@@ -62,16 +62,16 @@
 
 <!-- [![ASSIST Dashboard Screen Shot][product-screenshot]](https://assistforhighered.org/) -->
 
-ASSIST stands for Academic & Student Success Integrated Support Technology. This product enhancement is made up of an ecosystem of features to enhance the open source project SutieCRM to serve the higher education market.
+ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offerring. 
 
-Born out of necessity to innovate in the face of financial constraints for market options, ASSIST was created at one of the largest community college districts in the United States, the Maricopa County Community College District. 
+Born out of necessity to innovate in the face of financial constraints for market options, ASSIST was created for one of the largest community college districts in the United States, the Maricopa County Community College District. This open-source project is managed and sponsored by Canyon GBS LLC, and offerred in a SaaS configuration for institutions that may not be ready to deploy the technology themselves.
 
-This project works to make the solution widely available as an open source solution that your college or university can adopt.
+This project aims to make the solution widely available as an open source solution that your college or university can adopt either as a DIY option, or a managed servicing offerring through Canyon GBS LLC.
 
 Key Features
 
 * 3.5M+ Student Records
-* In Production at Six Colleges
+* In Production at 6 Colleges
 * Built Natively for the Cloud
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -81,6 +81,7 @@ Key Features
 * [PHP](https://php.net)
 * [Laravel](https://laravel.com/)
 * [Livewire](https://laravel-livewire.com/)
+* [Tailwind CSS](https://https://tailwindcss.com/)
 * [Bootstrap](https://getbootstrap.com)
 * [JQuery](https://jquery.com)
 
