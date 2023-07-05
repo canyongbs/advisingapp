@@ -13,7 +13,7 @@
 <br />
 <div align="center">
   <a href="https://canyongbs.com/">
-    <img src="https://s3.us-west-2.amazonaws.com/canyongbs.com/CanyonGBS-Logo-White.png" alt="Logo" width="324" height="100">
+    <img src="https://s3.us-west-2.amazonaws.com/canyongbs.com/CanyonGBS-Logo-White.png" alt="Logo" height="100">
   </a>
 
   <p align="center">
