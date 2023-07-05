@@ -1,0 +1,233 @@
+.row {
+    @apply w-full mb-12 px-4
+}
+
+.card {
+    @apply relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg border-0
+}
+
+.card .card-header {
+    @apply rounded-t bg-white mb-0 px-6 py-6
+}
+
+.card .card-header-container {
+    @apply text-center flex justify-between
+}
+
+.card .card-title {
+    @apply text-blueGray-700 text-xl font-bold
+}
+
+.card .card-body {
+    @apply flex-auto px-4 lg:px-10 py-10 pt-0
+}
+
+.card .card-controls {
+    @apply flex-auto px-4 lg:px-10 py-3
+}
+
+.card .card-table {
+    @apply py-3 pt-0
+}
+
+.btn {
+    @apply inline-block font-bold border-transparent uppercase justify-center text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none focus:ring-2 focus:ring-offset-2 mr-1 ease-linear transition-all duration-150 cursor-pointer;
+}
+
+.btn-sm {
+    @apply py-1 px-2
+}
+
+.btn.btn-primary {
+    @apply bg-pink-500 text-white active:bg-pink-600 focus:ring-pink-500
+}
+
+.btn.btn-indigo {
+    @apply bg-indigo-500 text-white active:bg-indigo-600 focus:ring-indigo-500
+}
+
+.btn.btn-secondary {
+    @apply text-blueGray-500 bg-white hover:bg-blueGray-50 active:bg-blueGray-100 focus:ring-indigo-500
+}
+
+.btn.btn-success {
+    @apply bg-green-500 text-white active:bg-green-600 focus:ring-green-500
+}
+
+.btn.btn-warning {
+    @apply bg-yellow-500 text-white active:bg-yellow-600 focus:ring-yellow-500
+}
+
+.btn.btn-danger {
+    @apply bg-red-500 text-white active:bg-red-600 focus:ring-red-500
+}
+
+.btn.btn-info {
+    @apply bg-blue-500 text-white active:bg-blue-600 focus:ring-blue-500
+}
+
+.btn.btn-rose {
+    @apply bg-rose-500 text-white active:bg-rose-600 focus:ring-rose-500
+}
+
+
+.sidebar-nav-active {
+    @apply text-xs uppercase py-3 font-bold block text-pink-500
+}
+
+.sidebar-nav-active > i {
+    @apply mr-2 text-sm opacity-75
+}
+
+.sidebar-nav-active:hover {
+    @apply text-pink-600
+}
+
+.sidebar-nav {
+    @apply text-xs uppercase py-3 font-bold block text-blueGray-800
+}
+
+.sidebar-nav > i {
+    @apply mr-2 text-sm text-blueGray-400
+}
+
+.sidebar-nav:hover {
+    @apply text-blueGray-600
+}
+
+.form-group {
+    @apply mt-4
+}
+
+.form-group:first-of-type {
+    @apply mt-0
+}
+
+.validation-message {
+    display: none;
+    @apply text-red-500
+}
+
+.form-group.invalid input,
+.form-group.invalid select,
+.form-group.invalid textarea {
+    @apply border-red-500 !important;
+}
+
+.form-group.invalid .validation-message {
+    display: block !important;
+}
+
+.form-label {
+    @apply block uppercase text-blueGray-600 text-xs font-bold mb-2
+}
+
+.form-control {
+    @apply w-full
+}
+
+input[type=text].form-control,
+input[type=email].form-control,
+input[type=number].form-control,
+input[type=password].form-control,
+textarea.form-control {
+    @apply border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring;
+}
+
+.flatpickr input[type=text].form-control {
+    @apply border-0 px-3 py-3 pl-10 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring;
+}
+
+.flatpickr input[type=text].form-control:required {
+    @apply border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring;
+}
+
+.table {
+    @apply items-center table-auto bg-transparent border-collapse
+}
+
+.table th {
+    @apply align-middle border border-solid text-xs uppercase whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500
+}
+
+.table td {
+    @apply border-blueGray-200
+}
+
+
+.table.table-view th,
+.table.table-view td {
+    @apply px-6 py-3 border border-solid
+}
+
+.table.table-index th {
+    @apply px-6 py-3 border-l-0 border-r-0 border-blueGray-100
+}
+
+.table.table-index td {
+    @apply px-4 py-2 border-t border-dashed
+}
+
+.table.table-index > tbody > tr:hover {
+    @apply bg-blueGray-50
+}
+
+.table.table-messages th {
+    @apply px-6 py-3 border-l-0 border-r-0 border-blueGray-100
+}
+
+.table.table-messages td {
+    @apply border-t border-dashed
+}
+
+.table.table-messages > tbody > tr:hover {
+    @apply bg-blueGray-50
+}
+
+.form-group .required::after {
+    content: " *";
+    @apply text-rose-500
+}
+
+.dropzone .dz-preview .dz-image img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.help-block {
+    @apply text-blueGray-600 pt-2 text-sm
+}
+
+.badge {
+    @apply text-xs font-semibold inline-block py-1 px-2 rounded last:mr-0 mr-1
+}
+
+.badge-relationship {
+    @apply text-indigo-600 bg-indigo-200
+}
+
+.link-light-blue {
+    @apply text-lightBlue-500 flex items-center hover:underline last:mb-0 mb-1;
+}
+
+.link-light-blue i {
+    @apply mr-1;
+}
+
+.link-photo {
+    @apply inline-block last:mr-0 mr-1;
+}
+
+.radio-label {
+    @apply flex items-center last:mb-0 mb-1 cursor-pointer;
+}
+
+.radio-label input[type=radio] {
+    @apply mr-2
+}
+
+.min-w-5
+{
+    min-width: 1.25rem;
+}
