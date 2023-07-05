@@ -153,9 +153,9 @@ Distributed under the AGPL 3.0 License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Joe Licata - [@canyongbs](https://twitter.com/canyongbs)
+Canyon GBS on Twitter- [@canyongbs](https://twitter.com/canyongbs)
 
-Project Link: [https://github.com/joelicatajr/assistforhighered](https://github.com/joelicatajr/assistforhighered)
+Project Link: [https://github.com/canyongbs/assistforhighered-2](https://github.com/canyongbs/assistforhighered-2)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
