@@ -12,8 +12,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://assistforhighered.org/">
-    <img src="images/logo.png" alt="Logo" width="324" height="100">
+  <a href="https://canyongbs.com/">
+    <img src="https://s3.console.aws.amazon.com/s3/object/canyongbs.com?region=us-west-2&prefix=CanyonGBS-Logo-White.png" alt="Logo" width="324" height="100">
   </a>
 
   <p align="center">
