@@ -174,16 +174,16 @@ We also want to extend a special think you to the Postsecondary Success team at 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[contributors-url]: https://github.com/joelicatajr/assistforhighered/graphs/contributors
-[forks-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[forks-url]: https://github.com/joelicatajr/assistforhighered/network/members
-[stars-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[contributors-url]: https://github.com/canyongbs/assistforhighered/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[forks-url]: https://github.com/canyongbs/assistforhighered/network/members
+[stars-shield]: https://img.shields.io/github/stars/canyongbs/assistforhighered-2.svg?style=for-the-badge
 [stars-url]: https://github.com/joelicatajr/assistforhighered/stargazers
 [issues-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[issues-url]: https://github.com/joelicatajr/assistforhighered/issues
-[license-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[license-url]: https://github.com/joelicatajr/assistforhighered/blob/main/LICENSE
+[issues-url]: https://github.com/joelicatajr/assistforhighered-2/issues
+[license-shield]: https://img.shields.io/github/license/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[license-url]: https://github.com/canyongbs/assistforhighered-2/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/company/canyongbs
 [product-screenshot]: images/assist-screenshot.png
