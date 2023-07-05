@@ -1,66 +1,189 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div id="top"></div>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<!-- PROJECT SHIELDS -->
 
-## About Laravel
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://assistforhighered.org/">
+    <img src="images/logo.png" alt="Logo" width="324" height="100">
+  </a>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+  <p align="center">
+    Academic & Student Success Integrated Support Technology
+    <br />
+    <br />
+    <a href="#"><strong>Explore the Docs » (Coming Soon)</strong></a>
+    <br />
+    <br />
+    <a href="#">View Demo (Coming Soon)</a>
+    ·
+    <a href="#">Report Bug (Coming Soon)</a>
+    ·
+    <a href="#">Request Feature (Coming Soon)</a>
+  </p>
+</div>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
 
-## Learning Laravel
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+<!-- [![ASSIST Dashboard Screen Shot][product-screenshot]](https://assistforhighered.org/) -->
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+ASSIST stands for Academic & Student Success Integrated Support Technology. This product enhancement is made up of an ecosystem of features to enhance the open source project SutieCRM to serve the higher education market.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Born out of necessity to innovate in the face of financial constraints for market options, ASSIST was created at one of the largest community college districts in the United States, the Maricopa County Community College District. 
 
-## Laravel Sponsors
+This project works to make the solution widely available as an open source solution that your college or university can adopt.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Key Features
 
-### Premium Partners
+* 3.5M+ Student Records
+* In Production at Six Colleges
+* Built Natively for the Cloud
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+<p align="right">(<a href="#top">back to top</a>)</p>
 
+### Built With
+
+* [PHP](https://php.net)
+* [Laravel](https://laravel.com/)
+* [Livewire](https://laravel-livewire.com/)
+* [Bootstrap](https://getbootstrap.com)
+* [JQuery](https://jquery.com)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+Coming soon
+
+### Prerequisites
+
+Coming Soon
+
+### Installation
+
+Coming Soon
+
+<!-- USAGE EXAMPLES -->
+## Usage
+
+Coming Soon
+
+_For more examples, please refer to the [Documentation](https://assistforhighered.org)_
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- ROADMAP -->
+## Roadmap
+
+Coming Soon
+<!--
+- [x] Add Changelog
+- [x] Add back to top links
+- [ ] Add Additional Templates w/ Examples
+- [ ] Add "components" document to easily copy & paste sections of the readme
+- [ ] Multi-language Support
+    - [ ] Chinese
+    - [ ] Spanish
+
+-->
+
+See the [open issues](https://github.com/canyongbs/assistforhighered-2/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- CONTRIBUTING -->
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-## Code of Conduct
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Security Vulnerabilities
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
+<!-- LICENSE -->
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Distributed under the AGPL 3.0 License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- CONTACT -->
+## Contact
+
+Joe Licata - [@canyongbs](https://twitter.com/canyongbs)
+
+Project Link: [https://github.com/joelicatajr/assistforhighered](https://github.com/joelicatajr/assistforhighered)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+Thank you for all of those who contribute to these open source projects and resources:
+
+Coming Soon
+
+We also want to extend a special think you to the Postsecondary Success team at the Bill and Melinda Gates Foundation, who's grant made much of this software possible:
+
+* [Bill & Melinda Gates Foundation](https://www.gatesfoundation.org/our-work/programs/us-program/postsecondary-success)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[contributors-url]: https://github.com/joelicatajr/assistforhighered/graphs/contributors
+[forks-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[forks-url]: https://github.com/joelicatajr/assistforhighered/network/members
+[stars-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[stars-url]: https://github.com/joelicatajr/assistforhighered/stargazers
+[issues-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[issues-url]: https://github.com/joelicatajr/assistforhighered/issues
+[license-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
+[license-url]: https://github.com/joelicatajr/assistforhighered/blob/main/LICENSE
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/company/canyongbs
+[product-screenshot]: images/assist-screenshot.png
