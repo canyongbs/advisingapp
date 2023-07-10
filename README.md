@@ -62,7 +62,7 @@
 
 <!-- [![ASSIST Dashboard Screen Shot][product-screenshot]](https://assistforhighered.org/) -->
 
-ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offerring. 
+ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offerring.
 
 Born out of necessity to innovate in the face of financial constraints for market options, ASSIST was created for one of the largest community college districts in the United States, the Maricopa County Community College District. This open-source project is managed and sponsored by Canyon GBS LLC, and offerred in a SaaS configuration for institutions that may not be ready to deploy the technology themselves.
 
@@ -90,7 +90,7 @@ Key Features
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Coming soon
+Coming soon!
 
 ### Prerequisites
 
