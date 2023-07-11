@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\CaseItemType;
 use Gate;
-use Illuminate\Http\Request;
+use App\Models\CaseItemType;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 
 class CaseItemTypeController extends Controller
 {

@@ -2,17 +2,19 @@
 
 namespace App\Http\Livewire\CaseItem;
 
-use App\Http\Livewire\WithConfirmation;
-use App\Http\Livewire\WithSorting;
-use App\Models\CaseItem;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
+use App\Models\CaseItem;
 use Livewire\WithPagination;
+use Illuminate\Http\Response;
+use App\Http\Livewire\WithSorting;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Livewire\WithConfirmation;
 
 class Index extends Component
 {
-    use WithPagination, WithSorting, WithConfirmation;
+    use WithPagination;
+    use WithSorting;
+    use WithConfirmation;
 
     public int $perPage;
 
@@ -58,18 +60,18 @@ class Index extends Component
 
     public function mount()
     {
-        $this->sortBy            = 'id';
-        $this->sortDirection     = 'desc';
-        $this->perPage           = 25;
+        $this->sortBy = 'id';
+        $this->sortDirection = 'desc';
+        $this->perPage = 25;
         $this->paginationOptions = config('project.pagination.options');
-        $this->orderable         = (new CaseItem())->orderable;
+        $this->orderable = (new CaseItem())->orderable;
     }
 
     public function render()
     {
         $query = CaseItem::with(['student', 'institution', 'state', 'type', 'priority', 'assignedTo', 'createdBy'])->advancedFilter([
-            's'               => $this->search ?: null,
-            'order_column'    => $this->sortBy,
+            's' => $this->search ?: null,
+            'order_column' => $this->sortBy,
             'order_direction' => $this->sortDirection,
         ]);
 

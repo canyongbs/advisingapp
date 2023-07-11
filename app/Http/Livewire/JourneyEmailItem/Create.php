@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\JourneyEmailItem;
 
-use App\Models\JourneyEmailItem;
 use Livewire\Component;
+use App\Models\JourneyEmailItem;
 
 class Create extends Component
 {
@@ -13,8 +13,8 @@ class Create extends Component
 
     public function mount(JourneyEmailItem $journeyEmailItem)
     {
-        $this->journeyEmailItem            = $journeyEmailItem;
-        $this->journeyEmailItem->active    = 'N';
+        $this->journeyEmailItem = $journeyEmailItem;
+        $this->journeyEmailItem->active = 'N';
         $this->journeyEmailItem->frequency = '1';
         $this->initListsForFields();
     }
@@ -65,7 +65,7 @@ class Create extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['active']    = $this->journeyEmailItem::ACTIVE_RADIO;
+        $this->listsForFields['active'] = $this->journeyEmailItem::ACTIVE_RADIO;
         $this->listsForFields['frequency'] = $this->journeyEmailItem::FREQUENCY_RADIO;
     }
 }

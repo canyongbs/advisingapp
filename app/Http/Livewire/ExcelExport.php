@@ -2,12 +2,11 @@
 
 namespace App\Http\Livewire;
 
-use App\Exports\ModelExport;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Response;
-use Illuminate\Support\Str;
 use Livewire\Component;
-use Maatwebsite\Excel\Excel;
+use Illuminate\Support\Str;
+use App\Exports\ModelExport;
+use Illuminate\Http\Response;
+use Illuminate\Database\Eloquent\Model;
 
 class ExcelExport extends Component
 {

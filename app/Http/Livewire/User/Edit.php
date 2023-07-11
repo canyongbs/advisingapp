@@ -18,7 +18,7 @@ class Edit extends Component
 
     public function mount(User $user)
     {
-        $this->user  = $user;
+        $this->user = $user;
         $this->roles = $this->user->roles()->pluck('id')->toArray();
         $this->initListsForFields();
     }
@@ -80,6 +80,6 @@ class Edit extends Component
     protected function initListsForFields(): void
     {
         $this->listsForFields['roles'] = Role::pluck('title', 'id')->toArray();
-        $this->listsForFields['type']  = $this->user::TYPE_RADIO;
+        $this->listsForFields['type'] = $this->user::TYPE_RADIO;
     }
 }

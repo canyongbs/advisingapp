@@ -2,17 +2,19 @@
 
 namespace App\Http\Livewire\EngagementEmailItem;
 
-use App\Http\Livewire\WithConfirmation;
-use App\Http\Livewire\WithSorting;
-use App\Models\EngagementEmailItem;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Http\Response;
+use App\Http\Livewire\WithSorting;
+use App\Models\EngagementEmailItem;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Livewire\WithConfirmation;
 
 class Index extends Component
 {
-    use WithPagination, WithSorting, WithConfirmation;
+    use WithPagination;
+    use WithSorting;
+    use WithConfirmation;
 
     public int $perPage;
 
@@ -58,18 +60,18 @@ class Index extends Component
 
     public function mount()
     {
-        $this->sortBy            = 'email';
-        $this->sortDirection     = 'desc';
-        $this->perPage           = 25;
+        $this->sortBy = 'email';
+        $this->sortDirection = 'desc';
+        $this->perPage = 25;
         $this->paginationOptions = config('project.pagination.options');
-        $this->orderable         = (new EngagementEmailItem())->orderable;
+        $this->orderable = (new EngagementEmailItem())->orderable;
     }
 
     public function render()
     {
         $query = EngagementEmailItem::advancedFilter([
-            's'               => $this->search ?: null,
-            'order_column'    => $this->sortBy,
+            's' => $this->search ?: null,
+            'order_column' => $this->sortBy,
             'order_direction' => $this->sortDirection,
         ]);
 

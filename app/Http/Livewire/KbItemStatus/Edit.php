@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\KbItemStatus;
 
-use App\Models\KbItemStatus;
 use Livewire\Component;
+use App\Models\KbItemStatus;
 
 class Edit extends Component
 {

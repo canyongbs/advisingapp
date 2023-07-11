@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Auditable;
+use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CaseItem extends Model
 {
-    use HasFactory, HasAdvancedFilter, SoftDeletes, Auditable;
+    use HasFactory;
+    use HasAdvancedFilter;
+    use SoftDeletes;
+    use Auditable;
 
     public $table = 'case_items';
 
@@ -58,11 +61,6 @@ class CaseItem extends Model
         'res_details',
         'created_by_id',
     ];
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
 
     public function student()
     {
@@ -112,5 +110,10 @@ class CaseItem extends Model
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

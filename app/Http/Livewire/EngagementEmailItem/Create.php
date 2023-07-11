@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\EngagementEmailItem;
 
-use App\Models\EngagementEmailItem;
 use Livewire\Component;
+use App\Models\EngagementEmailItem;
 
 class Create extends Component
 {

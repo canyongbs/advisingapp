@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\JourneyTargetList;
 
-use App\Models\JourneyTargetList;
 use Livewire\Component;
+use App\Models\JourneyTargetList;
 
 class Edit extends Component
 {

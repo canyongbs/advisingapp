@@ -3,8 +3,8 @@
 namespace App\Http\Livewire\UserAlert;
 
 use App\Models\User;
-use App\Models\UserAlert;
 use Livewire\Component;
+use App\Models\UserAlert;
 
 class Create extends Component
 {

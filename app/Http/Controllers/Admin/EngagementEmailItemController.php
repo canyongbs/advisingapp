@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\EngagementEmailItem;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\EngagementEmailItem;
+use App\Http\Controllers\Controller;
 
 class EngagementEmailItemController extends Controller
 {

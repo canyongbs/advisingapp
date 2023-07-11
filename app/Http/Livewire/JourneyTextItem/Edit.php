@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\JourneyTextItem;
 
-use App\Models\JourneyTextItem;
 use Livewire\Component;
+use App\Models\JourneyTextItem;
 
 class Edit extends Component
 {
@@ -64,7 +64,7 @@ class Edit extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['active']    = $this->journeyTextItem::ACTIVE_RADIO;
+        $this->listsForFields['active'] = $this->journeyTextItem::ACTIVE_RADIO;
         $this->listsForFields['frequency'] = $this->journeyTextItem::FREQUENCY_RADIO;
     }
 }

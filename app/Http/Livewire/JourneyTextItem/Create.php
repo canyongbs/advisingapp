@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\JourneyTextItem;
 
-use App\Models\JourneyTextItem;
 use Livewire\Component;
+use App\Models\JourneyTextItem;
 
 class Create extends Component
 {
@@ -13,8 +13,8 @@ class Create extends Component
 
     public function mount(JourneyTextItem $journeyTextItem)
     {
-        $this->journeyTextItem            = $journeyTextItem;
-        $this->journeyTextItem->active    = 'N';
+        $this->journeyTextItem = $journeyTextItem;
+        $this->journeyTextItem->active = 'N';
         $this->journeyTextItem->frequency = '1';
         $this->initListsForFields();
     }
@@ -66,7 +66,7 @@ class Create extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['active']    = $this->journeyTextItem::ACTIVE_RADIO;
+        $this->listsForFields['active'] = $this->journeyTextItem::ACTIVE_RADIO;
         $this->listsForFields['frequency'] = $this->journeyTextItem::FREQUENCY_RADIO;
     }
 }

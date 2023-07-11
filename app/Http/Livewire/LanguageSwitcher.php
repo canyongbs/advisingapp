@@ -12,7 +12,7 @@ class LanguageSwitcher extends Component
 
     public function mount()
     {
-        $this->languages       = config('project.supported_languages');
+        $this->languages = config('project.supported_languages');
         $this->currentLanguage = app()->getLocale();
     }
 

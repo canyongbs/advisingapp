@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\Institution;
 
-use App\Models\Institution;
 use Livewire\Component;
+use App\Models\Institution;
 
 class Edit extends Component
 {

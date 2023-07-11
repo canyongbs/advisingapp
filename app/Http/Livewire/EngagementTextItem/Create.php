@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\EngagementTextItem;
 
-use App\Models\EngagementTextItem;
 use Livewire\Component;
+use App\Models\EngagementTextItem;
 
 class Create extends Component
 {

@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Gate;
+use App\Models\CaseItem;
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\WithCSVImport;
-use App\Models\CaseItem;
-use Gate;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class CaseItemController extends Controller
 {
     use WithCSVImport;
+
+    public function __construct()
+    {
+        $this->csvImportModel = CaseItem::class;
+    }
 
     public function index()
     {
@@ -41,10 +45,5 @@ class CaseItemController extends Controller
         $caseItem->load('student', 'institution', 'state', 'type', 'priority', 'assignedTo', 'createdBy');
 
         return view('admin.case-item.show', compact('caseItem'));
-    }
-
-    public function __construct()
-    {
-        $this->csvImportModel = CaseItem::class;
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\SupportPage;
 
-use App\Models\SupportPage;
 use Livewire\Component;
+use App\Models\SupportPage;
 
 class Edit extends Component
 {

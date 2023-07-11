@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\JourneyEmailItem;
 
-use App\Models\JourneyEmailItem;
 use Livewire\Component;
+use App\Models\JourneyEmailItem;
 
 class Edit extends Component
 {
@@ -63,7 +63,7 @@ class Edit extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['active']    = $this->journeyEmailItem::ACTIVE_RADIO;
+        $this->listsForFields['active'] = $this->journeyEmailItem::ACTIVE_RADIO;
         $this->listsForFields['frequency'] = $this->journeyEmailItem::FREQUENCY_RADIO;
     }
 }

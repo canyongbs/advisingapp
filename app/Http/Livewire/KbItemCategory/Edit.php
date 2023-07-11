@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\KbItemCategory;
 
-use App\Models\KbItemCategory;
 use Livewire\Component;
+use App\Models\KbItemCategory;
 
 class Edit extends Component
 {

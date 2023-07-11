@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\ProspectStatus;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\ProspectStatus;
+use App\Http\Controllers\Controller;
 
 class ProspectStatusController extends Controller
 {

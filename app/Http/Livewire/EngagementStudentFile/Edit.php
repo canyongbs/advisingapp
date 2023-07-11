@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire\EngagementStudentFile;
 
-use App\Models\EngagementStudentFile;
-use App\Models\RecordStudentItem;
 use Livewire\Component;
+use App\Models\RecordStudentItem;
+use App\Models\EngagementStudentFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Edit extends Component
@@ -36,22 +36,12 @@ class Edit extends Component
         return $this->mediaCollections[$name];
     }
 
-    protected function syncMedia(): void
-    {
-        collect($this->mediaCollections)->flatten(1)
-            ->each(fn ($item) => Media::where('uuid', $item['uuid'])
-                ->update(['model_id' => $this->engagementStudentFile->id]));
-
-        Media::whereIn('uuid', $this->mediaToRemove)->delete();
-    }
-
     public function mount(EngagementStudentFile $engagementStudentFile)
     {
         $this->engagementStudentFile = $engagementStudentFile;
         $this->initListsForFields();
         $this->mediaCollections = [
             'engagement_student_file_file' => $engagementStudentFile->file,
-
         ];
     }
 
@@ -68,6 +58,15 @@ class Edit extends Component
         $this->syncMedia();
 
         return redirect()->route('admin.engagement-student-files.index');
+    }
+
+    protected function syncMedia(): void
+    {
+        collect($this->mediaCollections)->flatten(1)
+            ->each(fn ($item) => Media::where('uuid', $item['uuid'])
+                ->update(['model_id' => $this->engagementStudentFile->id]));
+
+        Media::whereIn('uuid', $this->mediaToRemove)->delete();
     }
 
     protected function rules(): array

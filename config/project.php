@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'date_format'               => 'Y-m-d',
-    'time_format'               => 'H:i:s',
-    'datetime_format'           => 'Y-m-d H:i:s',
-    'flatpickr_date_format'     => 'Y-m-d',
-    'flatpickr_time_format'     => 'H:i:S',
+    'date_format' => 'Y-m-d',
+    'time_format' => 'H:i:s',
+    'datetime_format' => 'Y-m-d H:i:s',
+    'flatpickr_date_format' => 'Y-m-d',
+    'flatpickr_time_format' => 'H:i:S',
     'flatpickr_datetime_format' => 'Y-m-d H:i:S',
-    'supported_languages'       => [
+    'supported_languages' => [
         [
-            'title'      => 'English',
+            'title' => 'English',
             'short_code' => 'en',
         ],
         [
-            'title'      => 'Spanish',
+            'title' => 'Spanish',
             'short_code' => 'es',
         ],
     ],

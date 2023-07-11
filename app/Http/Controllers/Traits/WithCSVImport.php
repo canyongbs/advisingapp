@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Traits;
 
 use App\Models\User;
+use SpreadsheetReader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
-use SpreadsheetReader;
 
 trait WithCSVImport
 {
@@ -23,34 +22,34 @@ trait WithCSVImport
     public function csvStore(Request $request)
     {
         $request->validate([
-            'csv_file'   => 'required|file|mimes:csv,txt',
+            'csv_file' => 'required|file|mimes:csv,txt',
             'has_header' => 'required|boolean',
         ]);
 
-        $csvFile              = $request->file('csv_file');
-        $this->csvHasHeader   = (bool) $request->input('has_header');
+        $csvFile = $request->file('csv_file');
+        $this->csvHasHeader = (bool) $request->input('has_header');
         $this->csvImportModel = new $this->csvImportModel();
 
         $this->makePreview($csvFile->path(), $this->csvPreviewLineCount);
 
         $storedCsvFile = $csvFile->storeAs('csv_import', sprintf('%s.csv', bin2hex(random_bytes(16))));
-        $route         = $request->input('route');
+        $route = $request->input('route');
 
         return view('admin.csv-import', [
-            'csvHeader'       => $this->csvHeader,
+            'csvHeader' => $this->csvHeader,
             'csvPreviewLines' => $this->csvContent,
-            'csvHasHeader'    => $this->csvHasHeader,
-            'fillables'       => $this->csvImportModel->getFillable(),
-            'filename'        => basename($storedCsvFile),
-            'route'           => $route,
-            'redirectTo'      => url()->previous(),
+            'csvHasHeader' => $this->csvHasHeader,
+            'fillables' => $this->csvImportModel->getFillable(),
+            'filename' => basename($storedCsvFile),
+            'route' => $route,
+            'redirectTo' => url()->previous(),
         ]);
     }
 
     public function csvUpdate(Request $request)
     {
         $this->csvImportModel = new $this->csvImportModel();
-        $this->csvHasHeader   = (bool) $request->input('has_header');
+        $this->csvHasHeader = (bool) $request->input('has_header');
 
         $this->importEntries($request->input('filename'), $request->input('fields', []));
 
@@ -59,7 +58,7 @@ trait WithCSVImport
 
     private function importEntries(string $filename, $fields): void
     {
-        $path   = storage_path('app/csv_import/' . basename($filename));
+        $path = storage_path('app/csv_import/' . basename($filename));
         $reader = new SpreadsheetReader($path);
         $fields = array_flip(array_filter($fields));
 
@@ -94,7 +93,7 @@ trait WithCSVImport
             trans(
                 'global.app_imported_rows_to_table',
                 [
-                    'rows'  => count($this->csvContent),
+                    'rows' => count($this->csvContent),
                     'table' => $this->csvImportModel->table,
                 ]
             )
@@ -148,6 +147,7 @@ trait WithCSVImport
         }
 
         $i = 0;
+
         while ($reader->next() !== false && ($i < $limit || $limit === 0)) {
             $this->csvContent[] = $reader->current();
             $i++;

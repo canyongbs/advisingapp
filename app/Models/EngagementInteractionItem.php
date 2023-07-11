@@ -2,17 +2,35 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Auditable;
+use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class EngagementInteractionItem extends Model
 {
-    use HasFactory, HasAdvancedFilter, SoftDeletes, Auditable;
+    use HasFactory;
+    use HasAdvancedFilter;
+    use SoftDeletes;
+    use Auditable;
+
+    public const DIRECTION_RADIO = [
+        'inbound' => 'Inbound',
+        'outbound' => 'Outbound',
+    ];
+
+    public const DURATION_RADIO = [
+        '5' => '5 Minutes',
+        '15' => '15 Minutes',
+        '30' => '30 Minutes',
+        '45' => '45 Minutes',
+        '60' => '1 Hour',
+        '90' => '1.5 Hours',
+        '120' => '2 Hours',
+    ];
 
     public $table = 'engagement_interaction_items';
 
@@ -35,11 +53,6 @@ class EngagementInteractionItem extends Model
         'deleted_at',
     ];
 
-    public const DIRECTION_RADIO = [
-        'inbound'  => 'Inbound',
-        'outbound' => 'Outbound',
-    ];
-
     protected $fillable = [
         'direction',
         'start',
@@ -47,21 +60,6 @@ class EngagementInteractionItem extends Model
         'subject',
         'description',
     ];
-
-    public const DURATION_RADIO = [
-        '5'   => '5 Minutes',
-        '15'  => '15 Minutes',
-        '30'  => '30 Minutes',
-        '45'  => '45 Minutes',
-        '60'  => '1 Hour',
-        '90'  => '1.5 Hours',
-        '120' => '2 Hours',
-    ];
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
 
     public function getDirectionLabelAttribute($value)
     {
@@ -96,5 +94,10 @@ class EngagementInteractionItem extends Model
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

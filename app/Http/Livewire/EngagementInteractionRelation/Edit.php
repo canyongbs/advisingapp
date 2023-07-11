@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\EngagementInteractionRelation;
 
-use App\Models\EngagementInteractionRelation;
 use Livewire\Component;
+use App\Models\EngagementInteractionRelation;
 
 class Edit extends Component
 {

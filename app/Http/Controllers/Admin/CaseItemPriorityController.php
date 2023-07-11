@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\CaseItemPriority;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\CaseItemPriority;
+use App\Http\Controllers\Controller;
 
 class CaseItemPriorityController extends Controller
 {

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\JourneyTextItem;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\JourneyTextItem;
+use App\Http\Controllers\Controller;
 
 class JourneyTextItemController extends Controller
 {

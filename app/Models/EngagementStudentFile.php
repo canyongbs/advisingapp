@@ -2,19 +2,23 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\Auditable;
 use Spatie\MediaLibrary\HasMedia;
+use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class EngagementStudentFile extends Model implements HasMedia
 {
-    use HasFactory, HasAdvancedFilter, SoftDeletes, InteractsWithMedia, Auditable;
+    use HasFactory;
+    use HasAdvancedFilter;
+    use SoftDeletes;
+    use InteractsWithMedia;
+    use Auditable;
 
     protected $appends = [
         'file',
@@ -49,15 +53,10 @@ class EngagementStudentFile extends Model implements HasMedia
         'student.otherid',
     ];
 
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
-
     public function getFileAttribute()
     {
         return $this->getMedia('engagement_student_file_file')->map(function ($item) {
-            $media        = $item->toArray();
+            $media = $item->toArray();
             $media['url'] = $item->getUrl();
 
             return $media;
@@ -82,5 +81,10 @@ class EngagementStudentFile extends Model implements HasMedia
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

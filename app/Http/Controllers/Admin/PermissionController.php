@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Permission;
 use Gate;
-use Illuminate\Http\Request;
+use App\Models\Permission;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 
 class PermissionController extends Controller
 {

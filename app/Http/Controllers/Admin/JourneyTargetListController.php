@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\JourneyTargetList;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\JourneyTargetList;
+use App\Http\Controllers\Controller;
 
 class JourneyTargetListController extends Controller
 {

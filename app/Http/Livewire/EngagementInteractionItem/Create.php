@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\EngagementInteractionItem;
 
-use App\Models\EngagementInteractionItem;
 use Livewire\Component;
+use App\Models\EngagementInteractionItem;
 
 class Create extends Component
 {
@@ -13,9 +13,9 @@ class Create extends Component
 
     public function mount(EngagementInteractionItem $engagementInteractionItem)
     {
-        $this->engagementInteractionItem            = $engagementInteractionItem;
+        $this->engagementInteractionItem = $engagementInteractionItem;
         $this->engagementInteractionItem->direction = 'inbound';
-        $this->engagementInteractionItem->duration  = '15';
+        $this->engagementInteractionItem->duration = '15';
         $this->initListsForFields();
     }
 
@@ -62,6 +62,6 @@ class Create extends Component
     protected function initListsForFields(): void
     {
         $this->listsForFields['direction'] = $this->engagementInteractionItem::DIRECTION_RADIO;
-        $this->listsForFields['duration']  = $this->engagementInteractionItem::DURATION_RADIO;
+        $this->listsForFields['duration'] = $this->engagementInteractionItem::DURATION_RADIO;
     }
 }

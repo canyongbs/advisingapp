@@ -2,14 +2,14 @@
 
 namespace App\Http\Livewire\CaseItem;
 
-use App\Models\CaseItem;
-use App\Models\CaseItemPriority;
-use App\Models\CaseItemStatus;
-use App\Models\CaseItemType;
-use App\Models\Institution;
-use App\Models\RecordStudentItem;
 use App\Models\User;
 use Livewire\Component;
+use App\Models\CaseItem;
+use App\Models\Institution;
+use App\Models\CaseItemType;
+use App\Models\CaseItemStatus;
+use App\Models\CaseItemPriority;
+use App\Models\RecordStudentItem;
 
 class Create extends Component
 {
@@ -94,12 +94,12 @@ class Create extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['student']     = RecordStudentItem::pluck('full', 'id')->toArray();
+        $this->listsForFields['student'] = RecordStudentItem::pluck('full', 'id')->toArray();
         $this->listsForFields['institution'] = Institution::pluck('name', 'id')->toArray();
-        $this->listsForFields['state']       = CaseItemStatus::pluck('status', 'id')->toArray();
-        $this->listsForFields['type']        = CaseItemType::pluck('type', 'id')->toArray();
-        $this->listsForFields['priority']    = CaseItemPriority::pluck('priority', 'id')->toArray();
+        $this->listsForFields['state'] = CaseItemStatus::pluck('status', 'id')->toArray();
+        $this->listsForFields['type'] = CaseItemType::pluck('type', 'id')->toArray();
+        $this->listsForFields['priority'] = CaseItemPriority::pluck('priority', 'id')->toArray();
         $this->listsForFields['assigned_to'] = User::pluck('name', 'id')->toArray();
-        $this->listsForFields['created_by']  = User::pluck('name', 'id')->toArray();
+        $this->listsForFields['created_by'] = User::pluck('name', 'id')->toArray();
     }
 }

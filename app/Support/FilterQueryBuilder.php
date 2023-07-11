@@ -2,8 +2,8 @@
 
 namespace App\Support;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FilterQueryBuilder
 {
@@ -39,12 +39,12 @@ class FilterQueryBuilder
     {
         if ($this->isNestedColumn($data['order_column'])) {
             [$relationship, $column] = explode('.', $data['order_column']);
-            $callable                = Str::camel($relationship);
-            $belongs                 = $this->model->{$callable}(
+            $callable = Str::camel($relationship);
+            $belongs = $this->model->{$callable}(
             );
             $relatedModel = $belongs->getModel();
             $relatedTable = $relatedModel->getTable();
-            $as           = "prefix_{$relatedTable}";
+            $as = "prefix_{$relatedTable}";
 
             if (! $belongs instanceof BelongsTo) {
                 return;
@@ -69,8 +69,8 @@ class FilterQueryBuilder
     {
         if ($this->isNestedColumn($filter['column'])) {
             [$relation, $filter['column']] = explode('.', $filter['column']);
-            $callable                      = Str::camel($relation);
-            $filter['match']               = 'and';
+            $callable = Str::camel($relation);
+            $filter['match'] = 'and';
 
             $query->orWhereHas(Str::camel($callable), function ($q) use ($filter) {
                 $this->{Str::camel($filter['operator'])}(

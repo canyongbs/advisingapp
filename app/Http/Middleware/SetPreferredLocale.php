@@ -17,7 +17,7 @@ class SetPreferredLocale
 
         // Otherwise auto-detect locale between browser and supported languages
         $languages = array_column(config('project.supported_languages'), 'short_code');
-        $locale    = $request->getPreferredLanguage($languages);
+        $locale = $request->getPreferredLanguage($languages);
 
         app()->setLocale($locale);
 

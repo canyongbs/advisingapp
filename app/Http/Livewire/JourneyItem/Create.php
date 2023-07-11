@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\JourneyItem;
 
-use App\Models\JourneyItem;
 use Livewire\Component;
+use App\Models\JourneyItem;
 
 class Create extends Component
 {
@@ -13,7 +13,7 @@ class Create extends Component
 
     public function mount(JourneyItem $journeyItem)
     {
-        $this->journeyItem            = $journeyItem;
+        $this->journeyItem = $journeyItem;
         $this->journeyItem->frequency = '1';
         $this->initListsForFields();
     }

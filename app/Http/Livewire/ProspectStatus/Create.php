@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\ProspectStatus;
 
-use App\Models\ProspectStatus;
 use Livewire\Component;
+use App\Models\ProspectStatus;
 
 class Create extends Component
 {

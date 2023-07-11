@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RecordStudentItem extends Model
 {
-    use HasFactory, HasAdvancedFilter;
-
-    public $table = 'record_student_items';
+    use HasFactory;
+    use HasAdvancedFilter;
 
     public const DUAL_RADIO = [
         'N' => 'No',
@@ -38,6 +37,8 @@ class RecordStudentItem extends Model
         'N' => 'No',
         'Y' => 'Yes',
     ];
+
+    public $table = 'record_student_items';
 
     public $orderable = [
         'sisid',
@@ -97,11 +98,6 @@ class RecordStudentItem extends Model
         'lastlmslogin',
     ];
 
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
-
     public function getSmsOptOutLabelAttribute($value)
     {
         return static::SMS_OPT_OUT_RADIO[$this->sms_opt_out] ?? null;
@@ -160,5 +156,10 @@ class RecordStudentItem extends Model
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Gate;
+use App\Models\ProspectItem;
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\WithCSVImport;
-use App\Models\ProspectItem;
-use Gate;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class ProspectItemController extends Controller
 {
     use WithCSVImport;
+
+    public function __construct()
+    {
+        $this->csvImportModel = ProspectItem::class;
+    }
 
     public function index()
     {
@@ -41,10 +45,5 @@ class ProspectItemController extends Controller
         $prospectItem->load('status', 'source', 'assignedTo', 'createdBy');
 
         return view('admin.prospect-item.show', compact('prospectItem'));
-    }
-
-    public function __construct()
-    {
-        $this->csvImportModel = ProspectItem::class;
     }
 }

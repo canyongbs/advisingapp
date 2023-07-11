@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\EngagementStudentFile;
 use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
+use App\Models\EngagementStudentFile;
 
 class EngagementStudentFileController extends Controller
 {
@@ -50,10 +50,10 @@ class EngagementStudentFileController extends Controller
             ]);
         }
 
-        $model                     = new EngagementStudentFile();
-        $model->id                 = $request->input('model_id', 0);
-        $model->exists             = true;
-        $media                     = $model->addMediaFromRequest('file')->toMediaCollection($request->input('collection_name'));
+        $model = new EngagementStudentFile();
+        $model->id = $request->input('model_id', 0);
+        $model->exists = true;
+        $media = $model->addMediaFromRequest('file')->toMediaCollection($request->input('collection_name'));
         $media->wasRecentlyCreated = true;
 
         return response()->json(compact('media'), Response::HTTP_CREATED);

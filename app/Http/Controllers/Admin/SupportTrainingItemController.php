@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\SupportTrainingItem;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\SupportTrainingItem;
+use App\Http\Controllers\Controller;
 
 class SupportTrainingItemController extends Controller
 {

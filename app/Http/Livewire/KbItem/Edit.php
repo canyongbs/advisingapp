@@ -2,12 +2,12 @@
 
 namespace App\Http\Livewire\KbItem;
 
-use App\Models\Institution;
 use App\Models\KbItem;
-use App\Models\KbItemCategory;
-use App\Models\KbItemQuality;
-use App\Models\KbItemStatus;
 use Livewire\Component;
+use App\Models\Institution;
+use App\Models\KbItemStatus;
+use App\Models\KbItemQuality;
+use App\Models\KbItemCategory;
 
 class Edit extends Component
 {
@@ -19,7 +19,7 @@ class Edit extends Component
 
     public function mount(KbItem $kbItem)
     {
-        $this->kbItem      = $kbItem;
+        $this->kbItem = $kbItem;
         $this->institution = $this->kbItem->institution()->pluck('id')->toArray();
         $this->initListsForFields();
     }
@@ -85,10 +85,10 @@ class Edit extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['quality']     = KbItemQuality::pluck('rating', 'id')->toArray();
-        $this->listsForFields['status']      = KbItemStatus::pluck('status', 'id')->toArray();
-        $this->listsForFields['public']      = $this->kbItem::PUBLIC_RADIO;
-        $this->listsForFields['category']    = KbItemCategory::pluck('category', 'id')->toArray();
+        $this->listsForFields['quality'] = KbItemQuality::pluck('rating', 'id')->toArray();
+        $this->listsForFields['status'] = KbItemStatus::pluck('status', 'id')->toArray();
+        $this->listsForFields['public'] = $this->kbItem::PUBLIC_RADIO;
+        $this->listsForFields['category'] = KbItemCategory::pluck('category', 'id')->toArray();
         $this->listsForFields['institution'] = Institution::pluck('name', 'id')->toArray();
     }
 }

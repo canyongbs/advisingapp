@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\CaseItemPriority;
 
-use App\Models\CaseItemPriority;
 use Livewire\Component;
+use App\Models\CaseItemPriority;
 
 class Edit extends Component
 {

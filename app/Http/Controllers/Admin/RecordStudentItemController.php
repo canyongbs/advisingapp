@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\RecordStudentItem;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\RecordStudentItem;
+use App\Http\Controllers\Controller;
 
 class RecordStudentItemController extends Controller
 {

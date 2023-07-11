@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\EngagementInteractionItem;
 
-use App\Models\EngagementInteractionItem;
 use Livewire\Component;
+use App\Models\EngagementInteractionItem;
 
 class Edit extends Component
 {
@@ -60,6 +60,6 @@ class Edit extends Component
     protected function initListsForFields(): void
     {
         $this->listsForFields['direction'] = $this->engagementInteractionItem::DIRECTION_RADIO;
-        $this->listsForFields['duration']  = $this->engagementInteractionItem::DURATION_RADIO;
+        $this->listsForFields['duration'] = $this->engagementInteractionItem::DURATION_RADIO;
     }
 }

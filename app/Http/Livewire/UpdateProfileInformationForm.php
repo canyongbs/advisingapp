@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class UpdateProfileInformationForm extends Component
 {
@@ -12,7 +12,7 @@ class UpdateProfileInformationForm extends Component
     public $state = [];
 
     protected $validationAttributes = [
-        'state.name'  => 'name',
+        'state.name' => 'name',
         'state.email' => 'email',
     ];
 
@@ -42,7 +42,7 @@ class UpdateProfileInformationForm extends Component
     protected function rules()
     {
         return [
-            'state.name'  => ['required', 'string', 'max:255'],
+            'state.name' => ['required', 'string', 'max:255'],
             'state.email' => [
                 'required',
                 'string',

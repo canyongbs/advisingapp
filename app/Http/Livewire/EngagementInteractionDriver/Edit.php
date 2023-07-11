@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\EngagementInteractionDriver;
 
-use App\Models\EngagementInteractionDriver;
 use Livewire\Component;
+use App\Models\EngagementInteractionDriver;
 
 class Edit extends Component
 {

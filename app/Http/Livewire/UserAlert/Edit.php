@@ -3,8 +3,8 @@
 namespace App\Http\Livewire\UserAlert;
 
 use App\Models\User;
-use App\Models\UserAlert;
 use Livewire\Component;
+use App\Models\UserAlert;
 
 class Edit extends Component
 {
@@ -17,7 +17,7 @@ class Edit extends Component
     public function mount(UserAlert $userAlert)
     {
         $this->userAlert = $userAlert;
-        $this->users     = $this->userAlert->users()->pluck('id')->toArray();
+        $this->users = $this->userAlert->users()->pluck('id')->toArray();
         $this->initListsForFields();
     }
 
