@@ -1,7 +1,7 @@
 {
     "name": "canyongbs/assistforhighered-2",
     "type": "project",
-    "description": "ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASSIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offerring.",
+    "description": "ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASSIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offering.",
     "keywords": ["higher", "education", "academic", "laravel"],
     "license": "MIT",
     "require": {
