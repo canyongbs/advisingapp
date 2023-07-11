@@ -98,7 +98,7 @@ Coming Soon
 
 ### Installation
 
-Coming Soon
+[Local Development Setup Documentation](./docs/local-setup.md)
 
 <!-- USAGE EXAMPLES -->
 ## Usage
