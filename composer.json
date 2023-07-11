@@ -1,26 +1,21 @@
 {
-    "name": "laravel/laravel",
+    "name": "canyongbs/assistforhighered-2",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASSIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offerring.",
+    "keywords": ["higher", "education", "academic", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
-        "dompdf/dompdf": "^2.0",
+        "php": "^8.2",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "livewire/livewire": "^2.11",
-        "maatwebsite/excel": "^3.1",
-        "laraveldaily/laravel-charts": "^0.1.29",
-        "nuovo/spreadsheet-reader": "^0.5.11",
         "spatie/laravel-medialibrary": "^10.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
-        "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
@@ -65,11 +60,7 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
+        "sort-packages": true
     },
-    "minimum-stability": "stable",
     "prefer-stable": true
 }
