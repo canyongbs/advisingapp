@@ -98,7 +98,7 @@ Coming Soon
 
 ### Installation
 
-Coming Soon
+Coming Soon...
 
 <!-- USAGE EXAMPLES -->
 ## Usage
