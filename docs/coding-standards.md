@@ -93,6 +93,18 @@ sail composer larastan
 
 Setup for automatic static analysis is per IDE and should be configured as such.
 
+Configuration is set in the [phpstan.neon.dist](../phpstan.neon.dist) file. If additional local configuration is desired, you can create a `phpstan.neon` file in the root of the project and it will be loaded automatically.
+
+Example `phpstan.neon` file:
+
+```neon 
+includes:
+    - phpstan.neon.dist
+
+parameters:
+    editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
+```
+
 ---
 
 # IDE Helper
