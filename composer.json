@@ -51,10 +51,12 @@
             "@php artisan key:generate --ansi"
         ],
         "check": [
-            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --dry-run -v --using-cache=no --stop-on-violation --config=./php-cs-fixer.php"
+            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --dry-run -v --using-cache=no --stop-on-violation --config=./php-cs-fixer.php",
+            "./node_modules/.bin/prettier resources/**/*.css resources/**/*.blade.php resources/**/*.js --check --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
         ],
         "fix": [
-            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --using-cache=no --config=./php-cs-fixer.php"
+            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --using-cache=no --config=./php-cs-fixer.php",
+            "./node_modules/.bin/prettier resources/**/*.css resources/**/*.blade.php resources/**/*.js --write --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
         ]
     },
     "extra": {
