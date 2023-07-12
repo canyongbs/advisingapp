@@ -1,8 +1,20 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('engagementInteractionType.type') ? 'invalid' : '' }}">
-        <label class="form-label" for="type">{{ trans('cruds.engagementInteractionType.fields.type') }}</label>
-        <input class="form-control" type="text" name="type" id="type" wire:model.defer="engagementInteractionType.type">
+        <label
+            class="form-label"
+            for="type"
+        >{{ trans('cruds.engagementInteractionType.fields.type') }}</label>
+        <input
+            class="form-control"
+            id="type"
+            name="type"
+            type="text"
+            wire:model.defer="engagementInteractionType.type"
+        >
         <div class="validation-message">
             {{ $errors->first('engagementInteractionType.type') }}
         </div>
@@ -12,10 +24,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.engagement-interaction-types.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.engagement-interaction-types.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

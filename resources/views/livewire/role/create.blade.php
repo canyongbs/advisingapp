@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('role.title') ? 'invalid' : '' }}">
-        <label class="form-label required" for="title">{{ trans('cruds.role.fields.title') }}</label>
-        <input class="form-control" type="text" name="title" id="title" required wire:model.defer="role.title">
+        <label
+            class="form-label required"
+            for="title"
+        >{{ trans('cruds.role.fields.title') }}</label>
+        <input
+            class="form-control"
+            id="title"
+            name="title"
+            type="text"
+            required
+            wire:model.defer="role.title"
+        >
         <div class="validation-message">
             {{ $errors->first('role.title') }}
         </div>
@@ -11,8 +24,19 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('permissions') ? 'invalid' : '' }}">
-        <label class="form-label required" for="permissions">{{ trans('cruds.role.fields.permissions') }}</label>
-        <x-select-list class="form-control" required id="permissions" name="permissions" wire:model="permissions" :options="$this->listsForFields['permissions']" multiple />
+        <label
+            class="form-label required"
+            for="permissions"
+        >{{ trans('cruds.role.fields.permissions') }}</label>
+        <x-select-list
+            class="form-control"
+            id="permissions"
+            name="permissions"
+            required
+            wire:model="permissions"
+            :options="$this->listsForFields['permissions']"
+            multiple
+        />
         <div class="validation-message">
             {{ $errors->first('permissions') }}
         </div>
@@ -22,10 +46,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.roles.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

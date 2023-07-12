@@ -1,8 +1,22 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('engagementTextItem.mobile') ? 'invalid' : '' }}">
-        <label class="form-label required" for="mobile">{{ trans('cruds.engagementTextItem.fields.mobile') }}</label>
-        <input class="form-control" type="number" name="mobile" id="mobile" required wire:model.defer="engagementTextItem.mobile" step="1">
+        <label
+            class="form-label required"
+            for="mobile"
+        >{{ trans('cruds.engagementTextItem.fields.mobile') }}</label>
+        <input
+            class="form-control"
+            id="mobile"
+            name="mobile"
+            type="number"
+            required
+            wire:model.defer="engagementTextItem.mobile"
+            step="1"
+        >
         <div class="validation-message">
             {{ $errors->first('engagementTextItem.mobile') }}
         </div>
@@ -11,8 +25,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('engagementTextItem.message') ? 'invalid' : '' }}">
-        <label class="form-label" for="message">{{ trans('cruds.engagementTextItem.fields.message') }}</label>
-        <input class="form-control" type="text" name="message" id="message" wire:model.defer="engagementTextItem.message">
+        <label
+            class="form-label"
+            for="message"
+        >{{ trans('cruds.engagementTextItem.fields.message') }}</label>
+        <input
+            class="form-control"
+            id="message"
+            name="message"
+            type="text"
+            wire:model.defer="engagementTextItem.message"
+        >
         <div class="validation-message">
             {{ $errors->first('engagementTextItem.message') }}
         </div>
@@ -22,10 +45,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.engagement-text-items.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.engagement-text-items.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

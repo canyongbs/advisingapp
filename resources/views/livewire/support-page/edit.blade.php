@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('supportPage.title') ? 'invalid' : '' }}">
-        <label class="form-label required" for="title">{{ trans('cruds.supportPage.fields.title') }}</label>
-        <input class="form-control" type="text" name="title" id="title" required wire:model.defer="supportPage.title">
+        <label
+            class="form-label required"
+            for="title"
+        >{{ trans('cruds.supportPage.fields.title') }}</label>
+        <input
+            class="form-control"
+            id="title"
+            name="title"
+            type="text"
+            required
+            wire:model.defer="supportPage.title"
+        >
         <div class="validation-message">
             {{ $errors->first('supportPage.title') }}
         </div>
@@ -11,8 +24,18 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('supportPage.body') ? 'invalid' : '' }}">
-        <label class="form-label required" for="body">{{ trans('cruds.supportPage.fields.body') }}</label>
-        <textarea class="form-control" name="body" id="body" required wire:model.defer="supportPage.body" rows="4"></textarea>
+        <label
+            class="form-label required"
+            for="body"
+        >{{ trans('cruds.supportPage.fields.body') }}</label>
+        <textarea
+            class="form-control"
+            id="body"
+            name="body"
+            required
+            wire:model.defer="supportPage.body"
+            rows="4"
+        ></textarea>
         <div class="validation-message">
             {{ $errors->first('supportPage.body') }}
         </div>
@@ -22,10 +45,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.support-pages.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.support-pages.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

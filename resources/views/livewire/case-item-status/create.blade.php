@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('caseItemStatus.status') ? 'invalid' : '' }}">
-        <label class="form-label required" for="status">{{ trans('cruds.caseItemStatus.fields.status') }}</label>
-        <input class="form-control" type="text" name="status" id="status" required wire:model.defer="caseItemStatus.status">
+        <label
+            class="form-label required"
+            for="status"
+        >{{ trans('cruds.caseItemStatus.fields.status') }}</label>
+        <input
+            class="form-control"
+            id="status"
+            name="status"
+            type="text"
+            required
+            wire:model.defer="caseItemStatus.status"
+        >
         <div class="validation-message">
             {{ $errors->first('caseItemStatus.status') }}
         </div>
@@ -12,10 +25,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.case-item-statuses.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.case-item-statuses.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

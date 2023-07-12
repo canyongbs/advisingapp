@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('userAlert.message') ? 'invalid' : '' }}">
-        <label class="form-label required" for="message">{{ trans('cruds.userAlert.fields.message') }}</label>
-        <input class="form-control" type="text" name="message" id="message" required wire:model.defer="userAlert.message">
+        <label
+            class="form-label required"
+            for="message"
+        >{{ trans('cruds.userAlert.fields.message') }}</label>
+        <input
+            class="form-control"
+            id="message"
+            name="message"
+            type="text"
+            required
+            wire:model.defer="userAlert.message"
+        >
         <div class="validation-message">
             {{ $errors->first('userAlert.message') }}
         </div>
@@ -11,8 +24,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('userAlert.link') ? 'invalid' : '' }}">
-        <label class="form-label" for="link">{{ trans('cruds.userAlert.fields.link') }}</label>
-        <input class="form-control" type="text" name="link" id="link" wire:model.defer="userAlert.link">
+        <label
+            class="form-label"
+            for="link"
+        >{{ trans('cruds.userAlert.fields.link') }}</label>
+        <input
+            class="form-control"
+            id="link"
+            name="link"
+            type="text"
+            wire:model.defer="userAlert.link"
+        >
         <div class="validation-message">
             {{ $errors->first('userAlert.link') }}
         </div>
@@ -21,8 +43,19 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('users') ? 'invalid' : '' }}">
-        <label class="form-label required" for="users">{{ trans('cruds.userAlert.fields.users') }}</label>
-        <x-select-list class="form-control" required id="users" name="users" wire:model="users" :options="$this->listsForFields['users']" multiple />
+        <label
+            class="form-label required"
+            for="users"
+        >{{ trans('cruds.userAlert.fields.users') }}</label>
+        <x-select-list
+            class="form-control"
+            id="users"
+            name="users"
+            required
+            wire:model="users"
+            :options="$this->listsForFields['users']"
+            multiple
+        />
         <div class="validation-message">
             {{ $errors->first('users') }}
         </div>
@@ -32,10 +65,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.user-alerts.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.user-alerts.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

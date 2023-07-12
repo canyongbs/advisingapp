@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('permission.title') ? 'invalid' : '' }}">
-        <label class="form-label required" for="title">{{ trans('cruds.permission.fields.title') }}</label>
-        <input class="form-control" type="text" name="title" id="title" required wire:model.defer="permission.title">
+        <label
+            class="form-label required"
+            for="title"
+        >{{ trans('cruds.permission.fields.title') }}</label>
+        <input
+            class="form-control"
+            id="title"
+            name="title"
+            type="text"
+            required
+            wire:model.defer="permission.title"
+        >
         <div class="validation-message">
             {{ $errors->first('permission.title') }}
         </div>
@@ -12,10 +25,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.permissions.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

@@ -7,17 +7,16 @@
 }
 
 .select2-container--default .select2-selection--single {
-    @apply border-0 h-11 flex items-center text-sm
+    @apply border-0 h-11 flex items-center text-sm;
 }
 
 .select2-container--default .select2-selection--multiple {
-    @apply border-0 text-sm
+    @apply border-0 text-sm;
 }
-
 
 .select2-container--default.select2-container--focus .select2-selection--single,
 .select2-container--default.select2-container--focus .select2-selection--multiple {
-    @apply border-0 outline-none ring ring-blue-600
+    @apply border-0 outline-none ring ring-blue-600;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -25,11 +24,11 @@
 }
 
 .select2-container .select2-selection--single .select2-selection__rendered {
-    @apply px-3 py-3 text-blueGray-600
+    @apply px-3 py-3 text-blueGray-600;
 }
 
 .select2-container .select2-selection--multiple .select2-selection__rendered {
-    @apply px-3 py-2 text-blueGray-600
+    @apply px-3 py-2 text-blueGray-600;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -49,14 +48,15 @@
 }
 
 .select2-container--default .select2-selection--single .select2-selection__clear {
-    @apply text-rose-500 ml-1 !important
+    @apply text-rose-500 ml-1 !important;
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-    @apply text-indigo-600 mr-1 !important
+    @apply text-indigo-600 mr-1 !important;
 }
 
-.select-all, .deselect-all {
+.select-all,
+.deselect-all {
     @apply cursor-pointer;
     font-size: 0.5rem !important;
 }

@@ -1,8 +1,20 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('user.emplid') ? 'invalid' : '' }}">
-        <label class="form-label" for="emplid">{{ trans('cruds.user.fields.emplid') }}</label>
-        <input class="form-control" type="text" name="emplid" id="emplid" wire:model.defer="user.emplid">
+        <label
+            class="form-label"
+            for="emplid"
+        >{{ trans('cruds.user.fields.emplid') }}</label>
+        <input
+            class="form-control"
+            id="emplid"
+            name="emplid"
+            type="text"
+            wire:model.defer="user.emplid"
+        >
         <div class="validation-message">
             {{ $errors->first('user.emplid') }}
         </div>
@@ -11,8 +23,18 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('user.name') ? 'invalid' : '' }}">
-        <label class="form-label required" for="name">{{ trans('cruds.user.fields.name') }}</label>
-        <input class="form-control" type="text" name="name" id="name" required wire:model.defer="user.name">
+        <label
+            class="form-label required"
+            for="name"
+        >{{ trans('cruds.user.fields.name') }}</label>
+        <input
+            class="form-control"
+            id="name"
+            name="name"
+            type="text"
+            required
+            wire:model.defer="user.name"
+        >
         <div class="validation-message">
             {{ $errors->first('user.name') }}
         </div>
@@ -21,8 +43,18 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('user.email') ? 'invalid' : '' }}">
-        <label class="form-label required" for="email">{{ trans('cruds.user.fields.email') }}</label>
-        <input class="form-control" type="email" name="email" id="email" required wire:model.defer="user.email">
+        <label
+            class="form-label required"
+            for="email"
+        >{{ trans('cruds.user.fields.email') }}</label>
+        <input
+            class="form-control"
+            id="email"
+            name="email"
+            type="email"
+            required
+            wire:model.defer="user.email"
+        >
         <div class="validation-message">
             {{ $errors->first('user.email') }}
         </div>
@@ -31,8 +63,18 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('user.password') ? 'invalid' : '' }}">
-        <label class="form-label required" for="password">{{ trans('cruds.user.fields.password') }}</label>
-        <input class="form-control" type="password" name="password" id="password" required wire:model.defer="password">
+        <label
+            class="form-label required"
+            for="password"
+        >{{ trans('cruds.user.fields.password') }}</label>
+        <input
+            class="form-control"
+            id="password"
+            name="password"
+            type="password"
+            required
+            wire:model.defer="password"
+        >
         <div class="validation-message">
             {{ $errors->first('user.password') }}
         </div>
@@ -41,8 +83,19 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('roles') ? 'invalid' : '' }}">
-        <label class="form-label required" for="roles">{{ trans('cruds.user.fields.roles') }}</label>
-        <x-select-list class="form-control" required id="roles" name="roles" wire:model="roles" :options="$this->listsForFields['roles']" multiple />
+        <label
+            class="form-label required"
+            for="roles"
+        >{{ trans('cruds.user.fields.roles') }}</label>
+        <x-select-list
+            class="form-control"
+            id="roles"
+            name="roles"
+            required
+            wire:model="roles"
+            :options="$this->listsForFields['roles']"
+            multiple
+        />
         <div class="validation-message">
             {{ $errors->first('roles') }}
         </div>
@@ -51,8 +104,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('user.locale') ? 'invalid' : '' }}">
-        <label class="form-label" for="locale">{{ trans('cruds.user.fields.locale') }}</label>
-        <input class="form-control" type="text" name="locale" id="locale" wire:model.defer="user.locale">
+        <label
+            class="form-label"
+            for="locale"
+        >{{ trans('cruds.user.fields.locale') }}</label>
+        <input
+            class="form-control"
+            id="locale"
+            name="locale"
+            type="text"
+            wire:model.defer="user.locale"
+        >
         <div class="validation-message">
             {{ $errors->first('user.locale') }}
         </div>
@@ -62,8 +124,13 @@
     </div>
     <div class="form-group {{ $errors->has('user.type') ? 'invalid' : '' }}">
         <label class="form-label required">{{ trans('cruds.user.fields.type') }}</label>
-        @foreach($this->listsForFields['type'] as $key => $value)
-            <label class="radio-label"><input type="radio" name="type" wire:model="user.type" value="{{ $key }}">{{ $value }}</label>
+        @foreach ($this->listsForFields['type'] as $key => $value)
+            <label class="radio-label"><input
+                    name="type"
+                    type="radio"
+                    value="{{ $key }}"
+                    wire:model="user.type"
+                >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
             {{ $errors->first('user.type') }}
@@ -74,10 +141,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.users.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

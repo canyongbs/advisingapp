@@ -1,8 +1,20 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('journeyTextItem.name') ? 'invalid' : '' }}">
-        <label class="form-label" for="name">{{ trans('cruds.journeyTextItem.fields.name') }}</label>
-        <input class="form-control" type="text" name="name" id="name" wire:model.defer="journeyTextItem.name">
+        <label
+            class="form-label"
+            for="name"
+        >{{ trans('cruds.journeyTextItem.fields.name') }}</label>
+        <input
+            class="form-control"
+            id="name"
+            name="name"
+            type="text"
+            wire:model.defer="journeyTextItem.name"
+        >
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.name') }}
         </div>
@@ -11,8 +23,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('journeyTextItem.text') ? 'invalid' : '' }}">
-        <label class="form-label" for="text">{{ trans('cruds.journeyTextItem.fields.text') }}</label>
-        <input class="form-control" type="text" name="text" id="text" wire:model.defer="journeyTextItem.text">
+        <label
+            class="form-label"
+            for="text"
+        >{{ trans('cruds.journeyTextItem.fields.text') }}</label>
+        <input
+            class="form-control"
+            id="text"
+            name="text"
+            type="text"
+            wire:model.defer="journeyTextItem.text"
+        >
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.text') }}
         </div>
@@ -21,8 +42,16 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('journeyTextItem.start') ? 'invalid' : '' }}">
-        <label class="form-label" for="start">{{ trans('cruds.journeyTextItem.fields.start') }}</label>
-        <x-date-picker class="form-control" wire:model="journeyTextItem.start" id="start" name="start" />
+        <label
+            class="form-label"
+            for="start"
+        >{{ trans('cruds.journeyTextItem.fields.start') }}</label>
+        <x-date-picker
+            class="form-control"
+            id="start"
+            name="start"
+            wire:model="journeyTextItem.start"
+        />
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.start') }}
         </div>
@@ -31,8 +60,16 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('journeyTextItem.end') ? 'invalid' : '' }}">
-        <label class="form-label" for="end">{{ trans('cruds.journeyTextItem.fields.end') }}</label>
-        <x-date-picker class="form-control" wire:model="journeyTextItem.end" id="end" name="end" />
+        <label
+            class="form-label"
+            for="end"
+        >{{ trans('cruds.journeyTextItem.fields.end') }}</label>
+        <x-date-picker
+            class="form-control"
+            id="end"
+            name="end"
+            wire:model="journeyTextItem.end"
+        />
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.end') }}
         </div>
@@ -42,8 +79,13 @@
     </div>
     <div class="form-group {{ $errors->has('journeyTextItem.active') ? 'invalid' : '' }}">
         <label class="form-label required">{{ trans('cruds.journeyTextItem.fields.active') }}</label>
-        @foreach($this->listsForFields['active'] as $key => $value)
-            <label class="radio-label"><input type="radio" name="active" wire:model="journeyTextItem.active" value="{{ $key }}">{{ $value }}</label>
+        @foreach ($this->listsForFields['active'] as $key => $value)
+            <label class="radio-label"><input
+                    name="active"
+                    type="radio"
+                    value="{{ $key }}"
+                    wire:model="journeyTextItem.active"
+                >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.active') }}
@@ -54,8 +96,13 @@
     </div>
     <div class="form-group {{ $errors->has('journeyTextItem.frequency') ? 'invalid' : '' }}">
         <label class="form-label">{{ trans('cruds.journeyTextItem.fields.frequency') }}</label>
-        @foreach($this->listsForFields['frequency'] as $key => $value)
-            <label class="radio-label"><input type="radio" name="frequency" wire:model="journeyTextItem.frequency" value="{{ $key }}">{{ $value }}</label>
+        @foreach ($this->listsForFields['frequency'] as $key => $value)
+            <label class="radio-label"><input
+                    name="frequency"
+                    type="radio"
+                    value="{{ $key }}"
+                    wire:model="journeyTextItem.frequency"
+                >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.frequency') }}
@@ -66,10 +113,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.journey-text-items.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.journey-text-items.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

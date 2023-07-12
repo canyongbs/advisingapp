@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('kbItem.question') ? 'invalid' : '' }}">
-        <label class="form-label required" for="question">{{ trans('cruds.kbItem.fields.question') }}</label>
-        <input class="form-control" type="text" name="question" id="question" required wire:model.defer="kbItem.question">
+        <label
+            class="form-label required"
+            for="question"
+        >{{ trans('cruds.kbItem.fields.question') }}</label>
+        <input
+            class="form-control"
+            id="question"
+            name="question"
+            type="text"
+            required
+            wire:model.defer="kbItem.question"
+        >
         <div class="validation-message">
             {{ $errors->first('kbItem.question') }}
         </div>
@@ -11,8 +24,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('kbItem.quality_id') ? 'invalid' : '' }}">
-        <label class="form-label" for="quality">{{ trans('cruds.kbItem.fields.quality') }}</label>
-        <x-select-list class="form-control" id="quality" name="quality" :options="$this->listsForFields['quality']" wire:model="kbItem.quality_id" />
+        <label
+            class="form-label"
+            for="quality"
+        >{{ trans('cruds.kbItem.fields.quality') }}</label>
+        <x-select-list
+            class="form-control"
+            id="quality"
+            name="quality"
+            :options="$this->listsForFields['quality']"
+            wire:model="kbItem.quality_id"
+        />
         <div class="validation-message">
             {{ $errors->first('kbItem.quality_id') }}
         </div>
@@ -21,8 +43,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('kbItem.status_id') ? 'invalid' : '' }}">
-        <label class="form-label" for="status">{{ trans('cruds.kbItem.fields.status') }}</label>
-        <x-select-list class="form-control" id="status" name="status" :options="$this->listsForFields['status']" wire:model="kbItem.status_id" />
+        <label
+            class="form-label"
+            for="status"
+        >{{ trans('cruds.kbItem.fields.status') }}</label>
+        <x-select-list
+            class="form-control"
+            id="status"
+            name="status"
+            :options="$this->listsForFields['status']"
+            wire:model="kbItem.status_id"
+        />
         <div class="validation-message">
             {{ $errors->first('kbItem.status_id') }}
         </div>
@@ -32,8 +63,13 @@
     </div>
     <div class="form-group {{ $errors->has('kbItem.public') ? 'invalid' : '' }}">
         <label class="form-label required">{{ trans('cruds.kbItem.fields.public') }}</label>
-        @foreach($this->listsForFields['public'] as $key => $value)
-            <label class="radio-label"><input type="radio" name="public" wire:model="kbItem.public" value="{{ $key }}">{{ $value }}</label>
+        @foreach ($this->listsForFields['public'] as $key => $value)
+            <label class="radio-label"><input
+                    name="public"
+                    type="radio"
+                    value="{{ $key }}"
+                    wire:model="kbItem.public"
+                >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
             {{ $errors->first('kbItem.public') }}
@@ -43,8 +79,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('kbItem.category_id') ? 'invalid' : '' }}">
-        <label class="form-label" for="category">{{ trans('cruds.kbItem.fields.category') }}</label>
-        <x-select-list class="form-control" id="category" name="category" :options="$this->listsForFields['category']" wire:model="kbItem.category_id" />
+        <label
+            class="form-label"
+            for="category"
+        >{{ trans('cruds.kbItem.fields.category') }}</label>
+        <x-select-list
+            class="form-control"
+            id="category"
+            name="category"
+            :options="$this->listsForFields['category']"
+            wire:model="kbItem.category_id"
+        />
         <div class="validation-message">
             {{ $errors->first('kbItem.category_id') }}
         </div>
@@ -53,8 +98,18 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('institution') ? 'invalid' : '' }}">
-        <label class="form-label" for="institution">{{ trans('cruds.kbItem.fields.institution') }}</label>
-        <x-select-list class="form-control" id="institution" name="institution" wire:model="institution" :options="$this->listsForFields['institution']" multiple />
+        <label
+            class="form-label"
+            for="institution"
+        >{{ trans('cruds.kbItem.fields.institution') }}</label>
+        <x-select-list
+            class="form-control"
+            id="institution"
+            name="institution"
+            wire:model="institution"
+            :options="$this->listsForFields['institution']"
+            multiple
+        />
         <div class="validation-message">
             {{ $errors->first('institution') }}
         </div>
@@ -63,8 +118,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('kbItem.solution') ? 'invalid' : '' }}">
-        <label class="form-label" for="solution">{{ trans('cruds.kbItem.fields.solution') }}</label>
-        <textarea class="form-control" name="solution" id="solution" wire:model.defer="kbItem.solution" rows="4"></textarea>
+        <label
+            class="form-label"
+            for="solution"
+        >{{ trans('cruds.kbItem.fields.solution') }}</label>
+        <textarea
+            class="form-control"
+            id="solution"
+            name="solution"
+            wire:model.defer="kbItem.solution"
+            rows="4"
+        ></textarea>
         <div class="validation-message">
             {{ $errors->first('kbItem.solution') }}
         </div>
@@ -73,8 +137,17 @@
         </div>
     </div>
     <div class="form-group {{ $errors->has('kbItem.notes') ? 'invalid' : '' }}">
-        <label class="form-label" for="notes">{{ trans('cruds.kbItem.fields.notes') }}</label>
-        <textarea class="form-control" name="notes" id="notes" wire:model.defer="kbItem.notes" rows="4"></textarea>
+        <label
+            class="form-label"
+            for="notes"
+        >{{ trans('cruds.kbItem.fields.notes') }}</label>
+        <textarea
+            class="form-control"
+            id="notes"
+            name="notes"
+            wire:model.defer="kbItem.notes"
+            rows="4"
+        ></textarea>
         <div class="validation-message">
             {{ $errors->first('kbItem.notes') }}
         </div>
@@ -84,10 +157,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.kb-items.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.kb-items.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

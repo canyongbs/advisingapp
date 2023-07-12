@@ -1,14 +1,27 @@
 <div>
-    <a class="text-blueGray-500 block" href="#" onclick="openDropdown(event,'{{ $this->id }}')">
-        <div class="items-center flex">
-            <span class="w-12 h-12 text-sm text-pink-400 md:text-white inline-flex items-center justify-center rounded-full font-bold uppercase">
+    <a
+        class="block text-blueGray-500"
+        href="#"
+        onclick="openDropdown(event,'{{ $this->id }}')"
+    >
+        <div class="flex items-center">
+            <span
+                class="inline-flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold uppercase text-pink-400 md:text-white"
+            >
                 {{ $currentLanguage }}
             </span>
         </div>
     </a>
-    <div class="hidden bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48" id="{{ $this->id }}">
-        @foreach($languages as $language)
-            <a wire:click="changeLocale('{{ $language['short_code'] }}')" href="#" class="text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 hover:text-indigo-600">
+    <div
+        class="z-50 float-left hidden min-w-48 list-none rounded bg-white py-2 text-left text-base shadow-lg"
+        id="{{ $this->id }}"
+    >
+        @foreach ($languages as $language)
+            <a
+                class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-blueGray-700 hover:text-indigo-600"
+                href="#"
+                wire:click="changeLocale('{{ $language['short_code'] }}')"
+            >
                 {{ $language['title'] }}
             </a>
         @endforeach
