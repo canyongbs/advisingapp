@@ -2,17 +2,19 @@
 
 namespace App\Http\Livewire\RecordEnrollmentItem;
 
-use App\Http\Livewire\WithConfirmation;
-use App\Http\Livewire\WithSorting;
-use App\Models\RecordEnrollmentItem;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Http\Response;
+use App\Http\Livewire\WithSorting;
+use App\Models\RecordEnrollmentItem;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Livewire\WithConfirmation;
 
 class Index extends Component
 {
-    use WithPagination, WithSorting, WithConfirmation;
+    use WithPagination;
+    use WithSorting;
+    use WithConfirmation;
 
     public int $perPage;
 
@@ -58,18 +60,18 @@ class Index extends Component
 
     public function mount()
     {
-        $this->sortBy            = 'name';
-        $this->sortDirection     = 'desc';
-        $this->perPage           = 10;
+        $this->sortBy = 'name';
+        $this->sortDirection = 'desc';
+        $this->perPage = 10;
         $this->paginationOptions = config('project.pagination.options');
-        $this->orderable         = (new RecordEnrollmentItem())->orderable;
+        $this->orderable = (new RecordEnrollmentItem())->orderable;
     }
 
     public function render()
     {
         $query = RecordEnrollmentItem::advancedFilter([
-            's'               => $this->search ?: null,
-            'order_column'    => $this->sortBy,
+            's' => $this->search ?: null,
+            'order_column' => $this->sortBy,
             'order_direction' => $this->sortDirection,
         ]);
 

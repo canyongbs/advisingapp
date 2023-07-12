@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AuditLog extends Model
 {
-    use HasFactory, HasAdvancedFilter;
+    use HasFactory;
+    use HasAdvancedFilter;
 
     public $table = 'audit_logs';
 
@@ -50,11 +51,6 @@ class AuditLog extends Model
         'created_at',
     ];
 
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
-
     public function getCreatedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
@@ -73,5 +69,10 @@ class AuditLog extends Model
     public function setUpdatedAtAttribute($value)
     {
         $this->attributes['updated_at'] = $value ? Carbon::createFromFormat(config('project.datetime_format'), $value)->format('Y-m-d H:i:s') : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

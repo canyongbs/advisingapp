@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\KbItemQuality;
 use Gate;
-use Illuminate\Http\Request;
+use App\Models\KbItemQuality;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 
 class KbItemQualityController extends Controller
 {

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
 use Gate;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {

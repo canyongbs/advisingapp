@@ -2,24 +2,35 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Auditable;
+use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class JourneyEmailItem extends Model
 {
-    use HasFactory, HasAdvancedFilter, SoftDeletes, Auditable;
-
-    public $table = 'journey_email_items';
+    use HasFactory;
+    use HasAdvancedFilter;
+    use SoftDeletes;
+    use Auditable;
 
     public const ACTIVE_RADIO = [
         'N' => 'No',
         'Y' => 'Yes',
     ];
+
+    public const FREQUENCY_RADIO = [
+        '1' => 'One Time',
+        '2' => 'Daily',
+        '3' => 'Weekly',
+        '4' => 'Monthly',
+        '5' => 'Annually',
+    ];
+
+    public $table = 'journey_email_items';
 
     public $orderable = [
         'id',
@@ -53,19 +64,6 @@ class JourneyEmailItem extends Model
         'active',
         'frequency',
     ];
-
-    public const FREQUENCY_RADIO = [
-        '1' => 'One Time',
-        '2' => 'Daily',
-        '3' => 'Weekly',
-        '4' => 'Monthly',
-        '5' => 'Annually',
-    ];
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
 
     public function getStartAttribute($value)
     {
@@ -110,5 +108,10 @@ class JourneyEmailItem extends Model
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

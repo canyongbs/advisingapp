@@ -2,11 +2,11 @@
 
 namespace App\Http\Livewire\ProspectItem;
 
+use App\Models\User;
+use Livewire\Component;
 use App\Models\ProspectItem;
 use App\Models\ProspectSource;
 use App\Models\ProspectStatus;
-use App\Models\User;
-use Livewire\Component;
 
 class Edit extends Component
 {
@@ -130,11 +130,11 @@ class Edit extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['sms_opt_out']  = $this->prospectItem::SMS_OPT_OUT_RADIO;
+        $this->listsForFields['sms_opt_out'] = $this->prospectItem::SMS_OPT_OUT_RADIO;
         $this->listsForFields['email_bounce'] = $this->prospectItem::EMAIL_BOUNCE_RADIO;
-        $this->listsForFields['status']       = ProspectStatus::pluck('status', 'id')->toArray();
-        $this->listsForFields['source']       = ProspectSource::pluck('source', 'id')->toArray();
-        $this->listsForFields['assigned_to']  = User::pluck('name', 'id')->toArray();
-        $this->listsForFields['created_by']   = User::pluck('name', 'id')->toArray();
+        $this->listsForFields['status'] = ProspectStatus::pluck('status', 'id')->toArray();
+        $this->listsForFields['source'] = ProspectSource::pluck('source', 'id')->toArray();
+        $this->listsForFields['assigned_to'] = User::pluck('name', 'id')->toArray();
+        $this->listsForFields['created_by'] = User::pluck('name', 'id')->toArray();
     }
 }

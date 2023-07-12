@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\ReportProspect;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\ReportProspect;
+use App\Http\Controllers\Controller;
 
 class ReportProspectController extends Controller
 {

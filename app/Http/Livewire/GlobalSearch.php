@@ -2,11 +2,11 @@
 
 namespace App\Http\Livewire;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 use Livewire\Component;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\Finder\Finder;
+use Illuminate\Database\Eloquent\Model;
 
 class GlobalSearch extends Component
 {
@@ -53,17 +53,17 @@ class GlobalSearch extends Component
                 ->map(function ($resource) {
                     $model_key = Str::camel(class_basename($resource));
                     $route_key = Str::plural(Str::kebab(class_basename($resource)));
-                    $fields    = [];
+                    $fields = [];
 
                     foreach ($resource::$search as $field) {
-                        $field_key                 = sprintf('cruds.%s.fields.%s', $model_key, $field);
+                        $field_key = sprintf('cruds.%s.fields.%s', $model_key, $field);
                         $fields[trans($field_key)] = $resource->{$field};
                     }
 
                     return [
                         'modelName' => trans(sprintf('cruds.%s.title', $model_key)),
-                        'linkTo'    => route(sprintf('admin.%s.show', $route_key), $resource),
-                        'fields'    => $fields,
+                        'linkTo' => route(sprintf('admin.%s.show', $route_key), $resource),
+                        'fields' => $fields,
                     ];
                 });
         }
@@ -72,7 +72,7 @@ class GlobalSearch extends Component
     protected function getSearchableModels(): array
     {
         $namespace = app()->getNamespace();
-        $models    = [];
+        $models = [];
 
         foreach ((new Finder())->in(app_path())->files() as $model) {
             $model = $namespace . str_replace(

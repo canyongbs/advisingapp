@@ -18,7 +18,7 @@ class Create extends Component
 
     public function mount(User $user)
     {
-        $this->user       = $user;
+        $this->user = $user;
         $this->user->type = 'local';
         $this->initListsForFields();
     }
@@ -81,6 +81,6 @@ class Create extends Component
     protected function initListsForFields(): void
     {
         $this->listsForFields['roles'] = Role::pluck('title', 'id')->toArray();
-        $this->listsForFields['type']  = $this->user::TYPE_RADIO;
+        $this->listsForFields['type'] = $this->user::TYPE_RADIO;
     }
 }

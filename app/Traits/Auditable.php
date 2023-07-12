@@ -27,12 +27,12 @@ trait Auditable
     protected static function audit($description, $model)
     {
         AuditLog::create([
-            'description'  => $description,
-            'subject_id'   => $model->id ?? null,
+            'description' => $description,
+            'subject_id' => $model->id ?? null,
             'subject_type' => sprintf('%s#%s', get_class($model), $model->id) ?? null,
-            'user_id'      => auth()->id() ?? null,
-            'properties'   => $model ?? null,
-            'host'         => request()->ip() ?? null,
+            'user_id' => auth()->id() ?? null,
+            'properties' => $model ?? null,
+            'host' => request()->ip() ?? null,
         ]);
     }
 }

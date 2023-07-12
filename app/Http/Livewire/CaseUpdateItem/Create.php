@@ -2,10 +2,10 @@
 
 namespace App\Http\Livewire\CaseUpdateItem;
 
+use Livewire\Component;
 use App\Models\CaseItem;
 use App\Models\CaseUpdateItem;
 use App\Models\RecordStudentItem;
-use Livewire\Component;
 
 class Create extends Component
 {
@@ -15,8 +15,8 @@ class Create extends Component
 
     public function mount(CaseUpdateItem $caseUpdateItem)
     {
-        $this->caseUpdateItem            = $caseUpdateItem;
-        $this->caseUpdateItem->internal  = 'Y';
+        $this->caseUpdateItem = $caseUpdateItem;
+        $this->caseUpdateItem->internal = 'Y';
         $this->caseUpdateItem->direction = '1';
         $this->initListsForFields();
     }
@@ -65,9 +65,9 @@ class Create extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['student']   = RecordStudentItem::pluck('full', 'id')->toArray();
-        $this->listsForFields['case']      = CaseItem::pluck('casenumber', 'id')->toArray();
-        $this->listsForFields['internal']  = $this->caseUpdateItem::INTERNAL_RADIO;
+        $this->listsForFields['student'] = RecordStudentItem::pluck('full', 'id')->toArray();
+        $this->listsForFields['case'] = CaseItem::pluck('casenumber', 'id')->toArray();
+        $this->listsForFields['internal'] = $this->caseUpdateItem::INTERNAL_RADIO;
         $this->listsForFields['direction'] = $this->caseUpdateItem::DIRECTION_RADIO;
     }
 }

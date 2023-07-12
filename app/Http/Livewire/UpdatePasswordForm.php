@@ -3,8 +3,8 @@
 namespace App\Http\Livewire;
 
 use Hash;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class UpdatePasswordForm extends Component
 {
@@ -14,7 +14,7 @@ class UpdatePasswordForm extends Component
 
     protected $validationAttributes = [
         'state.current_password' => 'current password',
-        'state.password'         => 'new password',
+        'state.password' => 'new password',
     ];
 
     public function mount()
@@ -48,15 +48,15 @@ class UpdatePasswordForm extends Component
     {
         return [
             'state.current_password' => ['required', 'current_password'],
-            'state.password'         => ['required', 'string', 'min:8', 'confirmed'],
+            'state.password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 
     protected function resetState()
     {
         $this->state = [
-            'current_password'      => '',
-            'password'              => '',
+            'current_password' => '',
+            'password' => '',
             'password_confirmation' => '',
         ];
     }

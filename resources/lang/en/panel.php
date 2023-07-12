@@ -2,5 +2,4 @@
 
 return [
     'site_title' => 'ASSIST',
-
 ];

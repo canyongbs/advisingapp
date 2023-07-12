@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\JourneyEmailItem;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\JourneyEmailItem;
+use App\Http\Controllers\Controller;
 
 class JourneyEmailItemController extends Controller
 {

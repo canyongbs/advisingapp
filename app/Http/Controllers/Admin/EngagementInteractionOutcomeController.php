@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\Traits\WithCSVImport;
-use App\Models\EngagementInteractionOutcome;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
+use App\Models\EngagementInteractionOutcome;
+use App\Http\Controllers\Traits\WithCSVImport;
 
 class EngagementInteractionOutcomeController extends Controller
 {
     use WithCSVImport;
+
+    public function __construct()
+    {
+        $this->csvImportModel = EngagementInteractionOutcome::class;
+    }
 
     public function index()
     {
@@ -39,10 +43,5 @@ class EngagementInteractionOutcomeController extends Controller
         abort_if(Gate::denies('engagement_interaction_outcome_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.engagement-interaction-outcome.show', compact('engagementInteractionOutcome'));
-    }
-
-    public function __construct()
-    {
-        $this->csvImportModel = EngagementInteractionOutcome::class;
     }
 }

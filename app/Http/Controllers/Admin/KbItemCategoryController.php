@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\KbItemCategory;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\KbItemCategory;
+use App\Http\Controllers\Controller;
 
 class KbItemCategoryController extends Controller
 {

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\AuditLog;
 use Gate;
-use Illuminate\Http\Request;
+use App\Models\AuditLog;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 
 class AuditLogController extends Controller
 {

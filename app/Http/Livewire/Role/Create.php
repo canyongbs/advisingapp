@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire\Role;
 
-use App\Models\Permission;
 use App\Models\Role;
 use Livewire\Component;
+use App\Models\Permission;
 
 class Create extends Component
 {

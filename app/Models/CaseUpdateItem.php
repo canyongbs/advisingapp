@@ -2,34 +2,37 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Auditable;
+use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CaseUpdateItem extends Model
 {
-    use HasFactory, HasAdvancedFilter, SoftDeletes, Auditable;
-
-    public $table = 'case_update_items';
+    use HasFactory;
+    use HasAdvancedFilter;
+    use SoftDeletes;
+    use Auditable;
 
     public const INTERNAL_RADIO = [
         'N' => 'No',
         'Y' => 'Yes',
     ];
 
+    public const DIRECTION_RADIO = [
+        '1' => 'Outbound',
+        '2' => 'Inbound',
+    ];
+
+    public $table = 'case_update_items';
+
     protected $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
-    ];
-
-    public const DIRECTION_RADIO = [
-        '1' => 'Outbound',
-        '2' => 'Inbound',
     ];
 
     protected $fillable = [
@@ -59,11 +62,6 @@ class CaseUpdateItem extends Model
         'internal',
         'direction',
     ];
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
 
     public function student()
     {
@@ -98,5 +96,10 @@ class CaseUpdateItem extends Model
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

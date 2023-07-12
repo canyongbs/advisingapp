@@ -2,33 +2,35 @@
 
 namespace App\Models;
 
-use App\Models\UserAlert;
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
+use Hash;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Hash;
-use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Traits\Auditable;
+use App\Support\HasAdvancedFilter;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 
 class User extends Authenticatable implements HasLocalePreference
 {
-    use HasFactory, HasAdvancedFilter, Notifiable, SoftDeletes, Auditable;
+    use HasFactory;
+    use HasAdvancedFilter;
+    use Notifiable;
+    use SoftDeletes;
+    use Auditable;
+
+    public const TYPE_RADIO = [
+        'local' => 'Local',
+        'sso' => 'SSO',
+    ];
 
     public $table = 'users';
 
     protected $hidden = [
         'remember_token',
         'password',
-    ];
-
-    public const TYPE_RADIO = [
-        'local' => 'Local',
-        'sso'   => 'SSO',
     ];
 
     protected $dates = [
@@ -86,11 +88,6 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->locale;
     }
 
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
-
     public function getEmailVerifiedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
@@ -131,5 +128,10 @@ class User extends Authenticatable implements HasLocalePreference
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\KbItemQuality;
 
-use App\Models\KbItemQuality;
 use Livewire\Component;
+use App\Models\KbItemQuality;
 
 class Create extends Component
 {

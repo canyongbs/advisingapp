@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\CaseItemStatus;
 
-use App\Models\CaseItemStatus;
 use Livewire\Component;
+use App\Models\CaseItemStatus;
 
 class Create extends Component
 {

@@ -2,27 +2,30 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Auditable;
+use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class KbItem extends Model
 {
-    use HasFactory, HasAdvancedFilter, SoftDeletes, Auditable;
+    use HasFactory;
+    use HasAdvancedFilter;
+    use SoftDeletes;
+    use Auditable;
+
+    public const PUBLIC_RADIO = [
+        'N' => 'No',
+        'Y' => 'Yes',
+    ];
 
     public $table = 'kb_items';
 
     public static $search = [
         'question',
-    ];
-
-    public const PUBLIC_RADIO = [
-        'N' => 'No',
-        'Y' => 'Yes',
     ];
 
     protected $dates = [
@@ -58,11 +61,6 @@ class KbItem extends Model
         'solution',
         'notes',
     ];
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
 
     public function quality()
     {
@@ -102,5 +100,10 @@ class KbItem extends Model
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
     }
 }

@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\Traits\WithCSVImport;
-use App\Models\EngagementInteractionDriver;
 use Gate;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
+use App\Models\EngagementInteractionDriver;
+use App\Http\Controllers\Traits\WithCSVImport;
 
 class EngagementInteractionDriverController extends Controller
 {
     use WithCSVImport;
+
+    public function __construct()
+    {
+        $this->csvImportModel = EngagementInteractionDriver::class;
+    }
 
     public function index()
     {
@@ -39,10 +43,5 @@ class EngagementInteractionDriverController extends Controller
         abort_if(Gate::denies('engagement_interaction_driver_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.engagement-interaction-driver.show', compact('engagementInteractionDriver'));
-    }
-
-    public function __construct()
-    {
-        $this->csvImportModel = EngagementInteractionDriver::class;
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\EngagementInteractionType;
 
-use App\Models\EngagementInteractionType;
 use Livewire\Component;
+use App\Models\EngagementInteractionType;
 
 class Create extends Component
 {
