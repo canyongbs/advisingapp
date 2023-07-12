@@ -10,6 +10,7 @@
         "production": "mix --production"
     },
     "devDependencies": {
+        "@shufo/prettier-plugin-blade": "^1.9.2",
         "@tailwindcss/forms": "^0.2.1",
         "@tailwindcss/jit": "^0.1.18",
         "autoprefixer": "^10.2.5",
@@ -23,6 +24,7 @@
         "laravel-mix": "^6.0.18",
         "lodash": "^4.17.19",
         "postcss": "^8.2.14",
+        "prettier": "^3.0.0",
         "resolve-url-loader": "^3.1.2",
         "select2": "^4.0.13",
         "tailwindcss": "^2.1.2"

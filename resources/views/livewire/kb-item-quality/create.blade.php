@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('kbItemQuality.rating') ? 'invalid' : '' }}">
-        <label class="form-label required" for="rating">{{ trans('cruds.kbItemQuality.fields.rating') }}</label>
-        <input class="form-control" type="text" name="rating" id="rating" required wire:model.defer="kbItemQuality.rating">
+        <label
+            class="form-label required"
+            for="rating"
+        >{{ trans('cruds.kbItemQuality.fields.rating') }}</label>
+        <input
+            class="form-control"
+            id="rating"
+            name="rating"
+            type="text"
+            required
+            wire:model.defer="kbItemQuality.rating"
+        >
         <div class="validation-message">
             {{ $errors->first('kbItemQuality.rating') }}
         </div>
@@ -12,10 +25,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.kb-item-qualities.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.kb-item-qualities.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

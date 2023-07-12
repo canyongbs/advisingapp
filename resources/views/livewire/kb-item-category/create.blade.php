@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('kbItemCategory.category') ? 'invalid' : '' }}">
-        <label class="form-label required" for="category">{{ trans('cruds.kbItemCategory.fields.category') }}</label>
-        <input class="form-control" type="text" name="category" id="category" required wire:model.defer="kbItemCategory.category">
+        <label
+            class="form-label required"
+            for="category"
+        >{{ trans('cruds.kbItemCategory.fields.category') }}</label>
+        <input
+            class="form-control"
+            id="category"
+            name="category"
+            type="text"
+            required
+            wire:model.defer="kbItemCategory.category"
+        >
         <div class="validation-message">
             {{ $errors->first('kbItemCategory.category') }}
         </div>
@@ -12,10 +25,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.kb-item-categories.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.kb-item-categories.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

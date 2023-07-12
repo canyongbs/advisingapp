@@ -1,8 +1,21 @@
-<form wire:submit.prevent="submit" class="pt-3">
+<form
+    class="pt-3"
+    wire:submit.prevent="submit"
+>
 
     <div class="form-group {{ $errors->has('engagementInteractionRelation.relation') ? 'invalid' : '' }}">
-        <label class="form-label required" for="relation">{{ trans('cruds.engagementInteractionRelation.fields.relation') }}</label>
-        <input class="form-control" type="text" name="relation" id="relation" required wire:model.defer="engagementInteractionRelation.relation">
+        <label
+            class="form-label required"
+            for="relation"
+        >{{ trans('cruds.engagementInteractionRelation.fields.relation') }}</label>
+        <input
+            class="form-control"
+            id="relation"
+            name="relation"
+            type="text"
+            required
+            wire:model.defer="engagementInteractionRelation.relation"
+        >
         <div class="validation-message">
             {{ $errors->first('engagementInteractionRelation.relation') }}
         </div>
@@ -12,10 +25,16 @@
     </div>
 
     <div class="form-group">
-        <button class="btn btn-indigo mr-2" type="submit">
+        <button
+            class="btn btn-indigo mr-2"
+            type="submit"
+        >
             {{ trans('global.save') }}
         </button>
-        <a href="{{ route('admin.engagement-interaction-relations.index') }}" class="btn btn-secondary">
+        <a
+            class="btn btn-secondary"
+            href="{{ route('admin.engagement-interaction-relations.index') }}"
+        >
             {{ trans('global.cancel') }}
         </a>
     </div>

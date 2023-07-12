@@ -50,11 +50,34 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "check": [
-            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --dry-run -v --using-cache=no --stop-on-violation --config=./php-cs-fixer.php"
+        "php-cs-lint": [
+            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
         ],
-        "fix": [
-            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --using-cache=no --config=./php-cs-fixer.php"
+        "php-cs-lint-dryrun": [
+            "@php-cs-lint --dry-run --stop-on-violation"
+        ],
+        "php-cs-clear-cache": [
+            "rm -f ./.php-cs-fixer.cache"
+        ],
+        "prettier": [
+            "./node_modules/.bin/prettier \"resources/**/*.css\" \"resources/**/*.blade.php\" \"resources/**/*.js\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+        ],
+        "prettier-lint": [
+            "@prettier --write"
+        ],
+        "prettier-lint-dryrun": [
+            "@prettier --check"
+        ],
+        "clear-prettier-cache": [
+            "rm -f ./node_modules/.cache/prettier/.prettier-cache"
+        ],
+        "lint-dryrun": [
+            "@php-cs-lint-dryrun",
+            "@prettier-lint-dryrun"
+        ],
+        "lint": [
+            "@php-cs-lint",
+            "@prettier-lint"
         ]
     },
     "extra": {

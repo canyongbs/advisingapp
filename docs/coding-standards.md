@@ -46,3 +46,32 @@ Arguments: fix $FileDir$/$FileName$ --verbose --config=$ProjectFileDir$/php-cs-f
         "on_save": true,
     }
     ```
+# Prettier (*.blade.php Files)
+
+This application comes with [Prettier](https://www.npmjs.com/package/prettier) and the [Prettier Blade Plugin](https://www.npmjs.com/package/@shufo/prettier-plugin-blade) to be used in order to set and automatically apply code formatting rules to our code-base blade files.
+
+Example of how to run the formatter manually:
+
+```bash
+sail composer prettier-lint
+```
+
+When setting up the project you should set up your IDE to automatically apply these rules to the current file you are working in on save. Common IDE configurations on how to do that are listed below.
+
+## IDE Configuration
+
+### PHPStorm / Jetbrains Products
+You can use Prettier Plugin for JetBrains IDE.
+
+Add extension setting `blade.php` to `File | Settings | Languages & Frameworks | JavaScript | Prettier | Run for files:`
+
+e.g.
+
+`{**/*,*}.{css,js,ts,jsx,tsx,blade.php}`
+
+and turn on checkbox `On 'Reformat Code' action`
+
+### VSCode
+You can use [Prettier extension for VSCode](https://github.com/prettier/prettier-vscode) to format blade within VSCode. You must install this plugin as local dependencies. see [https://github.com/prettier/prettier-vscode#prettier-resolution](https://github.com/prettier/prettier-vscode#prettier-resolution)
+
+If you want to use formatter without Prettier, please consider using [vscode-blade-formatter](https://github.com/shufo/vscode-blade-formatter)
