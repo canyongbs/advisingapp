@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @mixin IdeHelperEngagementStudentFile
+ */
 class EngagementStudentFile extends Model implements HasMedia
 {
     use HasFactory;
