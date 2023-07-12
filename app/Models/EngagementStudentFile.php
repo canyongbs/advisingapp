@@ -10,6 +10,7 @@ use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class EngagementStudentFile extends Model implements HasMedia
@@ -63,7 +64,7 @@ class EngagementStudentFile extends Model implements HasMedia
         });
     }
 
-    public function student()
+    public function student(): BelongsTo
     {
         return $this->belongsTo(RecordStudentItem::class);
     }

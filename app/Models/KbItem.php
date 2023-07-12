@@ -8,7 +8,9 @@ use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class KbItem extends Model
 {
@@ -62,12 +64,12 @@ class KbItem extends Model
         'notes',
     ];
 
-    public function quality()
+    public function quality(): BelongsTo
     {
         return $this->belongsTo(KbItemQuality::class);
     }
 
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo(KbItemStatus::class);
     }
@@ -77,12 +79,12 @@ class KbItem extends Model
         return static::PUBLIC_RADIO[$this->public] ?? null;
     }
 
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(KbItemCategory::class);
     }
 
-    public function institution()
+    public function institution(): BelongsToMany
     {
         return $this->belongsToMany(Institution::class);
     }

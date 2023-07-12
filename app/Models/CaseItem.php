@@ -8,6 +8,7 @@ use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CaseItem extends Model
@@ -62,37 +63,37 @@ class CaseItem extends Model
         'created_by_id',
     ];
 
-    public function student()
+    public function student(): BelongsTo
     {
         return $this->belongsTo(RecordStudentItem::class);
     }
 
-    public function institution()
+    public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);
     }
 
-    public function state()
+    public function state(): BelongsTo
     {
         return $this->belongsTo(CaseItemStatus::class);
     }
 
-    public function type()
+    public function type(): BelongsTo
     {
         return $this->belongsTo(CaseItemType::class);
     }
 
-    public function priority()
+    public function priority(): BelongsTo
     {
         return $this->belongsTo(CaseItemPriority::class);
     }
 
-    public function assignedTo()
+    public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
