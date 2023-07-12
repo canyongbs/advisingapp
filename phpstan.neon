@@ -9,5 +9,9 @@ parameters:
         - tests/
         - routes/
 
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+            - '#PHPDoc tag @mixin contains unknown class App\\Models#'
+
     # Level 9 is the highest level
     level: 1
