@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Hash;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements HasLocalePreference
 {
@@ -103,7 +104,7 @@ class User extends Authenticatable implements HasLocalePreference
         }
     }
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }

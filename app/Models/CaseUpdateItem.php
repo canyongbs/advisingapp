@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CaseUpdateItem extends BaseModel
 {
@@ -56,12 +57,12 @@ class CaseUpdateItem extends BaseModel
         'direction',
     ];
 
-    public function student()
+    public function student(): BelongsTo
     {
         return $this->belongsTo(RecordStudentItem::class);
     }
 
-    public function case()
+    public function case(): BelongsTo
     {
         return $this->belongsTo(CaseItem::class);
     }
