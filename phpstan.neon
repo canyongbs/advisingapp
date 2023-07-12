@@ -9,9 +9,8 @@ parameters:
         - tests/
         - routes/
 
-    reportUnmatchedIgnoredErrors: false
-    ignoreErrors:
-            - '#PHPDoc tag @mixin contains unknown class App\\Models#'
+    scanFiles:
+          - _ide_helper_models.php
 
     # Level 9 is the highest level
     level: 1
