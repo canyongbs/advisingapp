@@ -18,3 +18,4 @@ yarn-error.log
 /.vscode
 public/css/
 public/js/
+/.php-cs-fixer.cache
