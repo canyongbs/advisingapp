@@ -8,6 +8,9 @@ use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @mixin IdeHelperCaseItemType
+ */
 class CaseItemType extends BaseModel
 {
     use HasAdvancedFilter;

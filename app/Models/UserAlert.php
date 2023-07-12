@@ -8,6 +8,9 @@ use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @mixin IdeHelperUserAlert
+ */
 class UserAlert extends BaseModel
 {
     use HasAdvancedFilter;

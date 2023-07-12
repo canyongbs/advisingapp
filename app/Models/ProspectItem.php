@@ -8,6 +8,9 @@ use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperProspectItem
+ */
 class ProspectItem extends BaseModel
 {
     use HasAdvancedFilter;

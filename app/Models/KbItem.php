@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @mixin IdeHelperKbItem
+ */
 class KbItem extends BaseModel
 {
     use HasAdvancedFilter;

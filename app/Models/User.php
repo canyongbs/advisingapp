@@ -14,6 +14,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @mixin IdeHelperUser
+ */
 class User extends Authenticatable implements HasLocalePreference
 {
     use HasFactory;
