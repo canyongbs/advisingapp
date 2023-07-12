@@ -83,6 +83,13 @@
         "lint": [
             "@php-cs-lint",
             "@prettier-lint"
+        ],
+        "larastan": [
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "checks": [
+            "@lint-dryrun",
+            "@larastan"
         ]
     },
     "extra": {
