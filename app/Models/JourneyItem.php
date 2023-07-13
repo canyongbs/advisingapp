@@ -4,18 +4,13 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class JourneyItem extends Model
+class JourneyItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     public const FREQUENCY_RADIO = [
         '1' => 'Once',
@@ -23,8 +18,6 @@ class JourneyItem extends Model
         '3' => 'Each Week',
         '4' => 'Each Month',
     ];
-
-    public $table = 'journey_items';
 
     public $orderable = [
         'id',

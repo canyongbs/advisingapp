@@ -4,18 +4,13 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ProspectItem extends Model
+class ProspectItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     public const SMS_OPT_OUT_RADIO = [
         'N' => 'No',
@@ -26,8 +21,6 @@ class ProspectItem extends Model
         'N' => 'No',
         'Y' => 'Yes',
     ];
-
-    public $table = 'prospect_items';
 
     public static $search = [
         'full',

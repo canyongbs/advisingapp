@@ -4,27 +4,20 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class EngagementStudentFile extends Model implements HasMedia
+class EngagementStudentFile extends BaseModel implements HasMedia
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
     use InteractsWithMedia;
-    use Auditable;
 
     protected $appends = [
         'file',
     ];
-
-    public $table = 'engagement_student_files';
 
     protected $fillable = [
         'description',

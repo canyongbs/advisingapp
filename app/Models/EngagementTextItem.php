@@ -4,25 +4,18 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class EngagementTextItem extends Model
+class EngagementTextItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     public const DIRECTION_RADIO = [
         '1' => 'Inbound',
         '2' => 'Outbound',
     ];
-
-    public $table = 'engagement_text_items';
 
     protected $fillable = [
         'mobile',

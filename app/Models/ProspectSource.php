@@ -5,17 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ProspectSource extends Model
+class ProspectSource extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-
-    public $table = 'prospect_sources';
 
     protected $fillable = [
         'source',

@@ -4,24 +4,17 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CaseItemStatus extends Model
+class CaseItemStatus extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     protected $fillable = [
         'status',
     ];
-
-    public $table = 'case_item_statuses';
 
     public $orderable = [
         'id',

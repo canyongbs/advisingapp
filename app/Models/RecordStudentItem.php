@@ -5,12 +5,9 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class RecordStudentItem extends Model
+class RecordStudentItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
 
     public const DUAL_RADIO = [
@@ -37,8 +34,6 @@ class RecordStudentItem extends Model
         'N' => 'No',
         'Y' => 'Yes',
     ];
-
-    public $table = 'record_student_items';
 
     public $orderable = [
         'sisid',

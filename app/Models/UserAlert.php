@@ -5,17 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class UserAlert extends Model
+class UserAlert extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-
-    public $table = 'user_alerts';
 
     protected $fillable = [
         'message',

@@ -26,8 +26,6 @@ class User extends Authenticatable implements HasLocalePreference
         'sso' => 'SSO',
     ];
 
-    public $table = 'users';
-
     protected $hidden = [
         'remember_token',
         'password',
