@@ -121,5 +121,5 @@ sail artisan ide-helper:meta
 Additionally, a helper file and related DocBlocks are generated to provide auto-completion and static analysis for Models and their relationships. This is done by running the following command, and should be run after any changes to Models.
 
 ```bash
-sail artisan ide-helper:models
+sail artisan ide-helper:models -M
 ```
