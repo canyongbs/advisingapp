@@ -8,12 +8,11 @@ use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+// TODO To delete when we install auditable library
 class AuditLog extends Model
 {
     use HasFactory;
     use HasAdvancedFilter;
-
-    public $table = 'audit_logs';
 
     protected $dates = [
         'created_at',

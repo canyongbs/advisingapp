@@ -4,18 +4,14 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class EngagementInteractionItem extends Model
+class EngagementInteractionItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     public const DIRECTION_RADIO = [
         'inbound' => 'Inbound',
@@ -31,8 +27,6 @@ class EngagementInteractionItem extends Model
         '90' => '1.5 Hours',
         '120' => '2 Hours',
     ];
-
-    public $table = 'engagement_interaction_items';
 
     public $orderable = [
         'id',

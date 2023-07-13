@@ -4,18 +4,13 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class EngagementInteractionType extends Model
+class EngagementInteractionType extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     protected $fillable = [
         'type',
@@ -30,8 +25,6 @@ class EngagementInteractionType extends Model
         'id',
         'type',
     ];
-
-    public $table = 'engagement_interaction_types';
 
     protected $dates = [
         'created_at',

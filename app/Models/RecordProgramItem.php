@@ -5,15 +5,10 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class RecordProgramItem extends Model
+class RecordProgramItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
-
-    public $table = 'record_program_items';
 
     protected $dates = [
         'created_at',

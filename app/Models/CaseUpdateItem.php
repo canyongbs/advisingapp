@@ -4,18 +4,13 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CaseUpdateItem extends Model
+class CaseUpdateItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     public const INTERNAL_RADIO = [
         'N' => 'No',
@@ -26,8 +21,6 @@ class CaseUpdateItem extends Model
         '1' => 'Outbound',
         '2' => 'Inbound',
     ];
-
-    public $table = 'case_update_items';
 
     protected $dates = [
         'created_at',

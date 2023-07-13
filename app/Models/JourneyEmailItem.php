@@ -4,18 +4,13 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class JourneyEmailItem extends Model
+class JourneyEmailItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     public const ACTIVE_RADIO = [
         'N' => 'No',
@@ -29,8 +24,6 @@ class JourneyEmailItem extends Model
         '4' => 'Monthly',
         '5' => 'Annually',
     ];
-
-    public $table = 'journey_email_items';
 
     public $orderable = [
         'id',

@@ -4,25 +4,18 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class KbItem extends Model
+class KbItem extends BaseModel
 {
-    use HasFactory;
     use HasAdvancedFilter;
     use SoftDeletes;
-    use Auditable;
 
     public const PUBLIC_RADIO = [
         'N' => 'No',
         'Y' => 'Yes',
     ];
-
-    public $table = 'kb_items';
 
     public static $search = [
         'question',
