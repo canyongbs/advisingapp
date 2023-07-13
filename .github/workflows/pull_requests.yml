@@ -1,0 +1,10 @@
+name: Pull Requests
+
+on:
+  pull_request:
+
+jobs:
+  code-checks:
+    name: Code Checks
+
+    uses: ./.github/workflows/ci.yml
