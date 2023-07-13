@@ -128,6 +128,7 @@ $finder = Finder::create()
             'vendor',
             'bower_components',
             'node_modules',
+            '_ide_helper.php',
         ]
     )
     ->name('*.php')

@@ -125,5 +125,5 @@ jobs:
       - name: Build Assets
         run: npm run build
 
-      - name: PHP CS Fixer
-        run: ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --dry-run -v --using-cache=no --stop-on-violation --config=./php-cs-fixer.php
+      - name: Linting and Analysis Checks
+        run: composer check
