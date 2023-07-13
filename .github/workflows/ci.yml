@@ -126,4 +126,4 @@ jobs:
         run: npm run build
 
       - name: Linting and Analysis Checks
-        run: composer check
+        run: composer checks
