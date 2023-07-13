@@ -3,6 +3,29 @@
 ### Requirements
 * [Docker](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/) (It is most likely that the way you installed Docker already came with Docker Compose, so on most systems you probably need not install this)
+* [NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) (Optional, but recommended)
+
+### Pre-Setup
+
+#### NVM
+
+NVM is used in this project to ensure that the correct version of Node is being used. This is not a requirement, but it is highly recommended. If you do not wish to use NVM, you can simply install the correct version of Node on your host machine and skip the NVM setup.
+
+To install NVM, follow the instructions on the [NVM GitHub page | Installing and Updating](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+After installing NVM, you can install the correct version of Node by running the following command in the root of the project:
+
+```bash
+nvm install
+```
+
+This will install the version of Node specified in the `.nvmrc` file. You can then use this version of Node by running the following command:
+
+```bash
+nvm use
+```
+
+Details on how to automatically use the correct version of Node when entering the project directory can be found on the [NVM GitHub page | Deeper Shell Integration](https://github.com/nvm-sh/nvm#deeper-shell-integration)
 
 ### Setup
 This application makes use of [Laravel Sail](https://laravel.com/docs/10.x/sail) for local development. Though not a requirement, it is highly recommended reading through the documentation on it.

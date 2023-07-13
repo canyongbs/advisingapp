@@ -1,24 +1,25 @@
-const plugin = require("tailwindcss/plugin")
-const colors = require('tailwindcss/colors')
+import plugin from 'tailwindcss/plugin';
+import colors from 'tailwindcss/colors';
+import forms from '@tailwindcss/forms';
 
-module.exports = {
-  mode: 'jit',
-  purge: {
-    enabled: false,
-    content: ['./resources/views/**/*.blade.php', './safelist.txt'],
-    options: {
-      safelist: []
-    }
-  },
+export default {
+  content: [
+      './resources/views/**/*.blade.php',
+      './safelist.txt'
+  ],
   theme: {
     extend: {
       colors: {
+        current: 'currentColor',
         indigo: colors.indigo,
         rose: colors.rose,
-        blueGray: colors.blueGray,
+        blueGray: colors.slate,
         lightBlue: colors.sky,
         orange: colors.orange,
-        red: colors.red
+        red: colors.red,
+        green: colors.emerald,
+        yellow: colors.amber,
+        purple: colors.violet,
       },
       minHeight: {
         'screen-75': '75vh'
@@ -78,22 +79,8 @@ module.exports = {
       }
     }
   },
-  variants: [
-    'responsive',
-    'group-hover',
-    'focus-within',
-    'first',
-    'last',
-    'odd',
-    'even',
-    'hover',
-    'focus',
-    'active',
-    'visited',
-    'disabled'
-  ],
   plugins: [
-    require('@tailwindcss/forms'),
+    forms,
     plugin(function ({ addComponents, theme }) {
       const screens = theme("screens", {});
       addComponents([
