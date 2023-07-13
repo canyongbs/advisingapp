@@ -65,10 +65,12 @@ Finally, we will set up the application by running the following commands:
 ```bash
 sail artisan key:generate
 sail artisan migrate
+sail artisan db:seed
 sail npm install
 sail npm run dev
-sail artisan db:seed
 ```
+
+Note: `npm run dev` will run vite in watch mode. If you wish to run it in production mode, you can run `npm run build` instead.
 
 Note: It can be quicker to run `npm run dev` on your host machine if you have the correct node version installed.
 
