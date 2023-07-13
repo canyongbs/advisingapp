@@ -829,36 +829,6 @@ namespace App\Models{
 
 namespace App\Models{
     /**
-     * App\Models\Permission
-     *
-     * @property int $id
-     * @property string $title
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $deleted_at
-     *
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission advancedFilter($data)
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission onlyTrashed()
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission query()
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission whereDeletedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission whereUpdatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission withTrashed()
-     * @method static \Illuminate\Database\Eloquent\Builder|Permission withoutTrashed()
-     *
-     * @mixin \Eloquent
-     */
-    class IdeHelperPermission
-    {
-    }
-}
-
-namespace App\Models{
-    /**
      * App\Models\ProspectItem
      *
      * @property int $id
@@ -1178,38 +1148,6 @@ namespace App\Models{
 
 namespace App\Models{
     /**
-     * App\Models\Role
-     *
-     * @property int $id
-     * @property string|null $title
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $deleted_at
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Permission> $permissions
-     * @property-read int|null $permissions_count
-     *
-     * @method static \Illuminate\Database\Eloquent\Builder|Role advancedFilter($data)
-     * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
-     * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
-     * @method static \Illuminate\Database\Eloquent\Builder|Role onlyTrashed()
-     * @method static \Illuminate\Database\Eloquent\Builder|Role query()
-     * @method static \Illuminate\Database\Eloquent\Builder|Role whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Role whereDeletedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Role whereTitle($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Role whereUpdatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder|Role withTrashed()
-     * @method static \Illuminate\Database\Eloquent\Builder|Role withoutTrashed()
-     *
-     * @mixin \Eloquent
-     */
-    class IdeHelperRole
-    {
-    }
-}
-
-namespace App\Models{
-    /**
      * App\Models\SupportFeedbackItem
      *
      * @method static \Illuminate\Database\Eloquent\Builder|SupportFeedbackItem newModelQuery()
@@ -1307,8 +1245,6 @@ namespace App\Models{
      * @property-read mixed $type_label
      * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
      * @property-read int|null $notifications_count
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Role> $roles
-     * @property-read int|null $roles_count
      *
      * @method static \Illuminate\Database\Eloquent\Builder|User admins()
      * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)

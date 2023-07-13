@@ -107,10 +107,10 @@ class User extends Authenticatable implements HasLocalePreference
         }
     }
 
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class);
-    }
+    //public function roles(): BelongsToMany
+    //{
+    //    return $this->belongsToMany(Role::class);
+    //}
 
     public function getTypeLabelAttribute($value)
     {
