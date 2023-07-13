@@ -59,7 +59,7 @@
 }
 
 .btn.btn-danger {
-    @apply bg-red-500 text-white active:bg-red-600 focus:ring-red-500
+    @apply bg-red-500 text-white active:bg-red-600 focus:ring-red-500;
 }
 
 .btn.btn-info {
@@ -69,7 +69,6 @@
 .btn.btn-rose {
     @apply bg-rose-500 text-white active:bg-rose-600 focus:ring-rose-500;
 }
-
 
 .sidebar-nav-active {
     @apply text-xs uppercase py-3 font-bold block text-pink-500;
@@ -126,19 +125,19 @@
     @apply w-full;
 }
 
-input[type=text].form-control,
-input[type=email].form-control,
-input[type=number].form-control,
-input[type=password].form-control,
+input[type='text'].form-control,
+input[type='email'].form-control,
+input[type='number'].form-control,
+input[type='password'].form-control,
 textarea.form-control {
     @apply border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring;
 }
 
-.flatpickr input[type=text].form-control {
+.flatpickr input[type='text'].form-control {
     @apply border-0 px-3 py-3 pl-10 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring;
 }
 
-.flatpickr input[type=text].form-control:required {
+.flatpickr input[type='text'].form-control:required {
     @apply border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring;
 }
 
@@ -153,7 +152,6 @@ textarea.form-control {
 .table td {
     @apply border-blueGray-200;
 }
-
 
 .table.table-view th,
 .table.table-view td {
@@ -185,7 +183,7 @@ textarea.form-control {
 }
 
 .form-group .required::after {
-    content: " *";
+    content: ' *';
     @apply text-rose-500;
 }
 
@@ -223,11 +221,10 @@ textarea.form-control {
     @apply flex items-center last:mb-0 mb-1 cursor-pointer;
 }
 
-.radio-label input[type=radio] {
+.radio-label input[type='radio'] {
     @apply mr-2;
 }
 
-.min-w-5
-{
+.min-w-5 {
     min-width: 1.25rem;
 }

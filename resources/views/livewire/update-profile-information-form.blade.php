@@ -51,9 +51,11 @@
                     class="text-sm"
                     style="display: none;"
                     x-data="{ shown: false, timeout: null }"
-                    x-init="@this.on('saved', () => { clearTimeout(timeout);
+                    x-init="@this.on('saved', () => {
+                        clearTimeout(timeout);
                         shown = true;
-                        timeout = setTimeout(() => { shown = false }, 2000); })"
+                        timeout = setTimeout(() => { shown = false }, 2000);
+                    })"
                     x-show.transition.out.opacity.duration.1500ms="shown"
                     x-transition:leave.opacity.duration.1500ms
                 >

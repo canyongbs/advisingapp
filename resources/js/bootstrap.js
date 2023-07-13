@@ -9,7 +9,6 @@ import dropzone from 'dropzone';
 
 import 'flatpickr';
 
-
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
  * for JavaScript based Bootstrap features such as modals and tabs. This
@@ -18,7 +17,7 @@ import 'flatpickr';
 
 try {
     window.$ = window.jQuery = jQuery;
-    window.Dropzone = dropzone.default
+    window.Dropzone = dropzone.default;
 } catch (e) {}
 
 /**

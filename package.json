@@ -5,7 +5,7 @@
         "build": "vite build"
     },
     "devDependencies": {
-	"@shufo/prettier-plugin-blade": "^1.9.2",
+	    "@shufo/prettier-plugin-blade": "^1.9.2",
         "@tailwindcss/forms": "^0.5.3",
         "autoprefixer": "^10.2.5",
         "axios": "^0.21.1",
@@ -18,7 +18,7 @@
         "laravel-vite-plugin": "^0.7.8",
         "lodash": "^4.17.19",
         "postcss": "^8.4.25",
-	"prettier": "^3.0.0",
+	    "prettier": "^3.0.0",
         "postcss-import": "^15.1.0",
         "resolve-url-loader": "^5.0.0",
         "select2": "^4.0.13",
