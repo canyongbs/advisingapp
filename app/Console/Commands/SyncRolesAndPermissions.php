@@ -48,7 +48,7 @@ class SyncRolesAndPermissions extends Command
             ->where('name', '!=', 'super_admin')
             ->get()
             ->each(function (Role $role) {
-                $this->syncPermissionFor('api', $role, config("roles.{$role->name}"));
+                $this->syncPermissionFor('api', $role, config("roles.api.{$role->name}"));
             });
     }
 
