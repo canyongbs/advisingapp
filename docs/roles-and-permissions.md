@@ -44,7 +44,7 @@ This structure allows us to easily see the defaults of the application, and dete
 ## Roles
 Similar to permissions, every initial role made available by the application can be found in the `config/roles` directory.
 
-Every initial role that the application has is defined in the `config/roles` directory. The file name represents the name of the role, and the permissions provided to the role are defined within the `base` and `model` keys as described in the Permissions convention.
+Every initial role that the application has is defined in the `config/roles` directory. The file name represents the name of the role, and the permissions provided to the role are defined within the `custom` and `model` keys as described in the Permissions convention.
 
 ## Packages/Modules
 **Future Feature*
