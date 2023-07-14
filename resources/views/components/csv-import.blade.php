@@ -22,7 +22,7 @@
     >
         <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
             <div
-                class="fixed inset-0 bg-blueGray-500 bg-opacity-75 transition-opacity"
+                class="fixed inset-0 bg-blueGray-500/75 transition-opacity"
                 aria-hidden="true"
                 x-on:click="open = false"
                 x-description="Background overlay, show/hide based on modal state."
@@ -60,7 +60,7 @@
                     <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div
-                                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blueGray-200 sm:mx-0 sm:h-10 sm:w-10">
+                                class="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blueGray-200 sm:mx-0 sm:h-10 sm:w-10">
                                 <i class="fas fa-file-csv fa-fw fa-lg text-blueGray-700"></i>
                             </div>
                             <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
