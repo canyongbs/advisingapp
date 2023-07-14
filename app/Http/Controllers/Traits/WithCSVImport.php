@@ -59,6 +59,7 @@ trait WithCSVImport
     private function importEntries(string $filename, $fields): void
     {
         $path = storage_path('app/csv_import/' . basename($filename));
+        // @phpstan-ignore-next-line
         $reader = new SpreadsheetReader($path);
         $fields = array_flip(array_filter($fields));
 
@@ -138,6 +139,7 @@ trait WithCSVImport
 
     private function makePreview(string $path, int $limit = 0): void
     {
+        // @phpstan-ignore-next-line
         $reader = new SpreadsheetReader($path);
 
         $this->csvHeader = $reader->current();

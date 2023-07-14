@@ -6,7 +6,11 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @mixin IdeHelperUserAlert
+ */
 class UserAlert extends BaseModel
 {
     use HasAdvancedFilter;
@@ -36,7 +40,7 @@ class UserAlert extends BaseModel
         'users.name',
     ];
 
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }

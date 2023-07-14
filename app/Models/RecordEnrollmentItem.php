@@ -7,6 +7,9 @@ use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperRecordEnrollmentItem
+ */
 class RecordEnrollmentItem extends BaseModel
 {
     use HasAdvancedFilter;

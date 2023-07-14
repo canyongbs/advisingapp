@@ -1,0 +1,129 @@
+name: CI
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build-deps:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - uses: actions/checkout@v3
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
+  test:
+    runs-on: ubuntu-22.04
+
+    timeout-minutes: 10
+
+    needs: [build-deps]
+
+    env:
+      DB_PORT: 3306
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_DATABASE: testing
+      SCOUT_PREFIX: test_
+      MEILISEARCH_KEY: testing
+      MEILISEARCH_HOST: http://127.0.0.1:7700
+      MEILISEARCH_PORT: 7700
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      meilisearch:
+        image: "getmeili/meilisearch:v1.2.0"
+        ports:
+          - 7700:7700
+        options: --health-cmd "wget --no-verbose --spider http://127.0.0.1:7700/health" --health-timeout 5s --health-retries 3
+
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - uses: actions/checkout@v3
+
+      - name: Start Mysql
+        run: sudo service mysql start
+
+      - name: Create Database
+        run: mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS testing"
+
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm install
+
+      - name: Build Assets
+        run: npm run build
+
+      - name: Generate key
+        run: php artisan key:generate
+
+      - name: Clear Config
+        run: php artisan optimize:clear
+
+      - name: Directory Permissions
+        run: chmod -R 777 storage bootstrap/cache
+
+      - name: Check route integrity
+        run: php artisan route:list
+
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: php artisan test --parallel --configuration phpunit-ci.xml --testsuite=Feature,Unit
+  lint:
+    runs-on: ubuntu-22.04
+
+    timeout-minutes: 10
+
+    needs: [build-deps]
+
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - uses: actions/checkout@v3
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm install
+
+      - name: Build Assets
+        run: npm run build
+
+      - name: Linting and Analysis Checks
+        run: composer checks

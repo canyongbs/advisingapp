@@ -6,7 +6,11 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperProspectItem
+ */
 class ProspectItem extends BaseModel
 {
     use HasAdvancedFilter;
@@ -85,12 +89,12 @@ class ProspectItem extends BaseModel
         return static::EMAIL_BOUNCE_RADIO[$this->email_bounce] ?? null;
     }
 
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo(ProspectStatus::class);
     }
 
-    public function source()
+    public function source(): BelongsTo
     {
         return $this->belongsTo(ProspectSource::class);
     }
@@ -115,12 +119,12 @@ class ProspectItem extends BaseModel
         $this->attributes['hsdate'] = $value ? Carbon::createFromFormat(config('project.date_format'), $value)->format('Y-m-d') : null;
     }
 
-    public function assignedTo()
+    public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function createdBy()
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

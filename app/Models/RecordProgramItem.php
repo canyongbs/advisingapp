@@ -6,6 +6,9 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 
+/**
+ * @mixin IdeHelperRecordProgramItem
+ */
 class RecordProgramItem extends BaseModel
 {
     use HasAdvancedFilter;

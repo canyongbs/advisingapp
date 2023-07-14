@@ -7,6 +7,9 @@ use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperCaseItemStatus
+ */
 class CaseItemStatus extends BaseModel
 {
     use HasAdvancedFilter;

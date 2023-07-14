@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\User;
 
-use App\Models\Role;
 use App\Models\User;
 use Livewire\Component;
 
@@ -80,7 +79,7 @@ class Create extends Component
 
     protected function initListsForFields(): void
     {
-        $this->listsForFields['roles'] = Role::pluck('title', 'id')->toArray();
+        //$this->listsForFields['roles'] = Role::pluck('title', 'id')->toArray();
         $this->listsForFields['type'] = $this->user::TYPE_RADIO;
     }
 }
