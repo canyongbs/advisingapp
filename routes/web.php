@@ -3,13 +3,11 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
-use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KbItemController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\CaseItemController;
 use App\Http\Controllers\Admin\UserAlertController;
-use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Auth\UserProfileController;
 use App\Http\Controllers\Admin\InstitutionController;
 use App\Http\Controllers\Admin\JourneyItemController;
@@ -50,12 +48,6 @@ Auth::routes(['register' => false]);
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
-
-    // Permissions
-    Route::resource('permissions', PermissionController::class, ['except' => ['store', 'update', 'destroy']]);
-
-    // Roles
-    Route::resource('roles', RoleController::class, ['except' => ['store', 'update', 'destroy']]);
 
     // Users
     Route::resource('users', UserController::class, ['except' => ['store', 'update', 'destroy']]);
