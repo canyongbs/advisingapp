@@ -5,7 +5,9 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // TODO To delete when we install auditable library
@@ -13,6 +15,7 @@ class AuditLog extends Model
 {
     use HasFactory;
     use HasAdvancedFilter;
+    use DefinesPermissions;
 
     protected $dates = [
         'created_at',

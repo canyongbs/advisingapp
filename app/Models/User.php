@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +21,7 @@ class User extends Authenticatable implements HasLocalePreference
     use Notifiable;
     use SoftDeletes;
     use Auditable;
+    use HasRoles;
 
     public const TYPE_RADIO = [
         'local' => 'Local',
