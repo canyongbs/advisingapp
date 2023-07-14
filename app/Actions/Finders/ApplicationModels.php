@@ -42,12 +42,10 @@ class ApplicationModels
         return $this->all()->filter(function ($class) {
             $implementsPermissions = false;
 
-            if (class_exists($class)) {
-                $reflection = new ReflectionClass($class);
+            $reflection = new ReflectionClass($class);
 
-                if (in_array(DefinesPermissions::class, $reflection->getTraitNames())) {
-                    $implementsPermissions = true;
-                }
+            if (in_array(DefinesPermissions::class, $reflection->getTraitNames())) {
+                $implementsPermissions = true;
             }
 
             return $implementsPermissions;

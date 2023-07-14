@@ -5,7 +5,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
