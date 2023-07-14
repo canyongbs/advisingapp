@@ -5,6 +5,7 @@ namespace App\Providers;
 use ReflectionClass;
 use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
+use App\Actions\Finders\ApplicationModels;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class MorphServiceProvider extends ServiceProvider
@@ -16,7 +17,7 @@ class MorphServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::enforceMorphMap(
-            get_application_models()->mapWithKeys(function ($modelClass) {
+            resolve(ApplicationModels::class)->all()->mapWithKeys(function ($modelClass) {
                 $reflection = new ReflectionClass($modelClass);
 
                 return [

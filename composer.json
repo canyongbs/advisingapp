@@ -26,9 +26,7 @@
         "spatie/laravel-ray": "^1.32"
     },
     "autoload": {
-        "files": [
-            "app/helpers.php"
-        ],
+        "files": [],
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",

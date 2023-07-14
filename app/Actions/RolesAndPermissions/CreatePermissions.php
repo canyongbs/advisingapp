@@ -3,6 +3,7 @@
 namespace App\Actions\RolesAndPermissions;
 
 use Spatie\Permission\Models\Permission;
+use App\Actions\Finders\ApplicationModels;
 
 class CreatePermissions
 {
@@ -12,37 +13,38 @@ class CreatePermissions
         $this->createModelPermissions();
 
         // Non-model related permissions
-        $this->createCorePermissions();
+        $this->createCustomPermissions();
 
-        // Package related permissions
+        // TODO Package related permissions
         // $this->createPackagePermissions();
     }
 
     protected function createModelPermissions(): void
     {
-        get_application_models()->each(function ($modelClass) {
+        resolve(ApplicationModels::class)->implementingPermissions()->each(function ($modelClass) {
             $createPermissionsForModel = resolve(CreatePermissionsForModel::class);
             $createPermissionsForModel->handle($modelClass);
         });
     }
 
-    protected function createCorePermissions(): void
+    protected function createCustomPermissions(): void
     {
-        foreach (config('permissions.web.core') as $permission) {
+        foreach (config('permissions.web.custom') as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
                 'guard_name' => 'web',
             ]);
         }
 
-        foreach (config('permissions.api.core') as $permission) {
+        foreach (config('permissions.api.custom') as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
-                'guard_name' => 'web',
+                'guard_name' => 'api',
             ]);
         }
     }
 
+    // TODO
     protected function createPackagePermissions(): void
     {
     }

@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'base' => [],
+    'custom' => [],
     'model' => [],
 ];

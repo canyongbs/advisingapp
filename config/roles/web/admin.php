@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'base' => [
+    'custom' => [
         // 'auth_profile.edit',
         // 'record_menu.access',
         // 'engage_menu.access',

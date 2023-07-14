@@ -9,7 +9,7 @@ class SetupPermissions extends Command
 {
     protected $signature = 'permissions:setup';
 
-    protected $description = 'This command will create all of the permissions in our core and model permission definitions.';
+    protected $description = 'This command will create all of the permissions in our custom and model permission definitions.';
 
     public function handle(): int
     {

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class SyncRolesAndPermissions extends Command
 {
@@ -16,8 +17,9 @@ class SyncRolesAndPermissions extends Command
     public function handle(): int
     {
         // TODO Put handling in place to prevent this from being run in production IF it has already been run once
-        // The easiest way to determine that is probably to do a quick check of whether or not any roles exist and are tied to permissions
-        // This can only be the case if this command was run, or if an organization has chosen NOT to run this and setup up roles/permissions manually
+        // We are going to introduce a convention for "one-time" operations similar to Laravel migrations in order to handle this
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Seed roles and permissions
         Artisan::call(SetupRoles::class);

@@ -9,6 +9,7 @@ use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -22,6 +23,7 @@ class User extends Authenticatable implements HasLocalePreference
     use SoftDeletes;
     use Auditable;
     use HasRoles;
+    use DefinesPermissions;
 
     public const TYPE_RADIO = [
         'local' => 'Local',

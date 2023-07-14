@@ -10,7 +10,7 @@ class CreatePermissionsForModel
 {
     public function handle(string $model): void
     {
-        $model = new $model();
+        $model = resolve($model);
 
         $this->createWebPermissionsForModel($model);
         $this->createApiPermissionsForModel($model);
