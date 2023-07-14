@@ -61,21 +61,40 @@ class SyncRolesAndPermissions extends Command
 
             collect($specificPermissions)
                 ->each(function ($specificPermission, $resource) use ($role, $permissionType) {
-                    if (count($specificPermission) === 1 && $specificPermission[0] === '*') {
-                        $foundPermissions = Permission::where('name', 'like', "{$resource}.%")
-                            ->where('guard_name', $permissionType)
-                            ->pluck('id');
+                    if (! is_array($specificPermission)) {
+                        $this->syncCustomPermissions($role, $specificPermission, $permissionType);
                     } else {
-                        $foundPermissions = collect($specificPermission)->map(function ($permission) use ($resource, $permissionType) {
-                            return Permission::firstWhere([
-                                'name' => "{$resource}.{$permission}",
-                                'guard_name' => $permissionType,
-                            ])->id;
-                        });
+                        $this->syncModelPermissions($role, $resource, $specificPermission, $permissionType);
                     }
-
-                    $role->syncPermissions([$role->permissions, $foundPermissions]);
                 });
         });
+    }
+
+    protected function syncCustomPermissions(Role $role, string $specificPermission, string $permissionType): void
+    {
+        $foundPermissions = Permission::firstWhere([
+            'name' => $specificPermission,
+            'guard_name' => $permissionType,
+        ])->id;
+
+        $role->syncPermissions([$role->permissions, $foundPermissions]);
+    }
+
+    protected function syncModelPermissions(Role $role, string $resource, array $specificPermission, string $permissionType): void
+    {
+        if (count($specificPermission) === 1 && $specificPermission[0] === '*') {
+            $foundPermissions = Permission::where('name', 'like', "{$resource}.%")
+                ->where('guard_name', $permissionType)
+                ->pluck('id');
+        } else {
+            $foundPermissions = collect($specificPermission)->map(function ($permission) use ($resource, $permissionType) {
+                return Permission::firstWhere([
+                    'name' => "{$resource}.{$permission}",
+                    'guard_name' => $permissionType,
+                ])->id;
+            });
+        }
+
+        $role->syncPermissions([$role->permissions, $foundPermissions]);
     }
 }

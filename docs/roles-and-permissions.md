@@ -5,6 +5,9 @@ This application uses the [Spatie Laravel-permission](https://spatie.be/docs/lar
 
 The application uses a dedicated convention in order to define and poulate roles and permissions, leaving little in the way of thinking when it comes time to stand up the application locally or in a live environment.
 
+## Local Development
+When running the `sail artisan migrate:fresh --seed` command, the `SyncRolesAndPermissions` command will also be run, populating your local application instance with all of the default Roles and Permissions currently provided by the application.
+
 ## Permissions
 The application defines two distinct types of permissions: those related directly to models and those that are not. In the application, there are referred to aptly as `model` permissions and `custom` permissions.
 
