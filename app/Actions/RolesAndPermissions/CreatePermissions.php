@@ -22,8 +22,7 @@ class CreatePermissions
     protected function createModelPermissions(): void
     {
         resolve(ApplicationModels::class)->implementingPermissions()->each(function ($modelClass) {
-            $createPermissionsForModel = resolve(CreatePermissionsForModel::class);
-            $createPermissionsForModel->handle($modelClass);
+            resolve(CreatePermissionsForModel::class)->handle($modelClass);
         });
     }
 

@@ -3,7 +3,7 @@ Roles and permissions in the application have been setup in a flexible and maint
 
 This application uses the [Spatie Laravel-permission](https://spatie.be/docs/laravel-permission/v5/introduction) package in order to facilitate the usage of roles and permissions.
 
-The application uses a dedicated convention in order to define and poulate roles and permissions, leaving little in the way of thinking when it comes time to stand up the application locally or in a live environment.
+The application uses a dedicated convention in order to define and populate roles and permissions, leaving little in the way of thinking when it comes time to stand up the application locally or in a live environment.
 
 ## Local Development
 When running the `sail artisan migrate:fresh --seed` command, the `SyncRolesAndPermissions` command will also be run, populating your local application instance with all of the default Roles and Permissions currently provided by the application.
