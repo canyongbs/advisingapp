@@ -8,7 +8,11 @@ use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperEngagementStudentFile
+ */
 class EngagementStudentFile extends BaseModel implements HasMedia
 {
     use HasAdvancedFilter;
@@ -56,7 +60,7 @@ class EngagementStudentFile extends BaseModel implements HasMedia
         });
     }
 
-    public function student()
+    public function student(): BelongsTo
     {
         return $this->belongsTo(RecordStudentItem::class);
     }

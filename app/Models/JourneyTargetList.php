@@ -7,6 +7,9 @@ use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @mixin IdeHelperJourneyTargetList
+ */
 class JourneyTargetList extends BaseModel
 {
     use HasAdvancedFilter;

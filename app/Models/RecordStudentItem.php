@@ -6,6 +6,9 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 
+/**
+ * @mixin IdeHelperRecordStudentItem
+ */
 class RecordStudentItem extends BaseModel
 {
     use HasAdvancedFilter;

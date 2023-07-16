@@ -10,6 +10,9 @@ use App\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 // TODO To delete when we install auditable library
+/**
+ * @mixin IdeHelperAuditLog
+ */
 class AuditLog extends Model
 {
     use HasFactory;
