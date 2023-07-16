@@ -3,6 +3,7 @@
 namespace App\Actions\Finders;
 
 use ReflectionClass;
+use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\File;
@@ -29,7 +30,7 @@ class ApplicationModels
 
                 if (class_exists($class)) {
                     $reflection = new ReflectionClass($class);
-                    $isModel = $reflection->isSubclassOf(Model::class) &&
+                    $isModel = ($reflection->isSubclassOf(Model::class) || $reflection->isSubclassOf(BaseModel::class)) &&
                     ! $reflection->isAbstract();
                 }
 
@@ -43,8 +44,9 @@ class ApplicationModels
             $implementsPermissions = false;
 
             $reflection = new ReflectionClass($class);
+            $parentClass = $reflection->getParentClass();
 
-            if (in_array(DefinesPermissions::class, $reflection->getTraitNames())) {
+            if (in_array(DefinesPermissions::class, $reflection->getTraitNames()) || in_array(DefinesPermissions::class, $parentClass->getTraitNames())) {
                 $implementsPermissions = true;
             }
 
