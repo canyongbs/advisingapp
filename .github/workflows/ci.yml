@@ -14,15 +14,55 @@ jobs:
           php-version: "8.2"
 
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
+  lint:
+    runs-on: ubuntu-22.04
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
+
+    timeout-minutes: 10
+
+    needs: [ build-deps ]
+
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm install
+
+      - name: Build Assets
+        run: npm run build
+
+      - name: Linting the code base
+        run: composer lint
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply Linting Changes
   test:
     runs-on: ubuntu-22.04
 
     timeout-minutes: 10
 
-    needs: [build-deps]
+    needs: [ build-deps, lint ]
 
     env:
       DB_PORT: 3306
@@ -63,6 +103,8 @@ jobs:
           php-version: "8.2"
 
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Start Mysql
         run: sudo service mysql start
@@ -88,23 +130,23 @@ jobs:
       - name: Generate key
         run: php artisan key:generate
 
+      - name: Check route integrity
+        run: php artisan route:cache
+
       - name: Clear Config
         run: php artisan optimize:clear
 
       - name: Directory Permissions
         run: chmod -R 777 storage bootstrap/cache
 
-      - name: Check route integrity
-        run: php artisan route:list
-
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         run: php artisan test --parallel --configuration phpunit-ci.xml --testsuite=Feature,Unit
-  lint:
+  code-analysis:
     runs-on: ubuntu-22.04
 
     timeout-minutes: 10
 
-    needs: [build-deps]
+    needs: [ build-deps, lint ]
 
     steps:
       - uses: shivammathur/setup-php@v2
@@ -112,18 +154,11 @@ jobs:
           php-version: "8.2"
 
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-      - run: npm install
-
-      - name: Build Assets
-        run: npm run build
-
-      - name: Linting and Analysis Checks
-        run: composer checks
+      - name: Code Analysis
+        run: composer larastan
