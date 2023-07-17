@@ -24,4 +24,9 @@ class Role extends SpatieRole
     {
         $query->where('name', 'super_admin');
     }
+
+    public function scopeAdmin(Builder $query): void
+    {
+        $query->where('name', 'admin');
+    }
 }

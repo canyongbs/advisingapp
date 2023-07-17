@@ -10,6 +10,7 @@ class UsersTableSeeder extends Seeder
 {
     public function run(): void
     {
+        /** Super Admin */
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@assist.com',
@@ -19,5 +20,16 @@ class UsersTableSeeder extends Seeder
         $superAdminRoles = Role::superAdmin()->get();
 
         $superAdmin->assignRole($superAdminRoles);
+
+        /** Admin */
+        $admin = User::factory()->create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@assist.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $adminRoles = Role::admin()->get();
+
+        $admin->assignRole($adminRoles);
     }
 }
