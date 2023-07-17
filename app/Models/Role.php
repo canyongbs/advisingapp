@@ -19,4 +19,9 @@ class Role extends SpatieRole
     {
         $query->where('guard_name', 'web');
     }
+
+    public function scopeSuperAdmin(Builder $query): void
+    {
+        $query->where('name', 'super_admin');
+    }
 }

@@ -2,25 +2,22 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        $users = [
-            [
-                'id' => 1,
-                'name' => 'Admin',
-                'email' => 'admin@admin.com',
-                'password' => bcrypt('password'),
-                'remember_token' => null,
-                'locale' => '',
-                'emplid' => '',
-            ],
-        ];
+        $superAdmin = User::factory()->create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@assist.com',
+            'password' => bcrypt('password'),
+        ]);
 
-        User::insert($users);
+        $superAdminRoles = Role::superAdmin()->get();
+
+        $superAdmin->assignRole($superAdminRoles);
     }
 }
