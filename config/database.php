@@ -90,6 +90,21 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+
+        'sis' => [
+            'driver' => 'pgsql',
+            'url' => env('SIS_DATABASE_URL'),
+            'host' => env('SIS_DB_HOST', '127.0.0.1'),
+            'port' => env('SIS_DB_PORT', '5432'),
+            'database' => env('SIS_DB_DATABASE', 'sis'),
+            'username' => env('SIS_DB_USERNAME', 'root'),
+            'password' => env('SIS_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
     ],
 
     /*

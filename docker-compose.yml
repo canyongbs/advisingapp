@@ -29,6 +29,7 @@ services:
             - meilisearch
             - minio
             - mailpit
+            - redshift
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -113,6 +114,30 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+    redshift:
+        image: 'foundryai/postgres8:8.0.2'
+        ports:
+            - '${FORWARD_SIS_DB_PORT:-5432}:5432'
+        environment:
+            POSTGRES_DATABASE: '${SIS_DB_DATABASE}'
+            POSTGRES_USER: '${SIS_DB_USERNAME}'
+            POSTGRES_PASSWORD: '${SIS_DB_PASSWORD:-secret}'
+        volumes:
+            - 'sail-redshift:/usr/local/pgsql/data'
+            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - pg_isready
+                - '-q'
+                - '-d'
+                - '${SIS_DB_DATABASE}'
+                - '-U'
+                - '${SIS_DB_USERNAME}'
+            retries: 3
+            timeout: 5s
 networks:
     sail:
         driver: bridge
@@ -124,4 +149,6 @@ volumes:
     sail-meilisearch:
         driver: local
     sail-minio:
+        driver: local
+    sail-redshift:
         driver: local
