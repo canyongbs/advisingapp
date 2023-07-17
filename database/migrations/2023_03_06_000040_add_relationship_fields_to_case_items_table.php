@@ -9,8 +9,6 @@ class AddRelationshipFieldsToCaseItemsTable extends Migration
     public function up()
     {
         Schema::table('case_items', function (Blueprint $table) {
-            $table->unsignedBigInteger('student_id')->nullable();
-            $table->foreign('student_id', 'student_fk_8136756')->references('id')->on('record_student_items');
             $table->unsignedBigInteger('institution_id')->nullable();
             $table->foreign('institution_id', 'institution_fk_8136757')->references('id')->on('institutions');
             $table->unsignedBigInteger('state_id')->nullable();
