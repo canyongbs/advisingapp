@@ -9,6 +9,7 @@ use App\Models\Permission;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use App\Filament\Resources\PermissionResource\Pages;
+use App\Filament\Resources\PermissionResource\RelationManagers\RolesRelationManager;
 
 class PermissionResource extends Resource
 {
@@ -60,6 +61,7 @@ class PermissionResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RolesRelationManager::class,
         ];
     }
 
