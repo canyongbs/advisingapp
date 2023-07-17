@@ -113,8 +113,6 @@ class User extends Authenticatable implements HasLocalePreference
 
     public function roles(): BelongsToMany
     {
-        // TODO: fix phpstan error when roles are added back in
-        // @phpstan-ignore-next-line
         return $this->belongsToMany(Role::class);
     }
 
