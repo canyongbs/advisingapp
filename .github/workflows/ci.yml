@@ -56,7 +56,7 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Apply Linting Changes
+          commit_message: Apply Linting Changes [skip ci]
   test:
     runs-on: ubuntu-22.04
 
