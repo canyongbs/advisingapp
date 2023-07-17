@@ -2,9 +2,8 @@
 
 namespace App\Filament\Resources\PermissionResource\Pages;
 
-use App\Filament\Resources\PermissionResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\PermissionResource;
 
 class CreatePermission extends CreateRecord
 {

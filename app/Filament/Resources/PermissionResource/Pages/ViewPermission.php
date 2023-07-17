@@ -2,9 +2,8 @@
 
 namespace App\Filament\Resources\PermissionResource\Pages;
 
-use App\Filament\Resources\PermissionResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Resources\PermissionResource;
 
 class ViewPermission extends ViewRecord
 {
@@ -13,7 +12,6 @@ class ViewPermission extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
         ];
     }
 }
