@@ -128,6 +128,10 @@ $finder = Finder::create()
             'vendor',
             'bower_components',
             'node_modules',
+        ]
+    )
+    ->notPath(
+        [
             '_ide_helper.php',
             '_ide_helper_models.php',
         ]

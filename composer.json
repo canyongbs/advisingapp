@@ -2,10 +2,16 @@
     "name": "canyongbs/assistforhighered-2",
     "type": "project",
     "description": "ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASSIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offering.",
-    "keywords": ["higher", "education", "academic", "laravel"],
+    "keywords": [
+        "higher",
+        "education",
+        "academic",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "filament/filament": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
@@ -44,7 +50,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
@@ -107,5 +114,6 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
-    "prefer-stable": true
+    "prefer-stable": true,
+    "minimum-stability": "alpha"
 }
