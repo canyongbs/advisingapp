@@ -15,9 +15,9 @@ class ListRoles extends ListRecords
     public function getTabs(): array
     {
         return [
-            'Web' => Tab::make()
+            'web' => Tab::make('Web')
                 ->modifyQueryUsing(fn (Builder $query) => $query->web()),
-            'Api' => Tab::make()
+            'api' => Tab::make('Api')
                 ->modifyQueryUsing(fn (Builder $query) => $query->api()),
         ];
     }
