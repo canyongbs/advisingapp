@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @mixin IdeHelperUser
@@ -109,11 +108,6 @@ class User extends Authenticatable implements HasLocalePreference
         if ($input) {
             $this->attributes['password'] = Hash::needsRehash($input) ? Hash::make($input) : $input;
         }
-    }
-
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class);
     }
 
     public function getTypeLabelAttribute($value)

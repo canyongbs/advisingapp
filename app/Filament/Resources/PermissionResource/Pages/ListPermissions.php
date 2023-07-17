@@ -2,9 +2,8 @@
 
 namespace App\Filament\Resources\PermissionResource\Pages;
 
-use App\Filament\Resources\PermissionResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\PermissionResource;
 
 class ListPermissions extends ListRecords
 {
@@ -12,8 +11,6 @@ class ListPermissions extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return [];
     }
 }
