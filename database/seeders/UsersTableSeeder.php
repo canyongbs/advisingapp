@@ -23,8 +23,8 @@ class UsersTableSeeder extends Seeder
 
         /** Admin */
         $admin = User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@assist.com',
+            'name' => 'Admin',
+            'email' => 'admin@assist.com',
             'password' => bcrypt('password'),
         ]);
 
