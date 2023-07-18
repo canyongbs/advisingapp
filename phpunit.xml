@@ -23,6 +23,7 @@
         <server name="SESSION_DRIVER" value="array"/>
         <server name="TELESCOPE_ENABLED" value="false"/>
         <env name="DB_DATABASE" value="testing"/>
+        <!-- TODO: Fix issues with other connections not working with different database Refresh -->
 <!--        <env name="SIS_DB_DATABASE" value="testing"/>-->
     </php>
 </phpunit>
