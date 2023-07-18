@@ -622,30 +622,30 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('permission_access')
-                                <li class="items-center">
-                                    <a
-                                        class="{{ request()->is('admin/permissions*') ? 'sidebar-nav-active' : 'sidebar-nav' }}"
-                                        href="{{ route('admin.permissions.index') }}"
-                                    >
-                                        <i class="fa-fw c-sidebar-nav-icon fas fa-unlock-alt">
-                                        </i>
-                                        {{ trans('cruds.permission.title') }}
-                                    </a>
-                                </li>
-                            @endcan
-                            @can('role_access')
-                                <li class="items-center">
-                                    <a
-                                        class="{{ request()->is('admin/roles*') ? 'sidebar-nav-active' : 'sidebar-nav' }}"
-                                        href="{{ route('admin.roles.index') }}"
-                                    >
-                                        <i class="fa-fw c-sidebar-nav-icon fas fa-briefcase">
-                                        </i>
-                                        {{ trans('cruds.role.title') }}
-                                    </a>
-                                </li>
-                            @endcan
+{{--                            @can('permission_access')--}}
+{{--                                <li class="items-center">--}}
+{{--                                    <a--}}
+{{--                                        class="{{ request()->is('admin/permissions*') ? 'sidebar-nav-active' : 'sidebar-nav' }}"--}}
+{{--                                        href="{{ route('admin.permissions.index') }}"--}}
+{{--                                    >--}}
+{{--                                        <i class="fa-fw c-sidebar-nav-icon fas fa-unlock-alt">--}}
+{{--                                        </i>--}}
+{{--                                        {{ trans('cruds.permission.title') }}--}}
+{{--                                    </a>--}}
+{{--                                </li>--}}
+{{--                            @endcan--}}
+{{--                            @can('role_access')--}}
+{{--                                <li class="items-center">--}}
+{{--                                    <a--}}
+{{--                                        class="{{ request()->is('admin/roles*') ? 'sidebar-nav-active' : 'sidebar-nav' }}"--}}
+{{--                                        href="{{ route('admin.roles.index') }}"--}}
+{{--                                    >--}}
+{{--                                        <i class="fa-fw c-sidebar-nav-icon fas fa-briefcase">--}}
+{{--                                        </i>--}}
+{{--                                        {{ trans('cruds.role.title') }}--}}
+{{--                                    </a>--}}
+{{--                                </li>--}}
+{{--                            @endcan--}}
                             @can('user_alert_access')
                                 <li class="items-center">
                                     <a
