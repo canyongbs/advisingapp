@@ -36,7 +36,7 @@
     <env name="DB_USERNAME" value="root"/>
     <env name="DB_PASSWORD" value="root"/>
     <env name="SIS_DB_CONNECTION" value="sis"/>
-    <env name="SIS_DB_HOST" value="postgres"/>
+    <env name="SIS_DB_HOST" value="127.0.0.1"/>
     <env name="SIS_DB_PORT" value="5432"/>
     <env name="SIS_DB_DATABASE" value="testing"/>
     <env name="SIS_DB_USERNAME" value="root"/>
