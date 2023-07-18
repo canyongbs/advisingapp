@@ -12,8 +12,18 @@ class Student extends Model
 
     protected $connection = 'sis';
 
+    protected $primaryKey = null;
+
+    public $incrementing = false;
+
     public function cases(): MorphMany
     {
-        return $this->morphMany(CaseItem::class, 'respondent');
+        return $this->morphMany(
+            related: CaseItem::class,
+            name: 'respondent',
+            type: 'respondent_type',
+            id: 'respondent_id',
+            localKey: 'student_id'
+        );
     }
 }
