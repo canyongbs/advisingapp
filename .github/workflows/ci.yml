@@ -34,6 +34,10 @@ jobs:
       MEILISEARCH_KEY: testing
       MEILISEARCH_HOST: http://127.0.0.1:7700
       MEILISEARCH_PORT: 7700
+      SIS_DB_USERNAME: root
+      SIS_DB_PASSWORD: root
+      SIS_DB_DATABASE: testing
+
 
     services:
       mysql:
@@ -56,6 +60,22 @@ jobs:
         ports:
           - 7700:7700
         options: --health-cmd "wget --no-verbose --spider http://127.0.0.1:7700/health" --health-timeout 5s --health-retries 3
+
+      postgres:
+        # Docker Hub image
+        image: postgres:15
+        # Provide the password for postgres
+        env:
+          PGPASSWORD: ${{ env.SIS_DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.SIS_DB_DATABASE }}
+          POSTGRES_USER: ${{ env.SIS_DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.SIS_DB_PASSWORD }}
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: shivammathur/setup-php@v2
