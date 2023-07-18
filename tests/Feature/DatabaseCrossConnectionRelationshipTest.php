@@ -20,5 +20,13 @@ class DatabaseCrossConnectionRelationshipTest extends TestCase
             ->create();
 
         $this->assertCount(3, $student->cases);
+
+        $whereHasEquivalent = Student::where(function ($query) {
+            $cases = CaseItem::whereNotNull('res_details')->get();
+
+            $query->whereIn('student_id', $cases->pluck('respondent_id'));
+        })->get();
+
+        $this->assertCount(1, $whereHasEquivalent);
     }
 }
