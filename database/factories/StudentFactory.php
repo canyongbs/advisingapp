@@ -14,10 +14,10 @@ class StudentFactory extends Factory
     {
         return [
             'student_id' => $this->faker->randomNumber(9),
-            'first_name' => 'test',
-            'middle_name' => 'test',
-            'last_name' => 'test',
-            'email' => 'test@test.com',
+            'first_name' => $this->faker->firstName(),
+            'middle_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'email' => $this->faker->email(),
         ];
     }
 }
