@@ -29,4 +29,9 @@ class Student extends Model
             localKey: 'student_id'
         );
     }
+
+    public function mcWhereHas($relation, $callback = null, $operator = '>=', $count = 1)
+    {
+        // TODO: Create a whereHas and other methods that work with the different database connections
+    }
 }
