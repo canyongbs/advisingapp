@@ -21,5 +21,8 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        
+	$this->artisan('migrate:fresh');
+        $this->artisan('migrate:fresh', ['--database' => 'sis', '--path' => 'database/migrations/sis']);
     }
 }
