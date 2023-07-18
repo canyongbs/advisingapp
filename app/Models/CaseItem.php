@@ -17,6 +17,8 @@ class CaseItem extends BaseModel
     use HasAdvancedFilter;
     use SoftDeletes;
 
+    protected $connection = 'mysql';
+
     public static $search = [
         'casenumber',
     ];
@@ -49,7 +51,8 @@ class CaseItem extends BaseModel
 
     protected $fillable = [
         'casenumber',
-        'student_id',
+        'respondent_type',
+        'respondent_id',
         'institution_id',
         'state_id',
         'type_id',
@@ -62,7 +65,12 @@ class CaseItem extends BaseModel
 
     public function respondent(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo(
+            name: 'respondent',
+            type: 'respondent_type',
+            id: 'respondent_id',
+            ownerKey: 'student_id',
+        );
     }
 
     public function institution(): BelongsTo

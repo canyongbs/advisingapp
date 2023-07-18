@@ -115,15 +115,16 @@ services:
         networks:
             - sail
     redshift:
-        image: 'foundryai/postgres8:8.0.2'
+        image: 'postgres:15'
         ports:
             - '${FORWARD_SIS_DB_PORT:-5432}:5432'
         environment:
-            POSTGRES_DATABASE: '${SIS_DB_DATABASE}'
+            PGPASSWORD: '${SIS_DB_PASSWORD:-secret}'
+            POSTGRES_DB: '${SIS_DB_DATABASE}'
             POSTGRES_USER: '${SIS_DB_USERNAME}'
             POSTGRES_PASSWORD: '${SIS_DB_PASSWORD:-secret}'
         volumes:
-            - 'sail-redshift:/usr/local/pgsql/data'
+            - 'sail-redshift:/var/lib/postgresql/data'
             - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
         networks:
             - sail
