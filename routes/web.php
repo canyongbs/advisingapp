@@ -49,12 +49,6 @@ Auth::routes(['register' => false]);
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
-    // Permissions
-    //Route::resource('permissions', PermissionController::class, ['except' => ['store', 'update', 'destroy']]);
-
-    // Roles
-    //Route::resource('roles', RoleController::class, ['except' => ['store', 'update', 'destroy']]);
-
     // Users
     Route::resource('users', UserController::class, ['except' => ['store', 'update', 'destroy']]);
 

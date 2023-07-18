@@ -19,7 +19,8 @@
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
         "livewire/livewire": "^2.11",
-        "spatie/laravel-medialibrary": "^10.7"
+        "spatie/laravel-medialibrary": "^10.7",
+        "spatie/laravel-permission": "^5.10"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",

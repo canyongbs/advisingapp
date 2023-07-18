@@ -7,7 +7,9 @@ use DateTimeInterface;
 use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -24,6 +26,8 @@ class User extends Authenticatable implements HasLocalePreference
     use Notifiable;
     use SoftDeletes;
     use Auditable;
+    use HasRoles;
+    use DefinesPermissions;
 
     public const TYPE_RADIO = [
         'local' => 'Local',
@@ -109,8 +113,6 @@ class User extends Authenticatable implements HasLocalePreference
 
     public function roles(): BelongsToMany
     {
-        // TODO: fix phpstan error when roles are added back in
-        // @phpstan-ignore-next-line
         return $this->belongsToMany(Role::class);
     }
 
