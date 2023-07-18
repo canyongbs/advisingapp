@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\RolesAndPermissions;
+namespace Tests\Feature\Actions\RolesAndPermissions;
 
 use Tests\TestCase;
 use App\Models\User;
