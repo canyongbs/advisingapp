@@ -17,8 +17,6 @@ class CaseItem extends BaseModel
     use HasAdvancedFilter;
     use SoftDeletes;
 
-    protected $connection = 'pgsql';
-
     public static $search = [
         'casenumber',
     ];

@@ -13,8 +13,6 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $connection = 'sis';
-
     protected $primaryKey = null;
 
     public $incrementing = false;
