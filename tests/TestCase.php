@@ -12,7 +12,7 @@ abstract class TestCase extends BaseTestCase
     use RefreshDatabase;
 
     protected $connectionsToTransact = [
-        'mysql',
+        'pgsql',
         'sis',
     ];
 

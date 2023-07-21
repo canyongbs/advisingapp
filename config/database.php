@@ -95,7 +95,7 @@ return [
             'driver' => 'pgsql',
             'url' => env('SIS_DATABASE_URL'),
             'host' => env('SIS_DB_HOST', 'redshift'),
-            'port' => env('SIS_DB_PORT', '5432'),
+            'port' => env('SIS_DB_PORT', '5433'),
             'database' => env('SIS_DB_DATABASE', 'sis'),
             'username' => env('SIS_DB_USERNAME', 'sail'),
             'password' => env('SIS_DB_PASSWORD', 'password'),
