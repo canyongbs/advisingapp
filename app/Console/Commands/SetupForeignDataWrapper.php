@@ -7,34 +7,21 @@ use App\DataTransferObjects\ForeignDataWrapperData;
 
 class SetupForeignDataWrapper extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'app:setup-foreign-data-wrapper';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Setup foreign data wrapper for SIS database';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function handle(): void
     {
         resolve(\App\Actions\Setup\SetupForeignDataWrapper::class)->handle(
             new ForeignDataWrapperData(
-                connection: 'pgsql',
-                localServerName: 'sis_bridge',
-                externalHost: 'redshift',
-                externalPort: '5433',
-                externalUser: 'sail',
-                externalPassword: 'password',
-                externalDatabase: 'sis',
+                connection: config('database.fdw.connection'),
+                localServerName: config('database.fdw.server_name'),
+                externalHost: config('database.fdw.external_host'),
+                externalPort: config('database.fdw.external_port'),
+                externalUser: config('database.fdw.external_user'),
+                externalPassword: config('database.fdw.external_password'),
+                externalDatabase: config('database.fdw.external_database'),
                 tables: [
                     'students',
                     'programs',

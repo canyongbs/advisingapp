@@ -157,4 +157,14 @@ return [
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
     ],
+
+    'fdw' => [
+        'connection' => env('FDW_CONNECTION', 'pgsql'),
+        'server_name' => env('FDW_SERVER_NAME', 'sis_bridge'),
+        'external_host' => env('FDW_EXTERNAL_HOST', 'redshift'),
+        'external_port' => env('FDW_EXTERNAL_PORT', '5433'),
+        'external_user' => env('FDW_EXTERNAL_USER', 'sail'),
+        'external_password' => env('FDW_EXTERNAL_PASSWORD', 'password'),
+        'external_database' => env('FDW_EXTERNAL_DBNAME', 'sis'),
+    ],
 ];
