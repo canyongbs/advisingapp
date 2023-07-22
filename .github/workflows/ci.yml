@@ -8,8 +8,6 @@ jobs:
   build-deps:
     runs-on: ubuntu-22.04
 
-    container: ubuntu:22.04
-
     steps:
       - uses: actions/checkout@v3
 
@@ -17,19 +15,8 @@ jobs:
         with:
           php-version: "8.2"
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Setup Dependencies
+        uses: ./.github/actions/composer-dependency-setup
   test:
     runs-on: ubuntu-22.04
 
