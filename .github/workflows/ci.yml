@@ -53,21 +53,6 @@ jobs:
 
     needs: [build-deps]
 
-    env:
-      DB_PORT: 5432
-      DB_HOST: 127.0.0.1
-      DB_USERNAME: root
-      DB_PASSWORD: root
-      DB_DATABASE: testing
-      SCOUT_PREFIX: test_
-      MEILISEARCH_KEY: testing
-      MEILISEARCH_HOST: http://127.0.0.1:7700
-      MEILISEARCH_PORT: 7700
-      SIS_DB_USERNAME: root
-      SIS_DB_PASSWORD: root
-      SIS_DB_DATABASE: testing
-
-
     services:
       postgres:
         # Docker Hub image
@@ -84,9 +69,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          # Maps tcp port 5432 on service container to the host
-          - 5432:tcp
 
       redis:
         image: redis
@@ -115,9 +97,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          # Maps tcp port 5432 on service container to the host
-          - 5433:tcp
 
     steps:
       - uses: shivammathur/setup-php@v2
