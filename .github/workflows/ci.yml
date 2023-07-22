@@ -8,7 +8,7 @@ jobs:
   build-deps:
     runs-on: ubuntu-22.04
 
-    container: php:8.2-cli
+    container: ubuntu:22.04
 
     steps:
       - uses: actions/checkout@v3
