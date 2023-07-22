@@ -112,8 +112,8 @@ jobs:
 #      - name: Create Database
 #        run: psql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS testing"
 #
-#      - name: Copy .env
-#        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
