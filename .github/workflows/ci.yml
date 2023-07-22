@@ -24,13 +24,13 @@ jobs:
 
     env:
       DB_PORT: 5432
-      DB_HOST: 127.0.0.1
+      DB_HOST: postgres
       DB_USERNAME: root
       DB_PASSWORD: root
       DB_DATABASE: testing
       SCOUT_PREFIX: test_
       MEILISEARCH_KEY: testing
-      MEILISEARCH_HOST: http://127.0.0.1:7700
+      MEILISEARCH_HOST: http://meilisearch:7700
       MEILISEARCH_PORT: 7700
       SIS_DB_USERNAME: root
       SIS_DB_PASSWORD: root
