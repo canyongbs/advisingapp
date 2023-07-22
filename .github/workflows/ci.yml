@@ -11,8 +11,6 @@ jobs:
     container: php:8.2-cli-alpine
 
     steps:
-      - uses: actions/checkout@v3
-
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
   test:
