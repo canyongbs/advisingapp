@@ -8,11 +8,10 @@ jobs:
   build-deps:
     runs-on: ubuntu-22.04
 
-    steps:
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
+    container:
+      image: docker://shivammathur/php:8.2-cli-alpine
 
+    steps:
       - uses: actions/checkout@v3
 
       - name: Setup Dependencies
@@ -40,15 +39,6 @@ jobs:
 
 
     services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
-        ports:
-          - 3306/tcp
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
       postgres:
         # Docker Hub image
         image: postgres:15
@@ -66,7 +56,7 @@ jobs:
           --health-retries 5
         ports:
           # Maps tcp port 5432 on service container to the host
-          - 5432:5432
+          - 5432:tcp
 
       redis:
         image: redis
@@ -95,6 +85,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5433:tcp
 
     steps:
       - uses: shivammathur/setup-php@v2
