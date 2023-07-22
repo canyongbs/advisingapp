@@ -8,7 +8,7 @@ jobs:
   build-deps:
     runs-on: ubuntu-22.04
 
-    container: php:8.2-cli-alpine
+    container: php:8.2-cli
 
     steps:
       - uses: actions/checkout@v3
@@ -20,7 +20,6 @@ jobs:
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-        shell: sh
 
       - name: Cache dependencies
         uses: actions/cache@v3
@@ -31,7 +30,6 @@ jobs:
 
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-        shell: sh
   test:
     runs-on: ubuntu-22.04
 
