@@ -8,8 +8,7 @@ jobs:
   build-deps:
     runs-on: ubuntu-22.04
 
-    container:
-      image: docker://shivammathur/php:8.2-cli-alpine
+    container: php:8.2-cli-alpine
 
     steps:
       - uses: actions/checkout@v3
