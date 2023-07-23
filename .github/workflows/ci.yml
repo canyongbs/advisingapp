@@ -63,11 +63,11 @@ jobs:
           - 6379:6379
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      meilisearch:
-        image: "getmeili/meilisearch:v1.2.0"
-        ports:
-          - 7700:7700
-        options: --health-cmd "wget --no-verbose --spider http://127.0.0.1:7700/health" --health-timeout 5s --health-retries 3
+#      meilisearch:
+#        image: "getmeili/meilisearch:v1.2.0"
+#        ports:
+#          - 7700:7700
+#        options: --health-cmd "wget --no-verbose --spider http://127.0.0.1:7700/health" --health-timeout 5s --health-retries 3
 
       redshift:
         # Docker Hub image
