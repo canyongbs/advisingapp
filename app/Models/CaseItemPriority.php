@@ -16,17 +16,18 @@ class CaseItemPriority extends BaseModel
     use SoftDeletes;
 
     protected $fillable = [
-        'priority',
+        'name',
+        'order',
     ];
 
     public $orderable = [
         'id',
-        'priority',
+        'order',
     ];
 
     public $filterable = [
         'id',
-        'priority',
+        'order',
     ];
 
     protected $dates = [
