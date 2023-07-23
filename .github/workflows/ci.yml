@@ -131,7 +131,7 @@ jobs:
         run: php artisan route:list
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: php artisan test --parallel --configuration phpunit-ci.xml --testsuite=Feature,Unit
+        run: php artisan test --configuration phpunit-ci.xml --testsuite=Feature,Unit
   lint:
     runs-on: ubuntu-22.04
 
