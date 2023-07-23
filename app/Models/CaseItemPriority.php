@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperCaseItemPriority
@@ -30,11 +31,10 @@ class CaseItemPriority extends BaseModel
         'order',
     ];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
+    public function caseItems(): HasMany
+    {
+        return $this->hasMany(CaseItem::class);
+    }
 
     public function getCreatedAtAttribute($value)
     {

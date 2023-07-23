@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Student;
 use App\Models\CaseItem;
+use App\Models\CaseItemPriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,5 +27,24 @@ class CaseItemFactory extends Factory
             'assigned_to_id' => $this->faker->randomNumber(9),
             'created_by_id' => $this->faker->randomNumber(9),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterMaking(function (CaseItem $case) {
+        })->afterCreating(function (CaseItem $case) {
+            $this->generatePriority($case);
+        });
+    }
+
+    protected function generatePriority(CaseItem $case): void
+    {
+        $priority = CaseItemPriority::inRandomOrder()->first();
+
+        if (! $priority) {
+            $priority = CaseItemPriority::factory()->state('high')->create();
+        }
+
+        $case->priority()->associate($priority)->save();
     }
 }

@@ -21,12 +21,6 @@ class CaseItem extends BaseModel
         'casenumber',
     ];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
     public $orderable = [
         'id',
         'casenumber',
@@ -71,16 +65,19 @@ class CaseItem extends BaseModel
         );
     }
 
+    // TODO
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);
     }
 
+    // TODO
     public function state(): BelongsTo
     {
         return $this->belongsTo(CaseItemStatus::class);
     }
 
+    // TODO
     public function type(): BelongsTo
     {
         return $this->belongsTo(CaseItemType::class);
@@ -91,11 +88,13 @@ class CaseItem extends BaseModel
         return $this->belongsTo(CaseItemPriority::class);
     }
 
+    // TODO
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    // TODO
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
