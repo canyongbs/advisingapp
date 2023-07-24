@@ -69,7 +69,7 @@ class Index extends Component
 
     public function render()
     {
-        $query = CaseItem::with(['respondent', 'institution', 'state', 'type', 'priority', 'assignedTo', 'createdBy'])->advancedFilter([
+        $query = CaseItem::with(['institution', 'state', 'type', 'priority', 'assignedTo', 'createdBy'])->advancedFilter([
             's' => $this->search ?: null,
             'order_column' => $this->sortBy,
             'order_direction' => $this->sortDirection,
