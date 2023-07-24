@@ -17,8 +17,10 @@ class CaseItemFactory extends Factory
     {
         return [
             'casenumber' => $this->faker->randomNumber(9),
-            'respondent_type' => 'App\Models\Student',
             'respondent_id' => Student::factory(),
+            'respondent_type' => function (array $attributes) {
+                return Student::find($attributes['respondent_id'])->getMorphClass();
+            },
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
             'institution_id' => $this->faker->randomNumber(9),
@@ -44,7 +46,7 @@ class CaseItemFactory extends Factory
         $priority = CaseItemPriority::inRandomOrder()->first();
 
         if (! $priority) {
-            $priority = CaseItemPriority::factory()->state('high')->create();
+            $priority = CaseItemPriority::factory()->high()->create();
         }
 
         $case->priority()->associate($priority)->save();
@@ -55,7 +57,7 @@ class CaseItemFactory extends Factory
         $priority = CaseItemStatus::inRandomOrder()->first();
 
         if (! $priority) {
-            $priority = CaseItemStatus::factory()->state('open')->create();
+            $priority = CaseItemStatus::factory()->open()->create();
         }
 
         $case->state()->associate($priority)->save();

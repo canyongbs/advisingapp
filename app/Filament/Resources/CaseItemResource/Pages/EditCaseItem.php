@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\CaseItemResource\Pages;
 
-use App\Filament\Resources\CaseItemResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\CaseItemResource;
 
 class EditCaseItem extends EditRecord
 {

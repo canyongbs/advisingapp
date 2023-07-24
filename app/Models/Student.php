@@ -13,7 +13,7 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = null;
+    protected $primaryKey = 'student_id';
 
     public $incrementing = false;
 
@@ -26,10 +26,5 @@ class Student extends Model
             id: 'respondent_id',
             localKey: 'student_id'
         );
-    }
-
-    public function mcWhereHas($relation, $callback = null, $operator = '>=', $count = 1)
-    {
-        // TODO: Create a whereHas and other methods that work with the different database connections
     }
 }
