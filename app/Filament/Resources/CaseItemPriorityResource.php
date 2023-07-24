@@ -30,7 +30,8 @@ class CaseItemPriorityResource extends Resource
                 TextInput::make('order')
                     ->numeric()
                     ->label('Priority Order')
-                    ->required(),
+                    ->required()
+                    ->disabledOn('edit'),
             ]);
     }
 
@@ -57,7 +58,8 @@ class CaseItemPriorityResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->reorderable('order');
     }
 
     public static function getRelations(): array
