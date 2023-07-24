@@ -11,6 +11,7 @@ class CreateCaseItemsTable extends Migration
         Schema::create('case_items', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('casenumber');
+            $table->nullableMorphs('respondent');
             $table->longText('close_details')->nullable();
             $table->longText('res_details')->nullable();
             $table->timestamps();

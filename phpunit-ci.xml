@@ -29,12 +29,19 @@
     <server name="SESSION_DRIVER" value="array"/>
     <server name="TELESCOPE_ENABLED" value="false"/>
     <server name="SCOUT_QUEUE" value="false"/>
-    <env name="DB_CONNECTION" value="mysql"/>
-    <env name="DB_HOST" value="127.0.0.1"/>
-    <env name="DB_PORT" value="3306"/>
+    <env name="REDIS_HOST" value="redis"/>
+    <env name="DB_CONNECTION" value="pgsql"/>
+    <env name="DB_HOST" value="postgres"/>
+    <env name="DB_PORT" value="5432"/>
     <env name="DB_DATABASE" value="testing"/>
     <env name="DB_USERNAME" value="root"/>
     <env name="DB_PASSWORD" value="root"/>
+    <env name="SIS_DB_CONNECTION" value="sis"/>
+    <env name="SIS_DB_HOST" value="redshift"/>
+    <env name="SIS_DB_PORT" value="5432"/>
+    <env name="SIS_DB_DATABASE" value="testing"/>
+    <env name="SIS_DB_USERNAME" value="root"/>
+    <env name="SIS_DB_PASSWORD" value="root"/>
   </php>
   <source>
     <include>

@@ -9,41 +9,53 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - uses: actions/checkout@v3
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-
-      - uses: actions/checkout@v3
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
   test:
     runs-on: ubuntu-22.04
 
-    timeout-minutes: 10
-
-    needs: [build-deps]
+    container: ubuntu:22.04
 
     env:
-      DB_PORT: 3306
-      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_HOST: postgres
       DB_USERNAME: root
       DB_PASSWORD: root
       DB_DATABASE: testing
       SCOUT_PREFIX: test_
       MEILISEARCH_KEY: testing
-      MEILISEARCH_HOST: http://127.0.0.1:7700
+      MEILISEARCH_HOST: http://meilisearch:7700
       MEILISEARCH_PORT: 7700
+      SIS_DB_USERNAME: root
+      SIS_DB_PASSWORD: root
+      SIS_DB_DATABASE: testing
+
+    timeout-minutes: 10
+
+    needs: [build-deps]
 
     services:
-      mysql:
-        image: mysql:5.7
+      postgres:
+        # Docker Hub image
+        image: postgres:15
+        # Provide the password for postgres
         env:
-          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
-        ports:
-          - 3306/tcp
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          PGPASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.DB_DATABASE }}
+          POSTGRES_USER: ${{ env.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
       redis:
         image: redis
@@ -51,11 +63,27 @@ jobs:
           - 6379:6379
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      meilisearch:
-        image: "getmeili/meilisearch:v1.2.0"
-        ports:
-          - 7700:7700
-        options: --health-cmd "wget --no-verbose --spider http://127.0.0.1:7700/health" --health-timeout 5s --health-retries 3
+#      meilisearch:
+#        image: "getmeili/meilisearch:v1.2.0"
+#        ports:
+#          - 7700:7700
+#        options: --health-cmd "wget --no-verbose --spider http://127.0.0.1:7700/health" --health-timeout 5s --health-retries 3
+
+      redshift:
+        # Docker Hub image
+        image: postgres:15
+        # Provide the password for postgres
+        env:
+          PGPASSWORD: ${{ env.SIS_DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.SIS_DB_DATABASE }}
+          POSTGRES_USER: ${{ env.SIS_DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.SIS_DB_PASSWORD }}
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: shivammathur/setup-php@v2
@@ -64,17 +92,22 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - name: Start Mysql
-        run: sudo service mysql start
-
-      - name: Create Database
-        run: mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS testing"
-
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Setup Dependencies
-        uses: ./.github/actions/composer-dependency-setup
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - uses: actions/setup-node@v3
         with:
@@ -98,7 +131,7 @@ jobs:
         run: php artisan route:list
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: php artisan test --parallel --configuration phpunit-ci.xml --testsuite=Feature,Unit
+        run: php artisan test --configuration phpunit-ci.xml --testsuite=Feature,Unit
   lint:
     runs-on: ubuntu-22.04
 
@@ -112,6 +145,14 @@ jobs:
           php-version: "8.2"
 
       - uses: actions/checkout@v3
+
+      - name: Cache PHP CS Fixer
+        uses: actions/cache@v3
+        with:
+          path: .php-cs-fixer.cache
+          key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup

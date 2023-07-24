@@ -22,5 +22,7 @@
         <server name="QUEUE_CONNECTION" value="sync"/>
         <server name="SESSION_DRIVER" value="array"/>
         <server name="TELESCOPE_ENABLED" value="false"/>
+        <env name="DB_DATABASE" value="testing"/>
+        <env name="SIS_DB_DATABASE" value="testing"/>
     </php>
 </phpunit>

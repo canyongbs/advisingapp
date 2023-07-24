@@ -11,6 +11,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-pdo": "*",
         "filament/filament": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
@@ -19,6 +20,7 @@
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
         "livewire/livewire": "^2.11",
+        "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-permission": "^5.10"
     },

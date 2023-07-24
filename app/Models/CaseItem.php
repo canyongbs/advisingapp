@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -48,7 +49,8 @@ class CaseItem extends BaseModel
 
     protected $fillable = [
         'casenumber',
-        'student_id',
+        'respondent_type',
+        'respondent_id',
         'institution_id',
         'state_id',
         'type_id',
@@ -59,9 +61,14 @@ class CaseItem extends BaseModel
         'created_by_id',
     ];
 
-    public function student(): BelongsTo
+    public function respondent(): MorphTo
     {
-        return $this->belongsTo(RecordStudentItem::class);
+        return $this->morphTo(
+            name: 'respondent',
+            type: 'respondent_type',
+            id: 'respondent_id',
+            ownerKey: 'student_id',
+        );
     }
 
     public function institution(): BelongsTo
