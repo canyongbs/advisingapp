@@ -7,6 +7,7 @@ use App\Models\CaseItem;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\CaseItemResource\Pages;
 
 class CaseItemResource extends Resource
@@ -33,10 +34,18 @@ class CaseItemResource extends Resource
                 Tables\Columns\TextColumn::make('casenumber')
                     ->label('Case #')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('priority.name')
+                    ->label('Priority')
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->orderByPowerJoins('priority.order', $direction);
+                    }),
                 Tables\Columns\TextColumn::make('status_id')
                     ->label('Status'),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('priority')
+                    ->relationship('priority', 'name')
+                    ->multiple(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

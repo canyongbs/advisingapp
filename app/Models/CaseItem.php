@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,7 @@ class CaseItem extends BaseModel
 {
     use HasAdvancedFilter;
     use SoftDeletes;
+    use PowerJoins;
 
     public static $search = [
         'casenumber',
