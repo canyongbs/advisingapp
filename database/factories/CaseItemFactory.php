@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Student;
 use App\Models\CaseItem;
+use App\Models\CaseItemStatus;
 use App\Models\CaseItemPriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -34,6 +35,7 @@ class CaseItemFactory extends Factory
         return $this->afterMaking(function (CaseItem $case) {
         })->afterCreating(function (CaseItem $case) {
             $this->generatePriority($case);
+            $this->generateStatus($case);
         });
     }
 
@@ -46,5 +48,16 @@ class CaseItemFactory extends Factory
         }
 
         $case->priority()->associate($priority)->save();
+    }
+
+    protected function generateStatus(CaseItem $case): void
+    {
+        $priority = CaseItemStatus::inRandomOrder()->first();
+
+        if (! $priority) {
+            $priority = CaseItemStatus::factory()->state('open')->create();
+        }
+
+        $case->state()->associate($priority)->save();
     }
 }

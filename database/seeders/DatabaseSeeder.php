@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersTableSeeder::class,
             CaseItemPrioritySeeder::class,
+            CaseItemStatusSeeder::class,
             CaseItemSeeder::class,
             StudentSeeder::class,
         ]);

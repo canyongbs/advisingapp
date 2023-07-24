@@ -39,12 +39,17 @@ class CaseItemResource extends Resource
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->orderByPowerJoins('priority.order', $direction);
                     }),
-                Tables\Columns\TextColumn::make('status_id')
-                    ->label('Status'),
+                Tables\Columns\TextColumn::make('state.name')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (CaseItem $caseItem) => $caseItem->state->color),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('priority')
                     ->relationship('priority', 'name')
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('state')
+                    ->relationship('state', 'name')
                     ->multiple(),
             ])
             ->actions([

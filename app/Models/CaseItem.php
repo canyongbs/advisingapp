@@ -72,7 +72,6 @@ class CaseItem extends BaseModel
         return $this->belongsTo(Institution::class);
     }
 
-    // TODO
     public function state(): BelongsTo
     {
         return $this->belongsTo(CaseItemStatus::class);
