@@ -12,5 +12,4 @@ class Enrollment extends Model
 {
     use HasFactory;
 
-    protected $connection = 'sis';
 }
