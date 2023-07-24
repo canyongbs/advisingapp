@@ -88,7 +88,6 @@ class CaseItem extends BaseModel
         return $this->belongsTo(CaseItemPriority::class);
     }
 
-    // TODO
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class);
