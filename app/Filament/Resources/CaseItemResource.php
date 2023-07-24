@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use App\Models\CaseItemStatus;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\MorphToSelect;
@@ -41,13 +42,13 @@ class CaseItemResource extends Resource
                     ])
                     ->searchable()
                     ->label('Respondent'),
-                // TODO: Institution
+                // TODO: Add Institution input
                 Select::make('state')
                     ->options(CaseItemStatus::all()->pluck('name', 'id'))
                     ->relationship('state', 'name')
                     ->label('State')
                     ->required(),
-                // TODO: Type
+                // TODO: Add Type input
                 Select::make('priority')
                     ->relationship(
                         relationshipName: 'priority',
@@ -56,6 +57,20 @@ class CaseItemResource extends Resource
                     )
                     ->label('Priority')
                     ->required(),
+                Select::make('assignedTo')
+                    ->relationship(
+                        relationshipName: 'assignedTo',
+                        titleAttribute: 'name',
+                    )
+                    ->label('Assigned To')
+                    ->required()
+                    ->searchable(['name', 'email']),
+                Textarea::make('close_details')
+                    ->label('Close Details/Description')
+                    ->nullable(),
+                Textarea::make('res_details')
+                    ->label('Internal Case Details')
+                    ->nullable(),
             ]);
     }
 
