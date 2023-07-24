@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\CaseItemStatusResource\Pages;
 
-use App\Filament\Resources\CaseItemStatusResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\CaseItemStatusResource;
 
 class EditCaseItemStatus extends EditRecord
 {

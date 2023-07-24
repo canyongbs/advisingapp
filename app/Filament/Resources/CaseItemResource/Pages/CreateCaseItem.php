@@ -2,9 +2,8 @@
 
 namespace App\Filament\Resources\CaseItemResource\Pages;
 
-use App\Filament\Resources\CaseItemResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\CaseItemResource;
 
 class CreateCaseItem extends CreateRecord
 {

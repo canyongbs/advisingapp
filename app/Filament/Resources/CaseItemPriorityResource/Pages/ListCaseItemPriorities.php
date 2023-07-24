@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\CaseItemPriorityResource\Pages;
 
-use App\Filament\Resources\CaseItemPriorityResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\CaseItemPriorityResource;
 
 class ListCaseItemPriorities extends ListRecords
 {

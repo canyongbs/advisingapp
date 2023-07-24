@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\CaseItemPriorityResource\Pages;
 
-use App\Filament\Resources\CaseItemPriorityResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Resources\CaseItemPriorityResource;
 
 class ViewCaseItemPriority extends ViewRecord
 {
