@@ -12,5 +12,4 @@ class Program extends Model
 {
     use HasFactory;
 
-    protected $connection = 'sis';
 }
