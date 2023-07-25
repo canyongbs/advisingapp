@@ -13,7 +13,7 @@ class CreateAndSyncRoleGroups
         collect(File::files(config_path('role_groups')))->each(function ($file) {
             $config = config("role_groups.{$file->getFilenameWithoutExtension()}");
 
-            $roleGroup = RoleGroup::create([
+            $roleGroup = RoleGroup::firstOrCreate([
                 'name' => $config['name'],
             ]);
 
