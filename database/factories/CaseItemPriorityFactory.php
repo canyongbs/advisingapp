@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\CaseItemPriority;
+use Assist\CaseModule\Models\CaseItemPriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

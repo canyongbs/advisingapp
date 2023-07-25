@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use Gate;
 use Illuminate\Http\Response;
-use App\Models\CaseUpdateItem;
 use App\Http\Controllers\Controller;
+use Assist\CaseModule\Models\CaseUpdateItem;
 
 class CaseUpdateItemController extends Controller
 {

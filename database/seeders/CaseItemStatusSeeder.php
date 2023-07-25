@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\CaseItemStatus;
 use Illuminate\Database\Seeder;
+use Assist\CaseModule\Models\CaseItemStatus;
 
 class CaseItemStatusSeeder extends Seeder
 {

@@ -5,9 +5,9 @@ namespace App\Filament\Resources;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Models\CaseItemPriority;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
+use Assist\CaseModule\Models\CaseItemPriority;
 use App\Filament\Resources\CaseItemPriorityResource\Pages;
 
 class CaseItemPriorityResource extends Resource

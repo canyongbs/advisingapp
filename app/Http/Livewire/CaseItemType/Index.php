@@ -3,12 +3,12 @@
 namespace App\Http\Livewire\CaseItemType;
 
 use Livewire\Component;
-use App\Models\CaseItemType;
 use Livewire\WithPagination;
 use Illuminate\Http\Response;
 use App\Http\Livewire\WithSorting;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Livewire\WithConfirmation;
+use Assist\CaseModule\Models\CaseItemType;
 
 class Index extends Component
 {

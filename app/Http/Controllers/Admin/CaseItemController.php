@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use Gate;
-use App\Models\CaseItem;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use Assist\CaseModule\Models\CaseItem;
 use App\Http\Controllers\Traits\WithCSVImport;
 
 class CaseItemController extends Controller

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\CaseItemPriority;
+use Assist\CaseModule\Models\CaseItemPriority;
 
 class CaseItemPrioritySeeder extends Seeder
 {

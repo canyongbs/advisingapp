@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\CaseItemType;
 
 use Livewire\Component;
-use App\Models\CaseItemType;
+use Assist\CaseModule\Models\CaseItemType;
 
 class Edit extends Component
 {

@@ -4,15 +4,15 @@ namespace App\Filament\Resources;
 
 use Filament\Tables;
 use App\Models\Student;
-use App\Models\CaseItem;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Models\CaseItemStatus;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Assist\CaseModule\Models\CaseItem;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\CaseModule\Models\CaseItemStatus;
 use Filament\Forms\Components\MorphToSelect;
 use App\Filament\Resources\CaseItemResource\Pages;
 

@@ -1,0 +1,24 @@
+{
+	"name": "canyon-gbs/case-module",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"Assist\\CaseModule\\": "src/",
+			"Assist\\CaseModule\\Tests\\": "tests/",
+			"Assist\\CaseModule\\Database\\Factories\\": "database/factories/",
+			"Assist\\CaseModule\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Assist\\CaseModule\\Providers\\CaseModuleServiceProvider"
+			]
+		}
+	}
+}

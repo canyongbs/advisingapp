@@ -5,11 +5,11 @@ namespace App\Filament\Resources;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use App\Models\CaseItemStatus;
 use Filament\Resources\Resource;
 use App\Enums\ColumnColorOptions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Assist\CaseModule\Models\CaseItemStatus;
 use App\Filament\Resources\CaseItemStatusResource\Pages;
 
 class CaseItemStatusResource extends Resource

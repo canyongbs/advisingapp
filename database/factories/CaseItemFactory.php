@@ -4,10 +4,10 @@ namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\Student;
-use App\Models\CaseItem;
 use App\Models\Institution;
-use App\Models\CaseItemStatus;
-use App\Models\CaseItemPriority;
+use Assist\CaseModule\Models\CaseItem;
+use Assist\CaseModule\Models\CaseItemStatus;
+use Assist\CaseModule\Models\CaseItemPriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

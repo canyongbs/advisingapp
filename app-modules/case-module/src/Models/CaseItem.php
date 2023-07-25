@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace Assist\CaseModule\Models;
 
+use App\Models\User;
 use DateTimeInterface;
+use App\Models\BaseModel;
+use App\Models\Institution;
+use App\Models\IdeHelperCaseItem;
 use App\Support\HasAdvancedFilter;
 use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\SoftDeletes;

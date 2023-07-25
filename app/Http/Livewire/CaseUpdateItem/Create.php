@@ -3,9 +3,9 @@
 namespace App\Http\Livewire\CaseUpdateItem;
 
 use Livewire\Component;
-use App\Models\CaseItem;
-use App\Models\CaseUpdateItem;
 use App\Models\RecordStudentItem;
+use Assist\CaseModule\Models\CaseItem;
+use Assist\CaseModule\Models\CaseUpdateItem;
 
 class Create extends Component
 {

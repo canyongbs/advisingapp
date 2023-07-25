@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use Gate;
-use App\Models\CaseItemType;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use Assist\CaseModule\Models\CaseItemType;
 
 class CaseItemTypeController extends Controller
 {

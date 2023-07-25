@@ -5,10 +5,10 @@ namespace App\Http\Livewire\CaseItemStatus;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Http\Response;
-use App\Models\CaseItemStatus;
 use App\Http\Livewire\WithSorting;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Livewire\WithConfirmation;
+use Assist\CaseModule\Models\CaseItemStatus;
 
 class Index extends Component
 {

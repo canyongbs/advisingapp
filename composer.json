@@ -12,8 +12,10 @@
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
+        "canyon-gbs/case-module": "*",
         "filament/filament": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
+        "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^2.7",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
@@ -119,5 +121,14 @@
         "sort-packages": true
     },
     "prefer-stable": true,
-    "minimum-stability": "alpha"
+    "minimum-stability": "alpha",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "app-modules/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
 }

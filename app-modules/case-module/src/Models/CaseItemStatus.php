@@ -1,41 +1,42 @@
 <?php
 
-namespace App\Models;
+namespace Assist\CaseModule\Models;
 
 use DateTimeInterface;
+use App\Models\BaseModel;
 use App\Support\HasAdvancedFilter;
+use App\Models\IdeHelperCaseItemStatus;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperCaseItemPriority
+ * @mixin IdeHelperCaseItemStatus
  */
-class CaseItemPriority extends BaseModel
+class CaseItemStatus extends BaseModel
 {
     use HasAdvancedFilter;
     use SoftDeletes;
 
     protected $fillable = [
         'name',
-        'order',
+        'color',
     ];
 
     public $orderable = [
         'id',
-        'order',
+        'name',
     ];
 
     public $filterable = [
         'id',
-        'order',
+        'name',
     ];
 
-    public function caseItems(): HasMany
+    public function caseItems()
     {
         return $this->hasMany(CaseItem::class);
     }
 
-    protected function serializeDate(DateTimeInterface $date): string
+    protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
