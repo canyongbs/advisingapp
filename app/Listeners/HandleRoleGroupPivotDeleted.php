@@ -22,6 +22,7 @@ class HandleRoleGroupPivotDeleted
     public function handle(object $event): void
     {
         // TODO For some reason we do not have access to the `role_groupable_type` on the pivot record
+        // (https://github.com/laravel/framework/issues/31658)
         // For the deleted event. We do have the `role_group_id` and the `role_groupable_id`.
         // On saved, this issue does not exist so we are able to determine model impacted.
 
