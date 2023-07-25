@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07981d38d2e551b7257fcba68ead7706",
+    "content-hash": "d4538e6afa780a907df1972fac0a5693",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5443,6 +5443,104 @@
                 }
             ],
             "time": "2023-04-28T07:47:42+00:00"
+        },
+        {
+            "name": "staudenmeir/eloquent-has-many-deep",
+            "version": "v1.18.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staudenmeir/eloquent-has-many-deep.git",
+                "reference": "b3421d637de05d2cc62166c5decb9727a029185c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staudenmeir/eloquent-has-many-deep/zipball/b3421d637de05d2cc62166c5decb9727a029185c",
+                "reference": "b3421d637de05d2cc62166c5decb9727a029185c",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^10.0",
+                "php": "^8.1",
+                "staudenmeir/eloquent-has-many-deep-contracts": "^1.1"
+            },
+            "require-dev": {
+                "awobaz/compoships": "^2.2",
+                "illuminate/pagination": "^10.0",
+                "korridor/laravel-has-many-merged": "^1.0",
+                "phpunit/phpunit": "^10.1",
+                "staudenmeir/eloquent-eager-limit": "^1.8",
+                "staudenmeir/eloquent-json-relations": "^1.8",
+                "staudenmeir/laravel-adjacency-list": "^1.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Staudenmeir\\EloquentHasManyDeep\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonas Staudenmeir",
+                    "email": "mail@jonas-staudenmeir.de"
+                }
+            ],
+            "description": "Laravel Eloquent HasManyThrough relationships with unlimited levels",
+            "support": {
+                "issues": "https://github.com/staudenmeir/eloquent-has-many-deep/issues",
+                "source": "https://github.com/staudenmeir/eloquent-has-many-deep/tree/v1.18.1"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/JonasStaudenmeir",
+                    "type": "custom"
+                }
+            ],
+            "time": "2023-06-20T18:09:39+00:00"
+        },
+        {
+            "name": "staudenmeir/eloquent-has-many-deep-contracts",
+            "version": "v1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staudenmeir/eloquent-has-many-deep-contracts.git",
+                "reference": "c39317b839d6123be126b9980e4a3d38310f5939"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staudenmeir/eloquent-has-many-deep-contracts/zipball/c39317b839d6123be126b9980e4a3d38310f5939",
+                "reference": "c39317b839d6123be126b9980e4a3d38310f5939",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^10.0",
+                "php": "^8.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Staudenmeir\\EloquentHasManyDeepContracts\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonas Staudenmeir",
+                    "email": "mail@jonas-staudenmeir.de"
+                }
+            ],
+            "description": "Contracts for staudenmeir/eloquent-has-many-deep",
+            "support": {
+                "issues": "https://github.com/staudenmeir/eloquent-has-many-deep-contracts/issues",
+                "source": "https://github.com/staudenmeir/eloquent-has-many-deep-contracts/tree/v1.1"
+            },
+            "time": "2023-01-18T12:43:26+00:00"
         },
         {
             "name": "symfony/console",
