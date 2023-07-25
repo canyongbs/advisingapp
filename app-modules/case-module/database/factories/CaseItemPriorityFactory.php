@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Assist\CaseModule\Database\Factories;
 
 use Assist\CaseModule\Models\CaseItemPriority;
 use Illuminate\Database\Eloquent\Factories\Factory;

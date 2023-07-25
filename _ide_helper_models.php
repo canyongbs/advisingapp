@@ -68,7 +68,7 @@ namespace App\Models{use Assist\CaseModule\Models\CaseItem;
  * @property-read \Assist\CaseModule\Models\CaseItemStatus|null $state
  * @property-read \Assist\CaseModule\Models\CaseItemType|null $type
  * @method static \Illuminate\Database\Eloquent\Builder|CaseItem advancedFilter($data)
- * @method static \Database\Factories\CaseItemFactory factory($count = null, $state = [])
+ * @method static \factories\CaseItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CaseItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseItem onlyTrashed()

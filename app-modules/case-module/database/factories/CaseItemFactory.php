@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Assist\CaseModule\Database\Factories;
 
 use App\Models\User;
 use App\Models\Student;

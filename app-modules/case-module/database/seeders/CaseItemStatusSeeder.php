@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Assist\CaseModule\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Assist\CaseModule\Models\CaseItemStatus;
