@@ -2,9 +2,8 @@
 
 namespace App\Filament\Resources\RoleGroupResource\Pages;
 
-use App\Filament\Resources\RoleGroupResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\RoleGroupResource;
 
 class CreateRoleGroup extends CreateRecord
 {

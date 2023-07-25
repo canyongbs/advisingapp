@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\RoleGroupResource\Pages;
 
-use App\Filament\Resources\RoleGroupResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\RoleGroupResource;
 
 class ListRoleGroups extends ListRecords
 {
