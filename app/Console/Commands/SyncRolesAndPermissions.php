@@ -29,6 +29,8 @@ class SyncRolesAndPermissions extends Command
 
         $this->syncApiPermissions();
 
+        Artisan::call(SetupRoleGroups::class);
+
         return self::SUCCESS;
     }
 
