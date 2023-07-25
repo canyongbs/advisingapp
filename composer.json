@@ -70,6 +70,12 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
+        "refresh-database": [
+            "@php artisan migrate:fresh",
+            "@php artisan migrate:fresh --database=sis --path=database/migrations/sis",
+            "@php artisan app:setup-foreign-data-wrapper",
+            "@php artisan db:seed"
+        ],
         "php-cs-lint": [
             "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
         ],
