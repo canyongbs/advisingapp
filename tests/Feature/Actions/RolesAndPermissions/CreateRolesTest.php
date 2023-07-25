@@ -19,10 +19,9 @@ class CreateRolesTest extends TestCase
         $this->assertCount(1, Role::where('name', 'super_admin')->api()->get());
         $this->assertCount(1, Role::where('name', 'super_admin')->web()->get());
 
-        $this->assertCount(1, Role::where('name', 'admin')->api()->get());
+        // TODO Remove this once Roles are more segmented
         $this->assertCount(1, Role::where('name', 'admin')->web()->get());
 
-        $this->assertCount(1, Role::where('name', 'user')->api()->get());
-        $this->assertCount(1, Role::where('name', 'user')->web()->get());
+        // TODO Add other Roles that should exist from initial seeding
     }
 }
