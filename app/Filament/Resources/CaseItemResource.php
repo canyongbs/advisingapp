@@ -44,7 +44,7 @@ class CaseItemResource extends Resource
                     ->label('Respondent'),
                 // TODO: Add Institution input
                 Select::make('state')
-                    ->options(CaseItemStatus::all()->pluck('name', 'id'))
+                    ->options(CaseItemStatus::pluck('name', 'id'))
                     ->relationship('state', 'name')
                     ->label('State')
                     ->required(),
