@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Actions\RolesAndPermissions;
+namespace App\Actions\RolesAndPermissions\RoleGroups;
 
 use App\Models\Role;
 use App\Models\RoleGroup;
 use Illuminate\Support\Facades\File;
 
-class SyncRoleGroups
+class CreateAndSyncRoleGroups
 {
     public function handle(): void
     {

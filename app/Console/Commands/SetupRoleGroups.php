@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Actions\RolesAndPermissions\SyncRoleGroups;
+use App\Actions\RolesAndPermissions\RoleGroups\CreateAndSyncRoleGroups;
 
 class SetupRoleGroups extends Command
 {
@@ -13,7 +13,7 @@ class SetupRoleGroups extends Command
 
     public function handle(): int
     {
-        resolve(SyncRoleGroups::class)->handle();
+        resolve(CreateAndSyncRoleGroups::class)->handle();
 
         return self::SUCCESS;
     }
