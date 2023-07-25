@@ -2,8 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use App\Models\Student;
 use App\Models\CaseItem;
+use App\Models\Institution;
 use App\Models\CaseItemStatus;
 use App\Models\CaseItemPriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,11 +25,11 @@ class CaseItemFactory extends Factory
             },
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
-            'institution_id' => $this->faker->randomNumber(9),
-            'state_id' => $this->faker->randomNumber(9),
+            'institution_id' => Institution::factory(),
+            'state_id' => CaseItemStatus::factory(),
             'type_id' => $this->faker->randomNumber(9),
-            'priority_id' => $this->faker->randomNumber(9),
-            'assigned_to_id' => $this->faker->randomNumber(9),
+            'priority_id' => CaseItemPriority::factory(),
+            'assigned_to_id' => User::factory(),
             'created_by_id' => $this->faker->randomNumber(9),
         ];
     }
