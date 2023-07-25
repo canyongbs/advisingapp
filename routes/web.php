@@ -42,7 +42,7 @@ use App\Http\Controllers\Admin\EngagementInteractionDriverController;
 use App\Http\Controllers\Admin\EngagementInteractionOutcomeController;
 use App\Http\Controllers\Admin\EngagementInteractionRelationController;
 
-Route::redirect('/', '/login');
+Route::redirect('/', '/v2/admin');
 
 Auth::routes(['register' => false]);
 
