@@ -11,8 +11,8 @@ parameters:
         - tests/
         - routes/
 
-    scanFiles:
-          - _ide_helper_models.php
+    excludePaths:
+        - app-modules/*/vendor/*
 
     excludePaths:
           - app-modules/*/vendor/*

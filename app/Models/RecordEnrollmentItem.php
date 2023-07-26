@@ -2,13 +2,46 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperRecordEnrollmentItem
+ * App\Models\RecordEnrollmentItem
+ *
+ * @property int $id
+ * @property string $sisid
+ * @property string|null $name
+ * @property string|null $start
+ * @property string|null $end
+ * @property string|null $course
+ * @property float|null $grade
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
+ * @method static Builder|RecordEnrollmentItem advancedFilter($data)
+ * @method static Builder|RecordEnrollmentItem newModelQuery()
+ * @method static Builder|RecordEnrollmentItem newQuery()
+ * @method static Builder|RecordEnrollmentItem onlyTrashed()
+ * @method static Builder|RecordEnrollmentItem query()
+ * @method static Builder|RecordEnrollmentItem whereCourse($value)
+ * @method static Builder|RecordEnrollmentItem whereCreatedAt($value)
+ * @method static Builder|RecordEnrollmentItem whereDeletedAt($value)
+ * @method static Builder|RecordEnrollmentItem whereEnd($value)
+ * @method static Builder|RecordEnrollmentItem whereGrade($value)
+ * @method static Builder|RecordEnrollmentItem whereId($value)
+ * @method static Builder|RecordEnrollmentItem whereName($value)
+ * @method static Builder|RecordEnrollmentItem whereSisid($value)
+ * @method static Builder|RecordEnrollmentItem whereStart($value)
+ * @method static Builder|RecordEnrollmentItem whereUpdatedAt($value)
+ * @method static Builder|RecordEnrollmentItem withTrashed()
+ * @method static Builder|RecordEnrollmentItem withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class RecordEnrollmentItem extends BaseModel
 {

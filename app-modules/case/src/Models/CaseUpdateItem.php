@@ -2,19 +2,51 @@
 
 namespace Assist\Case\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\RecordStudentItem;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperCaseUpdateItem
+ * Assist\Case\Models\CaseUpdateItem
  *
+ * @property int $id
+ * @property string $update
  * @property string $internal
  * @property string $direction
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $student_id
+ * @property int|null $case_id
+ * @property-read CaseItem|null $case
+ * @property-read mixed $direction_label
+ * @property-read mixed $internal_label
+ * @property-read RecordStudentItem|null $student
+ *
+ * @method static Builder|CaseUpdateItem advancedFilter($data)
+ * @method static Builder|CaseUpdateItem newModelQuery()
+ * @method static Builder|CaseUpdateItem newQuery()
+ * @method static Builder|CaseUpdateItem onlyTrashed()
+ * @method static Builder|CaseUpdateItem query()
+ * @method static Builder|CaseUpdateItem whereCaseId($value)
+ * @method static Builder|CaseUpdateItem whereCreatedAt($value)
+ * @method static Builder|CaseUpdateItem whereDeletedAt($value)
+ * @method static Builder|CaseUpdateItem whereDirection($value)
+ * @method static Builder|CaseUpdateItem whereId($value)
+ * @method static Builder|CaseUpdateItem whereInternal($value)
+ * @method static Builder|CaseUpdateItem whereStudentId($value)
+ * @method static Builder|CaseUpdateItem whereUpdate($value)
+ * @method static Builder|CaseUpdateItem whereUpdatedAt($value)
+ * @method static Builder|CaseUpdateItem withTrashed()
+ * @method static Builder|CaseUpdateItem withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class CaseUpdateItem extends BaseModel
 {

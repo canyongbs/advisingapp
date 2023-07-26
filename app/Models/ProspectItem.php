@@ -2,14 +2,81 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperProspectItem
+ * App\Models\ProspectItem
+ *
+ * @property int $id
+ * @property string $first
+ * @property string $last
+ * @property string $full
+ * @property string|null $preferred
+ * @property string|null $description
+ * @property string|null $email
+ * @property string|null $email_2
+ * @property int|null $mobile
+ * @property string|null $sms_opt_out
+ * @property string|null $email_bounce
+ * @property int|null $phone
+ * @property string|null $address
+ * @property string|null $address_2
+ * @property string|null $birthdate
+ * @property string|null $hsgrad
+ * @property string|null $hsdate
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $status_id
+ * @property int|null $source_id
+ * @property int|null $assigned_to_id
+ * @property int|null $created_by_id
+ * @property-read User|null $assignedTo
+ * @property-read User|null $createdBy
+ * @property-read mixed $email_bounce_label
+ * @property-read mixed $sms_opt_out_label
+ * @property-read ProspectSource|null $source
+ * @property-read ProspectStatus|null $status
+ *
+ * @method static Builder|ProspectItem advancedFilter($data)
+ * @method static Builder|ProspectItem newModelQuery()
+ * @method static Builder|ProspectItem newQuery()
+ * @method static Builder|ProspectItem onlyTrashed()
+ * @method static Builder|ProspectItem query()
+ * @method static Builder|ProspectItem whereAddress($value)
+ * @method static Builder|ProspectItem whereAddress2($value)
+ * @method static Builder|ProspectItem whereAssignedToId($value)
+ * @method static Builder|ProspectItem whereBirthdate($value)
+ * @method static Builder|ProspectItem whereCreatedAt($value)
+ * @method static Builder|ProspectItem whereCreatedById($value)
+ * @method static Builder|ProspectItem whereDeletedAt($value)
+ * @method static Builder|ProspectItem whereDescription($value)
+ * @method static Builder|ProspectItem whereEmail($value)
+ * @method static Builder|ProspectItem whereEmail2($value)
+ * @method static Builder|ProspectItem whereEmailBounce($value)
+ * @method static Builder|ProspectItem whereFirst($value)
+ * @method static Builder|ProspectItem whereFull($value)
+ * @method static Builder|ProspectItem whereHsdate($value)
+ * @method static Builder|ProspectItem whereHsgrad($value)
+ * @method static Builder|ProspectItem whereId($value)
+ * @method static Builder|ProspectItem whereLast($value)
+ * @method static Builder|ProspectItem whereMobile($value)
+ * @method static Builder|ProspectItem wherePhone($value)
+ * @method static Builder|ProspectItem wherePreferred($value)
+ * @method static Builder|ProspectItem whereSmsOptOut($value)
+ * @method static Builder|ProspectItem whereSourceId($value)
+ * @method static Builder|ProspectItem whereStatusId($value)
+ * @method static Builder|ProspectItem whereUpdatedAt($value)
+ * @method static Builder|ProspectItem withTrashed()
+ * @method static Builder|ProspectItem withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class ProspectItem extends BaseModel
 {

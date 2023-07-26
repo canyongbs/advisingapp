@@ -2,16 +2,47 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 /**
- * @mixin IdeHelperEngagementStudentFile
+ * App\Models\EngagementStudentFile
+ *
+ * @property int $id
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $student_id
+ * @property-read mixed $file
+ * @property-read MediaCollection<int, Media> $media
+ * @property-read int|null $media_count
+ * @property-read RecordStudentItem|null $student
+ *
+ * @method static Builder|EngagementStudentFile advancedFilter($data)
+ * @method static Builder|EngagementStudentFile newModelQuery()
+ * @method static Builder|EngagementStudentFile newQuery()
+ * @method static Builder|EngagementStudentFile onlyTrashed()
+ * @method static Builder|EngagementStudentFile query()
+ * @method static Builder|EngagementStudentFile whereCreatedAt($value)
+ * @method static Builder|EngagementStudentFile whereDeletedAt($value)
+ * @method static Builder|EngagementStudentFile whereDescription($value)
+ * @method static Builder|EngagementStudentFile whereId($value)
+ * @method static Builder|EngagementStudentFile whereStudentId($value)
+ * @method static Builder|EngagementStudentFile whereUpdatedAt($value)
+ * @method static Builder|EngagementStudentFile withTrashed()
+ * @method static Builder|EngagementStudentFile withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class EngagementStudentFile extends BaseModel implements HasMedia
 {

@@ -2,13 +2,36 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperProspectSource
+ * App\Models\ProspectSource
+ *
+ * @property int $id
+ * @property string $source
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
+ * @method static Builder|ProspectSource advancedFilter($data)
+ * @method static Builder|ProspectSource newModelQuery()
+ * @method static Builder|ProspectSource newQuery()
+ * @method static Builder|ProspectSource onlyTrashed()
+ * @method static Builder|ProspectSource query()
+ * @method static Builder|ProspectSource whereCreatedAt($value)
+ * @method static Builder|ProspectSource whereDeletedAt($value)
+ * @method static Builder|ProspectSource whereId($value)
+ * @method static Builder|ProspectSource whereSource($value)
+ * @method static Builder|ProspectSource whereUpdatedAt($value)
+ * @method static Builder|ProspectSource withTrashed()
+ * @method static Builder|ProspectSource withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class ProspectSource extends BaseModel
 {

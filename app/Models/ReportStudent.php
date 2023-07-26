@@ -2,11 +2,19 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @mixin IdeHelperReportStudent
+ * App\Models\ReportStudent
+ *
+ * @method static Builder|ReportStudent newModelQuery()
+ * @method static Builder|ReportStudent newQuery()
+ * @method static Builder|ReportStudent query()
+ *
+ * @mixin Eloquent
  */
 class ReportStudent extends Model
 {
