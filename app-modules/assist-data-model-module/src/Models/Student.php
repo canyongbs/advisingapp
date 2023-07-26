@@ -2,19 +2,16 @@
 
 namespace Assist\AssistDataModelModule\Models;
 
+use App\Models\BaseModel;
 use App\Models\IdeHelperStudent;
 use Assist\CaseModule\Models\CaseItem;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @mixin IdeHelperStudent
  */
-class Student extends Model
+class Student extends BaseModel
 {
-    use HasFactory;
-
     protected $primaryKey = 'student_id';
 
     public $incrementing = false;
