@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Assist\AssistDataModelModule\Database\Factories;
 
 use Assist\AssistDataModelModule\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
