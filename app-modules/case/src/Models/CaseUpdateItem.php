@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperCaseUpdateItem
+ *
+ * @property string $internal
+ * @property string $direction
  */
 class CaseUpdateItem extends BaseModel
 {
