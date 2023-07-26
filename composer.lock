@@ -361,7 +361,7 @@
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/assist-data-model-module",
+                "url": "app-modules/assist-data-model",
                 "reference": "427e4696473c88ce2404d2254a9a584cd3388ebe"
             },
             "require": {
