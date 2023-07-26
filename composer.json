@@ -12,14 +12,17 @@
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
-        "filament/filament": "^3.0",
+        "canyon-gbs/case-module": "*",
+        "filament/filament": "v3.0.0-beta11",
         "guzzlehttp/guzzle": "^7.2",
+        "internachi/modular": "^2.0",
+        "kirschbaum-development/eloquent-power-joins": "^3.0",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "livewire/livewire": "^2.11",
+        "livewire/livewire": "^3.0@beta",
         "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-permission": "^5.10",
@@ -67,6 +70,12 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "refresh-database": [
+            "@php artisan migrate:fresh",
+            "@php artisan migrate:fresh --database=sis --path=database/migrations/sis",
+            "@php artisan app:setup-foreign-data-wrapper",
+            "@php artisan db:seed"
         ],
         "php-cs-lint": [
             "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
@@ -116,8 +125,21 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
     },
     "prefer-stable": true,
-    "minimum-stability": "alpha"
+    "minimum-stability": "alpha",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "app-modules/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
 }
