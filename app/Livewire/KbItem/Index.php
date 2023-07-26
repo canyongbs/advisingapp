@@ -5,10 +5,10 @@ namespace App\Livewire\KbItem;
 use App\Models\KbItem;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Http\Response;
 use App\Livewire\WithSorting;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Response;
 use App\Livewire\WithConfirmation;
+use Illuminate\Support\Facades\Gate;
 
 class Index extends Component
 {

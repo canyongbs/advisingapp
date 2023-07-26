@@ -4,11 +4,11 @@ namespace App\Livewire\CaseItem;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Http\Response;
 use App\Livewire\WithSorting;
+use Illuminate\Http\Response;
+use App\Livewire\WithConfirmation;
 use Illuminate\Support\Facades\Gate;
 use Assist\CaseModule\Models\CaseItem;
-use App\Livewire\WithConfirmation;
 
 class Index extends Component
 {

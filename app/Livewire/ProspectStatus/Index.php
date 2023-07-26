@@ -4,11 +4,11 @@ namespace App\Livewire\ProspectStatus;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Livewire\WithSorting;
 use Illuminate\Http\Response;
 use App\Models\ProspectStatus;
-use App\Livewire\WithSorting;
-use Illuminate\Support\Facades\Gate;
 use App\Livewire\WithConfirmation;
+use Illuminate\Support\Facades\Gate;
 
 class Index extends Component
 {

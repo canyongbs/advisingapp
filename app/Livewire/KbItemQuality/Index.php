@@ -4,11 +4,11 @@ namespace App\Livewire\KbItemQuality;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Livewire\WithSorting;
 use App\Models\KbItemQuality;
 use Illuminate\Http\Response;
-use App\Livewire\WithSorting;
-use Illuminate\Support\Facades\Gate;
 use App\Livewire\WithConfirmation;
+use Illuminate\Support\Facades\Gate;
 
 class Index extends Component
 {

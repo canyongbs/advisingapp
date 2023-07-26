@@ -1,5 +1,5 @@
 <div>
-    <h6 class="mb-6 mt-3 text-sm font-bold uppercase text-blueGray-400">
+    <h6 class="text-blueGray-400 mb-6 mt-3 text-sm font-bold uppercase">
         {{ __('global.profile_information') }}
     </h6>
 

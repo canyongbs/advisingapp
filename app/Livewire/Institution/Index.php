@@ -5,10 +5,10 @@ namespace App\Livewire\Institution;
 use Livewire\Component;
 use App\Models\Institution;
 use Livewire\WithPagination;
-use Illuminate\Http\Response;
 use App\Livewire\WithSorting;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Response;
 use App\Livewire\WithConfirmation;
+use Illuminate\Support\Facades\Gate;
 
 class Index extends Component
 {

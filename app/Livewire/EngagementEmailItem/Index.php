@@ -4,11 +4,11 @@ namespace App\Livewire\EngagementEmailItem;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Http\Response;
 use App\Livewire\WithSorting;
+use Illuminate\Http\Response;
+use App\Livewire\WithConfirmation;
 use App\Models\EngagementEmailItem;
 use Illuminate\Support\Facades\Gate;
-use App\Livewire\WithConfirmation;
 
 class Index extends Component
 {

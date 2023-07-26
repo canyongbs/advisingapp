@@ -1,6 +1,6 @@
 <div class="relative flex w-full flex-wrap items-stretch">
     <span
-        class="absolute absolute z-10 h-full w-8 items-center justify-center rounded bg-transparent py-3 pl-3 text-center text-base font-normal leading-snug text-blueGray-300"
+        class="text-blueGray-300 absolute absolute z-10 h-full w-8 items-center justify-center rounded bg-transparent py-3 pl-3 text-center text-base font-normal leading-snug"
     >
         <i class="fas fa-search"></i>
     </span>
@@ -15,7 +15,7 @@
     @endif
 
     <input
-        class="relative w-full rounded border-0 bg-white bg-white px-3 py-3 pl-10 text-sm text-blueGray-600 placeholder-blueGray-300 shadow outline-none focus:outline-none focus:ring"
+        class="text-blueGray-600 placeholder-blueGray-300 relative w-full rounded border-0 bg-white bg-white px-3 py-3 pl-10 text-sm shadow outline-none focus:outline-none focus:ring"
         type="text"
         placeholder="Search here..."
         wire:model.live.debounce.300ms="search"
@@ -31,10 +31,10 @@
             <ul>
                 @foreach ($entries as $entry)
                     <li
-                        class="block flex cursor-pointer items-center px-3 py-2 font-normal no-underline hover:bg-blueGray-100">
+                        class="hover:bg-blueGray-100 block flex cursor-pointer items-center px-3 py-2 font-normal no-underline">
                         <a href="{{ $entry['linkTo'] }}">
                             @foreach ($entry['fields'] as $name => $value)
-                                <div class="text-sm text-blueGray-700">{{ $name }}: {{ $value }}</div>
+                                <div class="text-blueGray-700 text-sm">{{ $name }}: {{ $value }}</div>
                             @endforeach
                         </a>
                     </li>

@@ -4,11 +4,11 @@ namespace App\Livewire\RecordEnrollmentItem;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Http\Response;
 use App\Livewire\WithSorting;
+use Illuminate\Http\Response;
+use App\Livewire\WithConfirmation;
 use App\Models\RecordEnrollmentItem;
 use Illuminate\Support\Facades\Gate;
-use App\Livewire\WithConfirmation;
 
 class Index extends Component
 {

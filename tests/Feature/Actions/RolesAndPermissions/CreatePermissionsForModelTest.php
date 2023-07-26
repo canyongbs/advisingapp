@@ -18,7 +18,7 @@ class CreatePermissionsForModelTest extends TestCase
         parent::setUp();
 
         Relation::morphMap([
-            'user' => \Mockery_2_App_Models_User::class,
+            'user' => \Mockery_3_App_Models_User::class,
         ]);
     }
 

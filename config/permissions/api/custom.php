@@ -1,4 +1,3 @@
-
 <?php
 
 // TODO There are some permissions that seem like they should be tied

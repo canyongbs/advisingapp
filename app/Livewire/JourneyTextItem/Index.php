@@ -4,11 +4,11 @@ namespace App\Livewire\JourneyTextItem;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Livewire\WithSorting;
 use Illuminate\Http\Response;
 use App\Models\JourneyTextItem;
-use App\Livewire\WithSorting;
-use Illuminate\Support\Facades\Gate;
 use App\Livewire\WithConfirmation;
+use Illuminate\Support\Facades\Gate;
 
 class Index extends Component
 {
