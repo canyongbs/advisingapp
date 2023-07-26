@@ -7,16 +7,17 @@ use DateTimeInterface;
 use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Concerns\HasRoleGroups;
+use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
-use App\Models\Concerns\HasRolesWithPivot;
-use App\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * @mixin IdeHelperUser

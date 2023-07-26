@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab8a39fbd8941ae4fee4abfc62b1b834",
+    "content-hash": "c285c875f7af4e91e92b4fa00e7b8e32",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -355,6 +355,41 @@
                 }
             ],
             "time": "2023-01-15T23:15:59+00:00"
+        },
+        {
+            "name": "canyon-gbs/authorization",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/authorization",
+                "reference": "bb4ed8e03b9e3ef6573ae30907c69886e13a964e"
+            },
+            "require": {
+                "spatie/laravel-permission": "^5.10"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Authorization\\Providers\\AuthorizationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Authorization\\": "src/",
+                    "Assist\\Authorization\\Tests\\": "tests/",
+                    "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "canyon-gbs/case-module",
