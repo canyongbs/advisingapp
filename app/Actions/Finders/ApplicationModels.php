@@ -15,7 +15,6 @@ class ApplicationModels
     public function all(): Collection
     {
         return collect(File::allFiles(app_path()))
-            ->merge(File::allFiles(base_path('app-modules')))
             ->map(function ($item) {
                 $path = $item->getRelativePathName();
                 $class = sprintf(

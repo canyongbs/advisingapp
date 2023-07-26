@@ -12,4 +12,8 @@ class CaseModuleServiceProvider extends ServiceProvider
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new CasePlugin()));
     }
+
+    public function boot()
+    {
+    }
 }
