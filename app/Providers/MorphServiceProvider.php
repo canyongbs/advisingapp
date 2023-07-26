@@ -16,8 +16,6 @@ class MorphServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        ray(resolve(ApplicationModels::class)->all());
-
         Relation::enforceMorphMap(
             resolve(ApplicationModels::class)->all()->mapWithKeys(function ($modelClass) {
                 $reflection = new ReflectionClass($modelClass);
