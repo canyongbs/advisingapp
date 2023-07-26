@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\Concerns\DefinesPermissions;
 use Spatie\Permission\Models\Role as SpatieRole;
 
+/**
+ * @mixin IdeHelperRole
+ */
 class Role extends SpatieRole
 {
     use DefinesPermissions;

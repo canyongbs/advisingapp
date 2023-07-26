@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Support\HasAdvancedFilter;
-use App\Models\IdeHelperCaseItemType;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**

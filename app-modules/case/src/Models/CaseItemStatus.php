@@ -5,7 +5,6 @@ namespace Assist\Case\Models;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Support\HasAdvancedFilter;
-use App\Models\IdeHelperCaseItemStatus;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**

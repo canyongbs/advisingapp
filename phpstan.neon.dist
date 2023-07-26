@@ -6,6 +6,7 @@ parameters:
 
     paths:
         - app/
+        - app-modules/
         - database/
         - tests/
         - routes/

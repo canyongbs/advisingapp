@@ -3,7 +3,6 @@
 namespace Assist\AssistDataModel\Models;
 
 use App\Models\BaseModel;
-use App\Models\IdeHelperStudent;
 use Assist\Case\Models\CaseItem;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
