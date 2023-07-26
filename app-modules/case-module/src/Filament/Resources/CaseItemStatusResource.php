@@ -11,8 +11,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Assist\CaseModule\Models\CaseItemStatus;
 use Assist\CaseModule\Filament\Resources\CaseItemStatusResource\Pages\EditCaseItemStatus;
-use Assist\CaseModule\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
 use Assist\CaseModule\Filament\Resources\CaseItemStatusResource\Pages\CreateCaseItemStatus;
+use Assist\CaseModule\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
 
 class CaseItemStatusResource extends Resource
 {
