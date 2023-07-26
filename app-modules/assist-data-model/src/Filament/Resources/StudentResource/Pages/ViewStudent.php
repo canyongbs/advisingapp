@@ -2,9 +2,9 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 
 class ViewStudent extends ViewRecord
 {
