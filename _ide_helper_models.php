@@ -44,9 +44,9 @@ namespace App\Models{
     }
 }
 
-namespace App\Models{use Assist\CaseModule\Models\CaseItem;
+namespace App\Models{use Assist\Case\Models\CaseItem;
 /**
-     * Assist\CaseModule\Models\CaseItem
+     * Assist\Case\Models\CaseItem
      *
      * @property int $id
      * @property int $casenumber
@@ -66,10 +66,10 @@ namespace App\Models{use Assist\CaseModule\Models\CaseItem;
      * @property-read \App\Models\User|null $assignedTo
      * @property-read \App\Models\User|null $createdBy
      * @property-read \App\Models\Institution|null $institution
-     * @property-read \Assist\CaseModule\Models\CaseItemPriority|null $priority
+     * @property-read \Assist\Case\Models\CaseItemPriority|null $priority
      * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $respondent
-     * @property-read \Assist\CaseModule\Models\CaseItemStatus|null $state
-     * @property-read \Assist\CaseModule\Models\CaseItemType|null $type
+     * @property-read \Assist\Case\Models\CaseItemStatus|null $state
+     * @property-read \Assist\Case\Models\CaseItemType|null $type
      *
      * @method static \Illuminate\Database\Eloquent\Builder|CaseItem advancedFilter($data)
      * @method static \factories\CaseItemFactory factory($count = null, $state = [])
@@ -102,9 +102,9 @@ namespace App\Models{use Assist\CaseModule\Models\CaseItem;
     }
 }
 
-namespace App\Models{use Assist\CaseModule\Models\CaseItemPriority;
+namespace App\Models{use Assist\Case\Models\CaseItemPriority;
 /**
-     * Assist\CaseModule\Models\CaseItemPriority
+     * Assist\Case\Models\CaseItemPriority
      *
      * @property int $id
      * @property string $priority
@@ -132,9 +132,9 @@ namespace App\Models{use Assist\CaseModule\Models\CaseItemPriority;
     }
 }
 
-namespace App\Models{use Assist\CaseModule\Models\CaseItemStatus;
+namespace App\Models{use Assist\Case\Models\CaseItemStatus;
 /**
-     * Assist\CaseModule\Models\CaseItemStatus
+     * Assist\Case\Models\CaseItemStatus
      *
      * @property int $id
      * @property string $status
@@ -162,9 +162,9 @@ namespace App\Models{use Assist\CaseModule\Models\CaseItemStatus;
     }
 }
 
-namespace App\Models{use Assist\CaseModule\Models\CaseItemType;
+namespace App\Models{use Assist\Case\Models\CaseItemType;
 /**
-     * Assist\CaseModule\Models\CaseItemType
+     * Assist\Case\Models\CaseItemType
      *
      * @property int $id
      * @property string $type
@@ -192,9 +192,9 @@ namespace App\Models{use Assist\CaseModule\Models\CaseItemType;
     }
 }
 
-namespace App\Models{use Assist\CaseModule\Models\CaseUpdateItem;
+namespace App\Models{use Assist\Case\Models\CaseUpdateItem;
 /**
-     * Assist\CaseModule\Models\CaseUpdateItem
+     * Assist\Case\Models\CaseUpdateItem
      *
      * @property int $id
      * @property string $update
@@ -205,7 +205,7 @@ namespace App\Models{use Assist\CaseModule\Models\CaseUpdateItem;
      * @property \Illuminate\Support\Carbon|null $deleted_at
      * @property int|null $student_id
      * @property int|null $case_id
-     * @property-read \Assist\CaseModule\Models\CaseItem|null $case
+     * @property-read \Assist\Case\Models\CaseItem|null $case
      * @property-read mixed $direction_label
      * @property-read mixed $internal_label
      * @property-read \App\Models\RecordStudentItem|null $student
@@ -1197,7 +1197,7 @@ namespace App\Models{
      * @property string $email
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseModule\Models\CaseItem> $cases
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseItem> $cases
      * @property-read int|null $cases_count
      *
      * @method static \Assist\AssistDataModelModule\Database\FactoriesStudentFactory factory($count = null, $state = [])

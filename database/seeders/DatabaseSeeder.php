@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
-use Assist\CaseModule\Database\Seeders\CaseItemSeeder;
-use Assist\CaseModule\Database\Seeders\CaseItemStatusSeeder;
-use Assist\CaseModule\Database\Seeders\CaseItemPrioritySeeder;
+use Assist\Case\Database\Seeders\CaseItemSeeder;
+use Assist\Case\Database\Seeders\CaseItemStatusSeeder;
+use Assist\Case\Database\Seeders\CaseItemPrioritySeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 
 class DatabaseSeeder extends Seeder
