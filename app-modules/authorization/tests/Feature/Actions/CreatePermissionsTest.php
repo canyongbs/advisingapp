@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Actions\RolesAndPermissions;
+namespace Assist\Authorization\Tests\Feature\Actions\RolesAndPermissions;
 
 use Tests\TestCase;
 use App\Models\User;
@@ -10,7 +10,6 @@ use App\Actions\Finders\ApplicationModels;
 use Assist\Authorization\Models\Permission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Assist\Authorization\Actions\CreatePermissions;
-use App\Actions\RolesAndPermissions\CreatePermissions;
 
 class CreatePermissionsTest extends TestCase
 {

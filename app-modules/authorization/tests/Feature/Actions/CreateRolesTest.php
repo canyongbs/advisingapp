@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Feature\Actions\RolesAndPermissions;
+namespace Assist\Authorization\Tests\Feature\Actions\RolesAndPermissions;
 
 use Tests\TestCase;
-use App\Models\Role;
+use Assist\Authorization\Models\Role;
 use App\Actions\RolesAndPermissions\CreateRoles;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

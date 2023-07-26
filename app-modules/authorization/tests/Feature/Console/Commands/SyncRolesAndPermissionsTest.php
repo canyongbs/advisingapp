@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Console\Commands;
+namespace Assist\Authorization\Tests\Feature\Console\Commands;
 
 use Tests\TestCase;
 use Assist\Authorization\Models\Role;

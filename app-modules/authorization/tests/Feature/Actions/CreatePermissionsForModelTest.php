@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Feature\Actions\RolesAndPermissions;
+namespace Assist\Authorization\Tests\Feature\Actions\RolesAndPermissions;
 
 use Tests\TestCase;
 use App\Models\User;
 use Mockery\MockInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use App\Actions\RolesAndPermissions\CreatePermissionsForModel;
+use Assist\Authorization\Actions\CreatePermissionsForModel;
 
 class CreatePermissionsForModelTest extends TestCase
 {
