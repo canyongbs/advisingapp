@@ -1,5 +1,5 @@
 {
-	"name": "canyon-gbs/assist-data-model-module",
+	"name": "canyon-gbs/assist-data-model",
 	"description": "",
 	"type": "library",
 	"version": "1.0",
@@ -9,17 +9,17 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Assist\\AssistDataModelModule\\": "src/",
-			"Assist\\AssistDataModelModule\\Tests\\": "tests/",
-			"Assist\\AssistDataModelModule\\Database\\Factories\\": "database/factories/",
-			"Assist\\AssistDataModelModule\\Database\\Seeders\\": "database/seeders/"
+			"Assist\\AssistDataModel\\": "src/",
+			"Assist\\AssistDataModel\\Tests\\": "tests/",
+			"Assist\\AssistDataModel\\Database\\Factories\\": "database/factories/",
+			"Assist\\AssistDataModel\\Database\\Seeders\\": "database/seeders/"
 		}
 	},
 	"minimum-stability": "dev",
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Assist\\AssistDataModelModule\\Providers\\AssistDataModelModuleServiceProvider"
+				"Assist\\AssistDataModel\\Providers\\AssistDataModelServiceProvider"
 			]
 		}
 	}

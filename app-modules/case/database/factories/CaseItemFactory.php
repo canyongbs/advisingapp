@@ -3,11 +3,11 @@
 namespace Assist\Case\Database\Factories;
 
 use App\Models\User;
-use Assist\AssistDataModelModule\Models\Student;
 use App\Models\Institution;
 use Assist\Case\Models\CaseItem;
 use Assist\Case\Models\CaseItemStatus;
 use Assist\Case\Models\CaseItemPriority;
+use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

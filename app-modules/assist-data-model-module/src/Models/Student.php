@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\AssistDataModelModule\Models;
+namespace Assist\AssistDataModel\Models;
 
 use App\Models\BaseModel;
 use App\Models\IdeHelperStudent;

@@ -1188,7 +1188,7 @@ namespace App\Models{
 
 namespace App\Models{
     /**
-     * Assist\AssistDataModelModule\Models\Student
+     * Assist\AssistDataModel\Models\Student
      *
      * @property int $student_id
      * @property string $first_name
@@ -1200,7 +1200,7 @@ namespace App\Models{
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseItem> $cases
      * @property-read int|null $cases_count
      *
-     * @method static \Assist\AssistDataModelModule\Database\FactoriesStudentFactory factory($count = null, $state = [])
+     * @method static \Assist\AssistDataModel\Database\FactoriesStudentFactory factory($count = null, $state = [])
      * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder|Student query()
