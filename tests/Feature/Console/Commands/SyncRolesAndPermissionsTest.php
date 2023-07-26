@@ -3,11 +3,11 @@
 namespace Tests\Feature\Console\Commands;
 
 use Tests\TestCase;
-use App\Models\Role;
+use Assist\Authorization\Models\Role;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
-use App\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 
 class SyncRolesAndPermissionsTest extends TestCase
 {

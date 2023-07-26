@@ -10,7 +10,8 @@ return new class () extends Migration {
         Schema::create('role_groups', function (Blueprint $table) {
             $table->id();
             $table->string('name', 125);
-            $table->string('slug', 125);
+            // TODO Remove nullable once we install Spatie sluggable package
+            $table->string('slug', 125)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -4,10 +4,10 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
-use App\Console\Commands\SyncRolesAndPermissions;
 use Assist\CaseModule\Database\Seeders\CaseItemSeeder;
 use Assist\CaseModule\Database\Seeders\CaseItemStatusSeeder;
 use Assist\CaseModule\Database\Seeders\CaseItemPrioritySeeder;
+use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 
 class DatabaseSeeder extends Seeder
 {
