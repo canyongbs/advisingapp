@@ -65,6 +65,7 @@ Finally, we will set up the application by running the following commands:
 ```bash
 sail artisan key:generate
 sail artisan migrate
+sail artisan migrate --database=sis --path=database/migrations/sis
 sail artisan db:seed
 sail npm install
 sail npm run dev

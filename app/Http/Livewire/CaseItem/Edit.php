@@ -91,9 +91,9 @@ class Edit extends Component
     {
         $this->listsForFields['student'] = RecordStudentItem::pluck('full', 'id')->toArray();
         $this->listsForFields['institution'] = Institution::pluck('name', 'id')->toArray();
-        $this->listsForFields['state'] = CaseItemStatus::pluck('status', 'id')->toArray();
+        $this->listsForFields['state'] = CaseItemStatus::pluck('name', 'id')->toArray();
         $this->listsForFields['type'] = CaseItemType::pluck('type', 'id')->toArray();
-        $this->listsForFields['priority'] = CaseItemPriority::pluck('priority', 'id')->toArray();
+        $this->listsForFields['priority'] = CaseItemPriority::pluck('name', 'id')->toArray();
         $this->listsForFields['assigned_to'] = User::pluck('name', 'id')->toArray();
     }
 }

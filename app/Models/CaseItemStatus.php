@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,42 +15,27 @@ class CaseItemStatus extends BaseModel
     use SoftDeletes;
 
     protected $fillable = [
-        'status',
+        'name',
+        'color',
     ];
 
     public $orderable = [
         'id',
-        'status',
+        'name',
     ];
 
     public $filterable = [
         'id',
-        'status',
+        'name',
     ];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
-    public function getCreatedAtAttribute($value)
+    public function caseItems()
     {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getUpdatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getDeletedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+        return $this->hasMany(CaseItem::class);
     }
 
     protected function serializeDate(DateTimeInterface $date)
     {
-        return $date->format('Y-m-d H:i:s');
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }
