@@ -4,12 +4,12 @@ namespace App\Http\Livewire\CaseItem;
 
 use App\Models\User;
 use Livewire\Component;
-use App\Models\CaseItem;
 use App\Models\Institution;
-use App\Models\CaseItemType;
-use App\Models\CaseItemStatus;
-use App\Models\CaseItemPriority;
 use App\Models\RecordStudentItem;
+use Assist\CaseModule\Models\CaseItem;
+use Assist\CaseModule\Models\CaseItemType;
+use Assist\CaseModule\Models\CaseItemStatus;
+use Assist\CaseModule\Models\CaseItemPriority;
 
 class Create extends Component
 {

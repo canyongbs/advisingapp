@@ -41,9 +41,9 @@ namespace App\Models{
 	class IdeHelperAuditLog {}
 }
 
-namespace App\Models{
+namespace App\Models{use Assist\CaseModule\Models\CaseItem;
 /**
- * App\Models\CaseItem
+ * Assist\CaseModule\Models\CaseItem
  *
  * @property int $id
  * @property int $casenumber
@@ -63,12 +63,12 @@ namespace App\Models{
  * @property-read \App\Models\User|null $assignedTo
  * @property-read \App\Models\User|null $createdBy
  * @property-read \App\Models\Institution|null $institution
- * @property-read \App\Models\CaseItemPriority|null $priority
+ * @property-read \Assist\CaseModule\Models\CaseItemPriority|null $priority
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $respondent
- * @property-read \App\Models\CaseItemStatus|null $state
- * @property-read \App\Models\CaseItemType|null $type
+ * @property-read \Assist\CaseModule\Models\CaseItemStatus|null $state
+ * @property-read \Assist\CaseModule\Models\CaseItemType|null $type
  * @method static \Illuminate\Database\Eloquent\Builder|CaseItem advancedFilter($data)
- * @method static \Database\Factories\CaseItemFactory factory($count = null, $state = [])
+ * @method static \factories\CaseItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CaseItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseItem onlyTrashed()
@@ -95,9 +95,9 @@ namespace App\Models{
 	class IdeHelperCaseItem {}
 }
 
-namespace App\Models{
+namespace App\Models{use Assist\CaseModule\Models\CaseItemPriority;
 /**
- * App\Models\CaseItemPriority
+ * Assist\CaseModule\Models\CaseItemPriority
  *
  * @property int $id
  * @property string $priority
@@ -121,9 +121,9 @@ namespace App\Models{
 	class IdeHelperCaseItemPriority {}
 }
 
-namespace App\Models{
+namespace App\Models{use Assist\CaseModule\Models\CaseItemStatus;
 /**
- * App\Models\CaseItemStatus
+ * Assist\CaseModule\Models\CaseItemStatus
  *
  * @property int $id
  * @property string $status
@@ -147,9 +147,9 @@ namespace App\Models{
 	class IdeHelperCaseItemStatus {}
 }
 
-namespace App\Models{
+namespace App\Models{use Assist\CaseModule\Models\CaseItemType;
 /**
- * App\Models\CaseItemType
+ * Assist\CaseModule\Models\CaseItemType
  *
  * @property int $id
  * @property string $type
@@ -173,9 +173,9 @@ namespace App\Models{
 	class IdeHelperCaseItemType {}
 }
 
-namespace App\Models{
+namespace App\Models{use Assist\CaseModule\Models\CaseUpdateItem;
 /**
- * App\Models\CaseUpdateItem
+ * Assist\CaseModule\Models\CaseUpdateItem
  *
  * @property int $id
  * @property string $update
@@ -186,7 +186,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property int|null $student_id
  * @property int|null $case_id
- * @property-read \App\Models\CaseItem|null $case
+ * @property-read \Assist\CaseModule\Models\CaseItem|null $case
  * @property-read mixed $direction_label
  * @property-read mixed $internal_label
  * @property-read \App\Models\RecordStudentItem|null $student
@@ -1069,7 +1069,7 @@ namespace App\Models{
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CaseItem> $cases
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseModule\Models\CaseItem> $cases
  * @property-read int|null $cases_count
  * @method static \Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()

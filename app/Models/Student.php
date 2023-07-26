@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Assist\CaseModule\Models\CaseItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

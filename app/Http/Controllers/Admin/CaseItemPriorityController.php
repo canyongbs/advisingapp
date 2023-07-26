@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use Gate;
 use Illuminate\Http\Response;
-use App\Models\CaseItemPriority;
 use App\Http\Controllers\Controller;
+use Assist\CaseModule\Models\CaseItemPriority;
 
 class CaseItemPriorityController extends Controller
 {
