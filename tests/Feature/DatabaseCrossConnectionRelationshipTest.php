@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Assist\AssistDataModelModule\Models\Student;
-use Assist\CaseModule\Models\CaseItem;
+use Assist\Case\Models\CaseItem;
 
 class DatabaseCrossConnectionRelationshipTest extends TestCase
 {

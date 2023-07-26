@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7b66431041577e9315a9026d0fb233e7",
+    "content-hash": "9815f77dd62e4952599318c434b65305",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -392,12 +392,12 @@
             }
         },
         {
-            "name": "canyon-gbs/case-module",
+            "name": "canyon-gbs/case",
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/case-module",
-                "reference": "f0557bca12331b40f8f1bfcfc16b2cbec519ca40"
+                "url": "app-modules/case",
+                "reference": "afb8433b2079e5ca6f72443d36f4c6afbf6a32ba"
             },
             "require": {
                 "filament/filament": "v3.0.0-beta11"
@@ -406,16 +406,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\CaseModule\\Providers\\CaseModuleServiceProvider"
+                        "Assist\\Case\\Providers\\CaseServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\CaseModule\\": "src/",
-                    "Assist\\CaseModule\\Tests\\": "tests/",
-                    "Assist\\CaseModule\\Database\\Factories\\": "database/factories/",
-                    "Assist\\CaseModule\\Database\\Seeders\\": "database/seeders/"
+                    "Assist\\Case\\": "src/",
+                    "Assist\\Case\\Tests\\": "tests/",
+                    "Assist\\Case\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Case\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

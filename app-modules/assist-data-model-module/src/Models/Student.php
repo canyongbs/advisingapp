@@ -4,7 +4,7 @@ namespace Assist\AssistDataModelModule\Models;
 
 use App\Models\BaseModel;
 use App\Models\IdeHelperStudent;
-use Assist\CaseModule\Models\CaseItem;
+use Assist\Case\Models\CaseItem;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**

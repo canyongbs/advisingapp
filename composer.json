@@ -13,7 +13,7 @@
         "php": "^8.2",
         "ext-pdo": "*",
         "canyon-gbs/assist-data-model-module": "*",
-        "canyon-gbs/case-module": "*",
+        "canyon-gbs/case": "^1.0",
         "filament/filament": "v3.0.0-beta11",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
