@@ -4,6 +4,7 @@ namespace Assist\Authorization\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -18,7 +19,6 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\EditRoleGroup;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\ViewRoleGroup;
-use App\Filament\Resources\RoleGroupResource\RelationManagers\UsersRelationManager;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\ListRoleGroups;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\CreateRoleGroup;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\RolesRelationManager;
