@@ -3,7 +3,6 @@
 namespace Assist\CaseModule\Filament\Resources;
 
 use Filament\Tables;
-use App\Models\Student;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -14,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\CaseModule\Models\CaseItemStatus;
 use Filament\Forms\Components\MorphToSelect;
+use Assist\AssistDataModelModule\Models\Student;
 use Assist\CaseModule\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
 use Assist\CaseModule\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
 use Assist\CaseModule\Filament\Resources\CaseItemResource\Pages\ListCaseItems;

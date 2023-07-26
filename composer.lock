@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "043bd913ba17f4087b7a377890497e63",
+    "content-hash": "7b66431041577e9315a9026d0fb233e7",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -355,6 +355,41 @@
                 }
             ],
             "time": "2023-01-15T23:15:59+00:00"
+        },
+        {
+            "name": "canyon-gbs/assist-data-model-module",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/assist-data-model-module",
+                "reference": "6899b17b455b42433050600553b20965e8ece9fa"
+            },
+            "require": {
+                "filament/filament": "v3.0.0-beta11"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\AssistDataModelModule\\Providers\\AssistDataModelModuleServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\AssistDataModelModule\\": "src/",
+                    "Assist\\AssistDataModelModule\\Tests\\": "tests/",
+                    "Assist\\AssistDataModelModule\\Database\\Factories\\": "database/factories/",
+                    "Assist\\AssistDataModelModule\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "canyon-gbs/case-module",

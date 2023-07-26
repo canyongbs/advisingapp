@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace Assist\AssistDataModelModule\Models;
 
+use App\Models\IdeHelperStudent;
 use Assist\CaseModule\Models\CaseItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;

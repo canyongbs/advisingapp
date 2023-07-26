@@ -1,0 +1,26 @@
+{
+	"name": "canyon-gbs/assist-data-model-module",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {
+		"filament/filament": "v3.0.0-beta11"
+	},
+	"autoload": {
+		"psr-4": {
+			"Assist\\AssistDataModelModule\\": "src/",
+			"Assist\\AssistDataModelModule\\Tests\\": "tests/",
+			"Assist\\AssistDataModelModule\\Database\\Factories\\": "database/factories/",
+			"Assist\\AssistDataModelModule\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "dev",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Assist\\AssistDataModelModule\\Providers\\AssistDataModelModuleServiceProvider"
+			]
+		}
+	}
+}

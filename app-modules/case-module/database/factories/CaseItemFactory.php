@@ -3,7 +3,7 @@
 namespace Assist\CaseModule\Database\Factories;
 
 use App\Models\User;
-use App\Models\Student;
+use Assist\AssistDataModelModule\Models\Student;
 use App\Models\Institution;
 use Assist\CaseModule\Models\CaseItem;
 use Assist\CaseModule\Models\CaseItemStatus;

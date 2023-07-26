@@ -12,6 +12,7 @@
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
+        "canyon-gbs/assist-data-model-module": "*",
         "canyon-gbs/case-module": "*",
         "filament/filament": "v3.0.0-beta11",
         "guzzlehttp/guzzle": "^7.2",
