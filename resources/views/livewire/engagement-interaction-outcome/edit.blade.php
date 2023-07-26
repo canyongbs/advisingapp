@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('engagementInteractionOutcome.outcome') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="outcome"
             type="text"
             required
-            wire:model.defer="engagementInteractionOutcome.outcome"
+            wire:model="engagementInteractionOutcome.outcome"
         >
         <div class="validation-message">
             {{ $errors->first('engagementInteractionOutcome.outcome') }}

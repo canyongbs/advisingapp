@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('institution.code') ? 'invalid' : '' }}">
@@ -13,7 +13,7 @@
             id="code"
             name="code"
             type="text"
-            wire:model.defer="institution.code"
+            wire:model="institution.code"
         >
         <div class="validation-message">
             {{ $errors->first('institution.code') }}
@@ -33,7 +33,7 @@
             name="name"
             type="text"
             required
-            wire:model.defer="institution.name"
+            wire:model="institution.name"
         >
         <div class="validation-message">
             {{ $errors->first('institution.name') }}
@@ -51,7 +51,7 @@
             class="form-control"
             id="description"
             name="description"
-            wire:model.defer="institution.description"
+            wire:model="institution.description"
             rows="4"
         ></textarea>
         <div class="validation-message">

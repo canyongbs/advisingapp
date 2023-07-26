@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('engagementInteractionItem.direction') ? 'invalid' : '' }}">
@@ -10,7 +10,7 @@
                     name="direction"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="engagementInteractionItem.direction"
+                    wire:model.live="engagementInteractionItem.direction"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
@@ -30,7 +30,7 @@
             id="start"
             name="start"
             required
-            wire:model="engagementInteractionItem.start"
+            wire:model.live="engagementInteractionItem.start"
         />
         <div class="validation-message">
             {{ $errors->first('engagementInteractionItem.start') }}
@@ -46,7 +46,7 @@
                     name="duration"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="engagementInteractionItem.duration"
+                    wire:model.live="engagementInteractionItem.duration"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
@@ -67,7 +67,7 @@
             name="subject"
             type="text"
             required
-            wire:model.defer="engagementInteractionItem.subject"
+            wire:model="engagementInteractionItem.subject"
         >
         <div class="validation-message">
             {{ $errors->first('engagementInteractionItem.subject') }}
@@ -85,7 +85,7 @@
             class="form-control"
             id="description"
             name="description"
-            wire:model.defer="engagementInteractionItem.description"
+            wire:model="engagementInteractionItem.description"
             rows="4"
         ></textarea>
         <div class="validation-message">

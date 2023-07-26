@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('kbItemCategory.category') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="category"
             type="text"
             required
-            wire:model.defer="kbItemCategory.category"
+            wire:model="kbItemCategory.category"
         >
         <div class="validation-message">
             {{ $errors->first('kbItemCategory.category') }}

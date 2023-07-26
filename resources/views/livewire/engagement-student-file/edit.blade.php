@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('mediaCollections.engagement_student_file_file') ? 'invalid' : '' }}">
@@ -32,7 +32,7 @@
             id="description"
             name="description"
             type="text"
-            wire:model.defer="engagementStudentFile.description"
+            wire:model="engagementStudentFile.description"
         >
         <div class="validation-message">
             {{ $errors->first('engagementStudentFile.description') }}
@@ -52,7 +52,7 @@
             name="student"
             required
             :options="$this->listsForFields['student']"
-            wire:model="engagementStudentFile.student_id"
+            wire:model.live="engagementStudentFile.student_id"
         />
         <div class="validation-message">
             {{ $errors->first('engagementStudentFile.student_id') }}

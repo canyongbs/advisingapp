@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('userAlert.message') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="message"
             type="text"
             required
-            wire:model.defer="userAlert.message"
+            wire:model="userAlert.message"
         >
         <div class="validation-message">
             {{ $errors->first('userAlert.message') }}
@@ -33,7 +33,7 @@
             id="link"
             name="link"
             type="text"
-            wire:model.defer="userAlert.link"
+            wire:model="userAlert.link"
         >
         <div class="validation-message">
             {{ $errors->first('userAlert.link') }}
@@ -52,7 +52,7 @@
             id="users"
             name="users"
             required
-            wire:model="users"
+            wire:model.live="users"
             :options="$this->listsForFields['users']"
             multiple
         />

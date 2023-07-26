@@ -18,7 +18,7 @@
         class="relative w-full rounded border-0 bg-white bg-white px-3 py-3 pl-10 text-sm text-blueGray-600 placeholder-blueGray-300 shadow outline-none focus:outline-none focus:ring"
         type="text"
         placeholder="Search here..."
-        wire:model.debounce.300ms="search"
+        wire:model.live.debounce.300ms="search"
     />
 
     <div

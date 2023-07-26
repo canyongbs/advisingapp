@@ -6,7 +6,7 @@
     <div class="flex flex-wrap">
         <form
             class="w-full"
-            wire:submit.prevent="updateProfileInformation"
+            wire:submit="updateProfileInformation"
         >
             <div class="form-group px-4">
                 <label
@@ -17,7 +17,7 @@
                     class="form-control"
                     id="name"
                     type="text"
-                    wire:model.defer="state.name"
+                    wire:model="state.name"
                     autocomplete="name"
                 >
                 @error('state.name')
@@ -34,7 +34,7 @@
                     class="form-control"
                     id="email"
                     type="text"
-                    wire:model.defer="state.email"
+                    wire:model="state.email"
                     autocomplete="email"
                 >
                 @error('state.email')

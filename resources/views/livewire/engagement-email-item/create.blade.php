@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('engagementEmailItem.email') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="email"
             type="email"
             required
-            wire:model.defer="engagementEmailItem.email"
+            wire:model="engagementEmailItem.email"
         >
         <div class="validation-message">
             {{ $errors->first('engagementEmailItem.email') }}
@@ -34,7 +34,7 @@
             name="subject"
             type="text"
             required
-            wire:model.defer="engagementEmailItem.subject"
+            wire:model="engagementEmailItem.subject"
         >
         <div class="validation-message">
             {{ $errors->first('engagementEmailItem.subject') }}
@@ -53,7 +53,7 @@
             id="body"
             name="body"
             required
-            wire:model.defer="engagementEmailItem.body"
+            wire:model="engagementEmailItem.body"
             rows="4"
         ></textarea>
         <div class="validation-message">

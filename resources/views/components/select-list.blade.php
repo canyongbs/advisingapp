@@ -35,7 +35,7 @@
 
 @push('scripts')
     <script>
-        document.addEventListener("livewire:load", () => {
+        document.addEventListener("livewire:init", () => {
             let el = $('#{{ $attributes['id'] }}')
             let buttonsId = '#{{ $attributes['id'] }}-btn-container'
 
@@ -70,7 +70,7 @@
                 if (data === "") {
                     data = null
                 }
-                @this.set('{{ $attributes['wire:model'] }}', data)
+                @this.set('{{ $attributes['wire:model.live'] }}', data)
             });
         });
     </script>

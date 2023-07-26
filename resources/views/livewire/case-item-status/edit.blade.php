@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('caseItemStatus.status') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="status"
             type="text"
             required
-            wire:model.defer="caseItemStatus.status"
+            wire:model="caseItemStatus.status"
         >
         <div class="validation-message">
             {{ $errors->first('caseItemStatus.status') }}

@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('journeyTextItem.name') ? 'invalid' : '' }}">
@@ -13,7 +13,7 @@
             id="name"
             name="name"
             type="text"
-            wire:model.defer="journeyTextItem.name"
+            wire:model="journeyTextItem.name"
         >
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.name') }}
@@ -32,7 +32,7 @@
             id="text"
             name="text"
             type="text"
-            wire:model.defer="journeyTextItem.text"
+            wire:model="journeyTextItem.text"
         >
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.text') }}
@@ -50,7 +50,7 @@
             class="form-control"
             id="start"
             name="start"
-            wire:model="journeyTextItem.start"
+            wire:model.live="journeyTextItem.start"
         />
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.start') }}
@@ -68,7 +68,7 @@
             class="form-control"
             id="end"
             name="end"
-            wire:model="journeyTextItem.end"
+            wire:model.live="journeyTextItem.end"
         />
         <div class="validation-message">
             {{ $errors->first('journeyTextItem.end') }}
@@ -84,7 +84,7 @@
                     name="active"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="journeyTextItem.active"
+                    wire:model.live="journeyTextItem.active"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
@@ -101,7 +101,7 @@
                     name="frequency"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="journeyTextItem.frequency"
+                    wire:model.live="journeyTextItem.frequency"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">

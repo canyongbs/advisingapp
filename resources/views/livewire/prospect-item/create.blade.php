@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('prospectItem.first') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="first"
             type="text"
             required
-            wire:model.defer="prospectItem.first"
+            wire:model="prospectItem.first"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.first') }}
@@ -34,7 +34,7 @@
             name="last"
             type="text"
             required
-            wire:model.defer="prospectItem.last"
+            wire:model="prospectItem.last"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.last') }}
@@ -54,7 +54,7 @@
             name="full"
             type="text"
             required
-            wire:model.defer="prospectItem.full"
+            wire:model="prospectItem.full"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.full') }}
@@ -73,7 +73,7 @@
             id="preferred"
             name="preferred"
             type="text"
-            wire:model.defer="prospectItem.preferred"
+            wire:model="prospectItem.preferred"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.preferred') }}
@@ -91,7 +91,7 @@
             class="form-control"
             id="description"
             name="description"
-            wire:model.defer="prospectItem.description"
+            wire:model="prospectItem.description"
             rows="4"
         ></textarea>
         <div class="validation-message">
@@ -111,7 +111,7 @@
             id="email"
             name="email"
             type="email"
-            wire:model.defer="prospectItem.email"
+            wire:model="prospectItem.email"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.email') }}
@@ -130,7 +130,7 @@
             id="email_2"
             name="email_2"
             type="email"
-            wire:model.defer="prospectItem.email_2"
+            wire:model="prospectItem.email_2"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.email_2') }}
@@ -149,7 +149,7 @@
             id="mobile"
             name="mobile"
             type="number"
-            wire:model.defer="prospectItem.mobile"
+            wire:model="prospectItem.mobile"
             step="1"
         >
         <div class="validation-message">
@@ -166,7 +166,7 @@
                     name="sms_opt_out"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="prospectItem.sms_opt_out"
+                    wire:model.live="prospectItem.sms_opt_out"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
@@ -183,7 +183,7 @@
                     name="email_bounce"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="prospectItem.email_bounce"
+                    wire:model.live="prospectItem.email_bounce"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
@@ -203,7 +203,7 @@
             id="status"
             name="status"
             :options="$this->listsForFields['status']"
-            wire:model="prospectItem.status_id"
+            wire:model.live="prospectItem.status_id"
         />
         <div class="validation-message">
             {{ $errors->first('prospectItem.status_id') }}
@@ -222,7 +222,7 @@
             id="source"
             name="source"
             :options="$this->listsForFields['source']"
-            wire:model="prospectItem.source_id"
+            wire:model.live="prospectItem.source_id"
         />
         <div class="validation-message">
             {{ $errors->first('prospectItem.source_id') }}
@@ -241,7 +241,7 @@
             id="phone"
             name="phone"
             type="number"
-            wire:model.defer="prospectItem.phone"
+            wire:model="prospectItem.phone"
             step="1"
         >
         <div class="validation-message">
@@ -261,7 +261,7 @@
             id="address"
             name="address"
             type="text"
-            wire:model.defer="prospectItem.address"
+            wire:model="prospectItem.address"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.address') }}
@@ -280,7 +280,7 @@
             id="address_2"
             name="address_2"
             type="text"
-            wire:model.defer="prospectItem.address_2"
+            wire:model="prospectItem.address_2"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.address_2') }}
@@ -298,7 +298,7 @@
             class="form-control"
             id="birthdate"
             name="birthdate"
-            wire:model="prospectItem.birthdate"
+            wire:model.live="prospectItem.birthdate"
             picker="date"
         />
         <div class="validation-message">
@@ -318,7 +318,7 @@
             id="hsgrad"
             name="hsgrad"
             type="text"
-            wire:model.defer="prospectItem.hsgrad"
+            wire:model="prospectItem.hsgrad"
         >
         <div class="validation-message">
             {{ $errors->first('prospectItem.hsgrad') }}
@@ -336,7 +336,7 @@
             class="form-control"
             id="hsdate"
             name="hsdate"
-            wire:model="prospectItem.hsdate"
+            wire:model.live="prospectItem.hsdate"
             picker="date"
         />
         <div class="validation-message">
@@ -356,7 +356,7 @@
             id="assigned_to"
             name="assigned_to"
             :options="$this->listsForFields['assigned_to']"
-            wire:model="prospectItem.assigned_to_id"
+            wire:model.live="prospectItem.assigned_to_id"
         />
         <div class="validation-message">
             {{ $errors->first('prospectItem.assigned_to_id') }}
@@ -375,7 +375,7 @@
             id="created_by"
             name="created_by"
             :options="$this->listsForFields['created_by']"
-            wire:model="prospectItem.created_by_id"
+            wire:model.live="prospectItem.created_by_id"
         />
         <div class="validation-message">
             {{ $errors->first('prospectItem.created_by_id') }}

@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('caseItem.casenumber') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="casenumber"
             type="number"
             required
-            wire:model.defer="caseItem.casenumber"
+            wire:model="caseItem.casenumber"
             step="1"
         >
         <div class="validation-message">
@@ -35,7 +35,7 @@
             name="student"
             required
             :options="$this->listsForFields['student']"
-            wire:model="caseItem.student_id"
+            wire:model.live="caseItem.student_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseItem.student_id') }}
@@ -55,7 +55,7 @@
             name="institution"
             required
             :options="$this->listsForFields['institution']"
-            wire:model="caseItem.institution_id"
+            wire:model.live="caseItem.institution_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseItem.institution_id') }}
@@ -74,7 +74,7 @@
             id="state"
             name="state"
             :options="$this->listsForFields['state']"
-            wire:model="caseItem.state_id"
+            wire:model.live="caseItem.state_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseItem.state_id') }}
@@ -94,7 +94,7 @@
             name="type"
             required
             :options="$this->listsForFields['type']"
-            wire:model="caseItem.type_id"
+            wire:model.live="caseItem.type_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseItem.type_id') }}
@@ -114,7 +114,7 @@
             name="priority"
             required
             :options="$this->listsForFields['priority']"
-            wire:model="caseItem.priority_id"
+            wire:model.live="caseItem.priority_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseItem.priority_id') }}
@@ -133,7 +133,7 @@
             id="assigned_to"
             name="assigned_to"
             :options="$this->listsForFields['assigned_to']"
-            wire:model="caseItem.assigned_to_id"
+            wire:model.live="caseItem.assigned_to_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseItem.assigned_to_id') }}
@@ -151,7 +151,7 @@
             class="form-control"
             id="close_details"
             name="close_details"
-            wire:model.defer="caseItem.close_details"
+            wire:model="caseItem.close_details"
             rows="4"
         ></textarea>
         <div class="validation-message">
@@ -170,7 +170,7 @@
             class="form-control"
             id="res_details"
             name="res_details"
-            wire:model.defer="caseItem.res_details"
+            wire:model="caseItem.res_details"
             rows="4"
         ></textarea>
         <div class="validation-message">
@@ -190,7 +190,7 @@
             id="created_by"
             name="created_by"
             :options="$this->listsForFields['created_by']"
-            wire:model="caseItem.created_by_id"
+            wire:model.live="caseItem.created_by_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseItem.created_by_id') }}

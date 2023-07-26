@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('supportPage.title') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="title"
             type="text"
             required
-            wire:model.defer="supportPage.title"
+            wire:model="supportPage.title"
         >
         <div class="validation-message">
             {{ $errors->first('supportPage.title') }}
@@ -33,7 +33,7 @@
             id="body"
             name="body"
             required
-            wire:model.defer="supportPage.body"
+            wire:model="supportPage.body"
             rows="4"
         ></textarea>
         <div class="validation-message">

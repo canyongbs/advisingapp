@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('role.title') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="title"
             type="text"
             required
-            wire:model.defer="role.title"
+            wire:model="role.title"
         >
         <div class="validation-message">
             {{ $errors->first('role.title') }}
@@ -33,7 +33,7 @@
             id="permissions"
             name="permissions"
             required
-            wire:model="permissions"
+            wire:model.live="permissions"
             :options="$this->listsForFields['permissions']"
             multiple
         />

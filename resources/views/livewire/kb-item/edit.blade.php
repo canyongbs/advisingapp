@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('kbItem.question') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="question"
             type="text"
             required
-            wire:model.defer="kbItem.question"
+            wire:model="kbItem.question"
         >
         <div class="validation-message">
             {{ $errors->first('kbItem.question') }}
@@ -33,7 +33,7 @@
             id="quality"
             name="quality"
             :options="$this->listsForFields['quality']"
-            wire:model="kbItem.quality_id"
+            wire:model.live="kbItem.quality_id"
         />
         <div class="validation-message">
             {{ $errors->first('kbItem.quality_id') }}
@@ -52,7 +52,7 @@
             id="status"
             name="status"
             :options="$this->listsForFields['status']"
-            wire:model="kbItem.status_id"
+            wire:model.live="kbItem.status_id"
         />
         <div class="validation-message">
             {{ $errors->first('kbItem.status_id') }}
@@ -68,7 +68,7 @@
                     name="public"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="kbItem.public"
+                    wire:model.live="kbItem.public"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
@@ -88,7 +88,7 @@
             id="category"
             name="category"
             :options="$this->listsForFields['category']"
-            wire:model="kbItem.category_id"
+            wire:model.live="kbItem.category_id"
         />
         <div class="validation-message">
             {{ $errors->first('kbItem.category_id') }}
@@ -106,7 +106,7 @@
             class="form-control"
             id="institution"
             name="institution"
-            wire:model="institution"
+            wire:model.live="institution"
             :options="$this->listsForFields['institution']"
             multiple
         />
@@ -126,7 +126,7 @@
             class="form-control"
             id="solution"
             name="solution"
-            wire:model.defer="kbItem.solution"
+            wire:model="kbItem.solution"
             rows="4"
         ></textarea>
         <div class="validation-message">
@@ -145,7 +145,7 @@
             class="form-control"
             id="notes"
             name="notes"
-            wire:model.defer="kbItem.notes"
+            wire:model="kbItem.notes"
             rows="4"
         ></textarea>
         <div class="validation-message">

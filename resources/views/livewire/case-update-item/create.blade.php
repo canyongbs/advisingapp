@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('caseUpdateItem.student_id') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="student"
             required
             :options="$this->listsForFields['student']"
-            wire:model="caseUpdateItem.student_id"
+            wire:model.live="caseUpdateItem.student_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseUpdateItem.student_id') }}
@@ -34,7 +34,7 @@
             name="case"
             required
             :options="$this->listsForFields['case']"
-            wire:model="caseUpdateItem.case_id"
+            wire:model.live="caseUpdateItem.case_id"
         />
         <div class="validation-message">
             {{ $errors->first('caseUpdateItem.case_id') }}
@@ -54,7 +54,7 @@
             name="update"
             type="text"
             required
-            wire:model.defer="caseUpdateItem.update"
+            wire:model="caseUpdateItem.update"
         >
         <div class="validation-message">
             {{ $errors->first('caseUpdateItem.update') }}
@@ -70,7 +70,7 @@
                     name="internal"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="caseUpdateItem.internal"
+                    wire:model.live="caseUpdateItem.internal"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
@@ -87,7 +87,7 @@
                     name="direction"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="caseUpdateItem.direction"
+                    wire:model.live="caseUpdateItem.direction"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">

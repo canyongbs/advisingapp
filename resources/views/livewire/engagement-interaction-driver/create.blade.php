@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('engagementInteractionDriver.driver') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="driver"
             type="text"
             required
-            wire:model.defer="engagementInteractionDriver.driver"
+            wire:model="engagementInteractionDriver.driver"
         >
         <div class="validation-message">
             {{ $errors->first('engagementInteractionDriver.driver') }}

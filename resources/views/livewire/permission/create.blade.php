@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('permission.title') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="title"
             type="text"
             required
-            wire:model.defer="permission.title"
+            wire:model="permission.title"
         >
         <div class="validation-message">
             {{ $errors->first('permission.title') }}

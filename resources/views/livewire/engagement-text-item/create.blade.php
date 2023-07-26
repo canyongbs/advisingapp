@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('engagementTextItem.mobile') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="mobile"
             type="number"
             required
-            wire:model.defer="engagementTextItem.mobile"
+            wire:model="engagementTextItem.mobile"
             step="1"
         >
         <div class="validation-message">
@@ -34,7 +34,7 @@
             id="message"
             name="message"
             type="text"
-            wire:model.defer="engagementTextItem.message"
+            wire:model="engagementTextItem.message"
         >
         <div class="validation-message">
             {{ $errors->first('engagementTextItem.message') }}

@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('journeyItem.name') ? 'invalid' : '' }}">
@@ -13,7 +13,7 @@
             id="name"
             name="name"
             type="text"
-            wire:model.defer="journeyItem.name"
+            wire:model="journeyItem.name"
         >
         <div class="validation-message">
             {{ $errors->first('journeyItem.name') }}
@@ -32,7 +32,7 @@
             id="body"
             name="body"
             required
-            wire:model.defer="journeyItem.body"
+            wire:model="journeyItem.body"
             rows="4"
         ></textarea>
         <div class="validation-message">
@@ -52,7 +52,7 @@
             id="start"
             name="start"
             required
-            wire:model="journeyItem.start"
+            wire:model.live="journeyItem.start"
         />
         <div class="validation-message">
             {{ $errors->first('journeyItem.start') }}
@@ -71,7 +71,7 @@
             id="end"
             name="end"
             required
-            wire:model="journeyItem.end"
+            wire:model.live="journeyItem.end"
         />
         <div class="validation-message">
             {{ $errors->first('journeyItem.end') }}
@@ -87,7 +87,7 @@
                     name="frequency"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="journeyItem.frequency"
+                    wire:model.live="journeyItem.frequency"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">

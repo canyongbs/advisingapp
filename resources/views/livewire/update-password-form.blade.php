@@ -6,7 +6,7 @@
     <div class="flex flex-wrap">
         <form
             class="w-full"
-            wire:submit.prevent="updatePassword"
+            wire:submit="updatePassword"
         >
             <div class="form-group px-4">
                 <label
@@ -17,7 +17,7 @@
                     class="form-control"
                     id="current_password"
                     type="password"
-                    wire:model.defer="state.current_password"
+                    wire:model="state.current_password"
                     autocomplete="current-password"
                 >
                 @error('state.current_password')
@@ -34,7 +34,7 @@
                     class="form-control"
                     id="new_password"
                     type="password"
-                    wire:model.defer="state.password"
+                    wire:model="state.password"
                     autocomplete="new-password"
                 >
                 @error('state.password')
@@ -51,7 +51,7 @@
                     class="form-control"
                     id="password_confirmation"
                     type="password"
-                    wire:model.defer="state.password_confirmation"
+                    wire:model="state.password_confirmation"
                     autocomplete="new-password"
                 >
             </div>

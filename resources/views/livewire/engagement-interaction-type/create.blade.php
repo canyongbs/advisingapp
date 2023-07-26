@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('engagementInteractionType.type') ? 'invalid' : '' }}">
@@ -13,7 +13,7 @@
             id="type"
             name="type"
             type="text"
-            wire:model.defer="engagementInteractionType.type"
+            wire:model="engagementInteractionType.type"
         >
         <div class="validation-message">
             {{ $errors->first('engagementInteractionType.type') }}

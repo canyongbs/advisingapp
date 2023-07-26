@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('journeyTargetList.name') ? 'invalid' : '' }}">
@@ -13,7 +13,7 @@
             id="name"
             name="name"
             type="text"
-            wire:model.defer="journeyTargetList.name"
+            wire:model="journeyTargetList.name"
         >
         <div class="validation-message">
             {{ $errors->first('journeyTargetList.name') }}
@@ -31,7 +31,7 @@
             class="form-control"
             id="description"
             name="description"
-            wire:model.defer="journeyTargetList.description"
+            wire:model="journeyTargetList.description"
             rows="4"
         ></textarea>
         <div class="validation-message">
@@ -50,7 +50,7 @@
             class="form-control"
             id="query"
             name="query"
-            wire:model.defer="journeyTargetList.query"
+            wire:model="journeyTargetList.query"
             rows="4"
         ></textarea>
         <div class="validation-message">

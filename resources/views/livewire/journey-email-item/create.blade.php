@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('journeyEmailItem.name') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="name"
             type="text"
             required
-            wire:model.defer="journeyEmailItem.name"
+            wire:model="journeyEmailItem.name"
         >
         <div class="validation-message">
             {{ $errors->first('journeyEmailItem.name') }}
@@ -33,7 +33,7 @@
             id="body"
             name="body"
             required
-            wire:model.defer="journeyEmailItem.body"
+            wire:model="journeyEmailItem.body"
             rows="4"
         ></textarea>
         <div class="validation-message">
@@ -53,7 +53,7 @@
             id="start"
             name="start"
             required
-            wire:model="journeyEmailItem.start"
+            wire:model.live="journeyEmailItem.start"
         />
         <div class="validation-message">
             {{ $errors->first('journeyEmailItem.start') }}
@@ -71,7 +71,7 @@
             class="form-control"
             id="end"
             name="end"
-            wire:model="journeyEmailItem.end"
+            wire:model.live="journeyEmailItem.end"
         />
         <div class="validation-message">
             {{ $errors->first('journeyEmailItem.end') }}
@@ -87,7 +87,7 @@
                     name="active"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="journeyEmailItem.active"
+                    wire:model.live="journeyEmailItem.active"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">
@@ -104,7 +104,7 @@
                     name="frequency"
                     type="radio"
                     value="{{ $key }}"
-                    wire:model="journeyEmailItem.frequency"
+                    wire:model.live="journeyEmailItem.frequency"
                 >{{ $value }}</label>
         @endforeach
         <div class="validation-message">

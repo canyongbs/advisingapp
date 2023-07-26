@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('engagementInteractionRelation.relation') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="relation"
             type="text"
             required
-            wire:model.defer="engagementInteractionRelation.relation"
+            wire:model="engagementInteractionRelation.relation"
         >
         <div class="validation-message">
             {{ $errors->first('engagementInteractionRelation.relation') }}

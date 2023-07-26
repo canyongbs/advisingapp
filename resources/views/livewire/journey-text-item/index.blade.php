@@ -4,7 +4,7 @@
             Per page:
             <select
                 class="form-select w-full sm:w-1/6"
-                wire:model="perPage"
+                wire:model.live="perPage"
             >
                 @foreach ($paginationOptions as $value)
                     <option value="{{ $value }}">{{ $value }}</option>
@@ -44,7 +44,7 @@
             <input
                 class="inline-block w-full sm:w-1/3"
                 type="text"
-                wire:model.debounce.300ms="search"
+                wire:model.live.debounce.300ms="search"
             />
         </div>
     </div>
@@ -98,7 +98,7 @@
                                 <input
                                     type="checkbox"
                                     value="{{ $journeyTextItem->id }}"
-                                    wire:model="selected"
+                                    wire:model.live="selected"
                                 >
                             </td>
                             <td>

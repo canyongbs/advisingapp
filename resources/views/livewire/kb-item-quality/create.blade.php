@@ -1,6 +1,6 @@
 <form
     class="pt-3"
-    wire:submit.prevent="submit"
+    wire:submit="submit"
 >
 
     <div class="form-group {{ $errors->has('kbItemQuality.rating') ? 'invalid' : '' }}">
@@ -14,7 +14,7 @@
             name="rating"
             type="text"
             required
-            wire:model.defer="kbItemQuality.rating"
+            wire:model="kbItemQuality.rating"
         >
         <div class="validation-message">
             {{ $errors->first('kbItemQuality.rating') }}
