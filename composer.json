@@ -13,7 +13,7 @@
         "php": "^8.2",
         "ext-pdo": "*",
         "canyon-gbs/case-module": "*",
-        "filament/filament": "^3.0",
+        "filament/filament": "^3.0@beta",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^2.7",
@@ -22,7 +22,7 @@
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "livewire/livewire": "^2.11",
+        "livewire/livewire": "^3.0@beta",
         "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-permission": "^5.10"
