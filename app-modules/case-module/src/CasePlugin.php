@@ -4,9 +4,6 @@ namespace Assist\CaseModule;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
-use Assist\CaseModule\Filament\Resources\CaseItemResource;
-use Assist\CaseModule\Filament\Resources\CaseItemStatusResource;
-use Assist\CaseModule\Filament\Resources\CaseItemPriorityResource;
 
 class CasePlugin implements Plugin
 {
@@ -17,11 +14,10 @@ class CasePlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->resources([
-            CaseItemResource::class,
-            CaseItemPriorityResource::class,
-            CaseItemStatusResource::class,
-        ]);
+        $panel->discoverResources(
+            in: __DIR__ . '/Filament/Resources',
+            for: 'Assist\\CaseModule\\Filament\\Resources'
+        );
     }
 
     public function boot(Panel $panel): void
