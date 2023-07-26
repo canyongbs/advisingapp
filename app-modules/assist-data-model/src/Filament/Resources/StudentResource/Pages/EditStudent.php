@@ -2,9 +2,9 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 
 class EditStudent extends EditRecord
 {
