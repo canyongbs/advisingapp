@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\CaseItemPriorityResource\Pages;
+namespace Assist\CaseModule\Filament\Resources\CaseItemPriorityResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use App\Filament\Resources\CaseItemPriorityResource;
+use Assist\CaseModule\Filament\Resources\CaseItemPriorityResource;
 
 class ViewCaseItemPriority extends ViewRecord
 {

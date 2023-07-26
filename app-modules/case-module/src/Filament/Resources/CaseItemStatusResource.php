@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace Assist\CaseModule\Filament\Resources;
 
 use Filament\Tables;
 use Filament\Forms\Form;
@@ -10,7 +10,9 @@ use App\Enums\ColumnColorOptions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Assist\CaseModule\Models\CaseItemStatus;
-use App\Filament\Resources\CaseItemStatusResource\Pages;
+use Assist\CaseModule\Filament\Resources\CaseItemStatusResource\Pages\EditCaseItemStatus;
+use Assist\CaseModule\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
+use Assist\CaseModule\Filament\Resources\CaseItemStatusResource\Pages\CreateCaseItemStatus;
 
 class CaseItemStatusResource extends Resource
 {
@@ -73,9 +75,9 @@ class CaseItemStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCaseItemStatuses::route('/'),
-            'create' => Pages\CreateCaseItemStatus::route('/create'),
-            'edit' => Pages\EditCaseItemStatus::route('/{record}/edit'),
+            'index' => ListCaseItemStatuses::route('/'),
+            'create' => CreateCaseItemStatus::route('/create'),
+            'edit' => EditCaseItemStatus::route('/{record}/edit'),
         ];
     }
 }

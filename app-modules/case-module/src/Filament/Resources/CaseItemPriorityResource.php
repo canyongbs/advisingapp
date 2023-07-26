@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace Assist\CaseModule\Filament\Resources;
 
 use Filament\Tables;
 use Filament\Forms\Form;
@@ -8,7 +8,10 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
 use Assist\CaseModule\Models\CaseItemPriority;
-use App\Filament\Resources\CaseItemPriorityResource\Pages;
+use Assist\CaseModule\Filament\Resources\CaseItemPriorityResource\Pages\EditCaseItemPriority;
+use Assist\CaseModule\Filament\Resources\CaseItemPriorityResource\Pages\ViewCaseItemPriority;
+use Assist\CaseModule\Filament\Resources\CaseItemPriorityResource\Pages\CreateCaseItemPriority;
+use Assist\CaseModule\Filament\Resources\CaseItemPriorityResource\Pages\ListCaseItemPriorities;
 
 class CaseItemPriorityResource extends Resource
 {
@@ -71,10 +74,10 @@ class CaseItemPriorityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCaseItemPriorities::route('/'),
-            'create' => Pages\CreateCaseItemPriority::route('/create'),
-            'view' => Pages\ViewCaseItemPriority::route('/{record}'),
-            'edit' => Pages\EditCaseItemPriority::route('/{record}/edit'),
+            'index' => ListCaseItemPriorities::route('/'),
+            'create' => CreateCaseItemPriority::route('/create'),
+            'view' => ViewCaseItemPriority::route('/{record}'),
+            'edit' => EditCaseItemPriority::route('/{record}/edit'),
         ];
     }
 }

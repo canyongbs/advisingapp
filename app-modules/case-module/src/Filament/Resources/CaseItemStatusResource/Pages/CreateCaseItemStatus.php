@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\CaseItemStatusResource\Pages;
+namespace Assist\CaseModule\Filament\Resources\CaseItemStatusResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Resources\CaseItemStatusResource;
+use Assist\CaseModule\Filament\Resources\CaseItemStatusResource;
 
 class CreateCaseItemStatus extends CreateRecord
 {

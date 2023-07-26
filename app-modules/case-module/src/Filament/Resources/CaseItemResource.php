@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace Assist\CaseModule\Filament\Resources;
 
 use Filament\Tables;
 use App\Models\Student;
@@ -14,7 +14,10 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\CaseModule\Models\CaseItemStatus;
 use Filament\Forms\Components\MorphToSelect;
-use App\Filament\Resources\CaseItemResource\Pages;
+use Assist\CaseModule\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
+use Assist\CaseModule\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
+use Assist\CaseModule\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
+use Assist\CaseModule\Filament\Resources\CaseItemResource\Pages\CreateCaseItem;
 
 class CaseItemResource extends Resource
 {
@@ -119,10 +122,10 @@ class CaseItemResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCaseItems::route('/'),
-            'create' => Pages\CreateCaseItem::route('/create'),
-            'view' => Pages\ViewCaseItem::route('/{record}'),
-            'edit' => Pages\EditCaseItem::route('/{record}/edit'),
+            'index' => ListCaseItems::route('/'),
+            'create' => CreateCaseItem::route('/create'),
+            'view' => ViewCaseItem::route('/{record}'),
+            'edit' => EditCaseItem::route('/{record}/edit'),
         ];
     }
 }

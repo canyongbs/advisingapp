@@ -4,7 +4,9 @@
 	"type": "library",
 	"version": "1.0",
 	"license": "proprietary",
-	"require": {},
+	"require": {
+		"filament/filament": "^3.0@beta"
+	},
 	"autoload": {
 		"psr-4": {
 			"Assist\\CaseModule\\": "src/",
@@ -13,7 +15,7 @@
 			"Assist\\CaseModule\\Database\\Seeders\\": "database/seeders/"
 		}
 	},
-	"minimum-stability": "stable",
+	"minimum-stability": "dev",
 	"extra": {
 		"laravel": {
 			"providers": [

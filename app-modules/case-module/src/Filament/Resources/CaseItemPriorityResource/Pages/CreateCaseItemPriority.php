@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\CaseItemPriorityResource\Pages;
+namespace Assist\CaseModule\Filament\Resources\CaseItemPriorityResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Resources\CaseItemPriorityResource;
+use Assist\CaseModule\Filament\Resources\CaseItemPriorityResource;
 
 class CreateCaseItemPriority extends CreateRecord
 {
