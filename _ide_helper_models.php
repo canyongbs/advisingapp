@@ -1060,7 +1060,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\Student
+ * Assist\AssistDataModelModule\Models\Student
  *
  * @property int $student_id
  * @property string $first_name
