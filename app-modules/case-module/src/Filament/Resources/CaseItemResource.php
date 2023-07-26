@@ -54,15 +54,15 @@ class CaseItemResource extends Resource
                 // TODO: Add Type input
                 Select::make('priority')
                     ->relationship(
-                        relationshipName: 'priority',
+                        name: 'priority',
                         titleAttribute: 'name',
-                        modifyOptionsQueryUsing: fn (Builder $query) => $query->orderBy('order'),
+                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('order'),
                     )
                     ->label('Priority')
                     ->required(),
                 Select::make('assignedTo')
                     ->relationship(
-                        relationshipName: 'assignedTo',
+                        name: 'assignedTo',
                         titleAttribute: 'name',
                     )
                     ->label('Assigned To')

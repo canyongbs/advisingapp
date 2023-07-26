@@ -6,7 +6,6 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
-use Assist\CaseModule\CasePlugin;
 use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
@@ -55,13 +54,5 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-        //->plugins([
-        //    new CasePlugin(),
-        //]);
-    }
-
-    public function boot()
-    {
-        //dd(filament()->getPanels());
     }
 }
