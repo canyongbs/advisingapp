@@ -2,12 +2,45 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @mixin IdeHelperRecordProgramItem
+ * App\Models\RecordProgramItem
+ *
+ * @property int $id
+ * @property string $name
+ * @property string|null $institution
+ * @property string|null $plan
+ * @property string|null $career
+ * @property string|null $term
+ * @property string|null $status
+ * @property string|null $foi
+ * @property float|null $gpa
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $deleted_at
+ *
+ * @method static Builder|RecordProgramItem advancedFilter($data)
+ * @method static Builder|RecordProgramItem newModelQuery()
+ * @method static Builder|RecordProgramItem newQuery()
+ * @method static Builder|RecordProgramItem query()
+ * @method static Builder|RecordProgramItem whereCareer($value)
+ * @method static Builder|RecordProgramItem whereCreatedAt($value)
+ * @method static Builder|RecordProgramItem whereFoi($value)
+ * @method static Builder|RecordProgramItem whereGpa($value)
+ * @method static Builder|RecordProgramItem whereId($value)
+ * @method static Builder|RecordProgramItem whereInstitution($value)
+ * @method static Builder|RecordProgramItem whereName($value)
+ * @method static Builder|RecordProgramItem wherePlan($value)
+ * @method static Builder|RecordProgramItem whereStatus($value)
+ * @method static Builder|RecordProgramItem whereTerm($value)
+ * @method static Builder|RecordProgramItem whereUpdatedAt($value)
+ *
+ * @mixin Eloquent
  */
 class RecordProgramItem extends BaseModel
 {

@@ -2,13 +2,40 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperEngagementEmailItem
+ * App\Models\EngagementEmailItem
+ *
+ * @property int $id
+ * @property string $email
+ * @property string $subject
+ * @property string $body
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
+ * @method static Builder|EngagementEmailItem advancedFilter($data)
+ * @method static Builder|EngagementEmailItem newModelQuery()
+ * @method static Builder|EngagementEmailItem newQuery()
+ * @method static Builder|EngagementEmailItem onlyTrashed()
+ * @method static Builder|EngagementEmailItem query()
+ * @method static Builder|EngagementEmailItem whereBody($value)
+ * @method static Builder|EngagementEmailItem whereCreatedAt($value)
+ * @method static Builder|EngagementEmailItem whereDeletedAt($value)
+ * @method static Builder|EngagementEmailItem whereEmail($value)
+ * @method static Builder|EngagementEmailItem whereId($value)
+ * @method static Builder|EngagementEmailItem whereSubject($value)
+ * @method static Builder|EngagementEmailItem whereUpdatedAt($value)
+ * @method static Builder|EngagementEmailItem withTrashed()
+ * @method static Builder|EngagementEmailItem withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class EngagementEmailItem extends BaseModel
 {

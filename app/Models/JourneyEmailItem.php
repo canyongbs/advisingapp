@@ -2,13 +2,48 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperJourneyEmailItem
+ * App\Models\JourneyEmailItem
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $body
+ * @property string $start
+ * @property string|null $end
+ * @property string|null $active
+ * @property string $frequency
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read mixed $active_label
+ * @property-read mixed $frequency_label
+ *
+ * @method static Builder|JourneyEmailItem advancedFilter($data)
+ * @method static Builder|JourneyEmailItem newModelQuery()
+ * @method static Builder|JourneyEmailItem newQuery()
+ * @method static Builder|JourneyEmailItem onlyTrashed()
+ * @method static Builder|JourneyEmailItem query()
+ * @method static Builder|JourneyEmailItem whereActive($value)
+ * @method static Builder|JourneyEmailItem whereBody($value)
+ * @method static Builder|JourneyEmailItem whereCreatedAt($value)
+ * @method static Builder|JourneyEmailItem whereDeletedAt($value)
+ * @method static Builder|JourneyEmailItem whereEnd($value)
+ * @method static Builder|JourneyEmailItem whereFrequency($value)
+ * @method static Builder|JourneyEmailItem whereId($value)
+ * @method static Builder|JourneyEmailItem whereName($value)
+ * @method static Builder|JourneyEmailItem whereStart($value)
+ * @method static Builder|JourneyEmailItem whereUpdatedAt($value)
+ * @method static Builder|JourneyEmailItem withTrashed()
+ * @method static Builder|JourneyEmailItem withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class JourneyEmailItem extends BaseModel
 {

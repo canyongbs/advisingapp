@@ -2,11 +2,19 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @mixin IdeHelperSupportTrainingItem
+ * App\Models\SupportTrainingItem
+ *
+ * @method static Builder|SupportTrainingItem newModelQuery()
+ * @method static Builder|SupportTrainingItem newQuery()
+ * @method static Builder|SupportTrainingItem query()
+ *
+ * @mixin Eloquent
  */
 class SupportTrainingItem extends Model
 {
