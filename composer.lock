@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16fc2b54f2da6b1c49aaa049e581a083",
+    "content-hash": "043bd913ba17f4087b7a377890497e63",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -362,10 +362,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/case-module",
-                "reference": "91b09b77cf4fb2c862a9c7204b79461c6e5d929c"
+                "reference": "f0557bca12331b40f8f1bfcfc16b2cbec519ca40"
             },
             "require": {
-                "filament/filament": "^3.0@beta"
+                "filament/filament": "v3.0.0-beta11"
             },
             "type": "library",
             "extra": {
@@ -1544,20 +1544,19 @@
         },
         {
             "name": "filament/actions",
-            "version": "v3.0.0-alpha129",
+            "version": "v3.0.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
-                "reference": "f4951909e66db3a94497c991a5310f1b1ca58b20"
+                "reference": "941f47a626778c7644e9d63b1c93377d662b4125"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/actions/zipball/f4951909e66db3a94497c991a5310f1b1ca58b20",
-                "reference": "f4951909e66db3a94497c991a5310f1b1ca58b20",
+                "url": "https://api.github.com/repos/filamentphp/actions/zipball/941f47a626778c7644e9d63b1c93377d662b4125",
+                "reference": "941f47a626778c7644e9d63b1c93377d662b4125",
                 "shasum": ""
             },
             "require": {
-                "blade-ui-kit/blade-heroicons": "^2.0",
                 "filament/forms": "self.version",
                 "filament/infolists": "self.version",
                 "filament/notifications": "self.version",
@@ -1565,7 +1564,6 @@
                 "illuminate/contracts": "^9.0|^10.0",
                 "illuminate/database": "^9.0|^10.0",
                 "illuminate/support": "^9.0|^10.0",
-                "livewire/livewire": "^2.10.7",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.9"
             },
@@ -1586,26 +1584,26 @@
             "license": [
                 "MIT"
             ],
-            "description": "Effortlessly build TALL-powered modals and slide-overs.",
+            "description": "Easily add beautiful action modals to any Livewire component.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-07-14T16:22:00+00:00"
+            "time": "2023-07-26T13:01:32+00:00"
         },
         {
             "name": "filament/filament",
-            "version": "v3.0.0-alpha129",
+            "version": "v3.0.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
-                "reference": "5adfac63b736ec4b70dd649178ce7f00bfec17ba"
+                "reference": "f15c336ac3352ca6c944c9b56a273ad4ce382490"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/panels/zipball/5adfac63b736ec4b70dd649178ce7f00bfec17ba",
-                "reference": "5adfac63b736ec4b70dd649178ce7f00bfec17ba",
+                "url": "https://api.github.com/repos/filamentphp/panels/zipball/f15c336ac3352ca6c944c9b56a273ad4ce382490",
+                "reference": "f15c336ac3352ca6c944c9b56a273ad4ce382490",
                 "shasum": ""
             },
             "require": {
@@ -1627,7 +1625,6 @@
                 "illuminate/session": "^9.0|^10.0",
                 "illuminate/support": "^9.0|^10.0",
                 "illuminate/view": "^9.0|^10.0",
-                "livewire/livewire": "^2.10.7",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.9"
             },
@@ -1652,30 +1649,29 @@
             "license": [
                 "MIT"
             ],
-            "description": "Effortlessly build TALL-stack apps and admin panels.",
+            "description": "A collection of full-stack components for accelerated Laravel app development.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-07-07T21:04:18+00:00"
+            "time": "2023-07-26T13:01:38+00:00"
         },
         {
             "name": "filament/forms",
-            "version": "v3.0.0-alpha129",
+            "version": "v3.0.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
-                "reference": "c576b78985d7b6ffbdfb15ccd972fccd69000b0c"
+                "reference": "9b6df91440334de8be3f6815967461ddd9abf42a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/forms/zipball/c576b78985d7b6ffbdfb15ccd972fccd69000b0c",
-                "reference": "c576b78985d7b6ffbdfb15ccd972fccd69000b0c",
+                "url": "https://api.github.com/repos/filamentphp/forms/zipball/9b6df91440334de8be3f6815967461ddd9abf42a",
+                "reference": "9b6df91440334de8be3f6815967461ddd9abf42a",
                 "shasum": ""
             },
             "require": {
-                "blade-ui-kit/blade-heroicons": "^2.0",
                 "danharrin/date-format-converter": "^0.3",
                 "filament/actions": "self.version",
                 "filament/support": "self.version",
@@ -1686,7 +1682,6 @@
                 "illuminate/support": "^9.0|^10.0",
                 "illuminate/validation": "^9.0|^10.0",
                 "illuminate/view": "^9.0|^10.0",
-                "livewire/livewire": "^2.10.7",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.9"
             },
@@ -1710,30 +1705,29 @@
             "license": [
                 "MIT"
             ],
-            "description": "Effortlessly build TALL-powered forms.",
+            "description": "Easily add beautiful forms to any Livewire component.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-07-12T21:43:59+00:00"
+            "time": "2023-07-26T13:01:38+00:00"
         },
         {
             "name": "filament/infolists",
-            "version": "v3.0.0-alpha129",
+            "version": "v3.0.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
-                "reference": "ca328d964dffa8b0d6306ced8950e74ea6ae868c"
+                "reference": "7be3b7f7f00650791a37b950b3f67664668a8508"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/ca328d964dffa8b0d6306ced8950e74ea6ae868c",
-                "reference": "ca328d964dffa8b0d6306ced8950e74ea6ae868c",
+                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/7be3b7f7f00650791a37b950b3f67664668a8508",
+                "reference": "7be3b7f7f00650791a37b950b3f67664668a8508",
                 "shasum": ""
             },
             "require": {
-                "blade-ui-kit/blade-heroicons": "^2.0",
                 "filament/actions": "self.version",
                 "filament/support": "self.version",
                 "illuminate/console": "^9.0|^10.0",
@@ -1762,37 +1756,35 @@
             "license": [
                 "MIT"
             ],
-            "description": "Effortlessly build TALL-powered description-lists (infolists).",
+            "description": "Easily add beautiful read-only infolists to any Livewire component.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-07-07T21:04:08+00:00"
+            "time": "2023-07-26T13:01:36+00:00"
         },
         {
             "name": "filament/notifications",
-            "version": "v3.0.0-alpha129",
+            "version": "v3.0.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
-                "reference": "015ae8a5c76d9ee05dfb38d0e27a10779302c13b"
+                "reference": "f83b4250f9abf8bbe085d3a8cf9e98b831a863ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/notifications/zipball/015ae8a5c76d9ee05dfb38d0e27a10779302c13b",
-                "reference": "015ae8a5c76d9ee05dfb38d0e27a10779302c13b",
+                "url": "https://api.github.com/repos/filamentphp/notifications/zipball/f83b4250f9abf8bbe085d3a8cf9e98b831a863ad",
+                "reference": "f83b4250f9abf8bbe085d3a8cf9e98b831a863ad",
                 "shasum": ""
             },
             "require": {
-                "blade-ui-kit/blade-heroicons": "^2.0",
                 "filament/actions": "self.version",
                 "filament/support": "self.version",
                 "illuminate/contracts": "^9.0|^10.0",
                 "illuminate/filesystem": "^9.0|^10.0",
                 "illuminate/notifications": "^9.0|^10.0",
                 "illuminate/support": "^9.0|^10.0",
-                "livewire/livewire": "^2.10.7",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.9"
             },
@@ -1816,34 +1808,35 @@
             "license": [
                 "MIT"
             ],
-            "description": "Effortlessly build TALL-powered notifications.",
+            "description": "Easily add beautiful notifications to any Livewire app.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-07-03T09:28:06+00:00"
+            "time": "2023-07-25T18:02:08+00:00"
         },
         {
             "name": "filament/support",
-            "version": "v3.0.0-alpha129",
+            "version": "v3.0.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
-                "reference": "637d31133d42f6ecccba3e25c9fb942b94584fdb"
+                "reference": "ac567c101fc0beedd4e46c0f6858e51bb3ead373"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/support/zipball/637d31133d42f6ecccba3e25c9fb942b94584fdb",
-                "reference": "637d31133d42f6ecccba3e25c9fb942b94584fdb",
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/ac567c101fc0beedd4e46c0f6858e51bb3ead373",
+                "reference": "ac567c101fc0beedd4e46c0f6858e51bb3ead373",
                 "shasum": ""
             },
             "require": {
-                "blade-ui-kit/blade-icons": "^1.4",
+                "blade-ui-kit/blade-heroicons": "^2.0",
                 "ext-intl": "*",
                 "illuminate/contracts": "^9.0|^10.0",
                 "illuminate/support": "^9.0|^10.0",
                 "illuminate/view": "^9.0|^10.0",
+                "livewire/livewire": "^3.0",
                 "php": "^8.1",
                 "ryangjchandler/blade-capture-directive": "^0.2|^0.3",
                 "spatie/color": "^1.5",
@@ -1871,30 +1864,29 @@
             "license": [
                 "MIT"
             ],
-            "description": "Associated helper methods and foundation code for Filament packages.",
+            "description": "Core helper methods and foundation code for all Filament packages.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-07-11T09:49:09+00:00"
+            "time": "2023-07-26T13:02:07+00:00"
         },
         {
             "name": "filament/tables",
-            "version": "v3.0.0-alpha129",
+            "version": "v3.0.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
-                "reference": "e7bcf238d11f328301093cdeb2b9c416a4d7a209"
+                "reference": "ce92308f6cdc7d4963ddbafcef8248b604f20ed9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/tables/zipball/e7bcf238d11f328301093cdeb2b9c416a4d7a209",
-                "reference": "e7bcf238d11f328301093cdeb2b9c416a4d7a209",
+                "url": "https://api.github.com/repos/filamentphp/tables/zipball/ce92308f6cdc7d4963ddbafcef8248b604f20ed9",
+                "reference": "ce92308f6cdc7d4963ddbafcef8248b604f20ed9",
                 "shasum": ""
             },
             "require": {
-                "blade-ui-kit/blade-heroicons": "^2.0",
                 "filament/actions": "self.version",
                 "filament/forms": "self.version",
                 "filament/support": "self.version",
@@ -1904,8 +1896,7 @@
                 "illuminate/filesystem": "^9.0|^10.0",
                 "illuminate/support": "^9.0|^10.0",
                 "illuminate/view": "^9.0|^10.0",
-                "kirschbaum-development/eloquent-power-joins": "^2.6",
-                "livewire/livewire": "^2.10.7",
+                "kirschbaum-development/eloquent-power-joins": "^3.0",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.9"
             },
@@ -1926,32 +1917,30 @@
             "license": [
                 "MIT"
             ],
-            "description": "Effortlessly build TALL-powered tables.",
+            "description": "Easily add beautiful tables to any Livewire component.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-07-12T21:47:45+00:00"
+            "time": "2023-07-26T13:02:01+00:00"
         },
         {
             "name": "filament/widgets",
-            "version": "v3.0.0-alpha129",
+            "version": "v3.0.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
-                "reference": "78a5f6cde9a20a152695a78fc6e3fcf70b3d8f84"
+                "reference": "022a6b43ac8589fe91df3db68408f224f8de2e3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/widgets/zipball/78a5f6cde9a20a152695a78fc6e3fcf70b3d8f84",
-                "reference": "78a5f6cde9a20a152695a78fc6e3fcf70b3d8f84",
+                "url": "https://api.github.com/repos/filamentphp/widgets/zipball/022a6b43ac8589fe91df3db68408f224f8de2e3f",
+                "reference": "022a6b43ac8589fe91df3db68408f224f8de2e3f",
                 "shasum": ""
             },
             "require": {
-                "blade-ui-kit/blade-heroicons": "^2.0",
                 "filament/support": "self.version",
-                "livewire/livewire": "^2.10.7",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.9"
             },
@@ -1972,13 +1961,13 @@
             "license": [
                 "MIT"
             ],
-            "description": "Effortlessly build TALL-powered dashboard widgets.",
+            "description": "Easily add beautiful dashboard widgets to any Livewire component.",
             "homepage": "https://github.com/filamentphp/filament",
             "support": {
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-06-29T22:14:36+00:00"
+            "time": "2023-07-26T13:02:06+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -2743,22 +2732,22 @@
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
-            "version": "2.7.3",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kirschbaum-development/eloquent-power-joins.git",
-                "reference": "14eb8de38e30ce8f7323beb45800673467567f56"
+                "reference": "ef388b6b6ae1502fac172b8beb6f13ffe541569b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kirschbaum-development/eloquent-power-joins/zipball/14eb8de38e30ce8f7323beb45800673467567f56",
-                "reference": "14eb8de38e30ce8f7323beb45800673467567f56",
+                "url": "https://api.github.com/repos/kirschbaum-development/eloquent-power-joins/zipball/ef388b6b6ae1502fac172b8beb6f13ffe541569b",
+                "reference": "ef388b6b6ae1502fac172b8beb6f13ffe541569b",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^6.0|^7.0|^8.0|^9.0|^10.0",
-                "illuminate/support": "^6.0|^7.0|^8.0|^9.0|^10.0",
-                "php": "^7.1|^8.0"
+                "illuminate/database": "^8.0|^9.0|^10.0",
+                "illuminate/support": "^8.0|^9.0|^10.0",
+                "php": "^8.0"
             },
             "require-dev": {
                 "laravel/legacy-factories": "^1.0@dev",
@@ -2799,22 +2788,22 @@
             ],
             "support": {
                 "issues": "https://github.com/kirschbaum-development/eloquent-power-joins/issues",
-                "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/2.7.3"
+                "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/3.2.0"
             },
-            "time": "2023-03-05T11:19:12+00:00"
+            "time": "2023-06-25T11:42:03+00:00"
         },
         {
             "name": "laravel/framework",
-            "version": "v10.16.0",
+            "version": "v10.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "7589f09fe0e8735615cf25f0f1807682aac124c1"
+                "reference": "5c93d2795c393b462481179ce42dedfb30cc19b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/7589f09fe0e8735615cf25f0f1807682aac124c1",
-                "reference": "7589f09fe0e8735615cf25f0f1807682aac124c1",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/5c93d2795c393b462481179ce42dedfb30cc19b5",
+                "reference": "5c93d2795c393b462481179ce42dedfb30cc19b5",
                 "shasum": ""
             },
             "require": {
@@ -3001,7 +2990,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-07-25T14:31:32+00:00"
+            "time": "2023-07-26T03:30:46+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -3955,33 +3944,33 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v2.12.3",
+            "version": "v3.0.0-beta.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "019b1e69d8cd8c7e749eba7a38e4fa69ecbc8f74"
+                "reference": "b57896e44397d7c5b1c42db64dba4c8382959357"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/019b1e69d8cd8c7e749eba7a38e4fa69ecbc8f74",
-                "reference": "019b1e69d8cd8c7e749eba7a38e4fa69ecbc8f74",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/b57896e44397d7c5b1c42db64dba4c8382959357",
+                "reference": "b57896e44397d7c5b1c42db64dba4c8382959357",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^7.0|^8.0|^9.0|^10.0",
-                "illuminate/support": "^7.0|^8.0|^9.0|^10.0",
-                "illuminate/validation": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/database": "^9.0|^10.0|^11.0",
+                "illuminate/support": "^9.0|^10.0|^11.0",
+                "illuminate/validation": "^9.0|^10.0|^11.0",
                 "league/mime-type-detection": "^1.9",
-                "php": "^7.2.5|^8.0",
+                "php": "^8.1",
                 "symfony/http-kernel": "^5.0|^6.0"
             },
             "require-dev": {
                 "calebporzio/sushi": "^2.1",
-                "laravel/framework": "^7.0|^8.0|^9.0|^10.0",
+                "laravel/framework": "^9.0|^10.0",
                 "mockery/mockery": "^1.3.1",
-                "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0",
-                "orchestra/testbench-dusk": "^5.2|^6.0|^7.0|^8.0",
-                "phpunit/phpunit": "^8.4|^9.0",
+                "orchestra/testbench": "^7.0|^8.0",
+                "orchestra/testbench-dusk": "^7.0|^8.0",
+                "phpunit/phpunit": "^9.0",
                 "psy/psysh": "@stable"
             },
             "type": "library",
@@ -4016,7 +4005,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v2.12.3"
+                "source": "https://github.com/livewire/livewire/tree/v3.0.0-beta.4"
             },
             "funding": [
                 {
@@ -4024,7 +4013,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-03-03T20:12:38+00:00"
+            "time": "2023-07-24T21:57:39+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -11081,16 +11070,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "10.1.2",
+            "version": "10.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "db1497ec8dd382e82c962f7abbe0320e4882ee4e"
+                "reference": "be1fe461fdc917de2a29a452ccf2657d325b443d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/db1497ec8dd382e82c962f7abbe0320e4882ee4e",
-                "reference": "db1497ec8dd382e82c962f7abbe0320e4882ee4e",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/be1fe461fdc917de2a29a452ccf2657d325b443d",
+                "reference": "be1fe461fdc917de2a29a452ccf2657d325b443d",
                 "shasum": ""
             },
             "require": {
@@ -11147,7 +11136,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/10.1.2"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/10.1.3"
             },
             "funding": [
                 {
@@ -11155,7 +11144,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-05-22T09:04:27+00:00"
+            "time": "2023-07-26T13:45:28+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -13574,7 +13563,9 @@
     ],
     "aliases": [],
     "minimum-stability": "alpha",
-    "stability-flags": [],
+    "stability-flags": {
+        "livewire/livewire": 10
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

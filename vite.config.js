@@ -1,38 +1,19 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import path from 'path';
-// import livewire from '@defstudio/vite-livewire-plugin';
+import { defineConfig } from 'vite'
+import laravel, { refreshPaths } from 'laravel-vite-plugin'
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: [
-                'resources/css/app.css',
-                // TODO: Will need this when we start using filament
-                // 'resources/css/filament.css',
-                'resources/js/app.js',
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: [
+                ...refreshPaths,
+                'app/Filament/**',
+                'app/Forms/Components/**',
+                'app/Livewire/**',
+                'app/Infolists/Components/**',
+                'app/Providers/Filament/**',
+                'app/Tables/Columns/**',
             ],
-            refresh: true,
         }),
-        {
-            name: 'blade',
-            handleHotUpdate({ file, server }) {
-                if (file.endsWith('.blade.php')) {
-                    server.ws.send({
-                        type: 'full-reload',
-                        path: '*',
-                    });
-                }
-            },
-        }
-        // livewire({
-        //     refresh: ['resources/css/filament.css'],
-        // }),
     ],
-    resolve: {
-        alias: {
-            '@': '/resources/js',
-            '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
-        }
-    }
-});
+})
