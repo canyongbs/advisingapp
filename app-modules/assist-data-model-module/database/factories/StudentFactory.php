@@ -1,8 +1,8 @@
 <?php
 
-namespace Assist\AssistDataModelModule\Database\Factories;
+namespace Assist\AssistDataModel\Database\Factories;
 
-use Assist\AssistDataModelModule\Models\Student;
+use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

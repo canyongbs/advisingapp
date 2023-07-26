@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Assist\AssistDataModelModule\Models\Student;
 use Illuminate\Database\Seeder;
+use Assist\AssistDataModel\Models\Student;
 
 class StudentSeeder extends Seeder
 {
