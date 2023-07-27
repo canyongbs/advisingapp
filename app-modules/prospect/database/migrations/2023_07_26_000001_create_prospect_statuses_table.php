@@ -6,10 +6,10 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateProspectStatusesTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('prospect_statuses', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('status');
             $table->timestamps();
             $table->softDeletes();

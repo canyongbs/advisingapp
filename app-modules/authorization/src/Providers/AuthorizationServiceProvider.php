@@ -8,16 +8,21 @@ use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\Models\RoleGroup;
 use Assist\Authorization\Models\Permission;
 use Assist\Authorization\AuthorizationPlugin;
+use Assist\Authorization\AuthorizationRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AuthorizationServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AuthorizationPlugin()));
+
+        $this->app->singleton(AuthorizationRegistry::class, function ($app) {
+            return new AuthorizationRegistry();
+        });
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'role' => Role::class,

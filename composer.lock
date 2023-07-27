@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c285c875f7af4e91e92b4fa00e7b8e32",
+    "content-hash": "f8d926224097f808deac42cf147c6470",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -362,9 +362,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/authorization",
-                "reference": "bb4ed8e03b9e3ef6573ae30907c69886e13a964e"
+                "reference": "13ad899f524153accad2a2287bdaaa7276d00b36"
             },
             "require": {
+                "filament/filament": "v3.0.0-beta11",
                 "spatie/laravel-permission": "^5.10"
             },
             "type": "library",
@@ -397,7 +398,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/case-module",
-                "reference": "f0557bca12331b40f8f1bfcfc16b2cbec519ca40"
+                "reference": "08eb70b37c4ce0fd82d9a3446945fcb725968b5b"
             },
             "require": {
                 "filament/filament": "v3.0.0-beta11"
@@ -416,6 +417,41 @@
                     "Assist\\CaseModule\\Tests\\": "tests/",
                     "Assist\\CaseModule\\Database\\Factories\\": "database/factories/",
                     "Assist\\CaseModule\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/prospect",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/prospect",
+                "reference": "843afd8b528d614d4ad03bdefdae3512cf203815"
+            },
+            "require": {
+                "filament/filament": "v3.0.0-beta11"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Prospect\\Providers\\ProspectServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Prospect\\": "src/",
+                    "Assist\\Prospect\\Tests\\": "tests/",
+                    "Assist\\Prospect\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Prospect\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

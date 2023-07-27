@@ -1,32 +1,36 @@
 <?php
 
-namespace App\Models;
+namespace Assist\Prospect\Models;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use App\Models\BaseModel;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Prospect\Models\Concerns\HasProspects;
 
 /**
- * @mixin IdeHelperProspectSource
+ * @mixin IdeHelperProspectStatus
  */
-class ProspectSource extends BaseModel
+class ProspectStatus extends BaseModel
 {
     use HasAdvancedFilter;
     use SoftDeletes;
+    use HasProspects;
 
+    // TODO Enum to represent this value?
     protected $fillable = [
-        'source',
+        'status',
     ];
 
     public $orderable = [
         'id',
-        'source',
+        'status',
     ];
 
     public $filterable = [
         'id',
-        'source',
+        'status',
     ];
 
     protected $dates = [

@@ -3,6 +3,7 @@
 namespace Assist\Authorization\Models\Concerns;
 
 use Illuminate\Support\Collection;
+use App\Actions\Finders\ApplicationModules;
 
 // This trait is used to define specific permissions for a model
 // A model that needs to break typical conventions can either extend
@@ -21,11 +22,19 @@ trait DefinesPermissions
 
     protected function webPermissions(): array
     {
-        return config('permissions.web.model');
+        return resolve(ApplicationModules::class)
+            ->moduleConfig(
+                module: 'authorization',
+                path: 'permissions/web/model'
+            );
     }
 
     protected function apiPermissions(): array
     {
-        return config('permissions.api.model');
+        return resolve(ApplicationModules::class)
+            ->moduleConfig(
+                module: 'authorization',
+                path: 'permissions/api/model'
+            );
     }
 }

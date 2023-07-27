@@ -1,26 +1,30 @@
 <?php
 
-namespace App\Models;
+namespace Assist\Prospect\Models;
 
 use Carbon\Carbon;
+use App\Models\User;
 use DateTimeInterface;
+use App\Models\BaseModel;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperProspectItem
+ * @mixin IdeHelperProspect
  */
-class ProspectItem extends BaseModel
+class Prospect extends BaseModel
 {
     use HasAdvancedFilter;
     use SoftDeletes;
 
+    // TODO If we need this enum, this should exist as an enum
     public const SMS_OPT_OUT_RADIO = [
         'N' => 'No',
         'Y' => 'Yes',
     ];
 
+    // TODO If we need this enum, this should exist as an enum
     public const EMAIL_BOUNCE_RADIO = [
         'N' => 'No',
         'Y' => 'Yes',
@@ -29,7 +33,7 @@ class ProspectItem extends BaseModel
     public static $search = [
         'full',
         'mobile',
-        'birthdate',
+        'date_of_birth',
     ];
 
     public $orderable = [
@@ -37,7 +41,7 @@ class ProspectItem extends BaseModel
         'full',
         'email',
         'mobile',
-        'birthdate',
+        'date_of_birth',
     ];
 
     public $filterable = [
@@ -45,11 +49,11 @@ class ProspectItem extends BaseModel
         'full',
         'email',
         'mobile',
-        'birthdate',
+        'date_of_birth',
     ];
 
     protected $dates = [
-        'birthdate',
+        'date_of_birth',
         'hsdate',
         'created_at',
         'updated_at',
@@ -72,21 +76,21 @@ class ProspectItem extends BaseModel
         'phone',
         'address',
         'address_2',
-        'birthdate',
-        'hsgrad',
-        'hsdate',
+        'date_of_birth',
+        'highschool_grad',
+        'highschool_date',
         'assigned_to_id',
         'created_by_id',
     ];
 
-    public function getSmsOptOutLabelAttribute($value)
+    public function assignedTo(): BelongsTo
     {
-        return static::SMS_OPT_OUT_RADIO[$this->sms_opt_out] ?? null;
+        return $this->belongsTo(User::class);
     }
 
-    public function getEmailBounceLabelAttribute($value)
+    public function createdBy(): BelongsTo
     {
-        return static::EMAIL_BOUNCE_RADIO[$this->email_bounce] ?? null;
+        return $this->belongsTo(User::class);
     }
 
     public function status(): BelongsTo
@@ -99,6 +103,16 @@ class ProspectItem extends BaseModel
         return $this->belongsTo(ProspectSource::class);
     }
 
+    public function getSmsOptOutLabelAttribute($value)
+    {
+        return static::SMS_OPT_OUT_RADIO[$this->sms_opt_out] ?? null;
+    }
+
+    public function getEmailBounceLabelAttribute($value)
+    {
+        return static::EMAIL_BOUNCE_RADIO[$this->email_bounce] ?? null;
+    }
+
     public function getBirthdateAttribute($value)
     {
         return $value ? Carbon::parse($value)->format(config('project.date_format')) : null;
@@ -106,7 +120,7 @@ class ProspectItem extends BaseModel
 
     public function setBirthdateAttribute($value)
     {
-        $this->attributes['birthdate'] = $value ? Carbon::createFromFormat(config('project.date_format'), $value)->format('Y-m-d') : null;
+        $this->attributes['date_of_birth'] = $value ? Carbon::createFromFormat(config('project.date_format'), $value)->format('Y-m-d') : null;
     }
 
     public function getHsdateAttribute($value)
@@ -117,16 +131,6 @@ class ProspectItem extends BaseModel
     public function setHsdateAttribute($value)
     {
         $this->attributes['hsdate'] = $value ? Carbon::createFromFormat(config('project.date_format'), $value)->format('Y-m-d') : null;
-    }
-
-    public function assignedTo(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function createdBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     public function getCreatedAtAttribute($value)

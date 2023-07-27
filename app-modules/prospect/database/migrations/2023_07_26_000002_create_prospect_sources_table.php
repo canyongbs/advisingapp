@@ -6,10 +6,10 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateProspectSourcesTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('prospect_sources', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('source');
             $table->timestamps();
             $table->softDeletes();
