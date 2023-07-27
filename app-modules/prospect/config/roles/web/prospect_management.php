@@ -2,7 +2,7 @@
 
 return [
     'model' => [
-        'prospect_item' => [
+        'prospect' => [
             '*',
         ],
         'prospect_source' => [

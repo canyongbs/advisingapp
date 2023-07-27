@@ -39,7 +39,7 @@ class SyncRolesAndPermissions extends Command
     protected function syncWebPermissions(): void
     {
         Role::where('guard_name', 'web')
-            ->where('name', '!=', 'super_admin')
+            ->where('name', '!=', 'authorization.super_admin')
             ->get()
             ->each(function (Role $role) {
                 $this->syncPermissionFor('web', $role);
@@ -49,7 +49,7 @@ class SyncRolesAndPermissions extends Command
     protected function syncApiPermissions(): void
     {
         Role::where('guard_name', 'api')
-            ->where('name', '!=', 'super_admin')
+            ->where('name', '!=', 'authorization.super_admin')
             ->get()
             ->each(function (Role $role) {
                 $this->syncPermissionFor('api', $role);
@@ -60,12 +60,12 @@ class SyncRolesAndPermissions extends Command
     {
         // This is assuming that our roles are named in the following convention
         // {module}.{role}
-        $module = explode('.', $role->name)[0];
+        [$module, $roleFileName] = explode('.', $role->name);
 
         $permissions = resolve(ApplicationModules::class)
             ->moduleConfig(
                 module: $module,
-                path: "roles/{$guard}/{$role->name}"
+                path: "roles/{$guard}/{$roleFileName}"
             );
 
         collect($permissions)->each(function ($specificPermissions, $permissionConvention) use ($role, $guard) {
