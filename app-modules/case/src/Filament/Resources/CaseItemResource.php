@@ -92,15 +92,22 @@ class CaseItemResource extends Resource
                     ->label('Student')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('priority.name')
-                    ->label('Priority')
-                    ->sortable(query: function (Builder $query, string $direction): Builder {
-                        return $query->orderByPowerJoins('priority.order', $direction);
-                    }),
-                Tables\Columns\TextColumn::make('state.name')
-                    ->label('Status')
-                    ->badge()
-                    ->color(fn (CaseItem $caseItem) => $caseItem->state->color),
+                Tables\Columns\TextColumn::make('respondent.sisid')
+                    ->label('SIS ID')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('respondent.otherid')
+                    ->label('Other ID')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('institution.name')
+                    ->label('Institution')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('assignedTo.name')
+                    ->label('Assigned to')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('priority')
