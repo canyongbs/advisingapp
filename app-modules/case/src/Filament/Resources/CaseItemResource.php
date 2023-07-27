@@ -81,9 +81,17 @@ class CaseItemResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('casenumber')
                     ->label('Case #')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('respondent.full')
+                    ->label('Student')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('priority.name')
                     ->label('Priority')
                     ->sortable(query: function (Builder $query, string $direction): Builder {

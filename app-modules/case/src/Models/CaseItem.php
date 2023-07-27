@@ -118,7 +118,7 @@ class CaseItem extends BaseModel
             name: 'respondent',
             type: 'respondent_type',
             id: 'respondent_id',
-            ownerKey: 'student_id',
+            ownerKey: 'sisid',
         );
     }
 

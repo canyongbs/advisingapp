@@ -24,9 +24,11 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 class Student extends BaseModel
 {
-    protected $primaryKey = 'student_id';
+    protected $primaryKey = 'sisid';
 
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     public function cases(): MorphMany
     {
@@ -35,7 +37,7 @@ class Student extends BaseModel
             name: 'respondent',
             type: 'respondent_type',
             id: 'respondent_id',
-            localKey: 'student_id'
+            localKey: 'sisid'
         );
     }
 }
