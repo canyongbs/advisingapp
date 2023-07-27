@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Authorization\Tests\Feature\Actions\RolesAndPermissions;
+namespace Assist\Authorization\Tests\Feature\Actions;
 
 use Tests\TestCase;
 use App\Models\User;
@@ -8,6 +8,7 @@ use Mockery\MockInterface;
 use Illuminate\Support\Facades\Config;
 use App\Actions\Finders\ApplicationModels;
 use Assist\Authorization\Models\Permission;
+use Spatie\Permission\Commands\CreatePermission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Assist\Authorization\Actions\CreatePermissions;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Assist\Authorization\Tests\Feature\Actions\RolesAndPermissions;
+namespace Assist\Authorization\Tests\Feature\Actions;
 
 use Tests\TestCase;
-use App\Actions\RolesAndPermissions\CreateRoles;
+use Assist\Authorization\Actions\CreateRoles;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateRolesTest extends TestCase
