@@ -29,6 +29,8 @@ class CaseItemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
+    protected static ?string $label = 'Case';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -45,13 +47,11 @@ class CaseItemResource extends Resource
                     ])
                     ->searchable()
                     ->label('Respondent'),
-                // TODO: Add Institution input
                 Select::make('state')
                     ->options(CaseItemStatus::pluck('name', 'id'))
                     ->relationship('state', 'name')
                     ->label('State')
                     ->required(),
-                // TODO: Add Type input
                 Select::make('priority')
                     ->relationship(
                         name: 'priority',
@@ -110,6 +110,7 @@ class CaseItemResource extends Resource
                     ->sortable(),
             ])
             ->filters([
+                // TODO: Figure out how to get this to display a list of existing items rather than a search
                 Tables\Filters\SelectFilter::make('priority')
                     ->relationship('priority', 'name')
                     ->multiple(),
