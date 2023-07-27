@@ -36,6 +36,7 @@ class SyncRolesAndPermissions extends Command
 
     protected function syncWebPermissions(): void
     {
+        // TODO We'll need to get the correct config path per module when we attempt to sync web permissions
         Role::where('guard_name', 'web')
             ->where('name', '!=', 'super_admin')
             ->get()
@@ -46,6 +47,7 @@ class SyncRolesAndPermissions extends Command
 
     protected function syncApiPermissions(): void
     {
+        // TODO We'll need to get the correct config path per module when we attempt to sync api permissions
         Role::where('guard_name', 'api')
             ->where('name', '!=', 'super_admin')
             ->get()

@@ -21,6 +21,7 @@ class CreatePermissions
 
     // TODO This will need to be refactored.
     // Each "module" will need to register its models somewhere
+    // So that we can create all of the permissions we'll need
     protected function createModelPermissions(): void
     {
         resolve(ApplicationModels::class)->implementingPermissions()->each(function ($modelClass) {

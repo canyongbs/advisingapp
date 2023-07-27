@@ -7,6 +7,8 @@ use Assist\Authorization\Models\Role;
 
 class CreateRoles
 {
+    // TODO We need to refactor this to take modules into account
+    // As roles will be defined per module that introduces them
     public function handle(): void
     {
         collect(File::directories(config_path('roles')))->each(function ($path, $key) {
