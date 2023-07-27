@@ -10,6 +10,9 @@ use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
+/**
+ * @mixin IdeHelperRole
+ */
 class Role extends SpatieRole
 {
     use DefinesPermissions;

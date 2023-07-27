@@ -41,176 +41,6 @@ namespace App\Models{
 	class IdeHelperAuditLog {}
 }
 
-namespace App\Models{use Assist\CaseModule\Models\CaseItem;
-/**
- * Assist\CaseModule\Models\CaseItem
- *
- * @property int $id
- * @property int $casenumber
- * @property string|null $respondent_type
- * @property int|null $respondent_id
- * @property string|null $close_details
- * @property string|null $res_details
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property int|null $institution_id
- * @property int|null $state_id
- * @property int|null $type_id
- * @property int|null $priority_id
- * @property int|null $assigned_to_id
- * @property int|null $created_by_id
- * @property-read \App\Models\User|null $assignedTo
- * @property-read \App\Models\User|null $createdBy
- * @property-read \App\Models\Institution|null $institution
- * @property-read \Assist\CaseModule\Models\CaseItemPriority|null $priority
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $respondent
- * @property-read \Assist\CaseModule\Models\CaseItemStatus|null $state
- * @property-read \Assist\CaseModule\Models\CaseItemType|null $type
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem advancedFilter($data)
- * @method static \factories\CaseItemFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem query()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereAssignedToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereCasenumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereCloseDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereCreatedById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereInstitutionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem wherePriorityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereResDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereRespondentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereRespondentType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereStateId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItem withoutTrashed()
- * @mixin \Eloquent
- */
-	class IdeHelperCaseItem {}
-}
-
-namespace App\Models{use Assist\CaseModule\Models\CaseItemPriority;
-/**
- * Assist\CaseModule\Models\CaseItemPriority
- *
- * @property int $id
- * @property string $priority
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority advancedFilter($data)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority query()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority wherePriority($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority withoutTrashed()
- * @mixin \Eloquent
- */
-	class IdeHelperCaseItemPriority {}
-}
-
-namespace App\Models{use Assist\CaseModule\Models\CaseItemStatus;
-/**
- * Assist\CaseModule\Models\CaseItemStatus
- *
- * @property int $id
- * @property string $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus advancedFilter($data)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus query()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus withoutTrashed()
- * @mixin \Eloquent
- */
-	class IdeHelperCaseItemStatus {}
-}
-
-namespace App\Models{use Assist\CaseModule\Models\CaseItemType;
-/**
- * Assist\CaseModule\Models\CaseItemType
- *
- * @property int $id
- * @property string $type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType advancedFilter($data)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType query()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType withoutTrashed()
- * @mixin \Eloquent
- */
-	class IdeHelperCaseItemType {}
-}
-
-namespace App\Models{use Assist\CaseModule\Models\CaseUpdateItem;
-/**
- * Assist\CaseModule\Models\CaseUpdateItem
- *
- * @property int $id
- * @property string $update
- * @property string $internal
- * @property string $direction
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property int|null $student_id
- * @property int|null $case_id
- * @property-read \Assist\CaseModule\Models\CaseItem|null $case
- * @property-read mixed $direction_label
- * @property-read mixed $internal_label
- * @property-read \App\Models\RecordStudentItem|null $student
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem advancedFilter($data)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem query()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereCaseId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereDirection($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereInternal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereStudentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereUpdate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem withoutTrashed()
- * @mixin \Eloquent
- */
-	class IdeHelperCaseUpdateItem {}
-}
-
 namespace App\Models{
 /**
  * App\Models\EngagementEmailItem
@@ -469,6 +299,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|Institution advancedFilter($data)
+ * @method static \Database\Factories\InstitutionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Institution newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Institution newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Institution onlyTrashed()
@@ -754,16 +585,44 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Permission
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Role> $roles
+ * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission api()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission web()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereGuardName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	class IdeHelperPermission {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Program
  *
- * @property int $program_id
- * @property string $name
  * @method static \Database\Factories\ProgramFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Program newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Program newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Program query()
- * @method static \Illuminate\Database\Eloquent\Builder|Program whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Program whereProgramId($value)
  * @mixin \Eloquent
  */
 	class IdeHelperProgram {}
@@ -1060,31 +919,33 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\Student
+ * App\Models\Role
  *
- * @property int $student_id
- * @property string $first_name
- * @property string $middle_name
- * @property string $last_name
- * @property string $email
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseModule\Models\CaseItem> $cases
- * @property-read int|null $cases_count
- * @method static \Database\Factories\StudentFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Student query()
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereFirstName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereMiddleName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereStudentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Student whereUpdatedAt($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Role admin()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role api()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role superAdmin()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role web()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereGuardName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	class IdeHelperStudent {}
+	class IdeHelperRole {}
 }
 
 namespace App\Models{
@@ -1173,13 +1034,19 @@ namespace App\Models{
  * @property-read mixed $type_label
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Role> $roles
+ * @property-read int|null $roles_count
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|User role($roles, $guard = null)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
@@ -1227,5 +1094,200 @@ namespace App\Models{
  * @mixin \Eloquent
  */
 	class IdeHelperUserAlert {}
+}
+
+namespace Assist\AssistDataModel\Models{
+/**
+ * Assist\AssistDataModel\Models\Student
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseItem> $cases
+ * @property-read int|null $cases_count
+ * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student query()
+ * @mixin \Eloquent
+ */
+	class IdeHelperStudent {}
+}
+
+namespace Assist\Case\Models{
+/**
+ * Assist\Case\Models\CaseItem
+ *
+ * @property int $id
+ * @property int $casenumber
+ * @property string|null $respondent_type
+ * @property int|null $respondent_id
+ * @property string|null $close_details
+ * @property string|null $res_details
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $institution_id
+ * @property int|null $state_id
+ * @property int|null $type_id
+ * @property int|null $priority_id
+ * @property int|null $assigned_to_id
+ * @property int|null $created_by_id
+ * @property-read \App\Models\User|null $assignedTo
+ * @property-read \App\Models\User|null $createdBy
+ * @property-read \App\Models\Institution|null $institution
+ * @property-read \Assist\Case\Models\CaseItemPriority|null $priority
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $respondent
+ * @property-read \Assist\Case\Models\CaseItemStatus|null $state
+ * @property-read \Assist\Case\Models\CaseItemType|null $type
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem advancedFilter($data)
+ * @method static \Assist\Case\Database\Factories\CaseItemFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereAssignedToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereCasenumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereCloseDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereInstitutionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem wherePriorityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereResDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereRespondentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereRespondentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereStateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItem withoutTrashed()
+ * @mixin \Eloquent
+ */
+	class IdeHelperCaseItem {}
+}
+
+namespace Assist\Case\Models{
+/**
+ * Assist\Case\Models\CaseItemPriority
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $order
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseItem> $caseItems
+ * @property-read int|null $case_items_count
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority advancedFilter($data)
+ * @method static \Assist\Case\Database\Factories\CaseItemPriorityFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemPriority withoutTrashed()
+ * @mixin \Eloquent
+ */
+	class IdeHelperCaseItemPriority {}
+}
+
+namespace Assist\Case\Models{
+/**
+ * Assist\Case\Models\CaseItemStatus
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $color
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseItem> $caseItems
+ * @property-read int|null $case_items_count
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus advancedFilter($data)
+ * @method static \Assist\Case\Database\Factories\CaseItemStatusFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemStatus withoutTrashed()
+ * @mixin \Eloquent
+ */
+	class IdeHelperCaseItemStatus {}
+}
+
+namespace Assist\Case\Models{
+/**
+ * Assist\Case\Models\CaseItemType
+ *
+ * @property int $id
+ * @property string $type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType advancedFilter($data)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseItemType withoutTrashed()
+ * @mixin \Eloquent
+ */
+	class IdeHelperCaseItemType {}
+}
+
+namespace Assist\Case\Models{
+/**
+ * Assist\Case\Models\CaseUpdateItem
+ *
+ * @property int $id
+ * @property string $update
+ * @property string $internal
+ * @property string $direction
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $student_id
+ * @property int|null $case_id
+ * @property-read \Assist\Case\Models\CaseItem|null $case
+ * @property-read mixed $direction_label
+ * @property-read mixed $internal_label
+ * @property-read \App\Models\RecordStudentItem|null $student
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem advancedFilter($data)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereCaseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereDirection($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereInternal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereStudentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereUpdate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseUpdateItem withoutTrashed()
+ * @mixin \Eloquent
+ */
+	class IdeHelperCaseUpdateItem {}
 }
 

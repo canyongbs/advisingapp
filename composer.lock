@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c285c875f7af4e91e92b4fa00e7b8e32",
+    "content-hash": "29363755d0023cea3d491601813f7657",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.276.5",
+            "version": "3.277.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "bd01bbc5ea4d62a070c7064a386bf0008871c6a5"
+                "reference": "c780e4fabaab2cce5fcd9748fd17cf82bb99207e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bd01bbc5ea4d62a070c7064a386bf0008871c6a5",
-                "reference": "bd01bbc5ea4d62a070c7064a386bf0008871c6a5",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c780e4fabaab2cce5fcd9748fd17cf82bb99207e",
+                "reference": "c780e4fabaab2cce5fcd9748fd17cf82bb99207e",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.276.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.277.0"
             },
-            "time": "2023-07-25T18:12:23+00:00"
+            "time": "2023-07-26T18:23:52+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -357,14 +357,50 @@
             "time": "2023-01-15T23:15:59+00:00"
         },
         {
+            "name": "canyon-gbs/assist-data-model",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/assist-data-model",
+                "reference": "427e4696473c88ce2404d2254a9a584cd3388ebe"
+            },
+            "require": {
+                "filament/filament": "v3.0.0-beta11"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\AssistDataModel\\Providers\\AssistDataModelServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\AssistDataModel\\": "src/",
+                    "Assist\\AssistDataModel\\Tests\\": "tests/",
+                    "Assist\\AssistDataModel\\Database\\Factories\\": "database/factories/",
+                    "Assist\\AssistDataModel\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/authorization",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/authorization",
-                "reference": "bb4ed8e03b9e3ef6573ae30907c69886e13a964e"
+                "reference": "13ad899f524153accad2a2287bdaaa7276d00b36"
             },
             "require": {
+                "filament/filament": "v3.0.0-beta11",
                 "spatie/laravel-permission": "^5.10"
             },
             "type": "library",
@@ -392,12 +428,12 @@
             }
         },
         {
-            "name": "canyon-gbs/case-module",
+            "name": "canyon-gbs/case",
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/case-module",
-                "reference": "f0557bca12331b40f8f1bfcfc16b2cbec519ca40"
+                "url": "app-modules/case",
+                "reference": "afb8433b2079e5ca6f72443d36f4c6afbf6a32ba"
             },
             "require": {
                 "filament/filament": "v3.0.0-beta11"
@@ -406,16 +442,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\CaseModule\\Providers\\CaseModuleServiceProvider"
+                        "Assist\\Case\\Providers\\CaseServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\CaseModule\\": "src/",
-                    "Assist\\CaseModule\\Tests\\": "tests/",
-                    "Assist\\CaseModule\\Database\\Factories\\": "database/factories/",
-                    "Assist\\CaseModule\\Database\\Seeders\\": "database/seeders/"
+                    "Assist\\Case\\": "src/",
+                    "Assist\\Case\\Tests\\": "tests/",
+                    "Assist\\Case\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Case\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -6104,16 +6140,16 @@
         },
         {
             "name": "spatie/image-optimizer",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image-optimizer.git",
-                "reference": "9551e2df936656bda3567901a033579345d52e88"
+                "reference": "af179994e2d2413e4b3ba2d348d06b4eaddbeb30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image-optimizer/zipball/9551e2df936656bda3567901a033579345d52e88",
-                "reference": "9551e2df936656bda3567901a033579345d52e88",
+                "url": "https://api.github.com/repos/spatie/image-optimizer/zipball/af179994e2d2413e4b3ba2d348d06b4eaddbeb30",
+                "reference": "af179994e2d2413e4b3ba2d348d06b4eaddbeb30",
                 "shasum": ""
             },
             "require": {
@@ -6153,9 +6189,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/image-optimizer/issues",
-                "source": "https://github.com/spatie/image-optimizer/tree/1.7.0"
+                "source": "https://github.com/spatie/image-optimizer/tree/1.7.1"
             },
-            "time": "2023-07-22T16:28:37+00:00"
+            "time": "2023-07-27T07:57:32+00:00"
         },
         {
             "name": "spatie/invade",
@@ -6308,16 +6344,16 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "10.11.1",
+            "version": "10.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "6ef22a3a0df6ca0cfc59fe48fde42d30e2e90d81"
+                "reference": "bac32801073bd9446277cdeb174cf4327ea28aef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/6ef22a3a0df6ca0cfc59fe48fde42d30e2e90d81",
-                "reference": "6ef22a3a0df6ca0cfc59fe48fde42d30e2e90d81",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/bac32801073bd9446277cdeb174cf4327ea28aef",
+                "reference": "bac32801073bd9446277cdeb174cf4327ea28aef",
                 "shasum": ""
             },
             "require": {
@@ -6401,7 +6437,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-medialibrary/issues",
-                "source": "https://github.com/spatie/laravel-medialibrary/tree/10.11.1"
+                "source": "https://github.com/spatie/laravel-medialibrary/tree/10.11.2"
             },
             "funding": [
                 {
@@ -6413,7 +6449,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-07-25T08:42:59+00:00"
+            "time": "2023-07-27T08:00:59+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",

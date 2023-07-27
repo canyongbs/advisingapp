@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Authorization\Tests\Feature\Actions\RolesAndPermissions;
+namespace Assist\Authorization\Tests\Feature\Actions;
 
 use Tests\TestCase;
 use App\Models\User;

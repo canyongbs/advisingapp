@@ -2,6 +2,8 @@
 
 namespace Assist\Authorization\Listeners;
 
+use App\Models\User;
+use Assist\Authorization\Models\Role;
 use Assist\Authorization\Actions\AddRolesFromRoleGroupToUser;
 use Assist\Authorization\Actions\AddNewRoleToExistingUsersInRoleGroup;
 
