@@ -12,6 +12,7 @@ use Assist\Case\Models\CaseItemStatus;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
@@ -91,15 +92,42 @@ class CaseItemResource extends Resource
                 Tables\Columns\TextColumn::make('respondent.full')
                     ->label('Student')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        // TODO: Look into issues with the Power Joins package being able to handle this
+                        //ray($query->joinRelationship('respondent', [
+                        //    'respondent' => [
+                        //        'students' => function ($join) {
+                        //            // ...
+                        //        },
+                        //    ],
+                        //])->toSql());
+
+                        // Update this if any other relations are added to the CaseItem model respondent relationship
+                        return $query->join('students', function (JoinClause $join) {
+                            $join->on('case_items.respondent_id', '=', 'students.sisid')
+                                ->where('case_items.respondent_type', '=', 'student');
+                        })->orderBy('full', $direction);
+                    }),
                 Tables\Columns\TextColumn::make('respondent.sisid')
                     ->label('SIS ID')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        // Update this if any other relations are added to the CaseItem model respondent relationship
+                        return $query->join('students', function (JoinClause $join) {
+                            $join->on('case_items.respondent_id', '=', 'students.sisid')
+                                ->where('case_items.respondent_type', '=', 'student');
+                        })->orderBy('sisid', $direction);
+                    }),
                 Tables\Columns\TextColumn::make('respondent.otherid')
                     ->label('Other ID')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        // Update this if any other relations are added to the CaseItem model respondent relationship
+                        return $query->join('students', function (JoinClause $join) {
+                            $join->on('case_items.respondent_id', '=', 'students.sisid')
+                                ->where('case_items.respondent_type', '=', 'student');
+                        })->orderBy('otherid', $direction);
+                    }),
                 Tables\Columns\TextColumn::make('institution.name')
                     ->label('Institution')
                     ->searchable()
