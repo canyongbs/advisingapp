@@ -8,6 +8,9 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\RoleGroupsRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 
 class UserResource extends Resource
 {
@@ -32,6 +35,7 @@ class UserResource extends Resource
             ->filters([
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -44,6 +48,9 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RoleGroupsRelationManager::class,
+            RolesRelationManager::class,
+            PermissionsRelationManager::class,
         ];
     }
 
@@ -52,6 +59,7 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
+            'view' => Pages\ViewUser::route('/{record}'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }

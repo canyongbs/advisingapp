@@ -51,94 +51,94 @@ return [
     ],
 
     'model' => [
-        'auditLog' => [
+        'audit_log' => [
             '*',
         ],
-        'caseItem' => [
+        'case_item' => [
             '*',
         ],
-        'caseItemPriority' => [
+        'case_item_priority' => [
             '*',
         ],
-        'caseItemStatus' => [
+        'case_item_status' => [
             '*',
         ],
-        'caseItemType' => [
+        'case_item_type' => [
             '*',
         ],
-        'caseUpdateItem' => [
+        'case_update_item' => [
             '*',
         ],
-        'engagementEmailItem' => [
+        'engagement_email_item' => [
             '*',
         ],
-        'engagementInteractionDriver' => [
+        'engagement_interaction_driver' => [
             '*',
         ],
-        'engagementInteractionItem' => [
+        'engagement_interaction_item' => [
             '*',
         ],
-        'engagementInteractionOutcome' => [
+        'engagement_interaction_outcome' => [
             '*',
         ],
-        'engagementInteractionRelation' => [
+        'engagement_interaction_relation' => [
             '*',
         ],
-        'engagementInteractionType' => [
+        'engagement_interaction_type' => [
             '*',
         ],
-        'engagementStudentFile' => [
+        'engagement_student_file' => [
             '*',
         ],
-        'engagementTextItem' => [
+        'engagement_text_item' => [
             '*',
         ],
         'institution' => [
             '*',
         ],
-        'journeyEmailItem' => [
+        'journey_email_item' => [
             '*',
         ],
-        'journeyItem' => [
+        'journey_item' => [
             '*',
         ],
-        'journeyTargetList' => [
+        'journey_target_list' => [
             '*',
         ],
-        'journeyTextItem' => [
+        'journey_text_item' => [
             '*',
         ],
-        'kbItem' => [
+        'kb_item' => [
             '*',
         ],
-        'kbItemCategory' => [
+        'kb_item_category' => [
             '*',
         ],
-        'kbItemQuality' => [
+        'kb_item_quality' => [
             '*',
         ],
-        'kbItemStatus' => [
+        'kb_item_status' => [
             '*',
         ],
-        'prospectItem' => [
+        'prospect_item' => [
             '*',
         ],
-        'prospectSource' => [
+        'prospect_source' => [
             '*',
         ],
-        'prospectStatus' => [
+        'prospect_status' => [
             '*',
         ],
-        'recordEnrollmentItem' => [
+        'record_enrollment_item' => [
             '*',
         ],
-        'recordProgramItem' => [
+        'record_program_item' => [
             '*',
         ],
-        'recordStudentItem' => [
+        'record_student_item' => [
             '*',
         ],
-        'supportPage' => [
+        'support_page' => [
             '*',
         ],
     ],

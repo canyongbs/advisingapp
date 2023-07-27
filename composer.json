@@ -25,7 +25,8 @@
         "livewire/livewire": "^3.0@beta",
         "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
-        "spatie/laravel-permission": "^5.10"
+        "spatie/laravel-permission": "^5.10",
+        "staudenmeir/eloquent-has-many-deep": "^1.18"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",

@@ -7,10 +7,13 @@ use DateTimeInterface;
 use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Traits\HasRoles;
+use App\Models\Concerns\HasRoleGroups;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Concerns\HasRolesWithPivot;
 use App\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -25,8 +28,10 @@ class User extends Authenticatable implements HasLocalePreference
     use Notifiable;
     use SoftDeletes;
     use Auditable;
-    use HasRoles;
+    use HasRolesWithPivot;
     use DefinesPermissions;
+    use HasRoleGroups;
+    use HasRelationships;
 
     public const TYPE_RADIO = [
         'local' => 'Local',
@@ -72,6 +77,11 @@ class User extends Authenticatable implements HasLocalePreference
         'roles.title',
         'locale',
     ];
+
+    public function permissions(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+    }
 
     public function getIsAdminAttribute()
     {
