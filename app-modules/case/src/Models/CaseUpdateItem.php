@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property int|null $student_id
  * @property int|null $case_id
- * @property-read CaseItem|null $case
+ * @property-read \Assist\Case\Models\CaseItem|null $case
  * @property-read mixed $direction_label
  * @property-read mixed $internal_label
  * @property-read RecordStudentItem|null $student

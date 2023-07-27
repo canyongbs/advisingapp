@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Traits\Auditable;
 use App\Support\HasAdvancedFilter;
-use Database\Factories\UserFactory;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -36,20 +35,20 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Collection<int, UserAlert> $alerts
+ * @property-read Collection<int, \App\Models\UserAlert> $alerts
  * @property-read int|null $alerts_count
  * @property-read mixed $is_admin
  * @property-read mixed $type_label
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read Collection<int, Permission> $permissions
+ * @property-read Collection<int, \App\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read Collection<int, Role> $roles
+ * @property-read Collection<int, \App\Models\Role> $roles
  * @property-read int|null $roles_count
  *
  * @method static Builder|User admins()
  * @method static Builder|User advancedFilter($data)
- * @method static UserFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User onlyTrashed()

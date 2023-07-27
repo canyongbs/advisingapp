@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Collection<int, User> $users
+ * @property-read Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  *
  * @method static Builder|UserAlert advancedFilter($data)

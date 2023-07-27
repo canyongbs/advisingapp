@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Case\Database\Factories\CaseItemPriorityFactory;
 
 /**
  * Assist\Case\Models\CaseItemPriority
@@ -22,11 +21,11 @@ use Assist\Case\Database\Factories\CaseItemPriorityFactory;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, CaseItem> $caseItems
+ * @property-read Collection<int, \Assist\Case\Models\CaseItem> $caseItems
  * @property-read int|null $case_items_count
  *
  * @method static Builder|CaseItemPriority advancedFilter($data)
- * @method static CaseItemPriorityFactory factory($count = null, $state = [])
+ * @method static \Assist\Case\Database\Factories\CaseItemPriorityFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemPriority newModelQuery()
  * @method static Builder|CaseItemPriority newQuery()
  * @method static Builder|CaseItemPriority onlyTrashed()

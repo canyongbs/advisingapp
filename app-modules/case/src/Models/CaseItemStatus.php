@@ -10,7 +10,6 @@ use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Assist\Case\Database\Factories\CaseItemStatusFactory;
 
 /**
  * Assist\Case\Models\CaseItemStatus
@@ -21,11 +20,11 @@ use Assist\Case\Database\Factories\CaseItemStatusFactory;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, CaseItem> $caseItems
+ * @property-read Collection<int, \Assist\Case\Models\CaseItem> $caseItems
  * @property-read int|null $case_items_count
  *
  * @method static Builder|CaseItemStatus advancedFilter($data)
- * @method static CaseItemStatusFactory factory($count = null, $state = [])
+ * @method static \Assist\Case\Database\Factories\CaseItemStatusFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemStatus newModelQuery()
  * @method static Builder|CaseItemStatus newQuery()
  * @method static Builder|CaseItemStatus onlyTrashed()
