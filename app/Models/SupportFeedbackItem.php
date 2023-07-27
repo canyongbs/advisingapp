@@ -2,11 +2,19 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @mixin IdeHelperSupportFeedbackItem
+ * App\Models\SupportFeedbackItem
+ *
+ * @method static Builder|SupportFeedbackItem newModelQuery()
+ * @method static Builder|SupportFeedbackItem newQuery()
+ * @method static Builder|SupportFeedbackItem query()
+ *
+ * @mixin Eloquent
  */
 class SupportFeedbackItem extends Model
 {

@@ -2,15 +2,57 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * @mixin IdeHelperKbItem
+ * App\Models\KbItem
+ *
+ * @property int $id
+ * @property string $question
+ * @property string $public
+ * @property string|null $solution
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $quality_id
+ * @property int|null $status_id
+ * @property int|null $category_id
+ * @property-read \App\Models\KbItemCategory|null $category
+ * @property-read mixed $public_label
+ * @property-read Collection<int, \App\Models\Institution> $institution
+ * @property-read int|null $institution_count
+ * @property-read \App\Models\KbItemQuality|null $quality
+ * @property-read \App\Models\KbItemStatus|null $status
+ *
+ * @method static Builder|KbItem advancedFilter($data)
+ * @method static Builder|KbItem newModelQuery()
+ * @method static Builder|KbItem newQuery()
+ * @method static Builder|KbItem onlyTrashed()
+ * @method static Builder|KbItem query()
+ * @method static Builder|KbItem whereCategoryId($value)
+ * @method static Builder|KbItem whereCreatedAt($value)
+ * @method static Builder|KbItem whereDeletedAt($value)
+ * @method static Builder|KbItem whereId($value)
+ * @method static Builder|KbItem whereNotes($value)
+ * @method static Builder|KbItem wherePublic($value)
+ * @method static Builder|KbItem whereQualityId($value)
+ * @method static Builder|KbItem whereQuestion($value)
+ * @method static Builder|KbItem whereSolution($value)
+ * @method static Builder|KbItem whereStatusId($value)
+ * @method static Builder|KbItem whereUpdatedAt($value)
+ * @method static Builder|KbItem withTrashed()
+ * @method static Builder|KbItem withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class KbItem extends BaseModel
 {

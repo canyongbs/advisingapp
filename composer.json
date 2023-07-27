@@ -107,6 +107,13 @@
       "@php-cs-lint",
       "@prettier-lint"
     ],
+    "helper-regen": [
+      "@php artisan ide-helper:generate",
+      "@php artisan ide-helper:models -W -R || true",
+      "@php artisan ide-helper:meta",
+      "@lint"
+    ],
+
     "larastan": [
       "./vendor/bin/phpstan analyse --memory-limit=2G"
     ],

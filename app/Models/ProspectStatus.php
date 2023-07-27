@@ -2,13 +2,36 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperProspectStatus
+ * App\Models\ProspectStatus
+ *
+ * @property int $id
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
+ * @method static Builder|ProspectStatus advancedFilter($data)
+ * @method static Builder|ProspectStatus newModelQuery()
+ * @method static Builder|ProspectStatus newQuery()
+ * @method static Builder|ProspectStatus onlyTrashed()
+ * @method static Builder|ProspectStatus query()
+ * @method static Builder|ProspectStatus whereCreatedAt($value)
+ * @method static Builder|ProspectStatus whereDeletedAt($value)
+ * @method static Builder|ProspectStatus whereId($value)
+ * @method static Builder|ProspectStatus whereStatus($value)
+ * @method static Builder|ProspectStatus whereUpdatedAt($value)
+ * @method static Builder|ProspectStatus withTrashed()
+ * @method static Builder|ProspectStatus withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class ProspectStatus extends BaseModel
 {

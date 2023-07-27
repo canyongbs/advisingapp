@@ -11,11 +11,8 @@ parameters:
         - tests/
         - routes/
 
-    scanFiles:
-          - _ide_helper_models.php
-
     excludePaths:
-          - app-modules/*/vendor/*
+        - app-modules/*/vendor/*
 
     # Level 9 is the highest level
     level: 1

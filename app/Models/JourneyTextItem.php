@@ -2,13 +2,48 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperJourneyTextItem
+ * App\Models\JourneyTextItem
+ *
+ * @property int $id
+ * @property string|null $name
+ * @property string|null $text
+ * @property string|null $start
+ * @property string|null $end
+ * @property string $active
+ * @property string|null $frequency
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read mixed $active_label
+ * @property-read mixed $frequency_label
+ *
+ * @method static Builder|JourneyTextItem advancedFilter($data)
+ * @method static Builder|JourneyTextItem newModelQuery()
+ * @method static Builder|JourneyTextItem newQuery()
+ * @method static Builder|JourneyTextItem onlyTrashed()
+ * @method static Builder|JourneyTextItem query()
+ * @method static Builder|JourneyTextItem whereActive($value)
+ * @method static Builder|JourneyTextItem whereCreatedAt($value)
+ * @method static Builder|JourneyTextItem whereDeletedAt($value)
+ * @method static Builder|JourneyTextItem whereEnd($value)
+ * @method static Builder|JourneyTextItem whereFrequency($value)
+ * @method static Builder|JourneyTextItem whereId($value)
+ * @method static Builder|JourneyTextItem whereName($value)
+ * @method static Builder|JourneyTextItem whereStart($value)
+ * @method static Builder|JourneyTextItem whereText($value)
+ * @method static Builder|JourneyTextItem whereUpdatedAt($value)
+ * @method static Builder|JourneyTextItem withTrashed()
+ * @method static Builder|JourneyTextItem withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class JourneyTextItem extends BaseModel
 {

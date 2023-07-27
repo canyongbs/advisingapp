@@ -2,13 +2,36 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperKbItemCategory
+ * App\Models\KbItemCategory
+ *
+ * @property int $id
+ * @property string $category
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
+ * @method static Builder|KbItemCategory advancedFilter($data)
+ * @method static Builder|KbItemCategory newModelQuery()
+ * @method static Builder|KbItemCategory newQuery()
+ * @method static Builder|KbItemCategory onlyTrashed()
+ * @method static Builder|KbItemCategory query()
+ * @method static Builder|KbItemCategory whereCategory($value)
+ * @method static Builder|KbItemCategory whereCreatedAt($value)
+ * @method static Builder|KbItemCategory whereDeletedAt($value)
+ * @method static Builder|KbItemCategory whereId($value)
+ * @method static Builder|KbItemCategory whereUpdatedAt($value)
+ * @method static Builder|KbItemCategory withTrashed()
+ * @method static Builder|KbItemCategory withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class KbItemCategory extends BaseModel
 {

@@ -2,13 +2,41 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperInstitution
+ * App\Models\Institution
+ *
+ * @property int $id
+ * @property string|null $code
+ * @property string $name
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
+ * @method static Builder|Institution advancedFilter($data)
+ * @method static \Database\Factories\InstitutionFactory factory($count = null, $state = [])
+ * @method static Builder|Institution newModelQuery()
+ * @method static Builder|Institution newQuery()
+ * @method static Builder|Institution onlyTrashed()
+ * @method static Builder|Institution query()
+ * @method static Builder|Institution whereCode($value)
+ * @method static Builder|Institution whereCreatedAt($value)
+ * @method static Builder|Institution whereDeletedAt($value)
+ * @method static Builder|Institution whereDescription($value)
+ * @method static Builder|Institution whereId($value)
+ * @method static Builder|Institution whereName($value)
+ * @method static Builder|Institution whereUpdatedAt($value)
+ * @method static Builder|Institution withTrashed()
+ * @method static Builder|Institution withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class Institution extends BaseModel
 {

@@ -2,12 +2,80 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @mixin IdeHelperRecordStudentItem
+ * App\Models\RecordStudentItem
+ *
+ * @property int $id
+ * @property string $sisid
+ * @property string|null $otherid
+ * @property string|null $first
+ * @property string|null $last
+ * @property string|null $full
+ * @property string|null $preferred
+ * @property string|null $email
+ * @property string|null $email_2
+ * @property int|null $mobile
+ * @property string|null $sms_opt_out
+ * @property string|null $email_bounce
+ * @property string|null $phone
+ * @property string|null $address
+ * @property string|null $address_2
+ * @property string|null $birthdate
+ * @property int|null $hsgrad
+ * @property string|null $dual
+ * @property string|null $ferpa
+ * @property float|null $gpa
+ * @property string|null $dfw
+ * @property string|null $firstgen
+ * @property string|null $ethnicity
+ * @property string|null $lastlmslogin
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $deleted_at
+ * @property-read mixed $dual_label
+ * @property-read mixed $email_bounce_label
+ * @property-read mixed $ferpa_label
+ * @property-read mixed $firstgen_label
+ * @property-read mixed $sms_opt_out_label
+ *
+ * @method static Builder|RecordStudentItem advancedFilter($data)
+ * @method static Builder|RecordStudentItem newModelQuery()
+ * @method static Builder|RecordStudentItem newQuery()
+ * @method static Builder|RecordStudentItem query()
+ * @method static Builder|RecordStudentItem whereAddress($value)
+ * @method static Builder|RecordStudentItem whereAddress2($value)
+ * @method static Builder|RecordStudentItem whereBirthdate($value)
+ * @method static Builder|RecordStudentItem whereCreatedAt($value)
+ * @method static Builder|RecordStudentItem whereDfw($value)
+ * @method static Builder|RecordStudentItem whereDual($value)
+ * @method static Builder|RecordStudentItem whereEmail($value)
+ * @method static Builder|RecordStudentItem whereEmail2($value)
+ * @method static Builder|RecordStudentItem whereEmailBounce($value)
+ * @method static Builder|RecordStudentItem whereEthnicity($value)
+ * @method static Builder|RecordStudentItem whereFerpa($value)
+ * @method static Builder|RecordStudentItem whereFirst($value)
+ * @method static Builder|RecordStudentItem whereFirstgen($value)
+ * @method static Builder|RecordStudentItem whereFull($value)
+ * @method static Builder|RecordStudentItem whereGpa($value)
+ * @method static Builder|RecordStudentItem whereHsgrad($value)
+ * @method static Builder|RecordStudentItem whereId($value)
+ * @method static Builder|RecordStudentItem whereLast($value)
+ * @method static Builder|RecordStudentItem whereLastlmslogin($value)
+ * @method static Builder|RecordStudentItem whereMobile($value)
+ * @method static Builder|RecordStudentItem whereOtherid($value)
+ * @method static Builder|RecordStudentItem wherePhone($value)
+ * @method static Builder|RecordStudentItem wherePreferred($value)
+ * @method static Builder|RecordStudentItem whereSisid($value)
+ * @method static Builder|RecordStudentItem whereSmsOptOut($value)
+ * @method static Builder|RecordStudentItem whereUpdatedAt($value)
+ *
+ * @mixin Eloquent
  */
 class RecordStudentItem extends BaseModel
 {

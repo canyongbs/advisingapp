@@ -2,13 +2,36 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperEngagementInteractionDriver
+ * App\Models\EngagementInteractionDriver
+ *
+ * @property int $id
+ * @property string $driver
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
+ * @method static Builder|EngagementInteractionDriver advancedFilter($data)
+ * @method static Builder|EngagementInteractionDriver newModelQuery()
+ * @method static Builder|EngagementInteractionDriver newQuery()
+ * @method static Builder|EngagementInteractionDriver onlyTrashed()
+ * @method static Builder|EngagementInteractionDriver query()
+ * @method static Builder|EngagementInteractionDriver whereCreatedAt($value)
+ * @method static Builder|EngagementInteractionDriver whereDeletedAt($value)
+ * @method static Builder|EngagementInteractionDriver whereDriver($value)
+ * @method static Builder|EngagementInteractionDriver whereId($value)
+ * @method static Builder|EngagementInteractionDriver whereUpdatedAt($value)
+ * @method static Builder|EngagementInteractionDriver withTrashed()
+ * @method static Builder|EngagementInteractionDriver withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class EngagementInteractionDriver extends BaseModel
 {
