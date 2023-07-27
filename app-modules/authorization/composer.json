@@ -1,0 +1,27 @@
+{
+  "name": "canyon-gbs/authorization",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "v3.0.0-beta11",
+    "spatie/laravel-permission": "^5.10"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Authorization\\": "src/",
+      "Assist\\Authorization\\Tests\\": "tests/",
+      "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
+      "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Authorization\\Providers\\AuthorizationServiceProvider"
+      ]
+    }
+  }
+}

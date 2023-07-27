@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Concerns\DefinesPermissions;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 class ApplicationModels
 {

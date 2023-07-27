@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
 use App\Models\User;
-use App\Models\RoleGroup;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Assist\Authorization\Models\Role;
 
 class UsersTableSeeder extends Seeder
 {
@@ -23,15 +22,10 @@ class UsersTableSeeder extends Seeder
 
         $superAdmin->assignRole($superAdminRoles);
 
-        /** Admin Role Group */
         $admin = User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@assist.com',
             'password' => Hash::make('password'),
         ]);
-
-        $adminRoleGroup = RoleGroup::admin()->first();
-
-        $admin->roleGroups()->syncWithoutDetaching($adminRoleGroup);
     }
 }

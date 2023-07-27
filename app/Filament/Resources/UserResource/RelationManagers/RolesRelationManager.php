@@ -7,8 +7,8 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use App\Enums\ModelHasRolesViaEnum;
 use Filament\Tables\Actions\DetachAction;
+use Assist\Authorization\Enums\ModelHasRolesViaEnum;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class RolesRelationManager extends RelationManager

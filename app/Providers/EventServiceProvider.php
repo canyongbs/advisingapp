@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Events\RoleGroupPivotSaved;
-use App\Events\RoleGroupPivotDeleted;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
-use App\Listeners\HandleRoleGroupPivotSaved;
-use App\Listeners\HandleRoleGroupPivotDeleted;
+use Assist\Authorization\Events\RoleGroupPivotSaved;
+use Assist\Authorization\Events\RoleGroupPivotDeleted;
+use Assist\Authorization\Listeners\HandleRoleGroupPivotSaved;
+use Assist\Authorization\Listeners\HandleRoleGroupPivotDeleted;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 

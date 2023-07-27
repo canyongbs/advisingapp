@@ -6,8 +6,8 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 // TODO To delete when we install auditable library
 /**
