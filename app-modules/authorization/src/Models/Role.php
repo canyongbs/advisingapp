@@ -20,16 +20,16 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @property string $guard_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  *
  * @method static Builder|Role admin()
  * @method static Builder|Role api()
  * @method static Builder|Role newModelQuery()
  * @method static Builder|Role newQuery()
- * @method static Builder|Role permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions)
  * @method static Builder|Role query()
  * @method static Builder|Role superAdmin()
  * @method static Builder|Role web()

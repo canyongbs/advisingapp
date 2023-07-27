@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Database\Factories\InstitutionFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -22,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  *
  * @method static Builder|Institution advancedFilter($data)
- * @method static InstitutionFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\InstitutionFactory factory($count = null, $state = [])
  * @method static Builder|Institution newModelQuery()
  * @method static Builder|Institution newQuery()
  * @method static Builder|Institution onlyTrashed()

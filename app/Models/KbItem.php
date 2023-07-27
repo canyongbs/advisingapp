@@ -26,12 +26,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int|null $quality_id
  * @property int|null $status_id
  * @property int|null $category_id
- * @property-read KbItemCategory|null $category
+ * @property-read \App\Models\KbItemCategory|null $category
  * @property-read mixed $public_label
- * @property-read Collection<int, Institution> $institution
+ * @property-read Collection<int, \App\Models\Institution> $institution
  * @property-read int|null $institution_count
- * @property-read KbItemQuality|null $quality
- * @property-read KbItemStatus|null $status
+ * @property-read \App\Models\KbItemQuality|null $quality
+ * @property-read \App\Models\KbItemStatus|null $status
  *
  * @method static Builder|KbItem advancedFilter($data)
  * @method static Builder|KbItem newModelQuery()

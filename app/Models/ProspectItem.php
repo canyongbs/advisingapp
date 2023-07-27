@@ -37,12 +37,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $source_id
  * @property int|null $assigned_to_id
  * @property int|null $created_by_id
- * @property-read User|null $assignedTo
- * @property-read User|null $createdBy
+ * @property-read \App\Models\User|null $assignedTo
+ * @property-read \App\Models\User|null $createdBy
  * @property-read mixed $email_bounce_label
  * @property-read mixed $sms_opt_out_label
- * @property-read ProspectSource|null $source
- * @property-read ProspectStatus|null $status
+ * @property-read \App\Models\ProspectSource|null $source
+ * @property-read \App\Models\ProspectStatus|null $status
  *
  * @method static Builder|ProspectItem advancedFilter($data)
  * @method static Builder|ProspectItem newModelQuery()
