@@ -15,7 +15,7 @@
       "StubModuleNamespace\\StubClassNamePrefix\\Database\\Seeders\\": "database/seeders/"
     }
   },
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
