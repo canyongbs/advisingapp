@@ -9,7 +9,5 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
 abstract class BaseModel extends Model
 {
     use HasFactory;
-
-    // TODO This is going to change
     use DefinesPermissions;
 }

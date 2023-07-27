@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
-use Assist\Authorization\Models\Concerns\HasDefaults;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Assist\Authorization\Models\Pivots\RoleGroupPivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +16,6 @@ class RoleGroup extends Model
     use HasFactory;
     use SoftDeletes;
     use HasRelationships;
-    use HasDefaults;
 
     protected $fillable = [
         'name',
