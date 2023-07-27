@@ -22,7 +22,7 @@ class AuthorizationServiceProvider extends ServiceProvider
         Relation::morphMap([
             'role' => Role::class,
             'permission' => Permission::class,
-            'roleGroup' => RoleGroup::class,
+            'role_group' => RoleGroup::class,
         ]);
     }
 }
