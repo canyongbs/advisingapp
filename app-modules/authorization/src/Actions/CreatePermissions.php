@@ -4,8 +4,8 @@ namespace Assist\Authorization\Actions;
 
 use ReflectionClass;
 use Assist\Authorization\Models\Permission;
-use Assist\Authorization\AuthorizationRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 class CreatePermissions
@@ -48,8 +48,9 @@ class CreatePermissions
     // And migrate their permissions separately from this initial seeding process.
     protected function createCustomPermissions(): void
     {
-        $registry = resolve(AuthorizationRegistry::class);
+        $registry = resolve(AuthorizationPermissionRegistry::class);
 
+        // $user->hasPermissionFromModule('some-permission')
         foreach ($registry->getModuleWebPermissions() as $module => $permissions) {
             foreach ($permissions as $permission) {
                 Permission::firstOrCreate([

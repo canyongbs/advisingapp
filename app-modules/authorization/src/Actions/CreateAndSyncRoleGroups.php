@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\File;
 use Assist\Authorization\Models\Role;
 use Assist\Authorization\Models\RoleGroup;
 
+// TODO Refactor if we're going to use this moving forward
+// Delete if we decide we just want to let orgs handle this manually through Filament
 class CreateAndSyncRoleGroups
 {
     public function handle(): void

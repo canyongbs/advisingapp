@@ -2,11 +2,12 @@
 
 namespace App\Actions\Finders;
 
-use InvalidArgumentException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 
 class ApplicationModules
 {
-    public function moduleConfig(string $module, string $path)
+    public function moduleConfig(string $module, string $path): array
     {
         $path = base_path("app-modules/{$module}/config/{$path}.php");
 
@@ -16,6 +17,15 @@ class ApplicationModules
             return $config;
         }
 
-        throw new InvalidArgumentException("Module [{$module}] does not have a configuration file.");
+        return [];
+    }
+
+    public function moduleConfigDirectory(string $module, string $path): Collection
+    {
+        $path = base_path("app-modules/{$module}/config/{$path}");
+
+        return collect(File::files($path))->map(function ($file, $key) use ($path) {
+            return explode('.' . $file->getExtension(), $file->getFilename())[0];
+        });
     }
 }

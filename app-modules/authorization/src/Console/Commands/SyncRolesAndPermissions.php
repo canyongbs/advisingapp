@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Assist\Authorization\Models\Role;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\PermissionRegistrar;
+use App\Actions\Finders\ApplicationModules;
 use Assist\Authorization\Models\Permission;
 
 class SyncRolesAndPermissions extends Command
@@ -29,46 +30,55 @@ class SyncRolesAndPermissions extends Command
 
         $this->syncApiPermissions();
 
-        Artisan::call(SetupRoleGroups::class);
+        // TODO We might just leave this command out for now, and just allow for manual creation of role groups per org
+        // Artisan::call(SetupRoleGroups::class);
 
         return self::SUCCESS;
     }
 
     protected function syncWebPermissions(): void
     {
-        // TODO We'll need to get the correct config path per module when we attempt to sync web permissions
         Role::where('guard_name', 'web')
             ->where('name', '!=', 'super_admin')
             ->get()
             ->each(function (Role $role) {
-                $this->syncPermissionFor('web', $role, config("roles.web.{$role->name}"));
+                $this->syncPermissionFor('web', $role);
             });
     }
 
     protected function syncApiPermissions(): void
     {
-        // TODO We'll need to get the correct config path per module when we attempt to sync api permissions
         Role::where('guard_name', 'api')
             ->where('name', '!=', 'super_admin')
             ->get()
             ->each(function (Role $role) {
-                $this->syncPermissionFor('api', $role, config("roles.api.{$role->name}"));
+                $this->syncPermissionFor('api', $role);
             });
     }
 
-    protected function syncPermissionFor(string $permissionType, Role $role, array $permissions): void
+    protected function syncPermissionFor(string $guard, Role $role): void
     {
-        collect($permissions)->each(function ($specificPermissions, $permissionConvention) use ($role, $permissionType) {
+        // This is assuming that our roles are named in the following convention
+        // {module}.{role}
+        $module = explode('.', $role->name)[0];
+
+        $permissions = resolve(ApplicationModules::class)
+            ->moduleConfig(
+                module: $module,
+                path: "roles/{$guard}/{$role->name}"
+            );
+
+        collect($permissions)->each(function ($specificPermissions, $permissionConvention) use ($role, $guard) {
             if (blank($specificPermissions)) {
                 return;
             }
 
             collect($specificPermissions)
-                ->each(function ($specificPermission, $resource) use ($role, $permissionType) {
+                ->each(function ($specificPermission, $resource) use ($role, $guard) {
                     if (! is_array($specificPermission)) {
-                        $this->syncCustomPermissions($role, $specificPermission, $permissionType);
+                        $this->syncCustomPermissions($role, $specificPermission, $guard);
                     } else {
-                        $this->syncModelPermissions($role, $resource, $specificPermission, $permissionType);
+                        $this->syncModelPermissions($role, $resource, $specificPermission, $guard);
                     }
                 });
         });
