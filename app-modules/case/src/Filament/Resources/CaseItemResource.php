@@ -20,6 +20,7 @@ use Assist\Case\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\CreateCaseItem;
+use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\CreatedByRelationManager;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\AssignedToRelationManager;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\RespondentRelationManager;
 
@@ -69,14 +70,6 @@ class CaseItemResource extends Resource
                     )
                     ->label('Priority')
                     ->required(),
-                Select::make('assignedTo')
-                    ->relationship(
-                        name: 'assignedTo',
-                        titleAttribute: 'name',
-                    )
-                    ->label('Assigned To')
-                    ->required()
-                    ->searchable(['name', 'email']),
                 Textarea::make('close_details')
                     ->label('Close Details/Description')
                     ->nullable(),
@@ -173,6 +166,7 @@ class CaseItemResource extends Resource
             RespondentRelationManager::class,
             RelationGroup::make('Related Users', [
                 AssignedToRelationManager::class,
+                CreatedByRelationManager::class,
             ]),
         ];
     }
