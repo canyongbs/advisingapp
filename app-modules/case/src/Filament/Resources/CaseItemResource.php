@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Assist\Case\Models\CaseItem;
 use Filament\Resources\Resource;
+use Assist\Case\Models\CaseItemType;
 use Filament\Forms\Components\Select;
 use Assist\Case\Models\CaseItemStatus;
 use Filament\Forms\Components\Textarea;
@@ -60,6 +61,12 @@ class CaseItemResource extends Resource
                         modifyQueryUsing: fn (Builder $query) => $query->orderBy('order'),
                     )
                     ->label('Priority')
+                    ->required(),
+                Select::make('type')
+                    //->options(CaseItemType::pluck('name', 'id'))
+                    ->relationship('type', 'name')
+                    ->preload()
+                    ->label('Type')
                     ->required(),
                 Textarea::make('close_details')
                     ->label('Close Details/Description')
