@@ -13,8 +13,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
-use Assist\AssistDataModel\Models\Student;
-use Filament\Forms\Components\MorphToSelect;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
@@ -46,13 +44,6 @@ class CaseItemResource extends Resource
                     ->label('Case #')
                     ->required()
                     ->disabledOn('edit'),
-                //MorphToSelect::make('respondent')
-                //    ->types([
-                //        MorphToSelect\Type::make(Student::class)
-                //            ->titleAttribute('full'),
-                //    ])
-                //    ->searchable()
-                //    ->label('Respondent'),
                 Select::make('institution')
                     ->relationship('institution', 'name')
                     ->label('Institution')
