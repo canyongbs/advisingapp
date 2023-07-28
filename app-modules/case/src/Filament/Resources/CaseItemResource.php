@@ -19,6 +19,7 @@ use Assist\Case\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\CreateCaseItem;
+use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\RespondentRelationManager;
 
 class CaseItemResource extends Resource
 {
@@ -36,18 +37,23 @@ class CaseItemResource extends Resource
     {
         return $form
             ->schema([
+                TextInput::make('id')
+                    ->disabled(),
                 TextInput::make('casenumber')
                     ->label('Case #')
                     ->required()
                     ->disabledOn('edit'),
-                MorphToSelect::make('respondent')
-                    ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->getOptionLabelFromRecordUsing(fn (Student $student): string => "{$student->first_name} {$student->middle_name} {$student->last_name}")
-                            ->titleAttribute('first_name'),
-                    ])
-                    ->searchable()
-                    ->label('Respondent'),
+                //MorphToSelect::make('respondent')
+                //    ->types([
+                //        MorphToSelect\Type::make(Student::class)
+                //            ->titleAttribute('full'),
+                //    ])
+                //    ->searchable()
+                //    ->label('Respondent'),
+                Select::make('institution')
+                    ->relationship('institution', 'name')
+                    ->label('Institution')
+                    ->required(),
                 Select::make('state')
                     ->options(CaseItemStatus::pluck('name', 'id'))
                     ->relationship('state', 'name')
@@ -162,6 +168,7 @@ class CaseItemResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RespondentRelationManager::class,
         ];
     }
 

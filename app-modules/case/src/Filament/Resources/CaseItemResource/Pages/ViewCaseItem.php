@@ -2,6 +2,7 @@
 
 namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Assist\Case\Filament\Resources\CaseItemResource;
 
@@ -12,6 +13,7 @@ class ViewCaseItem extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            EditAction::make(),
         ];
     }
 }

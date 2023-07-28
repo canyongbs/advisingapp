@@ -30,7 +30,7 @@ class CaseItemFactory extends Factory
             'type_id' => $this->faker->randomNumber(9),
             'priority_id' => CaseItemPriority::inRandomOrder()->first() ?? CaseItemPriority::factory(),
             'assigned_to_id' => User::factory(),
-            'created_by_id' => $this->faker->randomNumber(9),
+            'created_by_id' => User::factory(),
         ];
     }
 }

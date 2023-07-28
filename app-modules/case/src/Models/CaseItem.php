@@ -148,7 +148,6 @@ class CaseItem extends BaseModel
         return $this->belongsTo(User::class);
     }
 
-    // TODO: Figure this out and whether or not it can just be handled via auditing
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
