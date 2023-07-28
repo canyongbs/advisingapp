@@ -15,10 +15,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\CreateCaseItem;
+use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\AssignedToRelationManager;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\RespondentRelationManager;
 
 class CaseItemResource extends Resource
@@ -169,6 +171,9 @@ class CaseItemResource extends Resource
     {
         return [
             RespondentRelationManager::class,
+            RelationGroup::make('Related Users', [
+                AssignedToRelationManager::class,
+            ]),
         ];
     }
 
