@@ -26,12 +26,9 @@ class StudentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('full')
                     ->label('Name')
-                    ->state(function (Student $student) {
-                        return "{$student->first_name} {$student->middle_name} {$student->last_name}";
-                    })
-                    ->searchable(['first_name', 'middle_name', 'last_name'])
+                    ->searchable()
                     ->sortable(),
             ])
             ->filters([
