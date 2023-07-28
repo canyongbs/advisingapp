@@ -141,10 +141,12 @@ class CaseItemResource extends Resource
                 // TODO: Figure out how to get this to display a list of existing items rather than a search
                 Tables\Filters\SelectFilter::make('priority')
                     ->relationship('priority', 'name')
-                    ->multiple(),
+                    ->multiple()
+                    ->preload(),
                 Tables\Filters\SelectFilter::make('state')
                     ->relationship('state', 'name')
-                    ->multiple(),
+                    ->multiple()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
