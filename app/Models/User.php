@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Traits\Auditable;
+use Assist\Case\Models\CaseItem;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
@@ -131,6 +132,14 @@ class User extends Authenticatable implements HasLocalePreference
     public function permissions(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+    }
+
+    public function caseItems()
+    {
+        return $this->hasMany(
+            related: CaseItem::class,
+            foreignKey: 'assigned_to_id',
+        );
     }
 
     public function getIsAdminAttribute()
