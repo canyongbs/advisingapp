@@ -50,19 +50,9 @@ class CaseItemStatus extends BaseModel
         'color',
     ];
 
-    public $orderable = [
-        'id',
-        'name',
-    ];
-
-    public $filterable = [
-        'id',
-        'name',
-    ];
-
     public function caseItems()
     {
-        return $this->hasMany(CaseItem::class);
+        return $this->hasMany(CaseItem::class, 'state_id');
     }
 
     protected function serializeDate(DateTimeInterface $date)

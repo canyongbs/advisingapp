@@ -51,19 +51,9 @@ class CaseItemPriority extends BaseModel
         'order',
     ];
 
-    public $orderable = [
-        'id',
-        'order',
-    ];
-
-    public $filterable = [
-        'id',
-        'order',
-    ];
-
     public function caseItems(): HasMany
     {
-        return $this->hasMany(CaseItem::class);
+        return $this->hasMany(CaseItem::class, 'priority_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

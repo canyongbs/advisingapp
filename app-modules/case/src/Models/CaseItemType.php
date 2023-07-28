@@ -42,6 +42,11 @@ class CaseItemType extends BaseModel
         'name',
     ];
 
+    public function caseItems()
+    {
+        return $this->hasMany(CaseItem::class, 'type_id');
+    }
+
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');

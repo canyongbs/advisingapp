@@ -49,6 +49,10 @@ class CaseItemPriorityResource extends Resource
                 Tables\Columns\TextColumn::make('order')
                     ->label('Priority Order')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('case_items_count')
+                    ->label('# of Case Items')
+                    ->counts('caseItems')
+                    ->sortable(),
             ])
             ->defaultSort('order')
             ->filters([

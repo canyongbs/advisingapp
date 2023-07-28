@@ -34,15 +34,21 @@ class CaseItemTypeResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('case_items_count')
+                    ->label('# of Case Items')
+                    ->counts('caseItems')
                     ->sortable(),
             ])
             ->filters([
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -63,7 +69,6 @@ class CaseItemTypeResource extends Resource
         return [
             'index' => Pages\ListCaseItemTypes::route('/'),
             'create' => Pages\CreateCaseItemType::route('/create'),
-            'view' => Pages\ViewCaseItemType::route('/{record}'),
             'edit' => Pages\EditCaseItemType::route('/{record}/edit'),
         ];
     }

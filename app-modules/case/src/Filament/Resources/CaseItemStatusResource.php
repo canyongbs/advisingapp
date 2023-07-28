@@ -45,6 +45,9 @@ class CaseItemStatusResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
@@ -53,6 +56,10 @@ class CaseItemStatusResource extends Resource
                     ->label('Color')
                     ->badge()
                     ->color(fn (CaseItemStatus $caseItemStatus) => $caseItemStatus->color),
+                Tables\Columns\TextColumn::make('case_items_count')
+                    ->label('# of Case Items')
+                    ->counts('caseItems')
+                    ->sortable(),
             ])
             ->filters([
             ])
