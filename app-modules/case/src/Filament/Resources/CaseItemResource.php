@@ -7,9 +7,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Assist\Case\Models\CaseItem;
 use Filament\Resources\Resource;
-use Assist\Case\Models\CaseItemType;
 use Filament\Forms\Components\Select;
-use Assist\Case\Models\CaseItemStatus;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -50,8 +48,8 @@ class CaseItemResource extends Resource
                     ->label('Institution')
                     ->required(),
                 Select::make('state')
-                    ->options(CaseItemStatus::pluck('name', 'id'))
                     ->relationship('state', 'name')
+                    ->preload()
                     ->label('State')
                     ->required(),
                 Select::make('priority')
@@ -63,7 +61,6 @@ class CaseItemResource extends Resource
                     ->label('Priority')
                     ->required(),
                 Select::make('type')
-                    //->options(CaseItemType::pluck('name', 'id'))
                     ->relationship('type', 'name')
                     ->preload()
                     ->label('Type')
