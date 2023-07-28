@@ -74,30 +74,6 @@ class CaseItem extends BaseModel
     use SoftDeletes;
     use PowerJoins;
 
-    public static $search = [
-        'casenumber',
-    ];
-
-    public $orderable = [
-        'id',
-        'casenumber',
-        'student.full',
-        'student.sisid',
-        'student.otherid',
-        'institution.name',
-        'assigned_to.name',
-    ];
-
-    public $filterable = [
-        'id',
-        'casenumber',
-        'student.full',
-        'student.sisid',
-        'student.otherid',
-        'institution.name',
-        'assigned_to.name',
-    ];
-
     protected $fillable = [
         'casenumber',
         'respondent_type',
