@@ -13,12 +13,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Assist\Case\Models\CaseItemType
  *
  * @property int $id
- * @property string $type
+ * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseItem> $caseItems
+ * @property-read int|null $case_items_count
  *
  * @method static Builder|CaseItemType advancedFilter($data)
+ * @method static \Assist\Case\Database\Factories\CaseItemTypeFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemType newModelQuery()
  * @method static Builder|CaseItemType newQuery()
  * @method static Builder|CaseItemType onlyTrashed()
@@ -26,7 +29,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder|CaseItemType whereCreatedAt($value)
  * @method static Builder|CaseItemType whereDeletedAt($value)
  * @method static Builder|CaseItemType whereId($value)
- * @method static Builder|CaseItemType whereType($value)
+ * @method static Builder|CaseItemType whereName($value)
  * @method static Builder|CaseItemType whereUpdatedAt($value)
  * @method static Builder|CaseItemType withTrashed()
  * @method static Builder|CaseItemType withoutTrashed()

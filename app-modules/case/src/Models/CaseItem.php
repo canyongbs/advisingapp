@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $casenumber
  * @property string|null $respondent_type
- * @property int|null $respondent_id
+ * @property string|null $respondent_id
  * @property string|null $close_details
  * @property string|null $res_details
  * @property Carbon|null $created_at

@@ -37,6 +37,8 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UserAlert> $alerts
  * @property-read int|null $alerts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, CaseItem> $caseItems
+ * @property-read int|null $case_items_count
  * @property-read mixed $is_admin
  * @property-read mixed $type_label
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
