@@ -6,7 +6,6 @@ use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
-use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -43,7 +42,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class CaseItemPriority extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
 
     protected $fillable = [

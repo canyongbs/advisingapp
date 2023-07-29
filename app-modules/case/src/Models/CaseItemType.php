@@ -5,7 +5,6 @@ namespace Assist\Case\Models;
 use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -38,7 +37,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class CaseItemType extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
 
     protected $fillable = [

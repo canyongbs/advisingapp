@@ -8,7 +8,6 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\Institution;
 use Illuminate\Support\Carbon;
-use App\Support\HasAdvancedFilter;
 use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -70,7 +69,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CaseItem extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
     use PowerJoins;
 
