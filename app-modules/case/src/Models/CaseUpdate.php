@@ -63,12 +63,6 @@ class CaseUpdate extends BaseModel
         'direction' => CaseUpdateDirection::class,
     ];
 
-    // TODO: Should this exist as a through relation?
-    //public function student(): BelongsTo
-    //{
-    //    return $this->belongsTo(RecordStudentItem::class);
-    //}
-
     public function case(): BelongsTo
     {
         return $this->belongsTo(CaseItem::class);
