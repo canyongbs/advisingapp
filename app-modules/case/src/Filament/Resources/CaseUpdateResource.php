@@ -8,6 +8,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Assist\Case\Models\CaseUpdate;
+use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
 use Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
 
@@ -37,15 +38,39 @@ class CaseUpdateResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('case.respondent.full')
                     ->label('Respondent')
-                    ->sortable()
+                    ->sortable(query: function (Builder $query, string $direction, $record): Builder {
+                        // TODO: Update this to work with other respondent types
+                        return $query->join('case_items', 'case_updates.case_id', '=', 'case_items.id')
+                            ->join('students', function ($join) {
+                                $join->on('case_items.respondent_id', '=', 'students.sisid')
+                                    ->where('case_items.respondent_type', '=', 'student');
+                            })
+                            ->orderBy('full', $direction);
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('case.respondent.sisid')
                     ->label('SIS ID')
-                    ->sortable()
+                    ->sortable(query: function (Builder $query, string $direction, $record): Builder {
+                        // TODO: Update this to work with other respondent types
+                        return $query->join('case_items', 'case_updates.case_id', '=', 'case_items.id')
+                            ->join('students', function ($join) {
+                                $join->on('case_items.respondent_id', '=', 'students.sisid')
+                                    ->where('case_items.respondent_type', '=', 'student');
+                            })
+                            ->orderBy('sisid', $direction);
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('case.respondent.otherid')
                     ->label('Other ID')
-                    ->sortable()
+                    ->sortable(query: function (Builder $query, string $direction, $record): Builder {
+                        // TODO: Update this to work with other respondent types
+                        return $query->join('case_items', 'case_updates.case_id', '=', 'case_items.id')
+                            ->join('students', function ($join) {
+                                $join->on('case_items.respondent_id', '=', 'students.sisid')
+                                    ->where('case_items.respondent_type', '=', 'student');
+                            })
+                            ->orderBy('otherid', $direction);
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('case.casenumber')
                     ->label('Case')
