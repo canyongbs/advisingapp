@@ -5,8 +5,10 @@ namespace Assist\Case\Filament\Resources;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Assist\Case\Models\CaseUpdate;
+use Assist\Case\Enums\CaseUpdateDirection;
 use Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
 
 class CaseUpdateResource extends Resource
@@ -30,8 +32,43 @@ class CaseUpdateResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('case.respondent.full')
+                    ->label('Respondent')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('case.respondent.sisid')
+                    ->label('SIS ID')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('case.respondent.otherid')
+                    ->label('Other ID')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('case.casenumber')
+                    ->label('Case')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\IconColumn::make('internal')
+                    ->boolean()
+                    ->label('Internal'),
+                Tables\Columns\TextColumn::make('direction')
+                    ->label('Direction')
+                    ->formatStateUsing(fn (CaseUpdateDirection $state): string => Str::ucfirst($state->value)),
             ])
             ->filters([
+                Tables\Filters\TernaryFilter::make('internal')
+                    ->label('Internal')
+                    ->translateLabel(),
+                Tables\Filters\SelectFilter::make('direction')
+                    ->label('Direction')
+                    ->translateLabel()
+                    ->options(
+                        collect(CaseUpdateDirection::cases())
+                            ->mapWithKeys(fn (CaseUpdateDirection $direction) => [$direction->value => $direction->name])
+                    ),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
