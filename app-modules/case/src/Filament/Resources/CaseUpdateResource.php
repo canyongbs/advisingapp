@@ -8,6 +8,9 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Assist\Case\Models\CaseUpdate;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
 use Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
@@ -26,6 +29,23 @@ class CaseUpdateResource extends Resource
     {
         return $form
             ->schema([
+                Select::make('case')
+                    ->relationship('case', 'casenumber')
+                    ->searchable()
+                    ->label('Case')
+                    ->translateLabel()
+                    ->required(),
+                Textarea::make('update')
+                    ->label('Update')
+                    ->required()
+                    ->rows(3)
+                    ->columnSpan('full'),
+                Select::make('direction')
+                    ->options(collect(CaseUpdateDirection::cases())->mapWithKeys(fn (CaseUpdateDirection $direction) => [$direction->value => $direction->name]))
+                    ->label('Direction')
+                    ->required(),
+                Toggle::make('internal')
+                    ->label('Internal'),
             ]);
     }
 
