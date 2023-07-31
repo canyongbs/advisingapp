@@ -6,12 +6,14 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Assist\Case\Models\CaseItem;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
@@ -20,6 +22,7 @@ use Assist\Case\Filament\Resources\CaseItemResource\Pages\CreateCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\CreatedByRelationManager;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\AssignedToRelationManager;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\RespondentRelationManager;
+use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\CaseUpdatesRelationManager;
 
 class CaseItemResource extends Resource
 {
@@ -159,11 +162,45 @@ class CaseItemResource extends Resource
     {
         return [
             RespondentRelationManager::class,
+            CaseUpdatesRelationManager::class,
             RelationGroup::make('Related Users', [
                 AssignedToRelationManager::class,
                 CreatedByRelationManager::class,
             ]),
         ];
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('id')
+                    ->label('ID')
+                    ->translateLabel(),
+                TextEntry::make('casenumber')
+                    ->label('Case Number')
+                    ->translateLabel(),
+                TextEntry::make('institution.name')
+                    ->label('Institution')
+                    ->translateLabel(),
+                TextEntry::make('state.name')
+                    ->label('State')
+                    ->translateLabel(),
+                TextEntry::make('priority.name')
+                    ->label('Priority')
+                    ->translateLabel(),
+                TextEntry::make('type.name')
+                    ->label('Type')
+                    ->translateLabel(),
+                TextEntry::make('close_details')
+                    ->label('Close Details/Description')
+                    ->translateLabel()
+                    ->columnSpanFull(),
+                TextEntry::make('res_details')
+                    ->label('Internal Case Details')
+                    ->translateLabel()
+                    ->columnSpanFull(),
+            ]);
     }
 
     public static function getPages(): array

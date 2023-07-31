@@ -12,6 +12,7 @@ use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -99,6 +100,11 @@ class CaseItem extends BaseModel
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);
+    }
+
+    public function caseUpdates(): HasMany
+    {
+        return $this->hasMany(CaseUpdate::class, 'case_id');
     }
 
     public function state(): BelongsTo
