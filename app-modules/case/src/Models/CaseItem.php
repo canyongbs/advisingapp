@@ -35,6 +35,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $assigned_to_id
  * @property int|null $created_by_id
  * @property-read User|null $assignedTo
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseUpdate> $caseUpdates
+ * @property-read int|null $case_updates_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
  * @property-read \Assist\Case\Models\CaseItemPriority|null $priority
@@ -42,7 +44,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \Assist\Case\Models\CaseItemStatus|null $state
  * @property-read \Assist\Case\Models\CaseItemType|null $type
  *
- * @method static Builder|CaseItem advancedFilter($data)
  * @method static \Assist\Case\Database\Factories\CaseItemFactory factory($count = null, $state = [])
  * @method static Builder|CaseItem newModelQuery()
  * @method static Builder|CaseItem newQuery()

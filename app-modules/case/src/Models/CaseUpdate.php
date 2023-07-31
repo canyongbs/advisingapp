@@ -5,7 +5,6 @@ namespace Assist\Case\Models;
 use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Models\RecordStudentItem;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,20 +14,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Assist\Case\Models\CaseUpdate
  *
  * @property int $id
+ * @property int|null $case_id
  * @property string $update
- * @property string $internal
- * @property string $direction
+ * @property bool $internal
+ * @property CaseUpdateDirection $direction
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property int|null $student_id
- * @property int|null $case_id
  * @property-read \Assist\Case\Models\CaseItem|null $case
- * @property-read mixed $direction_label
- * @property-read mixed $internal_label
- * @property-read RecordStudentItem|null $student
  *
- * @method static Builder|CaseUpdate advancedFilter($data)
+ * @method static \Assist\Case\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
  * @method static Builder|CaseUpdate newModelQuery()
  * @method static Builder|CaseUpdate newQuery()
  * @method static Builder|CaseUpdate onlyTrashed()
@@ -39,7 +34,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|CaseUpdate whereDirection($value)
  * @method static Builder|CaseUpdate whereId($value)
  * @method static Builder|CaseUpdate whereInternal($value)
- * @method static Builder|CaseUpdate whereStudentId($value)
  * @method static Builder|CaseUpdate whereUpdate($value)
  * @method static Builder|CaseUpdate whereUpdatedAt($value)
  * @method static Builder|CaseUpdate withTrashed()
