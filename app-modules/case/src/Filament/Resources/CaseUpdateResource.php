@@ -101,7 +101,11 @@ class CaseUpdateResource extends Resource
                     ->label('Internal'),
                 Tables\Columns\TextColumn::make('direction')
                     ->label('Direction')
-                    ->formatStateUsing(fn (CaseUpdateDirection $state): string => Str::ucfirst($state->value)),
+                    ->formatStateUsing(fn (CaseUpdateDirection $state): string => Str::ucfirst($state->value))
+                    ->icon(fn (CaseUpdateDirection $state): string => match ($state) {
+                        CaseUpdateDirection::Inbound => 'heroicon-o-arrow-down-tray',
+                        CaseUpdateDirection::Outbound => 'heroicon-o-arrow-up-tray',
+                    }),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('internal')
