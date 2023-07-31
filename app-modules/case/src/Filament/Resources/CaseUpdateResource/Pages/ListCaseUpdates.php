@@ -2,9 +2,9 @@
 
 namespace Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
 
-use Assist\Case\Filament\Resources\CaseUpdateResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Assist\Case\Filament\Resources\CaseUpdateResource;
 
 class ListCaseUpdates extends ListRecords
 {

@@ -2,9 +2,8 @@
 
 namespace Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
 
-use Assist\Case\Filament\Resources\CaseUpdateResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Assist\Case\Filament\Resources\CaseUpdateResource;
 
 class CreateCaseUpdate extends CreateRecord
 {
