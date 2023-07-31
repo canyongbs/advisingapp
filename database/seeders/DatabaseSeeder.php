@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             CaseItemStatusSeeder::class,
             CaseItemTypeSeeder::class,
             CaseItemSeeder::class,
+            CaseUpdateSeeder::class,
             StudentSeeder::class,
         ]);
     }
