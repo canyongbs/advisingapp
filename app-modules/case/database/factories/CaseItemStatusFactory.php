@@ -2,8 +2,8 @@
 
 namespace Assist\Case\Database\Factories;
 
-use App\Enums\ColumnColorOptions;
 use Assist\Case\Models\CaseItemStatus;
+use Assist\Case\Enums\ColumnColorOptions;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

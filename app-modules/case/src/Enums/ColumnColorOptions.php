@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums;
+namespace Assist\Case\Enums;
 
 enum ColumnColorOptions: string
 {

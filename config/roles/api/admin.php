@@ -66,7 +66,7 @@ return [
         'case_item_type' => [
             '*',
         ],
-        'case_update_item' => [
+        'case_update' => [
             '*',
         ],
         'engagement_email_item' => [
