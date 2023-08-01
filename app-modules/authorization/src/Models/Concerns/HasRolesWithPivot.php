@@ -41,4 +41,13 @@ trait HasRolesWithPivot
             ->contains($role)
             ->where('via', ModelHasRolesViaEnum::Direct);
     }
+
+    public function assignRoleViaRoleGroup(Role $role): void
+    {
+        $this->assignRole([$this->roles, $role]);
+
+        $this->roles()->where('id', $role->id)->first()->pivot->update([
+            'via' => ModelHasRolesViaEnum::RoleGroup,
+        ]);
+    }
 }

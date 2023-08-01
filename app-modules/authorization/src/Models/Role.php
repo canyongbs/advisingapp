@@ -8,12 +8,21 @@ use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 class Role extends SpatieRole
 {
     use DefinesPermissions;
-    use HasRoleGroups;
+    use HasRoleGroups {
+        roleGroups as traitRoleGroups;
+    }
+
+    public function roleGroups(): BelongsToMany
+    {
+        return $this->traitRoleGroups()
+            ->using(RoleGroupRolePivot::class);
+    }
 
     public function users(): BelongsToMany
     {

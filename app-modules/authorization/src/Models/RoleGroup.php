@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
-use Assist\Authorization\Models\Pivots\RoleGroupPivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
+use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
 
 class RoleGroup extends Model
 {
@@ -22,18 +23,18 @@ class RoleGroup extends Model
         'slug',
     ];
 
-    public function users(): MorphToMany
+    public function users(): BelongsToMany
     {
         return $this
-            ->morphedByMany(User::class, 'role_groupable')
-            ->using(RoleGroupPivot::class);
+            ->belongsToMany(User::class)
+            ->using(RoleGroupUserPivot::class);
     }
 
-    public function roles(): MorphToMany
+    public function roles(): BelongsToMany
     {
         return $this
-            ->morphedByMany(Role::class, 'role_groupable')
-            ->using(RoleGroupPivot::class);
+            ->belongsToMany(Role::class)
+            ->using(RoleGroupRolePivot::class);
     }
 
     public function permissions(): HasManyDeep

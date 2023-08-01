@@ -4,11 +4,15 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
-use Assist\Authorization\Events\RoleGroupPivotSaved;
-use Assist\Authorization\Events\RoleGroupPivotDeleted;
-use Assist\Authorization\Listeners\HandleRoleGroupPivotSaved;
-use Assist\Authorization\Listeners\HandleRoleGroupPivotDeleted;
+use Assist\Authorization\Events\RoleGroupRolePivotSaved;
+use Assist\Authorization\Events\RoleGroupUserPivotSaved;
+use Assist\Authorization\Events\RoleGroupRolePivotDeleted;
+use Assist\Authorization\Events\RoleGroupUserPivotDeleted;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use Assist\Authorization\Listeners\HandleRoleGroupRolePivotSaved;
+use Assist\Authorization\Listeners\HandleRoleGroupUserPivotSaved;
+use Assist\Authorization\Listeners\HandleRoleGroupRolePivotDeleted;
+use Assist\Authorization\Listeners\HandleRoleGroupUserPivotDeleted;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -22,11 +26,18 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        RoleGroupPivotSaved::class => [
-            HandleRoleGroupPivotSaved::class,
+        // TODO Extract these into the authorization module
+        RoleGroupUserPivotSaved::class => [
+            HandleRoleGroupUserPivotSaved::class,
         ],
-        RoleGroupPivotDeleted::class => [
-            HandleRoleGroupPivotDeleted::class,
+        RoleGroupRolePivotSaved::class => [
+            HandleRoleGroupRolePivotSaved::class,
+        ],
+        RoleGroupUserPivotDeleted::class => [
+            HandleRoleGroupUserPivotDeleted::class,
+        ],
+        RoleGroupRolePivotDeleted::class => [
+            HandleRoleGroupRolePivotDeleted::class,
         ],
     ];
 

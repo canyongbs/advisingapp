@@ -5,15 +5,15 @@ namespace Assist\Authorization\Actions;
 use App\Models\User;
 use Assist\Authorization\Models\Role;
 use Assist\Authorization\Models\RoleGroup;
-use Assist\Authorization\Models\Pivots\RoleGroupPivot;
+use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
 
 // TODO This should be queued
 class RemoveRoleFromUsersInRoleGroup
 {
-    public function handle(RoleGroupPivot $roleGroupPivot): void
+    public function handle(RoleGroupRolePivot $pivot): void
     {
-        $roleGroup = RoleGroup::findOrFail($roleGroupPivot->role_group_id);
-        $role = Role::findOrFail($roleGroupPivot->role_groupable_id);
+        $roleGroup = RoleGroup::findOrFail($pivot->role_group_id);
+        $role = Role::findOrFail($pivot->role_id);
 
         $roleGroup->users()->each(function (User $user) use ($role, $roleGroup) {
             if ($this->roleShouldBeRemovedFromUser($user, $role, $roleGroup)) {
