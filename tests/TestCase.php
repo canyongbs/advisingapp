@@ -4,7 +4,7 @@ namespace Tests;
 
 use Illuminate\Contracts\Console\Kernel;
 use Spatie\Permission\PermissionRegistrar;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
@@ -12,7 +12,6 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
     use CanConfigureMigrationCommands;
-    use RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -20,28 +19,28 @@ abstract class TestCase extends BaseTestCase
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        //$this->artisan('migrate:fresh', $this->migrateFreshUsing());
-        //
-        //$this->artisan('migrate:fresh', [
-        //    '--database' => 'sis',
-        //    '--path' => 'database/migrations/sis',
-        //    ...$this->migrateFreshUsing(),
-        //]);
+        $this->artisan('migrate:fresh', $this->migrateFreshUsing());
+
+        $this->artisan('migrate:fresh', [
+            '--database' => 'sis',
+            '--path' => 'database/migrations/sis',
+            ...$this->migrateFreshUsing(),
+        ]);
 
         $this->artisan('app:setup-foreign-data-wrapper');
 
         $this->app[Kernel::class]->setArtisan(null);
 
-        //$this->beforeApplicationDestroyed(function () {
-        //    $this->artisan('migrate:rollback');
-        //    $this->artisan('migrate:rollback', [
-        //        '--database' => 'sis',
-        //        '--path' => 'database/migrations/sis',
-        //    ]);
-        //
-        //    $this->artisan('app:remove-foreign-data-wrapper');
-        //
-        //    RefreshDatabaseState::$migrated = false;
-        //});
+        $this->beforeApplicationDestroyed(function () {
+            $this->artisan('migrate:rollback');
+            $this->artisan('migrate:rollback', [
+                '--database' => 'sis',
+                '--path' => 'database/migrations/sis',
+            ]);
+
+            $this->artisan('app:remove-foreign-data-wrapper');
+
+            RefreshDatabaseState::$migrated = false;
+        });
     }
 }
