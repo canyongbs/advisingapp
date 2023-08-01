@@ -2,6 +2,8 @@
 
 namespace Assist\Authorization\Models;
 
+use Eloquent;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\PermissionRegistrar;
@@ -11,6 +13,37 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
+/**
+ * Assist\Authorization\Models\Role
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
+ * @property-read int|null $role_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
+ *
+ * @method static Builder|Role admin()
+ * @method static Builder|Role api()
+ * @method static Builder|Role newModelQuery()
+ * @method static Builder|Role newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions)
+ * @method static Builder|Role query()
+ * @method static Builder|Role superAdmin()
+ * @method static Builder|Role web()
+ * @method static Builder|Role whereCreatedAt($value)
+ * @method static Builder|Role whereGuardName($value)
+ * @method static Builder|Role whereId($value)
+ * @method static Builder|Role whereName($value)
+ * @method static Builder|Role whereUpdatedAt($value)
+ *
+ * @mixin Eloquent
+ */
 class Role extends SpatieRole
 {
     use DefinesPermissions;

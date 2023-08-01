@@ -117,6 +117,7 @@ $rules = [
     'whitespace_after_comma_in_array' => true,
     'trim_array_spaces' => true,
     'single_space_around_construct' => true,
+    'fully_qualified_strict_types' => true,
 ];
 
 $finder = Finder::create()

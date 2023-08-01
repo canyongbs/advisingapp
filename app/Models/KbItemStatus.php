@@ -2,13 +2,36 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperKbItemStatus
+ * App\Models\KbItemStatus
+ *
+ * @property int $id
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ *
+ * @method static Builder|KbItemStatus advancedFilter($data)
+ * @method static Builder|KbItemStatus newModelQuery()
+ * @method static Builder|KbItemStatus newQuery()
+ * @method static Builder|KbItemStatus onlyTrashed()
+ * @method static Builder|KbItemStatus query()
+ * @method static Builder|KbItemStatus whereCreatedAt($value)
+ * @method static Builder|KbItemStatus whereDeletedAt($value)
+ * @method static Builder|KbItemStatus whereId($value)
+ * @method static Builder|KbItemStatus whereStatus($value)
+ * @method static Builder|KbItemStatus whereUpdatedAt($value)
+ * @method static Builder|KbItemStatus withTrashed()
+ * @method static Builder|KbItemStatus withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class KbItemStatus extends BaseModel
 {

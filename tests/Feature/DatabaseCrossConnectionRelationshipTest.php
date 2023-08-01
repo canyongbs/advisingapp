@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use App\Models\Student;
-use Assist\CaseModule\Models\CaseItem;
+use Assist\Case\Models\CaseItem;
+use Assist\AssistDataModel\Models\Student;
 
 class DatabaseCrossConnectionRelationshipTest extends TestCase
 {

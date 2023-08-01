@@ -2,13 +2,46 @@
 
 namespace App\Models;
 
+use Eloquent;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Support\HasAdvancedFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperEngagementInteractionItem
+ * App\Models\EngagementInteractionItem
+ *
+ * @property int $id
+ * @property string $direction
+ * @property string $start
+ * @property string $duration
+ * @property string $subject
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read mixed $direction_label
+ * @property-read mixed $duration_label
+ *
+ * @method static Builder|EngagementInteractionItem advancedFilter($data)
+ * @method static Builder|EngagementInteractionItem newModelQuery()
+ * @method static Builder|EngagementInteractionItem newQuery()
+ * @method static Builder|EngagementInteractionItem onlyTrashed()
+ * @method static Builder|EngagementInteractionItem query()
+ * @method static Builder|EngagementInteractionItem whereCreatedAt($value)
+ * @method static Builder|EngagementInteractionItem whereDeletedAt($value)
+ * @method static Builder|EngagementInteractionItem whereDescription($value)
+ * @method static Builder|EngagementInteractionItem whereDirection($value)
+ * @method static Builder|EngagementInteractionItem whereDuration($value)
+ * @method static Builder|EngagementInteractionItem whereId($value)
+ * @method static Builder|EngagementInteractionItem whereStart($value)
+ * @method static Builder|EngagementInteractionItem whereSubject($value)
+ * @method static Builder|EngagementInteractionItem whereUpdatedAt($value)
+ * @method static Builder|EngagementInteractionItem withTrashed()
+ * @method static Builder|EngagementInteractionItem withoutTrashed()
+ *
+ * @mixin Eloquent
  */
 class EngagementInteractionItem extends BaseModel
 {

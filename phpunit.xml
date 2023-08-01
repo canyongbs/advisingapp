@@ -20,4 +20,4 @@
         <env name="DB_DATABASE" value="testing"/>
         <env name="SIS_DB_DATABASE" value="testing"/>
     </php>
-<formatOutput>1</formatOutput></phpunit>
+</phpunit>
