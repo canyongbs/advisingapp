@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Assist\Case\Models\CaseItemStatus
@@ -48,7 +49,7 @@ class CaseItemStatus extends BaseModel
         'color',
     ];
 
-    public function caseItems()
+    public function caseItems(): HasMany
     {
         return $this->hasMany(CaseItem::class, 'state_id');
     }

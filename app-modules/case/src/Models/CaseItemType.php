@@ -7,6 +7,7 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Assist\Case\Models\CaseItemType
@@ -43,7 +44,7 @@ class CaseItemType extends BaseModel
         'name',
     ];
 
-    public function caseItems()
+    public function caseItems(): HasMany
     {
         return $this->hasMany(CaseItem::class, 'type_id');
     }

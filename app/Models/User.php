@@ -12,6 +12,7 @@ use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
@@ -136,7 +137,7 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
-    public function caseItems()
+    public function caseItems(): HasMany
     {
         return $this->hasMany(
             related: CaseItem::class,
