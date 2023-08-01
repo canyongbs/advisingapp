@@ -10,14 +10,12 @@ class CreateCaseUpdateItemsTable extends Migration
     {
         Schema::create('case_updates', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('case_id')->nullable();
+            $table->foreignId('case_id')->nullable()->references('id')->on('case_items');
             $table->text('update');
             $table->boolean('internal');
             $table->string('direction');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreignId('case_id')->references('id')->on('case_items');
         });
     }
 }
