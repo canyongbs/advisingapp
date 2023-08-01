@@ -70,8 +70,8 @@ class CaseItemTypeResource extends Resource
     {
         return [
             'index' => Pages\ListCaseItemTypes::route('/'),
-            'view' => Pages\ViewCaseItemType::route('/{record}'),
             'create' => Pages\CreateCaseItemType::route('/create'),
+            'view' => Pages\ViewCaseItemType::route('/{record}'),
             'edit' => Pages\EditCaseItemType::route('/{record}/edit'),
         ];
     }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e8e12462a6538b991de96cce38d2a1d3",
+    "content-hash": "3bb0081f583f7d45d8b7b4b4ecd7d0a7",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -14074,6 +14074,79 @@
             "time": "2021-07-28T10:34:58+00:00"
         },
         {
+            "name": "worksome/request-factories",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/worksome/request-factories.git",
+                "reference": "ab609788dbc66cbfdf334fe1bbbb72ac849599c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/worksome/request-factories/zipball/ab609788dbc66cbfdf334fe1bbbb72ac849599c2",
+                "reference": "ab609788dbc66cbfdf334fe1bbbb72ac849599c2",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "nunomaduro/collision": "^7.0",
+                "nunomaduro/larastan": "^2.0",
+                "orchestra/testbench": "^8.0",
+                "pestphp/pest": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0",
+                "worksome/coding-style": "^2.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Worksome\\RequestFactories\\RequestFactoriesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/PestAutoload.php"
+                ],
+                "psr-4": {
+                    "Worksome\\RequestFactories\\": "src",
+                    "Worksome\\RequestFactories\\Database\\Factories\\": "database/factories"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "luke",
+                    "email": "lukeraymonddowning@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Test Form Requests in Laravel without all of the boilerplate.",
+            "homepage": "https://github.com/worksome/request-factories",
+            "keywords": [
+                "laravel",
+                "request-factories",
+                "worksome"
+            ],
+            "support": {
+                "issues": "https://github.com/worksome/request-factories/issues",
+                "source": "https://github.com/worksome/request-factories/tree/v3.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/worksome",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-03-22T14:31:02+00:00"
+        },
+        {
             "name": "zbateson/mail-mime-parser",
             "version": "2.4.0",
             "source": {
@@ -14282,7 +14355,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "alpha",
+    "minimum-stability": "dev",
     "stability-flags": {
         "livewire/livewire": 10
     },
