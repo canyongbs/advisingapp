@@ -17,7 +17,7 @@ class CreateCaseUpdateItemsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('case_id', 'case_fk_8136752')->references('id')->on('case_items');
+            $table->foreignId('case_id')->references('id')->on('case_items');
         });
     }
 }
