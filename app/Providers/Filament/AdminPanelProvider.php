@@ -8,6 +8,7 @@ use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -28,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('/')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex('#2bb8b3'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -54,5 +55,17 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    public function boot(): void
+    {
+        FilamentColor::register([
+            'danger' => Color::Red,
+            'gray' => Color::Zinc,
+            'info' => Color::Blue,
+            'primary' => Color::hex('#2bb8b3'),
+            'success' => Color::Green,
+            'warning' => Color::Amber,
+        ]);
     }
 }

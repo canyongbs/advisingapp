@@ -26,7 +26,8 @@ class CaseItemTypeResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->required(),
+                    ->required()
+                    ->string(),
             ]);
     }
 
@@ -49,6 +50,7 @@ class CaseItemTypeResource extends Resource
             ->filters([
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -69,6 +71,7 @@ class CaseItemTypeResource extends Resource
         return [
             'index' => Pages\ListCaseItemTypes::route('/'),
             'create' => Pages\CreateCaseItemType::route('/create'),
+            'view' => Pages\ViewCaseItemType::route('/{record}'),
             'edit' => Pages\EditCaseItemType::route('/{record}/edit'),
         ];
     }

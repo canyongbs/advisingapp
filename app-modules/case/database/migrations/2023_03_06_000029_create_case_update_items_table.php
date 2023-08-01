@@ -6,12 +6,13 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateCaseUpdateItemsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('case_update_items', function (Blueprint $table) {
+        Schema::create('case_updates', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('update');
-            $table->string('internal');
+            $table->foreignId('case_id')->nullable()->references('id')->on('case_items');
+            $table->text('update');
+            $table->boolean('internal');
             $table->string('direction');
             $table->timestamps();
             $table->softDeletes();

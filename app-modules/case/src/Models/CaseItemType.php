@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseItem> $caseItems
  * @property-read int|null $case_items_count
  *
- * @method static Builder|CaseItemType advancedFilter($data)
  * @method static \Assist\Case\Database\Factories\CaseItemTypeFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemType newModelQuery()
  * @method static Builder|CaseItemType newQuery()

@@ -15,7 +15,7 @@
     "canyon-gbs/authorization": "*",
     "canyon-gbs/assist-data-model": "*",
     "canyon-gbs/case": "*",
-    "filament/filament": "v3.0.0-beta11",
+    "filament/filament": "^3.0.0",
     "guzzlehttp/guzzle": "^7.2",
     "internachi/modular": "^2.0",
     "kirschbaum-development/eloquent-power-joins": "^3.0",
@@ -39,9 +39,14 @@
     "mockery/mockery": "^1.4.4",
     "nunomaduro/collision": "^7.0",
     "nunomaduro/larastan": "^2.6",
+    "pestphp/pest": "^2.11",
+    "pestphp/pest-plugin-faker": "^2.0",
+    "pestphp/pest-plugin-laravel": "^2.1",
+    "pestphp/pest-plugin-livewire": "^2.1",
     "phpunit/phpunit": "^10.0",
     "spatie/laravel-ignition": "^2.0",
-    "spatie/laravel-ray": "^1.32"
+    "spatie/laravel-ray": "^1.32",
+    "worksome/request-factories": "^3.2"
   },
   "autoload": {
     "psr-4": {
@@ -141,7 +146,7 @@
     }
   },
   "prefer-stable": true,
-  "minimum-stability": "alpha",
+  "minimum-stability": "dev",
   "repositories": [
     {
       "type": "path",
