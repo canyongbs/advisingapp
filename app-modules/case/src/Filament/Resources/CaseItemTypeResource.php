@@ -26,7 +26,8 @@ class CaseItemTypeResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->required(),
+                    ->required()
+                    ->string(),
             ]);
     }
 
