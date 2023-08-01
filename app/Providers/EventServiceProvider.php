@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
+use Assist\Authorization\Events\RoleRemovedFromUser;
 use Assist\Authorization\Events\RoleGroupRolePivotSaved;
 use Assist\Authorization\Events\RoleGroupUserPivotSaved;
 use Assist\Authorization\Events\RoleGroupRolePivotDeleted;
 use Assist\Authorization\Events\RoleGroupUserPivotDeleted;
+use Assist\Authorization\Listeners\HandleRoleRemovedFromUser;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Assist\Authorization\Listeners\HandleRoleGroupRolePivotSaved;
 use Assist\Authorization\Listeners\HandleRoleGroupUserPivotSaved;
@@ -38,6 +40,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         RoleGroupRolePivotDeleted::class => [
             HandleRoleGroupRolePivotDeleted::class,
+        ],
+        RoleRemovedFromUser::class => [
+            HandleRoleRemovedFromUser::class,
         ],
     ];
 
