@@ -50,6 +50,7 @@ class CaseItemTypeResource extends Resource
             ->filters([
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -69,6 +70,7 @@ class CaseItemTypeResource extends Resource
     {
         return [
             'index' => Pages\ListCaseItemTypes::route('/'),
+            'view' => Pages\ViewCaseItemType::route('/{record}'),
             'create' => Pages\CreateCaseItemType::route('/create'),
             'edit' => Pages\EditCaseItemType::route('/{record}/edit'),
         ];

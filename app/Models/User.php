@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Filament\Panel;
 use DateTimeInterface;
 use App\Traits\Auditable;
 use Assist\Case\Models\CaseItem;
@@ -10,6 +11,7 @@ use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -75,7 +77,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  *
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements HasLocalePreference
+class User extends Authenticatable implements HasLocalePreference, FilamentUser
 {
     use HasFactory;
     use HasAdvancedFilter;
@@ -200,6 +202,11 @@ class User extends Authenticatable implements HasLocalePreference
     public function getDeletedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
     }
 
     protected function serializeDate(DateTimeInterface $date)
