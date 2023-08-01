@@ -5,7 +5,6 @@ namespace Tests;
 use Illuminate\Contracts\Console\Kernel;
 use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
