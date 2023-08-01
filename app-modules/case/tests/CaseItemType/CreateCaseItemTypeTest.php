@@ -1,6 +1,7 @@
 <?php
 
 use function Tests\asSuperAdmin;
+use \Assist\Case\Filament\Resources\CaseItemTypeResource\Pages\CreateCaseItemType;
 use function Pest\Laravel\artisan;
 
 use Assist\Case\Models\CaseItemType;

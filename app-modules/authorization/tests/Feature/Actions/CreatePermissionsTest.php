@@ -1,77 +1,67 @@
 <?php
 
-namespace Assist\Authorization\Tests\Feature\Actions;
-
-use Tests\TestCase;
 use App\Models\User;
 use Mockery\MockInterface;
 use Illuminate\Support\Facades\Config;
 use App\Actions\Finders\ApplicationModels;
 use Assist\Authorization\Models\Permission;
 use Spatie\Permission\Commands\CreatePermission;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Assist\Authorization\Actions\CreatePermissions;
 
-class CreatePermissionsTest extends TestCase
-{
-    use RefreshDatabase;
 
-    /** @test */
-    public function it_will_create_appropriate_permissions_for_all_models(): void
-    {
-        $this->partialMock(ApplicationModels::class, function (MockInterface $mock) {
-            $mock
-                ->shouldReceive('implementingPermissions')
-                ->andReturn(collect([
-                    User::class,
-                ]));
-        });
+uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-        /** @var CreatePermission $createPermissionsAction */
-        $createPermissionsAction = $this->partialMock(CreatePermissions::class, function (MockInterface $mock) {
-            $mock
-                ->shouldAllowMockingProtectedMethods()
-                ->shouldReceive('createCustomPermissions')
-                ->andReturn();
-        });
+it('will create appropriate permissions for all models', function () {
+    $this->partialMock(ApplicationModels::class, function (MockInterface $mock) {
+        $mock
+            ->shouldReceive('implementingPermissions')
+            ->andReturn(collect([
+                User::class,
+            ]));
+    });
 
-        $createPermissionsAction->handle();
+    /** @var CreatePermission $createPermissionsAction */
+    $createPermissionsAction = $this->partialMock(CreatePermissions::class, function (MockInterface $mock) {
+        $mock
+            ->shouldAllowMockingProtectedMethods()
+            ->shouldReceive('createCustomPermissions')
+            ->andReturn();
+    });
 
-        $this->assertDatabaseHas('permissions', [
-            'name' => 'user.*.view',
-            'guard_name' => 'web',
-        ]);
-    }
+    $createPermissionsAction->handle();
 
-    /** @test */
-    public function it_will_create_appropriate_custom_permissions(): void
-    {
-        /** @var CreatePermission $createPermissionsAction */
-        $createPermissionsAction = $this->partialMock(CreatePermissions::class, function (MockInterface $mock) {
-            $mock
-                ->shouldAllowMockingProtectedMethods()
-                ->shouldReceive('createModelPermissions')
-                ->andReturn();
-        });
+    $this->assertDatabaseHas('permissions', [
+        'name' => 'user.*.view',
+        'guard_name' => 'web',
+    ]);
+});
 
-        // Based on our configuration for custom permissions
-        Config::set('permissions.web.custom', ['dashboard.access']);
-        Config::set('permissions.api.custom', ['data.access']);
+it('will create appropriate custom permissions', function () {
+    /** @var CreatePermission $createPermissionsAction */
+    $createPermissionsAction = $this->partialMock(CreatePermissions::class, function (MockInterface $mock) {
+        $mock
+            ->shouldAllowMockingProtectedMethods()
+            ->shouldReceive('createModelPermissions')
+            ->andReturn();
+    });
 
-        // When we run the CreatePermissions action
-        $createPermissionsAction->handle();
+    // Based on our configuration for custom permissions
+    Config::set('permissions.web.custom', ['dashboard.access']);
+    Config::set('permissions.api.custom', ['data.access']);
 
-        // We should have created the records that were specified in config
-        $this->assertDatabaseHas('permissions', [
-            'name' => 'dashboard.access',
-            'guard_name' => 'web',
-        ]);
+    // When we run the CreatePermissions action
+    $createPermissionsAction->handle();
 
-        $this->assertDatabaseHas('permissions', [
-            'name' => 'data.access',
-            'guard_name' => 'api',
-        ]);
+    // We should have created the records that were specified in config
+    $this->assertDatabaseHas('permissions', [
+        'name' => 'dashboard.access',
+        'guard_name' => 'web',
+    ]);
 
-        $this->assertCount(2, Permission::get());
-    }
-}
+    $this->assertDatabaseHas('permissions', [
+        'name' => 'data.access',
+        'guard_name' => 'api',
+    ]);
+
+    expect(Permission::get())->toHaveCount(2);
+});
