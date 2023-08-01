@@ -6,10 +6,10 @@ use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
-use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Assist\Case\Models\CaseItemStatus
@@ -42,7 +42,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class CaseItemStatus extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
 
     protected $fillable = [
@@ -50,19 +49,9 @@ class CaseItemStatus extends BaseModel
         'color',
     ];
 
-    public $orderable = [
-        'id',
-        'name',
-    ];
-
-    public $filterable = [
-        'id',
-        'name',
-    ];
-
-    public function caseItems()
+    public function caseItems(): HasMany
     {
-        return $this->hasMany(CaseItem::class);
+        return $this->hasMany(CaseItem::class, 'state_id');
     }
 
     protected function serializeDate(DateTimeInterface $date)

@@ -6,23 +6,19 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use App\Enums\ColumnColorOptions;
-use Filament\Forms\Components\Select;
-use Assist\Case\Models\CaseItemStatus;
+use Assist\Case\Models\CaseItemType;
 use Filament\Forms\Components\TextInput;
-use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\EditCaseItemStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\CreateCaseItemStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
+use Assist\Case\Filament\Resources\CaseItemTypeResource\Pages;
 
-class CaseItemStatusResource extends Resource
+class CaseItemTypeResource extends Resource
 {
-    protected static ?string $model = CaseItemStatus::class;
+    protected static ?string $model = CaseItemType::class;
 
     protected static ?string $navigationGroup = 'Field Settings';
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -30,14 +26,7 @@ class CaseItemStatusResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->translateLabel()
                     ->required(),
-                Select::make('color')
-                    ->label('Color')
-                    ->translateLabel()
-                    ->options(ColumnColorOptions::class)
-                    ->required()
-                    ->enum(ColumnColorOptions::class),
             ]);
     }
 
@@ -52,10 +41,6 @@ class CaseItemStatusResource extends Resource
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('color')
-                    ->label('Color')
-                    ->badge()
-                    ->color(fn (CaseItemStatus $caseItemStatus) => $caseItemStatus->color),
                 Tables\Columns\TextColumn::make('case_items_count')
                     ->label('# of Case Items')
                     ->counts('caseItems')
@@ -82,9 +67,9 @@ class CaseItemStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListCaseItemStatuses::route('/'),
-            'create' => CreateCaseItemStatus::route('/create'),
-            'edit' => EditCaseItemStatus::route('/{record}/edit'),
+            'index' => Pages\ListCaseItemTypes::route('/'),
+            'create' => Pages\CreateCaseItemType::route('/create'),
+            'edit' => Pages\EditCaseItemType::route('/{record}/edit'),
         ];
     }
 }

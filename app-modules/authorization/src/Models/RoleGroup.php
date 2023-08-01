@@ -14,6 +14,12 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 /**
  * Assist\Authorization\Models\RoleGroup
  *
+ * @property int $id
+ * @property string $name
+ * @property string|null $slug
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
@@ -24,6 +30,12 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup query()
+ * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup withoutTrashed()
  *

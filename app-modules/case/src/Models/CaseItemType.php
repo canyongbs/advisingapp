@@ -3,23 +3,25 @@
 namespace Assist\Case\Models;
 
 use Eloquent;
-use Carbon\Carbon;
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Assist\Case\Models\CaseItemType
  *
  * @property int $id
- * @property string $type
+ * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseItem> $caseItems
+ * @property-read int|null $case_items_count
  *
  * @method static Builder|CaseItemType advancedFilter($data)
+ * @method static \Assist\Case\Database\Factories\CaseItemTypeFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemType newModelQuery()
  * @method static Builder|CaseItemType newQuery()
  * @method static Builder|CaseItemType onlyTrashed()
@@ -27,7 +29,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder|CaseItemType whereCreatedAt($value)
  * @method static Builder|CaseItemType whereDeletedAt($value)
  * @method static Builder|CaseItemType whereId($value)
- * @method static Builder|CaseItemType whereType($value)
+ * @method static Builder|CaseItemType whereName($value)
  * @method static Builder|CaseItemType whereUpdatedAt($value)
  * @method static Builder|CaseItemType withTrashed()
  * @method static Builder|CaseItemType withoutTrashed()
@@ -36,46 +38,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class CaseItemType extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
 
     protected $fillable = [
-        'type',
+        'name',
     ];
 
-    public $orderable = [
-        'id',
-        'type',
-    ];
-
-    public $filterable = [
-        'id',
-        'type',
-    ];
-
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
-    public function getCreatedAtAttribute($value)
+    public function caseItems(): HasMany
     {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+        return $this->hasMany(CaseItem::class, 'type_id');
     }
 
-    public function getUpdatedAtAttribute($value)
+    protected function serializeDate(DateTimeInterface $date): string
     {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getDeletedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

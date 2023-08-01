@@ -5,6 +5,7 @@ namespace Assist\Case\Database\Factories;
 use App\Models\User;
 use App\Models\Institution;
 use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\CaseItemType;
 use Assist\Case\Models\CaseItemStatus;
 use Assist\Case\Models\CaseItemPriority;
 use Assist\AssistDataModel\Models\Student;
@@ -27,10 +28,10 @@ class CaseItemFactory extends Factory
             'res_details' => $this->faker->sentence(),
             'institution_id' => Institution::factory(),
             'state_id' => CaseItemStatus::inRandomOrder()->first() ?? CaseItemStatus::factory(),
-            'type_id' => $this->faker->randomNumber(9),
+            'type_id' => CaseItemType::inRandomOrder()->first() ?? CaseItemType::factory(),
             'priority_id' => CaseItemPriority::inRandomOrder()->first() ?? CaseItemPriority::factory(),
             'assigned_to_id' => User::factory(),
-            'created_by_id' => $this->faker->randomNumber(9),
+            'created_by_id' => User::factory(),
         ];
     }
 }

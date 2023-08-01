@@ -6,11 +6,11 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateCaseItemTypesTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('case_item_types', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('type');
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });

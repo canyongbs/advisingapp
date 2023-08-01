@@ -8,7 +8,6 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\Institution;
 use Illuminate\Support\Carbon;
-use App\Support\HasAdvancedFilter;
 use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $casenumber
  * @property string|null $respondent_type
- * @property int|null $respondent_id
+ * @property string|null $respondent_id
  * @property string|null $close_details
  * @property string|null $res_details
  * @property Carbon|null $created_at
@@ -70,33 +69,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CaseItem extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
     use PowerJoins;
-
-    public static $search = [
-        'casenumber',
-    ];
-
-    public $orderable = [
-        'id',
-        'casenumber',
-        'student.full',
-        'student.sisid',
-        'student.otherid',
-        'institution.name',
-        'assigned_to.name',
-    ];
-
-    public $filterable = [
-        'id',
-        'casenumber',
-        'student.full',
-        'student.sisid',
-        'student.otherid',
-        'institution.name',
-        'assigned_to.name',
-    ];
 
     protected $fillable = [
         'casenumber',
@@ -118,7 +92,7 @@ class CaseItem extends BaseModel
             name: 'respondent',
             type: 'respondent_type',
             id: 'respondent_id',
-            ownerKey: 'student_id',
+            ownerKey: 'sisid',
         );
     }
 
@@ -148,7 +122,6 @@ class CaseItem extends BaseModel
         return $this->belongsTo(User::class);
     }
 
-    // TODO: Figure this out and whether or not it can just be handled via auditing
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);

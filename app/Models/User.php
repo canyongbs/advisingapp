@@ -5,12 +5,14 @@ namespace App\Models;
 use Carbon\Carbon;
 use DateTimeInterface;
 use App\Traits\Auditable;
+use Assist\Case\Models\CaseItem;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
@@ -36,6 +38,8 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UserAlert> $alerts
  * @property-read int|null $alerts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, CaseItem> $caseItems
+ * @property-read int|null $case_items_count
  * @property-read mixed $is_admin
  * @property-read mixed $type_label
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -131,6 +135,14 @@ class User extends Authenticatable implements HasLocalePreference
     public function permissions(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+    }
+
+    public function caseItems(): HasMany
+    {
+        return $this->hasMany(
+            related: CaseItem::class,
+            foreignKey: 'assigned_to_id',
+        );
     }
 
     public function getIsAdminAttribute()
