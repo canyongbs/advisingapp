@@ -1,31 +1,31 @@
 {
-  "name": "canyon-gbs/assist-data-model",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Assist\\AssistDataModel\\": "src/",
-      "Assist\\AssistDataModel\\Tests\\": "tests/",
-      "Assist\\AssistDataModel\\Database\\Factories\\": "database/factories/",
-      "Assist\\AssistDataModel\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/assist-data-model",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Assist\\AssistDataModel\\": "src/",
+            "Assist\\AssistDataModel\\Tests\\": "tests/",
+            "Assist\\AssistDataModel\\Database\\Factories\\": "database/factories/",
+            "Assist\\AssistDataModel\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Assist\\AssistDataModel\\Providers\\AssistDataModelServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Assist\\AssistDataModel\\Providers\\AssistDataModelServiceProvider"
-      ]
-    }
-  },
-  "config": {
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
-  }
 }

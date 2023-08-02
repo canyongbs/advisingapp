@@ -16,10 +16,6 @@ class SyncRolesAndPermissions extends Command
 
     public function handle(): int
     {
-        ray('SyncRolesAndPermissions');
-        ray()->measure('roles-and-permissions:sync');
-        ray()->showSlowQueries();
-
         // TODO Put handling in place to prevent this from being run in production IF it has already been run once
         // We are going to introduce a convention for "one-time" operations similar to Laravel migrations in order to handle this
 
@@ -34,8 +30,6 @@ class SyncRolesAndPermissions extends Command
         $this->syncApiPermissions();
 
         Artisan::call(SetupRoleGroups::class);
-
-        ray()->measure('roles-and-permissions:sync');
 
         return self::SUCCESS;
     }
