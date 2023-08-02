@@ -11,7 +11,8 @@
 |
 */
 
-uses(Tests\TestCase::class)->in('../app-modules/*/tests');
+uses(Tests\TestCase::class)
+    ->in('../app-modules/*/tests', '../tests');
 
 /*
 |--------------------------------------------------------------------------

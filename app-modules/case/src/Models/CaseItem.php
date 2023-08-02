@@ -12,6 +12,7 @@ use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Case\Database\Factories\CaseItemFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -137,5 +138,10 @@ class CaseItem extends BaseModel
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+    }
+
+    protected static function newFactory()
+    {
+        return new CaseItemFactory();
     }
 }

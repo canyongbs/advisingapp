@@ -7,7 +7,10 @@
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
-    <testsuite name="Modules"><directory suffix="Test.php">./app-modules/*/tests</directory></testsuite></testsuites>
+        <testsuite name="Modules">
+            <directory suffix="Test.php">./app-modules/*/tests</directory>
+        </testsuite>
+    </testsuites>
     <php>
         <server name="APP_ENV" value="testing"/>
         <server name="APP_URL" value="http://localhost"/>
@@ -17,7 +20,5 @@
         <server name="QUEUE_CONNECTION" value="sync"/>
         <server name="SESSION_DRIVER" value="array"/>
         <server name="TELESCOPE_ENABLED" value="false"/>
-        <env name="DB_DATABASE" value="testing"/>
-        <env name="SIS_DB_DATABASE" value="testing"/>
     </php>
 </phpunit>
