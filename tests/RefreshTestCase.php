@@ -4,16 +4,15 @@ namespace Tests;
 
 use Illuminate\Contracts\Console\Kernel;
 use Spatie\Permission\PermissionRegistrar;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
-abstract class TestCase extends BaseTestCase
+abstract class RefreshTestCase extends BaseTestCase
 {
     use CreatesApplication;
-    use DatabaseTransactions;
+    use RefreshDatabase;
     use CanConfigureMigrationCommands;
 
     protected function setUp(): void
@@ -29,8 +28,6 @@ abstract class TestCase extends BaseTestCase
             '--path' => 'database/migrations/sis',
             ...$this->migrateFreshUsing(),
         ]);
-
-        $this->artisan(SyncRolesAndPermissions::class);
 
         $this->artisan('app:setup-foreign-data-wrapper');
 

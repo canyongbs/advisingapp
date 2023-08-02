@@ -5,9 +5,6 @@ use Mockery\MockInterface;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\Actions\CreatePermissionsForModel;
 
-
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
-
 beforeEach(function () {
     Relation::morphMap([
         'user' => \Mockery_3_App_Models_User::class,

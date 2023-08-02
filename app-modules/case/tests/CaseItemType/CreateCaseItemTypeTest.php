@@ -1,8 +1,6 @@
 <?php
 
 use function Tests\asSuperAdmin;
-use \Assist\Case\Filament\Resources\CaseItemTypeResource\Pages\CreateCaseItemType;
-use function Pest\Laravel\artisan;
 
 use Assist\Case\Models\CaseItemType;
 
@@ -11,12 +9,11 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
+use CaseItemTypeResource\Pages\CreateCaseItemType;
 use Assist\Case\Filament\Resources\CaseItemTypeResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseItemTypeRequestFactory;
 
 test('A successful action on the CreateCaseItemType page', function () {
-    artisan('roles-and-permissions:sync');
-
     asSuperAdmin()
         ->get(
             CaseItemTypeResource::getUrl('create')
@@ -38,8 +35,6 @@ test('A successful action on the CreateCaseItemType page', function () {
 });
 
 test('CreateCaseItemType required valid data', function ($data, $errors) {
-    artisan('roles-and-permissions:sync');
-
     asSuperAdmin();
 
     ray(CreateCaseItemTypeRequestFactory::new($data)->create());

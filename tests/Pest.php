@@ -11,8 +11,11 @@
 |
 */
 
+uses(Tests\RefreshTestCase::class)
+    ->in('../app-modules/authorization/tests');
+
 uses(Tests\TestCase::class)
-    ->in('../app-modules/*/tests', '../tests');
+    ->in('../app-modules/case/tests', '../tests');
 
 /*
 |--------------------------------------------------------------------------
