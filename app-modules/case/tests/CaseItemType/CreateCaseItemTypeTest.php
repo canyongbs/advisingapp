@@ -9,7 +9,6 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-use CaseItemTypeResource\Pages\CreateCaseItemType;
 use Assist\Case\Filament\Resources\CaseItemTypeResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseItemTypeRequestFactory;
 

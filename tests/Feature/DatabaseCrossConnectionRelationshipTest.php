@@ -3,7 +3,6 @@
 use Assist\Case\Models\CaseItem;
 use Assist\AssistDataModel\Models\Student;
 
-
 test('relationships work cross connections', function () {
     $student = Student::factory()
         ->has(

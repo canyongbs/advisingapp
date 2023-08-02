@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 
-
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 it('will assign permissions to roles as defined in our configuration', function () {
