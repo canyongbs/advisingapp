@@ -2,21 +2,15 @@
 
 use App\Models\User;
 use Mockery\MockInterface;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use Assist\Authorization\Tests\Helpers;
 use App\Actions\Finders\ApplicationModels;
 use Assist\Authorization\Models\Permission;
 use Spatie\Permission\Commands\CreatePermission;
 use Assist\Authorization\Actions\CreatePermissions;
 
 beforeEach(function () {
-    DB::table('roles')->truncate();
-    DB::table('permissions')->truncate();
-    DB::table('role_groups')->truncate();
-    DB::table('role_groupables')->truncate();
-    DB::table('model_has_roles')->truncate();
-    DB::table('role_has_permissions')->truncate();
-    DB::table('model_has_permissions')->truncate();
+    (new Helpers())->truncateTables();
 });
 
 it('will create appropriate permissions for all models', function () {
