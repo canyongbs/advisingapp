@@ -11,11 +11,9 @@
 |
 */
 
-uses(Tests\RefreshTestCase::class)
-    ->in('../app-modules/authorization/tests');
+uses(Tests\TestCase::class)->in('../app-modules/case/tests', '../tests');
 
-uses(Tests\TestCase::class)
-    ->in('../app-modules/case/tests', '../tests');
+uses(Tests\RefreshTestCase::class)->in('../app-modules/authorization/tests');
 
 /*
 |--------------------------------------------------------------------------
