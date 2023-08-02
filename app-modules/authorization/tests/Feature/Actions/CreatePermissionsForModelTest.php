@@ -1,80 +1,73 @@
 <?php
 
-namespace Assist\Authorization\Tests\Feature\Actions;
-
-use Tests\TestCase;
 use App\Models\User;
 use Mockery\MockInterface;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\Actions\CreatePermissionsForModel;
 
-class CreatePermissionsForModelTest extends TestCase
-{
-    use RefreshDatabase;
+beforeEach(function () {
+    Relation::morphMap([
+        'user' => \Mockery_3_App_Models_User::class,
+    ]);
 
-    public function setUp(): void
-    {
-        parent::setUp();
+    DB::table('roles')->truncate();
+    DB::table('permissions')->truncate();
+    DB::table('role_groups')->truncate();
+    DB::table('role_groupables')->truncate();
+    DB::table('model_has_roles')->truncate();
+    DB::table('role_has_permissions')->truncate();
+    DB::table('model_has_permissions')->truncate();
+});
 
-        Relation::morphMap([
-            'user' => \Mockery_3_App_Models_User::class,
-        ]);
-    }
+it('will respect model permission overrides', function () {
+    // When a model overrides the default configuration for permissions
+    $this->partialMock(User::class, function (MockInterface $mock) {
+        $mock
+            ->shouldReceive('getWebPermissions')
+            ->once()
+            ->andReturn(collect(['*.test']));
+    });
 
-    /** @test */
-    public function it_will_respect_model_permission_overrides(): void
-    {
-        // When a model overrides the default configuration for permissions
-        $this->partialMock(User::class, function (MockInterface $mock) {
-            $mock
-                ->shouldReceive('getWebPermissions')
-                ->once()
-                ->andReturn(collect(['*.test']));
-        });
+    // And the CreatePermissionsForModel action is run
+    $action = resolve(CreatePermissionsForModel::class);
+    $action->handle(User::class);
 
-        // And the CreatePermissionsForModel action is run
-        $action = resolve(CreatePermissionsForModel::class);
-        $action->handle(User::class);
+    // Our database should reflect the appropriate permissions
+    $this->assertDatabaseHas('permissions', [
+        'name' => 'user.*.test',
+        'guard_name' => 'web',
+    ]);
 
-        // Our database should reflect the appropriate permissions
-        $this->assertDatabaseHas('permissions', [
-            'name' => 'user.*.test',
-            'guard_name' => 'web',
-        ]);
+    // Respecting the override and ignoring the defaults
+    $this->assertDatabaseMissing('permissions', [
+        'name' => 'user.*.view',
+        'guard_name' => 'web',
+    ]);
+});
 
-        // Respecting the override and ignoring the defaults
-        $this->assertDatabaseMissing('permissions', [
-            'name' => 'user.*.view',
-            'guard_name' => 'web',
-        ]);
-    }
+it('will respect model permission extensions', function () {
+    // When a model extends the default configuration for permissions
+    $this->partialMock(User::class, function (MockInterface $mock) {
+        $mock
+            ->shouldReceive('getWebPermissions')
+            ->once()
+            ->andReturn(collect(['*.test', ...config('permissions.web.model')]));
+    });
 
-    /** @test */
-    public function it_will_respect_model_permission_extensions(): void
-    {
-        // When a model extends the default configuration for permissions
-        $this->partialMock(User::class, function (MockInterface $mock) {
-            $mock
-                ->shouldReceive('getWebPermissions')
-                ->once()
-                ->andReturn(collect(['*.test', ...config('permissions.web.model')]));
-        });
+    // And the CreatePermissionsForModel action is run
+    $action = resolve(CreatePermissionsForModel::class);
+    $action->handle(User::class);
 
-        // And the CreatePermissionsForModel action is run
-        $action = resolve(CreatePermissionsForModel::class);
-        $action->handle(User::class);
+    // Our database should reflect the appropriate permissions the model has extended
+    $this->assertDatabaseHas('permissions', [
+        'name' => 'user.*.test',
+        'guard_name' => 'web',
+    ]);
 
-        // Our database should reflect the appropriate permissions the model has extended
-        $this->assertDatabaseHas('permissions', [
-            'name' => 'user.*.test',
-            'guard_name' => 'web',
-        ]);
-
-        // While also respecting the defaults that the application provides
-        $this->assertDatabaseHas('permissions', [
-            'name' => 'user.*.view',
-            'guard_name' => 'web',
-        ]);
-    }
-}
+    // While also respecting the defaults that the application provides
+    $this->assertDatabaseHas('permissions', [
+        'name' => 'user.*.view',
+        'guard_name' => 'web',
+    ]);
+});

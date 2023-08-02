@@ -1,7 +1,6 @@
 <?php
 
 use function Tests\asSuperAdmin;
-use function Pest\Laravel\artisan;
 
 use Assist\Case\Models\CaseItemType;
 
@@ -14,8 +13,6 @@ use Assist\Case\Filament\Resources\CaseItemTypeResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseItemTypeRequestFactory;
 
 test('A successful action on the CreateCaseItemType page', function () {
-    artisan('roles-and-permissions:sync');
-
     asSuperAdmin()
         ->get(
             CaseItemTypeResource::getUrl('create')
@@ -35,8 +32,6 @@ test('A successful action on the CreateCaseItemType page', function () {
 });
 
 test('CreateCaseItemType required valid data', function ($data, $errors) {
-    artisan('roles-and-permissions:sync');
-
     asSuperAdmin();
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
