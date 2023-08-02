@@ -1,7 +1,6 @@
 <?php
 
 use function Tests\asSuperAdmin;
-use function Pest\Laravel\artisan;
 
 use Assist\Case\Models\CaseItemType;
 
@@ -13,8 +12,6 @@ use Assist\Case\Filament\Resources\CaseItemTypeResource;
 use Assist\Case\Tests\RequestFactories\EditCaseItemTypeRequestFactory;
 
 test('A successful action on the EditCaseItemType page', function () {
-    artisan('roles-and-permissions:sync');
-
     $caseItemType = CaseItemType::factory()->create();
 
     asSuperAdmin()
@@ -41,8 +38,6 @@ test('A successful action on the EditCaseItemType page', function () {
 });
 
 test('EditCaseItemType required valid data', function ($data, $errors) {
-    artisan('roles-and-permissions:sync');
-
     asSuperAdmin();
 
     $caseItemType = CaseItemType::factory()->create();

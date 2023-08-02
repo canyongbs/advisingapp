@@ -1,7 +1,6 @@
 <?php
 
 use function Tests\asSuperAdmin;
-use function Pest\Laravel\artisan;
 use function Pest\Livewire\livewire;
 
 use Assist\Case\Models\CaseItemPriority;
@@ -13,8 +12,6 @@ use Assist\Case\Filament\Resources\CaseItemPriorityResource;
 use Assist\Case\Tests\RequestFactories\EditCaseItemPriorityRequestFactory;
 
 test('A successful action on the EditCaseItemPriority page', function () {
-    artisan('roles-and-permissions:sync');
-
     $caseItemPriority = CaseItemPriority::factory()->create();
 
     asSuperAdmin()
@@ -41,8 +38,6 @@ test('A successful action on the EditCaseItemPriority page', function () {
 });
 
 test('EditCaseItemPriority requires valid data', function ($data, $errors) {
-    artisan('roles-and-permissions:sync');
-
     asSuperAdmin();
 
     $caseItemPriority = CaseItemPriority::factory()->create();
