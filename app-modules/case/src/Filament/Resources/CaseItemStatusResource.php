@@ -37,6 +37,7 @@ class CaseItemStatusResource extends Resource
                 Select::make('color')
                     ->label('Color')
                     ->translateLabel()
+                    ->searchable()
                     ->options(ColumnColorOptions::class)
                     ->required()
                     ->enum(ColumnColorOptions::class),
