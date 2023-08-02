@@ -2,8 +2,6 @@
 
 use Assist\Authorization\Actions\CreateRoles;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
-
 it('will create the roles defined in our config', function () {
     $this->markTestSkipped();
 

@@ -8,8 +8,6 @@ use Assist\Authorization\Models\Permission;
 use Spatie\Permission\Commands\CreatePermission;
 use Assist\Authorization\Actions\CreatePermissions;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
-
 it('will create appropriate permissions for all models', function () {
     $this->partialMock(ApplicationModels::class, function (MockInterface $mock) {
         $mock
