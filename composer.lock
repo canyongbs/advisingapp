@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1fe2e9fe38e1401c09e78f8c656a3135",
+    "content-hash": "3bb0081f583f7d45d8b7b4b4ecd7d0a7",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -362,7 +362,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/assist-data-model",
-                "reference": "d4c44bfe49e7b6ac3cc4585903795163bf434b59"
+                "reference": "583afaa4e287b46127e2f788bcf95e217ec51056"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -397,7 +397,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/authorization",
-                "reference": "35e6a64a698b4cbf51bfe7d026cddee73a9574ad"
+                "reference": "fcc2625b01ef5e750d71c7e0280f491a11b2f591"
             },
             "require": {
                 "filament/filament": "^3.0.0",
@@ -433,7 +433,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/case",
-                "reference": "7a5d37b586eaaace77527bcd1d260d9689fb156c"
+                "reference": "40dfb6d1b5e13ea604d34f18c8bfb2708a510911"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -452,41 +452,6 @@
                     "Assist\\Case\\Tests\\": "tests/",
                     "Assist\\Case\\Database\\Factories\\": "database/factories/",
                     "Assist\\Case\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/prospect",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/prospect",
-                "reference": "843afd8b528d614d4ad03bdefdae3512cf203815"
-            },
-            "require": {
-                "filament/filament": "v3.0.0-beta11"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Assist\\Prospect\\Providers\\ProspectServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Assist\\Prospect\\": "src/",
-                    "Assist\\Prospect\\Tests\\": "tests/",
-                    "Assist\\Prospect\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Prospect\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

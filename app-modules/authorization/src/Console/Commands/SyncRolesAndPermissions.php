@@ -40,8 +40,7 @@ class SyncRolesAndPermissions extends Command
     {
         Role::where('guard_name', 'web')
             ->where('name', '!=', 'authorization.super_admin')
-            ->get()
-            ->each(function (Role $role) {
+            ->cursor(function (Role $role) {
                 $this->syncPermissionFor('web', $role);
             });
     }
@@ -50,8 +49,7 @@ class SyncRolesAndPermissions extends Command
     {
         Role::where('guard_name', 'api')
             ->where('name', '!=', 'authorization.super_admin')
-            ->get()
-            ->each(function (Role $role) {
+            ->cursor(function (Role $role) {
                 $this->syncPermissionFor('api', $role);
             });
     }

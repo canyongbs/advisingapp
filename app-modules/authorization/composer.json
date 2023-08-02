@@ -23,5 +23,10 @@
         "Assist\\Authorization\\Providers\\AuthorizationServiceProvider"
       ]
     }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
   }
 }

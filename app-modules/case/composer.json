@@ -22,5 +22,10 @@
 				"Assist\\Case\\Providers\\CaseServiceProvider"
 			]
 		}
+	},
+	"config": {
+		"allow-plugins": {
+			"pestphp/pest-plugin": true
+		}
 	}
 }

@@ -29,11 +29,13 @@ class CaseItemPriorityResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->required(),
+                    ->required()
+                    ->string(),
                 TextInput::make('order')
-                    ->numeric()
                     ->label('Priority Order')
                     ->required()
+                    ->integer()
+                    ->numeric()
                     ->disabledOn('edit'),
             ]);
     }

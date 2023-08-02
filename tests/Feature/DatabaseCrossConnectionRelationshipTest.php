@@ -1,34 +1,26 @@
 <?php
 
-namespace Tests\Feature;
-
-use Tests\TestCase;
 use Assist\Case\Models\CaseItem;
 use Assist\AssistDataModel\Models\Student;
 
-class DatabaseCrossConnectionRelationshipTest extends TestCase
-{
-    /** @test */
-    public function relationships_work_cross_connections(): void
-    {
-        $student = Student::factory()
-            ->has(
-                CaseItem::factory()
-                    ->count(3),
-                'cases'
-            )
-            ->create();
+test('relationships work cross connections', function () {
+    $student = Student::factory()
+        ->has(
+            CaseItem::factory()
+                ->count(3),
+            'cases'
+        )
+        ->create();
 
-        $this->assertCount(3, $student->cases);
+    expect($student->cases)->toHaveCount(3);
 
-        Student::factory()->create();
+    Student::factory()->create();
 
-        $this->assertCount(2, Student::all());
+    expect(Student::all())->toHaveCount(2);
 
-        $whereHas = Student::whereHas('cases', function ($query) {
-            $query->whereNotNull('res_details');
-        })->get();
+    $whereHas = Student::whereHas('cases', function ($query) {
+        $query->whereNotNull('res_details');
+    })->get();
 
-        $this->assertCount(1, $whereHas);
-    }
-}
+    expect($whereHas)->toHaveCount(1);
+});

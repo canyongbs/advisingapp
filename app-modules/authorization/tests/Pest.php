@@ -11,7 +11,7 @@
 |
 */
 
-uses(Tests\TestCase::class)->in('../tests', '../app-modules/*/tests');
+// uses(Tests\TestCase::class)->in('Feature');
 
 /*
 |--------------------------------------------------------------------------
@@ -24,9 +24,9 @@ uses(Tests\TestCase::class)->in('../tests', '../app-modules/*/tests');
 |
 */
 
-//expect()->extend('toBeOne', function () {
-//    return $this->toBe(1);
-//});
+// expect()->extend('toBeOne', function () {
+//     return $this->toBe(1);
+// });
 
 /*
 |--------------------------------------------------------------------------
