@@ -7,8 +7,6 @@ use Assist\Case\Models\CaseItemStatus;
 use Assist\Case\Filament\Resources\CaseItemStatusResource;
 
 test('The correct details are displayed on the ViewCaseItemStatus page', function () {
-    artisan('roles-and-permissions:sync');
-
     $caseItemStatus = CaseItemStatus::factory()->create();
 
     asSuperAdmin()

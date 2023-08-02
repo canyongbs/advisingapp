@@ -1,7 +1,6 @@
 <?php
 
 use function Tests\asSuperAdmin;
-use function Pest\Laravel\artisan;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
@@ -15,8 +14,6 @@ use Assist\Case\Filament\Resources\CaseItemStatusResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseItemStatusRequestFactory;
 
 test('A successful action on the CreateCaseItemStatus page', function () {
-    artisan('roles-and-permissions:sync');
-
     asSuperAdmin()
         ->get(
             CaseItemStatusResource::getUrl('create')
@@ -36,9 +33,6 @@ test('A successful action on the CreateCaseItemStatus page', function () {
 });
 
 test('CreateCaseItemStatus requires valid data', function ($data, $errors) {
-    // TODO: Bring back once we figure out how to speed this up
-    //artisan('roles-and-permissions:sync');
-
     asSuperAdmin();
 
     livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)

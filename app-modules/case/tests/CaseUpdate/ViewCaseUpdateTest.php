@@ -9,8 +9,6 @@ use function Pest\Laravel\artisan;
 use Assist\Case\Filament\Resources\CaseUpdateResource;
 
 test('The correct details are displayed on the ViewCaseUpdate page', function () {
-    artisan('roles-and-permissions:sync');
-
     $caseItemUpdate = CaseUpdate::factory()->create();
 
     asSuperAdmin()

@@ -1,7 +1,6 @@
 <?php
 
 use function Tests\asSuperAdmin;
-use function Pest\Laravel\artisan;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
@@ -14,8 +13,6 @@ use Assist\Case\Filament\Resources\CaseItemStatusResource;
 use Assist\Case\Tests\RequestFactories\EditCaseItemStatusRequestFactory;
 
 test('A successful action on the EditCaseItemStatus page', function () {
-    artisan('roles-and-permissions:sync');
-
     $caseItemStatus = CaseItemStatus::factory()->create();
 
     asSuperAdmin()
@@ -44,9 +41,6 @@ test('A successful action on the EditCaseItemStatus page', function () {
 });
 
 test('EditCaseItemStatus requires valid data', function ($data, $errors) {
-    // TODO: Bring back once we figure out how to speed this up
-    //artisan('roles-and-permissions:sync');
-
     asSuperAdmin();
 
     $caseItemStatus = CaseItemStatus::factory()->create();
