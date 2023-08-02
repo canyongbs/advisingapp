@@ -11,8 +11,22 @@
 |
 */
 
-uses(Tests\TestCase::class)->in('../app-modules/case/tests', '../tests');
+function baseTestCaseDirectories(): array
+{
+    $directories = glob('./app-modules/*', GLOB_ONLYDIR);
 
+    $filteredDirectories = array_filter($directories, function ($dir) {
+        return basename($dir) !== 'authorization';
+    });
+
+    $filteredDirectories = array_map(function ($dir) {
+        return '.' . $dir . '/tests';
+    }, $filteredDirectories);
+
+    return ['../tests', ...$filteredDirectories];
+}
+
+uses(Tests\TestCase::class)->in(...baseTestCaseDirectories());
 uses(Tests\RefreshTestCase::class)->in('../app-modules/authorization/tests');
 
 /*
