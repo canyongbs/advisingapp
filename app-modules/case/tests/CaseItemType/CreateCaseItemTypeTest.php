@@ -31,7 +31,7 @@ test('A successful action on the CreateCaseItemType page', function () {
     assertDatabaseHas(CaseItemType::class, $editRequest);
 });
 
-test('CreateCaseItemType required valid data', function ($data, $errors) {
+test('CreateCaseItemType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)

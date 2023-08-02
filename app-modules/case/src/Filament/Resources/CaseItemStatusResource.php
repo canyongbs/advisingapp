@@ -11,6 +11,7 @@ use Assist\Case\Models\CaseItemStatus;
 use Filament\Forms\Components\TextInput;
 use Assist\Case\Enums\ColumnColorOptions;
 use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\EditCaseItemStatus;
+use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ViewCaseItemStatus;
 use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\CreateCaseItemStatus;
 use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
 
@@ -31,7 +32,8 @@ class CaseItemStatusResource extends Resource
                 TextInput::make('name')
                     ->label('Name')
                     ->translateLabel()
-                    ->required(),
+                    ->required()
+                    ->string(),
                 Select::make('color')
                     ->label('Color')
                     ->translateLabel()
@@ -64,6 +66,7 @@ class CaseItemStatusResource extends Resource
             ->filters([
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -84,6 +87,7 @@ class CaseItemStatusResource extends Resource
         return [
             'index' => ListCaseItemStatuses::route('/'),
             'create' => CreateCaseItemStatus::route('/create'),
+            'view' => ViewCaseItemStatus::route('/{record}'),
             'edit' => EditCaseItemStatus::route('/{record}/edit'),
         ];
     }
