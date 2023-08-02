@@ -22,26 +22,22 @@ test('A successful action on the CreateCaseItemType page', function () {
         )
         ->assertSuccessful();
 
-    $data = [
-        'name' => fake()->name(),
-    ];
+    $editRequest = CreateCaseItemTypeRequestFactory::new()->create();
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
-        ->fillForm($data)
+        ->fillForm($editRequest)
         ->call('create')
         ->assertHasNoFormErrors();
 
     assertCount(1, CaseItemType::all());
 
-    assertDatabaseHas(CaseItemType::class, $data);
+    assertDatabaseHas(CaseItemType::class, $editRequest);
 });
 
 test('CreateCaseItemType required valid data', function ($data, $errors) {
     artisan('roles-and-permissions:sync');
 
     asSuperAdmin();
-
-    ray(CreateCaseItemTypeRequestFactory::new($data)->create());
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
         ->fillForm(CreateCaseItemTypeRequestFactory::new($data)->create())
