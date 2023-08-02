@@ -1,7 +1,6 @@
 <?php
 
 use function Tests\asSuperAdmin;
-use function Pest\Laravel\artisan;
 
 use Assist\Case\Models\CaseItemStatus;
 use Assist\Case\Filament\Resources\CaseItemStatusResource;

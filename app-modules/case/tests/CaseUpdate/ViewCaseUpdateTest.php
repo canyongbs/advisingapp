@@ -3,9 +3,6 @@
 use function Tests\asSuperAdmin;
 
 use Assist\Case\Models\CaseUpdate;
-
-use function Pest\Laravel\artisan;
-
 use Assist\Case\Filament\Resources\CaseUpdateResource;
 
 test('The correct details are displayed on the ViewCaseUpdate page', function () {
