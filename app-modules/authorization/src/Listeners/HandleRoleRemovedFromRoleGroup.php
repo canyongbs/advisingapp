@@ -8,8 +8,6 @@ class HandleRoleRemovedFromRoleGroup
 {
     public function handle(object $event): void
     {
-        ray('HandleRoleRemovedFromRoleGroup', $event);
-
         resolve(RemoveRoleFromUsersInRoleGroup::class)->handle($event->pivot);
     }
 }
