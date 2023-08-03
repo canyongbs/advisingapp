@@ -75,8 +75,6 @@ class RolesRelationManager extends RelationManager
                         ['roleGroups' => $record->roleGroups],
                     ))
                     ->after(function ($record) {
-                        ray('emit some event...');
-
                         RoleRemovedFromUser::dispatch($record, $this->ownerRecord);
 
                         // TODO This is the "double action" that we will carry out to re-assign roles directly after removing a user from a RoleGroup
@@ -94,10 +92,10 @@ class RolesRelationManager extends RelationManager
             ]);
     }
 
-    public function afterDetachAction(): Action
-    {
-        return Action::make('afterDetach')
-            ->requiresConfirmation()
-            ->action(fn (array $arguments) => ray($arguments));
-    }
+    // public function afterDetachAction(): Action
+    // {
+    //     return Action::make('afterDetach')
+    //         ->requiresConfirmation()
+    //         ->action(fn (array $arguments) => ray($arguments));
+    // }
 }

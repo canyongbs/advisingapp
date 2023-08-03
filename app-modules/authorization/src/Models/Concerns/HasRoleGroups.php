@@ -15,7 +15,7 @@ trait HasRoleGroups
             ->withTimestamps();
     }
 
-    protected function inheritsRoleFromAnotherRoleGroup(Role $role, RoleGroup $roleGroup)
+    public function inheritsRoleFromAnotherRoleGroup(Role $role, RoleGroup $roleGroup)
     {
         // If the user belongs to another RoleGroup that implements this Role
         // We want to leave this role in place

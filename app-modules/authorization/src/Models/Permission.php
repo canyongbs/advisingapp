@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
@@ -41,6 +42,7 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
  */
 class Permission extends SpatiePermission
 {
+    use HasFactory;
     use DefinesPermissions;
 
     public function getWebPermissions(): Collection

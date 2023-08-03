@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Role as SpatieRole;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
@@ -46,6 +47,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  */
 class Role extends SpatieRole
 {
+    use HasFactory;
     use DefinesPermissions;
     use HasRoleGroups {
         roleGroups as traitRoleGroups;

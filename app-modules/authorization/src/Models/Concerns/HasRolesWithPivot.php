@@ -40,9 +40,10 @@ trait HasRolesWithPivot
 
     public function hasBeenAssignedRoleDirectly(Role $role)
     {
-        return $this->roles
-            ->contains($role)
-            ->where('via', ModelHasRolesViaEnum::Direct);
+        return $this->roles()
+            ->where('id', $role->id)
+            ->where('via', ModelHasRolesViaEnum::Direct)
+            ->exists();
     }
 
     public function assignRoleViaRoleGroup(Role $role): void

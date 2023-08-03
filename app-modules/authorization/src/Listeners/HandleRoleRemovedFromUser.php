@@ -2,16 +2,13 @@
 
 namespace Assist\Authorization\Listeners;
 
-use Assist\Authorization\Enums\ModelHasRolesViaEnum;
-
 class HandleRoleRemovedFromUser
 {
     public function handle(object $event): void
     {
-        if ($event->role->via === ModelHasRolesViaEnum::RoleGroup->value) {
-            $event->role->roleGroups->each(function ($roleGroup) use ($event) {
-                $event->user->roleGroups()->detach($roleGroup);
-            });
-        }
+        // Remove all role groups that this user may belong to that this role belonged to
+        $event->role->roleGroups->each(function ($roleGroup) use ($event) {
+            $event->user->roleGroups()->detach($roleGroup);
+        });
     }
 }
