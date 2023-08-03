@@ -5,9 +5,9 @@ namespace Assist\Authorization\Events;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
+use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
 
-class RoleGroupRolePivotSaved
+class UserRemovedFromRoleGroup
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -17,7 +17,7 @@ class RoleGroupRolePivotSaved
      * Create a new event instance.
      */
     public function __construct(
-        public RoleGroupRolePivot $pivot
+        public RoleGroupUserPivot $pivot
     ) {
     }
 }

@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Event;
 use Assist\Authorization\Models\RoleGroup;
-use Assist\Authorization\Events\RoleGroupRolePivotDeleted;
-use Assist\Authorization\Events\RoleGroupUserPivotDeleted;
-use Assist\Authorization\Listeners\HandleRoleGroupRolePivotDeleted;
+use Assist\Authorization\Events\RoleRemovedFromRoleGroup;
+use Assist\Authorization\Events\UserRemovedFromRoleGroup;
+use Assist\Authorization\Listeners\HandleRoleRemovedFromRoleGroup;
 
 it('will fire when a role has been detached from a role group', function () {
     Event::fake();
@@ -16,15 +16,15 @@ it('will fire when a role has been detached from a role group', function () {
 
     $roleGroup->roles()->detach($roleGroup->roles->first());
 
-    Event::assertDispatched(RoleGroupRolePivotDeleted::class);
-    Event::assertNotDispatched(RoleGroupUserPivotDeleted::class);
+    Event::assertDispatched(RoleRemovedFromRoleGroup::class);
+    Event::assertNotDispatched(UserRemovedFromRoleGroup::class);
 });
 
 it('will be handled by the correct listener', function () {
     Event::fake();
 
     Event::assertListening(
-        RoleGroupRolePivotDeleted::class,
-        HandleRoleGroupRolePivotDeleted::class
+        RoleRemovedFromRoleGroup::class,
+        HandleRoleRemovedFromRoleGroup::class
     );
 });

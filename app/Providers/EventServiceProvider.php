@@ -5,16 +5,16 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Assist\Authorization\Events\RoleRemovedFromUser;
-use Assist\Authorization\Events\RoleGroupRolePivotSaved;
-use Assist\Authorization\Events\RoleGroupUserPivotSaved;
-use Assist\Authorization\Events\RoleGroupRolePivotDeleted;
-use Assist\Authorization\Events\RoleGroupUserPivotDeleted;
+use Assist\Authorization\Events\RoleAttachedToRoleGroup;
+use Assist\Authorization\Events\UserAttachedToRoleGroup;
+use Assist\Authorization\Events\RoleRemovedFromRoleGroup;
+use Assist\Authorization\Events\UserRemovedFromRoleGroup;
 use Assist\Authorization\Listeners\HandleRoleRemovedFromUser;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
-use Assist\Authorization\Listeners\HandleRoleGroupRolePivotSaved;
-use Assist\Authorization\Listeners\HandleRoleGroupUserPivotSaved;
-use Assist\Authorization\Listeners\HandleRoleGroupRolePivotDeleted;
-use Assist\Authorization\Listeners\HandleRoleGroupUserPivotDeleted;
+use Assist\Authorization\Listeners\HandleRoleAttachedToRoleGroup;
+use Assist\Authorization\Listeners\HandleUserAttachedToRoleGroup;
+use Assist\Authorization\Listeners\HandleRoleRemovedFromRoleGroup;
+use Assist\Authorization\Listeners\HandleUserRemovedFromRoleGroup;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -29,17 +29,17 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         // TODO Extract these into the authorization module
-        RoleGroupUserPivotSaved::class => [
-            HandleRoleGroupUserPivotSaved::class,
+        UserAttachedToRoleGroup::class => [
+            HandleUserAttachedToRoleGroup::class,
         ],
-        RoleGroupRolePivotSaved::class => [
-            HandleRoleGroupRolePivotSaved::class,
+        RoleAttachedToRoleGroup::class => [
+            HandleRoleAttachedToRoleGroup::class,
         ],
-        RoleGroupUserPivotDeleted::class => [
-            HandleRoleGroupUserPivotDeleted::class,
+        UserRemovedFromRoleGroup::class => [
+            HandleUserRemovedFromRoleGroup::class,
         ],
-        RoleGroupRolePivotDeleted::class => [
-            HandleRoleGroupRolePivotDeleted::class,
+        RoleRemovedFromRoleGroup::class => [
+            HandleRoleRemovedFromRoleGroup::class,
         ],
         RoleRemovedFromUser::class => [
             HandleRoleRemovedFromUser::class,

@@ -3,9 +3,9 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Assist\Authorization\Models\RoleGroup;
-use Assist\Authorization\Events\RoleGroupRolePivotSaved;
-use Assist\Authorization\Events\RoleGroupUserPivotSaved;
-use Assist\Authorization\Listeners\HandleRoleGroupUserPivotSaved;
+use Assist\Authorization\Events\RoleAttachedToRoleGroup;
+use Assist\Authorization\Events\UserAttachedToRoleGroup;
+use Assist\Authorization\Listeners\HandleUserAttachedToRoleGroup;
 
 it('will fire when a user has been attached to a role group', function () {
     Event::fake();
@@ -18,15 +18,15 @@ it('will fire when a user has been attached to a role group', function () {
 
     $roleGroup->users()->attach($user);
 
-    Event::assertDispatched(RoleGroupUserPivotSaved::class);
-    Event::assertNotDispatched(RoleGroupRolePivotSaved::class);
+    Event::assertDispatched(UserAttachedToRoleGroup::class);
+    Event::assertNotDispatched(RoleAttachedToRoleGroup::class);
 });
 
 it('will be handled by the correct listener', function () {
     Event::fake();
 
     Event::assertListening(
-        RoleGroupUserPivotSaved::class,
-        HandleRoleGroupUserPivotSaved::class
+        UserAttachedToRoleGroup::class,
+        HandleUserAttachedToRoleGroup::class
     );
 });

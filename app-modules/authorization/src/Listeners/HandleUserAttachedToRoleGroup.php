@@ -4,11 +4,11 @@ namespace Assist\Authorization\Listeners;
 
 use Assist\Authorization\Actions\AddRolesFromRoleGroupToUser;
 
-class HandleRoleGroupUserPivotSaved
+class HandleUserAttachedToRoleGroup
 {
     public function handle(object $event): void
     {
-        ray('HandleRoleGroupUserPivotSaved', $event);
+        ray('UserAttachedToRoleGroup', $event);
 
         resolve(AddRolesFromRoleGroupToUser::class)->handle($event->pivot);
     }

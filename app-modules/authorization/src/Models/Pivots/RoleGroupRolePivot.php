@@ -3,13 +3,13 @@
 namespace Assist\Authorization\Models\Pivots;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Assist\Authorization\Events\RoleGroupRolePivotSaved;
-use Assist\Authorization\Events\RoleGroupRolePivotDeleted;
+use Assist\Authorization\Events\RoleAttachedToRoleGroup;
+use Assist\Authorization\Events\RoleRemovedFromRoleGroup;
 
 class RoleGroupRolePivot extends Pivot
 {
     protected $dispatchesEvents = [
-        'saved' => RoleGroupRolePivotSaved::class,
-        'deleted' => RoleGroupRolePivotDeleted::class,
+        'saved' => RoleAttachedToRoleGroup::class,
+        'deleted' => RoleRemovedFromRoleGroup::class,
     ];
 }

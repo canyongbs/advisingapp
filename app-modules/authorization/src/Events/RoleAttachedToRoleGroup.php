@@ -7,7 +7,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
 
-class RoleGroupRolePivotDeleted
+class RoleAttachedToRoleGroup
 {
     use Dispatchable;
     use InteractsWithSockets;

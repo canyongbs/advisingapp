@@ -4,7 +4,7 @@ namespace Assist\Authorization\Listeners;
 
 use Assist\Authorization\Actions\AddNewRoleToExistingUsersInRoleGroup;
 
-class HandleRoleGroupRolePivotSaved
+class HandleRoleAttachedToRoleGroup
 {
     public function handle(object $event): void
     {

@@ -4,11 +4,11 @@ namespace Assist\Authorization\Listeners;
 
 use Assist\Authorization\Actions\RemoveRolesForRoleGroupFromUser;
 
-class HandleRoleGroupUserPivotDeleted
+class HandleUserRemovedFromRoleGroup
 {
     public function handle(object $event): void
     {
-        ray('HandleRoleGroupUserPivotDeleted', $event);
+        ray('HandleUserRemovedFromRoleGroup', $event);
 
         resolve(RemoveRolesForRoleGroupFromUser::class)->handle($event->pivot);
     }
