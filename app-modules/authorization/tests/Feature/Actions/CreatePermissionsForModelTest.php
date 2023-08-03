@@ -3,6 +3,7 @@
 use App\Models\User;
 use Mockery\MockInterface;
 use Assist\Authorization\Tests\Helpers;
+use App\Actions\Finders\ApplicationModules;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\Actions\CreatePermissionsForModel;
 
@@ -46,7 +47,10 @@ it('will respect model permission extensions', function () {
         $mock
             ->shouldReceive('getWebPermissions')
             ->once()
-            ->andReturn(collect(['*.test', ...config('permissions.web.model')]));
+            ->andReturn(collect([
+                '*.test',
+                ...resolve(ApplicationModules::class)->moduleConfig('authorization', 'permissions/web/model'),
+            ]));
     });
 
     // And the CreatePermissionsForModel action is run
