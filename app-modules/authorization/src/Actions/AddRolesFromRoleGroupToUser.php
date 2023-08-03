@@ -7,8 +7,6 @@ use Assist\Authorization\Models\Role;
 use Assist\Authorization\Models\RoleGroup;
 use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
 
-// This action is called when we add a new User to a Role Group
-
 // TODO This should be queued
 class AddRolesFromRoleGroupToUser
 {

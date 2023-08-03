@@ -50,7 +50,6 @@ class CreatePermissions
     {
         $registry = resolve(AuthorizationPermissionRegistry::class);
 
-        // $user->hasPermissionFromModule('some-permission')
         foreach ($registry->getModuleWebPermissions() as $module => $permissions) {
             foreach ($permissions as $permission) {
                 Permission::firstOrCreate([

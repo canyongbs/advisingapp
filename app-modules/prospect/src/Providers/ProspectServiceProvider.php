@@ -24,12 +24,6 @@ class ProspectServiceProvider extends ServiceProvider
             'prospect_status' => ProspectStatus::class,
         ]);
 
-        // The expectation difference between registering roles and permissions
-        // Is that permissions exist within a single file, "custom"
-        // And roles exist as named files within a directory
-        // Is this convention too brittle?
-
-        // File caching for config???
         $permissionRegistry->registerApiPermissions(
             module: 'prospect',
             path: 'permissions/api/custom'

@@ -41,7 +41,6 @@ class ProspectStatus extends BaseModel
     use SoftDeletes;
     use HasProspects;
 
-    // TODO Enum to represent this value?
     protected $fillable = [
         'status',
     ];
