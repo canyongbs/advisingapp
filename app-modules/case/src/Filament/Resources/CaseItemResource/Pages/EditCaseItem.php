@@ -26,8 +26,6 @@ class EditCaseItem extends EditRecord
                 ->disabled(),
             TextInput::make('casenumber')
                 ->label('Case #')
-                ->required()
-                ->unique()
                 ->disabled(),
             Select::make('institution')
                 ->relationship('institution', 'name')
