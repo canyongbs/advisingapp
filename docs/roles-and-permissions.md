@@ -79,14 +79,39 @@ Every initial role that the application has is defined in the `config/roles` dir
 1. There are two ways roles can be assigned:
    1. "directly" by simply assigning a single Role to a User
    2. "role_group" by assigning a RoleGroup to a User, wherein they inherit all of the Roles that belong to this group
-## Packages/Modules
-**Future Feature*
+## Registering Roles and Permissions
+In order to register Roles and Permissions, the `authorization` module exposes registries that every other module can interact with. The Assist platform expects that your Roles and Permissions are defined within configuration files.
 
-In order to faciliate the addition of permissions specific to new modules or packages that are introduced to the application, they should adhere to the convention established by the custom application.
+The two registries available are:
 
-When a new package or module wants to introduce permissions, it should model its configuration in the same way the application's configuration is constructed, and publish its permission configuration to `config/permissions/packages` and its role configuration to `config/roles/packages`.
+1. AuthorizationRoleRegistry
+2. AuthorizationPermissionRegistry
 
-An example of what this would like like for the development of a package, `package-a`:
+If a new module has roles and permissions that need to be added to the application, they should be added within the appropriate registry from the Module's service provider. An example of that looks like this:
+
+```
+NewModuleServiceProvider class extends ServiceProvider
+{
+    public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
+    {
+        $permissionRegistry->registerWebPermissions(
+            module: 'new-module',
+            path: 'permissions/web/custom'
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: 'new-module',
+            path: 'roles/web'
+        );
+    }
+}
+```
+
+The `AuthorizationPermissionRegistry` and `AuthorizationRoleRegistry` expose methods that allow you to register web or api roles and permissions by passing in your module name and the relative config path to your definitions.
+
+By default, the Assist platform will already take care of adding standardized permissions for every model that your application introduces, so you'll need to ensure you register those models and their morphing with the `Relation::morphMap()`. So, the only permissions that you need to explicitly define here are custom permissions that are not related to models.
+
+The roles that you add can relate to any model or custom permissions that your or another module defines, and they should follow the convention defined above.
 
 *Permissions*
 - config
