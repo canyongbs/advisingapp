@@ -55,6 +55,17 @@ class CaseItemType extends BaseModel implements Auditable
         'name',
     ];
 
+    /**
+     * @return array{id: mixed}
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->getScoutKey(),
+            'name' => $this->name,
+        ];
+    }
+
     public function caseItems(): HasMany
     {
         return $this->hasMany(CaseItem::class, 'type_id');
