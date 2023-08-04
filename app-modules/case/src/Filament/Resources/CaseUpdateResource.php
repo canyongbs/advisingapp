@@ -6,6 +6,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Assist\Case\Models\CaseItem;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Assist\Case\Models\CaseUpdate;
@@ -37,18 +38,25 @@ class CaseUpdateResource extends Resource
                     ->searchable()
                     ->label('Case')
                     ->translateLabel()
-                    ->required(),
+                    ->required()
+                    ->exists(
+                        table: (new CaseItem())->getTable(),
+                        column: (new CaseItem())->getKeyName()
+                    ),
                 Textarea::make('update')
                     ->label('Update')
-                    ->required()
                     ->rows(3)
-                    ->columnSpan('full'),
+                    ->columnSpan('full')
+                    ->required()
+                    ->string(),
                 Select::make('direction')
                     ->options(collect(CaseUpdateDirection::cases())->mapWithKeys(fn (CaseUpdateDirection $direction) => [$direction->value => $direction->name]))
                     ->label('Direction')
-                    ->required(),
+                    ->required()
+                    ->enum(CaseUpdateDirection::class),
                 Toggle::make('internal')
-                    ->label('Internal'),
+                    ->label('Internal')
+                    ->rule(['boolean']),
             ]);
     }
 

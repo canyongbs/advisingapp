@@ -37,7 +37,7 @@ test('A successful action on the EditCaseItemType page', function () {
     assertEquals($editRequest['name'], $caseItemType->fresh()->name);
 });
 
-test('EditCaseItemType required valid data', function ($data, $errors) {
+test('EditCaseItemType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     $caseItemType = CaseItemType::factory()->create();

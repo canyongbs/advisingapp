@@ -31,7 +31,7 @@ test('A successful action on the CreateCaseItemPriority page', function () {
     assertDatabaseHas(CaseItemPriority::class, $request);
 });
 
-test('CreateCaseItemPriority required valid data', function ($data, $errors) {
+test('CreateCaseItemPriority requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
