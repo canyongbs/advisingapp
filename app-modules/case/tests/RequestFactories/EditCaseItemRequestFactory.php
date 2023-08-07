@@ -14,7 +14,7 @@ class EditCaseItemRequestFactory extends RequestFactory
     {
         return [
             'institution' => Institution::factory()->create()->id,
-            'state' => CaseItemStatus::factory()->create()->id,
+            'status' => CaseItemStatus::factory()->create()->id,
             'priority' => CaseItemPriority::factory()->create()->id,
             'type' => CaseItemType::factory()->create()->id,
             'close_details' => $this->faker->sentence,

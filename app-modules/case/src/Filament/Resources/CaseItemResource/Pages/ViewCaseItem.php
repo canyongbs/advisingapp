@@ -25,8 +25,8 @@ class ViewCaseItem extends ViewRecord
                 TextEntry::make('institution.name')
                     ->label('Institution')
                     ->translateLabel(),
-                TextEntry::make('state.name')
-                    ->label('State')
+                TextEntry::make('status.name')
+                    ->label('Status')
                     ->translateLabel(),
                 TextEntry::make('priority.name')
                     ->label('Priority')

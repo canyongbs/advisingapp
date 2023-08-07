@@ -27,7 +27,7 @@ class CaseItemFactory extends Factory
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
             'institution_id' => Institution::factory(),
-            'state_id' => CaseItemStatus::inRandomOrder()->first() ?? CaseItemStatus::factory(),
+            'status_id' => CaseItemStatus::inRandomOrder()->first() ?? CaseItemStatus::factory(),
             'type_id' => CaseItemType::inRandomOrder()->first() ?? CaseItemType::factory(),
             'priority_id' => CaseItemPriority::inRandomOrder()->first() ?? CaseItemPriority::factory(),
             'assigned_to_id' => User::factory(),

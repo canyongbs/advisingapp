@@ -32,7 +32,7 @@ test('A successful action on the CreateCaseUpdate page', function () {
         $request->except(
             [
                 'institution',
-                'state',
+                'status',
                 'priority',
                 'type',
             ]
@@ -43,8 +43,8 @@ test('A successful action on the CreateCaseUpdate page', function () {
 
     expect($caseItem->institution->id)
         ->toEqual($request->get('institution'))
-        ->and($caseItem->state->id)
-        ->toEqual($request->get('state'))
+        ->and($caseItem->status->id)
+        ->toEqual($request->get('status'))
         ->and($caseItem->priority->id)
         ->toEqual($request->get('priority'))
         ->and($caseItem->type->id)
@@ -65,7 +65,7 @@ test('CreateCaseItem requires valid data', function ($data, $errors, $setup = nu
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseMissing(CaseItem::class, $request->except(['institution', 'state', 'priority', 'type'])->toArray());
+    assertDatabaseMissing(CaseItem::class, $request->except(['institution', 'status', 'priority', 'type'])->toArray());
 })->with(
     [
         'casenumber missing' => [CreateCaseItemRequestFactory::new()->without('casenumber'), ['casenumber' => 'required']],
@@ -81,10 +81,10 @@ test('CreateCaseItem requires valid data', function ($data, $errors, $setup = nu
             CreateCaseItemRequestFactory::new()->state(['institution' => 99]),
             ['institution' => 'exists'],
         ],
-        'state missing' => [CreateCaseItemRequestFactory::new()->without('state'), ['state' => 'required']],
-        'state does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['state' => 99]),
-            ['state' => 'exists'],
+        'status missing' => [CreateCaseItemRequestFactory::new()->without('status'), ['status' => 'required']],
+        'status does not exist' => [
+            CreateCaseItemRequestFactory::new()->state(['status' => 99]),
+            ['status' => 'exists'],
         ],
         'priority missing' => [CreateCaseItemRequestFactory::new()->without('priority'), ['priority' => 'required']],
         'priority does not exist' => [

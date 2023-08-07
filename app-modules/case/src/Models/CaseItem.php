@@ -25,15 +25,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $respondent_id
  * @property string|null $close_details
  * @property string|null $res_details
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
  * @property int|null $institution_id
- * @property int|null $state_id
+ * @property int|null $status_id
  * @property int|null $type_id
  * @property int|null $priority_id
  * @property int|null $assigned_to_id
  * @property int|null $created_by_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read User|null $assignedTo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Case\Models\CaseUpdate> $caseUpdates
  * @property-read int|null $case_updates_count
@@ -41,7 +41,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Institution|null $institution
  * @property-read \Assist\Case\Models\CaseItemPriority|null $priority
  * @property-read Model|\Eloquent $respondent
- * @property-read \Assist\Case\Models\CaseItemStatus|null $state
+ * @property-read \Assist\Case\Models\CaseItemStatus|null $status
  * @property-read \Assist\Case\Models\CaseItemType|null $type
  *
  * @method static \Assist\Case\Database\Factories\CaseItemFactory factory($count = null, $state = [])
@@ -61,7 +61,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|CaseItem whereResDetails($value)
  * @method static Builder|CaseItem whereRespondentId($value)
  * @method static Builder|CaseItem whereRespondentType($value)
- * @method static Builder|CaseItem whereStateId($value)
+ * @method static Builder|CaseItem whereStatusId($value)
  * @method static Builder|CaseItem whereTypeId($value)
  * @method static Builder|CaseItem whereUpdatedAt($value)
  * @method static Builder|CaseItem withTrashed()
@@ -79,7 +79,7 @@ class CaseItem extends BaseModel
         'respondent_type',
         'respondent_id',
         'institution_id',
-        'state_id',
+        'status_id',
         'type_id',
         'priority_id',
         'assigned_to_id',
@@ -108,7 +108,7 @@ class CaseItem extends BaseModel
         return $this->hasMany(CaseUpdate::class, 'case_id');
     }
 
-    public function state(): BelongsTo
+    public function status(): BelongsTo
     {
         return $this->belongsTo(CaseItemStatus::class);
     }

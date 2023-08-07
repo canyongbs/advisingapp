@@ -32,10 +32,10 @@ class EditCaseItem extends EditRecord
                 ->label('Institution')
                 ->required()
                 ->exists((new Institution())->getTable(), 'id'),
-            Select::make('state')
-                ->relationship('state', 'name')
+            Select::make('status')
+                ->relationship('status', 'name')
                 ->preload()
-                ->label('State')
+                ->label('Status')
                 ->required()
                 ->exists((new CaseItemStatus())->getTable(), 'id'),
             Select::make('priority')

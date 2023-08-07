@@ -84,8 +84,8 @@ class ListCaseItems extends ListRecords
                     ->relationship('priority', 'name')
                     ->multiple()
                     ->preload(),
-                SelectFilter::make('state')
-                    ->relationship('state', 'name')
+                SelectFilter::make('status')
+                    ->relationship('status', 'name')
                     ->multiple()
                     ->preload(),
             ])

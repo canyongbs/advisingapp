@@ -34,7 +34,7 @@ test('A successful action on the EditCaseItem page', function () {
         $request->except(
             [
                 'institution',
-                'state',
+                'status',
                 'priority',
                 'type',
             ]
@@ -45,8 +45,8 @@ test('A successful action on the EditCaseItem page', function () {
 
     expect($caseItem->institution->id)
         ->toEqual($request->get('institution'))
-        ->and($caseItem->state->id)
-        ->toEqual($request->get('state'))
+        ->and($caseItem->status->id)
+        ->toEqual($request->get('status'))
         ->and($caseItem->priority->id)
         ->toEqual($request->get('priority'))
         ->and($caseItem->type->id)
@@ -71,8 +71,8 @@ test('EditCaseItem requires valid data', function ($data, $errors) {
 
     expect($caseItem->fresh()->institution->id)
         ->toEqual($caseItem->institution->id)
-        ->and($caseItem->fresh()->state->id)
-        ->toEqual($caseItem->state->id)
+        ->and($caseItem->fresh()->status->id)
+        ->toEqual($caseItem->status->id)
         ->and($caseItem->fresh()->priority->id)
         ->toEqual($caseItem->priority->id)
         ->and($caseItem->fresh()->type->id)
@@ -84,10 +84,10 @@ test('EditCaseItem requires valid data', function ($data, $errors) {
             EditCaseItemRequestFactory::new()->state(['institution' => 99]),
             ['institution' => 'exists'],
         ],
-        'state missing' => [EditCaseItemRequestFactory::new()->state(['state' => null]), ['state' => 'required']],
-        'state does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['state' => 99]),
-            ['state' => 'exists'],
+        'status missing' => [EditCaseItemRequestFactory::new()->state(['status' => null]), ['status' => 'required']],
+        'status does not exist' => [
+            EditCaseItemRequestFactory::new()->state(['status' => 99]),
+            ['status' => 'exists'],
         ],
         'priority missing' => [EditCaseItemRequestFactory::new()->state(['priority' => null]), ['priority' => 'required']],
         'priority does not exist' => [
@@ -132,7 +132,7 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
             [
                 'casenumber',
                 'institution',
-                'state',
+                'status',
                 'priority',
                 'type',
             ]
@@ -143,8 +143,8 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
 
     expect($caseItem->institution->id)
         ->toEqual($request->get('institution'))
-        ->and($caseItem->state->id)
-        ->toEqual($request->get('state'))
+        ->and($caseItem->status->id)
+        ->toEqual($request->get('status'))
         ->and($caseItem->priority->id)
         ->toEqual($request->get('priority'))
         ->and($caseItem->type->id)

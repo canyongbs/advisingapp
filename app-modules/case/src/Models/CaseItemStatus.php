@@ -50,7 +50,7 @@ class CaseItemStatus extends BaseModel
 
     public function caseItems(): HasMany
     {
-        return $this->hasMany(CaseItem::class, 'state_id');
+        return $this->hasMany(CaseItem::class, 'status_id');
     }
 
     protected function serializeDate(DateTimeInterface $date)
