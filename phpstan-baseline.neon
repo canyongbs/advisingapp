@@ -12,7 +12,7 @@ parameters:
 
 		-
 			message: "#^Undefined variable\\: \\$this$#"
-			count: 6
+			count: 7
 			path: app-modules/authorization/tests/Feature/Actions/CreatePermissionsTest.php
 
 		-

@@ -2,21 +2,15 @@
 
 use App\Models\User;
 use Mockery\MockInterface;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
+use Assist\Authorization\Tests\Helpers;
 use App\Actions\Finders\ApplicationModels;
 use Assist\Authorization\Models\Permission;
 use Spatie\Permission\Commands\CreatePermission;
 use Assist\Authorization\Actions\CreatePermissions;
+use Assist\Authorization\AuthorizationPermissionRegistry;
 
 beforeEach(function () {
-    DB::table('roles')->truncate();
-    DB::table('permissions')->truncate();
-    DB::table('role_groups')->truncate();
-    DB::table('role_groupables')->truncate();
-    DB::table('model_has_roles')->truncate();
-    DB::table('role_has_permissions')->truncate();
-    DB::table('model_has_permissions')->truncate();
+    (new Helpers())->truncateTables();
 });
 
 it('will create appropriate permissions for all models', function () {
@@ -53,21 +47,27 @@ it('will create appropriate custom permissions', function () {
             ->andReturn();
     });
 
-    // Based on our configuration for custom permissions
-    Config::set('permissions.web.custom', ['dashboard.access']);
-    Config::set('permissions.api.custom', ['data.access']);
+    $this->partialMock(AuthorizationPermissionRegistry::class, function (MockInterface $mock) {
+        $mock
+            ->shouldReceive('getModuleWebPermissions')
+            ->andReturn(['new-module' => ['dashboard.access']]);
+
+        $mock
+            ->shouldReceive('getModuleApiPermissions')
+            ->andReturn(['new-module' => ['dashboard.queries']]);
+    });
 
     // When we run the CreatePermissions action
     $createPermissionsAction->handle();
 
-    // We should have created the records that were specified in config
+    // We should have created the records that were added to the registry from the module
     $this->assertDatabaseHas('permissions', [
-        'name' => 'dashboard.access',
+        'name' => 'new-module.dashboard.access',
         'guard_name' => 'web',
     ]);
 
     $this->assertDatabaseHas('permissions', [
-        'name' => 'data.access',
+        'name' => 'new-module.dashboard.queries',
         'guard_name' => 'api',
     ]);
 

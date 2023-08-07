@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
 use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
@@ -48,8 +50,10 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
  * @property-read int|null $role_groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Role> $roles
  * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
+ * @property-read int|null $trait_role_groups_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)
@@ -84,9 +88,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser
     use Notifiable;
     use SoftDeletes;
     use Auditable;
+    use HasRoleGroups {
+        roleGroups as traitRoleGroups;
+    }
     use HasRolesWithPivot;
     use DefinesPermissions;
-    use HasRoleGroups;
     use HasRelationships;
 
     public const TYPE_RADIO = [
@@ -133,6 +139,12 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser
         'roles.title',
         'locale',
     ];
+
+    public function roleGroups(): BelongsToMany
+    {
+        return $this->traitRoleGroups()
+            ->using(RoleGroupUserPivot::class);
+    }
 
     public function permissions(): HasManyDeep
     {

@@ -22,7 +22,7 @@ class UsersTableSeeder extends Seeder
 
         $superAdmin->assignRole($superAdminRoles);
 
-        $admin = User::factory()->create([
+        User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@assist.com',
             'password' => Hash::make('password'),

@@ -2,13 +2,17 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use Filament\Forms;
-use Filament\Tables;
 use Filament\Forms\Form;
+use Illuminate\View\View;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Filament\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Assist\Authorization\Enums\ModelHasRolesViaEnum;
+use Assist\Authorization\Events\RoleRemovedFromUser;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class RolesRelationManager extends RelationManager
@@ -21,10 +25,10 @@ class RolesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('guard_name')
+                TextInput::make('guard_name')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -34,39 +38,64 @@ class RolesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('guard_name'),
-                Tables\Columns\TextColumn::make('pivot.via')->label('Via'),
+                TextColumn::make('name'),
+                TextColumn::make('guard_name'),
+                TextColumn::make('pivot.via')->label('Via'),
             ])
             ->filters([
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()->recordTitle(function ($record) {
+                AttachAction::make()->recordTitle(function ($record) {
                     return Str::of($record->name)->append(' | ')->append($record->guard_name);
                 }),
             ])
             ->actions([
+                // FIXME There is currently a bug in Livewire/Filament that requires a refresh after adding a RoleGroup
+                // Before deleting it. This is being looked into by the Filament team
                 DetachAction::make()->label(function () {
                     return 'Remove Role';
                 })
                     ->requiresConfirmation()
+                    ->modalIcon('heroicon-o-trash')
+                    ->color('danger')
+                    ->modalHeading(function ($record) {
+                        return "Remove {$record->name} Role?";
+                    })
                     ->modalDescription(function ($record) {
                         if ($record->via === ModelHasRolesViaEnum::Direct->value) {
                             return 'Are you sure you would like to remove this role?';
                         }
 
                         if ($record->via === ModelHasRolesViaEnum::RoleGroup->value) {
-                            // TODO need to find the role group for the role specified here...
-                            // A role can belong to multiple role groups, so we effectively just need to find every role group that the role/user belongs to
-                            // And find what matches here
-                            return "By removing this role, you will also remove the user from the {$record} Role Group. Are you sure you want to do that?";
+                            return 'By removing this role, you will also remove the user from the following Role Group(s):';
                         }
+                    })
+                    ->modalContent(fn ($record): View => view(
+                        'filament.pages.users.confirm',
+                        ['roleGroups' => $record->roleGroups],
+                    ))
+                    ->after(function ($record) {
+                        RoleRemovedFromUser::dispatch($record, $this->ownerRecord);
 
-                        // TODO we also need a second piece of dialog that asks if the user wants to apply all of the other roles that belong to the RoleGroup
-                        // The user is being removed from directly.
+                        // TODO This is the "double action" that we will carry out to re-assign roles directly after removing a user from a RoleGroup
+                        // If that is the desired outcome of the administering user.
+                        // There are potentially other, more elegant ways to handle this as well. (wizard, form in modal with checkbox, etc..)
+                        // $this->mountAction(
+                        //     'afterDetach',
+                        //     [
+                        //         'record' => $record,
+                        //     ]
+                        // );
                     }),
             ])
             ->bulkActions([
             ]);
     }
+
+    // public function afterDetachAction(): Action
+    // {
+    //     return Action::make('afterDetach')
+    //         ->requiresConfirmation()
+    //         ->action(fn (array $arguments) => ray($arguments));
+    // }
 }

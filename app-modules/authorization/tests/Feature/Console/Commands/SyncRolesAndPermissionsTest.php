@@ -1,19 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
 use Assist\Authorization\Models\Role;
 use Illuminate\Support\Facades\Config;
+use Assist\Authorization\Tests\Helpers;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 
 beforeEach(function () {
-    DB::table('roles')->truncate();
-    DB::table('permissions')->truncate();
-    DB::table('role_groups')->truncate();
-    DB::table('role_groupables')->truncate();
-    DB::table('model_has_roles')->truncate();
-    DB::table('role_has_permissions')->truncate();
-    DB::table('model_has_permissions')->truncate();
+    (new Helpers())->truncateTables();
 });
 
 it('will assign permissions to roles as defined in our configuration', function () {

@@ -4,11 +4,17 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
-use Assist\Authorization\Events\RoleGroupPivotSaved;
-use Assist\Authorization\Events\RoleGroupPivotDeleted;
-use Assist\Authorization\Listeners\HandleRoleGroupPivotSaved;
-use Assist\Authorization\Listeners\HandleRoleGroupPivotDeleted;
+use Assist\Authorization\Events\RoleRemovedFromUser;
+use Assist\Authorization\Events\RoleAttachedToRoleGroup;
+use Assist\Authorization\Events\UserAttachedToRoleGroup;
+use Assist\Authorization\Events\RoleRemovedFromRoleGroup;
+use Assist\Authorization\Events\UserRemovedFromRoleGroup;
+use Assist\Authorization\Listeners\HandleRoleRemovedFromUser;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use Assist\Authorization\Listeners\HandleRoleAttachedToRoleGroup;
+use Assist\Authorization\Listeners\HandleUserAttachedToRoleGroup;
+use Assist\Authorization\Listeners\HandleRoleRemovedFromRoleGroup;
+use Assist\Authorization\Listeners\HandleUserRemovedFromRoleGroup;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -22,11 +28,21 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        RoleGroupPivotSaved::class => [
-            HandleRoleGroupPivotSaved::class,
+        // TODO Extract these into the authorization module
+        UserAttachedToRoleGroup::class => [
+            HandleUserAttachedToRoleGroup::class,
         ],
-        RoleGroupPivotDeleted::class => [
-            HandleRoleGroupPivotDeleted::class,
+        RoleAttachedToRoleGroup::class => [
+            HandleRoleAttachedToRoleGroup::class,
+        ],
+        UserRemovedFromRoleGroup::class => [
+            HandleUserRemovedFromRoleGroup::class,
+        ],
+        RoleRemovedFromRoleGroup::class => [
+            HandleRoleRemovedFromRoleGroup::class,
+        ],
+        RoleRemovedFromUser::class => [
+            HandleRoleRemovedFromUser::class,
         ],
     ];
 

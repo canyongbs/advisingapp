@@ -2,7 +2,8 @@
 
 use App\Models\User;
 use Mockery\MockInterface;
-use Illuminate\Support\Facades\DB;
+use Assist\Authorization\Tests\Helpers;
+use App\Actions\Finders\ApplicationModules;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\Actions\CreatePermissionsForModel;
 
@@ -11,13 +12,7 @@ beforeEach(function () {
         'user' => \Mockery_3_App_Models_User::class,
     ]);
 
-    DB::table('roles')->truncate();
-    DB::table('permissions')->truncate();
-    DB::table('role_groups')->truncate();
-    DB::table('role_groupables')->truncate();
-    DB::table('model_has_roles')->truncate();
-    DB::table('role_has_permissions')->truncate();
-    DB::table('model_has_permissions')->truncate();
+    (new Helpers())->truncateTables();
 });
 
 it('will respect model permission overrides', function () {
@@ -52,7 +47,10 @@ it('will respect model permission extensions', function () {
         $mock
             ->shouldReceive('getWebPermissions')
             ->once()
-            ->andReturn(collect(['*.test', ...config('permissions.web.model')]));
+            ->andReturn(collect([
+                '*.test',
+                ...resolve(ApplicationModules::class)->moduleConfig('authorization', 'permissions/web/model'),
+            ]));
     });
 
     // And the CreatePermissionsForModel action is run

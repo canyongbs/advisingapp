@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
-use Filament\Forms;
-use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class PermissionsRelationManager extends RelationManager
@@ -18,10 +18,10 @@ class PermissionsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('guard_name')
+                TextInput::make('guard_name')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -31,8 +31,8 @@ class PermissionsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('guard_name'),
+                TextColumn::make('name'),
+                TextColumn::make('guard_name'),
             ])
             ->filters([
             ])

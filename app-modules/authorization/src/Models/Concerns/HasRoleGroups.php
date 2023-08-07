@@ -4,19 +4,18 @@ namespace Assist\Authorization\Models\Concerns;
 
 use Assist\Authorization\Models\Role;
 use Assist\Authorization\Models\RoleGroup;
-use Assist\Authorization\Models\Pivots\RoleGroupPivot;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasRoleGroups
 {
-    public function roleGroups(): MorphToMany
+    public function roleGroups(): BelongsToMany
     {
         return $this
-            ->morphToMany(RoleGroup::class, 'role_groupable')
-            ->using(RoleGroupPivot::class);
+            ->belongsToMany(RoleGroup::class)
+            ->withTimestamps();
     }
 
-    protected function inheritsRoleFromAnotherRoleGroup(Role $role, RoleGroup $roleGroup)
+    public function inheritsRoleFromAnotherRoleGroup(Role $role, RoleGroup $roleGroup)
     {
         // If the user belongs to another RoleGroup that implements this Role
         // We want to leave this role in place
