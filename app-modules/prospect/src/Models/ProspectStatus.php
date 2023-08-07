@@ -12,13 +12,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\Prospect\Models\Concerns\HasProspects;
 
 /**
- * App\Models\ProspectStatus
+ * Assist\Prospect\Models\ProspectStatus
  *
  * @property int $id
  * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospects
+ * @property-read int|null $prospects_count
  *
  * @method static Builder|ProspectStatus advancedFilter($data)
  * @method static Builder|ProspectStatus newModelQuery()

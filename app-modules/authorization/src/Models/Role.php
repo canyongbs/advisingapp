@@ -26,11 +26,13 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
  * @property-read int|null $role_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
+ * @property-read int|null $trait_role_groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  *
- * @method static Builder|Role admin()
  * @method static Builder|Role api()
+ * @method static \Assist\Authorization\Database\Factories\RoleFactory factory($count = null, $state = [])
  * @method static Builder|Role newModelQuery()
  * @method static Builder|Role newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions)

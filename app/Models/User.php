@@ -50,8 +50,10 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
  * @property-read int|null $role_groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Role> $roles
  * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
+ * @property-read int|null $trait_role_groups_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)

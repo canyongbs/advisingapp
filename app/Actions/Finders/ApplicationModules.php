@@ -24,7 +24,7 @@ class ApplicationModules
     {
         $path = base_path("app-modules/{$module}/config/{$path}");
 
-        return collect(File::files($path))->map(function ($file, $key) use ($path) {
+        return collect(File::files($path))->map(function ($file, $key) {
             return explode('.' . $file->getExtension(), $file->getFilename())[0];
         });
     }
