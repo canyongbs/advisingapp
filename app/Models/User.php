@@ -89,7 +89,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser
     use SoftDeletes;
     use Auditable;
     use HasRoleGroups {
-        roleGroups as traitRoleGroups;
+        HasRoleGroups::roleGroups as traitRoleGroups;
     }
     use HasRolesWithPivot;
     use DefinesPermissions;
@@ -146,10 +146,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser
             ->using(RoleGroupUserPivot::class);
     }
 
-    public function permissions(): HasManyDeep
-    {
-        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
-    }
+    //public function permissions(): HasManyDeep
+    //{
+    //    return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+    //}
 
     public function caseItems(): HasMany
     {
