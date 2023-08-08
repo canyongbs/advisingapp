@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace Assist\Prospect\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;

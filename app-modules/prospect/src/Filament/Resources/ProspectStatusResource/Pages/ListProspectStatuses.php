@@ -32,7 +32,7 @@ class ListProspectStatuses extends ListRecords
                     ->label('Color')
                     ->badge()
                     ->color(fn (ProspectStatus $caseItemStatus) => $caseItemStatus->color),
-                TextColumn::make('prospect_count')
+                TextColumn::make('prospects_count')
                     ->label('# of Prospects')
                     ->counts('prospects')
                     ->sortable(),
