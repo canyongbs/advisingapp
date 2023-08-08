@@ -11,8 +11,11 @@ use Assist\Case\Database\Seeders\CaseItemStatusSeeder;
 use Assist\Case\Database\Seeders\CaseItemPrioritySeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 
-class DatabaseSeeder extends Seeder
+class DemoDatabaseSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         Artisan::call(SyncRolesAndPermissions::class);
@@ -24,7 +27,6 @@ class DatabaseSeeder extends Seeder
             CaseItemTypeSeeder::class,
             CaseItemSeeder::class,
             CaseUpdateSeeder::class,
-            StudentSeeder::class,
         ]);
     }
 }
