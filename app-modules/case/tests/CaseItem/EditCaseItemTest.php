@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\User;
 use Assist\Case\Models\CaseItem;
 
 use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -152,4 +154,70 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
         ->and($caseItem->casenumber)
         ->not()
         ->toEqual($request->get('casenumber'));
+});
+
+// Permission Tests
+
+test('EditCaseItem is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    $caseItem = CaseItem::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseItemResource::getUrl('edit', [
+                'record' => $caseItem,
+            ])
+        )->assertForbidden();
+
+    $request = collect(EditCaseItemRequestFactory::new()->create());
+
+    $request->merge(['casenumber' => fake()->randomNumber(9)]);
+
+    livewire(CaseItemResource\Pages\EditCaseItem::class, [
+        'record' => $caseItem->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $user->givePermissionTo('case_item.view-any');
+    $user->givePermissionTo('case_item.*.update');
+
+    actingAs($user)
+        ->get(
+            CaseItemResource::getUrl('edit', [
+                'record' => $caseItem,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditCaseItemRequestFactory::new()->create());
+
+    livewire(CaseItemResource\Pages\EditCaseItem::class, [
+        'record' => $caseItem->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(
+        CaseItem::class,
+        $request->except(
+            [
+                'institution',
+                'status',
+                'priority',
+                'type',
+            ]
+        )->toArray()
+    );
+
+    $caseItem->refresh();
+
+    expect($caseItem->institution->id)
+        ->toEqual($request->get('institution'))
+        ->and($caseItem->status->id)
+        ->toEqual($request->get('status'))
+        ->and($caseItem->priority->id)
+        ->toEqual($request->get('priority'))
+        ->and($caseItem->type->id)
+        ->toEqual($request->get('type'));
 });

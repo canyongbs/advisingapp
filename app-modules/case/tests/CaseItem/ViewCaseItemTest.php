@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\User;
 use Assist\Case\Models\CaseItem;
 
 use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
 
 use Assist\Case\Filament\Resources\CaseItemResource;
 
@@ -36,4 +38,29 @@ test('The correct details are displayed on the ViewCaseItem page', function () {
                 $caseItem->res_details,
             ]
         );
+});
+
+// Permission Tests
+
+test('ViewCaseItem is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    $caseItem = CaseItem::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseItemResource::getUrl('view', [
+                'record' => $caseItem,
+            ])
+        )->assertForbidden();
+
+    $user->givePermissionTo('case_item.view-any');
+    $user->givePermissionTo('case_item.*.view');
+
+    actingAs($user)
+        ->get(
+            CaseItemResource::getUrl('view', [
+                'record' => $caseItem,
+            ])
+        )->assertSuccessful();
 });
