@@ -3,7 +3,6 @@
 namespace Assist\Prospect\Models;
 
 use Eloquent;
-use Carbon\Carbon;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Support\HasAdvancedFilter;
@@ -58,29 +57,8 @@ class ProspectSource extends BaseModel
         'source',
     ];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
-    public function getCreatedAtAttribute($value)
+    protected function serializeDate(DateTimeInterface $date): string
     {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getUpdatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getDeletedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

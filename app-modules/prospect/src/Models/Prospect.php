@@ -2,7 +2,6 @@
 
 namespace Assist\Prospect\Models;
 
-use Carbon\Carbon;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
@@ -119,14 +118,6 @@ class Prospect extends BaseModel
         'date_of_birth',
     ];
 
-    protected $dates = [
-        'date_of_birth',
-        'hsdate',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
     protected $fillable = [
         'first',
         'last',
@@ -180,43 +171,8 @@ class Prospect extends BaseModel
         return static::EMAIL_BOUNCE_RADIO[$this->email_bounce] ?? null;
     }
 
-    public function getBirthdateAttribute($value)
+    protected function serializeDate(DateTimeInterface $date): string
     {
-        return $value ? Carbon::parse($value)->format(config('project.date_format')) : null;
-    }
-
-    public function setBirthdateAttribute($value)
-    {
-        $this->attributes['date_of_birth'] = $value ? Carbon::createFromFormat(config('project.date_format'), $value)->format('Y-m-d') : null;
-    }
-
-    public function getHsdateAttribute($value)
-    {
-        return $value ? Carbon::parse($value)->format(config('project.date_format')) : null;
-    }
-
-    public function setHsdateAttribute($value)
-    {
-        $this->attributes['hsdate'] = $value ? Carbon::createFromFormat(config('project.date_format'), $value)->format('Y-m-d') : null;
-    }
-
-    public function getCreatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getUpdatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getDeletedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }
