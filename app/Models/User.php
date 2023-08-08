@@ -146,6 +146,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser
             ->using(RoleGroupUserPivot::class);
     }
 
+    // TODO: Fix this to not conflict with Spatie method
     //public function permissions(): HasManyDeep
     //{
     //    return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
