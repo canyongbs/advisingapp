@@ -2,9 +2,9 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
-use Assist\Prospect\Filament\Resources\ProspectStatusResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Assist\Prospect\Filament\Resources\ProspectStatusResource;
 
 class EditProspectStatus extends EditRecord
 {

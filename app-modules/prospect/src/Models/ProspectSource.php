@@ -18,8 +18,6 @@ use Assist\Prospect\Models\Concerns\HasProspects;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospects
- * @property-read int|null $prospects_count
  *
  * @method static Builder|ProspectSource advancedFilter($data)
  * @method static Builder|ProspectSource newModelQuery()

@@ -38,9 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read User $assignedTo
  * @property-read User $createdBy
- * @property mixed $birthdate
  * @property-read mixed $email_bounce_label
- * @property mixed $hsdate
  * @property-read mixed $sms_opt_out_label
  * @property-read \Assist\Prospect\Models\ProspectSource $source
  * @property-read \Assist\Prospect\Models\ProspectStatus $status

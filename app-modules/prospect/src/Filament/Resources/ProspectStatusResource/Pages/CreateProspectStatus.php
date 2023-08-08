@@ -2,9 +2,8 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
-use Assist\Prospect\Filament\Resources\ProspectStatusResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Assist\Prospect\Filament\Resources\ProspectStatusResource;
 
 class CreateProspectStatus extends CreateRecord
 {

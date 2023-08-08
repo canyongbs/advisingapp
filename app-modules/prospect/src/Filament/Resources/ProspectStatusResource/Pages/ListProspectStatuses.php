@@ -4,11 +4,11 @@ namespace Assist\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
-use Assist\Case\Models\CaseItemStatus;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use Assist\Prospect\Models\ProspectStatus;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Prospect\Filament\Resources\ProspectStatusResource;
@@ -31,10 +31,10 @@ class ListProspectStatuses extends ListRecords
                 TextColumn::make('color')
                     ->label('Color')
                     ->badge()
-                    ->color(fn (CaseItemStatus $caseItemStatus) => $caseItemStatus->color),
-                TextColumn::make('case_items_count')
-                    ->label('# of Case Items')
-                    ->counts('caseItems')
+                    ->color(fn (ProspectStatus $caseItemStatus) => $caseItemStatus->color),
+                TextColumn::make('prospect_count')
+                    ->label('# of Prospects')
+                    ->counts('prospects')
                     ->sortable(),
             ])
             ->filters([
