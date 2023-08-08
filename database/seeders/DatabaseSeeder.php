@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Case\Database\Seeders\CaseItemSeeder;
+use Assist\Case\Database\Seeders\CaseUpdateSeeder;
 use Assist\Case\Database\Seeders\CaseItemTypeSeeder;
 use Assist\Case\Database\Seeders\CaseItemStatusSeeder;
 use Assist\Case\Database\Seeders\CaseItemPrioritySeeder;
