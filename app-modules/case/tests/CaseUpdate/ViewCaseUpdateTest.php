@@ -18,7 +18,7 @@ test('The correct details are displayed on the ViewCaseUpdate page', function ()
         ->assertSeeTextInOrder(
             [
                 'Case',
-                $caseItemUpdate->case->id,
+                $caseItemUpdate->case->casenumber,
                 'Internal',
                 // TODO: Figure out how to check whether this internal value the check or the X icon
                 'Direction',

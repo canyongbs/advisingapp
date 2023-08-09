@@ -7,7 +7,6 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Assist\Case\Models\CaseItem;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Assist\Case\Models\CaseUpdate;
 use Filament\Forms\Components\Select;
@@ -15,8 +14,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
 use Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
 
 class CaseUpdateResource extends Resource
@@ -147,28 +144,6 @@ class CaseUpdateResource extends Resource
     public static function getRelations(): array
     {
         return [];
-    }
-
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                TextEntry::make('case.casenumber')
-                    ->label('Case')
-                    ->translateLabel()
-                    ->url(fn (CaseUpdate $caseUpdate): string => CaseItemResource::getUrl('view', ['record' => $caseUpdate]))
-                    ->color('primary'),
-                IconEntry::make('internal')
-                    ->boolean(),
-                TextEntry::make('direction')
-                    ->icon(fn (CaseUpdateDirection $state): string => match ($state) {
-                        CaseUpdateDirection::Inbound => 'heroicon-o-arrow-down-tray',
-                        CaseUpdateDirection::Outbound => 'heroicon-o-arrow-up-tray',
-                    })
-                    ->formatStateUsing(fn (CaseUpdateDirection $state): string => Str::ucfirst($state->value)),
-                TextEntry::make('update')
-                    ->columnSpanFull(),
-            ]);
     }
 
     public static function getPages(): array
