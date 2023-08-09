@@ -43,7 +43,7 @@ class ProspectSource extends BaseModel
     use SoftDeletes;
 
     protected $fillable = [
-        'source',
+        'name',
     ];
 
     public function prospects(): HasMany
