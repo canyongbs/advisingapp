@@ -82,8 +82,8 @@ class Prospect extends BaseModel
     use SoftDeletes;
 
     protected $fillable = [
-        'first',
-        'last',
+        'first_name',
+        'last_name',
         'full',
         'preferred',
         'description',
@@ -97,7 +97,7 @@ class Prospect extends BaseModel
         'phone',
         'address',
         'address_2',
-        'date_of_birth',
+        'birthdate',
         'hsgrad',
         'assigned_to_id',
         'created_by_id',
