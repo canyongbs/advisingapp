@@ -7,10 +7,10 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
-use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Prospect\Database\Factories\ProspectFactory;
 
 /**
  * Assist\Prospect\Models\Prospect
@@ -40,11 +40,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $deleted_at
  * @property-read User $assignedTo
  * @property-read User|null $createdBy
- * @property-read \Assist\Prospect\Models\ProspectSource $source
- * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read ProspectSource $source
+ * @property-read ProspectStatus $status
  *
  * @method static Builder|Prospect advancedFilter($data)
- * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
+ * @method static ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()
@@ -79,30 +79,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Prospect extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
-
-    public static $search = [
-        'full',
-        'mobile',
-        'date_of_birth',
-    ];
-
-    public $orderable = [
-        'id',
-        'full',
-        'email',
-        'mobile',
-        'date_of_birth',
-    ];
-
-    public $filterable = [
-        'id',
-        'full',
-        'email',
-        'mobile',
-        'date_of_birth',
-    ];
 
     protected $fillable = [
         'first',
@@ -124,6 +101,11 @@ class Prospect extends BaseModel
         'hsgrad',
         'assigned_to_id',
         'created_by_id',
+    ];
+
+    protected $casts = [
+        'sms_opt_out' => 'boolean',
+        'email_bounce' => 'boolean',
     ];
 
     public function assignedTo(): BelongsTo
