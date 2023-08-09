@@ -26,7 +26,6 @@ return new class () extends Migration {
                 $table->string('address')->nullable();
                 $table->string('address_2')->nullable();
                 $table->date('birthdate')->nullable();
-                // TODO: Is this the year they graduated?
                 $table->integer('hsgrad')->nullable();
                 // TODO: Should dual be a boolean?
                 $table->string('dual')->nullable();

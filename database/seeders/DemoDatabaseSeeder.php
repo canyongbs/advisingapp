@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 use Assist\Case\Database\Seeders\CaseItemSeeder;
 use Assist\Case\Database\Seeders\CaseUpdateSeeder;
 use Assist\Case\Database\Seeders\CaseItemTypeSeeder;
+use Assist\Prospect\Database\Seeders\ProspectSeeder;
 use Assist\Case\Database\Seeders\CaseItemStatusSeeder;
 use Assist\Case\Database\Seeders\CaseItemPrioritySeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
@@ -31,6 +32,7 @@ class DemoDatabaseSeeder extends Seeder
             CaseUpdateSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
+            ProspectSeeder::class,
         ]);
     }
 }
