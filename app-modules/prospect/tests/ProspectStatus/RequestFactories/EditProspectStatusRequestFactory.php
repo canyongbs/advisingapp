@@ -2,7 +2,6 @@
 
 namespace Assist\Prospect\Tests\ProspectStatus\RequestFactories;
 
-use Assist\Case\Enums\ColumnColorOptions;
 use Worksome\RequestFactories\RequestFactory;
 use Assist\Prospect\Enums\ProspectStatusColorOptions;
 
