@@ -111,7 +111,7 @@ class CreateProspect extends CreateRecord
                     ->numeric()
                     ->minValue(1920)
                     ->maxValue(now()->addYears(25)->year),
-                Select::make('assigned_to')
+                Select::make('assigned_to_id')
                     ->label('Assigned To')
                     ->translateLabel()
                     ->relationship('assignedTo', 'name')
@@ -122,7 +122,7 @@ class CreateProspect extends CreateRecord
                         column: (new User())->getKeyName()
                     ),
                 // TODO: Should this be hidden and just filled in by the system?
-                Select::make('created_by')
+                Select::make('created_by_id')
                     ->label('Created By')
                     ->translateLabel()
                     ->relationship('createdBy', 'name')

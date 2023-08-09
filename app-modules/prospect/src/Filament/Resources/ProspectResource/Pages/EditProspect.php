@@ -110,7 +110,7 @@ class EditProspect extends EditRecord
                     ->numeric()
                     ->minValue(1920)
                     ->maxValue(now()->addYears(25)->year),
-                Select::make('assigned_to')
+                Select::make('assigned_to_id')
                     ->label('Assigned To')
                     ->translateLabel()
                     ->relationship('assignedTo', 'name')
@@ -120,7 +120,7 @@ class EditProspect extends EditRecord
                         table: (new User())->getTable(),
                         column: (new User())->getKeyName()
                     ),
-                Select::make('created_by')
+                Select::make('created_by_id')
                     ->label('Created By')
                     ->translateLabel()
                     ->relationship('createdBy', 'name')
