@@ -6,8 +6,11 @@ use Eloquent;
 use App\Models\BaseModel;
 use Assist\Case\Models\CaseItem;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Assist\AssistDataModel\Database\Factories\StudentFactory;
 
 /**
  * Assist\AssistDataModel\Models\Student
@@ -15,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property-read Collection<int, CaseItem> $cases
  * @property-read int|null $cases_count
  *
- * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
+ * @method static StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
@@ -38,6 +41,14 @@ class Student extends BaseModel
             type: 'respondent_type',
             id: 'respondent_id',
             localKey: 'sisid'
+        );
+    }
+
+    public function engagementFiles(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: EngagementFile::class,
+            name: 'engagement_file_entity',
         );
     }
 }
