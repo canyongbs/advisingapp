@@ -13,6 +13,10 @@ use Assist\Case\Database\Seeders\CaseItemPrioritySeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
+use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
+use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
+use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
+use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -30,6 +34,10 @@ class DatabaseSeeder extends Seeder
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
             ProspectSeeder::class,
+            KnowledgeBaseCategorySeeder::class,
+            KnowledgeBaseQualitySeeder::class,
+            KnowledgeBaseStatusSeeder::class,
+            KnowledgeBaseItemSeeder::class,
             StudentSeeder::class,
         ]);
     }
