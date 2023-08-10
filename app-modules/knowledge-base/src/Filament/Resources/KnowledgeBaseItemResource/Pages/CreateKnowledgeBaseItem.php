@@ -3,8 +3,8 @@
 namespace Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
 use Filament\Forms\Form;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\RichEditor;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
@@ -20,8 +20,10 @@ class CreateKnowledgeBaseItem extends CreateRecord
                     ->label('Question/Issue/Feature')
                     ->required()
                     ->string(),
-                RichEditor::make('solution')
+                TiptapEditor::make('solution')
                     ->label('Solution')
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required()
                     ->string(),
             ]);
