@@ -7,6 +7,9 @@ use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Tables\Columns\Column;
+use Filament\Forms\Components\Field;
+use Filament\Infolists\Components\Entry;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
@@ -21,6 +24,15 @@ use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public function register(): void
+    {
+        parent::register();
+
+        Field::configureUsing(fn ($field) => $field->translateLabel());
+        Entry::configureUsing(fn ($entry) => $entry->translateLabel());
+        Column::configureUsing(fn ($column) => $column->translateLabel());
+    }
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -31,6 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex('#2bb8b3'),
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
