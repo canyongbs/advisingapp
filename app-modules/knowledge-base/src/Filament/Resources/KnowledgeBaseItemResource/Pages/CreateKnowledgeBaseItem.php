@@ -27,20 +27,20 @@ class CreateKnowledgeBaseItem extends CreateRecord
                     ->translateLabel()
                     ->required()
                     ->string(),
-                Select::make('quality')
+                Select::make('quality_id')
                     ->label('Quality')
                     ->translateLabel()
                     ->relationship('quality', 'name')
                     ->searchable()
                     ->preload()
                     ->exists((new KnowledgeBaseQuality())->getTable(), (new KnowledgeBaseQuality())->getKeyName()),
-                Select::make('status')
+                Select::make('status_id')
                     ->label('Status')
                     ->relationship('status', 'name')
                     ->searchable()
                     ->preload()
                     ->exists((new KnowledgeBaseStatus())->getTable(), (new KnowledgeBaseStatus())->getKeyName()),
-                Select::make('category')
+                Select::make('category_id')
                     ->label('Category')
                     ->translateLabel()
                     ->relationship('category', 'name')
