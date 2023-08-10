@@ -15,12 +15,12 @@ use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 test('ViewKnowledgeBaseCategory is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $prospectSource = KnowledgeBaseCategory::factory()->create();
+    $knowledgeBaseCategory = KnowledgeBaseCategory::factory()->create();
 
     actingAs($user)
         ->get(
             KnowledgeBaseCategoryResource::getUrl('view', [
-                'record' => $prospectSource,
+                'record' => $knowledgeBaseCategory,
             ])
         )->assertForbidden();
 
@@ -30,7 +30,7 @@ test('ViewKnowledgeBaseCategory is gated with proper access control', function (
     actingAs($user)
         ->get(
             KnowledgeBaseCategoryResource::getUrl('view', [
-                'record' => $prospectSource,
+                'record' => $knowledgeBaseCategory,
             ])
         )->assertSuccessful();
 });

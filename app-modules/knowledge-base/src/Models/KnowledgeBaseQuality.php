@@ -2,33 +2,37 @@
 
 namespace Assist\KnowledgeBase\Models;
 
+use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseQuality
  *
  * @property int $id
  * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  *
- * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality withoutTrashed()
+ * @method static KnowledgeBaseQualityFactory factory($count = null, $state = [])
+ * @method static Builder|KnowledgeBaseQuality newModelQuery()
+ * @method static Builder|KnowledgeBaseQuality newQuery()
+ * @method static Builder|KnowledgeBaseQuality onlyTrashed()
+ * @method static Builder|KnowledgeBaseQuality query()
+ * @method static Builder|KnowledgeBaseQuality whereCreatedAt($value)
+ * @method static Builder|KnowledgeBaseQuality whereDeletedAt($value)
+ * @method static Builder|KnowledgeBaseQuality whereId($value)
+ * @method static Builder|KnowledgeBaseQuality whereName($value)
+ * @method static Builder|KnowledgeBaseQuality whereUpdatedAt($value)
+ * @method static Builder|KnowledgeBaseQuality withTrashed()
+ * @method static Builder|KnowledgeBaseQuality withoutTrashed()
  *
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class KnowledgeBaseQuality extends BaseModel
 {
@@ -47,6 +51,11 @@ class KnowledgeBaseQuality extends BaseModel
         'id',
         'name',
     ];
+
+    public function knowledgeBaseItems()
+    {
+        return $this->hasMany(KnowledgeBaseItem::class, 'quality_id');
+    }
 
     protected function serializeDate(DateTimeInterface $date): string
     {
