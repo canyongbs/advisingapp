@@ -20,6 +20,7 @@
         "canyon-gbs/knowledge-base": "*",
         "canyon-gbs/prospect": "*",
         "filament/filament": "^3.0.18",
+	"filament/spatie-laravel-media-library-plugin": "^3.0-stable",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^3.0",
