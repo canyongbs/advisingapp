@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseItem
@@ -28,13 +27,13 @@ use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read KnowledgeBaseCategory|null $category
+ * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
  * @property-read Collection<int, Institution> $institution
  * @property-read int|null $institution_count
- * @property-read KnowledgeBaseQuality|null $quality
- * @property-read KnowledgeBaseStatus|null $status
+ * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
+ * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
  *
- * @method static KnowledgeBaseItemFactory factory($count = null, $state = [])
+ * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
  * @method static Builder|KnowledgeBaseItem newModelQuery()
  * @method static Builder|KnowledgeBaseItem newQuery()
  * @method static Builder|KnowledgeBaseItem onlyTrashed()

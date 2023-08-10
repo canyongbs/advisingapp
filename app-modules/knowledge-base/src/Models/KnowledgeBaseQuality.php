@@ -8,7 +8,6 @@ use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseQuality
@@ -18,8 +17,10 @@ use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
+ * @property-read int|null $knowledge_base_items_count
  *
- * @method static KnowledgeBaseQualityFactory factory($count = null, $state = [])
+ * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
  * @method static Builder|KnowledgeBaseQuality newModelQuery()
  * @method static Builder|KnowledgeBaseQuality newQuery()
  * @method static Builder|KnowledgeBaseQuality onlyTrashed()
