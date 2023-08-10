@@ -2,6 +2,8 @@
 
 namespace Assist\Prospect\Providers;
 
+use Filament\Panel;
+use Assist\Prospect\ProspectPlugin;
 use Assist\Prospect\Models\Prospect;
 use Illuminate\Support\ServiceProvider;
 use Assist\Prospect\Models\ProspectSource;
@@ -12,8 +14,9 @@ use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class ProspectServiceProvider extends ServiceProvider
 {
-    public function register(): void
+    public function register()
     {
+        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ProspectPlugin()));
     }
 
     public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void

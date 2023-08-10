@@ -2,13 +2,17 @@
 
 namespace Assist\Prospect\Models;
 
-use Carbon\Carbon;
+use Eloquent;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Support\HasAdvancedFilter;
+use Illuminate\Support\Carbon;
+use Assist\Case\Models\CaseItem;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Assist\Prospect\Database\Factories\ProspectFactory;
 
 /**
  * Assist\Prospect\Models\Prospect
@@ -16,120 +20,72 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $status_id
  * @property int $source_id
- * @property int $assigned_to_id
- * @property int $created_by_id
  * @property string $first_name
  * @property string $last_name
- * @property string $full_name
+ * @property string $full
  * @property string|null $preferred
  * @property string|null $description
  * @property string|null $email
  * @property string|null $email_2
- * @property int|null $mobile
- * @property string|null $sms_opt_out
- * @property string|null $email_bounce
- * @property int|null $phone
+ * @property string|null $mobile
+ * @property bool $sms_opt_out
+ * @property bool $email_bounce
+ * @property string|null $phone
  * @property string|null $address
  * @property string|null $address_2
- * @property string|null $date_of_birth
- * @property string|null $highschool_grad
- * @property string|null $highschool_date
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $birthdate
+ * @property string|null $hsgrad
+ * @property int $assigned_to_id
+ * @property int|null $created_by_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read User $assignedTo
- * @property-read User $createdBy
- * @property mixed $birthdate
- * @property-read mixed $email_bounce_label
- * @property mixed $hsdate
- * @property-read mixed $sms_opt_out_label
- * @property-read \Assist\Prospect\Models\ProspectSource $source
- * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read User|null $createdBy
+ * @property-read ProspectSource $source
+ * @property-read ProspectStatus $status
  *
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect advancedFilter($data)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect query()
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAddress2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereAssignedToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereCreatedById($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereDateOfBirth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereEmail2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereEmailBounce($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereFirstName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereFullName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereHighschoolDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereHighschoolGrad($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereMobile($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect wherePreferred($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereSmsOptOut($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereSourceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Prospect withoutTrashed()
+ * @method static Builder|Prospect advancedFilter($data)
+ * @method static ProspectFactory factory($count = null, $state = [])
+ * @method static Builder|Prospect newModelQuery()
+ * @method static Builder|Prospect newQuery()
+ * @method static Builder|Prospect onlyTrashed()
+ * @method static Builder|Prospect query()
+ * @method static Builder|Prospect whereAddress($value)
+ * @method static Builder|Prospect whereAddress2($value)
+ * @method static Builder|Prospect whereAssignedToId($value)
+ * @method static Builder|Prospect whereBirthdate($value)
+ * @method static Builder|Prospect whereCreatedAt($value)
+ * @method static Builder|Prospect whereCreatedById($value)
+ * @method static Builder|Prospect whereDeletedAt($value)
+ * @method static Builder|Prospect whereDescription($value)
+ * @method static Builder|Prospect whereEmail($value)
+ * @method static Builder|Prospect whereEmail2($value)
+ * @method static Builder|Prospect whereEmailBounce($value)
+ * @method static Builder|Prospect whereFirstName($value)
+ * @method static Builder|Prospect whereFull($value)
+ * @method static Builder|Prospect whereHsgrad($value)
+ * @method static Builder|Prospect whereId($value)
+ * @method static Builder|Prospect whereLastName($value)
+ * @method static Builder|Prospect whereMobile($value)
+ * @method static Builder|Prospect wherePhone($value)
+ * @method static Builder|Prospect wherePreferred($value)
+ * @method static Builder|Prospect whereSmsOptOut($value)
+ * @method static Builder|Prospect whereSourceId($value)
+ * @method static Builder|Prospect whereStatusId($value)
+ * @method static Builder|Prospect whereUpdatedAt($value)
+ * @method static Builder|Prospect withTrashed()
+ * @method static Builder|Prospect withoutTrashed()
  *
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class Prospect extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
 
-    // TODO If we need this enum, this should exist as an enum
-    public const SMS_OPT_OUT_RADIO = [
-        'N' => 'No',
-        'Y' => 'Yes',
-    ];
-
-    // TODO If we need this enum, this should exist as an enum
-    public const EMAIL_BOUNCE_RADIO = [
-        'N' => 'No',
-        'Y' => 'Yes',
-    ];
-
-    public static $search = [
-        'full',
-        'mobile',
-        'date_of_birth',
-    ];
-
-    public $orderable = [
-        'id',
-        'full',
-        'email',
-        'mobile',
-        'date_of_birth',
-    ];
-
-    public $filterable = [
-        'id',
-        'full',
-        'email',
-        'mobile',
-        'date_of_birth',
-    ];
-
-    protected $dates = [
-        'date_of_birth',
-        'hsdate',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
     protected $fillable = [
-        'first',
-        'last',
+        'first_name',
+        'last_name',
         'full',
         'preferred',
         'description',
@@ -143,16 +99,31 @@ class Prospect extends BaseModel
         'phone',
         'address',
         'address_2',
-        'date_of_birth',
-        'highschool_grad',
-        'highschool_date',
+        'birthdate',
+        'hsgrad',
         'assigned_to_id',
         'created_by_id',
+    ];
+
+    protected $casts = [
+        'sms_opt_out' => 'boolean',
+        'email_bounce' => 'boolean',
     ];
 
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function cases(): MorphMany
+    {
+        return $this->morphMany(
+            related: CaseItem::class,
+            name: 'respondent',
+            type: 'respondent_type',
+            id: 'respondent_id',
+            localKey: 'id'
+        );
     }
 
     public function createdBy(): BelongsTo
@@ -170,53 +141,8 @@ class Prospect extends BaseModel
         return $this->belongsTo(ProspectSource::class);
     }
 
-    public function getSmsOptOutLabelAttribute($value)
+    protected function serializeDate(DateTimeInterface $date): string
     {
-        return static::SMS_OPT_OUT_RADIO[$this->sms_opt_out] ?? null;
-    }
-
-    public function getEmailBounceLabelAttribute($value)
-    {
-        return static::EMAIL_BOUNCE_RADIO[$this->email_bounce] ?? null;
-    }
-
-    public function getBirthdateAttribute($value)
-    {
-        return $value ? Carbon::parse($value)->format(config('project.date_format')) : null;
-    }
-
-    public function setBirthdateAttribute($value)
-    {
-        $this->attributes['date_of_birth'] = $value ? Carbon::createFromFormat(config('project.date_format'), $value)->format('Y-m-d') : null;
-    }
-
-    public function getHsdateAttribute($value)
-    {
-        return $value ? Carbon::parse($value)->format(config('project.date_format')) : null;
-    }
-
-    public function setHsdateAttribute($value)
-    {
-        $this->attributes['hsdate'] = $value ? Carbon::createFromFormat(config('project.date_format'), $value)->format('Y-m-d') : null;
-    }
-
-    public function getCreatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getUpdatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getDeletedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

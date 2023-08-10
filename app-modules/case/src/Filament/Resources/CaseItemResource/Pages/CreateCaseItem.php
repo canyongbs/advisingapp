@@ -5,13 +5,16 @@ namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
 use Filament\Forms\Form;
 use App\Models\Institution;
 use Assist\Case\Models\CaseItemType;
+use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Assist\Case\Models\CaseItemStatus;
 use Filament\Forms\Components\Textarea;
 use Assist\Case\Models\CaseItemPriority;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Forms\Components\MorphToSelect;
 use Assist\Case\Filament\Resources\CaseItemResource;
 
 class CreateCaseItem extends CreateRecord
@@ -60,6 +63,16 @@ class CreateCaseItem extends CreateRecord
                     ->label('Internal Case Details')
                     ->nullable()
                     ->string(),
+                MorphToSelect::make('respondent')
+                    ->label('Respondent')
+                    ->searchable()
+                    ->preload()
+                    ->types([
+                        MorphToSelect\Type::make(Student::class)
+                            ->titleAttribute('full'),
+                        MorphToSelect\Type::make(Prospect::class)
+                            ->titleAttribute('full'),
+                    ]),
             ]);
     }
 }

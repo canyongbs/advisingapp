@@ -10,7 +10,7 @@ class CreateProspectSourcesTable extends Migration
     {
         Schema::create('prospect_sources', function (Blueprint $table) {
             $table->id();
-            $table->string('source');
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });

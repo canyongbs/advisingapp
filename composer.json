@@ -16,7 +16,7 @@
     "canyon-gbs/assist-data-model": "*",
     "canyon-gbs/case": "*",
     "canyon-gbs/prospect": "*",
-    "filament/filament": "^3.0.0",
+    "filament/filament": "^3.0.15",
     "guzzlehttp/guzzle": "^7.2",
     "internachi/modular": "^2.0",
     "kirschbaum-development/eloquent-power-joins": "^3.0",

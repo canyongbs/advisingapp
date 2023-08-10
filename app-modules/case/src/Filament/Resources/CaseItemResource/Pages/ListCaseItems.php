@@ -31,7 +31,7 @@ class ListCaseItems extends ListRecords
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('respondent.full')
-                    ->label('Student')
+                    ->label('Respondent')
                     ->searchable()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // TODO: Look into issues with the Power Joins package being able to handle this

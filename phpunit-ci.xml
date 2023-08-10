@@ -18,8 +18,10 @@
     <testsuite name="Feature">
       <directory suffix="Test.php">./tests/Feature</directory>
     </testsuite>
+    <testsuite name="Modules">
+      <directory suffix="Test.php">./app-modules/*/tests</directory>
+    </testsuite>
   </testsuites>
-  <coverage/>
   <php>
     <server name="APP_ENV" value="testing"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
@@ -43,9 +45,4 @@
     <env name="SIS_DB_USERNAME" value="root"/>
     <env name="SIS_DB_PASSWORD" value="root"/>
   </php>
-  <source>
-    <include>
-      <directory suffix=".php">./app</directory>
-    </include>
-  </source>
 </phpunit>

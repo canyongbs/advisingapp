@@ -9,7 +9,7 @@ class ProspectPlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'prospect-plugin';
+        return 'prospect';
     }
 
     public function register(Panel $panel): void

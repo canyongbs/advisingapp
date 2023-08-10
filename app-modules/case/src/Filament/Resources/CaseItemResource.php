@@ -11,7 +11,6 @@ use Assist\Case\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\CreateCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\CreatedByRelationManager;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\AssignedToRelationManager;
-use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\RespondentRelationManager;
 use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\CaseUpdatesRelationManager;
 
 class CaseItemResource extends Resource
@@ -29,7 +28,6 @@ class CaseItemResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RespondentRelationManager::class,
             CaseUpdatesRelationManager::class,
             RelationGroup::make('Related Users', [
                 AssignedToRelationManager::class,
