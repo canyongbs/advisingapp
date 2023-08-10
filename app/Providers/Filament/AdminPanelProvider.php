@@ -7,6 +7,9 @@ use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Tables\Columns\Column;
+use Filament\Forms\Components\Field;
+use Filament\Infolists\Components\Entry;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
@@ -21,6 +24,15 @@ use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public function register(): void
+    {
+        parent::register();
+
+        Field::configureUsing(fn ($field) => $field->translateLabel());
+        Entry::configureUsing(fn ($entry) => $entry->translateLabel());
+        Column::configureUsing(fn ($column) => $column->translateLabel());
+    }
+
     public function panel(Panel $panel): Panel
     {
         return $panel
