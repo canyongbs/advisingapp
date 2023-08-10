@@ -2,6 +2,7 @@
 
 namespace Assist\KnowledgeBase\Database\Factories;
 
+use App\Models\Institution;
 use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
@@ -24,5 +25,17 @@ class KnowledgeBaseItemFactory extends Factory
             'status_id' => KnowledgeBaseStatus::inRandomOrder()->first() ?? KnowledgeBaseStatus::factory(),
             'category_id' => KnowledgeBaseCategory::inRandomOrder()->first() ?? KnowledgeBaseCategory::factory(),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterMaking(function (KnowledgeBaseItem $knowledgeBaseItem) {
+            // ...
+        })->afterCreating(function (KnowledgeBaseItem $knowledgeBaseItem) {
+            if ($knowledgeBaseItem->institution->isEmpty()) {
+                $knowledgeBaseItem->institution()->attach(Institution::first()?->id ?? Institution::factory()->create()->id);
+                $knowledgeBaseItem->save();
+            }
+        });
     }
 }
