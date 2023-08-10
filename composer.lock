@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "58abdf9d70c873ff23f49270754e1814",
+    "content-hash": "995f109526a4af6e88aa57d690a6e14a",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -452,6 +452,41 @@
                     "Assist\\Case\\Tests\\": "tests/",
                     "Assist\\Case\\Database\\Factories\\": "database/factories/",
                     "Assist\\Case\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/knowledge-base",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/knowledge-base",
+                "reference": "97a8359a8d591d209611b39f402a343a7522e7c9"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\KnowledgeBase\\Providers\\KnowledgeBaseServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\KnowledgeBase\\": "src/",
+                    "Assist\\KnowledgeBase\\Tests\\": "tests/",
+                    "Assist\\KnowledgeBase\\Database\\Factories\\": "database/factories/",
+                    "Assist\\KnowledgeBase\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

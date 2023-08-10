@@ -4,13 +4,13 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateKbItemStatusesTable extends Migration
+class CreateKnowledgeBaseStatusesTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('kb_item_statuses', function (Blueprint $table) {
+        Schema::create('knowledge_base_statuses', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('status');
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });

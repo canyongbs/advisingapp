@@ -4,16 +4,19 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateKbItemsTable extends Migration
+class CreateKnowledgeBaseItemsTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('kb_items', function (Blueprint $table) {
+        Schema::create('knowledge_base_items', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('question');
-            $table->string('public');
+            $table->boolean('public');
             $table->longText('solution')->nullable();
             $table->longText('notes')->nullable();
+            $table->unsignedBigInteger('quality_id')->nullable();
+            $table->unsignedBigInteger('status_id')->nullable();
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

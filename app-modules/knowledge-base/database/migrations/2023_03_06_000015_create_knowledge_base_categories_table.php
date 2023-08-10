@@ -4,13 +4,13 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateKbItemCategoriesTable extends Migration
+class CreateKnowledgeBaseCategoriesTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('kb_item_categories', function (Blueprint $table) {
+        Schema::create('knowledge_base_categories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('category');
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });

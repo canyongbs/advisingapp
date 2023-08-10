@@ -4,13 +4,13 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateKbItemQualitiesTable extends Migration
+class CreateKnowledgeBaseQualitiesTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('kb_item_qualities', function (Blueprint $table) {
+        Schema::create('knowledge_base_qualities', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('rating');
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });
