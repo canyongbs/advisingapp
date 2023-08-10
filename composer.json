@@ -16,6 +16,7 @@
         "canyon-gbs/assist-data-model": "*",
         "canyon-gbs/authorization": "*",
         "canyon-gbs/case": "*",
+        "canyon-gbs/engagement": "*",
         "canyon-gbs/knowledge-base": "*",
         "canyon-gbs/prospect": "*",
         "filament/filament": "^3.0.18",
