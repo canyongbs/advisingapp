@@ -7,9 +7,11 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
+use Assist\Case\Models\CaseItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Prospect\Database\Factories\ProspectFactory;
 
 /**
@@ -111,6 +113,17 @@ class Prospect extends BaseModel
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function cases(): MorphMany
+    {
+        return $this->morphMany(
+            related: CaseItem::class,
+            name: 'respondent',
+            type: 'respondent_type',
+            id: 'respondent_id',
+            localKey: 'id'
+        );
     }
 
     public function createdBy(): BelongsTo

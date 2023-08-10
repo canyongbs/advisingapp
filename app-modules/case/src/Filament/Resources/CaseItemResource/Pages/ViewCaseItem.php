@@ -2,11 +2,16 @@
 
 namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
 
+use Assist\Case\Models\CaseItem;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Assist\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ViewRecord;
+use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Case\Filament\Resources\CaseItemResource;
+use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 
 class ViewCaseItem extends ViewRecord
 {
@@ -42,6 +47,28 @@ class ViewCaseItem extends ViewRecord
                     ->label('Internal Case Details')
                     ->translateLabel()
                     ->columnSpanFull(),
+                TextEntry::make('respondent')
+                    ->label('Respondent')
+                    ->translateLabel()
+                    ->color('primary')
+                    ->state(function (CaseItem $record): string {
+                        /** @var Student|Prospect $respondent */
+                        $respondent = $record->respondent;
+
+                        return match ($respondent::class) {
+                            Student::class => "{$respondent->full} (Student)",
+                            Prospect::class => "{$respondent->full} (Prospect)",
+                        };
+                    })
+                    ->url(function (CaseItem $record) {
+                        /** @var Student|Prospect $respondent */
+                        $respondent = $record->respondent;
+
+                        return match ($respondent::class) {
+                            Student::class => StudentResource::getUrl('view', ['record' => $respondent->sisid]),
+                            Prospect::class => ProspectResource::getUrl('view', ['record' => $respondent->id]),
+                        };
+                    }),
             ]);
     }
 
