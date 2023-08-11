@@ -18,7 +18,7 @@
         "canyon-gbs/case": "*",
         "canyon-gbs/knowledge-base": "*",
         "canyon-gbs/prospect": "*",
-        "filament/filament": "^3.0.15",
+        "filament/filament": "^3.0.18",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^3.0",
@@ -66,7 +66,6 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "./vite-check",
             "@php artisan package:discover --ansi",
             "@php artisan filament:upgrade"
         ],
