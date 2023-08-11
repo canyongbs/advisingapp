@@ -10,9 +10,9 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('engagement_file_entity', function (Blueprint $table) {
-            $table->integer('engagement_file_id')->unsigned();
-            $table->integer('entity_id')->unsigned();
+        Schema::create('engagement_file_entities', function (Blueprint $table) {
+            $table->uuid('engagement_file_id');
+            $table->string('entity_id');
             $table->string('entity_type');
             $table->timestamps();
         });

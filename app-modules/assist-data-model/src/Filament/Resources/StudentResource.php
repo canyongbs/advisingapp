@@ -8,6 +8,7 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Assist\AssistDataModel\Models\Student;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
 
 class StudentResource extends Resource
 {
@@ -50,6 +51,7 @@ class StudentResource extends Resource
     public static function getRelations(): array
     {
         return [
+            EngagementFilesRelationManager::class,
         ];
     }
 

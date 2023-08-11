@@ -33,6 +33,10 @@ class Student extends BaseModel
 
     protected $keyType = 'string';
 
+    protected $casts = [
+        'sisid' => 'string',
+    ];
+
     public function cases(): MorphMany
     {
         return $this->morphMany(
@@ -48,7 +52,11 @@ class Student extends BaseModel
     {
         return $this->morphToMany(
             related: EngagementFile::class,
-            name: 'engagement_file_entity',
+            name: 'entity',
+            table: 'engagement_file_entities',
+            foreignPivotKey: 'entity_id',
+            relatedPivotKey: 'engagement_file_id',
+            relation: 'student',
         );
     }
 }
