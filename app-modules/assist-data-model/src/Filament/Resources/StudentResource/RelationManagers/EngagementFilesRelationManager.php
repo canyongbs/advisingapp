@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class EngagementFilesRelationManager extends RelationManager
 {
@@ -20,6 +21,13 @@ class EngagementFilesRelationManager extends RelationManager
                 Forms\Components\TextInput::make('description')
                     ->required()
                     ->maxLength(255),
+                SpatieMediaLibraryFileUpload::make('file')
+                    ->label('File')
+                    // TODO: Determine if this is needed
+                    //->visibility('private')
+                    ->disk('s3')
+                    ->collection('file')
+                    ->required(),
             ]);
     }
 
@@ -37,7 +45,8 @@ class EngagementFilesRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
                 Tables\Actions\AttachAction::make()
-                    ->preloadRecordSelect(),
+                    ->preloadRecordSelect()
+                    ->forceSearchCaseInsensitive(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -52,7 +61,9 @@ class EngagementFilesRelationManager extends RelationManager
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make(),
+                Tables\Actions\AttachAction::make()
+                    ->preloadRecordSelect()
+                    ->forceSearchCaseInsensitive(),
             ]);
     }
 }

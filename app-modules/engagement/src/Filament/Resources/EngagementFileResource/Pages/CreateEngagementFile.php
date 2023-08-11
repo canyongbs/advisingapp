@@ -19,13 +19,15 @@ class CreateEngagementFile extends CreateRecord
                 TextInput::make('description')
                     ->label('Description')
                     ->nullable()
-                    ->string(),
+                    ->string()
+                    ->required(),
                 SpatieMediaLibraryFileUpload::make('file')
                     ->label('File')
                     // TODO: Determine if this is needed
                     //->visibility('private')
                     ->disk('s3')
-                    ->collection('file'),
+                    ->collection('file')
+                    ->required(),
             ]);
     }
 }

@@ -31,7 +31,7 @@ class EngagementFile extends BaseModel implements HasMedia
     {
         return $this->morphedByMany(
             related: Student::class,
-            name: 'engagement_file',
+            name: 'entity',
             table: 'engagement_file_entities',
             foreignPivotKey: 'engagement_file_id',
             relatedPivotKey: 'entity_id',
