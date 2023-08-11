@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ -f "./public/build/manifest.json" ]; then
+    echo "Vite manifest exists!"
+else
+    echo "Vite manifest does not exists, building..." \
+    && npm ci \
+    && npm run build \
+    && echo "Vite manifest built!"
+fi
