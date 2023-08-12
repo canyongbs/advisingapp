@@ -10,15 +10,16 @@ use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Assist\AssistDataModel\Database\Factories\StudentFactory;
 
 /**
  * Assist\AssistDataModel\Models\Student
  *
  * @property-read Collection<int, CaseItem> $cases
  * @property-read int|null $cases_count
+ * @property-read Collection<int, EngagementFile> $engagementFiles
+ * @property-read int|null $engagement_files_count
  *
- * @method static StudentFactory factory($count = null, $state = [])
+ * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()

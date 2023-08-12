@@ -15,15 +15,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * Assist\Prospect\Models\Prospect
  *
- * @property int $id
- * @property int $status_id
- * @property int $source_id
+ * @property string $id
+ * @property string $status_id
+ * @property string $source_id
  * @property string $first_name
  * @property string $last_name
  * @property string $full
@@ -48,10 +47,12 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property-read Collection<int, CaseItem> $cases
  * @property-read int|null $cases_count
  * @property-read User|null $createdBy
- * @property-read ProspectSource $source
- * @property-read ProspectStatus $status
+ * @property-read Collection<int, EngagementFile> $engagementFiles
+ * @property-read int|null $engagement_files_count
+ * @property-read \Assist\Prospect\Models\ProspectSource $source
+ * @property-read \Assist\Prospect\Models\ProspectStatus $status
  *
- * @method static ProspectFactory factory($count = null, $state = [])
+ * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()

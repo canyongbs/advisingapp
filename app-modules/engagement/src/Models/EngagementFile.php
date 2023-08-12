@@ -10,6 +10,31 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
+/**
+ * Assist\Engagement\Models\EngagementFile
+ *
+ * @property string $id
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Prospect> $prospects
+ * @property-read int|null $prospects_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Student> $students
+ * @property-read int|null $students_count
+ *
+ * @method static \Assist\Engagement\Database\Factories\EngagementFileFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
+ */
 class EngagementFile extends BaseModel implements HasMedia
 {
     use HasUuids;

@@ -11,21 +11,20 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Prospect\Database\Factories\ProspectStatusFactory;
 
 /**
  * Assist\Prospect\Models\ProspectStatus
  *
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $color
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, Prospect> $prospects
+ * @property-read Collection<int, \Assist\Prospect\Models\Prospect> $prospects
  * @property-read int|null $prospects_count
  *
- * @method static ProspectStatusFactory factory($count = null, $state = [])
+ * @method static \Assist\Prospect\Database\Factories\ProspectStatusFactory factory($count = null, $state = [])
  * @method static Builder|ProspectStatus newModelQuery()
  * @method static Builder|ProspectStatus newQuery()
  * @method static Builder|ProspectStatus onlyTrashed()
