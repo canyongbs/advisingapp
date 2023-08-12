@@ -41,6 +41,13 @@ class EngagementFile extends BaseModel implements HasMedia
 
     public function prospects(): MorphToMany
     {
-        return $this->morphedByMany(Prospect::class, 'engagement_file');
+        return $this->morphedByMany(
+            related: Prospect::class,
+            name: 'entity',
+            table: 'engagement_file_entities',
+            foreignPivotKey: 'engagement_file_id',
+            relatedPivotKey: 'entity_id',
+            relation: 'prospects',
+        );
     }
 }

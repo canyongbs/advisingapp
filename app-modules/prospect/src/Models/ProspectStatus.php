@@ -9,7 +9,9 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Prospect\Database\Factories\ProspectStatusFactory;
 
 /**
  * Assist\Prospect\Models\ProspectStatus
@@ -20,10 +22,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, \Assist\Prospect\Models\Prospect> $prospects
+ * @property-read Collection<int, Prospect> $prospects
  * @property-read int|null $prospects_count
  *
- * @method static \Assist\Prospect\Database\Factories\ProspectStatusFactory factory($count = null, $state = [])
+ * @method static ProspectStatusFactory factory($count = null, $state = [])
  * @method static Builder|ProspectStatus newModelQuery()
  * @method static Builder|ProspectStatus newQuery()
  * @method static Builder|ProspectStatus onlyTrashed()
@@ -41,6 +43,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class ProspectStatus extends BaseModel
 {
+    use HasUuids;
     use SoftDeletes;
 
     protected $fillable = [
