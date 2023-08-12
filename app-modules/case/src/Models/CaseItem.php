@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Case\Database\Factories\CaseItemFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,16 +37,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read User|null $assignedTo
- * @property-read Collection<int, \Assist\Case\Models\CaseUpdate> $caseUpdates
+ * @property-read Collection<int, CaseUpdate> $caseUpdates
  * @property-read int|null $case_updates_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
- * @property-read \Assist\Case\Models\CaseItemPriority|null $priority
- * @property-read Model|\Eloquent $respondent
- * @property-read \Assist\Case\Models\CaseItemStatus|null $status
- * @property-read \Assist\Case\Models\CaseItemType|null $type
+ * @property-read CaseItemPriority|null $priority
+ * @property-read Model|Eloquent $respondent
+ * @property-read CaseItemStatus|null $status
+ * @property-read CaseItemType|null $type
  *
- * @method static \Assist\Case\Database\Factories\CaseItemFactory factory($count = null, $state = [])
+ * @method static CaseItemFactory factory($count = null, $state = [])
  * @method static Builder|CaseItem newModelQuery()
  * @method static Builder|CaseItem newQuery()
  * @method static Builder|CaseItem onlyTrashed()
@@ -100,7 +101,7 @@ class CaseItem extends BaseModel
 
     public function institution(): BelongsTo
     {
-        return $this->belongsTo(Institution::class);
+        return $this->belongsTo(Institution::class, 'institution_id');
     }
 
     public function caseUpdates(): HasMany
@@ -113,7 +114,6 @@ class CaseItem extends BaseModel
         return $this->belongsTo(CaseItemStatus::class);
     }
 
-    // TODO
     public function type(): BelongsTo
     {
         return $this->belongsTo(CaseItemType::class);

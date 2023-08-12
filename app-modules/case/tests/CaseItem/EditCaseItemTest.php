@@ -35,10 +35,10 @@ test('A successful action on the EditCaseItem page', function () {
         CaseItem::class,
         $request->except(
             [
-                'institution',
-                'status',
-                'priority',
-                'type',
+                'institution_id',
+                'status_id',
+                'priority_id',
+                'type_id',
             ]
         )->toArray()
     );
@@ -46,13 +46,13 @@ test('A successful action on the EditCaseItem page', function () {
     $caseItem->refresh();
 
     expect($caseItem->institution->id)
-        ->toEqual($request->get('institution'))
+        ->toEqual($request->get('institution_id'))
         ->and($caseItem->status->id)
-        ->toEqual($request->get('status'))
+        ->toEqual($request->get('status_id'))
         ->and($caseItem->priority->id)
-        ->toEqual($request->get('priority'))
+        ->toEqual($request->get('priority_id'))
         ->and($caseItem->type->id)
-        ->toEqual($request->get('type'));
+        ->toEqual($request->get('type_id'));
 });
 
 test('EditCaseItem requires valid data', function ($data, $errors) {
@@ -81,25 +81,25 @@ test('EditCaseItem requires valid data', function ($data, $errors) {
         ->toEqual($caseItem->type->id);
 })->with(
     [
-        'institution missing' => [EditCaseItemRequestFactory::new()->state(['institution' => null]), ['institution' => 'required']],
-        'institution does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['institution' => 99]),
-            ['institution' => 'exists'],
+        'institution_id missing' => [EditCaseItemRequestFactory::new()->state(['institution_id' => null]), ['institution_id' => 'required']],
+        'institution_id does not exist' => [
+            EditCaseItemRequestFactory::new()->state(['institution_id' => 99]),
+            ['institution_id' => 'exists'],
         ],
-        'status missing' => [EditCaseItemRequestFactory::new()->state(['status' => null]), ['status' => 'required']],
-        'status does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['status' => 99]),
-            ['status' => 'exists'],
+        'status_id missing' => [EditCaseItemRequestFactory::new()->state(['status_id' => null]), ['status_id' => 'required']],
+        'status_id does not exist' => [
+            EditCaseItemRequestFactory::new()->state(['status_id' => 99]),
+            ['status_id' => 'exists'],
         ],
-        'priority missing' => [EditCaseItemRequestFactory::new()->state(['priority' => null]), ['priority' => 'required']],
-        'priority does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['priority' => 99]),
-            ['priority' => 'exists'],
+        'priority_id missing' => [EditCaseItemRequestFactory::new()->state(['priority_id' => null]), ['priority_id' => 'required']],
+        'priority_id does not exist' => [
+            EditCaseItemRequestFactory::new()->state(['priority_id' => 99]),
+            ['priority_id' => 'exists'],
         ],
-        'type missing' => [EditCaseItemRequestFactory::new()->state(['type' => null]), ['type' => 'required']],
-        'type does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['type' => 99]),
-            ['type' => 'exists'],
+        'type_id missing' => [EditCaseItemRequestFactory::new()->state(['type_id' => null]), ['type_id' => 'required']],
+        'type_id does not exist' => [
+            EditCaseItemRequestFactory::new()->state(['type_id' => 99]),
+            ['type_id' => 'exists'],
         ],
         'close_details is not a string' => [EditCaseItemRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],
         'res_details is not a string' => [EditCaseItemRequestFactory::new()->state(['res_details' => 1]), ['res_details' => 'string']],
@@ -133,10 +133,10 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
         $request->except(
             [
                 'casenumber',
-                'institution',
-                'status',
-                'priority',
-                'type',
+                'institution_id',
+                'status_id',
+                'priority_id',
+                'type_id',
             ]
         )->toArray()
     );
@@ -144,13 +144,13 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
     $caseItem->refresh();
 
     expect($caseItem->institution->id)
-        ->toEqual($request->get('institution'))
+        ->toEqual($request->get('institution_id'))
         ->and($caseItem->status->id)
-        ->toEqual($request->get('status'))
+        ->toEqual($request->get('status_id'))
         ->and($caseItem->priority->id)
-        ->toEqual($request->get('priority'))
+        ->toEqual($request->get('priority_id'))
         ->and($caseItem->type->id)
-        ->toEqual($request->get('type'))
+        ->toEqual($request->get('type_id'))
         ->and($caseItem->casenumber)
         ->not()
         ->toEqual($request->get('casenumber'));
@@ -213,11 +213,11 @@ test('EditCaseItem is gated with proper access control', function () {
     $caseItem->refresh();
 
     expect($caseItem->institution->id)
-        ->toEqual($request->get('institution'))
+        ->toEqual($request->get('institution_id'))
         ->and($caseItem->status->id)
-        ->toEqual($request->get('status'))
+        ->toEqual($request->get('status_id'))
         ->and($caseItem->priority->id)
-        ->toEqual($request->get('priority'))
+        ->toEqual($request->get('priority_id'))
         ->and($caseItem->type->id)
-        ->toEqual($request->get('type'));
+        ->toEqual($request->get('type_id'));
 });

@@ -14,10 +14,10 @@ class CreateCaseItemRequestFactory extends RequestFactory
     {
         return [
             'casenumber' => $this->faker->randomNumber(8),
-            'institution' => Institution::factory()->create()->id,
-            'status' => CaseItemStatus::factory()->create()->id,
-            'priority' => CaseItemPriority::factory()->create()->id,
-            'type' => CaseItemType::factory()->create()->id,
+            'institution_id' => Institution::factory()->create()->id,
+            'status_id' => CaseItemStatus::factory()->create()->id,
+            'priority_id' => CaseItemPriority::factory()->create()->id,
+            'type_id' => CaseItemType::factory()->create()->id,
             'close_details' => $this->faker->sentence,
             'res_details' => $this->faker->sentence,
         ];

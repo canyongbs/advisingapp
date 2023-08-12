@@ -30,7 +30,7 @@ class CaseUpdateResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('case')
+                Select::make('case_id')
                     ->relationship('case', 'casenumber')
                     ->searchable()
                     ->label('Case')
