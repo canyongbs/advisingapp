@@ -33,10 +33,10 @@ test('A successful action on the EditCaseUpdate page', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('case')->toArray());
+    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
 
     expect(CaseUpdate::first()->case->id)
-        ->toEqual($request->get('case'));
+        ->toEqual($request->get('case_id'));
 });
 
 test('EditCaseUpdate requires valid data', function ($data, $errors) {
@@ -57,8 +57,8 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
         ->toEqual($caseUpdate->case->id);
 })->with(
     [
-        'case missing' => [EditCaseUpdateRequestFactory::new()->state(['case' => null]), ['case' => 'required']],
-        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case' => 99]), ['case' => 'exists']],
+        'case missing' => [EditCaseUpdateRequestFactory::new()->state(['case_id' => null]), ['case_id' => 'required']],
+        'case not existing case id' => [EditCaseUpdateRequestFactory::new()->state(['case_id' => 99]), ['case_id' => 'exists']],
         'update missing' => [EditCaseUpdateRequestFactory::new()->state(['update' => null]), ['update' => 'required']],
         'update is not a string' => [EditCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
         'direction missing' => [EditCaseUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],

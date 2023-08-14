@@ -9,12 +9,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Assist\Prospect\Models\ProspectStatus
  *
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $color
  * @property Carbon|null $created_at
@@ -41,6 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class ProspectStatus extends BaseModel
 {
+    use HasUuids;
     use SoftDeletes;
 
     protected $fillable = [

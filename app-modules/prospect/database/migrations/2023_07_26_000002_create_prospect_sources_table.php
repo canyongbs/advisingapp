@@ -9,7 +9,7 @@ class CreateProspectSourcesTable extends Migration
     public function up(): void
     {
         Schema::create('prospect_sources', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();

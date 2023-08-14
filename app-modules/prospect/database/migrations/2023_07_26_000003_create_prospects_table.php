@@ -9,9 +9,9 @@ class CreateProspectsTable extends Migration
     public function up(): void
     {
         Schema::create('prospects', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('status_id')->references('id')->on('prospect_statuses');
-            $table->foreignId('source_id')->references('id')->on('prospect_sources');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('status_id')->references('id')->on('prospect_statuses');
+            $table->foreignUuid('source_id')->references('id')->on('prospect_sources');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('full');

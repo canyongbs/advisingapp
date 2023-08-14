@@ -33,10 +33,10 @@ test('A successful action on the CreateCaseUpdate page', function () {
         CaseItem::class,
         $request->except(
             [
-                'institution',
-                'status',
-                'priority',
-                'type',
+                'institution_id',
+                'status_id',
+                'priority_id',
+                'type_id',
             ]
         )->toArray()
     );
@@ -44,13 +44,13 @@ test('A successful action on the CreateCaseUpdate page', function () {
     $caseItem = CaseItem::first();
 
     expect($caseItem->institution->id)
-        ->toEqual($request->get('institution'))
+        ->toEqual($request->get('institution_id'))
         ->and($caseItem->status->id)
-        ->toEqual($request->get('status'))
+        ->toEqual($request->get('status_id'))
         ->and($caseItem->priority->id)
-        ->toEqual($request->get('priority'))
+        ->toEqual($request->get('priority_id'))
         ->and($caseItem->type->id)
-        ->toEqual($request->get('type'));
+        ->toEqual($request->get('type_id'));
 });
 
 test('CreateCaseItem requires valid data', function ($data, $errors, $setup = null) {
@@ -78,25 +78,25 @@ test('CreateCaseItem requires valid data', function ($data, $errors, $setup = nu
                 CaseItem::factory()->create(['casenumber' => 99]);
             },
         ],
-        'institution missing' => [CreateCaseItemRequestFactory::new()->without('institution'), ['institution' => 'required']],
-        'institution does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['institution' => 99]),
-            ['institution' => 'exists'],
+        'institution_id missing' => [CreateCaseItemRequestFactory::new()->without('institution_id'), ['institution_id' => 'required']],
+        'institution_id does not exist' => [
+            CreateCaseItemRequestFactory::new()->state(['institution_id' => 99]),
+            ['institution_id' => 'exists'],
         ],
-        'status missing' => [CreateCaseItemRequestFactory::new()->without('status'), ['status' => 'required']],
-        'status does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['status' => 99]),
-            ['status' => 'exists'],
+        'status_id missing' => [CreateCaseItemRequestFactory::new()->without('status_id'), ['status_id' => 'required']],
+        'status_id does not exist' => [
+            CreateCaseItemRequestFactory::new()->state(['status_id' => 99]),
+            ['status_id' => 'exists'],
         ],
-        'priority missing' => [CreateCaseItemRequestFactory::new()->without('priority'), ['priority' => 'required']],
-        'priority does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['priority' => 99]),
-            ['priority' => 'exists'],
+        'priority_id missing' => [CreateCaseItemRequestFactory::new()->without('priority_id'), ['priority_id' => 'required']],
+        'priority_id does not exist' => [
+            CreateCaseItemRequestFactory::new()->state(['priority_id' => 99]),
+            ['priority_id' => 'exists'],
         ],
-        'type missing' => [CreateCaseItemRequestFactory::new()->without('type'), ['type' => 'required']],
-        'type does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['type' => 99]),
-            ['type' => 'exists'],
+        'type_id missing' => [CreateCaseItemRequestFactory::new()->without('type_id'), ['type_id' => 'required']],
+        'type_id does not exist' => [
+            CreateCaseItemRequestFactory::new()->state(['type_id' => 99]),
+            ['type_id' => 'exists'],
         ],
         'close_details is not a string' => [CreateCaseItemRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],
         'res_details is not a string' => [CreateCaseItemRequestFactory::new()->state(['res_details' => 1]), ['res_details' => 'string']],
@@ -137,10 +137,10 @@ test('CreateCaseItem is gated with proper access control', function () {
         CaseItem::class,
         $request->except(
             [
-                'institution',
-                'status',
-                'priority',
-                'type',
+                'institution_id',
+                'status_id',
+                'priority_id',
+                'type_id',
             ]
         )->toArray()
     );
@@ -148,11 +148,11 @@ test('CreateCaseItem is gated with proper access control', function () {
     $caseItem = CaseItem::first();
 
     expect($caseItem->institution->id)
-        ->toEqual($request->get('institution'))
+        ->toEqual($request->get('institution_id'))
         ->and($caseItem->status->id)
-        ->toEqual($request->get('status'))
+        ->toEqual($request->get('status_id'))
         ->and($caseItem->priority->id)
-        ->toEqual($request->get('priority'))
+        ->toEqual($request->get('priority_id'))
         ->and($caseItem->type->id)
-        ->toEqual($request->get('type'));
+        ->toEqual($request->get('type_id'));
 });

@@ -29,18 +29,18 @@ class CreateCaseItem extends CreateRecord
                     ->label('Case #')
                     ->required()
                     ->unique(),
-                Select::make('institution')
+                Select::make('institution_id')
                     ->relationship('institution', 'name')
                     ->label('Institution')
                     ->required()
                     ->exists((new Institution())->getTable(), 'id'),
-                Select::make('status')
+                Select::make('status_id')
                     ->relationship('status', 'name')
                     ->preload()
                     ->label('Status')
                     ->required()
                     ->exists((new CaseItemStatus())->getTable(), 'id'),
-                Select::make('priority')
+                Select::make('priority_id')
                     ->relationship(
                         name: 'priority',
                         titleAttribute: 'name',
@@ -49,7 +49,7 @@ class CreateCaseItem extends CreateRecord
                     ->label('Priority')
                     ->required()
                     ->exists((new CaseItemPriority())->getTable(), 'id'),
-                Select::make('type')
+                Select::make('type_id')
                     ->relationship('type', 'name')
                     ->preload()
                     ->label('Type')

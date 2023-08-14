@@ -30,18 +30,18 @@ class EditCaseItem extends EditRecord
             TextInput::make('casenumber')
                 ->label('Case #')
                 ->disabled(),
-            Select::make('institution')
+            Select::make('institution_id')
                 ->relationship('institution', 'name')
                 ->label('Institution')
                 ->required()
                 ->exists((new Institution())->getTable(), 'id'),
-            Select::make('status')
+            Select::make('status_id')
                 ->relationship('status', 'name')
                 ->preload()
                 ->label('Status')
                 ->required()
                 ->exists((new CaseItemStatus())->getTable(), 'id'),
-            Select::make('priority')
+            Select::make('priority_id')
                 ->relationship(
                     name: 'priority',
                     titleAttribute: 'name',
@@ -50,7 +50,7 @@ class EditCaseItem extends EditRecord
                 ->label('Priority')
                 ->required()
                 ->exists((new CaseItemPriority())->getTable(), 'id'),
-            Select::make('type')
+            Select::make('type_id')
                 ->relationship('type', 'name')
                 ->preload()
                 ->label('Type')

@@ -9,16 +9,20 @@ use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
 use Assist\Case\Models\CaseItem;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\Engagement\Models\EngagementFile;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * Assist\Prospect\Models\Prospect
  *
- * @property int $id
- * @property int $status_id
- * @property int $source_id
+ * @property string $id
+ * @property string $status_id
+ * @property string $source_id
  * @property string $first_name
  * @property string $last_name
  * @property string $full
@@ -40,9 +44,11 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read User|null $assignedTo
- * @property-read \Illuminate\Database\Eloquent\Collection<int, CaseItem> $cases
+ * @property-read Collection<int, CaseItem> $cases
  * @property-read int|null $cases_count
  * @property-read User|null $createdBy
+ * @property-read Collection<int, EngagementFile> $engagementFiles
+ * @property-read int|null $engagement_files_count
  * @property-read \Assist\Prospect\Models\ProspectSource $source
  * @property-read \Assist\Prospect\Models\ProspectStatus $status
  *
@@ -81,6 +87,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 class Prospect extends BaseModel
 {
+    use HasUuids;
     use SoftDeletes;
 
     protected $fillable = [
@@ -139,6 +146,18 @@ class Prospect extends BaseModel
     public function source(): BelongsTo
     {
         return $this->belongsTo(ProspectSource::class);
+    }
+
+    public function engagementFiles(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: EngagementFile::class,
+            name: 'entity',
+            table: 'engagement_file_entities',
+            foreignPivotKey: 'entity_id',
+            relatedPivotKey: 'engagement_file_id',
+            relation: 'prospects',
+        );
     }
 
     protected function serializeDate(DateTimeInterface $date): string
