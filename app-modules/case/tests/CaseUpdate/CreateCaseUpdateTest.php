@@ -1,9 +1,12 @@
 <?php
 
+use App\Models\User;
+
 use function Tests\asSuperAdmin;
 
 use Assist\Case\Models\CaseUpdate;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
@@ -57,3 +60,36 @@ test('CreateCaseUpdate requires valid data', function ($data, $errors) {
         'internal not a boolean' => [CreateCaseUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
     ]
 );
+
+// Permission Tests
+
+test('CreateCaseUpdate is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseUpdateResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(CaseUpdateResource\Pages\CreateCaseUpdate::class)
+        ->assertForbidden();
+
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.create');
+
+    actingAs($user)
+        ->get(
+            CaseUpdateResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateCaseUpdateRequestFactory::new()->create());
+
+    livewire(CaseUpdateResource\Pages\CreateCaseUpdate::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, CaseUpdate::all());
+
+    assertDatabaseHas(CaseUpdate::class, $request->toArray());
+});
