@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\User;
+
 use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
 
 use Assist\Case\Models\CaseItemType;
 
@@ -46,3 +49,36 @@ test('CreateCaseItemType requires valid data', function ($data, $errors) {
         'name not a string' => [CreateCaseItemTypeRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
     ]
 );
+
+// Permission Tests
+
+test('CreateCaseItemType is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseItemTypeResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
+        ->assertForbidden();
+
+    $user->givePermissionTo('case_item_type.view-any');
+    $user->givePermissionTo('case_item_type.create');
+
+    actingAs($user)
+        ->get(
+            CaseItemTypeResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateCaseItemTypeRequestFactory::new()->create());
+
+    livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, CaseItemType::all());
+
+    assertDatabaseHas(CaseItemType::class, $request->toArray());
+});
