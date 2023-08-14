@@ -39,9 +39,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read User|null $assignedTo
- * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read Collection<int, \Assist\Case\Models\CaseUpdate> $caseUpdates
+ * @property-read Collection<int, CaseUpdate> $caseUpdates
  * @property-read int|null $case_updates_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
