@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\User;
+
 use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
@@ -65,3 +68,44 @@ test('EditCaseItemStatus requires valid data', function ($data, $errors) {
         'color not within enum' => [EditCaseItemStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
     ]
 );
+
+// Permission Tests
+
+test('EditCaseItemStatus is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    $caseItemStatus = CaseItemStatus::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseItemStatusResource::getUrl('edit', [
+                'record' => $caseItemStatus,
+            ])
+        )->assertForbidden();
+
+    livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
+        'record' => $caseItemStatus->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $user->givePermissionTo('case_item_status.view-any');
+    $user->givePermissionTo('case_item_status.*.update');
+
+    actingAs($user)
+        ->get(
+            CaseItemStatusResource::getUrl('edit', [
+                'record' => $caseItemStatus,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditCaseItemStatusRequestFactory::new()->create());
+
+    livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
+        'record' => $caseItemStatus->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertEquals($request['name'], $caseItemStatus->fresh()->name);
+});

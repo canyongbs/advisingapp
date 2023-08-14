@@ -1,10 +1,14 @@
 <?php
 
+use App\Models\User;
 use Assist\Case\Models\CaseItem;
 
+use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Assist\Case\Models\CaseItemStatus;
+use Assist\Case\Filament\Resources\CaseItemStatusResource;
 use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
 
 test('The correct details are displayed on the ListCaseItemStatus page', function () {
@@ -12,6 +16,8 @@ test('The correct details are displayed on the ListCaseItemStatus page', functio
         ->has(CaseItem::factory()->count(fake()->randomNumber(1)), 'caseItems')
         ->count(10)
         ->create();
+
+    asSuperAdmin();
 
     $component = livewire(ListCaseItemStatuses::class);
 
@@ -43,3 +49,21 @@ test('The correct details are displayed on the ListCaseItemStatus page', functio
 });
 
 // TODO: Sorting and Searching tests
+
+// Permission Tests
+
+test('ListCaseItemStatuses is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseItemStatusResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('case_item_status.view-any');
+
+    actingAs($user)
+        ->get(
+            CaseItemStatusResource::getUrl('index')
+        )->assertSuccessful();
+});
