@@ -6,11 +6,14 @@ use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Prospect\Database\Factories\ProspectSourceFactory;
 
 /**
  * Assist\Prospect\Models\ProspectSource
@@ -20,10 +23,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, \Assist\Prospect\Models\Prospect> $prospects
+ * @property-read Collection<int, Prospect> $prospects
  * @property-read int|null $prospects_count
  *
- * @method static \Assist\Prospect\Database\Factories\ProspectSourceFactory factory($count = null, $state = [])
+ * @method static ProspectSourceFactory factory($count = null, $state = [])
  * @method static Builder|ProspectSource newModelQuery()
  * @method static Builder|ProspectSource newQuery()
  * @method static Builder|ProspectSource onlyTrashed()
@@ -38,10 +41,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin Eloquent
  */
-class ProspectSource extends BaseModel
+class ProspectSource extends BaseModel implements Auditable
 {
     use HasUuids;
     use SoftDeletes;
+    use AuditableTrait;
 
     protected $fillable = [
         'name',

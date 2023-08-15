@@ -8,13 +8,16 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
 use Assist\Case\Models\CaseItem;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
@@ -49,10 +52,10 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property-read User|null $createdBy
  * @property-read Collection<int, EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
- * @property-read \Assist\Prospect\Models\ProspectSource $source
- * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read ProspectSource $source
+ * @property-read ProspectStatus $status
  *
- * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
+ * @method static ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()
@@ -85,10 +88,11 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  *
  * @mixin Eloquent
  */
-class Prospect extends BaseModel
+class Prospect extends BaseModel implements Auditable
 {
     use HasUuids;
     use SoftDeletes;
+    use AuditableTrait;
 
     protected $fillable = [
         'first_name',
