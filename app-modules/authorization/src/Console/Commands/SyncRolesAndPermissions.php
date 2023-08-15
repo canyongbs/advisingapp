@@ -40,7 +40,8 @@ class SyncRolesAndPermissions extends Command
     {
         Role::where('guard_name', 'web')
             ->where('name', '!=', 'authorization.super_admin')
-            ->cursor(function (Role $role) {
+            ->cursor()
+            ->each(function (Role $role) {
                 $this->syncPermissionFor('web', $role);
             });
     }
@@ -49,7 +50,8 @@ class SyncRolesAndPermissions extends Command
     {
         Role::where('guard_name', 'api')
             ->where('name', '!=', 'authorization.super_admin')
-            ->cursor(function (Role $role) {
+            ->cursor()
+            ->each(function (Role $role) {
                 $this->syncPermissionFor('api', $role);
             });
     }
@@ -97,13 +99,13 @@ class SyncRolesAndPermissions extends Command
         if (count($specificPermission) === 1 && $specificPermission[0] === '*') {
             $foundPermissions = Permission::where('name', 'like', "{$resource}.%")
                 ->where('guard_name', $permissionType)
-                ->pluck('id');
+                ->pluck('name');
         } else {
             $foundPermissions = collect($specificPermission)->map(function ($permission) use ($resource, $permissionType) {
                 return Permission::firstWhere([
                     'name' => "{$resource}.{$permission}",
                     'guard_name' => $permissionType,
-                ])->id;
+                ])->name;
             });
         }
 
