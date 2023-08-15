@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fa6e30d9e974e5ddb3ffc4e5a64e6e12",
+    "content-hash": "2c7d3c9518ca03f1a450e5bd1d889722",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -459,6 +459,41 @@
                     "Assist\\AssistDataModel\\Tests\\": "tests/",
                     "Assist\\AssistDataModel\\Database\\Factories\\": "database/factories/",
                     "Assist\\AssistDataModel\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/audit",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/audit",
+                "reference": "266bd34e0eb7dd0f2ce1414533c912ba90b1de2d"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Audit\\Providers\\AuditServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Audit\\": "src/",
+                    "Assist\\Audit\\Tests\\": "tests/",
+                    "Assist\\Audit\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Audit\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
