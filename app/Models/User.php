@@ -5,7 +5,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use Filament\Panel;
 use DateTimeInterface;
-use App\Traits\Auditable;
 use Assist\Case\Models\CaseItem;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -89,13 +89,13 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser
     use HasAdvancedFilter;
     use Notifiable;
     use SoftDeletes;
-    use Auditable;
     use HasRoleGroups {
         HasRoleGroups::roleGroups as traitRoleGroups;
     }
     use HasRolesWithPivot;
     use DefinesPermissions;
     use HasRelationships;
+    use HasUuids;
 
     public const TYPE_RADIO = [
         'local' => 'Local',

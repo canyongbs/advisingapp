@@ -19,8 +19,8 @@ class CreateCaseItemsTable extends Migration
             $table->unsignedBigInteger('status_id')->nullable();
             $table->unsignedBigInteger('type_id')->nullable();
             $table->unsignedBigInteger('priority_id')->nullable();
-            $table->unsignedBigInteger('assigned_to_id')->nullable();
-            $table->unsignedBigInteger('created_by_id')->nullable();
+            $table->uuid('assigned_to_id')->nullable();
+            $table->uuid('created_by_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

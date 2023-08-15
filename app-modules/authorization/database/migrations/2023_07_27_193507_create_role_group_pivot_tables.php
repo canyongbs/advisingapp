@@ -8,7 +8,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('role_group_user', function (Blueprint $table) {
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignUuid('user_id')->references('id')->on('users');
             $table->foreignId('role_group_id')->references('id')->on('role_groups');
             $table->timestamps();
         });
