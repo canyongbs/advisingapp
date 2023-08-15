@@ -6,10 +6,10 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateUsersTable extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->string('emplid')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable()->unique();

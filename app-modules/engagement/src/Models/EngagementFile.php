@@ -2,43 +2,54 @@
 
 namespace Assist\Engagement\Models;
 
+use Eloquent;
 use App\Models\BaseModel;
+use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Assist\Prospect\Models\Prospect;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\Collection;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 /**
  * Assist\Engagement\Models\EngagementFile
  *
  * @property string $id
  * @property string|null $description
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read MediaCollection<int, Media> $media
  * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Prospect> $prospects
+ * @property-read Collection<int, Prospect> $prospects
  * @property-read int|null $prospects_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Student> $students
+ * @property-read Collection<int, Student> $students
  * @property-read int|null $students_count
  *
  * @method static \Assist\Engagement\Database\Factories\EngagementFileFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile query()
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereUpdatedAt($value)
+ * @method static Builder|EngagementFile newModelQuery()
+ * @method static Builder|EngagementFile newQuery()
+ * @method static Builder|EngagementFile query()
+ * @method static Builder|EngagementFile whereCreatedAt($value)
+ * @method static Builder|EngagementFile whereDescription($value)
+ * @method static Builder|EngagementFile whereId($value)
+ * @method static Builder|EngagementFile whereUpdatedAt($value)
  *
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
-class EngagementFile extends BaseModel implements HasMedia
+class EngagementFile extends BaseModel implements HasMedia, Auditable
 {
     use HasUuids;
     use InteractsWithMedia;
+    use AuditableTrait;
 
     protected $fillable = [
         'description',

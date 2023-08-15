@@ -8,10 +8,12 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
 use Assist\Case\Models\CaseItem;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -38,12 +40,14 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property string|null $address_2
  * @property string|null $birthdate
  * @property string|null $hsgrad
- * @property int|null $assigned_to_id
- * @property int|null $created_by_id
+ * @property string|null $assigned_to_id
+ * @property string|null $created_by_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read User|null $assignedTo
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read Collection<int, CaseItem> $cases
  * @property-read int|null $cases_count
  * @property-read User|null $createdBy
@@ -85,10 +89,11 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  *
  * @mixin Eloquent
  */
-class Prospect extends BaseModel
+class Prospect extends BaseModel implements Auditable
 {
     use HasUuids;
     use SoftDeletes;
+    use AuditableTrait;
 
     protected $fillable = [
         'first_name',

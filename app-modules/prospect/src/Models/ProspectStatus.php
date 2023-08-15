@@ -6,9 +6,11 @@ use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -21,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read Collection<int, \Assist\Prospect\Models\Prospect> $prospects
  * @property-read int|null $prospects_count
  *
@@ -40,10 +44,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin Eloquent
  */
-class ProspectStatus extends BaseModel
+class ProspectStatus extends BaseModel implements Auditable
 {
     use HasUuids;
     use SoftDeletes;
+    use AuditableTrait;
 
     protected $fillable = [
         'name',

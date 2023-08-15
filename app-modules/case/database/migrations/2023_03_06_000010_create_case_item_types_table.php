@@ -9,7 +9,7 @@ class CreateCaseItemTypesTable extends Migration
     public function up(): void
     {
         Schema::create('case_item_types', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();

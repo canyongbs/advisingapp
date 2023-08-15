@@ -6,18 +6,25 @@ use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseQuality
  *
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
  * @property-read int|null $knowledge_base_items_count
  *
  * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
@@ -35,25 +42,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @mixin Eloquent
  */
-class KnowledgeBaseQuality extends BaseModel
+class KnowledgeBaseQuality extends BaseModel implements Auditable
 {
     use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
 
     protected $fillable = [
         'name',
     ];
 
-    public $orderable = [
-        'id',
-        'name',
-    ];
-
-    public $filterable = [
-        'id',
-        'name',
-    ];
-
-    public function knowledgeBaseItems()
+    public function knowledgeBaseItems(): HasMany
     {
         return $this->hasMany(KnowledgeBaseItem::class, 'quality_id');
     }

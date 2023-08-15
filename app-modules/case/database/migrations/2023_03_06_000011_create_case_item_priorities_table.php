@@ -9,7 +9,7 @@ class CreateCaseItemPrioritiesTable extends Migration
     public function up(): void
     {
         Schema::create('case_item_priorities', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->integer('order');
             $table->timestamps();

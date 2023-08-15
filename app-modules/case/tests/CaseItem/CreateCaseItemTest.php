@@ -80,22 +80,22 @@ test('CreateCaseItem requires valid data', function ($data, $errors, $setup = nu
         ],
         'institution_id missing' => [CreateCaseItemRequestFactory::new()->without('institution_id'), ['institution_id' => 'required']],
         'institution_id does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['institution_id' => 99]),
+            CreateCaseItemRequestFactory::new()->state(['institution_id' => fake()->uuid()]),
             ['institution_id' => 'exists'],
         ],
         'status_id missing' => [CreateCaseItemRequestFactory::new()->without('status_id'), ['status_id' => 'required']],
         'status_id does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['status_id' => 99]),
+            CreateCaseItemRequestFactory::new()->state(['status_id' => fake()->uuid()]),
             ['status_id' => 'exists'],
         ],
         'priority_id missing' => [CreateCaseItemRequestFactory::new()->without('priority_id'), ['priority_id' => 'required']],
         'priority_id does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['priority_id' => 99]),
+            CreateCaseItemRequestFactory::new()->state(['priority_id' => fake()->uuid()]),
             ['priority_id' => 'exists'],
         ],
         'type_id missing' => [CreateCaseItemRequestFactory::new()->without('type_id'), ['type_id' => 'required']],
         'type_id does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['type_id' => 99]),
+            CreateCaseItemRequestFactory::new()->state(['type_id' => fake()->uuid()]),
             ['type_id' => 'exists'],
         ],
         'close_details is not a string' => [CreateCaseItemRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],

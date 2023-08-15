@@ -83,22 +83,22 @@ test('EditCaseItem requires valid data', function ($data, $errors) {
     [
         'institution_id missing' => [EditCaseItemRequestFactory::new()->state(['institution_id' => null]), ['institution_id' => 'required']],
         'institution_id does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['institution_id' => 99]),
+            EditCaseItemRequestFactory::new()->state(['institution_id' => fake()->uuid()]),
             ['institution_id' => 'exists'],
         ],
         'status_id missing' => [EditCaseItemRequestFactory::new()->state(['status_id' => null]), ['status_id' => 'required']],
         'status_id does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['status_id' => 99]),
+            EditCaseItemRequestFactory::new()->state(['status_id' => fake()->uuid()]),
             ['status_id' => 'exists'],
         ],
         'priority_id missing' => [EditCaseItemRequestFactory::new()->state(['priority_id' => null]), ['priority_id' => 'required']],
         'priority_id does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['priority_id' => 99]),
+            EditCaseItemRequestFactory::new()->state(['priority_id' => fake()->uuid()]),
             ['priority_id' => 'exists'],
         ],
         'type_id missing' => [EditCaseItemRequestFactory::new()->state(['type_id' => null]), ['type_id' => 'required']],
         'type_id does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['type_id' => 99]),
+            EditCaseItemRequestFactory::new()->state(['type_id' => fake()->uuid()]),
             ['type_id' => 'exists'],
         ],
         'close_details is not a string' => [EditCaseItemRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],

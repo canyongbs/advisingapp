@@ -28,8 +28,8 @@ class CreateProspectsTable extends Migration
             $table->date('birthdate')->nullable();
             $table->string('hsgrad')->nullable();
             // TODO Determine if there can be more than one assignment to a prospect
-            $table->foreignId('assigned_to_id')->nullable()->references('id')->on('users');
-            $table->foreignId('created_by_id')->nullable()->references('id')->on('users');
+            $table->foreignUuid('assigned_to_id')->nullable()->references('id')->on('users');
+            $table->foreignUuid('created_by_id')->nullable()->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });

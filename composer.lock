@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "063f606a7037ecac98a09b574a45d1cf",
+    "content-hash": "8c2ab3ca7646ece6447a1a2c2f09f7ac",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -470,6 +470,42 @@
             }
         },
         {
+            "name": "canyon-gbs/audit",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/audit",
+                "reference": "7bbe4b03590fa7aa663ebd8f777b449b5803674f"
+            },
+            "require": {
+                "filament/filament": "^3.0.0",
+                "owen-it/laravel-auditing": "^13.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Audit\\Providers\\AuditServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Audit\\": "src/",
+                    "Assist\\Audit\\Tests\\": "tests/",
+                    "Assist\\Audit\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Audit\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/authorization",
             "version": "1.0",
             "dist": {
@@ -511,10 +547,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/case",
-                "reference": "40dfb6d1b5e13ea604d34f18c8bfb2708a510911"
+                "reference": "43fed942572cfc9dbd97d481d527a145061d446e"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.0.18"
             },
             "type": "library",
             "extra": {
@@ -5353,6 +5389,94 @@
                 }
             ],
             "time": "2023-02-08T01:06:31+00:00"
+        },
+        {
+            "name": "owen-it/laravel-auditing",
+            "version": "v13.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/owen-it/laravel-auditing.git",
+                "reference": "8b9c5bd7d6e79ed63376a86b1861ab1606215801"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/8b9c5bd7d6e79ed63376a86b1861ab1606215801",
+                "reference": "8b9c5bd7d6e79ed63376a86b1861ab1606215801",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/console": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/database": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/filesystem": "^7.0|^8.0|^9.0|^10.0",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "laravel/legacy-factories": "*",
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "^5.0|^6.0|^7.0|^8.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "suggest": {
+                "irazasyed/larasupport": "Needed to publish the package configuration in Lumen"
+            },
+            "type": "package",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "v13-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "OwenIt\\Auditing\\AuditingServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OwenIt\\Auditing\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Antério Vieira",
+                    "email": "anteriovieira@gmail.com"
+                },
+                {
+                    "name": "Raphael França",
+                    "email": "raphaelfrancabsb@gmail.com"
+                },
+                {
+                    "name": "Morten D. Hansen",
+                    "email": "morten@visia.dk"
+                }
+            ],
+            "description": "Audit changes of your Eloquent models in Laravel/Lumen",
+            "homepage": "http://laravel-auditing.com",
+            "keywords": [
+                "Accountability",
+                "Audit",
+                "auditing",
+                "changes",
+                "eloquent",
+                "history",
+                "laravel",
+                "log",
+                "logging",
+                "lumen",
+                "observer",
+                "record",
+                "revision",
+                "tracking"
+            ],
+            "support": {
+                "issues": "https://github.com/owen-it/laravel-auditing/issues",
+                "source": "https://github.com/owen-it/laravel-auditing"
+            },
+            "time": "2023-06-19T14:51:52+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
