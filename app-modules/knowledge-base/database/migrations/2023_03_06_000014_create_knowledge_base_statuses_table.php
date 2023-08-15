@@ -9,7 +9,7 @@ class CreateKnowledgeBaseStatusesTable extends Migration
     public function up(): void
     {
         Schema::create('knowledge_base_statuses', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();

@@ -5,22 +5,28 @@ namespace Assist\Case\Models;
 use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Assist\Case\Models\CaseUpdate
  *
- * @property int $id
- * @property int|null $case_id
+ * @property string $id
+ * @property string|null $case_id
  * @property string $update
  * @property bool $internal
  * @property CaseUpdateDirection $direction
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \Assist\Case\Models\CaseItem|null $case
  *
  * @method static \Assist\Case\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
@@ -41,9 +47,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin Eloquent
  */
-class CaseUpdate extends BaseModel
+class CaseUpdate extends BaseModel implements Auditable
 {
     use SoftDeletes;
+    use HasUuids;
+    use AuditableTrait;
 
     protected $fillable = [
         'case_id',

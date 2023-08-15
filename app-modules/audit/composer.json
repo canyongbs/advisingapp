@@ -1,0 +1,27 @@
+{
+  "name": "canyon-gbs/audit",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0.0",
+    "owen-it/laravel-auditing": "^13.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Audit\\": "src/",
+      "Assist\\Audit\\Tests\\": "tests/",
+      "Assist\\Audit\\Database\\Factories\\": "database/factories/",
+      "Assist\\Audit\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Audit\\Providers\\AuditServiceProvider"
+      ]
+    }
+  }
+}

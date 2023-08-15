@@ -10,10 +10,12 @@ use App\Models\Institution;
 use Illuminate\Support\Carbon;
 use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Assist\Case\Database\Factories\CaseItemFactory;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,32 +23,34 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Assist\Case\Models\CaseItem
  *
- * @property int $id
+ * @property string $id
  * @property int $casenumber
  * @property string|null $respondent_type
  * @property string|null $respondent_id
  * @property string|null $close_details
  * @property string|null $res_details
- * @property int|null $institution_id
- * @property int|null $status_id
- * @property int|null $type_id
- * @property int|null $priority_id
- * @property int|null $assigned_to_id
- * @property int|null $created_by_id
+ * @property string|null $institution_id
+ * @property string|null $status_id
+ * @property string|null $type_id
+ * @property string|null $priority_id
+ * @property string|null $assigned_to_id
+ * @property string|null $created_by_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read User|null $assignedTo
- * @property-read Collection<int, CaseUpdate> $caseUpdates
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read Collection<int, \Assist\Case\Models\CaseUpdate> $caseUpdates
  * @property-read int|null $case_updates_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
- * @property-read CaseItemPriority|null $priority
- * @property-read Model|Eloquent $respondent
- * @property-read CaseItemStatus|null $status
- * @property-read CaseItemType|null $type
+ * @property-read \Assist\Case\Models\CaseItemPriority|null $priority
+ * @property-read Model|\Eloquent $respondent
+ * @property-read \Assist\Case\Models\CaseItemStatus|null $status
+ * @property-read \Assist\Case\Models\CaseItemType|null $type
  *
- * @method static CaseItemFactory factory($count = null, $state = [])
+ * @method static \Assist\Case\Database\Factories\CaseItemFactory factory($count = null, $state = [])
  * @method static Builder|CaseItem newModelQuery()
  * @method static Builder|CaseItem newQuery()
  * @method static Builder|CaseItem onlyTrashed()
@@ -71,10 +75,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin Eloquent
  */
-class CaseItem extends BaseModel
+class CaseItem extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use PowerJoins;
+    use AuditableTrait;
+    use HasUuids;
 
     protected $fillable = [
         'casenumber',

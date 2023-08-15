@@ -7,26 +7,31 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\Institution;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseItem
  *
- * @property int $id
+ * @property string $id
  * @property string $question
  * @property bool $public
  * @property string|null $solution
  * @property string|null $notes
- * @property int|null $quality_id
- * @property int|null $status_id
- * @property int|null $category_id
+ * @property string|null $quality_id
+ * @property string|null $status_id
+ * @property string|null $category_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
  * @property-read Collection<int, Institution> $institution
  * @property-read int|null $institution_count
@@ -54,9 +59,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *
  * @mixin Eloquent
  */
-class KnowledgeBaseItem extends BaseModel
+class KnowledgeBaseItem extends BaseModel implements Auditable
 {
     use SoftDeletes;
+    use AuditableTrait;
+    use HasUuids;
 
     protected $casts = [
         'public' => 'boolean',

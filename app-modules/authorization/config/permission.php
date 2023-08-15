@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * TODO: This will not currently work as expected because the package does not populate up config files
+ * Moved this to the config root of the app for now
+ * https://github.com/InterNACHI/modular/issues/43
+ */
+
 return [
     'models' => [
         /*
@@ -137,7 +143,7 @@ return [
          * When permissions or roles are updated the cache is flushed automatically.
          */
 
-        'expiration_time' => \DateInterval::createFromDateString('24 hours'),
+        'expiration_time' => DateInterval::createFromDateString('24 hours'),
 
         /*
          * The cache key used to store all permissions.

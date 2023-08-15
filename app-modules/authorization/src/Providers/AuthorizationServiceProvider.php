@@ -25,6 +25,8 @@ class AuthorizationServiceProvider extends ServiceProvider
         $this->app->singleton(AuthorizationRoleRegistry::class, function ($app) {
             return new AuthorizationRoleRegistry();
         });
+
+        app('config')->set('permission', require base_path('app-modules/authorization/config/permission.php'));
     }
 
     public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
