@@ -6,9 +6,11 @@ use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Case\Database\Factories\CaseItemPriorityFactory;
@@ -41,10 +43,11 @@ use Assist\Case\Database\Factories\CaseItemPriorityFactory;
  *
  * @mixin Eloquent
  */
-class CaseItemPriority extends BaseModel
+class CaseItemPriority extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use HasUuids;
+    use AuditableTrait;
 
     protected $fillable = [
         'name',
