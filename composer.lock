@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c7d3c9518ca03f1a450e5bd1d889722",
+    "content-hash": "8c2ab3ca7646ece6447a1a2c2f09f7ac",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -475,10 +475,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/audit",
-                "reference": "266bd34e0eb7dd0f2ce1414533c912ba90b1de2d"
+                "reference": "7bbe4b03590fa7aa663ebd8f777b449b5803674f"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.0.0",
+                "owen-it/laravel-auditing": "^13.5"
             },
             "type": "library",
             "extra": {
