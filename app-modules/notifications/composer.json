@@ -1,0 +1,26 @@
+{
+  "name": "canyon-gbs/notifications",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Notifications\\": "src/",
+      "Assist\\Notifications\\Tests\\": "tests/",
+      "Assist\\Notifications\\Database\\Factories\\": "database/factories/",
+      "Assist\\Notifications\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Notifications\\Providers\\NotificationsServiceProvider"
+      ]
+    }
+  }
+}
