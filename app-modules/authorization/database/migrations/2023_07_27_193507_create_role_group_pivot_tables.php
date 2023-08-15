@@ -9,13 +9,13 @@ return new class () extends Migration {
     {
         Schema::create('role_group_user', function (Blueprint $table) {
             $table->foreignUuid('user_id')->references('id')->on('users');
-            $table->foreignId('role_group_id')->references('id')->on('role_groups');
+            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
             $table->timestamps();
         });
 
         Schema::create('role_role_group', function (Blueprint $table) {
-            $table->foreignId('role_id')->references('id')->on('roles');
-            $table->foreignId('role_group_id')->references('id')->on('role_groups');
+            $table->foreignUuid('role_id')->references('id')->on('roles');
+            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
             $table->timestamps();
         });
     }

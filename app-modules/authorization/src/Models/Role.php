@@ -3,13 +3,16 @@
 namespace Assist\Authorization\Models;
 
 use Eloquent;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Role as SpatieRole;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
+use Assist\Authorization\Database\Factories\RoleFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
@@ -24,18 +27,18 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @property Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, RoleGroup> $roleGroups
  * @property-read int|null $role_groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, RoleGroup> $traitRoleGroups
  * @property-read int|null $trait_role_groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read int|null $users_count
  *
  * @method static Builder|Role api()
- * @method static \Assist\Authorization\Database\Factories\RoleFactory factory($count = null, $state = [])
+ * @method static RoleFactory factory($count = null, $state = [])
  * @method static Builder|Role newModelQuery()
  * @method static Builder|Role newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions)
+ * @method static Builder|Role permission($permissions)
  * @method static Builder|Role query()
  * @method static Builder|Role superAdmin()
  * @method static Builder|Role web()
@@ -52,8 +55,9 @@ class Role extends SpatieRole
     use HasFactory;
     use DefinesPermissions;
     use HasRoleGroups {
-        roleGroups as traitRoleGroups;
+        HasRoleGroups::roleGroups as traitRoleGroups;
     }
+    use HasUuids;
 
     public function roleGroups(): BelongsToMany
     {
