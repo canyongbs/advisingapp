@@ -80,7 +80,7 @@ test('CreateCaseItem requires valid data', function ($data, $errors, $setup = nu
         ],
         'institution_id missing' => [CreateCaseItemRequestFactory::new()->without('institution_id'), ['institution_id' => 'required']],
         'institution_id does not exist' => [
-            CreateCaseItemRequestFactory::new()->state(['institution_id' => 99]),
+            CreateCaseItemRequestFactory::new()->state(['institution_id' => fake()->uuid()]),
             ['institution_id' => 'exists'],
         ],
         'status_id missing' => [CreateCaseItemRequestFactory::new()->without('status_id'), ['status_id' => 'required']],

@@ -10,7 +10,7 @@ class CreateInstitutionKnowledgeBaseItemPivotTable extends Migration
     {
         Schema::create('institution_knowledge_base_item', function (Blueprint $table) {
             $table->foreignUuid('knowledge_base_item_id')->references('id')->on('knowledge_base_items');
-            $table->foreignId('institution_id')->references('id')->on('institutions');
+            $table->foreignUuid('institution_id')->references('id')->on('institutions');
         });
     }
 }

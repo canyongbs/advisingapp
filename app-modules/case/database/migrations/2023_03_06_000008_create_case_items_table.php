@@ -15,7 +15,7 @@ class CreateCaseItemsTable extends Migration
             $table->string('respondent_id')->nullable();
             $table->longText('close_details')->nullable();
             $table->longText('res_details')->nullable();
-            $table->unsignedBigInteger('institution_id')->nullable();
+            $table->uuid('institution_id')->nullable();
             $table->uuid('status_id')->nullable();
             $table->uuid('type_id')->nullable();
             $table->uuid('priority_id')->nullable();

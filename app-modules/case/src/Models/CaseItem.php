@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $respondent_id
  * @property string|null $close_details
  * @property string|null $res_details
- * @property int|null $institution_id
+ * @property string|null $institution_id
  * @property string|null $status_id
  * @property string|null $type_id
  * @property string|null $priority_id

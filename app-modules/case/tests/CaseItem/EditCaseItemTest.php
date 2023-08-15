@@ -83,7 +83,7 @@ test('EditCaseItem requires valid data', function ($data, $errors) {
     [
         'institution_id missing' => [EditCaseItemRequestFactory::new()->state(['institution_id' => null]), ['institution_id' => 'required']],
         'institution_id does not exist' => [
-            EditCaseItemRequestFactory::new()->state(['institution_id' => 99]),
+            EditCaseItemRequestFactory::new()->state(['institution_id' => fake()->uuid()]),
             ['institution_id' => 'exists'],
         ],
         'status_id missing' => [EditCaseItemRequestFactory::new()->state(['status_id' => null]), ['status_id' => 'required']],
