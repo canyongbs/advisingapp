@@ -5,7 +5,6 @@ namespace App\Models;
 use Eloquent;
 use DateTimeInterface;
 use Illuminate\Support\Carbon;
-use App\Support\HasAdvancedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -21,7 +20,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @method static Builder|Institution advancedFilter($data)
  * @method static \Database\Factories\InstitutionFactory factory($count = null, $state = [])
  * @method static Builder|Institution newModelQuery()
  * @method static Builder|Institution newQuery()
@@ -41,7 +39,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
  */
 class Institution extends BaseModel
 {
-    use HasAdvancedFilter;
     use SoftDeletes;
     use HasUuids;
 
