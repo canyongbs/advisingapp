@@ -12,23 +12,24 @@ use Assist\Case\Enums\CaseUpdateDirection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Assist\Case\Database\Factories\CaseUpdateFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Assist\Case\Models\CaseUpdate
  *
- * @property int $id
- * @property int|null $case_id
+ * @property string $id
+ * @property string|null $case_id
  * @property string $update
  * @property bool $internal
  * @property CaseUpdateDirection $direction
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read CaseItem|null $case
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Assist\Case\Models\CaseItem|null $case
  *
- * @method static CaseUpdateFactory factory($count = null, $state = [])
+ * @method static \Assist\Case\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
  * @method static Builder|CaseUpdate newModelQuery()
  * @method static Builder|CaseUpdate newQuery()
  * @method static Builder|CaseUpdate onlyTrashed()

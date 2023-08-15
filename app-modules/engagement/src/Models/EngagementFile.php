@@ -16,7 +16,6 @@ use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Assist\Engagement\Database\Factories\EngagementFileFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 /**
@@ -26,6 +25,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
  * @property string|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read Collection<int, Prospect> $prospects
@@ -33,7 +34,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
  * @property-read Collection<int, Student> $students
  * @property-read int|null $students_count
  *
- * @method static EngagementFileFactory factory($count = null, $state = [])
+ * @method static \Assist\Engagement\Database\Factories\EngagementFileFactory factory($count = null, $state = [])
  * @method static Builder|EngagementFile newModelQuery()
  * @method static Builder|EngagementFile newQuery()
  * @method static Builder|EngagementFile query()

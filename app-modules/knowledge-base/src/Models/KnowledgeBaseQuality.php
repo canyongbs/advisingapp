@@ -13,20 +13,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseQuality
  *
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, KnowledgeBaseItem> $knowledgeBaseItems
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
  * @property-read int|null $knowledge_base_items_count
  *
- * @method static KnowledgeBaseQualityFactory factory($count = null, $state = [])
+ * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
  * @method static Builder|KnowledgeBaseQuality newModelQuery()
  * @method static Builder|KnowledgeBaseQuality newQuery()
  * @method static Builder|KnowledgeBaseQuality onlyTrashed()

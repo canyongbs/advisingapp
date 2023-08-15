@@ -17,7 +17,6 @@ use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
@@ -41,21 +40,23 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property string|null $address_2
  * @property string|null $birthdate
  * @property string|null $hsgrad
- * @property int|null $assigned_to_id
- * @property int|null $created_by_id
+ * @property string|null $assigned_to_id
+ * @property string|null $created_by_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read User|null $assignedTo
+ * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read Collection<int, CaseItem> $cases
  * @property-read int|null $cases_count
  * @property-read User|null $createdBy
  * @property-read Collection<int, EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
- * @property-read ProspectSource $source
- * @property-read ProspectStatus $status
+ * @property-read \Assist\Prospect\Models\ProspectSource $source
+ * @property-read \Assist\Prospect\Models\ProspectStatus $status
  *
- * @method static ProspectFactory factory($count = null, $state = [])
+ * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()

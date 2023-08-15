@@ -11,25 +11,24 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Spatie\Permission\Models\Permission as SpatiePermission;
-use Assist\Authorization\Database\Factories\PermissionFactory;
 
 /**
  * Assist\Authorization\Models\Permission
  *
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $guard_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, SpatiePermission> $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
  * @property-read int|null $users_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder|Permission api()
- * @method static PermissionFactory factory($count = null, $state = [])
+ * @method static \Assist\Authorization\Database\Factories\PermissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission permission($permissions)

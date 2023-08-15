@@ -28,7 +28,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
 /**
  * App\Models\User
  *
- * @property int $id
+ * @property string $id
  * @property string|null $emplid
  * @property string|null $name
  * @property string|null $email
@@ -48,7 +48,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @property-read mixed $type_label
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
  * @property-read int|null $role_groups_count
