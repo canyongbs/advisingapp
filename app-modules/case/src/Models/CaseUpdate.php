@@ -5,9 +5,12 @@ namespace Assist\Case\Models;
 use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\Case\Database\Factories\CaseUpdateFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -18,12 +21,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $update
  * @property bool $internal
  * @property CaseUpdateDirection $direction
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Assist\Case\Models\CaseItem|null $case
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read CaseItem|null $case
  *
- * @method static \Assist\Case\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
+ * @method static CaseUpdateFactory factory($count = null, $state = [])
  * @method static Builder|CaseUpdate newModelQuery()
  * @method static Builder|CaseUpdate newQuery()
  * @method static Builder|CaseUpdate onlyTrashed()
@@ -44,6 +47,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CaseUpdate extends BaseModel
 {
     use SoftDeletes;
+    use HasUuids;
 
     protected $fillable = [
         'case_id',

@@ -9,7 +9,9 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Case\Database\Factories\CaseItemStatusFactory;
 
 /**
  * Assist\Case\Models\CaseItemStatus
@@ -20,10 +22,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, \Assist\Case\Models\CaseItem> $caseItems
+ * @property-read Collection<int, CaseItem> $caseItems
  * @property-read int|null $case_items_count
  *
- * @method static \Assist\Case\Database\Factories\CaseItemStatusFactory factory($count = null, $state = [])
+ * @method static CaseItemStatusFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemStatus newModelQuery()
  * @method static Builder|CaseItemStatus newQuery()
  * @method static Builder|CaseItemStatus onlyTrashed()
@@ -42,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class CaseItemStatus extends BaseModel
 {
     use SoftDeletes;
+    use HasUuids;
 
     protected $fillable = [
         'name',

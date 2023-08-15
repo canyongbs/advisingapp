@@ -10,10 +10,13 @@ use App\Models\Institution;
 use Illuminate\Support\Carbon;
 use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Assist\Case\Database\Factories\CaseItemFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -71,10 +74,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin Eloquent
  */
-class CaseItem extends BaseModel
+class CaseItem extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use PowerJoins;
+    use AuditableTrait;
+    use HasUuids;
 
     protected $fillable = [
         'casenumber',
