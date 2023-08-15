@@ -5,7 +5,7 @@
 	"version": "1.0",
 	"license": "proprietary",
 	"require": {
-		"filament/filament": "^3.0.18"
+		"filament/filament": "^3.0-stable"
 	},
 	"autoload": {
 		"psr-4": {
