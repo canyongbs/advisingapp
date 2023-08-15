@@ -114,7 +114,7 @@ return [
     |
     */
 
-    'timestamps' => false,
+    'timestamps' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -164,5 +164,5 @@ return [
     |
     */
 
-    'console' => false,
+    'console' => true,
 ];
