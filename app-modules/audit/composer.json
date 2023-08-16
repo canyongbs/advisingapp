@@ -6,7 +6,8 @@
   "license": "proprietary",
   "require": {
     "filament/filament": "^3.0-stable",
-    "owen-it/laravel-auditing": "^13.5"
+    "owen-it/laravel-auditing": "^13.5",
+    "spatie/laravel-settings": "^3.2-stable"
   },
   "autoload": {
     "psr-4": {
