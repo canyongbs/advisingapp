@@ -13,8 +13,8 @@ use Assist\Case\Enums\CaseUpdateDirection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Case\Database\Factories\CaseUpdateFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**

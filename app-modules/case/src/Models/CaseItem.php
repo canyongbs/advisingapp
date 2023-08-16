@@ -14,10 +14,10 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Case\Database\Factories\CaseItemFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Assist\Case\Database\Factories\CaseItemFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 

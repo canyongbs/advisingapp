@@ -9,7 +9,6 @@ use DateTimeInterface;
 use Assist\Case\Models\CaseItem;
 use OwenIt\Auditing\Models\Audit;
 use App\Support\HasAdvancedFilter;
-use Database\Factories\UserFactory;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
@@ -51,7 +50,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Collection<int, UserAlert> $alerts
+ * @property-read Collection<int, \App\Models\UserAlert> $alerts
  * @property-read int|null $alerts_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
@@ -72,7 +71,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  *
  * @method static Builder|User admins()
  * @method static Builder|User advancedFilter($data)
- * @method static UserFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User onlyTrashed()

@@ -16,8 +16,8 @@ use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Assist\Authorization\Database\Factories\RoleFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * Assist\Authorization\Models\Role

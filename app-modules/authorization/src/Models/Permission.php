@@ -10,9 +10,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Authorization\Database\Factories\PermissionFactory;
 
 /**

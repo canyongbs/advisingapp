@@ -4,8 +4,8 @@ namespace Assist\Audit\Models\Concerns;
 
 use Assist\Audit\Overrides\MorphToMany;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Assist\Audit\Overrides\BelongsToMany;
+use Illuminate\Database\Eloquent\Builder;
 
 trait AuditableManyToMany
 {
