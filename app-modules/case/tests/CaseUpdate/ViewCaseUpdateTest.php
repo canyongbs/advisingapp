@@ -1,8 +1,13 @@
 <?php
 
+use App\Models\User;
+
 use function Tests\asSuperAdmin;
 
 use Assist\Case\Models\CaseUpdate;
+
+use function Pest\Laravel\actingAs;
+
 use Assist\Case\Filament\Resources\CaseUpdateResource;
 
 test('The correct details are displayed on the ViewCaseUpdate page', function () {
@@ -27,4 +32,29 @@ test('The correct details are displayed on the ViewCaseUpdate page', function ()
                 $caseItemUpdate->update,
             ]
         );
+});
+
+// Permission Tests
+
+test('ViewCaseUpdate is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    $caseUpdate = CaseUpdate::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseUpdateResource::getUrl('view', [
+                'record' => $caseUpdate,
+            ])
+        )->assertForbidden();
+
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.*.view');
+
+    actingAs($user)
+        ->get(
+            CaseUpdateResource::getUrl('view', [
+                'record' => $caseUpdate,
+            ])
+        )->assertSuccessful();
 });

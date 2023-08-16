@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\User;
+
 use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Assist\Case\Models\CaseItemPriority;
@@ -48,3 +51,36 @@ test('CreateCaseItemPriority requires valid data', function ($data, $errors) {
         'order not a number' => [CreateCaseItemPriorityRequestFactory::new()->state(['order' => 'a']), ['order' => 'numeric']],
     ]
 );
+
+// Permission Tests
+
+test('CreateCaseItemPriority is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseItemPriorityResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
+        ->assertForbidden();
+
+    $user->givePermissionTo('case_item_priority.view-any');
+    $user->givePermissionTo('case_item_priority.create');
+
+    actingAs($user)
+        ->get(
+            CaseItemPriorityResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateCaseItemPriorityRequestFactory::new()->create());
+
+    livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, CaseItemPriority::all());
+
+    assertDatabaseHas(CaseItemPriority::class, $request->toArray());
+});

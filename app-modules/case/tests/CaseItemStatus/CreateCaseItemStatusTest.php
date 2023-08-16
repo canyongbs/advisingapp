@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\User;
+
 use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
@@ -49,3 +52,36 @@ test('CreateCaseItemStatus requires valid data', function ($data, $errors) {
         'color not within enum' => [CreateCaseItemStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
     ]
 );
+
+// Permission Tests
+
+test('CreateCaseItemStatus is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseItemStatusResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)
+        ->assertForbidden();
+
+    $user->givePermissionTo('case_item_status.view-any');
+    $user->givePermissionTo('case_item_status.create');
+
+    actingAs($user)
+        ->get(
+            CaseItemStatusResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateCaseItemStatusRequestFactory::new()->create());
+
+    livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, CaseItemStatus::all());
+
+    assertDatabaseHas(CaseItemStatus::class, $request->toArray());
+});

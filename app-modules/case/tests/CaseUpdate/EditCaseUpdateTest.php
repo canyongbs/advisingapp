@@ -1,9 +1,12 @@
 <?php
 
+use App\Models\User;
+
 use function Tests\asSuperAdmin;
 
 use Assist\Case\Models\CaseUpdate;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
@@ -66,3 +69,47 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
         'internal not a boolean' => [EditCaseUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
     ]
 );
+
+// Permission Tests
+
+test('EditCaseUpdate is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    $caseUpdate = CaseUpdate::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseUpdateResource::getUrl('edit', [
+                'record' => $caseUpdate,
+            ])
+        )->assertForbidden();
+
+    livewire(CaseUpdateResource\Pages\EditCaseUpdate::class, [
+        'record' => $caseUpdate->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $user->givePermissionTo('case_update.view-any');
+    $user->givePermissionTo('case_update.*.update');
+
+    actingAs($user)
+        ->get(
+            CaseUpdateResource::getUrl('edit', [
+                'record' => $caseUpdate,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditCaseUpdateRequestFactory::new()->create());
+
+    livewire(CaseUpdateResource\Pages\EditCaseUpdate::class, [
+        'record' => $caseUpdate->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
+
+    expect(CaseUpdate::first()->case->id)
+        ->toEqual($request->get('case_id'));
+});

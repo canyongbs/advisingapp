@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\User;
+
 use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
 
 use Assist\Case\Models\CaseItemType;
 
@@ -59,3 +62,44 @@ test('EditCaseItemType requires valid data', function ($data, $errors) {
         'name not a string' => [EditCaseItemTypeRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
     ]
 );
+
+// Permission Tests
+
+test('EditCaseItemType is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    $caseItemType = CaseItemType::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseItemTypeResource::getUrl('edit', [
+                'record' => $caseItemType,
+            ])
+        )->assertForbidden();
+
+    livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
+        'record' => $caseItemType->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $user->givePermissionTo('case_item_type.view-any');
+    $user->givePermissionTo('case_item_type.*.update');
+
+    actingAs($user)
+        ->get(
+            CaseItemTypeResource::getUrl('edit', [
+                'record' => $caseItemType,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditCaseItemTypeRequestFactory::new()->create());
+
+    livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
+        'record' => $caseItemType->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertEquals($request['name'], $caseItemType->fresh()->name);
+});

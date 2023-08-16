@@ -1,11 +1,17 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Str;
 use Assist\Case\Models\CaseItem;
+
+use function Tests\asSuperAdmin;
+
 use Assist\Case\Models\CaseUpdate;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use Assist\Case\Filament\Resources\CaseUpdateResource;
 use Assist\Case\Filament\Resources\CaseUpdateResource\Pages\ListCaseUpdates;
 
 test('The correct details are displayed on the ListCaseUpdate page', function () {
@@ -13,6 +19,8 @@ test('The correct details are displayed on the ListCaseUpdate page', function ()
         ->for(CaseItem::factory(), 'case')
         ->count(10)
         ->create();
+
+    asSuperAdmin();
 
     $component = livewire(ListCaseUpdates::class);
 
@@ -61,3 +69,21 @@ test('The correct details are displayed on the ListCaseUpdate page', function ()
 });
 
 // TODO: Sorting and Searching tests
+
+// Permission Tests
+
+test('ListCaseUpdates is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            CaseUpdateResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('case_update.view-any');
+
+    actingAs($user)
+        ->get(
+            CaseUpdateResource::getUrl('index')
+        )->assertSuccessful();
+});
