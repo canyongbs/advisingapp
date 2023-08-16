@@ -17,7 +17,8 @@ class CreateAuditsTable extends Migration
             $table->bigIncrements('id');
             $table->nullableUuidMorphs($morphPrefix);
             $table->string('event');
-            $table->uuidMorphs('auditable');
+            $table->string('auditable_type');
+            $table->string('auditable_id');
             $table->json('old_values')->nullable();
             $table->json('new_values')->nullable();
             $table->text('url')->nullable();
@@ -25,6 +26,8 @@ class CreateAuditsTable extends Migration
             $table->string('user_agent', 1023)->nullable();
             $table->string('tags')->nullable();
             $table->timestamps();
+
+            $table->index(['auditable_type', 'auditable_id']);
         });
     }
 

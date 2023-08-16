@@ -5,8 +5,11 @@ namespace App\Models;
 use Eloquent;
 use DateTimeInterface;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
+use Database\Factories\InstitutionFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 /**
@@ -20,7 +23,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @method static \Database\Factories\InstitutionFactory factory($count = null, $state = [])
+ * @method static InstitutionFactory factory($count = null, $state = [])
  * @method static Builder|Institution newModelQuery()
  * @method static Builder|Institution newQuery()
  * @method static Builder|Institution onlyTrashed()
@@ -37,10 +40,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
  *
  * @mixin Eloquent
  */
-class Institution extends BaseModel
+class Institution extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use HasUuids;
+    use AuditableTrait;
 
     protected $fillable = [
         'code',
