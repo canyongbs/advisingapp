@@ -475,10 +475,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/audit",
-                "reference": "f526790ee40285abb2e8aa725f1861f47256e28a"
+                "reference": "8382200fe0e240311761f782209f152836746d49"
             },
             "require": {
                 "filament/filament": "^3.0-stable",
+                "filament/spatie-laravel-settings-plugin": "^3.0-stable",
                 "owen-it/laravel-auditing": "^13.5",
                 "spatie/laravel-settings": "^3.2-stable"
             },
@@ -2439,6 +2440,53 @@
                 "source": "https://github.com/filamentphp/filament"
             },
             "time": "2023-08-14T14:24:04+00:00"
+        },
+        {
+            "name": "filament/spatie-laravel-settings-plugin",
+            "version": "v3.0.23",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
+                "reference": "c284631075ef7553dc5990cbd8b7763f58ff0d30"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/filamentphp/spatie-laravel-settings-plugin/zipball/c284631075ef7553dc5990cbd8b7763f58ff0d30",
+                "reference": "c284631075ef7553dc5990cbd8b7763f58ff0d30",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "self.version",
+                "illuminate/console": "^10.0",
+                "illuminate/filesystem": "^10.0",
+                "illuminate/support": "^10.0",
+                "php": "^8.1",
+                "spatie/laravel-settings": "^2.2|^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Filament\\SpatieLaravelSettingsPluginServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Filament\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Filament support for `spatie/laravel-settings`.",
+            "homepage": "https://github.com/filamentphp/filament",
+            "support": {
+                "issues": "https://github.com/filamentphp/filament/issues",
+                "source": "https://github.com/filamentphp/filament"
+            },
+            "time": "2023-08-14T14:24:11+00:00"
         },
         {
             "name": "filament/support",
