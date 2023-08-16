@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Assist\Audit\Filament\Actions\AuditAttachAction;
+use Assist\Audit\Filament\Actions\AuditDetachAction;
 use Assist\Authorization\Enums\ModelHasRolesViaEnum;
 use Assist\Authorization\Events\RoleRemovedFromUser;
 use Filament\Resources\RelationManagers\RelationManager;

@@ -7,7 +7,9 @@ use Carbon\Carbon;
 use Filament\Panel;
 use DateTimeInterface;
 use Assist\Case\Models\CaseItem;
+use OwenIt\Auditing\Models\Audit;
 use App\Support\HasAdvancedFilter;
+use Database\Factories\UserFactory;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
@@ -23,6 +25,7 @@ use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Audit\Models\Concerns\AuditableManyToMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
@@ -49,9 +52,9 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Collection<int, \App\Models\UserAlert> $alerts
+ * @property-read Collection<int, UserAlert> $alerts
  * @property-read int|null $alerts_count
- * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
  * @property-read Collection<int, CaseItem> $caseItems
  * @property-read int|null $case_items_count
@@ -70,7 +73,7 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
  *
  * @method static Builder|User admins()
  * @method static Builder|User advancedFilter($data)
- * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User onlyTrashed()
@@ -108,6 +111,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasRelationships;
     use HasUuids;
     use AuditableTrait;
+    use AuditableManyToMany;
 
     public const TYPE_RADIO = [
         'local' => 'Local',
