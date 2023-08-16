@@ -9,11 +9,9 @@ use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\DetachAction;
+use Assist\Audit\Filament\Actions\AuditAttachAction;
 use Assist\Authorization\Enums\ModelHasRolesViaEnum;
 use Assist\Authorization\Events\RoleRemovedFromUser;
-use Assist\Audit\Filament\Actions\AuditDetachAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class RolesRelationManager extends RelationManager

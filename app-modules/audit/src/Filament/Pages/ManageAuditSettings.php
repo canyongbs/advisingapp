@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Select;
 use Assist\Audit\Settings\AuditSettings;
+use Assist\Audit\Actions\Finders\AuditableModels;
 
 class ManageAuditSettings extends SettingsPage
 {
@@ -18,12 +19,7 @@ class ManageAuditSettings extends SettingsPage
         return $form
             ->schema([
                 Select::make('audited_models')
-                    ->options(
-                        [
-                            'user' => 'User',
-                            'case_item' => 'CaseItem',
-                        ]
-                    )
+                    ->options(AuditableModels::all())
                     ->multiple(),
             ]);
     }
