@@ -20,12 +20,10 @@ use Assist\Authorization\Models\Permission;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Audit\Models\Concerns\AuditableManyToMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
@@ -36,6 +34,7 @@ use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
 use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * App\Models\User
@@ -111,7 +110,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasRelationships;
     use HasUuids;
     use AuditableTrait;
-    use AuditableManyToMany;
 
     public const TYPE_RADIO = [
         'local' => 'Local',

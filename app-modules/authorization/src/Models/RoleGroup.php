@@ -10,7 +10,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
@@ -18,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
 use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Authorization\Database\Factories\RoleGroupFactory;
 
 /**

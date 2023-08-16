@@ -9,8 +9,8 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Database\Factories\InstitutionFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * App\Models\Institution

@@ -7,14 +7,16 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\Institution;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseItem
@@ -30,15 +32,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
+ * @property-read KnowledgeBaseCategory|null $category
  * @property-read Collection<int, Institution> $institution
  * @property-read int|null $institution_count
- * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
- * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
+ * @property-read KnowledgeBaseQuality|null $quality
+ * @property-read KnowledgeBaseStatus|null $status
  *
- * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
+ * @method static KnowledgeBaseItemFactory factory($count = null, $state = [])
  * @method static Builder|KnowledgeBaseItem newModelQuery()
  * @method static Builder|KnowledgeBaseItem newQuery()
  * @method static Builder|KnowledgeBaseItem onlyTrashed()
