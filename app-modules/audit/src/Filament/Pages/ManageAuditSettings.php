@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace Assist\Audit\Filament\Pages;
 
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;

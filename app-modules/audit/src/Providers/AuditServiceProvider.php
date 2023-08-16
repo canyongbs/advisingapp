@@ -2,6 +2,8 @@
 
 namespace Assist\Audit\Providers;
 
+use Filament\Panel;
+use Assist\Audit\AuditPlugin;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -11,6 +13,8 @@ class AuditServiceProvider extends ServiceProvider
 {
     public function register()
     {
+        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AuditPlugin()));
+
         app('config')->set('audit', require base_path('app-modules/audit/config/audit.php'));
         app('config')->set('settings', require base_path('app-modules/audit/config/settings.php'));
     }
