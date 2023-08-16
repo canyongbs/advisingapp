@@ -4,6 +4,7 @@ namespace Assist\Audit\Providers;
 
 use Filament\Panel;
 use Assist\Audit\AuditPlugin;
+use OwenIt\Auditing\Models\Audit;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -21,7 +22,11 @@ class AuditServiceProvider extends ServiceProvider
 
     public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
     {
-        Relation::morphMap([]);
+        Relation::morphMap(
+            [
+                'audit' => Audit::class,
+            ]
+        );
 
         $permissionRegistry->registerApiPermissions(
             module: 'audit',
