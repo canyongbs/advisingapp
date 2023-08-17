@@ -52,7 +52,8 @@ class AuditServiceProvider extends ServiceProvider
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             $schedule->command('audit:purge-past-retention-audit-records')
                 ->daily()
-                ->evenInMaintenanceMode();
+                ->evenInMaintenanceMode()
+                ->onOneServer();
         });
     }
 }

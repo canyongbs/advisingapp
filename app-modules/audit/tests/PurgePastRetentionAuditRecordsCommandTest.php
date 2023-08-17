@@ -1,7 +1,12 @@
 <?php
 
 use Assist\Audit\Models\Audit;
+
+use function Pest\Laravel\travelTo;
+
+use Illuminate\Support\Facades\Event;
 use Assist\Audit\Settings\AuditSettings;
+use Illuminate\Console\Events\ScheduledTaskStarting;
 
 test('PurgePastRetentionAuditRecordsCommand properly deletes records', function () {
     $auditSettings = resolve(AuditSettings::class);
@@ -41,4 +46,16 @@ test('PurgePastRetentionAuditRecordsCommand properly deletes records', function 
             expect(Audit::where('id', $audit->id)->exists())->toBeFalse();
         }
     );
+});
+
+test('PurgePastRetentionAuditRecordsCommand is properly scheduled', function () {
+    Event::fake();
+
+    travelTo(now()->startOfDay());
+
+    $this->artisan('schedule:run');
+
+    Event::assertDispatched(function (ScheduledTaskStarting $event) {
+        return str($event->task->command)->contains('audit:purge-past-retention-audit-records');
+    });
 });
