@@ -2,7 +2,6 @@
 
 namespace Assist\Audit\Filament\Resources\AuditResource\Pages;
 
-use Filament\Actions;
 use Filament\Infolists\Infolist;
 use OwenIt\Auditing\Models\Audit;
 use Filament\Resources\Pages\ViewRecord;
@@ -44,8 +43,6 @@ class ViewAudit extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\EditAction::make(),
-        ];
+        return [];
     }
 }
