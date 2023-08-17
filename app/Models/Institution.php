@@ -8,7 +8,6 @@ use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
-use Database\Factories\InstitutionFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -27,7 +26,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
  *
- * @method static InstitutionFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\InstitutionFactory factory($count = null, $state = [])
  * @method static Builder|Institution newModelQuery()
  * @method static Builder|Institution newQuery()
  * @method static Builder|Institution onlyTrashed()
