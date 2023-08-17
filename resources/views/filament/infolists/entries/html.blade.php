@@ -4,7 +4,7 @@
     </span>
 </dt>
 <div class="mt-2 rounded border border-gray-700 p-4">
-    <div class="prose mt-2 dark:prose-invert lg:prose-xl">
+    <div class="prose mt-2 max-w-full dark:prose-invert lg:prose-xl">
         {!! $getState() !!}
     </div>
 </div>
