@@ -4,13 +4,8 @@ namespace Assist\Authorization\Filament\Resources\PermissionResource\RelationMan
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class RolesRelationManager extends RelationManager
@@ -38,16 +33,10 @@ class RolesRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
-                CreateAction::make(),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ]);
     }
 }

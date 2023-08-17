@@ -19,6 +19,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -159,11 +160,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->using(RoleGroupUserPivot::class);
     }
 
-    // TODO: Fix this to not conflict with Spatie method
-    //public function permissions(): HasManyDeep
-    //{
-    //    return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
-    //}
+    public function permissionsFromRoles(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+    }
 
     public function caseItems(): HasMany
     {

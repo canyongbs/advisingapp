@@ -10,7 +10,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 
 class PermissionsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'permissions';
+    protected static string $relationship = 'permissionsFromRoles';
 
     protected static ?string $recordTitleAttribute = 'name';
 

@@ -14,10 +14,13 @@ class AuthorizationPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Authorization\\Filament\\Resources'
-        );
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'Assist\\Authorization\\Filament\\Resources'
+            )
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('10s');
     }
 
     public function boot(Panel $panel): void

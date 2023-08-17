@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c2ab3ca7646ece6447a1a2c2f09f7ac",
+    "content-hash": "c82676fd7aaab6750e0e250f9cca640a",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -636,6 +636,41 @@
                     "Assist\\KnowledgeBase\\Tests\\": "tests/",
                     "Assist\\KnowledgeBase\\Database\\Factories\\": "database/factories/",
                     "Assist\\KnowledgeBase\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/notifications",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/notifications",
+                "reference": "4a45eb33e21759ea861da16151a1e7cb022b3d40"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Notifications\\Providers\\NotificationsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Notifications\\": "src/",
+                    "Assist\\Notifications\\Tests\\": "tests/",
+                    "Assist\\Notifications\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Notifications\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

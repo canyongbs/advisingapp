@@ -19,6 +19,7 @@
         "canyon-gbs/case": "*",
         "canyon-gbs/engagement": "*",
         "canyon-gbs/knowledge-base": "*",
+        "canyon-gbs/notifications": "*",
         "canyon-gbs/prospect": "*",
         "filament/filament": "^3.0.18",
         "filament/spatie-laravel-media-library-plugin": "^3.0-stable",
