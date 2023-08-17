@@ -4,7 +4,10 @@ namespace Assist\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
+use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\EditKnowledgeBaseItem;
+use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\ViewKnowledgeBaseItem;
+use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\ListKnowledgeBaseItems;
+use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem;
 
 class KnowledgeBaseItemResource extends Resource
 {
@@ -21,10 +24,10 @@ class KnowledgeBaseItemResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKnowledgeBaseItems::route('/'),
-            'create' => Pages\CreateKnowledgeBaseItem::route('/create'),
-            'view' => Pages\ViewKnowledgeBaseItem::route('/{record}'),
-            'edit' => Pages\EditKnowledgeBaseItem::route('/{record}/edit'),
+            'index' => ListKnowledgeBaseItems::route('/'),
+            'create' => CreateKnowledgeBaseItem::route('/create'),
+            'view' => ViewKnowledgeBaseItem::route('/{record}'),
+            'edit' => EditKnowledgeBaseItem::route('/{record}/edit'),
         ];
     }
 }
