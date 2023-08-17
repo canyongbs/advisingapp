@@ -1,12 +1,11 @@
 <?php
 
 use App\Models\User;
+use Assist\Audit\Models\Audit;
 
-use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Filament\Resources\ProspectSourceResource;
+use Assist\Audit\Filament\Resources\AuditResource;
 
 // TODO: Write tests for ViewAudit page
 test('The correct details are displayed on the ViewAudit page', function () {});
@@ -16,22 +15,22 @@ test('The correct details are displayed on the ViewAudit page', function () {});
 test('ViewAudit is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $prospectSource = ProspectSource::factory()->create();
+    $audit = Audit::factory()->create();
 
     actingAs($user)
         ->get(
-            ProspectSourceResource::getUrl('view', [
-                'record' => $prospectSource,
+            AuditResource::getUrl('view', [
+                'record' => $audit,
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('prospect_source.view-any');
-    $user->givePermissionTo('prospect_source.*.view');
+    $user->givePermissionTo('audit.view-any');
+    $user->givePermissionTo('audit.*.view');
 
     actingAs($user)
         ->get(
-            ProspectSourceResource::getUrl('view', [
-                'record' => $prospectSource,
+            AuditResource::getUrl('view', [
+                'record' => $audit,
             ])
         )->assertSuccessful();
 });
