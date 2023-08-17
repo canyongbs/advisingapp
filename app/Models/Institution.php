@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Eloquent;
 use DateTimeInterface;
+use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
+use Database\Factories\InstitutionFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -21,10 +24,10 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
  *
- * @method static \Database\Factories\InstitutionFactory factory($count = null, $state = [])
+ * @method static InstitutionFactory factory($count = null, $state = [])
  * @method static Builder|Institution newModelQuery()
  * @method static Builder|Institution newQuery()
  * @method static Builder|Institution onlyTrashed()

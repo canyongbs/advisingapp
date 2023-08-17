@@ -4,8 +4,8 @@ namespace Assist\Engagement\Models;
 
 use Eloquent;
 use App\Models\BaseModel;
+use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
-use OwenIt\Auditing\Models\Audit;
 use Spatie\MediaLibrary\HasMedia;
 use Assist\Prospect\Models\Prospect;
 use OwenIt\Auditing\Contracts\Auditable;

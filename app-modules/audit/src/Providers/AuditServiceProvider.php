@@ -4,7 +4,7 @@ namespace Assist\Audit\Providers;
 
 use Filament\Panel;
 use Assist\Audit\AuditPlugin;
-use OwenIt\Auditing\Models\Audit;
+use Assist\Audit\Models\Audit;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;

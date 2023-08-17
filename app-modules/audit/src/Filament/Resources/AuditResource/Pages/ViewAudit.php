@@ -2,8 +2,8 @@
 
 namespace Assist\Audit\Filament\Resources\AuditResource\Pages;
 
+use Assist\Audit\Models\Audit;
 use Filament\Infolists\Infolist;
-use OwenIt\Auditing\Models\Audit;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Audit\Filament\Resources\AuditResource;

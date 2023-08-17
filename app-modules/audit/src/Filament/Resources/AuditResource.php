@@ -2,8 +2,8 @@
 
 namespace Assist\Audit\Filament\Resources;
 
+use Assist\Audit\Models\Audit;
 use Filament\Resources\Resource;
-use OwenIt\Auditing\Models\Audit;
 use Assist\Audit\Filament\Resources\AuditResource\Pages;
 
 class AuditResource extends Resource

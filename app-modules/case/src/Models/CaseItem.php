@@ -7,6 +7,7 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\Institution;
+use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
