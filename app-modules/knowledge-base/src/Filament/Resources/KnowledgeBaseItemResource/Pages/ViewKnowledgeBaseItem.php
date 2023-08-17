@@ -6,7 +6,7 @@ use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\TextEntry;
-use FilamentTiptapEditor\Facades\TiptapConverter;
+use Filament\Infolists\Components\ViewEntry;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 class ViewKnowledgeBaseItem extends ViewRecord
@@ -39,17 +39,16 @@ class ViewKnowledgeBaseItem extends ViewRecord
                 TextEntry::make('institution.name')
                     ->label('Institution')
                     ->translateLabel(),
-                TextEntry::make('solution')
+                ViewEntry::make('solution')
                     ->label('Solution')
                     ->translateLabel()
                     ->columnSpanFull()
-                    ->formatStateUsing(fn (string $state): string => TiptapConverter::asHTML($state))
-                    ->html(),
-                TextEntry::make('notes')
+                    ->view('filament.infolists.entries.html'),
+                ViewEntry::make('notes')
                     ->label('Notes')
                     ->translateLabel()
                     ->columnSpanFull()
-                    ->html(),
+                    ->view('filament.infolists.entries.html'),
             ]);
     }
 
