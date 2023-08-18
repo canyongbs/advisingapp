@@ -73,7 +73,7 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
             table: 'engagement_file_entities',
             foreignPivotKey: 'engagement_file_id',
             relatedPivotKey: 'entity_id',
-            relation: 'student',
+            relation: 'engagementFiles',
         );
     }
 
