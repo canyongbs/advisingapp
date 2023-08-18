@@ -2,6 +2,7 @@
 
 use Assist\Audit\Models\Audit;
 
+use function Pest\Laravel\artisan;
 use function Pest\Laravel\travelTo;
 
 use Illuminate\Support\Facades\Event;
@@ -31,7 +32,7 @@ test('PurgePastRetentionAuditRecordsCommand properly deletes records', function 
 
     $auditCount = Audit::count();
 
-    $this->artisan('audit:purge-past-retention-audit-records');
+    artisan('audit:purge-past-retention-audit-records');
 
     expect(Audit::count())->toBe($auditCount - $purgedAudits->count());
 
@@ -53,7 +54,7 @@ test('PurgePastRetentionAuditRecordsCommand is properly scheduled', function () 
 
     travelTo(now()->startOfDay());
 
-    $this->artisan('schedule:run');
+    artisan('schedule:run');
 
     Event::assertDispatched(function (ScheduledTaskStarting $event) {
         return str($event->task->command)->contains('audit:purge-past-retention-audit-records');
