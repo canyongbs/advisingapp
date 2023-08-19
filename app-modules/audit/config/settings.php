@@ -1,5 +1,7 @@
 <?php
 
+use Assist\Audit\Models\SettingsProperty;
+
 return [
     /*
      * Each settings class used in your application must be registered, you can
@@ -34,7 +36,7 @@ return [
     'repositories' => [
         'database' => [
             'type' => Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository::class,
-            'model' => null,
+            'model' => SettingsProperty::class,
             'table' => null,
             'connection' => null,
         ],
