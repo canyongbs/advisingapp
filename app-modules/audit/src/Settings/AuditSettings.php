@@ -6,7 +6,7 @@ use Spatie\LaravelSettings\Settings;
 
 class AuditSettings extends Settings
 {
-    public int $retention_duration;
+    public int $retention_duration_in_days;
 
     public array $audited_models;
 

@@ -11,7 +11,7 @@ use Illuminate\Console\Events\ScheduledTaskStarting;
 
 test('PurgePastRetentionAuditRecordsCommand properly deletes records', function () {
     $auditSettings = resolve(AuditSettings::class);
-    $auditSettings->retention_duration = 90;
+    $auditSettings->retention_duration_in_days = 90;
     $auditSettings->save();
 
     $retainedAudits = Audit::factory()

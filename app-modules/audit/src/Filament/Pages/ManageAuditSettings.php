@@ -32,7 +32,8 @@ class ManageAuditSettings extends SettingsPage
                         icon: 'heroicon-m-question-mark-circle',
                         tooltip: 'Items added here will be tracked by the audit trail.'
                     ),
-                TextInput::make('retention_duration')
+                TextInput::make('retention_duration_in_days')
+                    ->label('Retention Duration')
                     ->integer()
                     ->minValue(1)
                     ->step(1)

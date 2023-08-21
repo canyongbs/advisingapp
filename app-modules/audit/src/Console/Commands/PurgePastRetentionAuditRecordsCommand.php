@@ -17,7 +17,7 @@ class PurgePastRetentionAuditRecordsCommand extends Command
         Audit::whereDate(
             column: 'created_at',
             operator: '<',
-            value: now()->subDays($auditSettings->retention_duration)
+            value: now()->subDays($auditSettings->retention_duration_in_days)
         )->delete();
     }
 }
