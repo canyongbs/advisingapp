@@ -16,7 +16,7 @@
         />
         <x-filament-panels::form.actions
                 :actions="$this->getSsoFormActions()"
-                :full-width="false"
+                :full-width="$this->hasFullWidthFormActions()"
         />
     </x-filament-panels::form>
 </x-filament-panels::page.simple>

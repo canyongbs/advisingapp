@@ -11,17 +11,26 @@ class Login extends FilamentLogin
 
     protected function getSsoFormActions(): array
     {
-        return [
-            Action::make('azure_sso')
+        $ssoActions = [];
+
+        if (! empty(config('services.azure.client_id'))) {
+            $ssoActions[] = Action::make('azure_sso')
                 ->label(__('Login with Azure SSO'))
                 ->url(route('socialite.redirect', ['provider' => 'azure']))
                 ->color('gray')
-                ->icon('icon-microsoft'),
-            Action::make('google_sso')
+                ->icon('icon-microsoft')
+                ->size('sm');
+        }
+
+        if (! empty(config('services.google.client_id'))) {
+            $ssoActions[] = Action::make('google_sso')
                 ->label(__('Login with Google SSO'))
                 ->url(route('socialite.redirect', ['provider' => 'google']))
                 ->icon('icon-google')
-                ->color('gray'),
-        ];
+                ->color('gray')
+                ->size('sm');
+        }
+
+        return $ssoActions;
     }
 }
