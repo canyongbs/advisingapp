@@ -43,6 +43,8 @@ class SocialiteController extends Controller
 
         Auth::login($user);
 
+        session(['auth_via' => $provider]);
+
         return redirect()->to(Dashboard::getUrl());
     }
 }

@@ -4,6 +4,7 @@ namespace Assist\Authorization;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
+use Filament\Navigation\MenuItem;
 
 class AuthorizationPlugin implements Plugin
 {
@@ -25,5 +26,12 @@ class AuthorizationPlugin implements Plugin
 
     public function boot(Panel $panel): void
     {
+        $panel->userMenuItems(
+            [
+                'logout' => MenuItem::make()
+                    ->label('Log out')
+                    ->url(route('logout')),
+            ]
+        );
     }
 }
