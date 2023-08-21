@@ -9,7 +9,7 @@ class Login extends FilamentLogin
 {
     protected static string $view = 'authorization::login';
 
-    protected function getSsoFormActions()
+    protected function getSsoFormActions(): array
     {
         return [
             Action::make('azure_sso')
