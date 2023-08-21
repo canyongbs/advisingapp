@@ -5,14 +5,16 @@ namespace Assist\Case\Models;
 use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Case\Database\Factories\CaseItemStatusFactory;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * Assist\Case\Models\CaseItemStatus
@@ -23,12 +25,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, \Assist\Case\Models\CaseItem> $caseItems
+ * @property-read Collection<int, CaseItem> $caseItems
  * @property-read int|null $case_items_count
  *
- * @method static \Assist\Case\Database\Factories\CaseItemStatusFactory factory($count = null, $state = [])
+ * @method static CaseItemStatusFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemStatus newModelQuery()
  * @method static Builder|CaseItemStatus newQuery()
  * @method static Builder|CaseItemStatus onlyTrashed()

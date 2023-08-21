@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Event;
+use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
+use Assist\Audit\Listeners\AuditingListener;
 use Assist\Authorization\Events\RoleRemovedFromUser;
 use Assist\Authorization\Events\RoleAttachedToRoleGroup;
 use Assist\Authorization\Events\UserAttachedToRoleGroup;
@@ -43,6 +44,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         RoleRemovedFromUser::class => [
             HandleRoleRemovedFromUser::class,
+        ],
+        // TODO: Move this to the auditing Module somehow
+        Auditing::class => [
+            AuditingListener::class,
         ],
     ];
 

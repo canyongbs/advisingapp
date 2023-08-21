@@ -1,0 +1,20 @@
+<?php
+
+test('app')
+    ->expect('App\Models')
+    ->not->toUse('OwenIt\Auditing\Auditable')
+    ->and('Assist\Case')
+    ->not->toUse('OwenIt\Auditing\Auditable')
+    ->and('Assist\AssistDataModel')
+    ->not->toUse('OwenIt\Auditing\Auditable')
+    ->and('Assist\Audit')
+    ->not->toUse('OwenIt\Auditing\Auditable')
+    ->ignoring('Assist\Audit\Models\Concerns\Auditable')
+    ->and('Assist\Authorization')
+    ->not->toUse('OwenIt\Auditing\Auditable')
+    ->and('Assist\Engagement')
+    ->not->toUse('OwenIt\Auditing\Auditable')
+    ->and('Assist\KnowledgeBase')
+    ->not->toUse('OwenIt\Auditing\Auditable')
+    ->and('Assist\Prospect')
+    ->not->toUse('OwenIt\Auditing\Auditable');

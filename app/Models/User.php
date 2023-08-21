@@ -6,6 +6,7 @@ use Eloquent;
 use Carbon\Carbon;
 use Filament\Panel;
 use DateTimeInterface;
+use Assist\Audit\Models\Audit;
 use Assist\Case\Models\CaseItem;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +19,6 @@ use Assist\Authorization\Models\Permission;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -33,6 +33,7 @@ use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
 use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * App\Models\User
@@ -51,7 +52,7 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read Collection<int, \App\Models\UserAlert> $alerts
  * @property-read int|null $alerts_count
- * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
  * @property-read Collection<int, CaseItem> $caseItems
  * @property-read int|null $case_items_count

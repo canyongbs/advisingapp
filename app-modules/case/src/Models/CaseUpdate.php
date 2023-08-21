@@ -5,14 +5,17 @@ namespace Assist\Case\Models;
 use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\Case\Database\Factories\CaseUpdateFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * Assist\Case\Models\CaseUpdate
@@ -25,11 +28,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\Case\Models\CaseItem|null $case
+ * @property-read CaseItem|null $case
  *
- * @method static \Assist\Case\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
+ * @method static CaseUpdateFactory factory($count = null, $state = [])
  * @method static Builder|CaseUpdate newModelQuery()
  * @method static Builder|CaseUpdate newQuery()
  * @method static Builder|CaseUpdate onlyTrashed()

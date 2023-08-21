@@ -21,7 +21,7 @@
         "canyon-gbs/knowledge-base": "*",
         "canyon-gbs/notifications": "*",
         "canyon-gbs/prospect": "*",
-        "filament/filament": "^3.0.18",
+        "filament/filament": "^3.0-stable",
         "filament/spatie-laravel-media-library-plugin": "^3.0-stable",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",

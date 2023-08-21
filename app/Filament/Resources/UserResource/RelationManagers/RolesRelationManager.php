@@ -8,7 +8,6 @@ use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\DetachAction;
 use Assist\Authorization\Enums\ModelHasRolesViaEnum;
 use Assist\Authorization\Events\RoleRemovedFromUser;
 use Filament\Resources\RelationManagers\RelationManager;

@@ -4,16 +4,21 @@ namespace Assist\AssistDataModel\Models;
 
 use Eloquent;
 use App\Models\BaseModel;
+use Assist\Audit\Models\Audit;
 use Assist\Case\Models\CaseItem;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * Assist\AssistDataModel\Models\Student
  *
+ * @property-read Collection<int, Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read Collection<int, CaseItem> $cases
  * @property-read int|null $cases_count
  * @property-read Collection<int, EngagementFile> $engagementFiles
@@ -26,8 +31,10 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  *
  * @mixin Eloquent
  */
-class Student extends BaseModel
+class Student extends BaseModel implements Auditable
 {
+    use AuditableTrait;
+
     protected $primaryKey = 'sisid';
 
     public $incrementing = false;

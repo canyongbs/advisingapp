@@ -5,14 +5,16 @@ namespace Assist\KnowledgeBase\Models;
 use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseStatusFactory;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseStatus
@@ -22,12 +24,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, \OwenIt\Auditing\Models\Audit> $audits
+ * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
+ * @property-read Collection<int, KnowledgeBaseItem> $knowledgeBaseItems
  * @property-read int|null $knowledge_base_items_count
  *
- * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseStatusFactory factory($count = null, $state = [])
+ * @method static KnowledgeBaseStatusFactory factory($count = null, $state = [])
  * @method static Builder|KnowledgeBaseStatus newModelQuery()
  * @method static Builder|KnowledgeBaseStatus newQuery()
  * @method static Builder|KnowledgeBaseStatus onlyTrashed()
