@@ -28,10 +28,12 @@
         "kirschbaum-development/eloquent-power-joins": "^3.0",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
+        "laravel/socialite": "^5.8",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
         "livewire/livewire": "^3.0@beta",
+        "socialiteproviders/microsoft-azure": "^5.1",
         "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
         "staudenmeir/eloquent-has-many-deep": "^1.18"
