@@ -4,10 +4,13 @@ namespace Assist\Authorization\Providers;
 
 use Filament\Panel;
 use Assist\Authorization\Models\Role;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\Models\RoleGroup;
 use Assist\Authorization\Models\Permission;
 use Assist\Authorization\AuthorizationPlugin;
+use SocialiteProviders\Azure\AzureExtendSocialite;
+use SocialiteProviders\Manager\SocialiteWasCalled;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
@@ -55,6 +58,11 @@ class AuthorizationServiceProvider extends ServiceProvider
         $roleRegistry->registerWebRoles(
             module: 'authorization',
             path: 'roles/web'
+        );
+
+        Event::listen(
+            events: SocialiteWasCalled::class,
+            listener: AzureExtendSocialite::class . '@handle'
         );
     }
 }
