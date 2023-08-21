@@ -6,6 +6,7 @@ use Filament\Panel;
 use Assist\Audit\AuditPlugin;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Console\Scheduling\Schedule;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
@@ -47,5 +48,12 @@ class AuditServiceProvider extends ServiceProvider
             module: 'audit',
             path: 'roles/web'
         );
+
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            $schedule->command('audit:purge-past-retention-audit-records')
+                ->daily()
+                ->evenInMaintenanceMode()
+                ->onOneServer();
+        });
     }
 }

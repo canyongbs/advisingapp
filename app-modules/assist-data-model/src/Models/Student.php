@@ -64,7 +64,7 @@ class Student extends BaseModel implements Auditable
             table: 'engagement_file_entities',
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
-            relation: 'student',
+            relation: 'engagementFiles',
         );
     }
 }

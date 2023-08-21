@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Select;
 use Assist\Audit\Settings\AuditSettings;
+use Filament\Forms\Components\TextInput;
 use Assist\Audit\Actions\Finders\AuditableModels;
 
 class ManageAuditSettings extends SettingsPage
@@ -20,7 +21,27 @@ class ManageAuditSettings extends SettingsPage
             ->schema([
                 Select::make('audited_models')
                     ->options(AuditableModels::all())
-                    ->multiple(),
+                    ->multiple()
+                    ->in(AuditableModels::all()->keys()->toArray())
+                    ->rules(
+                        [
+                            'array',
+                        ]
+                    )
+                    ->hintIcon(
+                        icon: 'heroicon-m-question-mark-circle',
+                        tooltip: 'Items added here will be tracked by the audit trail.'
+                    ),
+                TextInput::make('retention_duration_in_days')
+                    ->label('Retention Duration')
+                    ->integer()
+                    ->minValue(1)
+                    ->step(1)
+                    ->suffix('Day/s')
+                    ->hintIcon(
+                        icon: 'heroicon-m-question-mark-circle',
+                        tooltip: 'Audit trail records older than the retention duration will be deleted.'
+                    ),
             ]);
     }
 }

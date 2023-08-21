@@ -3,13 +3,9 @@
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
 use Filament\Forms\Form;
-use Illuminate\View\View;
 use Filament\Tables\Table;
-use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Assist\Authorization\Enums\ModelHasRolesViaEnum;
-use Assist\Authorization\Events\RoleRemovedFromUser;
 use Filament\Resources\RelationManagers\RelationManager;
 
 class RolesRelationManager extends RelationManager

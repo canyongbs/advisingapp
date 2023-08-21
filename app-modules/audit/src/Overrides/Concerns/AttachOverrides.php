@@ -2,6 +2,7 @@
 
 namespace Assist\Audit\Overrides\Concerns;
 
+use ReflectionClass;
 use Illuminate\Support\Facades\Event;
 use OwenIt\Auditing\Events\AuditCustom;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -12,6 +13,13 @@ trait AttachOverrides
     {
         /** @var Auditable $parentModel */
         $parentModel = $this->getParent();
+
+        if (! $this->isAuditable($parentModel::class)) {
+            parent::attach($id, $attributes, $touch);
+
+            return;
+        }
+
         $relationName = $this->relationName;
 
         $parentModel->auditEvent = 'attach';
@@ -33,6 +41,11 @@ trait AttachOverrides
     {
         /** @var Auditable $parentModel */
         $parentModel = $this->getParent();
+
+        if (! $this->isAuditable($parentModel::class)) {
+            return parent::detach($ids, $touch);
+        }
+
         $relationName = $this->relationName;
 
         $parentModel->auditEvent = 'detach';
@@ -56,6 +69,11 @@ trait AttachOverrides
     {
         /** @var Auditable $parentModel */
         $parentModel = $this->getParent();
+
+        if (! $this->isAuditable($parentModel::class)) {
+            return parent::sync($ids, $detaching);
+        }
+
         $relationName = $this->relationName;
 
         $parentModel->auditEvent = 'sync';
@@ -80,5 +98,12 @@ trait AttachOverrides
         $parentModel->isCustomEvent = false;
 
         return $changes;
+    }
+
+    private function isAuditable(string $class)
+    {
+        $reflection = new ReflectionClass($class);
+
+        return $reflection->implementsInterface(Auditable::class);
     }
 }
