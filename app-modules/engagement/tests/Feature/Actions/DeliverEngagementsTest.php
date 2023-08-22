@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Notification;
 use Assist\Engagement\Actions\DeliverEngagements;
 use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Actions\EngagementSmsChannelDelivery;
-use Assist\Engagement\Notifications\EngagementNotification;
 use Assist\Engagement\Actions\EngagementEmailChannelDelivery;
 
 it('will dispatch a job to send all engagements that should be delivered via email', function () {
@@ -68,7 +67,7 @@ it('will dispatch a job to send all engagements that should be delivered via sms
 
 it('will not dispatch a job to send an engagement that has already been delivered', function () {
     Queue::fake(EngagementEmailChannelDelivery::class);
-    Notification::fake(EngagementNotification::class);
+    Notification::fake();
 
     // Given that we have an engagement
     $engagement = Engagement::factory()

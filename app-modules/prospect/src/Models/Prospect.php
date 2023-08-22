@@ -9,6 +9,7 @@ use App\Models\BaseModel;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use Assist\Case\Models\CaseItem;
+use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
