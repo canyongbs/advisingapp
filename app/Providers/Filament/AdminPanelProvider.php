@@ -14,6 +14,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Assist\Authorization\Filament\Pages\Auth\Login;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -39,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('/')
-            ->login()
+            ->login(Login::class)
             ->colors([
                 'primary' => Color::hex('#2bb8b3'),
             ])
@@ -79,6 +80,7 @@ class AdminPanelProvider extends PanelProvider
             'primary' => Color::hex('#2bb8b3'),
             'success' => Color::Green,
             'warning' => Color::Amber,
+            'white' => Color::hex('#fff'),
         ]);
     }
 }
