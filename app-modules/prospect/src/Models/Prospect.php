@@ -9,6 +9,7 @@ use App\Models\BaseModel;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use Assist\Case\Models\CaseItem;
+use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Engagement\Models\EngagementFile;
@@ -96,6 +97,7 @@ class Prospect extends BaseModel implements Auditable
     use HasUuids;
     use SoftDeletes;
     use AuditableTrait;
+    use Notifiable;
 
     protected $fillable = [
         'first_name',
@@ -164,6 +166,14 @@ class Prospect extends BaseModel implements Auditable
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
             relation: 'prospects',
+        );
+    }
+
+    public function engagements(): MorphMany
+    {
+        return $this->morphMany(
+            related: Engagement::class,
+            name: 'receivable',
         );
     }
 

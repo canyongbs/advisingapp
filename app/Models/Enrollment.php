@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Eloquent;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Models\Enrollment
@@ -20,4 +21,5 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Enrollment extends Model
 {
     use HasFactory;
+    use DefinesPermissions;
 }

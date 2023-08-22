@@ -1,0 +1,65 @@
+<?php
+
+namespace Assist\Engagement\Models;
+
+use App\Models\User;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Engagement extends BaseModel
+{
+    protected $fillable = [
+        'user_id',
+        'subject',
+        'description',
+        'recipient_id',
+        'recipient_type',
+        'send_at',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        $this->user();
+    }
+
+    public function engagementDeliverables(): HasMany
+    {
+        return $this->hasMany(EngagementDeliverable::class);
+    }
+
+    public function deliverables(): HasMany
+    {
+        return $this->engagementDeliverables();
+    }
+
+    public function recipient(): MorphTo
+    {
+        return $this->morphTo(
+            name: 'recipient',
+            type: 'recipient_type',
+            id: 'recipient_id',
+        );
+    }
+
+    public function hasBeenDelivered(): bool
+    {
+        return $this->deliverables->filter(fn (EngagementDeliverable $deliverable) => $deliverable->hasBeenSent())->count() > 0;
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // auto-sets values on creation
+        static::creating(function ($engagement) {
+            $engagement->send_at = $engagement->send_at ?? now();
+        });
+    }
+}

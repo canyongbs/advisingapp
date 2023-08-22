@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * App\Models\Program
@@ -20,4 +21,5 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Program extends Model
 {
     use HasFactory;
+    use DefinesPermissions;
 }
