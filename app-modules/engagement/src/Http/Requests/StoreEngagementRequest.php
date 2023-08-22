@@ -22,7 +22,6 @@ class StoreEngagementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
         ];
     }
 }

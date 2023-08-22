@@ -2,7 +2,6 @@
 
 namespace Assist\Engagement\Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EngagementSeeder extends Seeder
@@ -12,6 +11,5 @@ class EngagementSeeder extends Seeder
      */
     public function run(): void
     {
-        //
     }
 }
