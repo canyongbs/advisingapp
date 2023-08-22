@@ -11,6 +11,34 @@ use Assist\Engagement\Actions\EngagementSmsChannelDelivery;
 use Assist\Engagement\Actions\EngagementEmailChannelDelivery;
 use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
 
+/**
+ * Assist\Engagement\Models\EngagementDeliverable
+ *
+ * @property string $id
+ * @property string $engagement_id
+ * @property EngagementDeliveryMethod $channel
+ * @property EngagementDeliveryStatus $delivery_status
+ * @property \Illuminate\Support\Carbon|null $delivered_at
+ * @property string|null $delivery_response
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Assist\Engagement\Models\Engagement $engagement
+ * @method static \Assist\Engagement\Database\Factories\EngagementDeliverableFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereChannel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereEngagementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class EngagementDeliverable extends BaseModel
 {
     use HasFactory;
