@@ -13,6 +13,7 @@ use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use SocialiteProviders\Google\GoogleExtendSocialite;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class AuthorizationServiceProvider extends ServiceProvider
@@ -63,6 +64,11 @@ class AuthorizationServiceProvider extends ServiceProvider
         Event::listen(
             events: SocialiteWasCalled::class,
             listener: AzureExtendSocialite::class . '@handle'
+        );
+
+        Event::listen(
+            events: SocialiteWasCalled::class,
+            listener: GoogleExtendSocialite::class . '@handle'
         );
     }
 }

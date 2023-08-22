@@ -33,6 +33,7 @@
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
         "livewire/livewire": "^3.0@beta",
+        "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.1",
         "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
