@@ -26,7 +26,7 @@ class Engagement extends BaseModel
 
     public function createdBy(): BelongsTo
     {
-        $this->user();
+        return $this->user();
     }
 
     public function engagementDeliverables(): HasMany
@@ -50,7 +50,7 @@ class Engagement extends BaseModel
 
     public function hasBeenDelivered(): bool
     {
-        return $this->deliverables->filter(fn (EngagementDeliverable $deliverable) => $deliverable->hasBeenSent())->count() > 0;
+        return (bool) $this->deliverables->filter(fn (EngagementDeliverable $deliverable) => $deliverable->hasBeenDelivered())->count() > 0;
     }
 
     protected static function boot()

@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use Assist\Engagement\Actions\EngagementSmsChannel;
 use Assist\Engagement\Actions\EngagementEmailChannel;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
+use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
@@ -16,13 +17,15 @@ class EngagementDeliverable extends BaseModel
 
     protected $fillable = [
         'channel',
-        'sent',
-        'response',
+        'delivery_status',
+        'delivered_at',
+        'delivery_response',
     ];
 
     protected $casts = [
         'channel' => EngagementDeliveryMethod::class,
-        'sent' => 'boolean',
+        'delivery_status' => EngagementDeliveryStatus::class,
+        'delivered_at' => 'datetime',
     ];
 
     public function engagement(): BelongsTo
@@ -30,9 +33,9 @@ class EngagementDeliverable extends BaseModel
         return $this->belongsTo(Engagement::class);
     }
 
-    public function hasBeenSent(): bool
+    public function hasBeenDelivered(): bool
     {
-        return ! is_null($this->sent_at);
+        return ! is_null($this->delivered_at);
     }
 
     public function send(): void

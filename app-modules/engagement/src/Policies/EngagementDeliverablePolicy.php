@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\EngagementDeliverable\Policies;
+namespace Assist\Engagement\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -43,7 +43,7 @@ class EngagementDeliverablePolicy
      */
     public function update(User $user, EngagementDeliverable $deliverable): Response
     {
-        if ($deliverable->hasBeenSent()) {
+        if ($deliverable->hasBeenDelivered()) {
             return Response::deny('You do not have permission to update this engagement deliverable because it has already been sent.');
         }
 
@@ -57,7 +57,7 @@ class EngagementDeliverablePolicy
      */
     public function delete(User $user, EngagementDeliverable $deliverable): Response
     {
-        if ($deliverable->hasBeenSent()) {
+        if ($deliverable->hasBeenDelivered()) {
             return Response::deny('You do not have permission to delete this engagement deliverable because it has already been sent.');
         }
 
@@ -81,7 +81,7 @@ class EngagementDeliverablePolicy
      */
     public function forceDelete(User $user, EngagementDeliverable $deliverable): Response
     {
-        if ($deliverable->hasBeenSent()) {
+        if ($deliverable->hasBeenDelivered()) {
             return Response::deny('You cannot permanently delete this engagement deliverable because it has already been delivered.');
         }
 
