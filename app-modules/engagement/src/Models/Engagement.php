@@ -4,6 +4,7 @@ namespace Assist\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,6 +47,13 @@ class Engagement extends BaseModel
             type: 'recipient_type',
             id: 'recipient_id',
         );
+    }
+
+    public function scopeHasNotBeenDelivered(Builder $query): void
+    {
+        $query->whereDoesntHave('engagementDeliverables', function (Builder $query) {
+            $query->whereNotNull('delivered_at');
+        });
     }
 
     public function hasBeenDelivered(): bool

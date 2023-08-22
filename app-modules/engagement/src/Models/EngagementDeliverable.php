@@ -38,6 +38,22 @@ class EngagementDeliverable extends BaseModel
         return ! is_null($this->delivered_at);
     }
 
+    public function markDeliverySuccessful(): void
+    {
+        $this->update([
+            'delivery_status' => EngagementDeliveryStatus::SUCCESSFUL,
+            'delivered_at' => now(),
+        ]);
+    }
+
+    public function markDeliveryFailed(string $reason): void
+    {
+        $this->update([
+            'delivery_status' => EngagementDeliveryStatus::FAILED,
+            'delivery_response' => $reason,
+        ]);
+    }
+
     public function deliver(): void
     {
         match ($this->channel) {

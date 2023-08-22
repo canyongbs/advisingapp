@@ -33,7 +33,7 @@ class EngagementFactory extends Factory
     {
         return $this->state([
             'recipient_id' => Student::factory(),
-            'recipient_type' => Student::class,
+            'recipient_type' => (new Student())->getMorphClass(),
         ]);
     }
 
@@ -41,7 +41,7 @@ class EngagementFactory extends Factory
     {
         return $this->state([
             'recipient_id' => Prospect::factory(),
-            'recipient_type' => Prospect::class,
+            'recipient_type' => (new Prospect())->getMorphClass(),
         ]);
     }
 
