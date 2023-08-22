@@ -19,12 +19,13 @@ class DeliverEngagements implements ShouldQueue
 
     public function handle(): void
     {
-        Engagement::where('send_at', '<=', now())->cursor()->each(function (Engagement $engagement) {
+        Engagement::where('deliver_at', '<=', now())->cursor()->each(function (Engagement $engagement) {
             $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
+                $deliverable->deliver();
+
                 // TODO We need to figure out how we will determine if the deliverables were delivered successfully
                 // This way, we can update the records accordingly and send notifications to the user that their engagement was successfully delivered
                 // Or, let them know that something went wrong.
-                $deliverable->send();
             });
         });
     }

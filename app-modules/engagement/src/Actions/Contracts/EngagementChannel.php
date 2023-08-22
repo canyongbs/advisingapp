@@ -4,5 +4,5 @@ namespace Assist\Engagement\Actions\Contracts;
 
 interface EngagementChannel
 {
-    public function send(): void;
+    public function deliver(): void;
 }

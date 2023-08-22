@@ -3,12 +3,12 @@
 namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
-use Assist\Engagement\Actions\EngagementSmsChannel;
-use Assist\Engagement\Actions\EngagementEmailChannel;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Engagement\Actions\EngagementSmsChannelDelivery;
+use Assist\Engagement\Actions\EngagementEmailChannelDelivery;
 use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
 
 class EngagementDeliverable extends BaseModel
@@ -38,11 +38,11 @@ class EngagementDeliverable extends BaseModel
         return ! is_null($this->delivered_at);
     }
 
-    public function send(): void
+    public function deliver(): void
     {
         match ($this->channel) {
-            EngagementDeliveryMethod::EMAIL => EngagementEmailChannel::dispatch($this),
-            EngagementDeliveryMethod::SMS => EngagementSmsChannel::dispatch($this),
+            EngagementDeliveryMethod::EMAIL => EngagementEmailChannelDelivery::dispatch($this),
+            EngagementDeliveryMethod::SMS => EngagementSmsChannelDelivery::dispatch($this),
             default => throw new UnknownDeliveryMethodException("Delivery channel '{$this->channel}' is not supported."),
         };
     }

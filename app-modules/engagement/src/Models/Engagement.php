@@ -16,7 +16,7 @@ class Engagement extends BaseModel
         'description',
         'recipient_id',
         'recipient_type',
-        'send_at',
+        'deliver_at',
     ];
 
     public function user(): BelongsTo
@@ -59,7 +59,7 @@ class Engagement extends BaseModel
 
         // auto-sets values on creation
         static::creating(function ($engagement) {
-            $engagement->send_at = $engagement->send_at ?? now();
+            $engagement->deliver_at = $engagement->deliver_at ?? now();
         });
     }
 }

@@ -54,7 +54,7 @@ class CreateEngagement extends CreateRecord
                         Toggle::make('send_later')
                             ->reactive()
                             ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
-                        DateTimePicker::make('send_at')
+                        DateTimePicker::make('deliver_at')
                             ->required()
                             ->visible(fn (callable $get) => $get('send_later')),
                     ]),

@@ -14,7 +14,7 @@ return new class () extends Migration {
             $table->string('recipient_type')->nullable();
             $table->string('subject');
             $table->longText('description')->nullable();
-            $table->dateTime('send_at');
+            $table->dateTimeTz('deliver_at');
             $table->timestamps();
         });
     }

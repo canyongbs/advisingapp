@@ -27,11 +27,6 @@ class ListEngagements extends ListRecords
                 TextColumn::make('description'),
                 TextColumn::make('recipient.full')
                     ->label('Recipient'),
-                // TODO This should probably only exist on the relationship
-                // The engagement deliverable, as we potentially want to show any errors that might have occurred as well
-                // ViewColumn::make('send_at')
-                //     ->label('Sending Status')
-                //     ->view('filament.tables.columns.sent-or-scheduled'),
             ])
             ->filters([
             ])

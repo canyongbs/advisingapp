@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Actions\Contracts\EngagementChannel;
 
-class EngagementSmsChannel implements EngagementChannel, ShouldQueue
+abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -18,17 +18,12 @@ class EngagementSmsChannel implements EngagementChannel, ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        protected EngagementDeliverable $deliverable
+        public EngagementDeliverable $deliverable
     ) {
     }
 
     public function handle(): void
     {
-        $this->send();
-    }
-
-    public function send(): void
-    {
-        // TODO Send engagement via text to end user
+        $this->deliver();
     }
 }
