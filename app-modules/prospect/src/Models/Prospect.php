@@ -170,12 +170,11 @@ class Prospect extends BaseModel implements Auditable
         );
     }
 
-    // TODO This might not be right - ensure this relationship is setup correctly
     public function engagements(): MorphMany
     {
         return $this->morphMany(
             related: Engagement::class,
-            name: 'receivable',
+            name: 'recipient',
         );
     }
 
