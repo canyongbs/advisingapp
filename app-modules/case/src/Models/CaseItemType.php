@@ -55,6 +55,11 @@ class CaseItemType extends BaseModel implements Auditable
         'name',
     ];
 
+    public function searchableAs(): string
+    {
+        return config('scout.prefix') . 'case_item_type_index';
+    }
+
     /**
      * @return array{id: mixed}
      */
