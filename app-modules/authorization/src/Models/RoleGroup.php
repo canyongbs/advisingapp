@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
 use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Authorization\Database\Factories\RoleGroupFactory;
 
 /**
  * Assist\Authorization\Models\RoleGroup
@@ -29,12 +28,14 @@ use Assist\Authorization\Database\Factories\RoleGroupFactory;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Collection<int, Role> $roles
+ * @property-read Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read Collection<int, \Assist\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
  *
- * @method static RoleGroupFactory factory($count = null, $state = [])
+ * @method static \Assist\Authorization\Database\Factories\RoleGroupFactory factory($count = null, $state = [])
  * @method static Builder|RoleGroup newModelQuery()
  * @method static Builder|RoleGroup newQuery()
  * @method static Builder|RoleGroup onlyTrashed()

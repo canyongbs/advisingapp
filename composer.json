@@ -163,6 +163,10 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/canyongbs/laravel-auditing"
         }
     ]
 }

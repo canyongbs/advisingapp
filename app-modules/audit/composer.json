@@ -6,7 +6,7 @@
   "license": "proprietary",
   "require": {
     "filament/filament": "^3.0-stable",
-    "owen-it/laravel-auditing": "^13.5",
+    "owen-it/laravel-auditing": "dev-feature/queued-auditing",
     "spatie/laravel-settings": "^3.2-stable",
     "filament/spatie-laravel-settings-plugin": "^3.0-stable"
   },
@@ -25,5 +25,11 @@
         "Assist\\Audit\\Providers\\AuditServiceProvider"
       ]
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/canyongbs/laravel-auditing"
+    }
+  ]
 }
