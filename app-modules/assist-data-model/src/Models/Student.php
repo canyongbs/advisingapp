@@ -3,15 +3,18 @@
 namespace Assist\AssistDataModel\Models;
 
 use Eloquent;
-use App\Models\BaseModel;
-use Assist\Audit\Models\Audit;
 use Assist\Case\Models\CaseItem;
+use Illuminate\Database\Eloquent\Model;
+use Assist\Engagement\Models\Engagement;
+use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -31,9 +34,12 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  *
  * @mixin Eloquent
  */
-class Student extends BaseModel implements Auditable
+class Student extends Model implements Auditable
 {
     use AuditableTrait;
+    use HasFactory;
+    use DefinesPermissions;
+    use Notifiable;
 
     protected $primaryKey = 'sisid';
 
@@ -53,6 +59,14 @@ class Student extends BaseModel implements Auditable
             type: 'respondent_type',
             id: 'respondent_id',
             localKey: 'sisid'
+        );
+    }
+
+    public function engagements(): MorphMany
+    {
+        return $this->morphMany(
+            related: Engagement::class,
+            name: 'recipient',
         );
     }
 
