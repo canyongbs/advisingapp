@@ -5,6 +5,7 @@ namespace Assist\Case\Models;
 use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Laravel\Scout\Searchable;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -48,10 +49,22 @@ class CaseItemType extends BaseModel implements Auditable
     use SoftDeletes;
     use HasUuids;
     use AuditableTrait;
+    use Searchable;
 
     protected $fillable = [
         'name',
     ];
+
+    /**
+     * @return array{id: mixed}
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->getScoutKey(),
+            'name' => $this->name,
+        ];
+    }
 
     public function caseItems(): HasMany
     {
