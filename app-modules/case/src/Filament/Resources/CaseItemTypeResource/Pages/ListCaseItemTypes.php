@@ -51,7 +51,7 @@ class ListCaseItemTypes extends ListRecords
     {
         if (filled($search = $this->getTableSearch())) {
             // TODO: This seems very slow and only finds exact matches. Need to investigate.
-            $query->whereIn('id', CaseItemType::search($search . '*')->keys());
+            $query->whereIn('id', CaseItemType::search($search)->keys());
         }
 
         return $query;
