@@ -169,7 +169,7 @@ return [
 
     'queue' => [
         'dispatch_listener' => ProcessDispatchAudit::class,
-        'connection' => 'redis',
+        'connection' => env('AUDIT_QUEUE_CONNECTION', 'sync'),
         'queue' => 'default',
         'delay' => 0,
     ],
