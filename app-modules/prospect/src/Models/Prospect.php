@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -93,7 +94,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  *
  * @mixin Eloquent
  */
-class Prospect extends BaseModel implements Auditable
+class Prospect extends BaseModel implements Auditable, Subscribable
 {
     use HasUuids;
     use SoftDeletes;

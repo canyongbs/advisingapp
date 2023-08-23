@@ -14,6 +14,8 @@ class SubscriptionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'subscriptions';
 
+    protected $listeners = ['refreshRelations' => '$refresh'];
+
     public function form(Form $form): Form
     {
         return $form
