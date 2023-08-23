@@ -72,10 +72,7 @@ class CreateEngagement extends CreateRecord
 
     public function afterCreate()
     {
-        ray('afterCreate()', $this->data, $this->record);
-
-        // TODO After creation, we want to dispatch an action to create the necessary relationships for deliverables
-        // For now, we'll just do it here
+        // TODO Extract this to an action
         foreach ($this->data['delivery_methods'] as $deliveryMethod) {
             $this->record->deliverables()->create([
                 'channel' => $deliveryMethod,

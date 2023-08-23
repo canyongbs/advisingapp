@@ -3,11 +3,12 @@
 namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Engagement\Actions\EngagementSmsChannelDelivery;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Actions\EngagementEmailChannelDelivery;
 use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
 
@@ -24,6 +25,7 @@ use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \Assist\Engagement\Models\Engagement $engagement
+ *
  * @method static \Assist\Engagement\Database\Factories\EngagementDeliverableFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newQuery()
@@ -37,11 +39,12 @@ use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereEngagementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
-class EngagementDeliverable extends BaseModel
+class EngagementDeliverable extends BaseModel implements Auditable
 {
-    use HasFactory;
+    use AuditableTrait;
 
     protected $fillable = [
         'channel',

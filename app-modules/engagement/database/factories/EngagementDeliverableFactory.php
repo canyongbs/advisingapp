@@ -19,7 +19,7 @@ class EngagementDeliverableFactory extends Factory
         return [
             'engagement_id' => Engagement::factory(),
             'channel' => $this->faker->randomElement(EngagementDeliveryMethod::cases()),
-            'delivery_status' => EngagementDeliveryStatus::AWAITING->value,
+            'delivery_status' => EngagementDeliveryStatus::AWAITING,
             'delivered_at' => null,
             'delivery_response' => $this->faker->paragraph,
         ];

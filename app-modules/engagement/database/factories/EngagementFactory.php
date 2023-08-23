@@ -14,6 +14,8 @@ class EngagementFactory extends Factory
 {
     public function definition(): array
     {
+        // TODO Improve this, as I think this will create a new student/prospect every time
+        // And we only ever want to create one, even if the other doesn't necessarily hurt
         $recipient = $this->faker->randomElement([
             Student::factory()->create(),
             Prospect::factory()->create(),
