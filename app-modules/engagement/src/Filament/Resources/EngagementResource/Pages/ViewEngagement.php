@@ -37,7 +37,6 @@ class ViewEngagement extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            // TODO Add conditional handling here to ensure this doesn't show if it shouldn't (ie, if the engagement has already been delivered)
             EditAction::make()
                 ->hidden(fn (Engagement $record) => $record->hasBeenDelivered() === true),
         ];

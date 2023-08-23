@@ -100,7 +100,6 @@ class Engagement extends BaseModel
     {
         parent::boot();
 
-        // auto-sets values on creation
         static::creating(function ($engagement) {
             $engagement->deliver_at = $engagement->deliver_at ?? now();
         });
