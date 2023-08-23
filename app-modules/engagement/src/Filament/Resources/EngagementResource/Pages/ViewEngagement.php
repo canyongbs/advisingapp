@@ -43,7 +43,6 @@ class ViewEngagement extends ViewRecord
                     ->state(function (Engagement $record): string {
                         /** @var Student|Prospect $recipient */
                         $recipient = $record->recipient;
-                        ray('recipient', $recipient);
 
                         return match ($recipient::class) {
                             Student::class => "{$recipient->full} (Student)",
