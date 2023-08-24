@@ -39,6 +39,7 @@
         "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
         "staudenmeir/eloquent-has-many-deep": "^1.18",
+        "tpetry/laravel-postgresql-enhanced": "^0.31.0",
         "twilio/sdk": "^7.7",
         "zing/laravel-scout-opensearch": "^3.2"
     },
