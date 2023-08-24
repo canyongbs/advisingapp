@@ -14,12 +14,14 @@ use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\Notifications\Models\Subscription;
 use Illuminate\Notifications\DatabaseNotification;
+use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
+use Assist\AssistDataModel\Database\Factories\StudentFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -38,7 +40,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read Collection<int, Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  *
- * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
+ * @method static StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
@@ -90,7 +92,9 @@ class Student extends Model implements Auditable, Subscribable
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
             relation: 'engagementFiles',
-        );
+        )
+            ->using(EngagementFileEntities::class)
+            ->withTimestamps();
     }
 
     public function subscriptions(): MorphMany

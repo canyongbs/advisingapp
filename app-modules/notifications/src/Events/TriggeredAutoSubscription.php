@@ -15,7 +15,7 @@ class TriggeredAutoSubscription
     use InteractsWithSockets;
     use SerializesModels;
 
-    public Subscribable $subscribable;
+    public ?Subscribable $subscribable;
 
     public function __construct(
         public User $user,

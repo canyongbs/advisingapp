@@ -102,12 +102,9 @@ class CaseItem extends BaseModel implements Auditable, CanTriggerAutoSubscriptio
         'created_by_id',
     ];
 
-    public function getSubscribable(): Subscribable
+    public function getSubscribable(): ?Subscribable
     {
-        /** @var Student|Prospect $respondent */
-        $respondent = $this->respondent;
-
-        return $respondent;
+        return $this->respondent instanceof Subscribable ? $this->respondent : null;
     }
 
     public function respondent(): MorphTo

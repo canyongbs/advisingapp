@@ -17,6 +17,7 @@ use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Notifications\Models\Contracts\Subscribable;
@@ -168,7 +169,9 @@ class Prospect extends BaseModel implements Auditable, Subscribable
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
             relation: 'prospects',
-        );
+        )
+            ->using(EngagementFileEntities::class)
+            ->withTimestamps();
     }
 
     public function engagements(): MorphMany

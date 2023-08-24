@@ -10,7 +10,9 @@ use Illuminate\Console\Scheduling\Schedule;
 use Assist\Engagement\Models\EngagementFile;
 use Assist\Engagement\Actions\DeliverEngagements;
 use Assist\Engagement\Models\EngagementDeliverable;
+use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Engagement\Observers\EngagementFileEntitiesObserver;
 
 class EngagementServiceProvider extends ServiceProvider
 {
@@ -30,5 +32,12 @@ class EngagementServiceProvider extends ServiceProvider
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             $schedule->job(DeliverEngagements::class)->everyMinute();
         });
+
+        $this->observers();
+    }
+
+    public function observers(): void
+    {
+        EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
     }
 }
