@@ -440,9 +440,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/assist-data-model",
-                "reference": "2752fdcb5221c5fe077d46e87d90170c89c27ea9"
+                "reference": "7b95a04a5333d79726a128892d04fdd673b9d09f"
             },
             "require": {
+                "canyon-gbs/notifications": "^1.0",
                 "filament/filament": "^3.0-stable"
             },
             "type": "library",
