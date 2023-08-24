@@ -2,10 +2,11 @@
 
 namespace Assist\Notifications\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Notifications\Actions\SubscriptionCreate;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 
-class CreateAutoSubscription
+class CreateAutoSubscription implements ShouldQueue
 {
     public function handle(TriggeredAutoSubscription $event): void
     {

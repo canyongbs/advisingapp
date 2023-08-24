@@ -7,6 +7,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 class TriggeredAutoSubscription
 {
@@ -14,8 +15,12 @@ class TriggeredAutoSubscription
     use InteractsWithSockets;
     use SerializesModels;
 
+    public Subscribable $subscribable;
+
     public function __construct(
         public User $user,
-        public Subscribable $subscribable,
-    ) {}
+        public CanTriggerAutoSubscription $model,
+    ) {
+        $this->subscribable = $model->getSubscribable();
+    }
 }
