@@ -16,6 +16,5 @@ class ForeignDataWrapperData extends Data
         public string $externalDatabase,
         /** @var array<string> */
         public array $tables,
-    ) {
-    }
+    ) {}
 }

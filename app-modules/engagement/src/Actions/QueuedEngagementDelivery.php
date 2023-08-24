@@ -19,8 +19,7 @@ abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueu
 
     public function __construct(
         public EngagementDeliverable $deliverable
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {

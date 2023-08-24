@@ -6,11 +6,7 @@ use Illuminate\Support\ServiceProvider;
 
 class StubClassNamePrefixServiceProvider extends ServiceProvider
 {
-    public function register()
-    {
-    }
+    public function register() {}
 
-    public function boot()
-    {
-    }
+    public function boot() {}
 }
