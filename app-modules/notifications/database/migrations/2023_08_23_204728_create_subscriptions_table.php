@@ -16,6 +16,7 @@ return new class () extends Migration {
             $table->string('subscribable_id');
             $table->string('subscribable_type');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };
