@@ -43,4 +43,12 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
+
+    // TODO Find a way to move this setting to the Engagement module, or perhaps a standalone SMS module if we find ourselves using Twilio in multiple modules
+    'twilio' => [
+        'account_sid' => env('TWILIO_ACCOUNT_SID'),
+        'auth_token' => env('TWILIO_AUTH_TOKEN'),
+        'from_number' => env('TWILIO_FROM_NUMBER'),
+        'test_to_number' => env('TWILIO_TEST_TO_NUMBER', null),
+    ],
 ];
