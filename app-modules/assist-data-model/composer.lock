@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca6278d5d937be9212b70627803735e4",
+    "content-hash": "46eccf86bdd1604c0db65cc9dc57473e",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -211,6 +211,41 @@
                 }
             ],
             "time": "2023-01-15T23:12:38+00:00"
+        },
+        {
+            "name": "canyon-gbs/notifications",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "../notifications",
+                "reference": "4a45eb33e21759ea861da16151a1e7cb022b3d40"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Notifications\\Providers\\NotificationsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Notifications\\": "src/",
+                    "Assist\\Notifications\\Tests\\": "tests/",
+                    "Assist\\Notifications\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Notifications\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "danharrin/date-format-converter",
