@@ -118,6 +118,7 @@ $rules = [
     'trim_array_spaces' => true,
     'single_space_around_construct' => true,
     'fully_qualified_strict_types' => true,
+    'single_line_empty_body' => true,
 ];
 
 $finder = Finder::create()
