@@ -9,6 +9,8 @@ use Assist\Notifications\Events\SubscriptionCreated;
 use Assist\Notifications\Events\SubscriptionDeleted;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Notifications\Observers\SubscriptionObserver;
+use Assist\Notifications\Events\TriggeredAutoSubscription;
+use Assist\Notifications\Listeners\CreateAutoSubscription;
 use Assist\Notifications\Listeners\NotifyUserOfSubscriptionCreated;
 use Assist\Notifications\Listeners\NotifyUserOfSubscriptionDeleted;
 
@@ -42,6 +44,11 @@ class NotificationsServiceProvider extends ServiceProvider
         Event::listen(
             SubscriptionDeleted::class,
             NotifyUserOfSubscriptionDeleted::class
+        );
+
+        Event::listen(
+            TriggeredAutoSubscription::class,
+            CreateAutoSubscription::class,
         );
     }
 }
