@@ -8,7 +8,7 @@ class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
 {
     public function deliver(): void
     {
-        // TODO Extract the client
+        // TODO Extract Client
         $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
 
         $response = $client->messages->create(
