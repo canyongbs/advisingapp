@@ -10,6 +10,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Assist\Engagement\Models\EngagementFile;
 use Assist\Engagement\Actions\DeliverEngagements;
 use Assist\Engagement\Models\EngagementDeliverable;
+use Assist\Engagement\Observers\EngagementObserver;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Engagement\Observers\EngagementFileEntitiesObserver;
@@ -39,5 +40,6 @@ class EngagementServiceProvider extends ServiceProvider
     public function observers(): void
     {
         EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
+        Engagement::observe(EngagementObserver::class);
     }
 }
