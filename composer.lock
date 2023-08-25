@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f75e576b9ee71a4c370a2485f09819e3",
+    "content-hash": "5a6ed057313aedb1c68f4a4ece0a4a03",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -708,6 +708,41 @@
                     "Assist\\Prospect\\Tests\\": "tests/",
                     "Assist\\Prospect\\Database\\Factories\\": "database/factories/",
                     "Assist\\Prospect\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/webhook",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/webhook",
+                "reference": "11b53458885ee556148eac5d67734654b7b0d616"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Webhook\\Providers\\WebhookServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Webhook\\": "src/",
+                    "Assist\\Webhook\\Tests\\": "tests/",
+                    "Assist\\Webhook\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Webhook\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
