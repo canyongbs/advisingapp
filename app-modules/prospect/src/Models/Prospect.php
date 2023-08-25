@@ -17,8 +17,10 @@ use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -93,7 +95,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  *
  * @mixin Eloquent
  */
-class Prospect extends BaseModel implements Auditable
+class Prospect extends BaseModel implements Auditable, Subscribable
 {
     use HasUuids;
     use SoftDeletes;
@@ -167,7 +169,9 @@ class Prospect extends BaseModel implements Auditable
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
             relation: 'prospects',
-        );
+        )
+            ->using(EngagementFileEntities::class)
+            ->withTimestamps();
     }
 
     public function engagements(): MorphMany

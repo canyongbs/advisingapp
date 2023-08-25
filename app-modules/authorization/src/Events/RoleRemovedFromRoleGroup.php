@@ -18,6 +18,5 @@ class RoleRemovedFromRoleGroup
      */
     public function __construct(
         public RoleGroupRolePivot $pivot
-    ) {
-    }
+    ) {}
 }

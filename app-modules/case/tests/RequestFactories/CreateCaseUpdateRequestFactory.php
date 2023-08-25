@@ -12,9 +12,9 @@ class CreateCaseUpdateRequestFactory extends RequestFactory
     {
         return [
             'case_id' => CaseItem::factory()->create()->id,
-            'update' => $this->faker->sentence,
+            'update' => $this->faker->sentence(),
             'direction' => $this->faker->randomElement(CaseUpdateDirection::cases())->value,
-            'internal' => $this->faker->boolean,
+            'internal' => $this->faker->boolean(),
         ];
     }
 }

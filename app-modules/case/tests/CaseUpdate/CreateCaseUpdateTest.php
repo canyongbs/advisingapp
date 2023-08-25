@@ -9,6 +9,7 @@ use Assist\Case\Models\CaseUpdate;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\Rules\Enum;
 
 use function PHPUnit\Framework\assertCount;
@@ -16,9 +17,16 @@ use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
 use Assist\Case\Filament\Resources\CaseUpdateResource;
+use Assist\Notifications\Events\TriggeredAutoSubscription;
 use Assist\Case\Tests\RequestFactories\CreateCaseUpdateRequestFactory;
 
 test('A successful action on the CreateCaseUpdate page', function () {
+    // Because we create a CaseItem there is already a Subscription created.
+    // This causes an issue during SubscriptionCreate as a unique constraint is violated.
+    // Postgres prevents any further actions from happening during a transaction when there is an error like this
+    // Preventing the Subscription creation for now
+    Event::fake([TriggeredAutoSubscription::class]);
+
     asSuperAdmin()
         ->get(
             CaseUpdateResource::getUrl('create')
@@ -64,6 +72,12 @@ test('CreateCaseUpdate requires valid data', function ($data, $errors) {
 // Permission Tests
 
 test('CreateCaseUpdate is gated with proper access control', function () {
+    // Because we create a CaseItem there is already a Subscription created.
+    // This causes an issue during SubscriptionCreate as a unique constraint is violated.
+    // Postgres prevents any further actions from happening during a transaction when there is an error like this
+    // Preventing the Subscription creation for now
+    Event::fake([TriggeredAutoSubscription::class]);
+
     $user = User::factory()->create();
 
     actingAs($user)

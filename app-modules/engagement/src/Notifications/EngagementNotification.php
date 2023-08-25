@@ -13,8 +13,7 @@ class EngagementNotification extends Notification
 
     public function __construct(
         public EngagementDeliverable $deliverable
-    ) {
-    }
+    ) {}
 
     public function via(object $notifiable): array
     {

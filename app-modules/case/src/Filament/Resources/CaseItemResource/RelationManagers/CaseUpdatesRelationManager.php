@@ -2,12 +2,14 @@
 
 namespace Assist\Case\Filament\Resources\CaseItemResource\RelationManagers;
 
-use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Assist\Case\Models\CaseUpdate;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Assist\Case\Enums\CaseUpdateDirection;
@@ -24,9 +26,20 @@ class CaseUpdatesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id')
+                Textarea::make('update')
+                    ->label('Update')
+                    ->rows(3)
+                    ->columnSpan('full')
                     ->required()
-                    ->maxLength(255),
+                    ->string(),
+                Select::make('direction')
+                    ->options(collect(CaseUpdateDirection::cases())->mapWithKeys(fn (CaseUpdateDirection $direction) => [$direction->value => $direction->name]))
+                    ->label('Direction')
+                    ->required()
+                    ->enum(CaseUpdateDirection::class),
+                Toggle::make('internal')
+                    ->label('Internal')
+                    ->rule(['boolean']),
             ]);
     }
 

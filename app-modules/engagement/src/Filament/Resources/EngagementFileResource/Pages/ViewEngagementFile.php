@@ -3,10 +3,8 @@
 namespace Assist\Engagement\Filament\Resources\EngagementFileResource\Pages;
 
 use Filament\Actions;
-use Illuminate\Support\Carbon;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Assist\Engagement\Models\EngagementFile;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
@@ -35,7 +33,7 @@ class ViewEngagementFile extends ViewRecord
                                 'download' => true,
                                 'target' => '_blank',
                             ])
-                            ->url(fn (EngagementFile $record) => $record->getFirstMedia('file')?->getTemporaryUrl(Carbon::now()->addMinutes(5)))
+                            ->url(route('engagement-file-download', ['file' => $this->record->id]))
                     ),
             ]);
     }

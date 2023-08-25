@@ -20,6 +20,5 @@ class RoleRemovedFromUser
     public function __construct(
         public Role $role,
         public User $user
-    ) {
-    }
+    ) {}
 }

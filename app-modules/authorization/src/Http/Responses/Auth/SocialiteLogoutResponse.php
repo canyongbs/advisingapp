@@ -11,8 +11,7 @@ class SocialiteLogoutResponse extends LogoutResponse
 {
     public function __construct(
         public SocialiteProvider $provider
-    ) {
-    }
+    ) {}
 
     public function toResponse($request): RedirectResponse
     {

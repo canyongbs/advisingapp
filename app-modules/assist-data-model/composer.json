@@ -5,7 +5,8 @@
     "version": "1.0",
     "license": "proprietary",
     "require": {
-        "filament/filament": "^3.0-stable"
+        "filament/filament": "^3.0-stable",
+        "canyon-gbs/notifications": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -27,5 +28,14 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
 }
