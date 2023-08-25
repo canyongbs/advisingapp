@@ -72,7 +72,9 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
             foreignPivotKey: 'engagement_file_id',
             relatedPivotKey: 'entity_id',
             relation: 'engagementFiles',
-        );
+        )
+            ->using(EngagementFileEntities::class)
+            ->withTimestamps();
     }
 
     public function prospects(): MorphToMany
@@ -84,6 +86,8 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
             foreignPivotKey: 'engagement_file_id',
             relatedPivotKey: 'entity_id',
             relation: 'prospects',
-        );
+        )
+            ->using(EngagementFileEntities::class)
+            ->withTimestamps();
     }
 }

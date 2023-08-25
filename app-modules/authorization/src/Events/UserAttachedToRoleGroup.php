@@ -18,6 +18,5 @@ class UserAttachedToRoleGroup
      */
     public function __construct(
         public RoleGroupUserPivot $pivot
-    ) {
-    }
+    ) {}
 }

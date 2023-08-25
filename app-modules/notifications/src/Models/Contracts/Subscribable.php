@@ -11,6 +11,4 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin Model
  */
-interface Subscribable
-{
-}
+interface Subscribable {}

@@ -7,14 +7,18 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\Case\Database\Factories\CaseUpdateFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * Assist\Case\Models\CaseUpdate
@@ -29,9 +33,9 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\Case\Models\CaseItem|null $case
+ * @property-read CaseItem|null $case
  *
- * @method static \Assist\Case\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
+ * @method static CaseUpdateFactory factory($count = null, $state = [])
  * @method static Builder|CaseUpdate newModelQuery()
  * @method static Builder|CaseUpdate newQuery()
  * @method static Builder|CaseUpdate onlyTrashed()
@@ -49,7 +53,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  *
  * @mixin Eloquent
  */
-class CaseUpdate extends BaseModel implements Auditable
+class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {
     use SoftDeletes;
     use HasUuids;
@@ -70,6 +74,16 @@ class CaseUpdate extends BaseModel implements Auditable
     public function case(): BelongsTo
     {
         return $this->belongsTo(CaseItem::class);
+    }
+
+    public function getSubscribable(): ?Subscribable
+    {
+        /** @var Subscribable|Model $respondent */
+        $respondent = $this->case->respondent;
+
+        return $respondent instanceof Subscribable
+            ? $respondent
+            : null;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

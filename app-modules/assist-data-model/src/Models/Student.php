@@ -14,6 +14,7 @@ use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\Notifications\Models\Subscription;
 use Illuminate\Notifications\DatabaseNotification;
+use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Notifications\Models\Contracts\Subscribable;
@@ -90,7 +91,9 @@ class Student extends Model implements Auditable, Subscribable
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
             relation: 'engagementFiles',
-        );
+        )
+            ->using(EngagementFileEntities::class)
+            ->withTimestamps();
     }
 
     public function subscriptions(): MorphMany

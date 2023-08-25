@@ -10,9 +10,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class MorphServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 
     public function boot(): void
     {

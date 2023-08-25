@@ -17,10 +17,7 @@ class SubscriptionToggle
         if ($subscription) {
             $subscription->delete();
         } else {
-            $user->subscriptions()->create([
-                'subscribable_id' => $subscribable->getKey(),
-                'subscribable_type' => $subscribable->getMorphClass(),
-            ]);
+            resolve(SubscriptionCreate::class)->handle($user, $subscribable);
         }
     }
 }
