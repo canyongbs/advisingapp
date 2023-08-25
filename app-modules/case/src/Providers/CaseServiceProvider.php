@@ -11,6 +11,7 @@ use Assist\Case\Models\CaseItemStatus;
 use Illuminate\Support\ServiceProvider;
 use Assist\Case\Models\CaseItemPriority;
 use Assist\Case\Observers\CaseItemObserver;
+use Assist\Case\Observers\CaseUpdateObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class CaseServiceProvider extends ServiceProvider
@@ -36,5 +37,6 @@ class CaseServiceProvider extends ServiceProvider
     protected function observers(): void
     {
         CaseItem::observe(CaseItemObserver::class);
+        CaseUpdate::observe(CaseUpdateObserver::class);
     }
 }

@@ -31,8 +31,9 @@ class CaseUpdateResource extends Resource
         return $form
             ->schema([
                 Select::make('case_id')
-                    ->relationship('case', 'casenumber')
+                    ->relationship('case', 'id')
                     ->searchable()
+                    ->preload()
                     ->label('Case')
                     ->translateLabel()
                     ->required()
