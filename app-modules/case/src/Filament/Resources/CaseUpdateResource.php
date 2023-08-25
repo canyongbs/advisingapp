@@ -32,7 +32,6 @@ class CaseUpdateResource extends Resource
             ->schema([
                 Select::make('case_id')
                     ->relationship('case', 'id')
-                    ->searchable()
                     ->preload()
                     ->label('Case')
                     ->translateLabel()
