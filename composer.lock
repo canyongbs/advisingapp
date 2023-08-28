@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "488a74bfd0d7a029e90916c7f86f3516",
+    "content-hash": "fafc18b8f7d826d92a633147c6ef5bcf",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -604,6 +604,41 @@
                     "Assist\\Engagement\\Tests\\": "tests/",
                     "Assist\\Engagement\\Database\\Factories\\": "database/factories/",
                     "Assist\\Engagement\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/integration-twilio",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/integration-twilio",
+                "reference": "b6c7aef4f3d3e4ea8ecaca6616738d922fa0644b"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\IntegrationTwilio\\Providers\\IntegrationTwilioServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\IntegrationTwilio\\": "src/",
+                    "Assist\\IntegrationTwilio\\Tests\\": "tests/",
+                    "Assist\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
+                    "Assist\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
