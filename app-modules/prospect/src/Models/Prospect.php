@@ -9,7 +9,6 @@ use App\Models\BaseModel;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use Assist\Case\Models\CaseItem;
-use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,6 +23,8 @@ use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
+use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
  * Assist\Prospect\Models\Prospect
@@ -101,6 +102,8 @@ class Prospect extends BaseModel implements Auditable, Subscribable
     use SoftDeletes;
     use AuditableTrait;
     use Notifiable;
+    use HasManyMorphedEngagements;
+    use HasManyMorphedEngagementResponses;
 
     protected $fillable = [
         'first_name',
@@ -172,14 +175,6 @@ class Prospect extends BaseModel implements Auditable, Subscribable
         )
             ->using(EngagementFileEntities::class)
             ->withTimestamps();
-    }
-
-    public function engagements(): MorphMany
-    {
-        return $this->morphMany(
-            related: Engagement::class,
-            name: 'recipient',
-        );
     }
 
     protected function serializeDate(DateTimeInterface $date): string
