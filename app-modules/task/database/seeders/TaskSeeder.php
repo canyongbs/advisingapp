@@ -54,5 +54,12 @@ class TaskSeeder extends Seeder
             ->concerningStudent()
             ->pastDue()
             ->create();
+
+        // Randomly assigned
+        Task::factory()
+            ->count(10)
+            ->assigned()
+            ->concerningStudent()
+            ->create();
     }
 }

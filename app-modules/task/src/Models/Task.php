@@ -4,6 +4,7 @@ namespace Assist\Task\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Assist\Task\Enums\TaskStatus;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -28,6 +29,11 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
         'assigned_to',
         'concern_id',
         'concern_type',
+    ];
+
+    protected $casts = [
+        'status' => TaskStatus::class,
+        'due' => 'datetime',
     ];
 
     public function concern(): MorphTo

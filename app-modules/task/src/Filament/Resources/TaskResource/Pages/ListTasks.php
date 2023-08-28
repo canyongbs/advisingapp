@@ -6,6 +6,7 @@ use Filament\Actions;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
+use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -30,8 +31,13 @@ class ListTasks extends ListRecords
         return parent::table($table)
             ->columns([
                 TextColumn::make('description')
-                    ->searchable(),
-                TextColumn::make('status'),
+                    ->searchable()
+                    ->wrap()
+                    ->limit(50),
+                TextColumn::make('status')
+                    ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
+                    ->badge()
+                    ->color(fn (Task $record) => $record->status->getTableColor()),
                 TextColumn::make('due')
                     ->label('Due Date'),
                 TextColumn::make('assignedTo.name')
@@ -45,16 +51,17 @@ class ListTasks extends ListRecords
                     }),
             ])
             ->filters([
+                Filter::make('my_tasks')
+                    ->label('My Tasks')
+                    ->query(
+                        fn ($query) => $query->where('assigned_to', auth()->id())
+                    )
+                    ->default(),
                 SelectFilter::make('assignedTo')
                     ->label('Assigned To')
                     ->relationship('assignedTo', 'name')
                     ->searchable()
-                    ->multiple()
-                    ->default(
-                        [
-                            auth()?->id(),
-                        ]
-                    ),
+                    ->multiple(),
                 SelectFilter::make('status')
                     ->label('Status')
                     ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
