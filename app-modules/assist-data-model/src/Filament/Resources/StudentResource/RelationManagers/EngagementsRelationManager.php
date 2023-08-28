@@ -2,22 +2,49 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
 
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Assist\Engagement\Models\Engagement;
+use Filament\Forms\Components\Component;
 use Filament\Tables\Actions\CreateAction;
+use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Filament\Resources\RelationManagers\RelationManager;
+use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
+use Assist\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
 
 class EngagementsRelationManager extends RelationManager
 {
     protected static string $relationship = 'engagements';
+
+    public function form(Form $form): Form
+    {
+        $createEngagementForm = (resolve(CreateEngagement::class))->form($form);
+
+        $formComponents = collect($createEngagementForm->getComponents())->filter(function (Component $component) {
+            if (! $component instanceof MorphToSelect) {
+                return true;
+            }
+        })->toArray();
+
+        return parent::form($createEngagementForm)
+            ->schema([
+                Hidden::make('recipient_id')
+                    ->default($this->ownerRecord->sisid),
+                Hidden::make('recipient_type')
+                    ->default(resolve(Student::class)->getMorphClass()),
+                ...$formComponents,
+            ]);
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -73,8 +100,10 @@ class EngagementsRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
-                // TODO Enable Engagement creation from the StudentResource
-                // CreateAction::make(),
+                CreateAction::make()
+                    ->after(function (Engagement $engagement, array $data) {
+                        $this->afterCreate($engagement, $data['delivery_methods']);
+                    }),
             ])
             ->actions([
                 ViewAction::make(),
@@ -82,8 +111,17 @@ class EngagementsRelationManager extends RelationManager
             ->bulkActions([
             ])
             ->emptyStateActions([
-                // TODO Enable Engagement creation from the StudentResource
-                // CreateAction::make(),
+                CreateAction::make()
+                    ->after(function (Engagement $engagement, array $data) {
+                        $this->afterCreate($engagement, $data['delivery_methods']);
+                    }),
             ]);
+    }
+
+    public function afterCreate(Engagement $engagement, array $deliveryMethods): void
+    {
+        $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
+
+        $createDeliverablesForEngagement($engagement, $deliveryMethods);
     }
 }
