@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c3d607dfcd6e3fa5095c7889431eba2",
+    "content-hash": "934c5d49d4064c9739d444881363db53",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -709,6 +709,41 @@
                     "Assist\\Prospect\\Tests\\": "tests/",
                     "Assist\\Prospect\\Database\\Factories\\": "database/factories/",
                     "Assist\\Prospect\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/task",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/task",
+                "reference": "d8358b9ca605e72196b010e141e1a35511888ace"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Task\\Providers\\TaskServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Task\\": "src/",
+                    "Assist\\Task\\Tests\\": "tests/",
+                    "Assist\\Task\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Task\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

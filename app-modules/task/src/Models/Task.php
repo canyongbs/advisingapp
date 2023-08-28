@@ -23,6 +23,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
 
     protected $fillable = [
         'description',
+        'status',
         'due',
         'assigned_to',
         'concern_id',

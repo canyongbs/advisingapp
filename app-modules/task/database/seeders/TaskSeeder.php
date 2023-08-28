@@ -13,7 +13,7 @@ class TaskSeeder extends Seeder
         // Past due, Student Concerned
         Task::factory()
             ->count(3)
-            ->assigned(User::find(1))
+            ->assigned(User::first())
             ->concerningStudent()
             ->pastDue()
             ->create();
@@ -21,7 +21,7 @@ class TaskSeeder extends Seeder
         // Past due, Prospect Concerned
         Task::factory()
             ->count(3)
-            ->assigned(User::find(1))
+            ->assigned(User::first())
             ->concerningProspect()
             ->pastDue()
             ->create();
@@ -29,7 +29,7 @@ class TaskSeeder extends Seeder
         // Due Later, Student Concerned
         Task::factory()
             ->count(3)
-            ->assigned(User::find(1))
+            ->assigned(User::first())
             ->concerningStudent()
             ->dueLater()
             ->create();
@@ -37,7 +37,7 @@ class TaskSeeder extends Seeder
         // Due Later, Prospect Concerned
         Task::factory()
             ->count(3)
-            ->assigned(User::find(1))
+            ->assigned(User::first())
             ->concerningProspect()
             ->dueLater()
             ->create();

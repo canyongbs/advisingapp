@@ -3,11 +3,12 @@
 namespace Assist\Task\Providers;
 
 use Filament\Panel;
+use Assist\Task\TaskPlugin;
+use Assist\Task\Models\Task;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Task\TaskPlugin;
 
 class TaskServiceProvider extends ServiceProvider
 {
@@ -18,7 +19,11 @@ class TaskServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([]);
+        Relation::morphMap(
+            [
+                'task' => Task::class,
+            ]
+        );
 
         $this->registerRolesAndPermissions();
     }
