@@ -8,12 +8,13 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('description');
             $table->timestamp('due')->nullable();
             $table->foreignUuid('assigned_to')->nullable()->constrained('users');
             $table->nullableUuidMorphs('concern');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

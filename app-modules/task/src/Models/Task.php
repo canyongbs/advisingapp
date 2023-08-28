@@ -4,13 +4,22 @@ namespace Assist\Task\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
-class Task extends BaseModel
+class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {
     use HasFactory;
+    use HasUuids;
+    use AuditableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'description',
@@ -28,5 +37,10 @@ class Task extends BaseModel
     public function assignedTo(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function getSubscribable(): ?Subscribable
+    {
+        return $this->concern instanceof Subscribable ? $this->concern : null;
     }
 }
