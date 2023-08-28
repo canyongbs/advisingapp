@@ -46,9 +46,10 @@ class ListTasks extends ListRecords
                     ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
                 TextColumn::make('concern.full')
                     ->label('Concern')
-                    ->url(fn (Task $record) => match ($record->concern::class) {
+                    ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
+                        default => null,
                     }),
             ])
             ->filters([
