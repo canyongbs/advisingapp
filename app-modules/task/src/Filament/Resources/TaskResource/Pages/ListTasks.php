@@ -39,7 +39,8 @@ class ListTasks extends ListRecords
                     ->badge()
                     ->color(fn (Task $record) => $record->status->getTableColor()),
                 TextColumn::make('due')
-                    ->label('Due Date'),
+                    ->label('Due Date')
+                    ->sortable(),
                 TextColumn::make('assignedTo.name')
                     ->label('Assigned To')
                     ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
