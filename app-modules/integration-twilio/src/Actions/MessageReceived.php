@@ -22,6 +22,9 @@ class MessageReceived implements ShouldQueue
 
     public function handle(CreateEngagementResponse $createEngagementResponse): void
     {
+        // TODO We might want to normalize data before trying to create an EngagementResponse
+        // This way we can do this for every integration in the future. For now, it's probably
+        // Overkill, but definitely something to think about a bit in the future.
         $createEngagementResponse($this->data);
     }
 }

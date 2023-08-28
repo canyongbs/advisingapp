@@ -15,8 +15,7 @@ class TwilioInboundWebhookController extends Controller
     // https://www.twilio.com/docs/usage/webhooks/getting-started-twilio-webhooks
     public function __invoke(string $event, Request $request, StoreInboundWebhook $storeInboundWebhook): JsonResponse
     {
-        // TODO Determine exactly how we need to process the incoming data
-        $data = json_decode($request->getContent(), true);
+        $data = $request->all();
 
         $storeInboundWebhook->handle(
             InboundWebhookSource::TWILIO,
@@ -30,8 +29,6 @@ class TwilioInboundWebhookController extends Controller
         // TODO We need a method to generate the response based on the event,
         // because it might be different - for example, Message requires TwiML
         // While a status update might just require a 200 OK
-
-        // new MessagingResponse();
-        return response()->json();
+        return new MessagingResponse();
     }
 }
