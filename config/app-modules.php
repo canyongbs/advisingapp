@@ -80,8 +80,9 @@ return [
     'stubs' => [
         'composer.json' => base_path('stubs/app-modules/composer-stub.json'),
         'src/Providers/StubClassNamePrefixServiceProvider.php' => base_path('stubs/app-modules/app/ServiceProvider.php'),
+        'src/StubClassNamePrefixPlugin.php' => base_path('stubs/app-modules/app/Plugin.php'),
         'src/Models/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
-        'tests/StubClassNamePrefixServiceProviderTest.php' => base_path('stubs/app-modules/tests/ServiceProviderTest.php'),
+        'tests/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'database/factories/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'database/migrations/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
         'database/seeders/.gitkeep' => base_path('stubs/app-modules/.gitkeep'),
