@@ -6,7 +6,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Assist\AssistDataModel\Models\Student;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
-use App\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\SubscriptionsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
 

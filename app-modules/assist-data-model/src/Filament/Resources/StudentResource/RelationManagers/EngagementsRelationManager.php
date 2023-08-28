@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\StudentResource\RelationManagers;
+namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
