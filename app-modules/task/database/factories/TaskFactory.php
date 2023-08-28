@@ -4,6 +4,7 @@ namespace Assist\Task\Database\Factories;
 
 use App\Models\User;
 use Assist\Task\Models\Task;
+use Assist\Task\Enums\TaskStatus;
 use Assist\Prospect\Models\Prospect;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,6 +18,7 @@ class TaskFactory extends Factory
     {
         return [
             'description' => $this->faker->sentence,
+            'status' => $this->faker->randomElement(TaskStatus::cases())->value,
             'due' => null,
             'assigned_to' => null,
             'concern_id' => null,
