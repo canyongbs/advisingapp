@@ -585,10 +585,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/engagement",
-                "reference": "c7b584b687eddc10b6d326ab710913d1601a5a47"
+                "reference": "cf490253e13296414bd26a6c03d0d3d547797f3d"
             },
             "require": {
-                "filament/filament": "^3.0-stable"
+                "filament/filament": "^3.0-stable",
+                "spatie/laravel-data": "^3.7"
             },
             "type": "library",
             "extra": {
@@ -620,13 +621,12 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-twilio",
-                "reference": "58131c83a1f619fb180cf014419717f924d0c6b4"
+                "reference": "ae23c73ca7a31fe1535b1bb1bc560eed4a9f4458"
             },
             "require": {
                 "canyon-gbs/engagement": "*",
                 "canyon-gbs/webhook": "*",
-                "filament/filament": "^3.0.0",
-                "spatie/laravel-data": "^3.7"
+                "filament/filament": "^3.0-stable"
             },
             "type": "library",
             "extra": {

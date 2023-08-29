@@ -5,10 +5,9 @@
     "version": "1.0",
     "license": "proprietary",
     "require": {
-        "filament/filament": "^3.0.0",
+        "filament/filament": "^3.0-stable",
         "canyon-gbs/engagement": "*",
-        "canyon-gbs/webhook": "*",
-        "spatie/laravel-data": "^3.7"
+        "canyon-gbs/webhook": "*"
     },
     "autoload": {
         "psr-4": {
