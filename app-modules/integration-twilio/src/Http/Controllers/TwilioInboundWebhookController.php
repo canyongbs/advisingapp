@@ -27,6 +27,11 @@ class TwilioInboundWebhookController extends Controller
 
         TwilioWebhookProcessor::dispatchToHandler($event, $data);
 
-        return TwilioWebhookProcessor::generateResponse($event);
+        $generatedResponse = TwilioWebhookProcessor::generateResponse($event);
+
+        logger('generatedResponse');
+        logger($generatedResponse);
+
+        return $generatedResponse;
     }
 }

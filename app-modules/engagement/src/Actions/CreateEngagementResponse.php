@@ -8,9 +8,6 @@ class CreateEngagementResponse
 {
     public function __invoke(array $data): void
     {
-        logger('CreateEngagementResponse');
-        logger($data);
-
         $findEngagementResponseSender = resolve(FindEngagementResponseSender::class);
 
         $sender = $findEngagementResponseSender($data['From']);
