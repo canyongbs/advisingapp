@@ -14,14 +14,12 @@ class EngagementDeliverableFactory extends Factory
 {
     public function definition(): array
     {
-        // TODO Add some better handling of the connection between status, delivered_at, and delivery_response
-
         return [
             'engagement_id' => Engagement::factory(),
-            'channel' => $this->faker->randomElement(EngagementDeliveryMethod::cases()),
+            'channel' => fake()->randomElement(EngagementDeliveryMethod::cases()),
             'delivery_status' => EngagementDeliveryStatus::AWAITING,
             'delivered_at' => null,
-            'delivery_response' => $this->faker->paragraph,
+            'delivery_response' => null,
         ];
     }
 
@@ -36,6 +34,23 @@ class EngagementDeliverableFactory extends Factory
     {
         return $this->state([
             'channel' => EngagementDeliveryMethod::SMS,
+        ]);
+    }
+
+    public function deliverySuccessful(): self
+    {
+        return $this->state([
+            'delivery_status' => EngagementDeliveryStatus::SUCCESSFUL,
+            'delivered_at' => now(),
+        ]);
+    }
+
+    public function deliveryFailed(): self
+    {
+        return $this->state([
+            'delivery_status' => EngagementDeliveryStatus::FAILED,
+            'delivered_at' => null,
+            'delivery_response' => 'The deliverable was not successfully delivered.',
         ]);
     }
 }

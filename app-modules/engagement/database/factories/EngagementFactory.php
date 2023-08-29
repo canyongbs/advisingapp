@@ -14,20 +14,20 @@ class EngagementFactory extends Factory
 {
     public function definition(): array
     {
-        // TODO Improve this, as I think this will create a new student/prospect every time
-        // And we only ever want to create one, even if the other doesn't necessarily hurt
-        $recipient = $this->faker->randomElement([
-            Student::factory()->create(),
-            Prospect::factory()->create(),
+        $recipient = fake()->randomElement([
+            Student::class,
+            Prospect::class,
         ]);
+
+        $recipient = $recipient::factory()->create();
 
         return [
             'user_id' => User::factory(),
             'recipient_id' => $recipient->id,
             'recipient_type' => $recipient->getMorphClass(),
-            'subject' => $this->faker->sentence,
-            'description' => $this->faker->paragraph,
-            'deliver_at' => $this->faker->dateTime,
+            'subject' => fake()->sentence,
+            'description' => fake()->paragraph,
+            'deliver_at' => fake()->dateTime,
         ];
     }
 
@@ -57,7 +57,7 @@ class EngagementFactory extends Factory
     public function deliverLater(): self
     {
         return $this->state([
-            'deliver_at' => $this->faker->dateTimeBetween('+1 day', '+1 week'),
+            'deliver_at' => fake()->dateTimeBetween('+1 day', '+1 week'),
         ]);
     }
 }

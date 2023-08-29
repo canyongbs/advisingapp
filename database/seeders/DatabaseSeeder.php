@@ -10,8 +10,10 @@ use Assist\Case\Database\Seeders\CaseItemTypeSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
 use Assist\Case\Database\Seeders\CaseItemStatusSeeder;
 use Assist\Case\Database\Seeders\CaseItemPrioritySeeder;
+use Assist\Engagement\Database\Seeders\EngagementSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
+use Assist\Engagement\Database\Seeders\EngagementResponseSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
@@ -39,6 +41,8 @@ class DatabaseSeeder extends Seeder
             KnowledgeBaseStatusSeeder::class,
             KnowledgeBaseItemSeeder::class,
             StudentSeeder::class,
+            EngagementSeeder::class,
+            EngagementResponseSeeder::class,
         ]);
     }
 }
