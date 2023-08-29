@@ -12,6 +12,7 @@ return new class () extends Migration {
             $table->string('sender_id')->nullable();
             $table->string('sender_type')->nullable();
             $table->longText('content')->nullable();
+            $table->timestamp('sent_at')->nullable();
             $table->timestamps();
         });
     }

@@ -12,7 +12,7 @@ it('will dispatch an appropriate job to process the incoming request', function 
     $this->post(
         route('inbound.webhook.twilio', 'message_received'),
         // TODO Change this payload for this specific test...
-        $this->loadFixtureFromModule('integration-twilio', 'StatusUpdates/sent'),
+        $this->loadFixtureFromModule('integration-twilio', 'StatusCallback/sent'),
     );
 
     Queue::assertPushed(MessageReceived::class);

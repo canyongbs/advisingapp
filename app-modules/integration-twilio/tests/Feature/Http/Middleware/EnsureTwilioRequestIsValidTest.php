@@ -3,7 +3,7 @@
 it('will abort the request if the request does not have the necessary header', function () {
     $response = $this->post(
         route('inbound.webhook.twilio', 'status_update'),
-        $this->loadFixtureFromModule('integration-twilio', 'Twilio/StatusUpdates/sent'),
+        $this->loadFixtureFromModule('integration-twilio', 'Twilio/StatusCallback/sent'),
     );
 
     $response->assertNotFound();
@@ -14,7 +14,7 @@ it('will abort the request if the request cannot be verified to have originated 
         'HTTP_X_TWILIO_SIGNATURE' => 'Not a legit signature',
     ])->post(
         route('inbound.webhook.twilio', 'status_update'),
-        $this->loadFixtureFromModule('integration-twilio', 'Twilio/StatusUpdates/sent'),
+        $this->loadFixtureFromModule('integration-twilio', 'Twilio/StatusCallback/sent'),
     );
 
     $response->assertNotFound();
