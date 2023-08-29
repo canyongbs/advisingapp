@@ -8,6 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Assist\Engagement\Actions\CreateEngagementResponse;
+use Assist\Engagement\DataTransferObjects\EngagementResponseData;
 
 class MessageReceived implements ShouldQueue
 {
@@ -24,7 +25,9 @@ class MessageReceived implements ShouldQueue
     {
         $createEngagementResponse = resolve(CreateEngagementResponse::class);
 
-        // TODO Normalize data before sending to CreateEngagementResponse
-        $createEngagementResponse($this->data);
+        $createEngagementResponse(EngagementResponseData::from([
+            'from' => $this->data['From'],
+            'body' => $this->data['Body'],
+        ]));
     }
 }

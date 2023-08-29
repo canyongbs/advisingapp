@@ -17,6 +17,6 @@
     "NumSegments": "1",
     "MessageSid": "SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "AccountSid": "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    "From": "++12223334455",
+    "From": "+12223334455",
     "ApiVersion": "2010-04-01"
 }

@@ -2,15 +2,16 @@
 
 use Assist\AssistDataModel\Models\Student;
 use Assist\IntegrationTwilio\Actions\MessageReceived;
-use Assist\Engagement\Exceptions\UnknownEngagementSenderException;
 
-it('will_throw_an_exception_when_it_cannot_find_an_associated_message_sender', function () {
+it('will not create an engagement response when it cannot find an associated message sender', function () {
     $messageData = $this->loadFixtureFromModule('integration-twilio', 'MessageReceived/payload');
-
-    $this->expectException(UnknownEngagementSenderException::class);
 
     $messageReceived = new MessageReceived($messageData);
     $messageReceived->handle();
+
+    $this->assertDatabaseMissing('engagement_responses', [
+        'content' => $messageData['Body'],
+    ]);
 });
 
 it('will create an engagement response when a message is received', function () {
@@ -18,7 +19,7 @@ it('will create an engagement response when a message is received', function () 
 
     $student = Student::factory()->create();
 
-    $messageData['from'] = $student->mobile;
+    $messageData['From'] = $student->mobile;
 
     $messageReceived = new MessageReceived($messageData);
 
@@ -27,6 +28,6 @@ it('will create an engagement response when a message is received', function () 
     $this->assertDatabaseHas('engagement_responses', [
         'sender_id' => $student->id,
         'sender_type' => (new Student())->getMorphClass(),
-        'content' => $messageData['body'],
+        'content' => $messageData['Body'],
     ]);
 });

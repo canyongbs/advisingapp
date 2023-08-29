@@ -15,8 +15,6 @@ class TwilioInboundWebhookController extends Controller
     public function __invoke(string $event, Request $request, StoreInboundWebhook $storeInboundWebhook): MessagingResponse|Response
     {
         $data = $request->all();
-        logger('TwilioInboundWebhookController');
-        logger($data);
 
         $storeInboundWebhook->handle(
             InboundWebhookSource::TWILIO,
@@ -27,11 +25,6 @@ class TwilioInboundWebhookController extends Controller
 
         TwilioWebhookProcessor::dispatchToHandler($event, $data);
 
-        $generatedResponse = TwilioWebhookProcessor::generateResponse($event);
-
-        logger('generatedResponse');
-        logger($generatedResponse);
-
-        return $generatedResponse;
+        return TwilioWebhookProcessor::generateResponse($event);
     }
 }
