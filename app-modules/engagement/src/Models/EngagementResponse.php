@@ -15,6 +15,7 @@ class EngagementResponse extends BaseModel implements Auditable
         'sender_id',
         'sender_type',
         'content',
+        'sent_at',
     ];
 
     public function sender(): MorphTo

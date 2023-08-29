@@ -14,6 +14,12 @@ class HandleNotificationFailed implements ShouldQueue
             return;
         }
 
-        // TODO Handle failed notifications
+        /** @var EngagementNotification $notification */
+        $notification = $event->notification;
+
+        /** @var EngagementDeliverable $deliverable */
+        $deliverable = $notification->deliverable;
+
+        $deliverable->markDeliveryFailed();
     }
 }
