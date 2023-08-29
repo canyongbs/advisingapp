@@ -16,6 +16,7 @@ use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Filament\Resources\EngagementResource;
+use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
 
 class CreateEngagement extends CreateRecord
 {
@@ -70,13 +71,10 @@ class CreateEngagement extends CreateRecord
             ]);
     }
 
-    public function afterCreate()
+    public function afterCreate(): void
     {
-        // TODO Extract this to an action
-        foreach ($this->data['delivery_methods'] as $deliveryMethod) {
-            $this->record->deliverables()->create([
-                'channel' => $deliveryMethod,
-            ]);
-        }
+        $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
+
+        $createDeliverablesForEngagement($this->record, $this->data['delivery_methods']);
     }
 }

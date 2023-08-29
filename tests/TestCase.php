@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Tests\Concerns\LoadsFixtures;
 use Illuminate\Contracts\Console\Kernel;
 use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,6 +16,7 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
     use RefreshDatabase;
     use CanConfigureMigrationCommands;
+    use LoadsFixtures;
 
     protected function setUp(): void
     {

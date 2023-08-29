@@ -12,7 +12,7 @@ class EngagementNotification extends Notification
     use Queueable;
 
     public function __construct(
-        protected EngagementDeliverable $deliverable
+        public EngagementDeliverable $deliverable
     ) {}
 
     public function via(object $notifiable): array

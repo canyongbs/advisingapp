@@ -1,0 +1,26 @@
+{
+    "name": "canyon-gbs/webhook",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Assist\\Webhook\\": "src/",
+            "Assist\\Webhook\\Tests\\": "tests/",
+            "Assist\\Webhook\\Database\\Factories\\": "database/factories/",
+            "Assist\\Webhook\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Assist\\Webhook\\Providers\\WebhookServiceProvider"
+            ]
+        }
+    }
+}

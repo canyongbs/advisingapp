@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Assist\Engagement\Models\Engagement;
 use Illuminate\Console\Scheduling\Schedule;
 use Assist\Engagement\Models\EngagementFile;
+use Assist\Engagement\Models\EngagementResponse;
 use Assist\Engagement\Actions\DeliverEngagements;
 use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Observers\EngagementObserver;
@@ -27,6 +28,7 @@ class EngagementServiceProvider extends ServiceProvider
         Relation::morphMap([
             'engagement' => Engagement::class,
             'engagement_deliverable' => EngagementDeliverable::class,
+            'engagement_response' => EngagementResponse::class,
             'engagement_file' => EngagementFile::class,
         ]);
 

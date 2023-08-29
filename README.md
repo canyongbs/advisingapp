@@ -104,12 +104,17 @@ Coming Soon
 ## Usage
 
 [Roles and Permissions](./docs/roles-and-permissions.md)
+[Inbound Webhooks](./docs/inbound-webhooks.md)
 
 _For more examples, please refer to the [Documentation](https://assistforhighered.org)_
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- ROADMAP -->
+
+## Integrations
+
+[Twilio](./docs/integrations/twilio.md)
 ## Roadmap
 
 Coming Soon

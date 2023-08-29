@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
+use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
  * Assist\AssistDataModel\Models\Student
@@ -52,6 +54,8 @@ class Student extends Model implements Auditable, Subscribable
     use HasFactory;
     use DefinesPermissions;
     use Notifiable;
+    use HasManyMorphedEngagements;
+    use HasManyMorphedEngagementResponses;
 
     protected $primaryKey = 'sisid';
 
@@ -71,14 +75,6 @@ class Student extends Model implements Auditable, Subscribable
             type: 'respondent_type',
             id: 'respondent_id',
             localKey: 'sisid'
-        );
-    }
-
-    public function engagements(): MorphMany
-    {
-        return $this->morphMany(
-            related: Engagement::class,
-            name: 'recipient',
         );
     }
 

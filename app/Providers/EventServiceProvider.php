@@ -6,10 +6,14 @@ use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
 use Assist\Audit\Listeners\AuditingListener;
 use Assist\Authorization\Events\RoleRemovedFromUser;
+use Illuminate\Notifications\Events\NotificationSent;
+use Assist\Engagement\Listeners\HandleNotificationSent;
+use Illuminate\Notifications\Events\NotificationFailed;
 use Assist\Authorization\Events\RoleAttachedToRoleGroup;
 use Assist\Authorization\Events\UserAttachedToRoleGroup;
 use Assist\Authorization\Events\RoleRemovedFromRoleGroup;
 use Assist\Authorization\Events\UserRemovedFromRoleGroup;
+use Assist\Engagement\Listeners\HandleNotificationFailed;
 use Assist\Authorization\Listeners\HandleRoleRemovedFromUser;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Assist\Authorization\Listeners\HandleRoleAttachedToRoleGroup;
@@ -48,6 +52,13 @@ class EventServiceProvider extends ServiceProvider
         // TODO: Move this to the auditing Module somehow
         Auditing::class => [
             AuditingListener::class,
+        ],
+        // Move this to the appropriate module - currently being used with Engagement
+        NotificationSent::class => [
+            HandleNotificationSent::class,
+        ],
+        NotificationFailed::class => [
+            HandleNotificationFailed::class,
         ],
     ];
 
