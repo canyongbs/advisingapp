@@ -20,8 +20,10 @@ class MessageReceived implements ShouldQueue
         public array $data
     ) {}
 
-    public function handle(CreateEngagementResponse $createEngagementResponse): void
+    public function handle(): void
     {
+        $createEngagementResponse = resolve(CreateEngagementResponse::class);
+
         // TODO Normalize data before sending to CreateEngagementResponse
         $createEngagementResponse($this->data);
     }
