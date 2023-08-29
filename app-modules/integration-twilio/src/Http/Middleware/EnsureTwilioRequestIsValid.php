@@ -15,7 +15,7 @@ class EnsureTwilioRequestIsValid
 
         $validator = new RequestValidator(config('services.twilio.auth_token'));
 
-        if (! $validator->validate($request->header('x-twilio-signature'), $request->url, $request->all())) {
+        if (! $validator->validate($request->header('x-twilio-signature'), $request->url(), $request->all())) {
             abort(404);
         }
 

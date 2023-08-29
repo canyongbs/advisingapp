@@ -1,6 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Queue;
+use Assist\IntegrationTwilio\Actions\MessageReceived;
+
 it('will create an inbound webhook with the Twilio source and the correct event', function () {
+    Queue::fake([MessageReceived::class]);
     $this->withoutMiddleware();
 
     $response = $this->post(
@@ -16,7 +20,7 @@ it('will create an inbound webhook with the Twilio source and the correct event'
         'event' => 'message_received',
     ]);
 
-    $this->assertDatabaseDoesntHave('inbound_webhooks', [
+    $this->assertDatabaseMissing('inbound_webhooks', [
         'source' => 'twilio',
         'event' => 'status_update',
     ]);
