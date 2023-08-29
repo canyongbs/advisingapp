@@ -82,14 +82,18 @@ class ListTasks extends ListRecords
             ])
             ->actions([
                 ViewAction::make()
-                    //->action(fn (Task $record) => $record->update(['status' => TaskStatus::COMPLETED]))
                     ->extraModalFooterActions(
                         [
+                            Action::make('mark_as_in_progress')
+                                ->label('Mark as In Progress')
+                                ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::IN_PROGRESS))
+                                ->cancelParentActions()
+                                ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::IN_PROGRESS->value)),
                             Action::make('mark_as_completed')
                                 ->label('Mark as Completed')
-                                ->action(fn (Task $record) => $record->update(['status' => TaskStatus::COMPLETED]))
+                                ->action(fn (Task $record) => $record->getStateMachine('status')->transitionTo(TaskStatus::COMPLETED))
                                 ->cancelParentActions()
-                                ->hidden(fn (Task $record) => $record->status->value === TaskStatus::COMPLETED->value),
+                                ->hidden(fn (Task $record) => $record->getStateMachine('status')->getStateTransitions()->doesntContain(TaskStatus::COMPLETED->value)),
                         ]
                     )
                     ->infolist(

@@ -13,6 +13,7 @@
         "php": "^8.2",
         "ext-pdo": "*",
         "awcodes/filament-tiptap-editor": "^3.0@beta",
+        "bvtterfly/model-state-machine": "^0.3.0",
         "canyon-gbs/assist-data-model": "*",
         "canyon-gbs/audit": "*",
         "canyon-gbs/authorization": "*",

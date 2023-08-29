@@ -3,7 +3,6 @@
 namespace Assist\Task\Filament\Resources\TaskResource\Pages;
 
 use Filament\Forms\Form;
-use Assist\Task\Enums\TaskStatus;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,12 +25,6 @@ class CreateTask extends CreateRecord
                     ->label('Description')
                     ->required()
                     ->string(),
-                Select::make('status')
-                    ->label('Status')
-                    ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $status) => [$status->value => str($status->name)->title()->headline()]))
-                    ->required()
-                    ->enum(TaskStatus::class)
-                    ->default(TaskStatus::PENDING->value),
                 DateTimePicker::make('due')
                     ->label('Due Date')
                     ->native(false),
