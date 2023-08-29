@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Assist\Task\Database\Seeders\TaskSeeder;
 use Assist\Case\Database\Seeders\CaseItemSeeder;
 use Assist\Case\Database\Seeders\CaseUpdateSeeder;
 use Assist\Case\Database\Seeders\CaseItemTypeSeeder;
@@ -41,6 +42,7 @@ class DemoDatabaseSeeder extends Seeder
             KnowledgeBaseQualitySeeder::class,
             KnowledgeBaseStatusSeeder::class,
             KnowledgeBaseItemSeeder::class,
+            TaskSeeder::class,
         ]);
     }
 }

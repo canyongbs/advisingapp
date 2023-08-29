@@ -1,178 +1,179 @@
 {
-    "name": "canyongbs/assistforhighered-2",
-    "type": "project",
-    "description": "ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASSIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offering.",
-    "keywords": [
-        "higher",
-        "education",
-        "academic",
-        "laravel"
+  "name": "canyongbs/assistforhighered-2",
+  "type": "project",
+  "description": "ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASSIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offering.",
+  "keywords": [
+    "higher",
+    "education",
+    "academic",
+    "laravel"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "ext-pdo": "*",
+    "awcodes/filament-tiptap-editor": "^3.0@beta",
+    "canyon-gbs/assist-data-model": "*",
+    "canyon-gbs/audit": "*",
+    "canyon-gbs/authorization": "*",
+    "canyon-gbs/case": "*",
+    "canyon-gbs/engagement": "*",
+    "canyon-gbs/integration-twilio": "*",
+    "canyon-gbs/knowledge-base": "*",
+    "canyon-gbs/notifications": "*",
+    "canyon-gbs/prospect": "*",
+    "canyon-gbs/task": "*",
+    "canyon-gbs/webhook": "*",
+    "filament/filament": "^3.0-stable",
+    "filament/spatie-laravel-media-library-plugin": "^3.0-stable",
+    "guzzlehttp/guzzle": "^7.2",
+    "internachi/modular": "^2.0",
+    "kirschbaum-development/eloquent-power-joins": "^3.0",
+    "laravel/framework": "^10.0",
+    "laravel/sanctum": "^3.2",
+    "laravel/scout": "^10.2",
+    "laravel/socialite": "^5.8",
+    "laravel/tinker": "^2.8",
+    "laravel/ui": "^4.2",
+    "league/flysystem-aws-s3-v3": "^3.0",
+    "livewire/livewire": "^3.0@beta",
+    "socialiteproviders/google": "^4.1",
+    "socialiteproviders/microsoft-azure": "^5.1",
+    "spatie/laravel-data": "^3.7",
+    "spatie/laravel-medialibrary": "^10.7",
+    "staudenmeir/eloquent-has-many-deep": "^1.18",
+    "tpetry/laravel-postgresql-enhanced": "^0.31.0",
+    "twilio/sdk": "^7.7",
+    "zing/laravel-scout-opensearch": "^3.2"
+  },
+  "require-dev": {
+    "barryvdh/laravel-ide-helper": "^2.13",
+    "brianium/paratest": "^7.2",
+    "doctrine/dbal": "^3.6",
+    "fakerphp/faker": "^1.9.1",
+    "friendsofphp/php-cs-fixer": "^3.21",
+    "laravel/sail": "^1.18",
+    "mockery/mockery": "^1.4.4",
+    "nunomaduro/collision": "^7.0",
+    "nunomaduro/larastan": "^2.6",
+    "pestphp/pest": "^2.11",
+    "pestphp/pest-plugin-faker": "^2.0",
+    "pestphp/pest-plugin-laravel": "^2.1",
+    "pestphp/pest-plugin-livewire": "^2.1",
+    "phpunit/phpunit": "^10.0",
+    "spatie/laravel-ignition": "^2.0",
+    "spatie/laravel-ray": "^1.32",
+    "worksome/request-factories": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi",
+      "@php artisan filament:upgrade"
     ],
-    "license": "MIT",
-    "require": {
-        "php": "^8.2",
-        "ext-pdo": "*",
-        "awcodes/filament-tiptap-editor": "^3.0@beta",
-        "canyon-gbs/assist-data-model": "*",
-        "canyon-gbs/audit": "*",
-        "canyon-gbs/authorization": "*",
-        "canyon-gbs/case": "*",
-        "canyon-gbs/engagement": "*",
-        "canyon-gbs/integration-twilio": "*",
-        "canyon-gbs/knowledge-base": "*",
-        "canyon-gbs/notifications": "*",
-        "canyon-gbs/prospect": "*",
-        "canyon-gbs/webhook": "*",
-        "filament/filament": "^3.0-stable",
-        "filament/spatie-laravel-media-library-plugin": "^3.0-stable",
-        "guzzlehttp/guzzle": "^7.2",
-        "internachi/modular": "^2.0",
-        "kirschbaum-development/eloquent-power-joins": "^3.0",
-        "laravel/framework": "^10.0",
-        "laravel/sanctum": "^3.2",
-        "laravel/scout": "^10.2",
-        "laravel/socialite": "^5.8",
-        "laravel/tinker": "^2.8",
-        "laravel/ui": "^4.2",
-        "league/flysystem-aws-s3-v3": "^3.0",
-        "livewire/livewire": "^3.0@beta",
-        "socialiteproviders/google": "^4.1",
-        "socialiteproviders/microsoft-azure": "^5.1",
-        "spatie/laravel-data": "^3.7",
-        "spatie/laravel-medialibrary": "^10.7",
-        "staudenmeir/eloquent-has-many-deep": "^1.18",
-        "tpetry/laravel-postgresql-enhanced": "^0.31.0",
-        "twilio/sdk": "^7.7",
-        "zing/laravel-scout-opensearch": "^3.2"
-    },
-    "require-dev": {
-        "barryvdh/laravel-ide-helper": "^2.13",
-        "brianium/paratest": "^7.2",
-        "doctrine/dbal": "^3.6",
-        "fakerphp/faker": "^1.9.1",
-        "friendsofphp/php-cs-fixer": "^3.21",
-        "laravel/sail": "^1.18",
-        "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^7.0",
-        "nunomaduro/larastan": "^2.6",
-        "pestphp/pest": "^2.11",
-        "pestphp/pest-plugin-faker": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.1",
-        "pestphp/pest-plugin-livewire": "^2.1",
-        "phpunit/phpunit": "^10.0",
-        "spatie/laravel-ignition": "^2.0",
-        "spatie/laravel-ray": "^1.32",
-        "worksome/request-factories": "^3.2"
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi",
-            "@php artisan filament:upgrade"
-        ],
-        "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta"
-        ],
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
-        "post-create-project-cmd": [
-            "@php artisan key:generate --ansi"
-        ],
-        "refresh-database": [
-            "@php artisan migrate:fresh",
-            "@php artisan migrate:fresh --database=sis --path=database/migrations/sis",
-            "@php artisan app:remove-foreign-data-wrapper",
-            "@php artisan app:setup-foreign-data-wrapper",
-            "@php artisan db:seed"
-        ],
-        "php-cs-lint": [
-            "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
-        ],
-        "php-cs-lint-dryrun": [
-            "@php-cs-lint --dry-run --stop-on-violation"
-        ],
-        "php-cs-clear-cache": [
-            "rm -f ./.php-cs-fixer.cache"
-        ],
-        "prettier": [
-            "./node_modules/.bin/prettier \"resources/**/*.css\" \"resources/**/*.blade.php\" \"resources/**/*.js\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
-        ],
-        "prettier-lint": [
-            "@prettier --write"
-        ],
-        "prettier-lint-dryrun": [
-            "@prettier --check"
-        ],
-        "clear-prettier-cache": [
-            "rm -f ./node_modules/.cache/prettier/.prettier-cache"
-        ],
-        "lint-dryrun": [
-            "@php-cs-lint-dryrun",
-            "@prettier-lint-dryrun"
-        ],
-        "lint": [
-            "@php-cs-lint",
-            "@prettier-lint"
-        ],
-        "helper-regen": [
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:models -W -R || true",
-            "@php artisan ide-helper:meta",
-            "@lint"
-        ],
-        "larastan": [
-            "./vendor/bin/phpstan analyse --memory-limit=2G"
-        ],
-        "checks": [
-            "@lint-dryrun",
-            "@larastan"
-        ]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "10.x-dev"
-        },
-        "laravel": {
-            "dont-discover": []
-        }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "php-http/discovery": true
-        }
-    },
-    "prefer-stable": true,
-    "minimum-stability": "dev",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "app-modules/*",
-            "options": {
-                "symlink": true
-            }
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/canyongbs/laravel-auditing"
-        }
+    "post-update-cmd": [
+      "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+      "@php artisan ide-helper:generate",
+      "@php artisan ide-helper:meta"
+    ],
+    "post-root-package-install": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "@php artisan key:generate --ansi"
+    ],
+    "refresh-database": [
+      "@php artisan migrate:fresh",
+      "@php artisan migrate:fresh --database=sis --path=database/migrations/sis",
+      "@php artisan app:remove-foreign-data-wrapper",
+      "@php artisan app:setup-foreign-data-wrapper",
+      "@php artisan db:seed"
+    ],
+    "php-cs-lint": [
+      "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
+    ],
+    "php-cs-lint-dryrun": [
+      "@php-cs-lint --dry-run --stop-on-violation"
+    ],
+    "php-cs-clear-cache": [
+      "rm -f ./.php-cs-fixer.cache"
+    ],
+    "prettier": [
+      "./node_modules/.bin/prettier \"resources/**/*.css\" \"resources/**/*.blade.php\" \"resources/**/*.js\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+    ],
+    "prettier-lint": [
+      "@prettier --write"
+    ],
+    "prettier-lint-dryrun": [
+      "@prettier --check"
+    ],
+    "clear-prettier-cache": [
+      "rm -f ./node_modules/.cache/prettier/.prettier-cache"
+    ],
+    "lint-dryrun": [
+      "@php-cs-lint-dryrun",
+      "@prettier-lint-dryrun"
+    ],
+    "lint": [
+      "@php-cs-lint",
+      "@prettier-lint"
+    ],
+    "helper-regen": [
+      "@php artisan ide-helper:generate",
+      "@php artisan ide-helper:models -W -R || true",
+      "@php artisan ide-helper:meta",
+      "@lint"
+    ],
+    "larastan": [
+      "./vendor/bin/phpstan analyse --memory-limit=2G"
+    ],
+    "checks": [
+      "@lint-dryrun",
+      "@larastan"
     ]
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "10.x-dev"
+    },
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "php-http/discovery": true
+    }
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "repositories": [
+    {
+      "type": "path",
+      "url": "app-modules/*",
+      "options": {
+        "symlink": true
+      }
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/canyongbs/laravel-auditing"
+    }
+  ]
 }

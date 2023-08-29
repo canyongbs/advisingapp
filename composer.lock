@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fafc18b8f7d826d92a633147c6ef5bcf",
+    "content-hash": "934c5d49d4064c9739d444881363db53",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -615,41 +615,6 @@
             }
         },
         {
-            "name": "canyon-gbs/integration-twilio",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/integration-twilio",
-                "reference": "b6c7aef4f3d3e4ea8ecaca6616738d922fa0644b"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Assist\\IntegrationTwilio\\Providers\\IntegrationTwilioServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Assist\\IntegrationTwilio\\": "src/",
-                    "Assist\\IntegrationTwilio\\Tests\\": "tests/",
-                    "Assist\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
-                    "Assist\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/knowledge-base",
             "version": "1.0",
             "dist": {
@@ -755,12 +720,12 @@
             }
         },
         {
-            "name": "canyon-gbs/webhook",
+            "name": "canyon-gbs/task",
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/webhook",
-                "reference": "11b53458885ee556148eac5d67734654b7b0d616"
+                "url": "app-modules/task",
+                "reference": "d8358b9ca605e72196b010e141e1a35511888ace"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -769,16 +734,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Webhook\\Providers\\WebhookServiceProvider"
+                        "Assist\\Task\\Providers\\TaskServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Webhook\\": "src/",
-                    "Assist\\Webhook\\Tests\\": "tests/",
-                    "Assist\\Webhook\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Webhook\\Database\\Seeders\\": "database/seeders/"
+                    "Assist\\Task\\": "src/",
+                    "Assist\\Task\\Tests\\": "tests/",
+                    "Assist\\Task\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Task\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -2349,16 +2314,16 @@
         },
         {
             "name": "filament/actions",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
-                "reference": "8355c09388e325d1dab45022c056773d53cf9a1d"
+                "reference": "97218337f7a779fda9102bd73348fb44597de279"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/actions/zipball/8355c09388e325d1dab45022c056773d53cf9a1d",
-                "reference": "8355c09388e325d1dab45022c056773d53cf9a1d",
+                "url": "https://api.github.com/repos/filamentphp/actions/zipball/97218337f7a779fda9102bd73348fb44597de279",
+                "reference": "97218337f7a779fda9102bd73348fb44597de279",
                 "shasum": ""
             },
             "require": {
@@ -2395,20 +2360,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-08-24T21:02:36+00:00"
+            "time": "2023-08-24T15:59:53+00:00"
         },
         {
             "name": "filament/filament",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
-                "reference": "ad45ee135e425315be925bac5e23fb9f2bb90d39"
+                "reference": "aa0373fc33dde67a10f8840d625eecc7cb6196ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/panels/zipball/ad45ee135e425315be925bac5e23fb9f2bb90d39",
-                "reference": "ad45ee135e425315be925bac5e23fb9f2bb90d39",
+                "url": "https://api.github.com/repos/filamentphp/panels/zipball/aa0373fc33dde67a10f8840d625eecc7cb6196ab",
+                "reference": "aa0373fc33dde67a10f8840d625eecc7cb6196ab",
                 "shasum": ""
             },
             "require": {
@@ -2460,11 +2425,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-08-24T21:02:42+00:00"
+            "time": "2023-08-24T17:44:51+00:00"
         },
         {
             "name": "filament/forms",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
@@ -2520,7 +2485,7 @@
         },
         {
             "name": "filament/infolists",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
@@ -2571,7 +2536,7 @@
         },
         {
             "name": "filament/notifications",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
@@ -2623,7 +2588,7 @@
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -2660,7 +2625,7 @@
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
@@ -2707,16 +2672,16 @@
         },
         {
             "name": "filament/support",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
-                "reference": "9fefb4d11ce11421ffeecc648afab56315c27ab6"
+                "reference": "6009d4380e24c207debf22e42be1007c965ed71b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/support/zipball/9fefb4d11ce11421ffeecc648afab56315c27ab6",
-                "reference": "9fefb4d11ce11421ffeecc648afab56315c27ab6",
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/6009d4380e24c207debf22e42be1007c965ed71b",
+                "reference": "6009d4380e24c207debf22e42be1007c965ed71b",
                 "shasum": ""
             },
             "require": {
@@ -2760,11 +2725,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-08-24T21:02:32+00:00"
+            "time": "2023-08-24T15:59:54+00:00"
         },
         {
             "name": "filament/tables",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
@@ -2817,16 +2782,16 @@
         },
         {
             "name": "filament/widgets",
-            "version": "v3.0.34",
+            "version": "v3.0.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
-                "reference": "6eead158463ed586e79057e4d1f6348941dd4b51"
+                "reference": "7b2ff346a6d32bb4a5d9d2f692760e444028ba39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/widgets/zipball/6eead158463ed586e79057e4d1f6348941dd4b51",
-                "reference": "6eead158463ed586e79057e4d1f6348941dd4b51",
+                "url": "https://api.github.com/repos/filamentphp/widgets/zipball/7b2ff346a6d32bb4a5d9d2f692760e444028ba39",
+                "reference": "7b2ff346a6d32bb4a5d9d2f692760e444028ba39",
                 "shasum": ""
             },
             "require": {
@@ -2857,7 +2822,7 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-08-24T21:02:51+00:00"
+            "time": "2023-08-24T16:00:16+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -5429,25 +5394,25 @@
         },
         {
             "name": "mtdowling/jmespath.php",
-            "version": "2.7.0",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmespath/jmespath.php.git",
-                "reference": "bbb69a935c2cbb0c03d7f481a238027430f6440b"
+                "reference": "9b87907a81b87bc76d19a7fb2d61e61486ee9edb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/bbb69a935c2cbb0c03d7f481a238027430f6440b",
-                "reference": "bbb69a935c2cbb0c03d7f481a238027430f6440b",
+                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/9b87907a81b87bc76d19a7fb2d61e61486ee9edb",
+                "reference": "9b87907a81b87bc76d19a7fb2d61e61486ee9edb",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2.5 || ^8.0",
+                "php": "^5.4 || ^7.0 || ^8.0",
                 "symfony/polyfill-mbstring": "^1.17"
             },
             "require-dev": {
-                "composer/xdebug-handler": "^3.0.3",
-                "phpunit/phpunit": "^8.5.33"
+                "composer/xdebug-handler": "^1.4 || ^2.0",
+                "phpunit/phpunit": "^4.8.36 || ^7.5.15"
             },
             "bin": [
                 "bin/jp.php"
@@ -5455,7 +5420,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev"
+                    "dev-master": "2.6-dev"
                 }
             },
             "autoload": {
@@ -5472,11 +5437,6 @@
             ],
             "authors": [
                 {
-                    "name": "Graham Campbell",
-                    "email": "hello@gjcampbell.co.uk",
-                    "homepage": "https://github.com/GrahamCampbell"
-                },
-                {
                     "name": "Michael Dowling",
                     "email": "mtdowling@gmail.com",
                     "homepage": "https://github.com/mtdowling"
@@ -5489,9 +5449,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jmespath/jmespath.php/issues",
-                "source": "https://github.com/jmespath/jmespath.php/tree/2.7.0"
+                "source": "https://github.com/jmespath/jmespath.php/tree/2.6.1"
             },
-            "time": "2023-08-25T10:54:48+00:00"
+            "time": "2021-06-14T00:11:39+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -7945,16 +7905,16 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "10.11.4",
+            "version": "10.11.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "54d240975662a3d971466434e84625876a0d8b46"
+                "reference": "293a066890e10c951ff29bc76bfa026a60034edc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/54d240975662a3d971466434e84625876a0d8b46",
-                "reference": "54d240975662a3d971466434e84625876a0d8b46",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/293a066890e10c951ff29bc76bfa026a60034edc",
+                "reference": "293a066890e10c951ff29bc76bfa026a60034edc",
                 "shasum": ""
             },
             "require": {
@@ -8037,7 +7997,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-medialibrary/issues",
-                "source": "https://github.com/spatie/laravel-medialibrary/tree/10.11.4"
+                "source": "https://github.com/spatie/laravel-medialibrary/tree/10.11.3"
             },
             "funding": [
                 {
@@ -8049,7 +8009,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-25T08:54:08+00:00"
+            "time": "2023-08-07T07:30:22+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -13384,16 +13344,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.32",
+            "version": "1.10.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "c47e47d3ab03137c0e121e77c4d2cb58672f6d44"
+                "reference": "c0eb159b598e2b637cbd52840e3d08f28d25dd47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c47e47d3ab03137c0e121e77c4d2cb58672f6d44",
-                "reference": "c47e47d3ab03137c0e121e77c4d2cb58672f6d44",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c0eb159b598e2b637cbd52840e3d08f28d25dd47",
+                "reference": "c0eb159b598e2b637cbd52840e3d08f28d25dd47",
                 "shasum": ""
             },
             "require": {
@@ -13442,7 +13402,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-24T21:54:50+00:00"
+            "time": "2023-08-24T14:26:09+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
