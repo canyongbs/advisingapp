@@ -13,13 +13,14 @@ class CreateEngagementResponse
 
         $findEngagementResponseSender = resolve(FindEngagementResponseSender::class);
 
-        $sender = $findEngagementResponseSender($data['from']);
+        $sender = $findEngagementResponseSender($data['From']);
 
         EngagementResponse::create([
             'sender_id' => $sender->id,
             'sender_type' => $sender->getMorphClass(),
-            'content' => $data['body'],
-            'sent_at' => $data['date_sent'],
+            'content' => $data['Body'],
+            // TODO It doesn't look like this data comes in the payload from Twilio
+            // 'sent_at' => $data['date_sent'],
         ]);
     }
 }
