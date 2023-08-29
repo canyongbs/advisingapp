@@ -53,7 +53,7 @@ class EngagementResponsePolicy
      */
     public function delete(User $user, EngagementResponse $engagementResponse): Response
     {
-        return $user->can('engagement_response.*.delete') || $user->can("engagement_response.{$engagement->id}.delete")
+        return $user->can('engagement_response.*.delete') || $user->can("engagement_response.{$engagementResponse->id}.delete")
             ? Response::allow()
             : Response::deny('You do not have permission to delete this engagement response.');
     }

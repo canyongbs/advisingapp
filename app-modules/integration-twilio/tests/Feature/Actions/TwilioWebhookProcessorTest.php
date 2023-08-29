@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Queue;
-use Assist\IntegrationTwilio\Actions\StatusUpdate;
+use Assist\IntegrationTwilio\Actions\StatusCallback;
 use Assist\IntegrationTwilio\Actions\MessageReceived;
 
 it('will dispatch an appropriate job to process the incoming request', function () {
@@ -16,5 +16,5 @@ it('will dispatch an appropriate job to process the incoming request', function 
     );
 
     Queue::assertPushed(MessageReceived::class);
-    Queue::assertNotPushed(StatusUpdate::class);
+    Queue::assertNotPushed(StatusCallback::class);
 });
