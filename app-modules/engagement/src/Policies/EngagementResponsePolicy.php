@@ -4,7 +4,6 @@ namespace Assist\Engagement\Policies;
 
 use App\Models\User;
 use Assist\Engagement\Models\EngagementResponse;
-use Illuminate\Auth\Access\Response;
 
 class EngagementResponsePolicy
 {
@@ -13,7 +12,7 @@ class EngagementResponsePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class EngagementResponsePolicy
      */
     public function view(User $user, EngagementResponse $engagementResponse): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class EngagementResponsePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class EngagementResponsePolicy
      */
     public function update(User $user, EngagementResponse $engagementResponse): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -45,7 +44,7 @@ class EngagementResponsePolicy
      */
     public function delete(User $user, EngagementResponse $engagementResponse): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +52,7 @@ class EngagementResponsePolicy
      */
     public function restore(User $user, EngagementResponse $engagementResponse): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -61,6 +60,6 @@ class EngagementResponsePolicy
      */
     public function forceDelete(User $user, EngagementResponse $engagementResponse): bool
     {
-        //
+        return true;
     }
 }
