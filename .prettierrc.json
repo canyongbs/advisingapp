@@ -21,6 +21,12 @@
         "singleQuote": true,
         "wrapAttributes": "force-expand-multiline"
       }
-    }
+    },
+    {
+        "files": ["*.json"],
+        "options": {
+          "tabWidth": 4
+        }
+      }
   ]
 }
