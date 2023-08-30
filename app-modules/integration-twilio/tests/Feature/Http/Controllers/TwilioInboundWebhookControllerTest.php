@@ -9,8 +9,7 @@ it('will create an inbound webhook with the Twilio source and the correct event'
 
     $response = $this->post(
         route('inbound.webhook.twilio', 'message_received'),
-        // TODO Change this payload for this specific test...
-        $this->loadFixtureFromModule('integration-twilio', 'StatusCallback/sent'),
+        $this->loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
     );
 
     $response->assertOk();
