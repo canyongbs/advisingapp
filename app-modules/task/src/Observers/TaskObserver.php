@@ -2,6 +2,8 @@
 
 namespace Assist\Task\Observers;
 
+use Exception;
+use App\Models\User;
 use Assist\Task\Models\Task;
 use Illuminate\Support\Facades\DB;
 use Assist\Authorization\Models\Permission;
@@ -19,13 +21,9 @@ class TaskObserver
         if (is_null($task->assigned_to)) {
             $task->assigned_to = auth()->id();
         }
-
-        //if ($task->isDirty('assigned_to')) {
-        //    ray('here');
-        //}
     }
 
-    public function creating(Task $task)
+    public function creating(Task $task): void
     {
         Permission::create([
             'name' => "task.{$task->id}.edit",
@@ -35,20 +33,36 @@ class TaskObserver
 
     public function created(Task $task): void
     {
-        // Add permissions to creator
-        $task->createdBy->givePermissionTo("task.{$task->id}.edit");
+        try {
+            // Add permissions to creator
+            $task->createdBy->givePermissionTo("task.{$task->id}.edit");
 
-        // Add permissions to assigned User unless they are the creator
-        if ($task->assigned_to !== $task->created_by) {
-            $task->assignedTo?->givePermissionTo("task.{$task->id}.edit");
+            // Add permissions to assigned User unless they are the creator
+            if ($task->assigned_to !== $task->created_by) {
+                $task->assignedTo?->givePermissionTo("task.{$task->id}.edit");
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            throw $e;
         }
     }
 
     public function updated(Task $task): void
     {
-        // Remove permissions from previously assigned User unless they are the creator
+        try {
+            if ($task->isDirty('assigned_to') && $task->assigned_to !== $task->created_by) {
+                // Remove permissions from previously assigned User unless they are the creator
+                User::find($task->getOriginal('assigned_to'))?->revokePermissionTo("task.{$task->id}.edit");
 
-        // Add permissions to newly assigned User unless they are the creator
+                // Add permissions to newly assigned User unless they are the creator
+                $task->assignedTo?->givePermissionTo("task.{$task->id}.edit");
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            throw $e;
+        }
     }
 
     public function saved(Task $task): void
