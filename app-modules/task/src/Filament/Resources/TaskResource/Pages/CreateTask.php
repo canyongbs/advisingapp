@@ -3,8 +3,10 @@
 namespace Assist\Task\Filament\Resources\TaskResource\Pages;
 
 use Filament\Forms\Form;
+use Filament\Facades\Filament;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
@@ -45,5 +47,22 @@ class CreateTask extends CreateRecord
                             ->titleAttribute('full'),
                     ]),
             ]);
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        $data = collect($data);
+
+        $record = new ($this->getModel())($data->except('assigned_to')->toArray());
+
+        $record->assigned_to = $data->get('assigned_to');
+
+        if ($tenant = Filament::getTenant()) {
+            return $this->associateRecordWithTenant($record, $tenant);
+        }
+
+        $record->save();
+
+        return $record;
     }
 }

@@ -1,5 +1,10 @@
 <?php
 
+use App\Models\SupportItem;
+use App\Models\SupportPage;
+use App\Models\SupportFeedbackItem;
+use App\Models\SupportTrainingItem;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -139,7 +144,7 @@ return [
 
     'model_locations' => [
         'app',
-        'app-modules/*',
+        'app-modules/*/src/Models',
     ],
 
     /*
@@ -152,6 +157,10 @@ return [
     */
 
     'ignored_models' => [
+        SupportFeedbackItem::class,
+        SupportItem::class,
+        SupportPage::class,
+        SupportTrainingItem::class,
     ],
 
     /*

@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseItem
@@ -34,13 +33,13 @@ use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read KnowledgeBaseCategory|null $category
+ * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
  * @property-read Collection<int, Institution> $institution
  * @property-read int|null $institution_count
- * @property-read KnowledgeBaseQuality|null $quality
- * @property-read KnowledgeBaseStatus|null $status
+ * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
+ * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
  *
- * @method static KnowledgeBaseItemFactory factory($count = null, $state = [])
+ * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
  * @method static Builder|KnowledgeBaseItem newModelQuery()
  * @method static Builder|KnowledgeBaseItem newQuery()
  * @method static Builder|KnowledgeBaseItem onlyTrashed()

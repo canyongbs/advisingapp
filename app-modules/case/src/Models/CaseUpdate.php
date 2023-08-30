@@ -14,7 +14,6 @@ use Assist\Case\Enums\CaseUpdateDirection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Assist\Case\Database\Factories\CaseUpdateFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -33,9 +32,9 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read CaseItem|null $case
+ * @property-read \Assist\Case\Models\CaseItem|null $case
  *
- * @method static CaseUpdateFactory factory($count = null, $state = [])
+ * @method static \Assist\Case\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
  * @method static Builder|CaseUpdate newModelQuery()
  * @method static Builder|CaseUpdate newQuery()
  * @method static Builder|CaseUpdate onlyTrashed()

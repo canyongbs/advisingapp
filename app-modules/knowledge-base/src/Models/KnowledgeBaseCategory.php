@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory;
 
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseCategory
@@ -26,10 +25,10 @@ use Assist\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, KnowledgeBaseItem> $knowledgeBaseItems
+ * @property-read Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
  * @property-read int|null $knowledge_base_items_count
  *
- * @method static KnowledgeBaseCategoryFactory factory($count = null, $state = [])
+ * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory factory($count = null, $state = [])
  * @method static Builder|KnowledgeBaseCategory newModelQuery()
  * @method static Builder|KnowledgeBaseCategory newQuery()
  * @method static Builder|KnowledgeBaseCategory onlyTrashed()

@@ -13,6 +13,7 @@ return new class () extends Migration {
             $table->string('status');
             $table->timestamp('due')->nullable();
             $table->foreignUuid('assigned_to')->nullable()->constrained('users');
+            $table->foreignUuid('created_by')->nullable()->constrained('users');
             $table->string('concern_type')->nullable();
             $table->string('concern_id')->nullable();
             $table->timestamps();

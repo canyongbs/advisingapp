@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Case\Database\Factories\CaseItemStatusFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -27,10 +26,10 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, CaseItem> $caseItems
+ * @property-read Collection<int, \Assist\Case\Models\CaseItem> $caseItems
  * @property-read int|null $case_items_count
  *
- * @method static CaseItemStatusFactory factory($count = null, $state = [])
+ * @method static \Assist\Case\Database\Factories\CaseItemStatusFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemStatus newModelQuery()
  * @method static Builder|CaseItemStatus newQuery()
  * @method static Builder|CaseItemStatus onlyTrashed()

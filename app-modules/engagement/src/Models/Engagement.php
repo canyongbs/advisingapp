@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\Engagement\Database\Factories\EngagementFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
@@ -30,15 +29,17 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property string $deliver_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read User $createdBy
- * @property-read Collection<int, EngagementDeliverable> $deliverables
+ * @property-read Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $deliverables
  * @property-read int|null $deliverables_count
- * @property-read Collection<int, EngagementDeliverable> $engagementDeliverables
+ * @property-read Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $engagementDeliverables
  * @property-read int|null $engagement_deliverables_count
- * @property-read Model|Eloquent $recipient
+ * @property-read Model|\Eloquent $recipient
  * @property-read User $user
  *
- * @method static EngagementFactory factory($count = null, $state = [])
+ * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newQuery()
