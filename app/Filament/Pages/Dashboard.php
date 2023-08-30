@@ -6,6 +6,7 @@ use App\Filament\Widgets\MyStudents;
 use App\Filament\Widgets\MyProspects;
 use App\Filament\Widgets\TotalStudents;
 use App\Filament\Widgets\TotalProspects;
+use App\Filament\Widgets\RecentLeadsList;
 use Filament\Pages\Dashboard as BasePage;
 
 class Dashboard extends BasePage
@@ -17,6 +18,7 @@ class Dashboard extends BasePage
             TotalProspects::class,
             MyStudents::class,
             MyProspects::class,
+            RecentLeadsList::class,
         ];
     }
 
