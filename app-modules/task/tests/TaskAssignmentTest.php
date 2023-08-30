@@ -62,3 +62,54 @@ it('sends the proper notification to the assigned User', function () {
     Notification::assertSentTo($newAssignedUser, TaskAssignedToUser::class);
     Notification::assertNotSentTo($originalAssignedUser, TaskAssignedToUser::class);
 });
+
+it('it properly subscriptions the creator and assigned Users to the Subscribable', function () {
+    $task = Task::factory()
+        ->recycle(User::factory()->create())
+        ->assigned()
+        ->concerningStudent()
+        ->create();
+
+    expect($task->createdBy->id)->toBe($task->assignedTo->id);
+
+    $subscriptions = $task->createdBy->subscriptions;
+
+    expect($subscriptions->count())->toBe(1)
+        ->and($subscriptions->first()->subscribable->id)->toBe($task->concern->id);
+
+    $task = Task::factory()
+        ->assigned()
+        ->concerningProspect()
+        ->create();
+
+    expect($task->createdBy->id)->not->toBe($task->assignedTo->id);
+
+    $creatorSubscriptions = $task->createdBy->subscriptions;
+
+    expect($creatorSubscriptions->count())->toBe(1)
+        ->and($creatorSubscriptions->first()->subscribable->id)->toBe($task->concern->id);
+
+    $assignedToSubscriptions = $task->assignedTo->subscriptions;
+
+    expect($assignedToSubscriptions->count())->toBe(1)
+        ->and($assignedToSubscriptions->first()->subscribable->id)->toBe($task->concern->id);
+
+    $newAssignedUser = User::factory()->create();
+
+    $task->assignedTo()->associate($newAssignedUser)->save();
+
+    $task->refresh();
+
+    expect($task->createdBy->id)->not->toBe($task->assignedTo->id);
+    expect($task->assignedTo->id)->toBe($newAssignedUser->id);
+
+    $creatorSubscriptions = $task->createdBy->subscriptions;
+
+    expect($creatorSubscriptions->count())->toBe(1)
+        ->and($creatorSubscriptions->first()->subscribable->id)->toBe($task->concern->id);
+
+    $assignedToSubscriptions = $task->assignedTo->subscriptions;
+
+    expect($assignedToSubscriptions->count())->toBe(1)
+        ->and($assignedToSubscriptions->first()->subscribable->id)->toBe($task->concern->id);
+});

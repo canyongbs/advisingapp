@@ -8,6 +8,7 @@ use Assist\Task\Models\Task;
 use Illuminate\Support\Facades\DB;
 use Assist\Authorization\Models\Permission;
 use Assist\Task\Notifications\TaskAssignedToUser;
+use Assist\Notifications\Events\TriggeredAutoSubscription;
 
 class TaskObserver
 {
@@ -36,12 +37,14 @@ class TaskObserver
     {
         try {
             // Add permissions to creator
-            $task->createdBy->givePermissionTo("task.{$task->id}.edit");
+            $task->createdBy?->givePermissionTo("task.{$task->id}.edit");
 
             // Add permissions to assigned User unless they are the creator
             if ($task->assigned_to !== $task->created_by) {
                 $task->assignedTo?->givePermissionTo("task.{$task->id}.edit");
             }
+
+            TriggeredAutoSubscription::dispatchIf(! empty($task->createdBy), $task->createdBy, $task);
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -71,8 +74,10 @@ class TaskObserver
     {
         DB::commit();
 
-        if ($task->wasChanged('assigned_to') || ($task->wasRecentlyCreated && ! empty($task->assignedTo))) {
+        if (! empty($task->assignedTo) && ($task->wasChanged('assigned_to') || ($task->wasRecentlyCreated))) {
             $task->assignedTo->notify(new TaskAssignedToUser($task));
+
+            TriggeredAutoSubscription::dispatch($task->assignedTo, $task);
         }
     }
 
