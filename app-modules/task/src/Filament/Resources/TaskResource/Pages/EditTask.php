@@ -35,7 +35,7 @@ class EditTask extends EditRecord
                     ->label('Assigned To')
                     ->relationship('assignedTo', 'name')
                     ->nullable()
-                    ->searchable()
+                    ->searchable(['name', 'email'])
                     ->default(auth()->id()),
                 MorphToSelect::make('concern')
                     ->label('Concern')
