@@ -4,14 +4,17 @@ namespace Assist\Engagement\Actions;
 
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\Engagement\DataTransferObjects\EngagementResponseData;
+use Assist\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 
 class CreateEngagementResponse
 {
+    public function __construct(
+        public EngagementResponseSenderFinder $finder
+    ) {}
+
     public function __invoke(EngagementResponseData $data): void
     {
-        $findEngagementResponseSender = resolve(FindEngagementResponseSender::class);
-
-        $sender = $findEngagementResponseSender($data->from);
+        $sender = $this->finder->find($data->from);
 
         if (! is_null($sender)) {
             EngagementResponse::create([

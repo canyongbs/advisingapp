@@ -5,10 +5,11 @@ namespace Assist\Engagement\Actions;
 use Illuminate\Support\Facades\Log;
 use Assist\Prospect\Models\Prospect;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 
-class FindEngagementResponseSender
+class FindEngagementResponseSender implements EngagementResponseSenderFinder
 {
-    public function __invoke(string $phoneNumber): Student|Prospect|null
+    public function find(string $phoneNumber): Student|Prospect|null
     {
         // Student currently takes priority, but determine if we potentially want to store this response
         // For *all* potential matches instead of just a singular result.
