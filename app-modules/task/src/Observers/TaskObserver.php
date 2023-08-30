@@ -7,6 +7,7 @@ use App\Models\User;
 use Assist\Task\Models\Task;
 use Illuminate\Support\Facades\DB;
 use Assist\Authorization\Models\Permission;
+use Assist\Task\Notifications\TaskAssignedToUser;
 
 class TaskObserver
 {
@@ -68,6 +69,10 @@ class TaskObserver
     public function saved(Task $task): void
     {
         DB::commit();
+
+        if ($task->wasChanged('assigned_to')) {
+            $task->assignedTo->notify(new TaskAssignedToUser($task));
+        }
     }
 
     public function deleted(Task $task): void
