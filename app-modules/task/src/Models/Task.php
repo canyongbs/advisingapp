@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use Assist\Task\Enums\TaskStatus;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Bvtterfly\ModelStateMachine\HasStateMachine;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,10 +22,10 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
     use HasUuids;
     use AuditableTrait;
     use SoftDeletes;
+    use HasStateMachine;
 
     protected $fillable = [
         'description',
-        'status',
         'due',
         'assigned_to',
         'concern_id',
@@ -35,6 +36,13 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
         'status' => TaskStatus::class,
         'due' => 'datetime',
     ];
+
+    public function getStateMachineFields(): array
+    {
+        return [
+            'status',
+        ];
+    }
 
     public function concern(): MorphTo
     {

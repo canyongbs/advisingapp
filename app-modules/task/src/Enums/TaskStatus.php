@@ -2,10 +2,18 @@
 
 namespace Assist\Task\Enums;
 
+use Bvtterfly\ModelStateMachine\Attributes\InitialState;
+use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
+
 enum TaskStatus: string
 {
+    #[InitialState]
+    #[AllowTransitionTo(self::IN_PROGRESS)]
+    #[AllowTransitionTo(self::CANCELLED)]
     case PENDING = 'pending';
 
+    #[AllowTransitionTo(self::COMPLETED)]
+    #[AllowTransitionTo(self::CANCELLED)]
     case IN_PROGRESS = 'in_progress';
 
     case COMPLETED = 'completed';
