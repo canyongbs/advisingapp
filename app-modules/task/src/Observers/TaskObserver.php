@@ -53,10 +53,11 @@ class TaskObserver
     {
         try {
             if ($task->isDirty('assigned_to') && $task->assigned_to !== $task->created_by) {
-                // Remove permissions from previously assigned User unless they are the creator
-                User::find($task->getOriginal('assigned_to'))?->revokePermissionTo("task.{$task->id}.edit");
+                if ($task->getOriginal('assigned_to') !== $task->created_by) {
+                    User::find($task->getOriginal('assigned_to'))?->revokePermissionTo("task.{$task->id}.edit");
+                }
 
-                // Add permissions to newly assigned User unless they are the creator
+                // Add permissions to newly assigned User
                 $task->assignedTo?->givePermissionTo("task.{$task->id}.edit");
             }
         } catch (Exception $e) {
@@ -70,7 +71,7 @@ class TaskObserver
     {
         DB::commit();
 
-        if ($task->wasChanged('assigned_to')) {
+        if ($task->wasChanged('assigned_to') || ($task->wasRecentlyCreated && ! empty($task->assignedTo))) {
             $task->assignedTo->notify(new TaskAssignedToUser($task));
         }
     }
