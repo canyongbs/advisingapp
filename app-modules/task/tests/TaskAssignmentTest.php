@@ -100,8 +100,8 @@ it('it properly subscriptions the creator and assigned Users to the Subscribable
 
     $task->refresh();
 
-    expect($task->createdBy->id)->not->toBe($task->assignedTo->id);
-    expect($task->assignedTo->id)->toBe($newAssignedUser->id);
+    expect($task->createdBy->id)->not->toBe($task->assignedTo->id)
+        ->and($task->assignedTo->id)->toBe($newAssignedUser->id);
 
     $creatorSubscriptions = $task->createdBy->subscriptions;
 
