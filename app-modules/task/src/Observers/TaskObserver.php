@@ -28,7 +28,7 @@ class TaskObserver
     public function creating(Task $task): void
     {
         Permission::create([
-            'name' => "task.{$task->id}.edit",
+            'name' => "task.{$task->id}.update",
             'guard_name' => 'web',
         ]);
     }
@@ -37,11 +37,11 @@ class TaskObserver
     {
         try {
             // Add permissions to creator
-            $task->createdBy?->givePermissionTo("task.{$task->id}.edit");
+            $task->createdBy?->givePermissionTo("task.{$task->id}.update");
 
             // Add permissions to assigned User unless they are the creator
             if ($task->assigned_to !== $task->created_by) {
-                $task->assignedTo?->givePermissionTo("task.{$task->id}.edit");
+                $task->assignedTo?->givePermissionTo("task.{$task->id}.update");
             }
 
             TriggeredAutoSubscription::dispatchIf(! empty($task->createdBy), $task->createdBy, $task);
@@ -57,11 +57,11 @@ class TaskObserver
         try {
             if ($task->isDirty('assigned_to') && $task->assigned_to !== $task->created_by) {
                 if ($task->getOriginal('assigned_to') !== $task->created_by) {
-                    User::find($task->getOriginal('assigned_to'))?->revokePermissionTo("task.{$task->id}.edit");
+                    User::find($task->getOriginal('assigned_to'))?->revokePermissionTo("task.{$task->id}.update");
                 }
 
                 // Add permissions to newly assigned User
-                $task->assignedTo?->givePermissionTo("task.{$task->id}.edit");
+                $task->assignedTo?->givePermissionTo("task.{$task->id}.update");
             }
         } catch (Exception $e) {
             DB::rollBack();

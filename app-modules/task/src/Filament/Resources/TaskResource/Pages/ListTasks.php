@@ -133,7 +133,6 @@ class ListTasks extends ListRecords
                             )->from('md'),
                         ]
                     ),
-                //->modalSubmitAction(fn (StaticAction $action) => $action->label('Mark as Completed')),
                 EditAction::make(),
             ])
             ->recordUrl(null)
