@@ -21,7 +21,7 @@ class EngagementResponseFactory extends Factory
         $sender = $sender::factory()->create();
 
         return [
-            'sender_id' => $sender->id,
+            'sender_id' => $sender->id ?? $sender->sisid,
             'sender_type' => $sender->getMorphClass(),
             'content' => fake()->sentence(),
             'sent_at' => fake()->dateTimeBetween('+1 day', '+1 week'),

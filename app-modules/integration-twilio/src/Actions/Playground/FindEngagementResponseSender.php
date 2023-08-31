@@ -10,7 +10,7 @@ class FindEngagementResponseSender implements EngagementResponseSenderFinder
 {
     public function find(string $phoneNumber): Student|Prospect|null
     {
-        return Student::where('mobile', config('services.twilio.from_number'))
+        return Student::latest()
             ->first();
     }
 }

@@ -9,6 +9,7 @@ use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\SubscriptionsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementResponsesRelationManager;
 
 class StudentResource extends Resource
 {
@@ -28,6 +29,7 @@ class StudentResource extends Resource
         return [
             SubscriptionsRelationManager::class,
             EngagementsRelationManager::class,
+            EngagementResponsesRelationManager::class,
             EngagementFilesRelationManager::class,
         ];
     }
