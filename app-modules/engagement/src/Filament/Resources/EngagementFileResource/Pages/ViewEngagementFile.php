@@ -24,6 +24,7 @@ class ViewEngagementFile extends ViewRecord
                     ->label('Description'),
                 SpatieMediaLibraryImageEntry::make('file')
                     ->collection('file')
+                    ->visibility('private')
                     ->hintAction(
                         Action::make('download')
                             ->label('Download')
