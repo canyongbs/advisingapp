@@ -2,7 +2,6 @@
 
 namespace Assist\Engagement\Actions;
 
-use Illuminate\Support\Facades\Log;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\Engagement\DataTransferObjects\EngagementResponseData;
 use Assist\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
@@ -16,9 +15,6 @@ class CreateEngagementResponse
     public function __invoke(EngagementResponseData $data): void
     {
         $sender = $this->finder->find($data->from);
-
-        Log::debug('sender');
-        Log::debug($sender);
 
         if (! is_null($sender)) {
             EngagementResponse::create([

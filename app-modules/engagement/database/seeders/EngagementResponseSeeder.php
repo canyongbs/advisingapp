@@ -9,8 +9,8 @@ class EngagementResponseSeeder extends Seeder
 {
     public function run(): void
     {
-        // EngagementResponse::factory()
-        //     ->count(50)
-        //     ->create();
+        EngagementResponse::factory()
+            ->count(50)
+            ->create();
     }
 }
