@@ -5,6 +5,7 @@ namespace Assist\Prospect\Filament\Resources;
 use Filament\Resources\Resource;
 use Assist\Prospect\Models\Prospect;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
 use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementFilesRelationManager;
 
 class ProspectResource extends Resource
@@ -17,6 +18,7 @@ class ProspectResource extends Resource
     {
         return [
             EngagementFilesRelationManager::class,
+            TasksRelationManager::class,
         ];
     }
 
