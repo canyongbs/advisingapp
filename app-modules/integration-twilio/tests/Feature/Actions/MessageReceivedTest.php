@@ -26,7 +26,7 @@ it('will create an engagement response when a message is received', function () 
     $messageReceived->handle();
 
     $this->assertDatabaseHas('engagement_responses', [
-        'sender_id' => $student->id,
+        'sender_id' => $student->sisid,
         'sender_type' => (new Student())->getMorphClass(),
         'content' => $messageData['Body'],
     ]);

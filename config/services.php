@@ -44,11 +44,12 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    // TODO Find a way to move this setting to the Engagement module, or perhaps a standalone SMS module if we find ourselves using Twilio in multiple modules
+    // TODO Find a way to move this setting to the Integration Twilio module
     'twilio' => [
         'account_sid' => env('TWILIO_ACCOUNT_SID'),
         'auth_token' => env('TWILIO_AUTH_TOKEN'),
         'from_number' => env('TWILIO_FROM_NUMBER'),
         'test_to_number' => env('TWILIO_TEST_TO_NUMBER', null),
+        'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
     ],
 ];

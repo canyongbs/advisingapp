@@ -11,7 +11,7 @@ class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
         // TODO Extract Client
         $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
 
-        $response = $client->messages->create(
+        $client->messages->create(
             ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->deliverable->engagement->recipient->mobile,
             [
                 'from' => config('services.twilio.from_number'),

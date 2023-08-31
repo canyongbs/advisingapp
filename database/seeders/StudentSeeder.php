@@ -10,6 +10,12 @@ class StudentSeeder extends Seeder
     public function run(): void
     {
         Student::factory()
+            ->create([
+                'full' => 'Twilio Tester',
+                'mobile' => config('services.twilio.from_number'),
+            ]);
+
+        Student::factory()
             ->count(10)
             ->create();
     }
