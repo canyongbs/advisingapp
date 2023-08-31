@@ -22,7 +22,6 @@ use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
-use Assist\AssistDataModel\Database\Factories\StudentFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
@@ -36,14 +35,18 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $cases_count
  * @property-read Collection<int, EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
+ * @property-read Collection<int, \Assist\Engagement\Models\EngagementResponse> $engagementResponses
+ * @property-read int|null $engagement_responses_count
  * @property-read Collection<int, Engagement> $engagements
  * @property-read int|null $engagements_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
+ * @property-read Collection<int, Task> $tasks
+ * @property-read int|null $tasks_count
  *
- * @method static StudentFactory factory($count = null, $state = [])
+ * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
