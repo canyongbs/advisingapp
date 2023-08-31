@@ -1,34 +1,60 @@
 <?php
 
-namespace Assist\Task\Filament\Resources\TaskResource\Pages;
+namespace Assist\Task\Filament\Resources\TaskResource\RelationManagers;
 
-use Filament\Actions;
+use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
-use Filament\Tables\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\SelectFilter;
 use Assist\AssistDataModel\Models\Student;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Task\Filament\Resources\TaskResource;
+use Filament\Forms\Components\DateTimePicker;
 use Assist\Prospect\Filament\Resources\ProspectResource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
-class ListTasks extends ListRecords
+class TasksRelationManager extends RelationManager
 {
-    protected static string $resource = TaskResource::class;
+    protected static string $relationship = 'tasks';
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('description')
+                    ->label('Description')
+                    ->required()
+                    ->string(),
+                DateTimePicker::make('due')
+                    ->label('Due Date')
+                    ->native(false),
+                Select::make('assigned_to')
+                    ->label('Assigned To')
+                    ->relationship('assignedTo', 'name')
+                    ->nullable()
+                    ->searchable(['name', 'email'])
+                    ->default(auth()->id()),
+            ]);
+    }
+
+    public function isReadOnly(): bool
+    {
+        return false;
+    }
 
     public function table(Table $table): Table
     {
-        return parent::table($table)
+        return $table
+            ->recordTitleAttribute('description')
             ->columns([
                 TextColumn::make('description')
                     ->searchable()
@@ -57,8 +83,7 @@ class ListTasks extends ListRecords
                     ->label('My Tasks')
                     ->query(
                         fn ($query) => $query->where('assigned_to', auth()->id())
-                    )
-                    ->default(),
+                    ),
                 SelectFilter::make('assignedTo')
                     ->label('Assigned To')
                     ->relationship('assignedTo', 'name')
@@ -75,25 +100,41 @@ class ListTasks extends ListRecords
                         ]
                     ),
             ])
+            ->headerActions([
+                $this->createAction(),
+            ])
             ->actions([
                 TaskViewAction::make(),
-                EditAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DetachAction::make(),
             ])
             ->recordUrl(null)
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DetachBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
-                CreateAction::make(),
+                $this->createAction(),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    protected function createAction()
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return Tables\Actions\CreateAction::make()
+            ->using(function (array $data, string $model): Model {
+                $data = collect($data);
+
+                /** @var Task $task */
+                $task = new ($model)($data->except('assigned_to')->toArray());
+
+                $task->assigned_to = $data->get('assigned_to');
+
+                $task->concern()->associate($this->getOwnerRecord());
+
+                $task->save();
+
+                return $task;
+            });
     }
 }

@@ -3,6 +3,7 @@
 namespace Assist\AssistDataModel\Models;
 
 use Eloquent;
+use Assist\Task\Models\Task;
 use Assist\Audit\Models\Audit;
 use Assist\Case\Models\CaseItem;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,7 @@ use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
+use Assist\AssistDataModel\Database\Factories\StudentFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
@@ -41,7 +43,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read Collection<int, Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  *
- * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
+ * @method static StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
@@ -90,6 +92,11 @@ class Student extends Model implements Auditable, Subscribable
         )
             ->using(EngagementFileEntities::class)
             ->withTimestamps();
+    }
+
+    public function tasks(): MorphMany
+    {
+        return $this->morphMany(Task::class, 'concern');
     }
 
     public function subscriptions(): MorphMany
