@@ -2,6 +2,7 @@
 
 namespace Assist\Engagement\Actions;
 
+use Illuminate\Support\Facades\Log;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\Engagement\DataTransferObjects\EngagementResponseData;
 use Assist\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
@@ -16,9 +17,13 @@ class CreateEngagementResponse
     {
         $sender = $this->finder->find($data->from);
 
+        Log::debug('sender');
+        Log::debug($sender);
+
         if (! is_null($sender)) {
             EngagementResponse::create([
-                'sender_id' => $sender->id,
+                // TODO Need to handle this better, perhaps some getter on the Prospect/Student
+                'sender_id' => $sender->id ?? $sender->sisid,
                 'sender_type' => $sender->getMorphClass(),
                 'content' => $data->body,
                 // TODO We might need to retroactively get this data from the Twilio API
