@@ -21,6 +21,7 @@ class TaskFactory extends Factory
             'status' => $this->faker->randomElement(TaskStatus::cases())->value,
             'due' => null,
             'assigned_to' => null,
+            'created_by' => User::factory(),
             'concern_id' => null,
             'concern_type' => null,
         ];

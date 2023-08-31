@@ -20,7 +20,6 @@ use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -60,10 +59,14 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read User|null $createdBy
  * @property-read Collection<int, EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
- * @property-read ProspectSource $source
- * @property-read ProspectStatus $status
+ * @property-read Collection<int, Engagement> $engagements
+ * @property-read int|null $engagements_count
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Assist\Prospect\Models\ProspectSource $source
+ * @property-read \Assist\Prospect\Models\ProspectStatus $status
  *
- * @method static ProspectFactory factory($count = null, $state = [])
+ * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()

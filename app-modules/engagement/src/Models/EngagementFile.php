@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Engagement\Database\Factories\EngagementFileFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 /**
@@ -35,7 +34,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
  * @property-read Collection<int, Student> $students
  * @property-read int|null $students_count
  *
- * @method static EngagementFileFactory factory($count = null, $state = [])
+ * @method static \Assist\Engagement\Database\Factories\EngagementFileFactory factory($count = null, $state = [])
  * @method static Builder|EngagementFile newModelQuery()
  * @method static Builder|EngagementFile newQuery()
  * @method static Builder|EngagementFile query()

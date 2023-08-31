@@ -24,6 +24,8 @@ use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \Assist\Engagement\Models\Engagement $engagement
  *
  * @method static \Assist\Engagement\Database\Factories\EngagementDeliverableFactory factory($count = null, $state = [])

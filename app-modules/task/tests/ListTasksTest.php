@@ -84,3 +84,6 @@ test('ListTasks is gated with proper access control', function () {
             TaskResource::getUrl('index')
         )->assertSuccessful();
 });
+
+// TODO: Test that mark_as_in_progress is visible to the proper users
+//test('mark_as_in_progress is only visible to those with the proper access', function () {});

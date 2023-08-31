@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Prospect\Database\Factories\ProspectStatusFactory;
 
 /**
  * Assist\Prospect\Models\ProspectStatus
@@ -27,10 +26,10 @@ use Assist\Prospect\Database\Factories\ProspectStatusFactory;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, Prospect> $prospects
+ * @property-read Collection<int, \Assist\Prospect\Models\Prospect> $prospects
  * @property-read int|null $prospects_count
  *
- * @method static ProspectStatusFactory factory($count = null, $state = [])
+ * @method static \Assist\Prospect\Database\Factories\ProspectStatusFactory factory($count = null, $state = [])
  * @method static Builder|ProspectStatus newModelQuery()
  * @method static Builder|ProspectStatus newQuery()
  * @method static Builder|ProspectStatus onlyTrashed()
