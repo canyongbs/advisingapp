@@ -1,19 +1,18 @@
 <?php
 
 use App\Models\User;
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
+use Assist\Case\Models\CaseItemStatus;
+use Assist\Case\Filament\Resources\CaseItemStatusResource;
+use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Case\Models\CaseItemStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource;
-use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
-
 test('The correct details are displayed on the ListCaseItemStatus page', function () {
     $caseItemStatuses = CaseItemStatus::factory()
-        ->has(CaseItem::factory()->count(fake()->randomNumber(1)), 'caseItems')
+        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
         ->count(10)
         ->create();
 

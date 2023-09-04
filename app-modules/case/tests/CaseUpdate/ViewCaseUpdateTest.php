@@ -1,17 +1,14 @@
 <?php
 
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
-use Assist\Case\Models\CaseUpdate;
-
-use function Pest\Laravel\actingAs;
-
+use Assist\Case\Models\ServiceRequestUpdate;
 use Assist\Case\Filament\Resources\CaseUpdateResource;
 
+use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
+
 test('The correct details are displayed on the ViewCaseUpdate page', function () {
-    $caseItemUpdate = CaseUpdate::factory()->create();
+    $caseItemUpdate = ServiceRequestUpdate::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -39,7 +36,7 @@ test('The correct details are displayed on the ViewCaseUpdate page', function ()
 test('ViewCaseUpdate is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseUpdate = CaseUpdate::factory()->create();
+    $caseUpdate = ServiceRequestUpdate::factory()->create();
 
     actingAs($user)
         ->get(

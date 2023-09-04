@@ -2,10 +2,10 @@
 
 namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
 
-use Assist\Case\Models\CaseItem;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Assist\Prospect\Models\Prospect;
+use Assist\Case\Models\ServiceRequest;
 use Filament\Resources\Pages\ViewRecord;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
@@ -51,7 +51,7 @@ class ViewCaseItem extends ViewRecord
                     ->label('Respondent')
                     ->translateLabel()
                     ->color('primary')
-                    ->state(function (CaseItem $record): string {
+                    ->state(function (ServiceRequest $record): string {
                         /** @var Student|Prospect $respondent */
                         $respondent = $record->respondent;
 
@@ -60,7 +60,7 @@ class ViewCaseItem extends ViewRecord
                             Prospect::class => "{$respondent->full} (Prospect)",
                         };
                     })
-                    ->url(function (CaseItem $record) {
+                    ->url(function (ServiceRequest $record) {
                         /** @var Student|Prospect $respondent */
                         $respondent = $record->respondent;
 

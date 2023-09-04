@@ -5,9 +5,9 @@ namespace Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
 use Filament\Actions;
 use Illuminate\Support\Str;
 use Filament\Infolists\Infolist;
-use Assist\Case\Models\CaseUpdate;
 use Filament\Resources\Pages\ViewRecord;
 use Assist\Case\Enums\CaseUpdateDirection;
+use Assist\Case\Models\ServiceRequestUpdate;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Case\Filament\Resources\CaseItemResource;
@@ -24,7 +24,7 @@ class ViewCaseUpdate extends ViewRecord
                 TextEntry::make('case.casenumber')
                     ->label('Case')
                     ->translateLabel()
-                    ->url(fn (CaseUpdate $caseUpdate): string => CaseItemResource::getUrl('view', ['record' => $caseUpdate]))
+                    ->url(fn (ServiceRequestUpdate $caseUpdate): string => CaseItemResource::getUrl('view', ['record' => $caseUpdate]))
                     ->color('primary'),
                 IconEntry::make('internal')
                     ->boolean(),

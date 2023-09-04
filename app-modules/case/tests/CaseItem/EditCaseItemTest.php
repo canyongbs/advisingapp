@@ -1,18 +1,17 @@
 <?php
 
 use App\Models\User;
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
+use Assist\Case\Filament\Resources\CaseItemResource;
+use Assist\Case\Tests\RequestFactories\EditCaseItemRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\Case\Filament\Resources\CaseItemResource;
-use Assist\Case\Tests\RequestFactories\EditCaseItemRequestFactory;
-
 test('A successful action on the EditCaseItem page', function () {
-    $caseItem = CaseItem::factory()->create();
+    $caseItem = ServiceRequest::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -32,7 +31,7 @@ test('A successful action on the EditCaseItem page', function () {
         ->assertHasNoFormErrors();
 
     assertDatabaseHas(
-        CaseItem::class,
+        ServiceRequest::class,
         $request->except(
             [
                 'institution_id',
@@ -56,7 +55,7 @@ test('A successful action on the EditCaseItem page', function () {
 });
 
 test('EditCaseItem requires valid data', function ($data, $errors) {
-    $caseItem = CaseItem::factory()->create();
+    $caseItem = ServiceRequest::factory()->create();
 
     asSuperAdmin();
 
@@ -69,7 +68,7 @@ test('EditCaseItem requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(CaseItem::class, $caseItem->toArray());
+    assertDatabaseHas(ServiceRequest::class, $caseItem->toArray());
 
     expect($caseItem->fresh()->institution->id)
         ->toEqual($caseItem->institution->id)
@@ -107,7 +106,7 @@ test('EditCaseItem requires valid data', function ($data, $errors) {
 );
 
 test('casenumber cannot be edited on EditCaseItem Page', function () {
-    $caseItem = CaseItem::factory()->create();
+    $caseItem = ServiceRequest::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -129,7 +128,7 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
         ->assertHasNoFormErrors();
 
     assertDatabaseHas(
-        CaseItem::class,
+        ServiceRequest::class,
         $request->except(
             [
                 'casenumber',
@@ -161,7 +160,7 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
 test('EditCaseItem is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseItem = CaseItem::factory()->create();
+    $caseItem = ServiceRequest::factory()->create();
 
     actingAs($user)
         ->get(
@@ -199,7 +198,7 @@ test('EditCaseItem is gated with proper access control', function () {
         ->assertHasNoFormErrors();
 
     assertDatabaseHas(
-        CaseItem::class,
+        ServiceRequest::class,
         $request->except(
             [
                 'institution',

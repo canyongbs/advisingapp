@@ -1,19 +1,18 @@
 <?php
 
 use App\Models\User;
+use Assist\Prospect\Models\ProspectSource;
+use Assist\Prospect\Filament\Resources\ProspectSourceResource;
+use Assist\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListProspectSources;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Filament\Resources\ProspectSourceResource;
-use Assist\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListProspectSources;
-
 test('The correct details are displayed on the ListProspectSources page', function () {
     $prospectSources = ProspectSource::factory()
         // TODO: Fix this once Prospect factory is created
-        //->has(CaseItem::factory()->count(fake()->randomNumber(1)), 'caseItems')
+        //->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
         ->count(10)
         ->create();
 

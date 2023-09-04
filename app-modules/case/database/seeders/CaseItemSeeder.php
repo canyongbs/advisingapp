@@ -3,13 +3,13 @@
 namespace Assist\Case\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
 
 class CaseItemSeeder extends Seeder
 {
     public function run(): void
     {
-        CaseItem::factory()
+        ServiceRequest::factory()
             ->count(30)
             ->create();
     }

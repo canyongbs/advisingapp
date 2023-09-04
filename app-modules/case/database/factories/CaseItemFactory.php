@@ -4,15 +4,15 @@ namespace Assist\Case\Database\Factories;
 
 use App\Models\User;
 use App\Models\Institution;
-use Assist\Case\Models\CaseItem;
 use Assist\Case\Models\CaseItemType;
+use Assist\Case\Models\ServiceRequest;
 use Assist\Case\Models\CaseItemStatus;
 use Assist\Case\Models\CaseItemPriority;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<CaseItem>
+ * @extends Factory<ServiceRequest>
  */
 class CaseItemFactory extends Factory
 {

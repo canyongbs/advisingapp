@@ -1,14 +1,14 @@
 <?php
 
-use Assist\Case\Models\CaseItem;
 use Assist\Case\Models\CaseItemType;
+use Assist\Case\Models\ServiceRequest;
 use Assist\AssistDataModel\Models\Student;
 
 test('relationships work cross connections', function () {
     CaseItemType::withoutSyncingToSearch(function () {
         $student = Student::factory()
             ->has(
-                CaseItem::factory()
+                ServiceRequest::factory()
                     ->count(3),
                 'cases'
             )

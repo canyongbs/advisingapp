@@ -6,13 +6,13 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Assist\Case\Models\CaseUpdate;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Assist\Case\Enums\CaseUpdateDirection;
+use Assist\Case\Models\ServiceRequestUpdate;
 use Assist\Case\Filament\Resources\CaseUpdateResource;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -72,7 +72,7 @@ class CaseUpdatesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->url(fn (CaseUpdate $caseUpdate) => CaseUpdateResource::getUrl('view', ['record' => $caseUpdate])),
+                    ->url(fn (ServiceRequestUpdate $caseUpdate) => CaseUpdateResource::getUrl('view', ['record' => $caseUpdate])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

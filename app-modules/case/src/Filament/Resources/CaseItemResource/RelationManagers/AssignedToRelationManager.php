@@ -7,7 +7,7 @@ use App\Models\User;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -41,7 +41,7 @@ class AssignedToRelationManager extends RelationManager
                     ->label('Reassign Case')
                     ->color('gray')
                     ->action(function (array $data): void {
-                        /** @var CaseItem $case */
+                        /** @var ServiceRequest $case */
                         $case = $this->ownerRecord;
 
                         $case->assignedTo()->associate($data['userId'])->save();

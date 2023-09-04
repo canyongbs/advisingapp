@@ -18,13 +18,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Assist\Case\Database\Factories\CaseItemFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
- * Assist\Case\Models\CaseItem
+ * Assist\Case\Models\ServiceRequest
  *
  * @property string $id
  * @property int $casenumber
@@ -44,41 +45,41 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property-read User|null $assignedTo
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, \Assist\Case\Models\CaseUpdate> $caseUpdates
+ * @property-read Collection<int, ServiceRequestUpdate> $caseUpdates
  * @property-read int|null $case_updates_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
- * @property-read \Assist\Case\Models\CaseItemPriority|null $priority
- * @property-read Model|\Eloquent $respondent
- * @property-read \Assist\Case\Models\CaseItemStatus|null $status
- * @property-read \Assist\Case\Models\CaseItemType|null $type
+ * @property-read CaseItemPriority|null $priority
+ * @property-read Model|Eloquent $respondent
+ * @property-read CaseItemStatus|null $status
+ * @property-read CaseItemType|null $type
  *
- * @method static \Assist\Case\Database\Factories\CaseItemFactory factory($count = null, $state = [])
- * @method static Builder|CaseItem newModelQuery()
- * @method static Builder|CaseItem newQuery()
- * @method static Builder|CaseItem onlyTrashed()
- * @method static Builder|CaseItem query()
- * @method static Builder|CaseItem whereAssignedToId($value)
- * @method static Builder|CaseItem whereCasenumber($value)
- * @method static Builder|CaseItem whereCloseDetails($value)
- * @method static Builder|CaseItem whereCreatedAt($value)
- * @method static Builder|CaseItem whereCreatedById($value)
- * @method static Builder|CaseItem whereDeletedAt($value)
- * @method static Builder|CaseItem whereId($value)
- * @method static Builder|CaseItem whereInstitutionId($value)
- * @method static Builder|CaseItem wherePriorityId($value)
- * @method static Builder|CaseItem whereResDetails($value)
- * @method static Builder|CaseItem whereRespondentId($value)
- * @method static Builder|CaseItem whereRespondentType($value)
- * @method static Builder|CaseItem whereStatusId($value)
- * @method static Builder|CaseItem whereTypeId($value)
- * @method static Builder|CaseItem whereUpdatedAt($value)
- * @method static Builder|CaseItem withTrashed()
- * @method static Builder|CaseItem withoutTrashed()
+ * @method static CaseItemFactory factory($count = null, $state = [])
+ * @method static Builder|ServiceRequest newModelQuery()
+ * @method static Builder|ServiceRequest newQuery()
+ * @method static Builder|ServiceRequest onlyTrashed()
+ * @method static Builder|ServiceRequest query()
+ * @method static Builder|ServiceRequest whereAssignedToId($value)
+ * @method static Builder|ServiceRequest whereCasenumber($value)
+ * @method static Builder|ServiceRequest whereCloseDetails($value)
+ * @method static Builder|ServiceRequest whereCreatedAt($value)
+ * @method static Builder|ServiceRequest whereCreatedById($value)
+ * @method static Builder|ServiceRequest whereDeletedAt($value)
+ * @method static Builder|ServiceRequest whereId($value)
+ * @method static Builder|ServiceRequest whereInstitutionId($value)
+ * @method static Builder|ServiceRequest wherePriorityId($value)
+ * @method static Builder|ServiceRequest whereResDetails($value)
+ * @method static Builder|ServiceRequest whereRespondentId($value)
+ * @method static Builder|ServiceRequest whereRespondentType($value)
+ * @method static Builder|ServiceRequest whereStatusId($value)
+ * @method static Builder|ServiceRequest whereTypeId($value)
+ * @method static Builder|ServiceRequest whereUpdatedAt($value)
+ * @method static Builder|ServiceRequest withTrashed()
+ * @method static Builder|ServiceRequest withoutTrashed()
  *
  * @mixin Eloquent
  */
-class CaseItem extends BaseModel implements Auditable, CanTriggerAutoSubscription
+class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {
     use SoftDeletes;
     use PowerJoins;
@@ -120,7 +121,7 @@ class CaseItem extends BaseModel implements Auditable, CanTriggerAutoSubscriptio
 
     public function caseUpdates(): HasMany
     {
-        return $this->hasMany(CaseUpdate::class, 'case_id');
+        return $this->hasMany(ServiceRequestUpdate::class, 'case_id');
     }
 
     public function status(): BelongsTo

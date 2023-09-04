@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\User;
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
+use Assist\Case\Filament\Resources\CaseItemResource;
+use Assist\Case\Tests\RequestFactories\CreateCaseItemRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
@@ -9,9 +11,6 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-
-use Assist\Case\Filament\Resources\CaseItemResource;
-use Assist\Case\Tests\RequestFactories\CreateCaseItemRequestFactory;
 
 test('A successful action on the CreateCaseUpdate page', function () {
     asSuperAdmin()
@@ -27,10 +26,10 @@ test('A successful action on the CreateCaseUpdate page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseItem::all());
+    assertCount(1, ServiceRequest::all());
 
     assertDatabaseHas(
-        CaseItem::class,
+        ServiceRequest::class,
         $request->except(
             [
                 'institution_id',
@@ -41,7 +40,7 @@ test('A successful action on the CreateCaseUpdate page', function () {
         )->toArray()
     );
 
-    $caseItem = CaseItem::first();
+    $caseItem = ServiceRequest::first();
 
     expect($caseItem->institution->id)
         ->toEqual($request->get('institution_id'))
@@ -67,7 +66,7 @@ test('CreateCaseItem requires valid data', function ($data, $errors, $setup = nu
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseMissing(CaseItem::class, $request->except(['institution', 'status', 'priority', 'type'])->toArray());
+    assertDatabaseMissing(ServiceRequest::class, $request->except(['institution', 'status', 'priority', 'type'])->toArray());
 })->with(
     [
         'casenumber missing' => [CreateCaseItemRequestFactory::new()->without('casenumber'), ['casenumber' => 'required']],
@@ -75,7 +74,7 @@ test('CreateCaseItem requires valid data', function ($data, $errors, $setup = nu
             CreateCaseItemRequestFactory::new()->state(['casenumber' => 99]),
             ['casenumber' => 'unique'],
             function () {
-                CaseItem::factory()->create(['casenumber' => 99]);
+                ServiceRequest::factory()->create(['casenumber' => 99]);
             },
         ],
         'institution_id missing' => [CreateCaseItemRequestFactory::new()->without('institution_id'), ['institution_id' => 'required']],
@@ -131,10 +130,10 @@ test('CreateCaseItem is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseItem::all());
+    assertCount(1, ServiceRequest::all());
 
     assertDatabaseHas(
-        CaseItem::class,
+        ServiceRequest::class,
         $request->except(
             [
                 'institution_id',
@@ -145,7 +144,7 @@ test('CreateCaseItem is gated with proper access control', function () {
         )->toArray()
     );
 
-    $caseItem = CaseItem::first();
+    $caseItem = ServiceRequest::first();
 
     expect($caseItem->institution->id)
         ->toEqual($request->get('institution_id'))

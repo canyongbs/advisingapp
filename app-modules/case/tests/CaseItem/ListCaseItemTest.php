@@ -1,17 +1,16 @@
 <?php
 
 use App\Models\User;
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
+use Assist\Case\Filament\Resources\CaseItemResource;
+use Assist\Case\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Case\Filament\Resources\CaseItemResource;
-use Assist\Case\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
-
 test('The correct details are displayed on the ListCaseItem page', function () {
-    $caseItems = CaseItem::factory()
+    $caseItems = ServiceRequest::factory()
         ->count(10)
         ->create();
 
@@ -24,7 +23,7 @@ test('The correct details are displayed on the ListCaseItem page', function () {
         ->assertCountTableRecords(10);
 
     $caseItems->each(
-        fn (CaseItem $caseItem) => $component
+        fn (ServiceRequest $caseItem) => $component
             ->assertTableColumnStateSet(
                 'id',
                 $caseItem->id,

@@ -2,8 +2,8 @@
 
 namespace Assist\Case\Filament\Resources;
 
-use Assist\Case\Models\CaseItem;
 use Filament\Resources\Resource;
+use Assist\Case\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
@@ -15,7 +15,7 @@ use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\CaseUpdates
 
 class CaseItemResource extends Resource
 {
-    protected static ?string $model = CaseItem::class;
+    protected static ?string $model = ServiceRequest::class;
 
     protected static ?string $navigationGroup = 'Cases';
 

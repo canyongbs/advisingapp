@@ -6,19 +6,19 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Assist\Case\Models\CaseItem;
 use Filament\Resources\Resource;
-use Assist\Case\Models\CaseUpdate;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Assist\Case\Models\ServiceRequest;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Enums\CaseUpdateDirection;
+use Assist\Case\Models\ServiceRequestUpdate;
 use Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
 
 class CaseUpdateResource extends Resource
 {
-    protected static ?string $model = CaseUpdate::class;
+    protected static ?string $model = ServiceRequestUpdate::class;
 
     protected static ?string $navigationGroup = 'Cases';
 
@@ -37,8 +37,8 @@ class CaseUpdateResource extends Resource
                     ->translateLabel()
                     ->required()
                     ->exists(
-                        table: (new CaseItem())->getTable(),
-                        column: (new CaseItem())->getKeyName()
+                        table: (new ServiceRequest())->getTable(),
+                        column: (new ServiceRequest())->getKeyName()
                     ),
                 Textarea::make('update')
                     ->label('Update')

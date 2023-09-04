@@ -1,10 +1,9 @@
 <?php
 
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
+use Assist\Audit\Settings\AuditSettings;
 
 use function Tests\asSuperAdmin;
-
-use Assist\Audit\Settings\AuditSettings;
 
 test('Audit logs are only created if the Model is set to be Audited by audit settings', function () {
     asSuperAdmin();
@@ -15,7 +14,7 @@ test('Audit logs are only created if the Model is set to be Audited by audit set
 
     $auditSettings->save();
 
-    $case = CaseItem::factory()->create();
+    $case = ServiceRequest::factory()->create();
 
     expect($case->audits)->toHaveCount(0);
 
@@ -23,7 +22,7 @@ test('Audit logs are only created if the Model is set to be Audited by audit set
 
     $auditSettings->save();
 
-    $case = CaseItem::factory()->create();
+    $case = ServiceRequest::factory()->create();
 
     expect($case->audits)->toHaveCount(1);
 });

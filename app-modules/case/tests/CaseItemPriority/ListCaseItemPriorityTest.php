@@ -1,19 +1,18 @@
 <?php
 
 use App\Models\User;
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
+use Assist\Case\Models\CaseItemPriority;
+use Assist\Case\Filament\Resources\CaseItemPriorityResource;
+use Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages\ListCaseItemPriorities;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Case\Models\CaseItemPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages\ListCaseItemPriorities;
-
 test('The correct details are displayed on the ListCaseItemPriority page', function () {
     $caseItemTypes = CaseItemPriority::factory()
-        ->has(CaseItem::factory()->count(fake()->randomNumber(1)), 'caseItems')
+        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
         ->count(3)
         ->sequence(
             ['name' => 'High', 'order' => 1],

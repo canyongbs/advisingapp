@@ -1,23 +1,18 @@
 <?php
 
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
-use Assist\Case\Models\CaseUpdate;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
 use Illuminate\Validation\Rules\Enum;
-
-use function Pest\Laravel\assertDatabaseHas;
-
+use Assist\Case\Models\ServiceRequestUpdate;
 use Assist\Case\Filament\Resources\CaseUpdateResource;
 use Assist\Case\Tests\RequestFactories\EditCaseUpdateRequestFactory;
 
+use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Pest\Laravel\assertDatabaseHas;
+
 test('A successful action on the EditCaseUpdate page', function () {
-    $caseUpdate = CaseUpdate::factory()->create();
+    $caseUpdate = ServiceRequestUpdate::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -36,14 +31,14 @@ test('A successful action on the EditCaseUpdate page', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
+    assertDatabaseHas(ServiceRequestUpdate::class, $request->except('case_id')->toArray());
 
-    expect(CaseUpdate::first()->case->id)
+    expect(ServiceRequestUpdate::first()->case->id)
         ->toEqual($request->get('case_id'));
 });
 
 test('EditCaseUpdate requires valid data', function ($data, $errors) {
-    $caseUpdate = CaseUpdate::factory()->create();
+    $caseUpdate = ServiceRequestUpdate::factory()->create();
 
     asSuperAdmin();
 
@@ -54,9 +49,9 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(CaseUpdate::class, $caseUpdate->toArray());
+    assertDatabaseHas(ServiceRequestUpdate::class, $caseUpdate->toArray());
 
-    expect(CaseUpdate::first()->case->id)
+    expect(ServiceRequestUpdate::first()->case->id)
         ->toEqual($caseUpdate->case->id);
 })->with(
     [
@@ -75,7 +70,7 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
 test('EditCaseUpdate is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseUpdate = CaseUpdate::factory()->create();
+    $caseUpdate = ServiceRequestUpdate::factory()->create();
 
     actingAs($user)
         ->get(
@@ -108,8 +103,8 @@ test('EditCaseUpdate is gated with proper access control', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
+    assertDatabaseHas(ServiceRequestUpdate::class, $request->except('case_id')->toArray());
 
-    expect(CaseUpdate::first()->case->id)
+    expect(ServiceRequestUpdate::first()->case->id)
         ->toEqual($request->get('case_id'));
 });

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Case\Database\Factories\CaseItemPriorityFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -26,10 +27,10 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, \Assist\Case\Models\CaseItem> $caseItems
+ * @property-read Collection<int, ServiceRequest> $caseItems
  * @property-read int|null $case_items_count
  *
- * @method static \Assist\Case\Database\Factories\CaseItemPriorityFactory factory($count = null, $state = [])
+ * @method static CaseItemPriorityFactory factory($count = null, $state = [])
  * @method static Builder|CaseItemPriority newModelQuery()
  * @method static Builder|CaseItemPriority newQuery()
  * @method static Builder|CaseItemPriority onlyTrashed()
@@ -58,7 +59,7 @@ class CaseItemPriority extends BaseModel implements Auditable
 
     public function caseItems(): HasMany
     {
-        return $this->hasMany(CaseItem::class, 'priority_id');
+        return $this->hasMany(ServiceRequest::class, 'priority_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

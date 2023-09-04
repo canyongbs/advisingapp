@@ -43,7 +43,7 @@ class ListCaseItems extends ListRecords
                         //    ],
                         //])->toSql());
 
-                        // Update this if any other relations are added to the CaseItem model respondent relationship
+                        // Update this if any other relations are added to the ServiceRequest model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
                             $join->on('case_items.respondent_id', '=', 'students.sisid')
                                 ->where('case_items.respondent_type', '=', 'student');
@@ -53,7 +53,7 @@ class ListCaseItems extends ListRecords
                     ->label('SIS ID')
                     ->searchable()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
-                        // Update this if any other relations are added to the CaseItem model respondent relationship
+                        // Update this if any other relations are added to the ServiceRequest model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
                             $join->on('case_items.respondent_id', '=', 'students.sisid')
                                 ->where('case_items.respondent_type', '=', 'student');
@@ -63,7 +63,7 @@ class ListCaseItems extends ListRecords
                     ->label('Other ID')
                     ->searchable()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
-                        // Update this if any other relations are added to the CaseItem model respondent relationship
+                        // Update this if any other relations are added to the ServiceRequest model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
                             $join->on('case_items.respondent_id', '=', 'students.sisid')
                                 ->where('case_items.respondent_type', '=', 'student');

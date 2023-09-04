@@ -2,21 +2,18 @@
 
 use App\Models\User;
 use Illuminate\Support\Str;
-use Assist\Case\Models\CaseItem;
-
-use function Tests\asSuperAdmin;
-
-use Assist\Case\Models\CaseUpdate;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
+use Assist\Case\Models\ServiceRequest;
+use Assist\Case\Models\ServiceRequestUpdate;
 use Assist\Case\Filament\Resources\CaseUpdateResource;
 use Assist\Case\Filament\Resources\CaseUpdateResource\Pages\ListCaseUpdates;
 
+use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+
 test('The correct details are displayed on the ListCaseUpdate page', function () {
-    $caseUpdates = CaseUpdate::factory()
-        ->for(CaseItem::factory(), 'case')
+    $caseUpdates = ServiceRequestUpdate::factory()
+        ->for(ServiceRequest::factory(), 'case')
         ->count(10)
         ->create();
 
@@ -29,7 +26,7 @@ test('The correct details are displayed on the ListCaseUpdate page', function ()
         ->assertCountTableRecords(10);
 
     $caseUpdates->each(
-        fn (CaseUpdate $caseUpdate) => $component
+        fn (ServiceRequestUpdate $caseUpdate) => $component
             ->assertTableColumnStateSet(
                 'id',
                 $caseUpdate->id,

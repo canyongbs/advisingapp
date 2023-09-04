@@ -7,10 +7,11 @@ use Carbon\Carbon;
 use Filament\Panel;
 use DateTimeInterface;
 use Assist\Audit\Models\Audit;
-use Assist\Case\Models\CaseItem;
 use App\Support\HasAdvancedFilter;
+use Database\Factories\UserFactory;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
+use Assist\Case\Models\ServiceRequest;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,8 +27,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
@@ -51,11 +52,11 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Collection<int, \App\Models\UserAlert> $alerts
+ * @property-read Collection<int, UserAlert> $alerts
  * @property-read int|null $alerts_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, CaseItem> $caseItems
+ * @property-read Collection<int, ServiceRequest> $caseItems
  * @property-read int|null $case_items_count
  * @property-read mixed $is_admin
  * @property-read mixed $type_label
@@ -74,7 +75,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  *
  * @method static Builder|User admins()
  * @method static Builder|User advancedFilter($data)
- * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User onlyTrashed()
@@ -177,7 +178,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function caseItems(): HasMany
     {
         return $this->hasMany(
-            related: CaseItem::class,
+            related:    ServiceRequest::class,
             foreignKey: 'assigned_to_id',
         );
     }

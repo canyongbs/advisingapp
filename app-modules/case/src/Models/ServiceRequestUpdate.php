@@ -15,12 +15,13 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Case\Database\Factories\CaseUpdateFactory;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
- * Assist\Case\Models\CaseUpdate
+ * Assist\Case\Models\ServiceRequestUpdate
  *
  * @property string $id
  * @property string|null $case_id
@@ -32,27 +33,27 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\Case\Models\CaseItem|null $case
+ * @property-read ServiceRequest|null $case
  *
- * @method static \Assist\Case\Database\Factories\CaseUpdateFactory factory($count = null, $state = [])
- * @method static Builder|CaseUpdate newModelQuery()
- * @method static Builder|CaseUpdate newQuery()
- * @method static Builder|CaseUpdate onlyTrashed()
- * @method static Builder|CaseUpdate query()
- * @method static Builder|CaseUpdate whereCaseId($value)
- * @method static Builder|CaseUpdate whereCreatedAt($value)
- * @method static Builder|CaseUpdate whereDeletedAt($value)
- * @method static Builder|CaseUpdate whereDirection($value)
- * @method static Builder|CaseUpdate whereId($value)
- * @method static Builder|CaseUpdate whereInternal($value)
- * @method static Builder|CaseUpdate whereUpdate($value)
- * @method static Builder|CaseUpdate whereUpdatedAt($value)
- * @method static Builder|CaseUpdate withTrashed()
- * @method static Builder|CaseUpdate withoutTrashed()
+ * @method static CaseUpdateFactory factory($count = null, $state = [])
+ * @method static Builder|ServiceRequestUpdate newModelQuery()
+ * @method static Builder|ServiceRequestUpdate newQuery()
+ * @method static Builder|ServiceRequestUpdate onlyTrashed()
+ * @method static Builder|ServiceRequestUpdate query()
+ * @method static Builder|ServiceRequestUpdate whereCaseId($value)
+ * @method static Builder|ServiceRequestUpdate whereCreatedAt($value)
+ * @method static Builder|ServiceRequestUpdate whereDeletedAt($value)
+ * @method static Builder|ServiceRequestUpdate whereDirection($value)
+ * @method static Builder|ServiceRequestUpdate whereId($value)
+ * @method static Builder|ServiceRequestUpdate whereInternal($value)
+ * @method static Builder|ServiceRequestUpdate whereUpdate($value)
+ * @method static Builder|ServiceRequestUpdate whereUpdatedAt($value)
+ * @method static Builder|ServiceRequestUpdate withTrashed()
+ * @method static Builder|ServiceRequestUpdate withoutTrashed()
  *
  * @mixin Eloquent
  */
-class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscription
+class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {
     use SoftDeletes;
     use HasUuids;
@@ -72,7 +73,7 @@ class CaseUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function case(): BelongsTo
     {
-        return $this->belongsTo(CaseItem::class);
+        return $this->belongsTo(ServiceRequest::class);
     }
 
     public function getSubscribable(): ?Subscribable

@@ -13,7 +13,7 @@ use Assist\Prospect\Filament\Resources\ProspectStatusResource\Pages\ListProspect
 test('The correct details are displayed on the ListProspectStatuses page', function () {
     $prospectStatuses = ProspectStatus::factory()
         // TODO: Fix this once Prospect factory is created
-        //->has(CaseItem::factory()->count(fake()->randomNumber(1)), 'caseItems')
+        //->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
         ->count(10)
         ->create();
 

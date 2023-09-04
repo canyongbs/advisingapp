@@ -9,13 +9,15 @@ use App\Models\BaseModel;
 use Assist\Task\Models\Task;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
-use Assist\Case\Models\CaseItem;
+use Assist\Case\Models\ServiceRequest;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Engagement\Models\Engagement;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Engagement\Models\EngagementResponse;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Assist\Engagement\Models\EngagementFileEntities;
@@ -23,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -57,23 +60,23 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read User|null $assignedTo
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, CaseItem> $cases
+ * @property-read Collection<int, ServiceRequest> $cases
  * @property-read int|null $cases_count
  * @property-read User|null $createdBy
  * @property-read Collection<int, EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
- * @property-read Collection<int, \Assist\Engagement\Models\EngagementResponse> $engagementResponses
+ * @property-read Collection<int, EngagementResponse> $engagementResponses
  * @property-read int|null $engagement_responses_count
- * @property-read Collection<int, \Assist\Engagement\Models\Engagement> $engagements
+ * @property-read Collection<int, Engagement> $engagements
  * @property-read int|null $engagements_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \Assist\Prospect\Models\ProspectSource $source
- * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read ProspectSource $source
+ * @property-read ProspectStatus $status
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
- * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
+ * @method static ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()
@@ -150,10 +153,10 @@ class Prospect extends BaseModel implements Auditable, Subscribable
     public function cases(): MorphMany
     {
         return $this->morphMany(
-            related: CaseItem::class,
-            name: 'respondent',
-            type: 'respondent_type',
-            id: 'respondent_id',
+            related:  ServiceRequest::class,
+            name:     'respondent',
+            type:     'respondent_type',
+            id:       'respondent_id',
             localKey: 'id'
         );
     }

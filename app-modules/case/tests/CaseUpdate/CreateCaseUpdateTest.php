@@ -1,27 +1,22 @@
 <?php
 
 use App\Models\User;
-
-use function Tests\asSuperAdmin;
-
-use Assist\Case\Models\CaseUpdate;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\Rules\Enum;
-
-use function PHPUnit\Framework\assertCount;
-use function PHPUnit\Framework\assertEmpty;
-use function Pest\Laravel\assertDatabaseHas;
-
+use Assist\Case\Models\ServiceRequestUpdate;
 use Assist\Case\Filament\Resources\CaseUpdateResource;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 use Assist\Case\Tests\RequestFactories\CreateCaseUpdateRequestFactory;
 
+use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function PHPUnit\Framework\assertCount;
+use function PHPUnit\Framework\assertEmpty;
+use function Pest\Laravel\assertDatabaseHas;
+
 test('A successful action on the CreateCaseUpdate page', function () {
-    // Because we create a CaseItem there is already a Subscription created.
+    // Because we create a ServiceRequest there is already a Subscription created.
     // This causes an issue during SubscriptionCreate as a unique constraint is violated.
     // Postgres prevents any further actions from happening during a transaction when there is an error like this
     // Preventing the Subscription creation for now
@@ -40,11 +35,11 @@ test('A successful action on the CreateCaseUpdate page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseUpdate::all());
+    assertCount(1, ServiceRequestUpdate::all());
 
-    assertDatabaseHas(CaseUpdate::class, $request->except('case_id')->toArray());
+    assertDatabaseHas(ServiceRequestUpdate::class, $request->except('case_id')->toArray());
 
-    expect(CaseUpdate::first()->case->id)
+    expect(ServiceRequestUpdate::first()->case->id)
         ->toEqual($request->get('case_id'));
 });
 
@@ -56,7 +51,7 @@ test('CreateCaseUpdate requires valid data', function ($data, $errors) {
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertEmpty(CaseUpdate::all());
+    assertEmpty(ServiceRequestUpdate::all());
 })->with(
     [
         'case missing' => [CreateCaseUpdateRequestFactory::new()->without('case_id'), ['case_id' => 'required']],
@@ -72,7 +67,7 @@ test('CreateCaseUpdate requires valid data', function ($data, $errors) {
 // Permission Tests
 
 test('CreateCaseUpdate is gated with proper access control', function () {
-    // Because we create a CaseItem there is already a Subscription created.
+    // Because we create a ServiceRequest there is already a Subscription created.
     // This causes an issue during SubscriptionCreate as a unique constraint is violated.
     // Postgres prevents any further actions from happening during a transaction when there is an error like this
     // Preventing the Subscription creation for now
@@ -103,7 +98,7 @@ test('CreateCaseUpdate is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseUpdate::all());
+    assertCount(1, ServiceRequestUpdate::all());
 
-    assertDatabaseHas(CaseUpdate::class, $request->toArray());
+    assertDatabaseHas(ServiceRequestUpdate::class, $request->toArray());
 });
