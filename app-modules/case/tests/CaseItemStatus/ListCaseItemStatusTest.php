@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
-use Assist\Case\Models\CaseItemStatus;
+use Assist\Case\Models\ServiceRequestStatus;
 use Assist\Case\Filament\Resources\CaseItemStatusResource;
 use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
 
@@ -11,7 +11,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 test('The correct details are displayed on the ListCaseItemStatus page', function () {
-    $caseItemStatuses = CaseItemStatus::factory()
+    $caseItemStatuses = ServiceRequestStatus::factory()
         ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
         ->count(10)
         ->create();
@@ -27,7 +27,7 @@ test('The correct details are displayed on the ListCaseItemStatus page', functio
         ->assertTableColumnExists('case_items_count');
 
     $caseItemStatuses->each(
-        fn (CaseItemStatus $caseItemType) => $component
+        fn (ServiceRequestStatus $caseItemType) => $component
             ->assertTableColumnStateSet(
                 'id',
                 $caseItemType->id,

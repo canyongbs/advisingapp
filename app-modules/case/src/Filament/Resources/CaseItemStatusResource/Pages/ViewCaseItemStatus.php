@@ -4,8 +4,8 @@ namespace Assist\Case\Filament\Resources\CaseItemStatusResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
-use Assist\Case\Models\CaseItemStatus;
 use Filament\Resources\Pages\ViewRecord;
+use Assist\Case\Models\ServiceRequestStatus;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Case\Filament\Resources\CaseItemStatusResource;
 
@@ -27,7 +27,7 @@ class ViewCaseItemStatus extends ViewRecord
                     ->label('Color')
                     ->translateLabel()
                     ->badge()
-                    ->color(fn (CaseItemStatus $caseItemStatus) => $caseItemStatus->color),
+                    ->color(fn (ServiceRequestStatus $caseItemStatus) => $caseItemStatus->color),
             ]);
     }
 

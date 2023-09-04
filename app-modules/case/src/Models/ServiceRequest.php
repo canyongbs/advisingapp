@@ -51,7 +51,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property-read Institution|null $institution
  * @property-read CaseItemPriority|null $priority
  * @property-read Model|Eloquent $respondent
- * @property-read CaseItemStatus|null $status
+ * @property-read ServiceRequestStatus|null $status
  * @property-read ServiceRequestType|null $type
  *
  * @method static CaseItemFactory factory($count = null, $state = [])
@@ -126,7 +126,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
     public function status(): BelongsTo
     {
-        return $this->belongsTo(CaseItemStatus::class);
+        return $this->belongsTo(ServiceRequestStatus::class);
     }
 
     public function type(): BelongsTo

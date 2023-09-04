@@ -17,7 +17,7 @@ use Assist\Case\Database\Factories\CaseItemStatusFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
- * Assist\Case\Models\CaseItemStatus
+ * Assist\Case\Models\ServiceRequestStatus
  *
  * @property string $id
  * @property string $name
@@ -31,22 +31,22 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read int|null $case_items_count
  *
  * @method static CaseItemStatusFactory factory($count = null, $state = [])
- * @method static Builder|CaseItemStatus newModelQuery()
- * @method static Builder|CaseItemStatus newQuery()
- * @method static Builder|CaseItemStatus onlyTrashed()
- * @method static Builder|CaseItemStatus query()
- * @method static Builder|CaseItemStatus whereColor($value)
- * @method static Builder|CaseItemStatus whereCreatedAt($value)
- * @method static Builder|CaseItemStatus whereDeletedAt($value)
- * @method static Builder|CaseItemStatus whereId($value)
- * @method static Builder|CaseItemStatus whereName($value)
- * @method static Builder|CaseItemStatus whereUpdatedAt($value)
- * @method static Builder|CaseItemStatus withTrashed()
- * @method static Builder|CaseItemStatus withoutTrashed()
+ * @method static Builder|ServiceRequestStatus newModelQuery()
+ * @method static Builder|ServiceRequestStatus newQuery()
+ * @method static Builder|ServiceRequestStatus onlyTrashed()
+ * @method static Builder|ServiceRequestStatus query()
+ * @method static Builder|ServiceRequestStatus whereColor($value)
+ * @method static Builder|ServiceRequestStatus whereCreatedAt($value)
+ * @method static Builder|ServiceRequestStatus whereDeletedAt($value)
+ * @method static Builder|ServiceRequestStatus whereId($value)
+ * @method static Builder|ServiceRequestStatus whereName($value)
+ * @method static Builder|ServiceRequestStatus whereUpdatedAt($value)
+ * @method static Builder|ServiceRequestStatus withTrashed()
+ * @method static Builder|ServiceRequestStatus withoutTrashed()
  *
  * @mixin Eloquent
  */
-class CaseItemStatus extends BaseModel implements Auditable
+class ServiceRequestStatus extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use HasUuids;

@@ -1,22 +1,19 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Validation\Rules\Enum;
+use Assist\Case\Models\ServiceRequestStatus;
+use Assist\Case\Filament\Resources\CaseItemStatusResource;
+use Assist\Case\Tests\RequestFactories\EditCaseItemStatusRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use Illuminate\Validation\Rules\Enum;
-use Assist\Case\Models\CaseItemStatus;
-
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\Case\Filament\Resources\CaseItemStatusResource;
-use Assist\Case\Tests\RequestFactories\EditCaseItemStatusRequestFactory;
-
 test('A successful action on the EditCaseItemStatus page', function () {
-    $caseItemStatus = CaseItemStatus::factory()->create();
+    $caseItemStatus = ServiceRequestStatus::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -46,7 +43,7 @@ test('A successful action on the EditCaseItemStatus page', function () {
 test('EditCaseItemStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    $caseItemStatus = CaseItemStatus::factory()->create();
+    $caseItemStatus = ServiceRequestStatus::factory()->create();
 
     livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
         'record' => $caseItemStatus->getRouteKey(),
@@ -59,7 +56,7 @@ test('EditCaseItemStatus requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(CaseItemStatus::class, $caseItemStatus->toArray());
+    assertDatabaseHas(ServiceRequestStatus::class, $caseItemStatus->toArray());
 })->with(
     [
         'name missing' => [EditCaseItemStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
@@ -74,7 +71,7 @@ test('EditCaseItemStatus requires valid data', function ($data, $errors) {
 test('EditCaseItemStatus is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseItemStatus = CaseItemStatus::factory()->create();
+    $caseItemStatus = ServiceRequestStatus::factory()->create();
 
     actingAs($user)
         ->get(

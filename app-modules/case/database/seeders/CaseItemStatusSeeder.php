@@ -3,21 +3,21 @@
 namespace Assist\Case\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Case\Models\CaseItemStatus;
+use Assist\Case\Models\ServiceRequestStatus;
 
 class CaseItemStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        CaseItemStatus::factory()
+        ServiceRequestStatus::factory()
             ->open()
             ->create();
 
-        CaseItemStatus::factory()
+        ServiceRequestStatus::factory()
             ->in_progress()
             ->create();
 
-        CaseItemStatus::factory()
+        ServiceRequestStatus::factory()
             ->closed()
             ->create();
     }

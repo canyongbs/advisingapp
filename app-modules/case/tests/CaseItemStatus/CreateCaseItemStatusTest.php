@@ -1,20 +1,17 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Validation\Rules\Enum;
+use Assist\Case\Models\ServiceRequestStatus;
+use Assist\Case\Filament\Resources\CaseItemStatusResource;
+use Assist\Case\Tests\RequestFactories\CreateCaseItemStatusRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use Illuminate\Validation\Rules\Enum;
-use Assist\Case\Models\CaseItemStatus;
-
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
-
-use Assist\Case\Filament\Resources\CaseItemStatusResource;
-use Assist\Case\Tests\RequestFactories\CreateCaseItemStatusRequestFactory;
 
 test('A successful action on the CreateCaseItemStatus page', function () {
     asSuperAdmin()
@@ -30,9 +27,9 @@ test('A successful action on the CreateCaseItemStatus page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseItemStatus::all());
+    assertCount(1, ServiceRequestStatus::all());
 
-    assertDatabaseHas(CaseItemStatus::class, $request);
+    assertDatabaseHas(ServiceRequestStatus::class, $request);
 });
 
 test('CreateCaseItemStatus requires valid data', function ($data, $errors) {
@@ -43,7 +40,7 @@ test('CreateCaseItemStatus requires valid data', function ($data, $errors) {
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertEmpty(CaseItemStatus::all());
+    assertEmpty(ServiceRequestStatus::all());
 })->with(
     [
         'name missing' => [CreateCaseItemStatusRequestFactory::new()->without('name'), ['name' => 'required']],
@@ -81,7 +78,7 @@ test('CreateCaseItemStatus is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseItemStatus::all());
+    assertCount(1, ServiceRequestStatus::all());
 
-    assertDatabaseHas(CaseItemStatus::class, $request->toArray());
+    assertDatabaseHas(ServiceRequestStatus::class, $request->toArray());
 });

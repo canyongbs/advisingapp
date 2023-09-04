@@ -2,12 +2,12 @@
 
 namespace Assist\Case\Database\Factories;
 
-use Assist\Case\Models\CaseItemStatus;
 use Assist\Case\Enums\ColumnColorOptions;
+use Assist\Case\Models\ServiceRequestStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<CaseItemStatus>
+ * @extends Factory<ServiceRequestStatus>
  */
 class CaseItemStatusFactory extends Factory
 {

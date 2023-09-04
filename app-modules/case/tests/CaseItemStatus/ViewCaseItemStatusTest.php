@@ -1,15 +1,14 @@
 <?php
 
 use App\Models\User;
+use Assist\Case\Models\ServiceRequestStatus;
+use Assist\Case\Filament\Resources\CaseItemStatusResource;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-use Assist\Case\Models\CaseItemStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource;
-
 test('The correct details are displayed on the ViewCaseItemStatus page', function () {
-    $caseItemStatus = CaseItemStatus::factory()->create();
+    $caseItemStatus = ServiceRequestStatus::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -35,7 +34,7 @@ test('The correct details are displayed on the ViewCaseItemStatus page', functio
 test('ViewCaseItemStatus is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $prospectSource = CaseItemStatus::factory()->create();
+    $prospectSource = ServiceRequestStatus::factory()->create();
 
     actingAs($user)
         ->get(
