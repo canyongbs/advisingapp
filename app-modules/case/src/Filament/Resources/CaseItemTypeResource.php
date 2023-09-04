@@ -3,12 +3,12 @@
 namespace Assist\Case\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\Case\Models\CaseItemType;
+use Assist\Case\Models\ServiceRequestType;
 use Assist\Case\Filament\Resources\CaseItemTypeResource\Pages;
 
 class CaseItemTypeResource extends Resource
 {
-    protected static ?string $model = CaseItemType::class;
+    protected static ?string $model = ServiceRequestType::class;
 
     protected static ?string $navigationGroup = 'Field Settings';
 

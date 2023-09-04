@@ -1,19 +1,16 @@
 <?php
 
 use App\Models\User;
+use Assist\Case\Models\ServiceRequestType;
+use Assist\Case\Filament\Resources\CaseItemTypeResource;
+use Assist\Case\Tests\RequestFactories\CreateCaseItemTypeRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
-
-use Assist\Case\Models\CaseItemType;
-
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
-
-use Assist\Case\Filament\Resources\CaseItemTypeResource;
-use Assist\Case\Tests\RequestFactories\CreateCaseItemTypeRequestFactory;
 
 test('A successful action on the CreateCaseItemType page', function () {
     asSuperAdmin()
@@ -29,9 +26,9 @@ test('A successful action on the CreateCaseItemType page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseItemType::all());
+    assertCount(1, ServiceRequestType::all());
 
-    assertDatabaseHas(CaseItemType::class, $editRequest);
+    assertDatabaseHas(ServiceRequestType::class, $editRequest);
 });
 
 test('CreateCaseItemType requires valid data', function ($data, $errors) {
@@ -42,7 +39,7 @@ test('CreateCaseItemType requires valid data', function ($data, $errors) {
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertEmpty(CaseItemType::all());
+    assertEmpty(ServiceRequestType::all());
 })->with(
     [
         'name missing' => [CreateCaseItemTypeRequestFactory::new()->without('name'), ['name' => 'required']],
@@ -78,7 +75,7 @@ test('CreateCaseItemType is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseItemType::all());
+    assertCount(1, ServiceRequestType::all());
 
-    assertDatabaseHas(CaseItemType::class, $request->toArray());
+    assertDatabaseHas(ServiceRequestType::class, $request->toArray());
 });

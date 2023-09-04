@@ -18,7 +18,7 @@ use Assist\Case\Database\Factories\CaseItemTypeFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
- * Assist\Case\Models\CaseItemType
+ * Assist\Case\Models\ServiceRequestType
  *
  * @property string $id
  * @property string $name
@@ -31,21 +31,21 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read int|null $case_items_count
  *
  * @method static CaseItemTypeFactory factory($count = null, $state = [])
- * @method static Builder|CaseItemType newModelQuery()
- * @method static Builder|CaseItemType newQuery()
- * @method static Builder|CaseItemType onlyTrashed()
- * @method static Builder|CaseItemType query()
- * @method static Builder|CaseItemType whereCreatedAt($value)
- * @method static Builder|CaseItemType whereDeletedAt($value)
- * @method static Builder|CaseItemType whereId($value)
- * @method static Builder|CaseItemType whereName($value)
- * @method static Builder|CaseItemType whereUpdatedAt($value)
- * @method static Builder|CaseItemType withTrashed()
- * @method static Builder|CaseItemType withoutTrashed()
+ * @method static Builder|ServiceRequestType newModelQuery()
+ * @method static Builder|ServiceRequestType newQuery()
+ * @method static Builder|ServiceRequestType onlyTrashed()
+ * @method static Builder|ServiceRequestType query()
+ * @method static Builder|ServiceRequestType whereCreatedAt($value)
+ * @method static Builder|ServiceRequestType whereDeletedAt($value)
+ * @method static Builder|ServiceRequestType whereId($value)
+ * @method static Builder|ServiceRequestType whereName($value)
+ * @method static Builder|ServiceRequestType whereUpdatedAt($value)
+ * @method static Builder|ServiceRequestType withTrashed()
+ * @method static Builder|ServiceRequestType withoutTrashed()
  *
  * @mixin Eloquent
  */
-class CaseItemType extends BaseModel implements Auditable
+class ServiceRequestType extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use HasUuids;

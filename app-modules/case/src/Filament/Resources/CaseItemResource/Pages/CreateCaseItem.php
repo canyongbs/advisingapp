@@ -4,7 +4,6 @@ namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
 
 use Filament\Forms\Form;
 use App\Models\Institution;
-use Assist\Case\Models\CaseItemType;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Assist\Case\Models\CaseItemStatus;
@@ -12,6 +11,7 @@ use Filament\Forms\Components\Textarea;
 use Assist\Case\Models\CaseItemPriority;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\Case\Models\ServiceRequestType;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\MorphToSelect;
@@ -54,7 +54,7 @@ class CreateCaseItem extends CreateRecord
                     ->preload()
                     ->label('Type')
                     ->required()
-                    ->exists((new CaseItemType())->getTable(), 'id'),
+                    ->exists((new ServiceRequestType())->getTable(), 'id'),
                 Textarea::make('close_details')
                     ->label('Close Details/Description')
                     ->nullable()

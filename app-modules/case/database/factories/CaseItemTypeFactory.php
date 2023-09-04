@@ -2,11 +2,11 @@
 
 namespace Assist\Case\Database\Factories;
 
-use Assist\Case\Models\CaseItemType;
+use Assist\Case\Models\ServiceRequestType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<CaseItemType>
+ * @extends Factory<ServiceRequestType>
  */
 class CaseItemTypeFactory extends Factory
 {

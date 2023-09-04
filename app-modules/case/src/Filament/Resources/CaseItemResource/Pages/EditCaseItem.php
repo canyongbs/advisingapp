@@ -5,7 +5,6 @@ namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
 use Filament\Actions;
 use Filament\Forms\Form;
 use App\Models\Institution;
-use Assist\Case\Models\CaseItemType;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Assist\Case\Models\CaseItemStatus;
@@ -14,6 +13,7 @@ use Assist\Case\Models\CaseItemPriority;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\Case\Models\ServiceRequestType;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
 use Assist\Case\Filament\Resources\CaseItemResource;
@@ -55,7 +55,7 @@ class EditCaseItem extends EditRecord
                 ->preload()
                 ->label('Type')
                 ->required()
-                ->exists((new CaseItemType())->getTable(), 'id'),
+                ->exists((new ServiceRequestType())->getTable(), 'id'),
             Textarea::make('close_details')
                 ->label('Close Details/Description')
                 ->nullable()

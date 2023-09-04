@@ -1,21 +1,18 @@
 <?php
 
 use App\Models\User;
+use Assist\Case\Models\ServiceRequestType;
+use Assist\Case\Filament\Resources\CaseItemTypeResource;
+use Assist\Case\Tests\RequestFactories\EditCaseItemTypeRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
-
-use Assist\Case\Models\CaseItemType;
-
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\Case\Filament\Resources\CaseItemTypeResource;
-use Assist\Case\Tests\RequestFactories\EditCaseItemTypeRequestFactory;
-
 test('A successful action on the EditCaseItemType page', function () {
-    $caseItemType = CaseItemType::factory()->create();
+    $caseItemType = ServiceRequestType::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -43,7 +40,7 @@ test('A successful action on the EditCaseItemType page', function () {
 test('EditCaseItemType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    $caseItemType = CaseItemType::factory()->create();
+    $caseItemType = ServiceRequestType::factory()->create();
 
     livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
         'record' => $caseItemType->getRouteKey(),
@@ -55,7 +52,7 @@ test('EditCaseItemType requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(CaseItemType::class, $caseItemType->toArray());
+    assertDatabaseHas(ServiceRequestType::class, $caseItemType->toArray());
 })->with(
     [
         'name missing' => [EditCaseItemTypeRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
@@ -68,7 +65,7 @@ test('EditCaseItemType requires valid data', function ($data, $errors) {
 test('EditCaseItemType is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseItemType = CaseItemType::factory()->create();
+    $caseItemType = ServiceRequestType::factory()->create();
 
     actingAs($user)
         ->get(

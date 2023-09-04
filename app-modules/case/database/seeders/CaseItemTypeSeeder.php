@@ -3,13 +3,13 @@
 namespace Assist\Case\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Case\Models\CaseItemType;
+use Assist\Case\Models\ServiceRequestType;
 
 class CaseItemTypeSeeder extends Seeder
 {
     public function run(): void
     {
-        CaseItemType::factory()
+        ServiceRequestType::factory()
             ->count(13)
             ->sequence(
                 ['name' => 'Admissions'],

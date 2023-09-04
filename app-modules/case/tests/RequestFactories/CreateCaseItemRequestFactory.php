@@ -3,9 +3,9 @@
 namespace Assist\Case\Tests\RequestFactories;
 
 use App\Models\Institution;
-use Assist\Case\Models\CaseItemType;
 use Assist\Case\Models\CaseItemStatus;
 use Assist\Case\Models\CaseItemPriority;
+use Assist\Case\Models\ServiceRequestType;
 use Worksome\RequestFactories\RequestFactory;
 
 class CreateCaseItemRequestFactory extends RequestFactory
@@ -17,7 +17,7 @@ class CreateCaseItemRequestFactory extends RequestFactory
             'institution_id' => Institution::factory()->create()->id,
             'status_id' => CaseItemStatus::factory()->create()->id,
             'priority_id' => CaseItemPriority::factory()->create()->id,
-            'type_id' => CaseItemType::factory()->create()->id,
+            'type_id' => ServiceRequestType::factory()->create()->id,
             'close_details' => $this->faker->sentence,
             'res_details' => $this->faker->sentence,
         ];
