@@ -9,10 +9,10 @@ use Illuminate\Support\ServiceProvider;
 use Assist\Case\Models\ServiceRequestType;
 use Assist\Case\Models\ServiceRequestStatus;
 use Assist\Case\Models\ServiceRequestUpdate;
-use Assist\Case\Observers\CaseUpdateObserver;
 use Assist\Case\Models\ServiceRequestPriority;
 use Assist\Case\Observers\ServiceRequestObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Case\Observers\ServiceRequestUpdateObserver;
 
 class CaseServiceProvider extends ServiceProvider
 {
@@ -37,6 +37,6 @@ class CaseServiceProvider extends ServiceProvider
     protected function observers(): void
     {
         ServiceRequest::observe(ServiceRequestObserver::class);
-        ServiceRequestUpdate::observe(CaseUpdateObserver::class);
+        ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
     }
 }
