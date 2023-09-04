@@ -4,7 +4,7 @@ namespace Assist\Case\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\Case\Models\CaseItemPriority;
+use Assist\Case\Models\ServiceRequestPriority;
 
 class CaseItemPriorityPolicy
 {
@@ -15,7 +15,7 @@ class CaseItemPriorityPolicy
             : Response::deny('You do not have permissions to view case item priorities.');
     }
 
-    public function view(User $user, CaseItemPriority $caseItemPriority): Response
+    public function view(User $user, ServiceRequestPriority $caseItemPriority): Response
     {
         return $user->can('case_item_priority.*.view') || $user->can("case_item_priority.{$caseItemPriority->id}.view")
             ? Response::allow()
@@ -29,28 +29,28 @@ class CaseItemPriorityPolicy
             : Response::deny('You do not have permissions to create case item priorities.');
     }
 
-    public function update(User $user, CaseItemPriority $caseItemPriority): Response
+    public function update(User $user, ServiceRequestPriority $caseItemPriority): Response
     {
         return $user->can('case_item_priority.*.update') || $user->can("case_item_priority.{$caseItemPriority->id}.update")
             ? Response::allow()
             : Response::deny('You do not have permissions to update this case item priority.');
     }
 
-    public function delete(User $user, CaseItemPriority $caseItemPriority): Response
+    public function delete(User $user, ServiceRequestPriority $caseItemPriority): Response
     {
         return $user->can('case_item_priority.*.delete') || $user->can("case_item_priority.{$caseItemPriority->id}.delete")
             ? Response::allow()
             : Response::deny('You do not have permissions to delete this case item priority.');
     }
 
-    public function restore(User $user, CaseItemPriority $caseItemPriority): Response
+    public function restore(User $user, ServiceRequestPriority $caseItemPriority): Response
     {
         return $user->can('case_item_priority.*.restore') || $user->can("case_item_priority.{$caseItemPriority->id}.restore")
             ? Response::allow()
             : Response::deny('You do not have permissions to restore this case item priority.');
     }
 
-    public function forceDelete(User $user, CaseItemPriority $caseItemPriority): Response
+    public function forceDelete(User $user, ServiceRequestPriority $caseItemPriority): Response
     {
         return $user->can('case_item_priority.*.force-delete') || $user->can("case_item_priority.{$caseItemPriority->id}.force-delete")
             ? Response::allow()

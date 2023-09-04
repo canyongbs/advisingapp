@@ -6,12 +6,12 @@ use Filament\Panel;
 use Assist\Case\CasePlugin;
 use Assist\Case\Models\ServiceRequest;
 use Illuminate\Support\ServiceProvider;
-use Assist\Case\Models\CaseItemPriority;
 use Assist\Case\Models\ServiceRequestType;
 use Assist\Case\Observers\CaseItemObserver;
 use Assist\Case\Models\ServiceRequestStatus;
 use Assist\Case\Models\ServiceRequestUpdate;
 use Assist\Case\Observers\CaseUpdateObserver;
+use Assist\Case\Models\ServiceRequestPriority;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class CaseServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class CaseServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'case_item' => ServiceRequest::class,
-            'case_item_priority' => CaseItemPriority::class,
+            'case_item_priority' => ServiceRequestPriority::class,
             'case_item_status' => ServiceRequestStatus::class,
             'case_item_type' => ServiceRequestType::class,
             'case_update' => ServiceRequestUpdate::class,

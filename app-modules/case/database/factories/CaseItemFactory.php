@@ -5,10 +5,10 @@ namespace Assist\Case\Database\Factories;
 use App\Models\User;
 use App\Models\Institution;
 use Assist\Case\Models\ServiceRequest;
-use Assist\Case\Models\CaseItemPriority;
 use Assist\Case\Models\ServiceRequestType;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Case\Models\ServiceRequestStatus;
+use Assist\Case\Models\ServiceRequestPriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -29,7 +29,7 @@ class CaseItemFactory extends Factory
             'institution_id' => Institution::factory(),
             'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
             'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
-            'priority_id' => CaseItemPriority::inRandomOrder()->first() ?? CaseItemPriority::factory(),
+            'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
             'assigned_to_id' => User::factory(),
             'created_by_id' => User::factory(),
         ];

@@ -49,7 +49,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property-read int|null $case_updates_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
- * @property-read CaseItemPriority|null $priority
+ * @property-read ServiceRequestPriority|null $priority
  * @property-read Model|Eloquent $respondent
  * @property-read ServiceRequestStatus|null $status
  * @property-read ServiceRequestType|null $type
@@ -136,7 +136,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
     public function priority(): BelongsTo
     {
-        return $this->belongsTo(CaseItemPriority::class);
+        return $this->belongsTo(ServiceRequestPriority::class);
     }
 
     public function assignedTo(): BelongsTo

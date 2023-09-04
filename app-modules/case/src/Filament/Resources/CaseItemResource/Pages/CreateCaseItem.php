@@ -7,7 +7,6 @@ use App\Models\Institution;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Assist\Case\Models\CaseItemPriority;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Models\ServiceRequestType;
@@ -15,6 +14,7 @@ use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Case\Models\ServiceRequestStatus;
 use Filament\Forms\Components\MorphToSelect;
+use Assist\Case\Models\ServiceRequestPriority;
 use Assist\Case\Filament\Resources\CaseItemResource;
 
 class CreateCaseItem extends CreateRecord
@@ -48,7 +48,7 @@ class CreateCaseItem extends CreateRecord
                     )
                     ->label('Priority')
                     ->required()
-                    ->exists((new CaseItemPriority())->getTable(), 'id'),
+                    ->exists((new ServiceRequestPriority())->getTable(), 'id'),
                 Select::make('type_id')
                     ->relationship('type', 'name')
                     ->preload()

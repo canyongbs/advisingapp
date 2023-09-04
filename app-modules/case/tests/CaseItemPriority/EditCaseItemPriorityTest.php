@@ -1,21 +1,18 @@
 <?php
 
 use App\Models\User;
+use Assist\Case\Models\ServiceRequestPriority;
+use Assist\Case\Filament\Resources\CaseItemPriorityResource;
+use Assist\Case\Tests\RequestFactories\EditCaseItemPriorityRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use Assist\Case\Models\CaseItemPriority;
-
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\Case\Filament\Resources\CaseItemPriorityResource;
-use Assist\Case\Tests\RequestFactories\EditCaseItemPriorityRequestFactory;
-
 test('A successful action on the EditCaseItemPriority page', function () {
-    $caseItemPriority = CaseItemPriority::factory()->create();
+    $caseItemPriority = ServiceRequestPriority::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -43,7 +40,7 @@ test('A successful action on the EditCaseItemPriority page', function () {
 test('EditCaseItemPriority requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    $caseItemPriority = CaseItemPriority::factory()->create();
+    $caseItemPriority = ServiceRequestPriority::factory()->create();
 
     livewire(CaseItemPriorityResource\Pages\EditCaseItemPriority::class, [
         'record' => $caseItemPriority->getRouteKey(),
@@ -55,7 +52,7 @@ test('EditCaseItemPriority requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(CaseItemPriority::class, $caseItemPriority->toArray());
+    assertDatabaseHas(ServiceRequestPriority::class, $caseItemPriority->toArray());
 })->with(
     [
         'name missing' => [EditCaseItemPriorityRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
@@ -68,7 +65,7 @@ test('EditCaseItemPriority requires valid data', function ($data, $errors) {
 test('EditCaseItemPriority is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseItemPriority = CaseItemPriority::factory()->create();
+    $caseItemPriority = ServiceRequestPriority::factory()->create();
 
     actingAs($user)
         ->get(

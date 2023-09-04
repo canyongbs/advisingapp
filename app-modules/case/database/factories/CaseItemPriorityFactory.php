@@ -2,11 +2,11 @@
 
 namespace Assist\Case\Database\Factories;
 
-use Assist\Case\Models\CaseItemPriority;
+use Assist\Case\Models\ServiceRequestPriority;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<CaseItemPriority>
+ * @extends Factory<ServiceRequestPriority>
  */
 class CaseItemPriorityFactory extends Factory
 {

@@ -17,7 +17,7 @@ use Assist\Case\Database\Factories\CaseItemPriorityFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
- * Assist\Case\Models\CaseItemPriority
+ * Assist\Case\Models\ServiceRequestPriority
  *
  * @property string $id
  * @property string $name
@@ -31,22 +31,22 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read int|null $case_items_count
  *
  * @method static CaseItemPriorityFactory factory($count = null, $state = [])
- * @method static Builder|CaseItemPriority newModelQuery()
- * @method static Builder|CaseItemPriority newQuery()
- * @method static Builder|CaseItemPriority onlyTrashed()
- * @method static Builder|CaseItemPriority query()
- * @method static Builder|CaseItemPriority whereCreatedAt($value)
- * @method static Builder|CaseItemPriority whereDeletedAt($value)
- * @method static Builder|CaseItemPriority whereId($value)
- * @method static Builder|CaseItemPriority whereName($value)
- * @method static Builder|CaseItemPriority whereOrder($value)
- * @method static Builder|CaseItemPriority whereUpdatedAt($value)
- * @method static Builder|CaseItemPriority withTrashed()
- * @method static Builder|CaseItemPriority withoutTrashed()
+ * @method static Builder|ServiceRequestPriority newModelQuery()
+ * @method static Builder|ServiceRequestPriority newQuery()
+ * @method static Builder|ServiceRequestPriority onlyTrashed()
+ * @method static Builder|ServiceRequestPriority query()
+ * @method static Builder|ServiceRequestPriority whereCreatedAt($value)
+ * @method static Builder|ServiceRequestPriority whereDeletedAt($value)
+ * @method static Builder|ServiceRequestPriority whereId($value)
+ * @method static Builder|ServiceRequestPriority whereName($value)
+ * @method static Builder|ServiceRequestPriority whereOrder($value)
+ * @method static Builder|ServiceRequestPriority whereUpdatedAt($value)
+ * @method static Builder|ServiceRequestPriority withTrashed()
+ * @method static Builder|ServiceRequestPriority withoutTrashed()
  *
  * @mixin Eloquent
  */
-class CaseItemPriority extends BaseModel implements Auditable
+class ServiceRequestPriority extends BaseModel implements Auditable
 {
     use SoftDeletes;
     use HasUuids;

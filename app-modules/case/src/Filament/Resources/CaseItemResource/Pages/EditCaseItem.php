@@ -8,7 +8,6 @@ use App\Models\Institution;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Assist\Case\Models\CaseItemPriority;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +15,7 @@ use Assist\Case\Models\ServiceRequestType;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Case\Models\ServiceRequestStatus;
 use Filament\Forms\Components\MorphToSelect;
+use Assist\Case\Models\ServiceRequestPriority;
 use Assist\Case\Filament\Resources\CaseItemResource;
 
 class EditCaseItem extends EditRecord
@@ -49,7 +49,7 @@ class EditCaseItem extends EditRecord
                 )
                 ->label('Priority')
                 ->required()
-                ->exists((new CaseItemPriority())->getTable(), 'id'),
+                ->exists((new ServiceRequestPriority())->getTable(), 'id'),
             Select::make('type_id')
                 ->relationship('type', 'name')
                 ->preload()

@@ -1,15 +1,14 @@
 <?php
 
 use App\Models\User;
+use Assist\Case\Models\ServiceRequestPriority;
+use Assist\Case\Filament\Resources\CaseItemPriorityResource;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-use Assist\Case\Models\CaseItemPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource;
-
 test('The correct details are displayed on the ViewCaseItemPriority page', function () {
-    $caseItemPriority = CaseItemPriority::factory()->create();
+    $caseItemPriority = ServiceRequestPriority::factory()->create();
 
     asSuperAdmin()
         ->get(
@@ -33,7 +32,7 @@ test('The correct details are displayed on the ViewCaseItemPriority page', funct
 test('ViewCaseItemPriority is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $prospectSource = CaseItemPriority::factory()->create();
+    $prospectSource = ServiceRequestPriority::factory()->create();
 
     actingAs($user)
         ->get(

@@ -3,13 +3,13 @@
 namespace Assist\Case\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Case\Models\CaseItemPriority;
+use Assist\Case\Models\ServiceRequestPriority;
 
 class CaseItemPrioritySeeder extends Seeder
 {
     public function run(): void
     {
-        CaseItemPriority::factory()
+        ServiceRequestPriority::factory()
             ->count(3)
             ->sequence(
                 ['name' => 'High', 'order' => 1],

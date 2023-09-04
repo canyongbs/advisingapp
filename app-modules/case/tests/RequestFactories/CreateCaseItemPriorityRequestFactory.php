@@ -2,8 +2,8 @@
 
 namespace Assist\Case\Tests\RequestFactories;
 
-use Assist\Case\Models\CaseItemPriority;
 use Worksome\RequestFactories\RequestFactory;
+use Assist\Case\Models\ServiceRequestPriority;
 
 class CreateCaseItemPriorityRequestFactory extends RequestFactory
 {
@@ -11,7 +11,7 @@ class CreateCaseItemPriorityRequestFactory extends RequestFactory
     {
         return [
             'name' => $this->faker->name(),
-            'order' => CaseItemPriority::orderBy('order', 'desc')->first()?->order + 1 ?? 1,
+            'order' => ServiceRequestPriority::orderBy('order', 'desc')->first()?->order + 1 ?? 1,
         ];
     }
 }

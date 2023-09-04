@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
-use Assist\Case\Models\CaseItemPriority;
+use Assist\Case\Models\ServiceRequestPriority;
 use Assist\Case\Filament\Resources\CaseItemPriorityResource;
 use Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages\ListCaseItemPriorities;
 
@@ -11,7 +11,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 test('The correct details are displayed on the ListCaseItemPriority page', function () {
-    $caseItemTypes = CaseItemPriority::factory()
+    $caseItemTypes = ServiceRequestPriority::factory()
         ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
         ->count(3)
         ->sequence(
@@ -32,7 +32,7 @@ test('The correct details are displayed on the ListCaseItemPriority page', funct
         ->assertTableColumnExists('case_items_count');
 
     $caseItemTypes->each(
-        fn (CaseItemPriority $caseItemType) => $component
+        fn (ServiceRequestPriority $caseItemType) => $component
             ->assertTableColumnStateSet(
                 'name',
                 $caseItemType->name,

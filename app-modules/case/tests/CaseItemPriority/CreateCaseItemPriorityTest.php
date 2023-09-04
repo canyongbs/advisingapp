@@ -1,19 +1,16 @@
 <?php
 
 use App\Models\User;
+use Assist\Case\Models\ServiceRequestPriority;
+use Assist\Case\Filament\Resources\CaseItemPriorityResource;
+use Assist\Case\Tests\RequestFactories\CreateCaseItemPriorityRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use Assist\Case\Models\CaseItemPriority;
-
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
-
-use Assist\Case\Filament\Resources\CaseItemPriorityResource;
-use Assist\Case\Tests\RequestFactories\CreateCaseItemPriorityRequestFactory;
 
 test('A successful action on the CreateCaseItemPriority page', function () {
     asSuperAdmin()
@@ -29,9 +26,9 @@ test('A successful action on the CreateCaseItemPriority page', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseItemPriority::all());
+    assertCount(1, ServiceRequestPriority::all());
 
-    assertDatabaseHas(CaseItemPriority::class, $request);
+    assertDatabaseHas(ServiceRequestPriority::class, $request);
 });
 
 test('CreateCaseItemPriority requires valid data', function ($data, $errors) {
@@ -42,7 +39,7 @@ test('CreateCaseItemPriority requires valid data', function ($data, $errors) {
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertEmpty(CaseItemPriority::all());
+    assertEmpty(ServiceRequestPriority::all());
 })->with(
     [
         'name missing' => [CreateCaseItemPriorityRequestFactory::new()->without('name'), ['name' => 'required']],
@@ -80,7 +77,7 @@ test('CreateCaseItemPriority is gated with proper access control', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, CaseItemPriority::all());
+    assertCount(1, ServiceRequestPriority::all());
 
-    assertDatabaseHas(CaseItemPriority::class, $request->toArray());
+    assertDatabaseHas(ServiceRequestPriority::class, $request->toArray());
 });
