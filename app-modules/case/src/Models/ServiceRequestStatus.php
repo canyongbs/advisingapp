@@ -57,7 +57,7 @@ class ServiceRequestStatus extends BaseModel implements Auditable
         'color',
     ];
 
-    public function caseItems(): HasMany
+    public function serviceRequests(): HasMany
     {
         return $this->hasMany(ServiceRequest::class, 'status_id');
     }

@@ -3,7 +3,7 @@
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
 use Assist\Case\Models\ServiceRequestType;
-use Assist\Case\Filament\Resources\CaseItemTypeResource;
+use Assist\Case\Filament\Resources\ServiceRequestTypeResource;
 use Assist\Case\Filament\Resources\CaseItemTypeResource\Pages\ListCaseItemTypes;
 
 use function Tests\asSuperAdmin;
@@ -46,18 +46,18 @@ test('The correct details are displayed on the ListCaseItemType page', function 
 
 // Permission Tests
 
-test('ListCaseItemTypes is gated with proper access control', function () {
+test('ListServiceRequestTypes is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)
         ->get(
-            CaseItemTypeResource::getUrl('index')
+            ServiceRequestTypeResource::getUrl('index')
         )->assertForbidden();
 
     $user->givePermissionTo('case_item_type.view-any');
 
     actingAs($user)
         ->get(
-            CaseItemTypeResource::getUrl('index')
+            ServiceRequestTypeResource::getUrl('index')
         )->assertSuccessful();
 });

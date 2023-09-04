@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequestType;
-use Assist\Case\Filament\Resources\CaseItemTypeResource;
+use Assist\Case\Filament\Resources\ServiceRequestTypeResource;
 use Assist\Case\Tests\RequestFactories\EditCaseItemTypeRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -11,12 +11,12 @@ use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-test('A successful action on the EditCaseItemType page', function () {
+test('A successful action on the EditServiceRequestType page', function () {
     $caseItemType = ServiceRequestType::factory()->create();
 
     asSuperAdmin()
         ->get(
-            CaseItemTypeResource::getUrl('edit', [
+            ServiceRequestTypeResource::getUrl('edit', [
                 'record' => $caseItemType->getRouteKey(),
             ])
         )
@@ -37,7 +37,7 @@ test('A successful action on the EditCaseItemType page', function () {
     assertEquals($editRequest['name'], $caseItemType->fresh()->name);
 });
 
-test('EditCaseItemType requires valid data', function ($data, $errors) {
+test('EditServiceRequestType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     $caseItemType = ServiceRequestType::factory()->create();
@@ -62,14 +62,14 @@ test('EditCaseItemType requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('EditCaseItemType is gated with proper access control', function () {
+test('EditServiceRequestType is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $caseItemType = ServiceRequestType::factory()->create();
 
     actingAs($user)
         ->get(
-            CaseItemTypeResource::getUrl('edit', [
+            ServiceRequestTypeResource::getUrl('edit', [
                 'record' => $caseItemType,
             ])
         )->assertForbidden();
@@ -84,7 +84,7 @@ test('EditCaseItemType is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemTypeResource::getUrl('edit', [
+            ServiceRequestTypeResource::getUrl('edit', [
                 'record' => $caseItemType,
             ])
         )->assertSuccessful();

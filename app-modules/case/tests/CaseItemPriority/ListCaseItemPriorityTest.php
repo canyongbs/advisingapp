@@ -3,7 +3,7 @@
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
 use Assist\Case\Models\ServiceRequestPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource;
 use Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages\ListCaseItemPriorities;
 
 use function Tests\asSuperAdmin;
@@ -56,13 +56,13 @@ test('ListCaseItemPriorities is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemPriorityResource::getUrl('index')
+            ServiceRequestPriorityResource::getUrl('index')
         )->assertForbidden();
 
     $user->givePermissionTo('case_item_priority.view-any');
 
     actingAs($user)
         ->get(
-            CaseItemPriorityResource::getUrl('index')
+            ServiceRequestPriorityResource::getUrl('index')
         )->assertSuccessful();
 });

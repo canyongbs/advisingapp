@@ -3,7 +3,7 @@
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
 use Assist\Case\Models\ServiceRequestStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource;
+use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
 use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
 
 use function Tests\asSuperAdmin;
@@ -56,13 +56,13 @@ test('ListCaseItemStatuses is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemStatusResource::getUrl('index')
+            ServiceRequestStatusResource::getUrl('index')
         )->assertForbidden();
 
     $user->givePermissionTo('case_item_status.view-any');
 
     actingAs($user)
         ->get(
-            CaseItemStatusResource::getUrl('index')
+            ServiceRequestStatusResource::getUrl('index')
         )->assertSuccessful();
 });

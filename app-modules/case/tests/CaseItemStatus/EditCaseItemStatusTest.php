@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Validation\Rules\Enum;
 use Assist\Case\Models\ServiceRequestStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource;
+use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
 use Assist\Case\Tests\RequestFactories\EditCaseItemStatusRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -17,7 +17,7 @@ test('A successful action on the EditCaseItemStatus page', function () {
 
     asSuperAdmin()
         ->get(
-            CaseItemStatusResource::getUrl('edit', [
+            ServiceRequestStatusResource::getUrl('edit', [
                 'record' => $caseItemStatus->getRouteKey(),
             ])
         )
@@ -75,7 +75,7 @@ test('EditCaseItemStatus is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemStatusResource::getUrl('edit', [
+            ServiceRequestStatusResource::getUrl('edit', [
                 'record' => $caseItemStatus,
             ])
         )->assertForbidden();
@@ -90,7 +90,7 @@ test('EditCaseItemStatus is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemStatusResource::getUrl('edit', [
+            ServiceRequestStatusResource::getUrl('edit', [
                 'record' => $caseItemStatus,
             ])
         )->assertSuccessful();

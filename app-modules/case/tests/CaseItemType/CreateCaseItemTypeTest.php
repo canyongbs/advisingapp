@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequestType;
-use Assist\Case\Filament\Resources\CaseItemTypeResource;
+use Assist\Case\Filament\Resources\ServiceRequestTypeResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseItemTypeRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -12,10 +12,10 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-test('A successful action on the CreateCaseItemType page', function () {
+test('A successful action on the CreateServiceRequestType page', function () {
     asSuperAdmin()
         ->get(
-            CaseItemTypeResource::getUrl('create')
+            ServiceRequestTypeResource::getUrl('create')
         )
         ->assertSuccessful();
 
@@ -31,7 +31,7 @@ test('A successful action on the CreateCaseItemType page', function () {
     assertDatabaseHas(ServiceRequestType::class, $editRequest);
 });
 
-test('CreateCaseItemType requires valid data', function ($data, $errors) {
+test('CreateServiceRequestType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
@@ -49,12 +49,12 @@ test('CreateCaseItemType requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('CreateCaseItemType is gated with proper access control', function () {
+test('CreateServiceRequestType is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)
         ->get(
-            CaseItemTypeResource::getUrl('create')
+            ServiceRequestTypeResource::getUrl('create')
         )->assertForbidden();
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
@@ -65,7 +65,7 @@ test('CreateCaseItemType is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemTypeResource::getUrl('create')
+            ServiceRequestTypeResource::getUrl('create')
         )->assertSuccessful();
 
     $request = collect(CreateCaseItemTypeRequestFactory::new()->create());

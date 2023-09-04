@@ -2,17 +2,17 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequestUpdate;
-use Assist\Case\Filament\Resources\CaseUpdateResource;
+use Assist\Case\Filament\Resources\ServiceRequestUpdateResource;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-test('The correct details are displayed on the ViewCaseUpdate page', function () {
+test('The correct details are displayed on the ViewServiceRequestUpdate page', function () {
     $caseItemUpdate = ServiceRequestUpdate::factory()->create();
 
     asSuperAdmin()
         ->get(
-            CaseUpdateResource::getUrl('view', [
+            ServiceRequestUpdateResource::getUrl('view', [
                 'record' => $caseItemUpdate,
             ])
         )
@@ -33,14 +33,14 @@ test('The correct details are displayed on the ViewCaseUpdate page', function ()
 
 // Permission Tests
 
-test('ViewCaseUpdate is gated with proper access control', function () {
+test('ViewServiceRequestUpdate is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $caseUpdate = ServiceRequestUpdate::factory()->create();
 
     actingAs($user)
         ->get(
-            CaseUpdateResource::getUrl('view', [
+            ServiceRequestUpdateResource::getUrl('view', [
                 'record' => $caseUpdate,
             ])
         )->assertForbidden();
@@ -50,7 +50,7 @@ test('ViewCaseUpdate is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseUpdateResource::getUrl('view', [
+            ServiceRequestUpdateResource::getUrl('view', [
                 'record' => $caseUpdate,
             ])
         )->assertSuccessful();

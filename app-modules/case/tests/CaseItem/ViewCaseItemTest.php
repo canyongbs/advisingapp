@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
-use Assist\Case\Filament\Resources\CaseItemResource;
+use Assist\Case\Filament\Resources\ServiceRequestResource;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
@@ -12,7 +12,7 @@ test('The correct details are displayed on the ViewCaseItem page', function () {
 
     asSuperAdmin()
         ->get(
-            CaseItemResource::getUrl('view', [
+            ServiceRequestResource::getUrl('view', [
                 'record' => $caseItem,
             ])
         )
@@ -48,7 +48,7 @@ test('ViewCaseItem is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemResource::getUrl('view', [
+            ServiceRequestResource::getUrl('view', [
                 'record' => $caseItem,
             ])
         )->assertForbidden();
@@ -58,7 +58,7 @@ test('ViewCaseItem is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemResource::getUrl('view', [
+            ServiceRequestResource::getUrl('view', [
                 'record' => $caseItem,
             ])
         )->assertSuccessful();

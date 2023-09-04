@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Validation\Rules\Enum;
 use Assist\Case\Models\ServiceRequestStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource;
+use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseItemStatusRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -16,7 +16,7 @@ use function Pest\Laravel\assertDatabaseHas;
 test('A successful action on the CreateCaseItemStatus page', function () {
     asSuperAdmin()
         ->get(
-            CaseItemStatusResource::getUrl('create')
+            ServiceRequestStatusResource::getUrl('create')
         )
         ->assertSuccessful();
 
@@ -57,7 +57,7 @@ test('CreateCaseItemStatus is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemStatusResource::getUrl('create')
+            ServiceRequestStatusResource::getUrl('create')
         )->assertForbidden();
 
     livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)
@@ -68,7 +68,7 @@ test('CreateCaseItemStatus is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemStatusResource::getUrl('create')
+            ServiceRequestStatusResource::getUrl('create')
         )->assertSuccessful();
 
     $request = collect(CreateCaseItemStatusRequestFactory::new()->create());

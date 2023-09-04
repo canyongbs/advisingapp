@@ -57,7 +57,7 @@ class ServiceRequestPriority extends BaseModel implements Auditable
         'order',
     ];
 
-    public function caseItems(): HasMany
+    public function serviceRequests(): HasMany
     {
         return $this->hasMany(ServiceRequest::class, 'priority_id');
     }

@@ -4,8 +4,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\Rules\Enum;
 use Assist\Case\Models\ServiceRequestUpdate;
-use Assist\Case\Filament\Resources\CaseUpdateResource;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
+use Assist\Case\Filament\Resources\ServiceRequestUpdateResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseUpdateRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -15,7 +15,7 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-test('A successful action on the CreateCaseUpdate page', function () {
+test('A successful action on the CreateServiceRequestUpdate page', function () {
     // Because we create a ServiceRequest there is already a Subscription created.
     // This causes an issue during SubscriptionCreate as a unique constraint is violated.
     // Postgres prevents any further actions from happening during a transaction when there is an error like this
@@ -24,7 +24,7 @@ test('A successful action on the CreateCaseUpdate page', function () {
 
     asSuperAdmin()
         ->get(
-            CaseUpdateResource::getUrl('create')
+            ServiceRequestUpdateResource::getUrl('create')
         )
         ->assertSuccessful();
 
@@ -43,7 +43,7 @@ test('A successful action on the CreateCaseUpdate page', function () {
         ->toEqual($request->get('case_id'));
 });
 
-test('CreateCaseUpdate requires valid data', function ($data, $errors) {
+test('CreateServiceRequestUpdate requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     livewire(CaseUpdateResource\Pages\CreateCaseUpdate::class)
@@ -66,7 +66,7 @@ test('CreateCaseUpdate requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('CreateCaseUpdate is gated with proper access control', function () {
+test('CreateServiceRequestUpdate is gated with proper access control', function () {
     // Because we create a ServiceRequest there is already a Subscription created.
     // This causes an issue during SubscriptionCreate as a unique constraint is violated.
     // Postgres prevents any further actions from happening during a transaction when there is an error like this
@@ -77,7 +77,7 @@ test('CreateCaseUpdate is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseUpdateResource::getUrl('create')
+            ServiceRequestUpdateResource::getUrl('create')
         )->assertForbidden();
 
     livewire(CaseUpdateResource\Pages\CreateCaseUpdate::class)
@@ -88,7 +88,7 @@ test('CreateCaseUpdate is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseUpdateResource::getUrl('create')
+            ServiceRequestUpdateResource::getUrl('create')
         )->assertSuccessful();
 
     $request = collect(CreateCaseUpdateRequestFactory::new()->create());

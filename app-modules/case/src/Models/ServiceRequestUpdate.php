@@ -10,12 +10,12 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Case\Enums\CaseUpdateDirection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Case\Enums\ServiceRequestUpdateDirection;
 use Assist\Case\Database\Factories\CaseUpdateFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
@@ -27,7 +27,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property string|null $case_id
  * @property string $update
  * @property bool $internal
- * @property CaseUpdateDirection $direction
+ * @property ServiceRequestUpdateDirection $direction
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -68,10 +68,10 @@ class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAut
 
     protected $casts = [
         'internal' => 'boolean',
-        'direction' => CaseUpdateDirection::class,
+        'direction' => ServiceRequestUpdateDirection::class,
     ];
 
-    public function case(): BelongsTo
+    public function serviceRequest(): BelongsTo
     {
         return $this->belongsTo(ServiceRequest::class);
     }
@@ -79,7 +79,7 @@ class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAut
     public function getSubscribable(): ?Subscribable
     {
         /** @var Subscribable|Model $respondent */
-        $respondent = $this->case->respondent;
+        $respondent = $this->serviceRequest->respondent;
 
         return $respondent instanceof Subscribable
             ? $respondent

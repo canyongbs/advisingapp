@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
-use Assist\Case\Filament\Resources\CaseItemResource;
+use Assist\Case\Filament\Resources\ServiceRequestResource;
 use Assist\Case\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
 
 use function Tests\asSuperAdmin;
@@ -71,13 +71,13 @@ test('ListCaseItem is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemResource::getUrl('index')
+            ServiceRequestResource::getUrl('index')
         )->assertForbidden();
 
     $user->givePermissionTo('case_item.view-any');
 
     actingAs($user)
         ->get(
-            CaseItemResource::getUrl('index')
+            ServiceRequestResource::getUrl('index')
         )->assertSuccessful();
 });

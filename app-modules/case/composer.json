@@ -19,7 +19,7 @@
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Assist\\Case\\Providers\\CaseServiceProvider"
+				"ServiceManagementServiceProvider"
 			]
 		}
 	},

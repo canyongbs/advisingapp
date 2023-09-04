@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequestPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
@@ -12,7 +12,7 @@ test('The correct details are displayed on the ViewCaseItemPriority page', funct
 
     asSuperAdmin()
         ->get(
-            CaseItemPriorityResource::getUrl('view', [
+            ServiceRequestPriorityResource::getUrl('view', [
                 'record' => $caseItemPriority,
             ])
         )
@@ -36,7 +36,7 @@ test('ViewCaseItemPriority is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemPriorityResource::getUrl('view', [
+            ServiceRequestPriorityResource::getUrl('view', [
                 'record' => $prospectSource,
             ])
         )->assertForbidden();
@@ -46,7 +46,7 @@ test('ViewCaseItemPriority is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemPriorityResource::getUrl('view', [
+            ServiceRequestPriorityResource::getUrl('view', [
                 'record' => $prospectSource,
             ])
         )->assertSuccessful();

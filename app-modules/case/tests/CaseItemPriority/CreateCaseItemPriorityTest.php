@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequestPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseItemPriorityRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -15,7 +15,7 @@ use function Pest\Laravel\assertDatabaseHas;
 test('A successful action on the CreateCaseItemPriority page', function () {
     asSuperAdmin()
         ->get(
-            CaseItemPriorityResource::getUrl('create')
+            ServiceRequestPriorityResource::getUrl('create')
         )
         ->assertSuccessful();
 
@@ -56,7 +56,7 @@ test('CreateCaseItemPriority is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemPriorityResource::getUrl('create')
+            ServiceRequestPriorityResource::getUrl('create')
         )->assertForbidden();
 
     livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
@@ -67,7 +67,7 @@ test('CreateCaseItemPriority is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemPriorityResource::getUrl('create')
+            ServiceRequestPriorityResource::getUrl('create')
         )->assertSuccessful();
 
     $request = collect(CreateCaseItemPriorityRequestFactory::new()->create());

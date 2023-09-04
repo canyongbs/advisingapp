@@ -15,10 +15,10 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Case\Database\Factories\CaseItemFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Assist\Case\Database\Factories\CaseItemFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -87,7 +87,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use HasUuids;
 
     protected $fillable = [
-        'casenumber',
+        'service_request_number',
         'respondent_type',
         'respondent_id',
         'institution_id',
@@ -119,9 +119,9 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return $this->belongsTo(Institution::class, 'institution_id');
     }
 
-    public function caseUpdates(): HasMany
+    public function serviceRequestUpdates(): HasMany
     {
-        return $this->hasMany(ServiceRequestUpdate::class, 'case_id');
+        return $this->hasMany(ServiceRequestUpdate::class, 'service_request_id');
     }
 
     public function status(): BelongsTo

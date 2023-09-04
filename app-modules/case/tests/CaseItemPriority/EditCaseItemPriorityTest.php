@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequestPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource;
 use Assist\Case\Tests\RequestFactories\EditCaseItemPriorityRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -16,7 +16,7 @@ test('A successful action on the EditCaseItemPriority page', function () {
 
     asSuperAdmin()
         ->get(
-            CaseItemPriorityResource::getUrl('edit', [
+            ServiceRequestPriorityResource::getUrl('edit', [
                 'record' => $caseItemPriority->getRouteKey(),
             ])
         )
@@ -69,7 +69,7 @@ test('EditCaseItemPriority is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemPriorityResource::getUrl('edit', [
+            ServiceRequestPriorityResource::getUrl('edit', [
                 'record' => $caseItemPriority,
             ])
         )->assertForbidden();
@@ -84,7 +84,7 @@ test('EditCaseItemPriority is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemPriorityResource::getUrl('edit', [
+            ServiceRequestPriorityResource::getUrl('edit', [
                 'record' => $caseItemPriority,
             ])
         )->assertSuccessful();

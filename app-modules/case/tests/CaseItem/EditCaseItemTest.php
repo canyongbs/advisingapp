@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
-use Assist\Case\Filament\Resources\CaseItemResource;
+use Assist\Case\Filament\Resources\ServiceRequestResource;
 use Assist\Case\Tests\RequestFactories\EditCaseItemRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -15,7 +15,7 @@ test('A successful action on the EditCaseItem page', function () {
 
     asSuperAdmin()
         ->get(
-            CaseItemResource::getUrl('edit', [
+            ServiceRequestResource::getUrl('edit', [
                 'record' => $caseItem->getRouteKey(),
             ])
         )
@@ -110,7 +110,7 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
 
     asSuperAdmin()
         ->get(
-            CaseItemResource::getUrl('edit', [
+            ServiceRequestResource::getUrl('edit', [
                 'record' => $caseItem->getRouteKey(),
             ])
         )
@@ -164,7 +164,7 @@ test('EditCaseItem is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemResource::getUrl('edit', [
+            ServiceRequestResource::getUrl('edit', [
                 'record' => $caseItem,
             ])
         )->assertForbidden();
@@ -183,7 +183,7 @@ test('EditCaseItem is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemResource::getUrl('edit', [
+            ServiceRequestResource::getUrl('edit', [
                 'record' => $caseItem,
             ])
         )->assertSuccessful();

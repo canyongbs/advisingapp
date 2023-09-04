@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequest;
-use Assist\Case\Filament\Resources\CaseItemResource;
+use Assist\Case\Filament\Resources\ServiceRequestResource;
 use Assist\Case\Tests\RequestFactories\CreateCaseItemRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -12,10 +12,10 @@ use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
-test('A successful action on the CreateCaseUpdate page', function () {
+test('A successful action on the CreateServiceRequestUpdate page', function () {
     asSuperAdmin()
         ->get(
-            CaseItemResource::getUrl('create')
+            ServiceRequestResource::getUrl('create')
         )
         ->assertSuccessful();
 
@@ -109,7 +109,7 @@ test('CreateCaseItem is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemResource::getUrl('create')
+            ServiceRequestResource::getUrl('create')
         )->assertForbidden();
 
     livewire(CaseItemResource\Pages\CreateCaseItem::class)
@@ -120,7 +120,7 @@ test('CreateCaseItem is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemResource::getUrl('create')
+            ServiceRequestResource::getUrl('create')
         )->assertSuccessful();
 
     $request = collect(CreateCaseItemRequestFactory::new()->create());

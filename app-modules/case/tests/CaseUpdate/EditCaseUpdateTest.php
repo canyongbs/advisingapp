@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Validation\Rules\Enum;
 use Assist\Case\Models\ServiceRequestUpdate;
-use Assist\Case\Filament\Resources\CaseUpdateResource;
+use Assist\Case\Filament\Resources\ServiceRequestUpdateResource;
 use Assist\Case\Tests\RequestFactories\EditCaseUpdateRequestFactory;
 
 use function Tests\asSuperAdmin;
@@ -11,12 +11,12 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 
-test('A successful action on the EditCaseUpdate page', function () {
+test('A successful action on the EditServiceRequestUpdate page', function () {
     $caseUpdate = ServiceRequestUpdate::factory()->create();
 
     asSuperAdmin()
         ->get(
-            CaseUpdateResource::getUrl('edit', [
+            ServiceRequestUpdateResource::getUrl('edit', [
                 'record' => $caseUpdate->getRouteKey(),
             ])
         )
@@ -37,7 +37,7 @@ test('A successful action on the EditCaseUpdate page', function () {
         ->toEqual($request->get('case_id'));
 });
 
-test('EditCaseUpdate requires valid data', function ($data, $errors) {
+test('EditServiceRequestUpdate requires valid data', function ($data, $errors) {
     $caseUpdate = ServiceRequestUpdate::factory()->create();
 
     asSuperAdmin();
@@ -67,14 +67,14 @@ test('EditCaseUpdate requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('EditCaseUpdate is gated with proper access control', function () {
+test('EditServiceRequestUpdate is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $caseUpdate = ServiceRequestUpdate::factory()->create();
 
     actingAs($user)
         ->get(
-            CaseUpdateResource::getUrl('edit', [
+            ServiceRequestUpdateResource::getUrl('edit', [
                 'record' => $caseUpdate,
             ])
         )->assertForbidden();
@@ -89,7 +89,7 @@ test('EditCaseUpdate is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseUpdateResource::getUrl('edit', [
+            ServiceRequestUpdateResource::getUrl('edit', [
                 'record' => $caseUpdate,
             ])
         )->assertSuccessful();

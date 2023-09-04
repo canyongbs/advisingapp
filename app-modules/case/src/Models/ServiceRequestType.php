@@ -67,7 +67,7 @@ class ServiceRequestType extends BaseModel implements Auditable
         ];
     }
 
-    public function caseItems(): HasMany
+    public function serviceRequests(): HasMany
     {
         return $this->hasMany(ServiceRequest::class, 'type_id');
     }

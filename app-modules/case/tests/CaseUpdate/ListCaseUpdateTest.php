@@ -4,7 +4,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Assist\Case\Models\ServiceRequest;
 use Assist\Case\Models\ServiceRequestUpdate;
-use Assist\Case\Filament\Resources\CaseUpdateResource;
+use Assist\Case\Filament\Resources\ServiceRequestUpdateResource;
 use Assist\Case\Filament\Resources\CaseUpdateResource\Pages\ListCaseUpdates;
 
 use function Tests\asSuperAdmin;
@@ -69,18 +69,18 @@ test('The correct details are displayed on the ListCaseUpdate page', function ()
 
 // Permission Tests
 
-test('ListCaseUpdates is gated with proper access control', function () {
+test('ListServiceRequestUpdates is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)
         ->get(
-            CaseUpdateResource::getUrl('index')
+            ServiceRequestUpdateResource::getUrl('index')
         )->assertForbidden();
 
     $user->givePermissionTo('case_update.view-any');
 
     actingAs($user)
         ->get(
-            CaseUpdateResource::getUrl('index')
+            ServiceRequestUpdateResource::getUrl('index')
         )->assertSuccessful();
 });

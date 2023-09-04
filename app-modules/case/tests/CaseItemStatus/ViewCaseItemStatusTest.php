@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Assist\Case\Models\ServiceRequestStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource;
+use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
@@ -12,7 +12,7 @@ test('The correct details are displayed on the ViewCaseItemStatus page', functio
 
     asSuperAdmin()
         ->get(
-            CaseItemStatusResource::getUrl('view', [
+            ServiceRequestStatusResource::getUrl('view', [
                 'record' => $caseItemStatus,
             ])
         )
@@ -38,7 +38,7 @@ test('ViewCaseItemStatus is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemStatusResource::getUrl('view', [
+            ServiceRequestStatusResource::getUrl('view', [
                 'record' => $prospectSource,
             ])
         )->assertForbidden();
@@ -48,7 +48,7 @@ test('ViewCaseItemStatus is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            CaseItemStatusResource::getUrl('view', [
+            ServiceRequestStatusResource::getUrl('view', [
                 'record' => $prospectSource,
             ])
         )->assertSuccessful();
