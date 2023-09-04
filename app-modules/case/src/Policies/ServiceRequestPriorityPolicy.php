@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Assist\Case\Models\ServiceRequestPriority;
 
-class CaseItemPriorityPolicy
+class ServiceRequestPriorityPolicy
 {
     public function viewAny(User $user): Response
     {

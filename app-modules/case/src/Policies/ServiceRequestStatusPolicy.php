@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Assist\Case\Models\ServiceRequestStatus;
 
-class CaseItemStatusPolicy
+class ServiceRequestStatusPolicy
 {
     public function viewAny(User $user): Response
     {

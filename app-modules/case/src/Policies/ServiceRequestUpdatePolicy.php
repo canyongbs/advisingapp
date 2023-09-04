@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use Assist\Case\Models\ServiceRequestUpdate;
 
-class CaseUpdatePolicy
+class ServiceRequestUpdatePolicy
 {
     public function viewAny(User $user): Response
     {
