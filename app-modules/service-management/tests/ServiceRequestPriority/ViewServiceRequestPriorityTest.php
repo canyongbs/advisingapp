@@ -9,21 +9,21 @@ use Assist\ServiceManagement\Models\ServiceRequestPriority;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 
 test('The correct details are displayed on the ViewServiceRequestPriority page', function () {
-    $caseItemPriority = ServiceRequestPriority::factory()->create();
+    $serviceRequestPriority = ServiceRequestPriority::factory()->create();
 
     asSuperAdmin()
         ->get(
             ServiceRequestPriorityResource::getUrl('view', [
-                'record' => $caseItemPriority,
+                'record' => $serviceRequestPriority,
             ])
         )
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
                 'Name',
-                $caseItemPriority->name,
+                $serviceRequestPriority->name,
                 'Order',
-                $caseItemPriority->order,
+                $serviceRequestPriority->order,
             ]
         );
 });
@@ -42,8 +42,8 @@ test('ViewServiceRequestPriority is gated with proper access control', function 
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('case_item_priority.view-any');
-    $user->givePermissionTo('case_item_priority.*.view');
+    $user->givePermissionTo('service_request_priority.view-any');
+    $user->givePermissionTo('service_request_priority.*.view');
 
     actingAs($user)
         ->get(

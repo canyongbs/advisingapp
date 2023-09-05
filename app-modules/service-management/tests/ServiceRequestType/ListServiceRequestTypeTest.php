@@ -9,37 +9,36 @@ use function Pest\Livewire\livewire;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\ServiceManagement\Models\ServiceRequestType;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use Assist\ServiceManagement\Filament\Resources\CaseItemTypeResource\Pages\ListCaseItemTypes;
 
-test('The correct details are displayed on the ListCaseItemType page', function () {
-    $caseItemTypes = ServiceRequestType::factory()
-        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
+test('The correct details are displayed on the ListServiceRequestType page', function () {
+    $serviceRequestTypes = ServiceRequestType::factory()
+        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
         ->count(10)
         ->create();
 
     asSuperAdmin();
 
-    $component = livewire(ListCaseItemTypes::class);
+    $component = livewire(ServiceRequestTypeResource\Pages\ListServiceRequestTypes::class);
 
     $component
         ->assertSuccessful()
-        ->assertCanSeeTableRecords($caseItemTypes)
+        ->assertCanSeeTableRecords($serviceRequestTypes)
         ->assertCountTableRecords(10)
-        ->assertTableColumnExists('case_items_count');
+        ->assertTableColumnExists('service_request_count');
 
-    $caseItemTypes->each(
-        fn (ServiceRequestType $caseItemType) => $component
+    $serviceRequestTypes->each(
+        fn (ServiceRequestType $serviceRequestType) => $component
             ->assertTableColumnStateSet(
                 'id',
-                $caseItemType->id,
-                $caseItemType
+                $serviceRequestType->id,
+                $serviceRequestType
             )
             ->assertTableColumnStateSet(
                 'name',
-                $caseItemType->name,
-                $caseItemType
+                $serviceRequestType->name,
+                $serviceRequestType
             )
-        // Currently setting not test for case_items_count as there is no easy way to check now, relying on underlying package tests
+        // Currently setting not test for service_request_count as there is no easy way to check now, relying on underlying package tests
     );
 });
 
@@ -55,7 +54,7 @@ test('ListServiceRequestTypes is gated with proper access control', function () 
             ServiceRequestTypeResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('case_item_type.view-any');
+    $user->givePermissionTo('service_request_type.view-any');
 
     actingAs($user)
         ->get(

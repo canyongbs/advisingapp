@@ -1,9 +1,6 @@
 <?php
 
 use App\Models\User;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestPriorityRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
@@ -11,6 +8,10 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
+
+use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestPriorityRequestFactory;
 
 test('A successful action on the CreateServiceRequestPriority page', function () {
     asSuperAdmin()
@@ -21,7 +22,7 @@ test('A successful action on the CreateServiceRequestPriority page', function ()
 
     $request = CreateServiceRequestPriorityRequestFactory::new()->create();
 
-    livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
+    livewire(ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -34,7 +35,7 @@ test('A successful action on the CreateServiceRequestPriority page', function ()
 test('CreateServiceRequestPriority requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
+    livewire(ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority::class)
         ->fillForm(CreateServiceRequestPriorityRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -59,11 +60,11 @@ test('CreateServiceRequestPriority is gated with proper access control', functio
             ServiceRequestPriorityResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
+    livewire(ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('case_item_priority.view-any');
-    $user->givePermissionTo('case_item_priority.create');
+    $user->givePermissionTo('service_request_priority.view-any');
+    $user->givePermissionTo('service_request_priority.create');
 
     actingAs($user)
         ->get(
@@ -72,7 +73,7 @@ test('CreateServiceRequestPriority is gated with proper access control', functio
 
     $request = collect(CreateServiceRequestPriorityRequestFactory::new()->create());
 
-    livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
+    livewire(ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

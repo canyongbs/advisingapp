@@ -1,17 +1,20 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Validation\Rules\Enum;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestStatusRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use Illuminate\Validation\Rules\Enum;
+
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
+
+use Assist\ServiceManagement\Models\ServiceRequestStatus;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestStatusRequestFactory;
 
 test('A successful action on the CreateServiceRequestStatus page', function () {
     asSuperAdmin()
@@ -22,7 +25,7 @@ test('A successful action on the CreateServiceRequestStatus page', function () {
 
     $request = CreateServiceRequestStatusRequestFactory::new()->create();
 
-    livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)
+    livewire(ServiceRequestStatusResource\Pages\CreateServiceRequestStatus::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -35,7 +38,7 @@ test('A successful action on the CreateServiceRequestStatus page', function () {
 test('CreateServiceRequestStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)
+    livewire(ServiceRequestStatusResource\Pages\CreateServiceRequestStatus::class)
         ->fillForm(CreateServiceRequestStatusRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -60,11 +63,11 @@ test('CreateServiceRequestStatus is gated with proper access control', function 
             ServiceRequestStatusResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)
+    livewire(ServiceRequestStatusResource\Pages\CreateServiceRequestStatus::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('case_item_status.view-any');
-    $user->givePermissionTo('case_item_status.create');
+    $user->givePermissionTo('service_request_status.view-any');
+    $user->givePermissionTo('service_request_status.create');
 
     actingAs($user)
         ->get(
@@ -73,7 +76,7 @@ test('CreateServiceRequestStatus is gated with proper access control', function 
 
     $request = collect(CreateServiceRequestStatusRequestFactory::new()->create());
 
-    livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)
+    livewire(ServiceRequestStatusResource\Pages\CreateServiceRequestStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

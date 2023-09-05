@@ -1,9 +1,6 @@
 <?php
 
 use App\Models\User;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestTypeRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
@@ -11,6 +8,10 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
+
+use Assist\ServiceManagement\Models\ServiceRequestType;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestTypeRequestFactory;
 
 test('A successful action on the CreateServiceRequestType page', function () {
     asSuperAdmin()
@@ -21,7 +22,7 @@ test('A successful action on the CreateServiceRequestType page', function () {
 
     $editRequest = CreateServiceRequestTypeRequestFactory::new()->create();
 
-    livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
+    livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
         ->fillForm($editRequest)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -34,7 +35,7 @@ test('A successful action on the CreateServiceRequestType page', function () {
 test('CreateServiceRequestType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
+    livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
         ->fillForm(CreateServiceRequestTypeRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -57,11 +58,11 @@ test('CreateServiceRequestType is gated with proper access control', function ()
             ServiceRequestTypeResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
+    livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('case_item_type.view-any');
-    $user->givePermissionTo('case_item_type.create');
+    $user->givePermissionTo('service_request_type.view-any');
+    $user->givePermissionTo('service_request_type.create');
 
     actingAs($user)
         ->get(
@@ -70,7 +71,7 @@ test('CreateServiceRequestType is gated with proper access control', function ()
 
     $request = collect(CreateServiceRequestTypeRequestFactory::new()->create());
 
-    livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
+    livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

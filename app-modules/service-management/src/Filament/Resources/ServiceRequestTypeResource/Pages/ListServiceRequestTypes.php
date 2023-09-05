@@ -29,8 +29,8 @@ class ListServiceRequestTypes extends ListRecords
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('service_request_items_count')
-                    ->label('# of Service Request Items')
+                TextColumn::make('service_request_count')
+                    ->label('# of Service Requests')
                     ->counts('serviceRequests')
                     ->sortable(),
             ])

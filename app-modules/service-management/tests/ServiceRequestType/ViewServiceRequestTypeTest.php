@@ -9,21 +9,21 @@ use Assist\ServiceManagement\Models\ServiceRequestType;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
 test('The correct details are displayed on the ViewServiceRequestType page', function () {
-    $caseItemType = ServiceRequestType::factory()->create();
+    $serviceRequestType = ServiceRequestType::factory()->create();
 
     asSuperAdmin()
         ->get(
             ServiceRequestTypeResource::getUrl('view', [
-                'record' => $caseItemType,
+                'record' => $serviceRequestType,
             ])
         )
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
                 'ID',
-                $caseItemType->id,
+                $serviceRequestType->id,
                 'Name',
-                $caseItemType->name,
+                $serviceRequestType->name,
             ]
         );
 });
@@ -33,22 +33,22 @@ test('The correct details are displayed on the ViewServiceRequestType page', fun
 test('ViewServiceRequestType is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseItemType = ServiceRequestType::factory()->create();
+    $serviceRequestType = ServiceRequestType::factory()->create();
 
     actingAs($user)
         ->get(
             ServiceRequestTypeResource::getUrl('view', [
-                'record' => $caseItemType,
+                'record' => $serviceRequestType,
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('case_item_type.view-any');
-    $user->givePermissionTo('case_item_type.*.view');
+    $user->givePermissionTo('service_request_type.view-any');
+    $user->givePermissionTo('service_request_type.*.view');
 
     actingAs($user)
         ->get(
             ServiceRequestTypeResource::getUrl('view', [
-                'record' => $caseItemType,
+                'record' => $serviceRequestType,
             ])
         )->assertSuccessful();
 });

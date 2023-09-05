@@ -9,23 +9,23 @@ use Assist\ServiceManagement\Models\ServiceRequestStatus;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 
 test('The correct details are displayed on the ViewServiceRequestStatus page', function () {
-    $caseItemStatus = ServiceRequestStatus::factory()->create();
+    $serviceRequestStatus = ServiceRequestStatus::factory()->create();
 
     asSuperAdmin()
         ->get(
             ServiceRequestStatusResource::getUrl('view', [
-                'record' => $caseItemStatus,
+                'record' => $serviceRequestStatus,
             ])
         )
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
                 'ID',
-                $caseItemStatus->id,
+                $serviceRequestStatus->id,
                 'Name',
-                $caseItemStatus->name,
+                $serviceRequestStatus->name,
                 'Color',
-                $caseItemStatus->color,
+                $serviceRequestStatus->color,
             ]
         );
 });
@@ -44,8 +44,8 @@ test('ViewServiceRequestStatus is gated with proper access control', function ()
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('case_item_status.view-any');
-    $user->givePermissionTo('case_item_status.*.view');
+    $user->givePermissionTo('service_request_status.view-any');
+    $user->givePermissionTo('service_request_status.*.view');
 
     actingAs($user)
         ->get(

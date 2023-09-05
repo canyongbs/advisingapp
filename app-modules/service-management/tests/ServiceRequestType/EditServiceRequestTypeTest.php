@@ -1,58 +1,59 @@
 <?php
 
 use App\Models\User;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestTypeRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-use function PHPUnit\Framework\assertEquals;
 use function Pest\Laravel\assertDatabaseHas;
+use function PHPUnit\Framework\assertEquals;
+
+use Assist\ServiceManagement\Models\ServiceRequestType;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestTypeRequestFactory;
 
 test('A successful action on the EditServiceRequestType page', function () {
-    $caseItemType = ServiceRequestType::factory()->create();
+    $serviceRequestType = ServiceRequestType::factory()->create();
 
     asSuperAdmin()
         ->get(
             ServiceRequestTypeResource::getUrl('edit', [
-                'record' => $caseItemType->getRouteKey(),
+                'record' => $serviceRequestType->getRouteKey(),
             ])
         )
         ->assertSuccessful();
 
     $editRequest = EditServiceRequestTypeRequestFactory::new()->create();
 
-    livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
-        'record' => $caseItemType->getRouteKey(),
+    livewire(ServiceRequestTypeResource\Pages\EditServiceRequestType::class, [
+        'record' => $serviceRequestType->getRouteKey(),
     ])
         ->assertFormSet([
-            'name' => $caseItemType->name,
+            'name' => $serviceRequestType->name,
         ])
         ->fillForm($editRequest)
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertEquals($editRequest['name'], $caseItemType->fresh()->name);
+    assertEquals($editRequest['name'], $serviceRequestType->fresh()->name);
 });
 
 test('EditServiceRequestType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    $caseItemType = ServiceRequestType::factory()->create();
+    $serviceRequestType = ServiceRequestType::factory()->create();
 
-    livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
-        'record' => $caseItemType->getRouteKey(),
+    livewire(ServiceRequestTypeResource\Pages\EditServiceRequestType::class, [
+        'record' => $serviceRequestType->getRouteKey(),
     ])
         ->assertFormSet([
-            'name' => $caseItemType->name,
+            'name' => $serviceRequestType->name,
         ])
         ->fillForm(EditServiceRequestTypeRequestFactory::new($data)->create())
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(ServiceRequestType::class, $caseItemType->toArray());
+    assertDatabaseHas(ServiceRequestType::class, $serviceRequestType->toArray());
 })->with(
     [
         'name missing' => [EditServiceRequestTypeRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
@@ -65,38 +66,38 @@ test('EditServiceRequestType requires valid data', function ($data, $errors) {
 test('EditServiceRequestType is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseItemType = ServiceRequestType::factory()->create();
+    $serviceRequestType = ServiceRequestType::factory()->create();
 
     actingAs($user)
         ->get(
             ServiceRequestTypeResource::getUrl('edit', [
-                'record' => $caseItemType,
+                'record' => $serviceRequestType,
             ])
         )->assertForbidden();
 
-    livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
-        'record' => $caseItemType->getRouteKey(),
+    livewire(ServiceRequestTypeResource\Pages\EditServiceRequestType::class, [
+        'record' => $serviceRequestType->getRouteKey(),
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('case_item_type.view-any');
-    $user->givePermissionTo('case_item_type.*.update');
+    $user->givePermissionTo('service_request_type.view-any');
+    $user->givePermissionTo('service_request_type.*.update');
 
     actingAs($user)
         ->get(
             ServiceRequestTypeResource::getUrl('edit', [
-                'record' => $caseItemType,
+                'record' => $serviceRequestType,
             ])
         )->assertSuccessful();
 
     $request = collect(EditServiceRequestTypeRequestFactory::new()->create());
 
-    livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
-        'record' => $caseItemType->getRouteKey(),
+    livewire(ServiceRequestTypeResource\Pages\EditServiceRequestType::class, [
+        'record' => $serviceRequestType->getRouteKey(),
     ])
         ->fillForm($request->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertEquals($request['name'], $caseItemType->fresh()->name);
+    assertEquals($request['name'], $serviceRequestType->fresh()->name);
 });

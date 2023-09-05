@@ -9,42 +9,41 @@ use function Pest\Livewire\livewire;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\ServiceManagement\Models\ServiceRequestStatus;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use Assist\ServiceManagement\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
 
-test('The correct details are displayed on the ListCaseItemStatus page', function () {
-    $caseItemStatuses = ServiceRequestStatus::factory()
-        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
+test('The correct details are displayed on the ListServiceRequestStatuses page', function () {
+    $serviceRequestStatuses = ServiceRequestStatus::factory()
+        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
         ->count(10)
         ->create();
 
     asSuperAdmin();
 
-    $component = livewire(ListCaseItemStatuses::class);
+    $component = livewire(ServiceRequestStatusResource\Pages\ListServiceRequestStatuses::class);
 
     $component
         ->assertSuccessful()
-        ->assertCanSeeTableRecords($caseItemStatuses)
+        ->assertCanSeeTableRecords($serviceRequestStatuses)
         ->assertCountTableRecords(10)
-        ->assertTableColumnExists('case_items_count');
+        ->assertTableColumnExists('service_request_count');
 
-    $caseItemStatuses->each(
-        fn (ServiceRequestStatus $caseItemType) => $component
+    $serviceRequestStatuses->each(
+        fn (ServiceRequestStatus $serviceRequestType) => $component
             ->assertTableColumnStateSet(
                 'id',
-                $caseItemType->id,
-                $caseItemType
+                $serviceRequestType->id,
+                $serviceRequestType
             )
             ->assertTableColumnStateSet(
                 'name',
-                $caseItemType->name,
-                $caseItemType
+                $serviceRequestType->name,
+                $serviceRequestType
             )
             ->assertTableColumnStateSet(
                 'color',
-                $caseItemType->color,
-                $caseItemType
+                $serviceRequestType->color,
+                $serviceRequestType
             )
-        // Currently setting not test for case_items_count as there is no easy way to check now, relying on underlying package tests
+        // Currently setting not test for service_request_count as there is no easy way to check now, relying on underlying package tests
     );
 });
 
@@ -60,7 +59,7 @@ test('ListServiceRequestStatuses is gated with proper access control', function 
             ServiceRequestStatusResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('case_item_status.view-any');
+    $user->givePermissionTo('service_request_status.view-any');
 
     actingAs($user)
         ->get(

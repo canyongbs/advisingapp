@@ -1,62 +1,65 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Validation\Rules\Enum;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestStatusRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use Illuminate\Validation\Rules\Enum;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
+use Assist\ServiceManagement\Models\ServiceRequestStatus;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestStatusRequestFactory;
+
 test('A successful action on the EditServiceRequestStatus page', function () {
-    $caseItemStatus = ServiceRequestStatus::factory()->create();
+    $serviceRequestStatus = ServiceRequestStatus::factory()->create();
 
     asSuperAdmin()
         ->get(
             ServiceRequestStatusResource::getUrl('edit', [
-                'record' => $caseItemStatus->getRouteKey(),
+                'record' => $serviceRequestStatus->getRouteKey(),
             ])
         )
         ->assertSuccessful();
 
     $editRequest = EditServiceRequestStatusRequestFactory::new()->create();
 
-    livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
-        'record' => $caseItemStatus->getRouteKey(),
+    livewire(ServiceRequestStatusResource\Pages\EditServiceRequestStatus::class, [
+        'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertFormSet([
-            'name' => $caseItemStatus->name,
-            'color' => $caseItemStatus->color,
+            'name' => $serviceRequestStatus->name,
+            'color' => $serviceRequestStatus->color,
         ])
         ->fillForm($editRequest)
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertEquals($editRequest['name'], $caseItemStatus->fresh()->name);
-    assertEquals($editRequest['color'], $caseItemStatus->fresh()->color);
+    assertEquals($editRequest['name'], $serviceRequestStatus->fresh()->name);
+    assertEquals($editRequest['color'], $serviceRequestStatus->fresh()->color);
 });
 
 test('EditServiceRequestStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    $caseItemStatus = ServiceRequestStatus::factory()->create();
+    $serviceRequestStatus = ServiceRequestStatus::factory()->create();
 
-    livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
-        'record' => $caseItemStatus->getRouteKey(),
+    livewire(ServiceRequestStatusResource\Pages\EditServiceRequestStatus::class, [
+        'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertFormSet([
-            'name' => $caseItemStatus->name,
-            'color' => $caseItemStatus->color,
+            'name' => $serviceRequestStatus->name,
+            'color' => $serviceRequestStatus->color,
         ])
         ->fillForm(EditServiceRequestStatusRequestFactory::new($data)->create())
         ->call('save')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseHas(ServiceRequestStatus::class, $caseItemStatus->toArray());
+    assertDatabaseHas(ServiceRequestStatus::class, $serviceRequestStatus->toArray());
 })->with(
     [
         'name missing' => [EditServiceRequestStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
@@ -71,38 +74,38 @@ test('EditServiceRequestStatus requires valid data', function ($data, $errors) {
 test('EditServiceRequestStatus is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseItemStatus = ServiceRequestStatus::factory()->create();
+    $serviceRequestStatus = ServiceRequestStatus::factory()->create();
 
     actingAs($user)
         ->get(
             ServiceRequestStatusResource::getUrl('edit', [
-                'record' => $caseItemStatus,
+                'record' => $serviceRequestStatus,
             ])
         )->assertForbidden();
 
-    livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
-        'record' => $caseItemStatus->getRouteKey(),
+    livewire(ServiceRequestStatusResource\Pages\EditServiceRequestStatus::class, [
+        'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo('case_item_status.view-any');
-    $user->givePermissionTo('case_item_status.*.update');
+    $user->givePermissionTo('service_request_status.view-any');
+    $user->givePermissionTo('service_request_status.*.update');
 
     actingAs($user)
         ->get(
             ServiceRequestStatusResource::getUrl('edit', [
-                'record' => $caseItemStatus,
+                'record' => $serviceRequestStatus,
             ])
         )->assertSuccessful();
 
     $request = collect(EditServiceRequestStatusRequestFactory::new()->create());
 
-    livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
-        'record' => $caseItemStatus->getRouteKey(),
+    livewire(ServiceRequestStatusResource\Pages\EditServiceRequestStatus::class, [
+        'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->fillForm($request->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    assertEquals($request['name'], $caseItemStatus->fresh()->name);
+    assertEquals($request['name'], $serviceRequestStatus->fresh()->name);
 });

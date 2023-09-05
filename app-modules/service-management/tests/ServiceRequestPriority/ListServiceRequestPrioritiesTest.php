@@ -9,11 +9,10 @@ use function Pest\Livewire\livewire;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\ServiceManagement\Models\ServiceRequestPriority;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
-use Assist\ServiceManagement\Filament\Resources\CaseItemPriorityResource\Pages\ListCaseItemPriorities;
 
-test('The correct details are displayed on the ListCaseItemPriority page', function () {
-    $caseItemTypes = ServiceRequestPriority::factory()
-        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'caseItems')
+test('The correct details are displayed on the ListServiceRequestPriorities page', function () {
+    $serviceRequestPriorities = ServiceRequestPriority::factory()
+        ->has(ServiceRequest::factory()->count(fake()->randomNumber(1)), 'serviceRequests')
         ->count(3)
         ->sequence(
             ['name' => 'High', 'order' => 1],
@@ -24,27 +23,27 @@ test('The correct details are displayed on the ListCaseItemPriority page', funct
 
     asSuperAdmin();
 
-    $component = livewire(ListCaseItemPriorities::class);
+    $component = livewire(ServiceRequestPriorityResource\Pages\ListServiceRequestPriorities::class);
 
     $component
         ->assertSuccessful()
-        ->assertCanSeeTableRecords($caseItemTypes)
+        ->assertCanSeeTableRecords($serviceRequestPriorities)
         ->assertCountTableRecords(3)
-        ->assertTableColumnExists('case_items_count');
+        ->assertTableColumnExists('service_request_count');
 
-    $caseItemTypes->each(
-        fn (ServiceRequestPriority $caseItemType) => $component
+    $serviceRequestPriorities->each(
+        fn (ServiceRequestPriority $serviceRequestPriority) => $component
             ->assertTableColumnStateSet(
                 'name',
-                $caseItemType->name,
-                $caseItemType
+                $serviceRequestPriority->name,
+                $serviceRequestPriority
             )
             ->assertTableColumnStateSet(
                 'order',
-                $caseItemType->order,
-                $caseItemType
+                $serviceRequestPriority->order,
+                $serviceRequestPriority
             )
-        // Currently setting not test for case_items_count as there is no easy way to check now, relying on underlying package tests
+        // Currently setting not test for service_request_count as there is no easy way to check now, relying on underlying package tests
     );
 });
 
@@ -60,7 +59,7 @@ test('ListServiceRequestPriorities is gated with proper access control', functio
             ServiceRequestPriorityResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('case_item_priority.view-any');
+    $user->givePermissionTo('service_request_priority.view-any');
 
     actingAs($user)
         ->get(
