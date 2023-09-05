@@ -20,8 +20,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use Assist\ServiceManagement\Database\Factories\ServiceRequestFactory;
+use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 /**
  * Assist\ServiceManagement\Models\ServiceRequest
@@ -46,14 +49,14 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property-read int|null $audits_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestPriority|null $priority
- * @property-read Model|\Eloquent $respondent
- * @property-read Collection<int, \Assist\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
+ * @property-read ServiceRequestPriority|null $priority
+ * @property-read Model|Eloquent $respondent
+ * @property-read Collection<int, ServiceRequestUpdate> $serviceRequestUpdates
  * @property-read int|null $service_request_updates_count
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestStatus|null $status
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestType|null $type
+ * @property-read ServiceRequestStatus|null $status
+ * @property-read ServiceRequestType|null $type
  *
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
+ * @method static ServiceRequestFactory factory($count = null, $state = [])
  * @method static Builder|ServiceRequest newModelQuery()
  * @method static Builder|ServiceRequest newQuery()
  * @method static Builder|ServiceRequest onlyTrashed()
@@ -86,7 +89,6 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use HasUuids;
 
     protected $fillable = [
-        'service_request_number',
         'respondent_type',
         'respondent_id',
         'institution_id',
@@ -98,6 +100,30 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         'res_details',
         'created_by_id',
     ];
+
+    public function save(array $options = [])
+    {
+        $attempts = 0;
+
+        do {
+            try {
+                $save = parent::save($options);
+            } catch (UniqueConstraintViolationException $e) {
+                $attempts++;
+                $save = false;
+
+                if ($attempts < 3) {
+                    $this->service_request_number = app(ServiceRequestNumberGenerator::class)->generate();
+                }
+
+                continue;
+            }
+
+            break;
+        } while ($attempts < 3);
+
+        return $save;
+    }
 
     public function getSubscribable(): ?Subscribable
     {
