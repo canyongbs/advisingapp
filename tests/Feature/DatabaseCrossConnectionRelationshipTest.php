@@ -1,8 +1,8 @@
 <?php
 
-use Assist\Case\Models\ServiceRequest;
-use Assist\Case\Models\ServiceRequestType;
 use Assist\AssistDataModel\Models\Student;
+use Assist\ServiceManagement\Models\ServiceRequest;
+use Assist\ServiceManagement\Models\ServiceRequestType;
 
 test('relationships work cross connections', function () {
     ServiceRequestType::withoutSyncingToSearch(function () {

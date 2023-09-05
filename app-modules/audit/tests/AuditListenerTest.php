@@ -1,9 +1,9 @@
 <?php
 
-use Assist\Case\Models\ServiceRequest;
-use Assist\Audit\Settings\AuditSettings;
-
 use function Tests\asSuperAdmin;
+
+use Assist\Audit\Settings\AuditSettings;
+use Assist\ServiceManagement\Models\ServiceRequest;
 
 test('Audit logs are only created if the Model is set to be Audited by audit settings', function () {
     asSuperAdmin();

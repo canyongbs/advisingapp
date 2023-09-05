@@ -9,23 +9,22 @@ use App\Models\BaseModel;
 use Assist\Task\Models\Task;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
-use Assist\Case\Models\ServiceRequest;
+use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Engagement\Models\Engagement;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\Engagement\Models\EngagementResponse;
 use Illuminate\Notifications\DatabaseNotification;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -71,12 +70,12 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $engagements_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read ProspectSource $source
- * @property-read ProspectStatus $status
+ * @property-read \Assist\Prospect\Models\ProspectSource $source
+ * @property-read \Assist\Prospect\Models\ProspectStatus $status
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
- * @method static ProspectFactory factory($count = null, $state = [])
+ * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()
@@ -153,10 +152,10 @@ class Prospect extends BaseModel implements Auditable, Subscribable
     public function cases(): MorphMany
     {
         return $this->morphMany(
-            related:  ServiceRequest::class,
-            name:     'respondent',
-            type:     'respondent_type',
-            id:       'respondent_id',
+            related: ServiceRequest::class,
+            name: 'respondent',
+            type: 'respondent_type',
+            id: 'respondent_id',
             localKey: 'id'
         );
     }

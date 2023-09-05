@@ -5,7 +5,6 @@ namespace Assist\AssistDataModel\Models;
 use Eloquent;
 use Assist\Task\Models\Task;
 use Assist\Audit\Models\Audit;
-use Assist\Case\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notifiable;
@@ -16,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Assist\Notifications\Models\Subscription;
 use Assist\Engagement\Models\EngagementResponse;
 use Illuminate\Notifications\DatabaseNotification;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +24,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\AssistDataModel\Database\Factories\StudentFactory;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
@@ -48,7 +47,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
- * @method static StudentFactory factory($count = null, $state = [])
+ * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
@@ -77,10 +76,10 @@ class Student extends Model implements Auditable, Subscribable
     public function cases(): MorphMany
     {
         return $this->morphMany(
-            related:  ServiceRequest::class,
-            name:     'respondent',
-            type:     'respondent_type',
-            id:       'respondent_id',
+            related: ServiceRequest::class,
+            name: 'respondent',
+            type: 'respondent_type',
+            id: 'respondent_id',
             localKey: 'sisid'
         );
     }
