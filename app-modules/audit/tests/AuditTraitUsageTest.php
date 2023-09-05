@@ -3,7 +3,7 @@
 test('app')
     ->expect('App\Models')
     ->not->toUse('OwenIt\Auditing\Auditable')
-    ->and('Assist\Case')
+    ->and('Assist\ServiceManagement')
     ->not->toUse('OwenIt\Auditing\Auditable')
     ->and('Assist\AssistDataModel')
     ->not->toUse('OwenIt\Auditing\Auditable')
