@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Case\Database\Factories\CaseItemPriorityFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Case\Database\Factories\ServiceRequestPriorityFactory;
 
 /**
  * Assist\Case\Models\ServiceRequestPriority
@@ -30,7 +30,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read Collection<int, ServiceRequest> $caseItems
  * @property-read int|null $case_items_count
  *
- * @method static CaseItemPriorityFactory factory($count = null, $state = [])
+ * @method static ServiceRequestPriorityFactory factory($count = null, $state = [])
  * @method static Builder|ServiceRequestPriority newModelQuery()
  * @method static Builder|ServiceRequestPriority newQuery()
  * @method static Builder|ServiceRequestPriority onlyTrashed()

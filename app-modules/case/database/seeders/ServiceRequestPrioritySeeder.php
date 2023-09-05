@@ -5,7 +5,7 @@ namespace Assist\Case\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Assist\Case\Models\ServiceRequestPriority;
 
-class CaseItemPrioritySeeder extends Seeder
+class ServiceRequestPrioritySeeder extends Seeder
 {
     public function run(): void
     {

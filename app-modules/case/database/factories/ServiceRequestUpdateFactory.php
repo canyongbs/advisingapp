@@ -10,12 +10,12 @@ use Assist\Case\Enums\ServiceRequestUpdateDirection;
 /**
  * @extends Factory<ServiceRequestUpdate>
  */
-class CaseUpdateFactory extends Factory
+class ServiceRequestUpdateFactory extends Factory
 {
     public function definition(): array
     {
         return [
-            'case_id' => ServiceRequest::factory(),
+            'service_request_id' => ServiceRequest::factory(),
             'update' => $this->faker->sentence(),
             'internal' => $this->faker->boolean(),
             'direction' => $this->faker->randomElement(ServiceRequestUpdateDirection::cases())->value,

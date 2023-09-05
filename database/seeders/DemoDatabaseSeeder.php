@@ -5,14 +5,14 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Task\Database\Seeders\TaskSeeder;
-use Assist\Case\Database\Seeders\CaseItemSeeder;
-use Assist\Case\Database\Seeders\CaseUpdateSeeder;
-use Assist\Case\Database\Seeders\CaseItemTypeSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
-use Assist\Case\Database\Seeders\CaseItemStatusSeeder;
-use Assist\Case\Database\Seeders\CaseItemPrioritySeeder;
+use Assist\Case\Database\Seeders\ServiceRequestSeeder;
+use Assist\Case\Database\Seeders\ServiceRequestTypeSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
+use Assist\Case\Database\Seeders\ServiceRequestStatusSeeder;
+use Assist\Case\Database\Seeders\ServiceRequestUpdateSeeder;
+use Assist\Case\Database\Seeders\ServiceRequestPrioritySeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
@@ -30,11 +30,11 @@ class DemoDatabaseSeeder extends Seeder
 
         $this->call([
             UsersTableSeeder::class,
-            CaseItemPrioritySeeder::class,
-            CaseItemStatusSeeder::class,
-            CaseItemTypeSeeder::class,
-            CaseItemSeeder::class,
-            CaseUpdateSeeder::class,
+            ServiceRequestPrioritySeeder::class,
+            ServiceRequestStatusSeeder::class,
+            ServiceRequestTypeSeeder::class,
+            ServiceRequestSeeder::class,
+            ServiceRequestUpdateSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
             ProspectSeeder::class,

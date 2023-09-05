@@ -14,10 +14,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Assist\Case\Enums\ServiceRequestUpdateDirection;
-use Assist\Case\Database\Factories\CaseUpdateFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Case\Database\Factories\ServiceRequestUpdateFactory;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
@@ -35,7 +35,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property-read int|null $audits_count
  * @property-read ServiceRequest|null $case
  *
- * @method static CaseUpdateFactory factory($count = null, $state = [])
+ * @method static ServiceRequestUpdateFactory factory($count = null, $state = [])
  * @method static Builder|ServiceRequestUpdate newModelQuery()
  * @method static Builder|ServiceRequestUpdate newQuery()
  * @method static Builder|ServiceRequestUpdate onlyTrashed()

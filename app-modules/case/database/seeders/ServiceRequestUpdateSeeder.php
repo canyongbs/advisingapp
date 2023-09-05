@@ -6,17 +6,17 @@ use Illuminate\Database\Seeder;
 use Assist\Case\Models\ServiceRequest;
 use Assist\Case\Models\ServiceRequestUpdate;
 
-class CaseUpdateSeeder extends Seeder
+class ServiceRequestUpdateSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        ServiceRequest::each(function (ServiceRequest $case) {
+        ServiceRequest::each(function (ServiceRequest $serviceRequest) {
             ServiceRequestUpdate::factory()
                 ->count(3)
-                ->for($case, 'case')
+                ->for($serviceRequest, 'serviceRequest')
                 ->create();
         });
     }

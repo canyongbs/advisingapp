@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Case\Database\Factories\CaseItemStatusFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Case\Database\Factories\ServiceRequestStatusFactory;
 
 /**
  * Assist\Case\Models\ServiceRequestStatus
@@ -30,7 +30,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read Collection<int, ServiceRequest> $caseItems
  * @property-read int|null $case_items_count
  *
- * @method static CaseItemStatusFactory factory($count = null, $state = [])
+ * @method static ServiceRequestStatusFactory factory($count = null, $state = [])
  * @method static Builder|ServiceRequestStatus newModelQuery()
  * @method static Builder|ServiceRequestStatus newQuery()
  * @method static Builder|ServiceRequestStatus onlyTrashed()

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<ServiceRequestPriority>
  */
-class CaseItemPriorityFactory extends Factory
+class ServiceRequestPriorityFactory extends Factory
 {
     public function definition(): array
     {

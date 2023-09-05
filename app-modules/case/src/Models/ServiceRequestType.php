@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Case\Database\Factories\CaseItemTypeFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Case\Database\Factories\ServiceRequestTypeFactory;
 
 /**
  * Assist\Case\Models\ServiceRequestType
@@ -30,7 +30,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read Collection<int, ServiceRequest> $caseItems
  * @property-read int|null $case_items_count
  *
- * @method static CaseItemTypeFactory factory($count = null, $state = [])
+ * @method static ServiceRequestTypeFactory factory($count = null, $state = [])
  * @method static Builder|ServiceRequestType newModelQuery()
  * @method static Builder|ServiceRequestType newQuery()
  * @method static Builder|ServiceRequestType onlyTrashed()

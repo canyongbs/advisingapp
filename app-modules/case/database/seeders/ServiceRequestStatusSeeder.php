@@ -5,7 +5,7 @@ namespace Assist\Case\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Assist\Case\Models\ServiceRequestStatus;
 
-class CaseItemStatusSeeder extends Seeder
+class ServiceRequestStatusSeeder extends Seeder
 {
     public function run(): void
     {
