@@ -4,16 +4,14 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCaseItemPrioritiesTable extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('case_item_priorities', function (Blueprint $table) {
+        Schema::create('service_request_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->integer('order');
             $table->timestamps();
             $table->softDeletes();
         });
     }
-}
+};
