@@ -10,50 +10,50 @@ class ServiceRequestStatusPolicy
 {
     public function viewAny(User $user): Response
     {
-        return $user->can('case_item_status.view-any')
+        return $user->can('service_request_status.view-any')
             ? Response::allow()
-            : Response::deny('You do not have permissions to view case item statuses.');
+            : Response::deny('You do not have permissions to view service request statuses.');
     }
 
-    public function view(User $user, ServiceRequestStatus $caseItemStatus): Response
+    public function view(User $user, ServiceRequestStatus $serviceRequestStatus): Response
     {
-        return $user->can('case_item_status.*.view') || $user->can("case_item_status.{$caseItemStatus->id}.view")
+        return $user->can('service_request_status.*.view') || $user->can("service_request_status.{$serviceRequestStatus->id}.view")
             ? Response::allow()
-            : Response::deny('You do not have permissions to view this case item status.');
+            : Response::deny('You do not have permissions to view this service request status.');
     }
 
     public function create(User $user): Response
     {
-        return $user->can('case_item_status.create')
+        return $user->can('service_request_status.create')
             ? Response::allow()
-            : Response::deny('You do not have permissions to create case item statuses.');
+            : Response::deny('You do not have permissions to create service request statuses.');
     }
 
-    public function update(User $user, ServiceRequestStatus $caseItemStatus): Response
+    public function update(User $user, ServiceRequestStatus $serviceRequestStatus): Response
     {
-        return $user->can('case_item_status.*.update') || $user->can("case_item_status.{$caseItemStatus->id}.update")
+        return $user->can('service_request_status.*.update') || $user->can("service_request_status.{$serviceRequestStatus->id}.update")
             ? Response::allow()
-            : Response::deny('You do not have permissions to update this case item status.');
+            : Response::deny('You do not have permissions to update this service request status.');
     }
 
-    public function delete(User $user, ServiceRequestStatus $caseItemStatus): Response
+    public function delete(User $user, ServiceRequestStatus $serviceRequestStatus): Response
     {
-        return $user->can('case_item_status.*.delete') || $user->can("case_item_status.{$caseItemStatus->id}.delete")
+        return $user->can('service_request_status.*.delete') || $user->can("service_request_status.{$serviceRequestStatus->id}.delete")
             ? Response::allow()
-            : Response::deny('You do not have permissions to delete this case item status.');
+            : Response::deny('You do not have permissions to delete this service request status.');
     }
 
-    public function restore(User $user, ServiceRequestStatus $caseItemStatus): Response
+    public function restore(User $user, ServiceRequestStatus $serviceRequestStatus): Response
     {
-        return $user->can('case_item_status.*.restore') || $user->can("case_item_status.{$caseItemStatus->id}.restore")
+        return $user->can('service_request_status.*.restore') || $user->can("service_request_status.{$serviceRequestStatus->id}.restore")
             ? Response::allow()
-            : Response::deny('You do not have permissions to restore this case item status.');
+            : Response::deny('You do not have permissions to restore this service request status.');
     }
 
-    public function forceDelete(User $user, ServiceRequestStatus $caseItemStatus): Response
+    public function forceDelete(User $user, ServiceRequestStatus $serviceRequestStatus): Response
     {
-        return $user->can('case_item_status.*.force-delete') || $user->can("case_item_status.{$caseItemStatus->id}.force-delete")
+        return $user->can('service_request_status.*.force-delete') || $user->can("service_request_status.{$serviceRequestStatus->id}.force-delete")
             ? Response::allow()
-            : Response::deny('You do not have permissions to force delete this case item status.');
+            : Response::deny('You do not have permissions to force delete this service request status.');
     }
 }

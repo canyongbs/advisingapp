@@ -10,50 +10,50 @@ class ServiceRequestPolicy
 {
     public function viewAny(User $user): Response
     {
-        return $user->can('case_item.view-any')
+        return $user->can('service_request.view-any')
             ? Response::allow()
-            : Response::deny('You do not have permission to view case items.');
+            : Response::deny('You do not have permission to view service requests.');
     }
 
-    public function view(User $user, ServiceRequest $caseItem): Response
+    public function view(User $user, ServiceRequest $serviceRequest): Response
     {
-        return $user->can('case_item.*.view') || $user->can("case_item.{$caseItem->id}.view")
+        return $user->can('service_request.*.view') || $user->can("service_request.{$serviceRequest->id}.view")
             ? Response::allow()
-            : Response::deny('You do not have permission to view this case item.');
+            : Response::deny('You do not have permission to view this service request.');
     }
 
     public function create(User $user): Response
     {
-        return $user->can('case_item.create')
+        return $user->can('service_request.create')
             ? Response::allow()
-            : Response::deny('You do not have permission to create case items.');
+            : Response::deny('You do not have permission to create service requests.');
     }
 
-    public function update(User $user, ServiceRequest $caseItem): Response
+    public function update(User $user, ServiceRequest $serviceRequest): Response
     {
-        return $user->can('case_item.*.update') || $user->can("case_item.{$caseItem->id}.update")
+        return $user->can('service_request.*.update') || $user->can("service_request.{$serviceRequest->id}.update")
             ? Response::allow()
-            : Response::deny('You do not have permission to update this case item.');
+            : Response::deny('You do not have permission to update this service request.');
     }
 
-    public function delete(User $user, ServiceRequest $caseItem): Response
+    public function delete(User $user, ServiceRequest $serviceRequest): Response
     {
-        return $user->can('case_item.*.delete') || $user->can("case_item.{$caseItem->id}.delete")
+        return $user->can('service_request.*.delete') || $user->can("service_request.{$serviceRequest->id}.delete")
             ? Response::allow()
-            : Response::deny('You do not have permission to delete this case item.');
+            : Response::deny('You do not have permission to delete this service request.');
     }
 
-    public function restore(User $user, ServiceRequest $caseItem): Response
+    public function restore(User $user, ServiceRequest $serviceRequest): Response
     {
-        return $user->can('case_item.*.restore') || $user->can("case_item.{$caseItem->id}.restore")
+        return $user->can('service_request.*.restore') || $user->can("service_request.{$serviceRequest->id}.restore")
             ? Response::allow()
-            : Response::deny('You do not have permission to restore this case item.');
+            : Response::deny('You do not have permission to restore this service request.');
     }
 
-    public function forceDelete(User $user, ServiceRequest $caseItem): Response
+    public function forceDelete(User $user, ServiceRequest $serviceRequest): Response
     {
-        return $user->can('case_item.*.force-delete') || $user->can("case_item.{$caseItem->id}.force-delete")
+        return $user->can('service_request.*.force-delete') || $user->can("service_request.{$serviceRequest->id}.force-delete")
             ? Response::allow()
-            : Response::deny('You do not have permission to permanently delete this case item.');
+            : Response::deny('You do not have permission to permanently delete this service request.');
     }
 }

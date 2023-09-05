@@ -7,10 +7,10 @@ use Assist\Notifications\Events\TriggeredAutoSubscription;
 
 class ServiceRequestObserver
 {
-    public function created(ServiceRequest $caseItem): void
+    public function created(ServiceRequest $serviceRequest): void
     {
         if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $caseItem);
+            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
         }
     }
 }

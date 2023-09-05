@@ -60,7 +60,7 @@ class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAut
     use AuditableTrait;
 
     protected $fillable = [
-        'case_id',
+        'service_request_id',
         'update',
         'internal',
         'direction',

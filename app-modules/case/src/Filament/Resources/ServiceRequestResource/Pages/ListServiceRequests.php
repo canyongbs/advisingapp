@@ -79,7 +79,6 @@ class ListServiceRequests extends ListRecords
                     ->sortable(),
             ])
             ->filters([
-                // TODO: Figure out how to get this to display a list of existing items rather than a search
                 SelectFilter::make('priority')
                     ->relationship('priority', 'name')
                     ->multiple()

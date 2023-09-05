@@ -10,50 +10,50 @@ class ServiceRequestUpdatePolicy
 {
     public function viewAny(User $user): Response
     {
-        return $user->can('case_update.view-any')
+        return $user->can('service_request_update.view-any')
             ? Response::allow()
-            : Response::deny('You do not have permissions to view case updates.');
+            : Response::deny('You do not have permissions to view service request updates.');
     }
 
-    public function view(User $user, ServiceRequestUpdate $caseUpdate): Response
+    public function view(User $user, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
-        return $user->can('case_update.*.view') || $user->can("case_update.{$caseUpdate->id}.view")
+        return $user->can('service_request_update.*.view') || $user->can("service_request_update.{$serviceRequestUpdate->id}.view")
             ? Response::allow()
-            : Response::deny('You do not have permissions to view this case update.');
+            : Response::deny('You do not have permissions to view this service request update.');
     }
 
     public function create(User $user): Response
     {
-        return $user->can('case_update.create')
+        return $user->can('service_request_update.create')
             ? Response::allow()
-            : Response::deny('You do not have permissions to create case updates.');
+            : Response::deny('You do not have permissions to create service request updates.');
     }
 
-    public function update(User $user, ServiceRequestUpdate $caseUpdate): Response
+    public function update(User $user, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
-        return $user->can('case_update.*.update') || $user->can("case_update.{$caseUpdate->id}.update")
+        return $user->can('service_request_update.*.update') || $user->can("service_request_update.{$serviceRequestUpdate->id}.update")
             ? Response::allow()
-            : Response::deny('You do not have permissions to update this case update.');
+            : Response::deny('You do not have permissions to update this service request update.');
     }
 
-    public function delete(User $user, ServiceRequestUpdate $caseUpdate): Response
+    public function delete(User $user, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
-        return $user->can('case_update.*.delete') || $user->can("case_update.{$caseUpdate->id}.delete")
+        return $user->can('service_request_update.*.delete') || $user->can("service_request_update.{$serviceRequestUpdate->id}.delete")
             ? Response::allow()
-            : Response::deny('You do not have permissions to delete this case update.');
+            : Response::deny('You do not have permissions to delete this service request update.');
     }
 
-    public function restore(User $user, ServiceRequestUpdate $caseUpdate): Response
+    public function restore(User $user, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
-        return $user->can('case_update.*.restore') || $user->can("case_update.{$caseUpdate->id}.restore")
+        return $user->can('service_request_update.*.restore') || $user->can("service_request_update.{$serviceRequestUpdate->id}.restore")
             ? Response::allow()
-            : Response::deny('You do not have permissions to restore this case update.');
+            : Response::deny('You do not have permissions to restore this service request update.');
     }
 
-    public function forceDelete(User $user, ServiceRequestUpdate $caseUpdate): Response
+    public function forceDelete(User $user, ServiceRequestUpdate $serviceRequestUpdate): Response
     {
-        return $user->can('case_update.*.force-delete') || $user->can("case_update.{$caseUpdate->id}.force-delete")
+        return $user->can('service_request_update.*.force-delete') || $user->can("service_request_update.{$serviceRequestUpdate->id}.force-delete")
             ? Response::allow()
-            : Response::deny('You do not have permissions to force delete this case update.');
+            : Response::deny('You do not have permissions to force delete this service request update.');
     }
 }

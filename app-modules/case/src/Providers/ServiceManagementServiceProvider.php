@@ -24,11 +24,11 @@ class ServiceManagementServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'case_item' => ServiceRequest::class,
-            'case_item_priority' => ServiceRequestPriority::class,
-            'case_item_status' => ServiceRequestStatus::class,
-            'case_item_type' => ServiceRequestType::class,
-            'case_update' => ServiceRequestUpdate::class,
+            'service_request' => ServiceRequest::class,
+            'service_request_priority' => ServiceRequestPriority::class,
+            'service_request_status' => ServiceRequestStatus::class,
+            'service_request_type' => ServiceRequestType::class,
+            'service_request_update' => ServiceRequestUpdate::class,
         ]);
 
         $this->observers();

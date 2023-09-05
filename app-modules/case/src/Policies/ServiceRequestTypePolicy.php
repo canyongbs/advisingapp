@@ -10,50 +10,50 @@ class ServiceRequestTypePolicy
 {
     public function viewAny(User $user): Response
     {
-        return $user->can('case_item_type.view-any')
+        return $user->can('service_request_type.view-any')
             ? Response::allow()
-            : Response::deny('You do not have permissions to view case item types.');
+            : Response::deny('You do not have permissions to view service request types.');
     }
 
-    public function view(User $user, ServiceRequestType $caseItemType): Response
+    public function view(User $user, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->can('case_item_type.*.view') || $user->can("case_item_type.{$caseItemType->id}.view")
+        return $user->can('service_request_type.*.view') || $user->can("service_request_type.{$serviceRequestType->id}.view")
             ? Response::allow()
-            : Response::deny('You do not have permissions to view this case item type.');
+            : Response::deny('You do not have permissions to view this service request type.');
     }
 
     public function create(User $user): Response
     {
-        return $user->can('case_item_type.create')
+        return $user->can('service_request_type.create')
             ? Response::allow()
-            : Response::deny('You do not have permissions to create case item types.');
+            : Response::deny('You do not have permissions to create service request types.');
     }
 
-    public function update(User $user, ServiceRequestType $caseItemType): Response
+    public function update(User $user, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->can('case_item_type.*.update') || $user->can("case_item_type.{$caseItemType->id}.update")
+        return $user->can('service_request_type.*.update') || $user->can("service_request_type.{$serviceRequestType->id}.update")
             ? Response::allow()
-            : Response::deny('You do not have permissions to update this case item type.');
+            : Response::deny('You do not have permissions to update this service request type.');
     }
 
-    public function delete(User $user, ServiceRequestType $caseItemType): Response
+    public function delete(User $user, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->can('case_item_type.*.delete') || $user->can("case_item_type.{$caseItemType->id}.delete")
+        return $user->can('service_request_type.*.delete') || $user->can("service_request_type.{$serviceRequestType->id}.delete")
             ? Response::allow()
-            : Response::deny('You do not have permissions to delete this case item type.');
+            : Response::deny('You do not have permissions to delete this service request type.');
     }
 
-    public function restore(User $user, ServiceRequestType $caseItemType): Response
+    public function restore(User $user, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->can('case_item_type.*.restore') || $user->can("case_item_type.{$caseItemType->id}.restore")
+        return $user->can('service_request_type.*.restore') || $user->can("service_request_type.{$serviceRequestType->id}.restore")
             ? Response::allow()
-            : Response::deny('You do not have permissions to restore this case item type.');
+            : Response::deny('You do not have permissions to restore this service request type.');
     }
 
-    public function forceDelete(User $user, ServiceRequestType $caseItemType): Response
+    public function forceDelete(User $user, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->can('case_item_type.*.force-delete') || $user->can("case_item_type.{$caseItemType->id}.force-delete")
+        return $user->can('service_request_type.*.force-delete') || $user->can("service_request_type.{$serviceRequestType->id}.force-delete")
             ? Response::allow()
-            : Response::deny('You do not have permissions to force delete this case item type.');
+            : Response::deny('You do not have permissions to force delete this service request type.');
     }
 }
