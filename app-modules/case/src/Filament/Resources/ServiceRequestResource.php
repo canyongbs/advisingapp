@@ -5,19 +5,19 @@ namespace Assist\Case\Filament\Resources;
 use Filament\Resources\Resource;
 use Assist\Case\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationGroup;
-use Assist\Case\Filament\Resources\CaseItemResource\Pages\EditCaseItem;
-use Assist\Case\Filament\Resources\CaseItemResource\Pages\ViewCaseItem;
-use Assist\Case\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
-use Assist\Case\Filament\Resources\CaseItemResource\Pages\CreateCaseItem;
-use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\CreatedByRelationManager;
-use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\AssignedToRelationManager;
-use Assist\Case\Filament\Resources\CaseItemResource\RelationManagers\CaseUpdatesRelationManager;
+use Assist\Case\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
+use Assist\Case\Filament\Resources\ServiceRequestResource\Pages\ViewServiceRequest;
+use Assist\Case\Filament\Resources\ServiceRequestResource\Pages\ListServiceRequests;
+use Assist\Case\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
+use Assist\Case\Filament\Resources\ServiceRequestResource\RelationManagers\CreatedByRelationManager;
+use Assist\Case\Filament\Resources\ServiceRequestResource\RelationManagers\AssignedToRelationManager;
+use Assist\Case\Filament\Resources\ServiceRequestResource\RelationManagers\ServiceRequestUpdatesRelationManager;
 
 class ServiceRequestResource extends Resource
 {
     protected static ?string $model = ServiceRequest::class;
 
-    protected static ?string $navigationGroup = 'Cases';
+    protected static ?string $navigationGroup = 'Service Management';
 
     protected static ?int $navigationSort = 1;
 
@@ -28,7 +28,7 @@ class ServiceRequestResource extends Resource
     public static function getRelations(): array
     {
         return [
-            CaseUpdatesRelationManager::class,
+            ServiceRequestUpdatesRelationManager::class,
             RelationGroup::make('Related Users', [
                 AssignedToRelationManager::class,
                 CreatedByRelationManager::class,
@@ -39,10 +39,10 @@ class ServiceRequestResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListCaseItems::route('/'),
-            'create' => CreateCaseItem::route('/create'),
-            'view' => ViewCaseItem::route('/{record}'),
-            'edit' => EditCaseItem::route('/{record}/edit'),
+            'index' => ListServiceRequests::route('/'),
+            'create' => CreateServiceRequest::route('/create'),
+            'view' => ViewServiceRequest::route('/{record}'),
+            'edit' => EditServiceRequest::route('/{record}/edit'),
         ];
     }
 }

@@ -4,10 +4,10 @@ namespace Assist\Case\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Assist\Case\Models\ServiceRequestPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages\EditCaseItemPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages\ViewCaseItemPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages\CreateCaseItemPriority;
-use Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages\ListCaseItemPriorities;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource\Pages\EditServiceRequestPriority;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource\Pages\ViewServiceRequestPriority;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource\Pages\ListServiceRequestPriorities;
 
 class ServiceRequestPriorityResource extends Resource
 {
@@ -28,10 +28,10 @@ class ServiceRequestPriorityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListCaseItemPriorities::route('/'),
-            'create' => CreateCaseItemPriority::route('/create'),
-            'view' => ViewCaseItemPriority::route('/{record}'),
-            'edit' => EditCaseItemPriority::route('/{record}/edit'),
+            'index' => ListServiceRequestPriorities::route('/'),
+            'create' => CreateServiceRequestPriority::route('/create'),
+            'view' => ViewServiceRequestPriority::route('/{record}'),
+            'edit' => EditServiceRequestPriority::route('/{record}/edit'),
         ];
     }
 }

@@ -14,13 +14,16 @@ use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Case\Models\ServiceRequestUpdate;
 use Assist\Case\Enums\ServiceRequestUpdateDirection;
-use Assist\Case\Filament\Resources\CaseUpdateResource\Pages;
+use Assist\Case\Filament\Resources\ServiceRequestUpdateResource\Pages\EditServiceRequestUpdate;
+use Assist\Case\Filament\Resources\ServiceRequestUpdateResource\Pages\ViewServiceRequestUpdate;
+use Assist\Case\Filament\Resources\ServiceRequestUpdateResource\Pages\ListServiceRequestUpdates;
+use Assist\Case\Filament\Resources\ServiceRequestUpdateResource\Pages\CreateServiceRequestUpdate;
 
 class ServiceRequestUpdateResource extends Resource
 {
     protected static ?string $model = ServiceRequestUpdate::class;
 
-    protected static ?string $navigationGroup = 'Cases';
+    protected static ?string $navigationGroup = 'Service Management';
 
     protected static ?int $navigationSort = 2;
 
@@ -30,10 +33,10 @@ class ServiceRequestUpdateResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('case_id')
-                    ->relationship('case', 'id')
+                Select::make('service_request_id')
+                    ->relationship('serviceRequest', 'id')
                     ->preload()
-                    ->label('Case')
+                    ->label('Service Request')
                     ->translateLabel()
                     ->required()
                     ->exists(
@@ -64,44 +67,44 @@ class ServiceRequestUpdateResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('case.respondent.full')
+                Tables\Columns\TextColumn::make('serviceRequest.respondent.full')
                     ->label('Respondent')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('case_items', 'case_updates.case_id', '=', 'case_items.id')
+                        return $query->join('service_requests', 'service_request_updates.service_request_id', '=', 'service_requests.id')
                             ->join('students', function ($join) {
-                                $join->on('case_items.respondent_id', '=', 'students.sisid')
-                                    ->where('case_items.respondent_type', '=', 'student');
+                                $join->on('service_requests.respondent_id', '=', 'students.sisid')
+                                    ->where('service_requests.respondent_type', '=', 'student');
                             })
                             ->orderBy('full', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('case.respondent.sisid')
+                Tables\Columns\TextColumn::make('serviceRequest.respondent.sisid')
                     ->label('SIS ID')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('case_items', 'case_updates.case_id', '=', 'case_items.id')
+                        return $query->join('service_requests', 'service_request_updates.service_request_id', '=', 'service_requests.id')
                             ->join('students', function ($join) {
-                                $join->on('case_items.respondent_id', '=', 'students.sisid')
-                                    ->where('case_items.respondent_type', '=', 'student');
+                                $join->on('service_requests.respondent_id', '=', 'students.sisid')
+                                    ->where('service_requests.respondent_type', '=', 'student');
                             })
                             ->orderBy('sisid', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('case.respondent.otherid')
+                Tables\Columns\TextColumn::make('serviceRequest.respondent.otherid')
                     ->label('Other ID')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
-                        return $query->join('case_items', 'case_updates.case_id', '=', 'case_items.id')
+                        return $query->join('service_requests', 'service_request_updates.service_request_id', '=', 'service_requests.id')
                             ->join('students', function ($join) {
-                                $join->on('case_items.respondent_id', '=', 'students.sisid')
-                                    ->where('case_items.respondent_type', '=', 'student');
+                                $join->on('service_requests.respondent_id', '=', 'students.sisid')
+                                    ->where('service_requests.respondent_type', '=', 'student');
                             })
                             ->orderBy('otherid', $direction);
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('case.casenumber')
-                    ->label('Case')
+                Tables\Columns\TextColumn::make('serviceRequest.service_request_number')
+                    ->label('Service Request')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('internal')
@@ -149,10 +152,10 @@ class ServiceRequestUpdateResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCaseUpdates::route('/'),
-            'create' => Pages\CreateCaseUpdate::route('/create'),
-            'view' => Pages\ViewCaseUpdate::route('/{record}'),
-            'edit' => Pages\EditCaseUpdate::route('/{record}/edit'),
+            'index' => ListServiceRequestUpdates::route('/'),
+            'create' => CreateServiceRequestUpdate::route('/create'),
+            'view' => ViewServiceRequestUpdate::route('/{record}'),
+            'edit' => EditServiceRequestUpdate::route('/{record}/edit'),
         ];
     }
 }

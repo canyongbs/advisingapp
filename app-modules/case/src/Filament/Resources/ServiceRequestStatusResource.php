@@ -4,10 +4,10 @@ namespace Assist\Case\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Assist\Case\Models\ServiceRequestStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\EditCaseItemStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ViewCaseItemStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\CreateCaseItemStatus;
-use Assist\Case\Filament\Resources\CaseItemStatusResource\Pages\ListCaseItemStatuses;
+use Assist\Case\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
+use Assist\Case\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
+use Assist\Case\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
+use Assist\Case\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
 
 class ServiceRequestStatusResource extends Resource
 {
@@ -28,10 +28,10 @@ class ServiceRequestStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListCaseItemStatuses::route('/'),
-            'create' => CreateCaseItemStatus::route('/create'),
-            'view' => ViewCaseItemStatus::route('/{record}'),
-            'edit' => EditCaseItemStatus::route('/{record}/edit'),
+            'index' => ListServiceRequestStatuses::route('/'),
+            'create' => CreateServiceRequestStatus::route('/create'),
+            'view' => ViewServiceRequestStatus::route('/{record}'),
+            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
         ];
     }
 }
