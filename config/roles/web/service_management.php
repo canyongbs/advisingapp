@@ -2,19 +2,19 @@
 
 return [
     'model' => [
-        'case_item' => [
+        'service_request' => [
             '*',
         ],
-        'case_item_priority' => [
+        'service_request_priority' => [
             '*',
         ],
-        'case_item_status' => [
+        'service_request_status' => [
             '*',
         ],
-        'case_item_type' => [
+        'service_request_type' => [
             '*',
         ],
-        'case_update_item' => [
+        'service_request_update' => [
             '*',
         ],
     ],

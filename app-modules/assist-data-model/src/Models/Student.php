@@ -32,8 +32,6 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, ServiceRequest> $cases
- * @property-read int|null $cases_count
  * @property-read Collection<int, EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
  * @property-read Collection<int, EngagementResponse> $engagementResponses
@@ -42,6 +40,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $engagements_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read Collection<int, ServiceRequest> $serviceRequests
+ * @property-read int|null $service_requests_count
  * @property-read Collection<int, Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read Collection<int, Task> $tasks
@@ -73,7 +73,7 @@ class Student extends Model implements Auditable, Subscribable
         'sisid' => 'string',
     ];
 
-    public function cases(): MorphMany
+    public function serviceRequests(): MorphMany
     {
         return $this->morphMany(
             related: ServiceRequest::class,

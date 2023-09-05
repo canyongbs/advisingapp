@@ -5,7 +5,7 @@ return [
         'auth_profile.edit',
         'record_menu.access',
         'engage_menu.access',
-        'case_menu.access',
+        'service_management_menu.access',
         'support_menu.access',
         'settings_menu.access',
         'kb_menu.access',
@@ -54,19 +54,19 @@ return [
         'audit_log' => [
             '*',
         ],
-        'case_item' => [
+        'service_request' => [
             '*',
         ],
-        'case_item_priority' => [
+        'service_request_priority' => [
             '*',
         ],
-        'case_item_status' => [
+        'service_request_status' => [
             '*',
         ],
-        'case_item_type' => [
+        'service_request_type' => [
             '*',
         ],
-        'case_update' => [
+        'service_request_update' => [
             '*',
         ],
         'engagement_email_item' => [

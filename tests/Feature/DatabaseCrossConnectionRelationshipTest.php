@@ -10,17 +10,17 @@ test('relationships work cross connections', function () {
             ->has(
                 ServiceRequest::factory()
                     ->count(3),
-                'cases'
+                'serviceRequests'
             )
             ->create();
 
-        expect($student->cases)->toHaveCount(3);
+        expect($student->serviceRequests)->toHaveCount(3);
 
         Student::factory()->create();
 
         expect(Student::all())->toHaveCount(2);
 
-        $whereHas = Student::whereHas('cases', function ($query) {
+        $whereHas = Student::whereHas('serviceRequests', function ($query) {
             $query->whereNotNull('res_details');
         })->get();
 

@@ -14,15 +14,15 @@ test('Audit logs are only created if the Model is set to be Audited by audit set
 
     $auditSettings->save();
 
-    $case = ServiceRequest::factory()->create();
+    $serviceRequest = ServiceRequest::factory()->create();
 
-    expect($case->audits)->toHaveCount(0);
+    expect($serviceRequest->audits)->toHaveCount(0);
 
-    $auditSettings->audited_models[] = $case->getMorphClass();
+    $auditSettings->audited_models[] = $serviceRequest->getMorphClass();
 
     $auditSettings->save();
 
-    $case = ServiceRequest::factory()->create();
+    $serviceRequest = ServiceRequest::factory()->create();
 
-    expect($case->audits)->toHaveCount(1);
+    expect($serviceRequest->audits)->toHaveCount(1);
 });

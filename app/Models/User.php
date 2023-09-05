@@ -55,8 +55,6 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read int|null $alerts_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, ServiceRequest> $caseItems
- * @property-read int|null $case_items_count
  * @property-read mixed $is_admin
  * @property-read mixed $type_label
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
@@ -67,6 +65,8 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read int|null $role_groups_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
+ * @property-read Collection<int, ServiceRequest> $serviceRequests
+ * @property-read int|null $service_requests_count
  * @property-read Collection<int, Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read Collection<int, RoleGroup> $traitRoleGroups
@@ -174,7 +174,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
-    public function caseItems(): HasMany
+    public function serviceRequests(): HasMany
     {
         return $this->hasMany(
             related: ServiceRequest::class,

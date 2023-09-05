@@ -5,7 +5,7 @@ return [
         'auth_profile.edit',
         'record_menu.access',
         'engage_menu.access',
-        'case_menu.access',
+        'service_requests_menu.access',
         'support_menu.access',
         'settings_menu.access',
         'kb_menu.access',
