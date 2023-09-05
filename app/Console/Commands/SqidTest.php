@@ -17,6 +17,14 @@ class SqidTest extends Command
      */
     public function handle()
     {
+        // Plain Timestamp and 5 random Chars
+        // Given 10 created per hour ~18 days of work are needed in order to have a 1% probability of at least one collision.
+        $this->info('Plain Timestamp and 5 random Chars SR-' . now()->format('mY') . str()->random(5));
+
+        // Plain Timestamp and 6 random Chars
+        // Given 10 created per hour ~5 months of work are needed in order to have a 1% probability of at least one collision.
+        $this->info('Plain Timestamp and 6 random Chars SR-' . now()->format('mY') . str()->random(6));
+
         $sqids = new Sqids();
         $encode = $sqids->encode([time()]);
         $length = strlen($encode);
@@ -35,5 +43,26 @@ class SqidTest extends Command
 
         // Virtually unlimited permutations per second
         $this->info('ULID: SR-' . Ulid::generate());
+
+        $sqids = new Sqids(
+            alphabet: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+        );
+        $encode = $sqids->encode([time()]);
+        $length = strlen($encode);
+        $remainingLenth = 14 - $length;
+
+        $this->info('SQID timestamp with 13 chars SR-' . $encode . $this->generateRandomString($remainingLenth));
+    }
+
+    public function generateRandomString($length)
+    {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $randomString = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $randomString;
     }
 }
