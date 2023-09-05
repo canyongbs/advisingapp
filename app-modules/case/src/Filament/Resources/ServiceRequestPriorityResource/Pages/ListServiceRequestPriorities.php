@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemStatusResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestPriorityResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
@@ -8,35 +8,31 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use Assist\Case\Models\ServiceRequestStatus;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
+use Assist\Case\Filament\Resources\ServiceRequestPriorityResource;
 
-class ListCaseItemStatuses extends ListRecords
+class ListServiceRequestPriorities extends ListRecords
 {
-    protected static string $resource = ServiceRequestStatusResource::class;
+    protected static string $resource = ServiceRequestPriorityResource::class;
 
     public function table(Table $table): Table
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->sortable(),
                 TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('color')
-                    ->label('Color')
-                    ->badge()
-                    ->color(fn (ServiceRequestStatus $caseItemStatus) => $caseItemStatus->color),
-                TextColumn::make('case_items_count')
-                    ->label('# of Case Items')
-                    ->counts('caseItems')
+                TextColumn::make('order')
+                    ->label('Priority Order')
+                    ->sortable(),
+                TextColumn::make('service_request_count')
+                    ->label('# of Service Requests')
+                    ->counts('serviceRequests')
                     ->sortable(),
             ])
+            ->defaultSort('order')
             ->filters([
             ])
             ->actions([
@@ -47,7 +43,8 @@ class ListCaseItemStatuses extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->reorderable('order');
     }
 
     protected function getHeaderActions(): array

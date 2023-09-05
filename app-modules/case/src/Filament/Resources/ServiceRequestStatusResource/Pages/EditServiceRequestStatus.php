@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemStatusResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestStatusResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
@@ -10,7 +10,7 @@ use Filament\Resources\Pages\EditRecord;
 use Assist\Case\Enums\ColumnColorOptions;
 use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
 
-class EditCaseItemStatus extends EditRecord
+class EditServiceRequestStatus extends EditRecord
 {
     protected static string $resource = ServiceRequestStatusResource::class;
 

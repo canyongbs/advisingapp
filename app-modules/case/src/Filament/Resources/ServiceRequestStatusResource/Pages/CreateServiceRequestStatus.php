@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemStatusResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestStatusResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
@@ -9,7 +9,7 @@ use Assist\Case\Enums\ColumnColorOptions;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
 
-class CreateCaseItemStatus extends CreateRecord
+class CreateServiceRequestStatus extends CreateRecord
 {
     protected static string $resource = ServiceRequestStatusResource::class;
 

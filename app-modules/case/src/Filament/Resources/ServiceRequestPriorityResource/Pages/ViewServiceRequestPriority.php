@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestPriorityResource\Pages;
 
 use Filament\Actions;
 use Filament\Infolists\Infolist;
@@ -8,7 +8,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Case\Filament\Resources\ServiceRequestPriorityResource;
 
-class ViewCaseItemPriority extends ViewRecord
+class ViewServiceRequestPriority extends ViewRecord
 {
     protected static string $resource = ServiceRequestPriorityResource::class;
 

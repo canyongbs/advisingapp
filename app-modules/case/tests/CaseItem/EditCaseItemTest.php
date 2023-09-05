@@ -10,7 +10,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 
-test('A successful action on the EditCaseItem page', function () {
+test('A successful action on the EditServiceRequest page', function () {
     $caseItem = ServiceRequest::factory()->create();
 
     asSuperAdmin()
@@ -54,7 +54,7 @@ test('A successful action on the EditCaseItem page', function () {
         ->toEqual($request->get('type_id'));
 });
 
-test('EditCaseItem requires valid data', function ($data, $errors) {
+test('EditServiceRequest requires valid data', function ($data, $errors) {
     $caseItem = ServiceRequest::factory()->create();
 
     asSuperAdmin();
@@ -105,7 +105,7 @@ test('EditCaseItem requires valid data', function ($data, $errors) {
     ]
 );
 
-test('casenumber cannot be edited on EditCaseItem Page', function () {
+test('casenumber cannot be edited on EditServiceRequest Page', function () {
     $caseItem = ServiceRequest::factory()->create();
 
     asSuperAdmin()
@@ -157,7 +157,7 @@ test('casenumber cannot be edited on EditCaseItem Page', function () {
 
 // Permission Tests
 
-test('EditCaseItem is gated with proper access control', function () {
+test('EditServiceRequest is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $caseItem = ServiceRequest::factory()->create();

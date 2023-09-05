@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
@@ -11,14 +11,14 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Case\Models\ServiceRequestType;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Case\Models\ServiceRequestType;
 use Assist\Case\Models\ServiceRequestStatus;
 use Filament\Forms\Components\MorphToSelect;
 use Assist\Case\Models\ServiceRequestPriority;
 use Assist\Case\Filament\Resources\ServiceRequestResource;
 
-class EditCaseItem extends EditRecord
+class EditServiceRequest extends EditRecord
 {
     protected static string $resource = ServiceRequestResource::class;
 
@@ -27,8 +27,8 @@ class EditCaseItem extends EditRecord
         return parent::form($form)->schema([
             TextInput::make('id')
                 ->disabled(),
-            TextInput::make('casenumber')
-                ->label('Case #')
+            TextInput::make('service_request_number')
+                ->label('Service Request #')
                 ->disabled(),
             Select::make('institution_id')
                 ->relationship('institution', 'name')
@@ -61,7 +61,7 @@ class EditCaseItem extends EditRecord
                 ->nullable()
                 ->string(),
             Textarea::make('res_details')
-                ->label('Internal Case Details')
+                ->label('Internal Service Request Details')
                 ->nullable()
                 ->string(),
             MorphToSelect::make('respondent')

@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemResource\RelationManagers;
+namespace Assist\Case\Filament\Resources\ServiceRequestResource\RelationManagers;
 
 use Filament\Tables;
 use Filament\Forms\Form;
@@ -16,9 +16,9 @@ use Assist\Case\Enums\ServiceRequestUpdateDirection;
 use Filament\Resources\RelationManagers\RelationManager;
 use Assist\Case\Filament\Resources\ServiceRequestUpdateResource;
 
-class CaseUpdatesRelationManager extends RelationManager
+class ServiceRequestUpdatesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'caseUpdates';
+    protected static string $relationship = 'serviceRequestUpdates';
 
     protected static ?string $recordTitleAttribute = 'update';
 
@@ -72,7 +72,7 @@ class CaseUpdatesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->url(fn (ServiceRequestUpdate $caseUpdate) => ServiceRequestUpdateResource::getUrl('view', ['record' => $caseUpdate])),
+                    ->url(fn (ServiceRequestUpdate $serviceRequestUpdate) => ServiceRequestUpdateResource::getUrl('view', ['record' => $serviceRequestUpdate])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

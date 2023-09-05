@@ -7,7 +7,7 @@ use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-test('The correct details are displayed on the ViewCaseItemStatus page', function () {
+test('The correct details are displayed on the ViewServiceRequestStatus page', function () {
     $caseItemStatus = ServiceRequestStatus::factory()->create();
 
     asSuperAdmin()
@@ -31,7 +31,7 @@ test('The correct details are displayed on the ViewCaseItemStatus page', functio
 
 // Permission Tests
 
-test('ViewCaseItemStatus is gated with proper access control', function () {
+test('ViewServiceRequestStatus is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $prospectSource = ServiceRequestStatus::factory()->create();

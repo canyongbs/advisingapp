@@ -12,7 +12,7 @@ use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-test('A successful action on the EditCaseItemStatus page', function () {
+test('A successful action on the EditServiceRequestStatus page', function () {
     $caseItemStatus = ServiceRequestStatus::factory()->create();
 
     asSuperAdmin()
@@ -40,7 +40,7 @@ test('A successful action on the EditCaseItemStatus page', function () {
     assertEquals($editRequest['color'], $caseItemStatus->fresh()->color);
 });
 
-test('EditCaseItemStatus requires valid data', function ($data, $errors) {
+test('EditServiceRequestStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     $caseItemStatus = ServiceRequestStatus::factory()->create();
@@ -68,7 +68,7 @@ test('EditCaseItemStatus requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('EditCaseItemStatus is gated with proper access control', function () {
+test('EditServiceRequestStatus is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $caseItemStatus = ServiceRequestStatus::factory()->create();

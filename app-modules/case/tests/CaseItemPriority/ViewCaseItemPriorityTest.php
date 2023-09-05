@@ -7,7 +7,7 @@ use Assist\Case\Filament\Resources\ServiceRequestPriorityResource;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-test('The correct details are displayed on the ViewCaseItemPriority page', function () {
+test('The correct details are displayed on the ViewServiceRequestPriority page', function () {
     $caseItemPriority = ServiceRequestPriority::factory()->create();
 
     asSuperAdmin()
@@ -29,7 +29,7 @@ test('The correct details are displayed on the ViewCaseItemPriority page', funct
 
 // Permission Tests
 
-test('ViewCaseItemPriority is gated with proper access control', function () {
+test('ViewServiceRequestPriority is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $prospectSource = ServiceRequestPriority::factory()->create();

@@ -51,7 +51,7 @@ test('The correct details are displayed on the ListCaseItemStatus page', functio
 
 // Permission Tests
 
-test('ListCaseItemStatuses is gated with proper access control', function () {
+test('ListServiceRequestStatuses is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)

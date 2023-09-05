@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemResource\RelationManagers;
+namespace Assist\Case\Filament\Resources\ServiceRequestResource\RelationManagers;
 
 use Filament\Forms;
 use App\Models\User;

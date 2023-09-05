@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemResource\RelationManagers;
+namespace Assist\Case\Filament\Resources\ServiceRequestResource\RelationManagers;
 
 use Filament\Forms;
 use App\Models\User;
@@ -37,14 +37,14 @@ class AssignedToRelationManager extends RelationManager
             ->paginated(false)
             ->headerActions([
                 // TODO: Figure out how to make it so this only displays on the edit page
-                Tables\Actions\Action::make('reassign-case')
-                    ->label('Reassign Case')
+                Tables\Actions\Action::make('reassign-service-request')
+                    ->label('Reassign Service Request')
                     ->color('gray')
                     ->action(function (array $data): void {
-                        /** @var ServiceRequest $case */
-                        $case = $this->ownerRecord;
+                        /** @var ServiceRequest $serviceRequest */
+                        $serviceRequest = $this->ownerRecord;
 
-                        $case->assignedTo()->associate($data['userId'])->save();
+                        $serviceRequest->assignedTo()->associate($data['userId'])->save();
                     })
                     ->form([
                         Forms\Components\Select::make('userId')

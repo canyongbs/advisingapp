@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
@@ -15,7 +15,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Case\Filament\Resources\ServiceRequestResource;
 
-class ListCaseItems extends ListRecords
+class ListServiceRequests extends ListRecords
 {
     protected static string $resource = ServiceRequestResource::class;
 
@@ -26,8 +26,8 @@ class ListCaseItems extends ListRecords
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
-                TextColumn::make('casenumber')
-                    ->label('Case #')
+                TextColumn::make('service_request_number')
+                    ->label('Service Request #')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('respondent.full')
@@ -45,8 +45,8 @@ class ListCaseItems extends ListRecords
 
                         // Update this if any other relations are added to the ServiceRequest model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
-                            $join->on('case_items.respondent_id', '=', 'students.sisid')
-                                ->where('case_items.respondent_type', '=', 'student');
+                            $join->on('service_requests.respondent_id', '=', 'students.sisid')
+                                ->where('service_requests.respondent_type', '=', 'student');
                         })->orderBy('full', $direction);
                     }),
                 TextColumn::make('respondent.sisid')
@@ -55,8 +55,8 @@ class ListCaseItems extends ListRecords
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the ServiceRequest model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
-                            $join->on('case_items.respondent_id', '=', 'students.sisid')
-                                ->where('case_items.respondent_type', '=', 'student');
+                            $join->on('service_requests.respondent_id', '=', 'students.sisid')
+                                ->where('service_requests.respondent_type', '=', 'student');
                         })->orderBy('sisid', $direction);
                     }),
                 TextColumn::make('respondent.otherid')
@@ -65,8 +65,8 @@ class ListCaseItems extends ListRecords
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         // Update this if any other relations are added to the ServiceRequest model respondent relationship
                         return $query->join('students', function (JoinClause $join) {
-                            $join->on('case_items.respondent_id', '=', 'students.sisid')
-                                ->where('case_items.respondent_type', '=', 'student');
+                            $join->on('service_requests.respondent_id', '=', 'students.sisid')
+                                ->where('service_requests.respondent_type', '=', 'student');
                         })->orderBy('otherid', $direction);
                     }),
                 TextColumn::make('institution.name')
@@ -104,7 +104,7 @@ class ListCaseItems extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Add Case'),
+                ->label('Add Service Request'),
         ];
     }
 }

@@ -12,7 +12,7 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-test('A successful action on the CreateCaseItemPriority page', function () {
+test('A successful action on the CreateServiceRequestPriority page', function () {
     asSuperAdmin()
         ->get(
             ServiceRequestPriorityResource::getUrl('create')
@@ -31,7 +31,7 @@ test('A successful action on the CreateCaseItemPriority page', function () {
     assertDatabaseHas(ServiceRequestPriority::class, $request);
 });
 
-test('CreateCaseItemPriority requires valid data', function ($data, $errors) {
+test('CreateServiceRequestPriority requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     livewire(CaseItemPriorityResource\Pages\CreateCaseItemPriority::class)
@@ -51,7 +51,7 @@ test('CreateCaseItemPriority requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('CreateCaseItemPriority is gated with proper access control', function () {
+test('CreateServiceRequestPriority is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
@@ -13,7 +13,7 @@ use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Case\Filament\Resources\ServiceRequestResource;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 
-class ViewCaseItem extends ViewRecord
+class ViewServiceRequest extends ViewRecord
 {
     protected static string $resource = ServiceRequestResource::class;
 
@@ -24,8 +24,8 @@ class ViewCaseItem extends ViewRecord
                 TextEntry::make('id')
                     ->label('ID')
                     ->translateLabel(),
-                TextEntry::make('casenumber')
-                    ->label('Case Number')
+                TextEntry::make('service_request_number')
+                    ->label('Service Request Number')
                     ->translateLabel(),
                 TextEntry::make('institution.name')
                     ->label('Institution')
@@ -44,7 +44,7 @@ class ViewCaseItem extends ViewRecord
                     ->translateLabel()
                     ->columnSpanFull(),
                 TextEntry::make('res_details')
-                    ->label('Internal Case Details')
+                    ->label('Internal Service Request Details')
                     ->translateLabel()
                     ->columnSpanFull(),
                 TextEntry::make('respondent')

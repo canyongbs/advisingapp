@@ -11,7 +11,7 @@ use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-test('A successful action on the EditCaseItemPriority page', function () {
+test('A successful action on the EditServiceRequestPriority page', function () {
     $caseItemPriority = ServiceRequestPriority::factory()->create();
 
     asSuperAdmin()
@@ -37,7 +37,7 @@ test('A successful action on the EditCaseItemPriority page', function () {
     assertEquals($editRequest['name'], $caseItemPriority->fresh()->name);
 });
 
-test('EditCaseItemPriority requires valid data', function ($data, $errors) {
+test('EditServiceRequestPriority requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     $caseItemPriority = ServiceRequestPriority::factory()->create();
@@ -62,7 +62,7 @@ test('EditCaseItemPriority requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('EditCaseItemPriority is gated with proper access control', function () {
+test('EditServiceRequestPriority is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $caseItemPriority = ServiceRequestPriority::factory()->create();

@@ -13,7 +13,7 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-test('A successful action on the CreateCaseItemStatus page', function () {
+test('A successful action on the CreateServiceRequestStatus page', function () {
     asSuperAdmin()
         ->get(
             ServiceRequestStatusResource::getUrl('create')
@@ -32,7 +32,7 @@ test('A successful action on the CreateCaseItemStatus page', function () {
     assertDatabaseHas(ServiceRequestStatus::class, $request);
 });
 
-test('CreateCaseItemStatus requires valid data', function ($data, $errors) {
+test('CreateServiceRequestStatus requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     livewire(CaseItemStatusResource\Pages\CreateCaseItemStatus::class)
@@ -52,7 +52,7 @@ test('CreateCaseItemStatus requires valid data', function ($data, $errors) {
 
 // Permission Tests
 
-test('CreateCaseItemStatus is gated with proper access control', function () {
+test('CreateServiceRequestStatus is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)

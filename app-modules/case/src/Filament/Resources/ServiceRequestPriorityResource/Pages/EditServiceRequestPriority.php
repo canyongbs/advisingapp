@@ -1,13 +1,14 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemPriorityResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestPriorityResource\Pages;
 
+use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
 use Assist\Case\Filament\Resources\ServiceRequestPriorityResource;
 
-class CreateCaseItemPriority extends CreateRecord
+class EditServiceRequestPriority extends EditRecord
 {
     protected static string $resource = ServiceRequestPriorityResource::class;
 
@@ -23,7 +24,16 @@ class CreateCaseItemPriority extends CreateRecord
                     ->label('Priority Order')
                     ->required()
                     ->integer()
-                    ->numeric(),
+                    ->numeric()
+                    ->disabled(),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\ViewAction::make(),
+            Actions\DeleteAction::make(),
+        ];
     }
 }

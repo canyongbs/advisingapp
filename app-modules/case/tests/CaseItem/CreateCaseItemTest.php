@@ -52,7 +52,7 @@ test('A successful action on the CreateServiceRequestUpdate page', function () {
         ->toEqual($request->get('type_id'));
 });
 
-test('CreateCaseItem requires valid data', function ($data, $errors, $setup = null) {
+test('CreateServiceRequest requires valid data', function ($data, $errors, $setup = null) {
     if ($setup) {
         $setup();
     }
@@ -104,7 +104,7 @@ test('CreateCaseItem requires valid data', function ($data, $errors, $setup = nu
 
 // Permission Tests
 
-test('CreateCaseItem is gated with proper access control', function () {
+test('CreateServiceRequest is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)

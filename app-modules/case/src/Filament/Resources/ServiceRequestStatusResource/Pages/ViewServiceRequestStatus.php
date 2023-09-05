@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Case\Filament\Resources\CaseItemStatusResource\Pages;
+namespace Assist\Case\Filament\Resources\ServiceRequestStatusResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
@@ -9,7 +9,7 @@ use Assist\Case\Models\ServiceRequestStatus;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Case\Filament\Resources\ServiceRequestStatusResource;
 
-class ViewCaseItemStatus extends ViewRecord
+class ViewServiceRequestStatus extends ViewRecord
 {
     protected static string $resource = ServiceRequestStatusResource::class;
 
@@ -27,7 +27,7 @@ class ViewCaseItemStatus extends ViewRecord
                     ->label('Color')
                     ->translateLabel()
                     ->badge()
-                    ->color(fn (ServiceRequestStatus $caseItemStatus) => $caseItemStatus->color),
+                    ->color(fn (ServiceRequestStatus $serviceRequestStatus) => $serviceRequestStatus->color),
             ]);
     }
 

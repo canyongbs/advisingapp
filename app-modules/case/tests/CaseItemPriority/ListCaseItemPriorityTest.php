@@ -51,7 +51,7 @@ test('The correct details are displayed on the ListCaseItemPriority page', funct
 
 // Permission Tests
 
-test('ListCaseItemPriorities is gated with proper access control', function () {
+test('ListServiceRequestPriorities is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)
