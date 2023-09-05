@@ -16,7 +16,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use Assist\ServiceManagement\Models\ServiceRequestUpdate;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateCaseUpdateRequestFactory;
+use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestUpdateRequestFactory;
 
 test('A successful action on the CreateServiceRequestUpdate page', function () {
     // Because we create a ServiceRequest there is already a Subscription created.
@@ -31,39 +31,39 @@ test('A successful action on the CreateServiceRequestUpdate page', function () {
         )
         ->assertSuccessful();
 
-    $request = collect(CreateCaseUpdateRequestFactory::new()->create());
+    $request = collect(CreateServiceRequestUpdateRequestFactory::new()->create());
 
-    livewire(CaseUpdateResource\Pages\CreateCaseUpdate::class)
+    livewire(ServiceRequestUpdateResource\Pages\CreateServiceRequestUpdate::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
 
     assertCount(1, ServiceRequestUpdate::all());
 
-    assertDatabaseHas(ServiceRequestUpdate::class, $request->except('case_id')->toArray());
+    assertDatabaseHas(ServiceRequestUpdate::class, $request->except('service_request_id')->toArray());
 
-    expect(ServiceRequestUpdate::first()->case->id)
-        ->toEqual($request->get('case_id'));
+    expect(ServiceRequestUpdate::first()->serviceRequest->id)
+        ->toEqual($request->get('service_request_id'));
 });
 
 test('CreateServiceRequestUpdate requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(CaseUpdateResource\Pages\CreateCaseUpdate::class)
-        ->fillForm(CreateCaseUpdateRequestFactory::new($data)->create())
+    livewire(ServiceRequestUpdateResource\Pages\CreateServiceRequestUpdate::class)
+        ->fillForm(CreateServiceRequestUpdateRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
 
     assertEmpty(ServiceRequestUpdate::all());
 })->with(
     [
-        'case missing' => [CreateCaseUpdateRequestFactory::new()->without('case_id'), ['case_id' => 'required']],
-        'case not existing case id' => [CreateCaseUpdateRequestFactory::new()->state(['case_id' => fake()->uuid()]), ['case_id' => 'exists']],
-        'update missing' => [CreateCaseUpdateRequestFactory::new()->without('update'), ['update' => 'required']],
-        'update is not a string' => [CreateCaseUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
-        'direction missing' => [CreateCaseUpdateRequestFactory::new()->without('direction'), ['direction' => 'required']],
-        'direction not a valid enum' => [CreateCaseUpdateRequestFactory::new()->state(['direction' => 'invalid']), ['direction' => Enum::class]],
-        'internal not a boolean' => [CreateCaseUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
+        'service_request missing' => [CreateServiceRequestUpdateRequestFactory::new()->without('service_request_id'), ['service_request_id' => 'required']],
+        'service_request not existing service_request id' => [CreateServiceRequestUpdateRequestFactory::new()->state(['service_request_id' => fake()->uuid()]), ['service_request_id' => 'exists']],
+        'update missing' => [CreateServiceRequestUpdateRequestFactory::new()->without('update'), ['update' => 'required']],
+        'update is not a string' => [CreateServiceRequestUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
+        'direction missing' => [CreateServiceRequestUpdateRequestFactory::new()->without('direction'), ['direction' => 'required']],
+        'direction not a valid enum' => [CreateServiceRequestUpdateRequestFactory::new()->state(['direction' => 'invalid']), ['direction' => Enum::class]],
+        'internal not a boolean' => [CreateServiceRequestUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
     ]
 );
 
@@ -83,20 +83,20 @@ test('CreateServiceRequestUpdate is gated with proper access control', function 
             ServiceRequestUpdateResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CaseUpdateResource\Pages\CreateCaseUpdate::class)
+    livewire(ServiceRequestUpdateResource\Pages\CreateServiceRequestUpdate::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('case_update.view-any');
-    $user->givePermissionTo('case_update.create');
+    $user->givePermissionTo('service_request_update.view-any');
+    $user->givePermissionTo('service_request_update.create');
 
     actingAs($user)
         ->get(
             ServiceRequestUpdateResource::getUrl('create')
         )->assertSuccessful();
 
-    $request = collect(CreateCaseUpdateRequestFactory::new()->create());
+    $request = collect(CreateServiceRequestUpdateRequestFactory::new()->create());
 
-    livewire(CaseUpdateResource\Pages\CreateCaseUpdate::class)
+    livewire(ServiceRequestUpdateResource\Pages\CreateServiceRequestUpdate::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

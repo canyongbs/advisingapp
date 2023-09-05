@@ -1,16 +1,15 @@
 <?php
 
 use App\Models\User;
+use Assist\ServiceManagement\Models\ServiceRequestType;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestTypeRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
-
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditCaseItemTypeRequestFactory;
+use function Pest\Laravel\assertDatabaseHas;
 
 test('A successful action on the EditServiceRequestType page', function () {
     $caseItemType = ServiceRequestType::factory()->create();
@@ -23,7 +22,7 @@ test('A successful action on the EditServiceRequestType page', function () {
         )
         ->assertSuccessful();
 
-    $editRequest = EditCaseItemTypeRequestFactory::new()->create();
+    $editRequest = EditServiceRequestTypeRequestFactory::new()->create();
 
     livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
         'record' => $caseItemType->getRouteKey(),
@@ -49,15 +48,15 @@ test('EditServiceRequestType requires valid data', function ($data, $errors) {
         ->assertFormSet([
             'name' => $caseItemType->name,
         ])
-        ->fillForm(EditCaseItemTypeRequestFactory::new($data)->create())
+        ->fillForm(EditServiceRequestTypeRequestFactory::new($data)->create())
         ->call('save')
         ->assertHasFormErrors($errors);
 
     assertDatabaseHas(ServiceRequestType::class, $caseItemType->toArray());
 })->with(
     [
-        'name missing' => [EditCaseItemTypeRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
-        'name not a string' => [EditCaseItemTypeRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name missing' => [EditServiceRequestTypeRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
+        'name not a string' => [EditServiceRequestTypeRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
     ]
 );
 
@@ -90,7 +89,7 @@ test('EditServiceRequestType is gated with proper access control', function () {
             ])
         )->assertSuccessful();
 
-    $request = collect(EditCaseItemTypeRequestFactory::new()->create());
+    $request = collect(EditServiceRequestTypeRequestFactory::new()->create());
 
     livewire(CaseItemTypeResource\Pages\EditCaseItemType::class, [
         'record' => $caseItemType->getRouteKey(),

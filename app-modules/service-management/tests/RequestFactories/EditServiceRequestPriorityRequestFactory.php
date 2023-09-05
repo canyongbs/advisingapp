@@ -4,7 +4,7 @@ namespace Assist\ServiceManagement\Tests\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 
-class CreateCaseItemTypeRequestFactory extends RequestFactory
+class EditServiceRequestPriorityRequestFactory extends RequestFactory
 {
     public function definition(): array
     {

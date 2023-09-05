@@ -1,19 +1,16 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Validation\Rules\Enum;
+use Assist\ServiceManagement\Models\ServiceRequestStatus;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestStatusRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-
-use Illuminate\Validation\Rules\Enum;
-
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
-
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditCaseItemStatusRequestFactory;
 
 test('A successful action on the EditServiceRequestStatus page', function () {
     $caseItemStatus = ServiceRequestStatus::factory()->create();
@@ -26,7 +23,7 @@ test('A successful action on the EditServiceRequestStatus page', function () {
         )
         ->assertSuccessful();
 
-    $editRequest = EditCaseItemStatusRequestFactory::new()->create();
+    $editRequest = EditServiceRequestStatusRequestFactory::new()->create();
 
     livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
         'record' => $caseItemStatus->getRouteKey(),
@@ -55,17 +52,17 @@ test('EditServiceRequestStatus requires valid data', function ($data, $errors) {
             'name' => $caseItemStatus->name,
             'color' => $caseItemStatus->color,
         ])
-        ->fillForm(EditCaseItemStatusRequestFactory::new($data)->create())
+        ->fillForm(EditServiceRequestStatusRequestFactory::new($data)->create())
         ->call('save')
         ->assertHasFormErrors($errors);
 
     assertDatabaseHas(ServiceRequestStatus::class, $caseItemStatus->toArray());
 })->with(
     [
-        'name missing' => [EditCaseItemStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
-        'name not a string' => [EditCaseItemStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
-        'color missing' => [EditCaseItemStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
-        'color not within enum' => [EditCaseItemStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
+        'name missing' => [EditServiceRequestStatusRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
+        'name not a string' => [EditServiceRequestStatusRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'color missing' => [EditServiceRequestStatusRequestFactory::new()->state(['color' => null]), ['color' => 'required']],
+        'color not within enum' => [EditServiceRequestStatusRequestFactory::new()->state(['color' => 'not-a-color']), ['color' => Enum::class]],
     ]
 );
 
@@ -98,7 +95,7 @@ test('EditServiceRequestStatus is gated with proper access control', function ()
             ])
         )->assertSuccessful();
 
-    $request = collect(EditCaseItemStatusRequestFactory::new()->create());
+    $request = collect(EditServiceRequestStatusRequestFactory::new()->create());
 
     livewire(CaseItemStatusResource\Pages\EditCaseItemStatus::class, [
         'record' => $caseItemStatus->getRouteKey(),

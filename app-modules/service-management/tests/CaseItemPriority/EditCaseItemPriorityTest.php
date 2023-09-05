@@ -1,16 +1,15 @@
 <?php
 
 use App\Models\User;
+use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestPriorityRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
-
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditCaseItemPriorityRequestFactory;
+use function Pest\Laravel\assertDatabaseHas;
 
 test('A successful action on the EditServiceRequestPriority page', function () {
     $caseItemPriority = ServiceRequestPriority::factory()->create();
@@ -23,7 +22,7 @@ test('A successful action on the EditServiceRequestPriority page', function () {
         )
         ->assertSuccessful();
 
-    $editRequest = EditCaseItemPriorityRequestFactory::new()->create();
+    $editRequest = EditServiceRequestPriorityRequestFactory::new()->create();
 
     livewire(CaseItemPriorityResource\Pages\EditCaseItemPriority::class, [
         'record' => $caseItemPriority->getRouteKey(),
@@ -49,15 +48,15 @@ test('EditServiceRequestPriority requires valid data', function ($data, $errors)
         ->assertFormSet([
             'name' => $caseItemPriority->name,
         ])
-        ->fillForm(EditCaseItemPriorityRequestFactory::new($data)->create())
+        ->fillForm(EditServiceRequestPriorityRequestFactory::new($data)->create())
         ->call('save')
         ->assertHasFormErrors($errors);
 
     assertDatabaseHas(ServiceRequestPriority::class, $caseItemPriority->toArray());
 })->with(
     [
-        'name missing' => [EditCaseItemPriorityRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
-        'name not a string' => [EditCaseItemPriorityRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name missing' => [EditServiceRequestPriorityRequestFactory::new()->state(['name' => null]), ['name' => 'required']],
+        'name not a string' => [EditServiceRequestPriorityRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
     ]
 );
 
@@ -90,7 +89,7 @@ test('EditServiceRequestPriority is gated with proper access control', function 
             ])
         )->assertSuccessful();
 
-    $request = collect(EditCaseItemPriorityRequestFactory::new()->create());
+    $request = collect(EditServiceRequestPriorityRequestFactory::new()->create());
 
     livewire(CaseItemPriorityResource\Pages\EditCaseItemPriority::class, [
         'record' => $caseItemPriority->getRouteKey(),

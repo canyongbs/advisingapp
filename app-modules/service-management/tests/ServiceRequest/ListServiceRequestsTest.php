@@ -8,57 +8,56 @@ use function Pest\Livewire\livewire;
 
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
-use Assist\ServiceManagement\Filament\Resources\CaseItemResource\Pages\ListCaseItems;
 
-test('The correct details are displayed on the ListCaseItem page', function () {
-    $caseItems = ServiceRequest::factory()
+test('The correct details are displayed on the ListServiceRequests page', function () {
+    $serviceRequests = ServiceRequest::factory()
         ->count(10)
         ->create();
 
     asSuperAdmin();
 
-    $component = livewire(ListCaseItems::class);
+    $component = livewire(ServiceRequestResource\Pages\ListServiceRequests::class);
 
     $component->assertSuccessful()
-        ->assertCanSeeTableRecords($caseItems)
+        ->assertCanSeeTableRecords($serviceRequests)
         ->assertCountTableRecords(10);
 
-    $caseItems->each(
-        fn (ServiceRequest $caseItem) => $component
+    $serviceRequests->each(
+        fn (ServiceRequest $serviceRequest) => $component
             ->assertTableColumnStateSet(
                 'id',
-                $caseItem->id,
-                $caseItem
+                $serviceRequest->id,
+                $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'casenumber',
-                $caseItem->casenumber,
-                $caseItem
+                'service_request_number',
+                $serviceRequest->service_request_number,
+                $serviceRequest
             )
             ->assertTableColumnStateSet(
                 'respondent.full',
-                $caseItem->respondent->full,
-                $caseItem
+                $serviceRequest->respondent->full,
+                $serviceRequest
             )
             ->assertTableColumnStateSet(
                 'respondent.sisid',
-                $caseItem->respondent->sisid,
-                $caseItem
+                $serviceRequest->respondent->sisid,
+                $serviceRequest
             )
             ->assertTableColumnStateSet(
                 'respondent.otherid',
-                $caseItem->respondent->otherid,
-                $caseItem
+                $serviceRequest->respondent->otherid,
+                $serviceRequest
             )
             ->assertTableColumnStateSet(
                 'institution.name',
-                $caseItem->institution->name,
-                $caseItem
+                $serviceRequest->institution->name,
+                $serviceRequest
             )
             ->assertTableColumnStateSet(
                 'assignedTo.name',
-                $caseItem->assignedTo->name,
-                $caseItem
+                $serviceRequest->assignedTo->name,
+                $serviceRequest
             )
     );
 });
@@ -67,7 +66,7 @@ test('The correct details are displayed on the ListCaseItem page', function () {
 
 // Permission Tests
 
-test('ListCaseItem is gated with proper access control', function () {
+test('ListServiceRequests is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -75,7 +74,7 @@ test('ListCaseItem is gated with proper access control', function () {
             ServiceRequestResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('case_item.view-any');
+    $user->givePermissionTo('service_request.view-any');
 
     actingAs($user)
         ->get(

@@ -8,12 +8,11 @@ use Assist\ServiceManagement\Models\ServiceRequestType;
 use Assist\ServiceManagement\Models\ServiceRequestStatus;
 use Assist\ServiceManagement\Models\ServiceRequestPriority;
 
-class CreateCaseItemRequestFactory extends RequestFactory
+class EditServiceRequestRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
         return [
-            'casenumber' => $this->faker->randomNumber(8),
             'institution_id' => Institution::factory()->create()->id,
             'status_id' => ServiceRequestStatus::factory()->create()->id,
             'priority_id' => ServiceRequestPriority::factory()->create()->id,

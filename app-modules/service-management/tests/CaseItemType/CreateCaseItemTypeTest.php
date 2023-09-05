@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\User;
+use Assist\ServiceManagement\Models\ServiceRequestType;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestTypeRequestFactory;
 
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
@@ -9,10 +12,6 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateCaseItemTypeRequestFactory;
-
 test('A successful action on the CreateServiceRequestType page', function () {
     asSuperAdmin()
         ->get(
@@ -20,7 +19,7 @@ test('A successful action on the CreateServiceRequestType page', function () {
         )
         ->assertSuccessful();
 
-    $editRequest = CreateCaseItemTypeRequestFactory::new()->create();
+    $editRequest = CreateServiceRequestTypeRequestFactory::new()->create();
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
         ->fillForm($editRequest)
@@ -36,15 +35,15 @@ test('CreateServiceRequestType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
-        ->fillForm(CreateCaseItemTypeRequestFactory::new($data)->create())
+        ->fillForm(CreateServiceRequestTypeRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
 
     assertEmpty(ServiceRequestType::all());
 })->with(
     [
-        'name missing' => [CreateCaseItemTypeRequestFactory::new()->without('name'), ['name' => 'required']],
-        'name not a string' => [CreateCaseItemTypeRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
+        'name missing' => [CreateServiceRequestTypeRequestFactory::new()->without('name'), ['name' => 'required']],
+        'name not a string' => [CreateServiceRequestTypeRequestFactory::new()->state(['name' => 1]), ['name' => 'string']],
     ]
 );
 
@@ -69,7 +68,7 @@ test('CreateServiceRequestType is gated with proper access control', function ()
             ServiceRequestTypeResource::getUrl('create')
         )->assertSuccessful();
 
-    $request = collect(CreateCaseItemTypeRequestFactory::new()->create());
+    $request = collect(CreateServiceRequestTypeRequestFactory::new()->create());
 
     livewire(CaseItemTypeResource\Pages\CreateCaseItemType::class)
         ->fillForm($request->toArray())

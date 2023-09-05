@@ -9,25 +9,25 @@ use Assist\ServiceManagement\Models\ServiceRequestUpdate;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
 test('The correct details are displayed on the ViewServiceRequestUpdate page', function () {
-    $caseItemUpdate = ServiceRequestUpdate::factory()->create();
+    $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();
 
     asSuperAdmin()
         ->get(
             ServiceRequestUpdateResource::getUrl('view', [
-                'record' => $caseItemUpdate,
+                'record' => $serviceRequestUpdate,
             ])
         )
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
-                'Case',
-                $caseItemUpdate->case->casenumber,
+                'Service Request',
+                $serviceRequestUpdate->serviceRequest->service_request_number,
                 'Internal',
                 // TODO: Figure out how to check whether this internal value the check or the X icon
                 'Direction',
-                $caseItemUpdate->direction->name,
+                $serviceRequestUpdate->direction->name,
                 'Update',
-                $caseItemUpdate->update,
+                $serviceRequestUpdate->update,
             ]
         );
 });
@@ -37,22 +37,22 @@ test('The correct details are displayed on the ViewServiceRequestUpdate page', f
 test('ViewServiceRequestUpdate is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseUpdate = ServiceRequestUpdate::factory()->create();
+    $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();
 
     actingAs($user)
         ->get(
             ServiceRequestUpdateResource::getUrl('view', [
-                'record' => $caseUpdate,
+                'record' => $serviceRequestUpdate,
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('case_update.view-any');
-    $user->givePermissionTo('case_update.*.view');
+    $user->givePermissionTo('service_request_update.view-any');
+    $user->givePermissionTo('service_request_update.*.view');
 
     actingAs($user)
         ->get(
             ServiceRequestUpdateResource::getUrl('view', [
-                'record' => $caseUpdate,
+                'record' => $serviceRequestUpdate,
             ])
         )->assertSuccessful();
 });

@@ -9,33 +9,33 @@ use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 test('The correct details are displayed on the ViewServiceRequest page', function () {
-    $caseItem = ServiceRequest::factory()->create();
+    $serviceRequest = ServiceRequest::factory()->create();
 
     asSuperAdmin()
         ->get(
             ServiceRequestResource::getUrl('view', [
-                'record' => $caseItem,
+                'record' => $serviceRequest,
             ])
         )
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
                 'ID',
-                $caseItem->id,
-                'Case Number',
-                $caseItem->casenumber,
+                $serviceRequest->id,
+                'Service Request Number',
+                $serviceRequest->service_request_number,
                 'Institution',
-                $caseItem->institution->name,
+                $serviceRequest->institution->name,
                 'Status',
-                $caseItem->status->name,
+                $serviceRequest->status->name,
                 'Priority',
-                $caseItem->priority->name,
+                $serviceRequest->priority->name,
                 'Type',
-                $caseItem->type->name,
+                $serviceRequest->type->name,
                 'Close Details/Description',
-                $caseItem->close_details,
-                'Internal Case Details',
-                $caseItem->res_details,
+                $serviceRequest->close_details,
+                'Internal Service Request Details',
+                $serviceRequest->res_details,
             ]
         );
 });
@@ -45,22 +45,22 @@ test('The correct details are displayed on the ViewServiceRequest page', functio
 test('ViewServiceRequest is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $caseItem = ServiceRequest::factory()->create();
+    $serviceRequest = ServiceRequest::factory()->create();
 
     actingAs($user)
         ->get(
             ServiceRequestResource::getUrl('view', [
-                'record' => $caseItem,
+                'record' => $serviceRequest,
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('case_item.view-any');
-    $user->givePermissionTo('case_item.*.view');
+    $user->givePermissionTo('service_request.view-any');
+    $user->givePermissionTo('service_request.*.view');
 
     actingAs($user)
         ->get(
             ServiceRequestResource::getUrl('view', [
-                'record' => $caseItem,
+                'record' => $serviceRequest,
             ])
         )->assertSuccessful();
 });
