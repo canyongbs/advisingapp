@@ -17,9 +17,7 @@ class ServiceRequestResource extends Resource
 {
     protected static ?string $model = ServiceRequest::class;
 
-    protected static ?string $navigationGroup = 'Service Management';
-
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationLabel = 'Service Request';
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 

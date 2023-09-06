@@ -29,11 +29,9 @@ class RoleGroupResource extends Resource
 {
     protected static ?string $model = RoleGroup::class;
 
+    protected static ?string $modelLabel = 'Group';
+
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
-    protected static ?string $navigationGroup = 'Administration';
-
-    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
