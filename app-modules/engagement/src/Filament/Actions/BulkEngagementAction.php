@@ -33,8 +33,7 @@ class BulkEngagementAction
                             ->minItems(1)
                             ->validationAttribute('Delivery Method')
                             ->required(),
-                    ])
-                    ->columns(2),
+                    ]),
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
@@ -42,12 +41,13 @@ class BulkEngagementAction
                             ->autofocus()
                             ->translateLabel()
                             ->required()
-                            ->placeholder(__('Subject')),
-                        // TODO Add validation to ensure that the description abides by sms standards
+                            ->placeholder(__('Subject'))
+                            ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::EMAIL->value)),
+                        // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
                         Textarea::make('description')
                             ->translateLabel()
                             ->placeholder(__('Description'))
-                            ->columnSpanFull(),
+                            ->maxLength(320),
                         // TODO Figure out if we want to enable this later
                         // Fieldset::make('Send your engagement')
                         //     ->schema([
@@ -65,6 +65,7 @@ class BulkEngagementAction
 
                 CreateEngagementBatch::dispatch(auth()->user(), $records, $data);
             })
+            ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
             // FIXME This is currently not working exactly as expected. Dan is taking a look and will report back
