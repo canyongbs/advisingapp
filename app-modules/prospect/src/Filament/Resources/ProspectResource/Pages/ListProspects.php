@@ -11,6 +11,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 
 class ListProspects extends ListRecords
 {
@@ -54,6 +55,7 @@ class ListProspects extends ListRecords
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    BulkEngagementAction::make(context: 'prospects'),
                 ]),
             ]);
     }
