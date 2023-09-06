@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Task\Database\Seeders\TaskSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
-use Assist\Engagement\Database\Seeders\EngagementSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
@@ -42,7 +41,6 @@ class DatabaseSeeder extends Seeder
             KnowledgeBaseItemSeeder::class,
             TaskSeeder::class,
             StudentSeeder::class,
-            EngagementSeeder::class,
         ]);
     }
 }

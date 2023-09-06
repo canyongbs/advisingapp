@@ -7,9 +7,6 @@ use Assist\Prospect\Models\Prospect;
 
 class ProspectSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         Prospect::factory()
