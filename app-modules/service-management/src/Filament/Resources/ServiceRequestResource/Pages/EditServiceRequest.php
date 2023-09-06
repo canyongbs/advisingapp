@@ -27,9 +27,6 @@ class EditServiceRequest extends EditRecord
         return parent::form($form)->schema([
             TextInput::make('id')
                 ->disabled(),
-            TextInput::make('service_request_number')
-                ->label('Service Request #')
-                ->disabled(),
             Select::make('institution_id')
                 ->relationship('institution', 'name')
                 ->label('Institution')

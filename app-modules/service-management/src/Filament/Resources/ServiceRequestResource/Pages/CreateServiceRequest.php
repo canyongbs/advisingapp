@@ -7,7 +7,6 @@ use App\Models\Institution;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
@@ -25,10 +24,6 @@ class CreateServiceRequest extends CreateRecord
     {
         return parent::form($form)
             ->schema([
-                TextInput::make('service_request_number')
-                    ->label('Service Request #')
-                    ->required()
-                    ->unique(),
                 Select::make('institution_id')
                     ->relationship('institution', 'name')
                     ->label('Institution')
