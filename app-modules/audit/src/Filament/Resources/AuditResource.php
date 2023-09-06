@@ -14,6 +14,10 @@ class AuditResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
+    protected static ?string $navigationGroup = 'Administration';
+
+    protected static ?int $navigationSort = 5;
+
     public static function getRelations(): array
     {
         return [

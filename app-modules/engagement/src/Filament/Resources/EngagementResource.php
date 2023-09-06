@@ -16,8 +16,11 @@ class EngagementResource extends Resource
 
     protected static ?string $navigationLabel = 'Engage';
 
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
+
+    protected static ?string $navigationGroup = 'Tools';
+
+    protected static ?int $navigationSort = 1;
 
     public static function getRelations(): array
     {

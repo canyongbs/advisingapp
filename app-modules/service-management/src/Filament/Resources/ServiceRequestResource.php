@@ -23,6 +23,10 @@ class ServiceRequestResource extends Resource
 
     protected static ?string $label = 'Service Request';
 
+    protected static ?string $navigationGroup = 'Tools';
+
+    protected static ?int $navigationSort = 2;
+
     public static function getRelations(): array
     {
         return [

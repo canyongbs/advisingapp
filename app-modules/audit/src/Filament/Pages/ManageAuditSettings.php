@@ -15,6 +15,10 @@ class ManageAuditSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Audit Settings';
 
+    protected static ?string $navigationGroup = 'Settings';
+
+    protected static ?int $navigationSort = 1;
+
     protected static string $settings = AuditSettings::class;
 
     protected static ?string $title = 'Audit Settings';
