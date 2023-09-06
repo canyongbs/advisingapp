@@ -106,56 +106,6 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
     ]
 );
 
-test('service_request_number cannot be edited on EditServiceRequest Page', function () {
-    $serviceRequest = ServiceRequest::factory()->create();
-
-    asSuperAdmin()
-        ->get(
-            ServiceRequestResource::getUrl('edit', [
-                'record' => $serviceRequest->getRouteKey(),
-            ])
-        )
-        ->assertSuccessful();
-
-    $request = collect(EditServiceRequestRequestFactory::new()->create());
-
-    $request->merge(['service_request_number' => fake()->randomNumber(9)]);
-
-    livewire(ServiceRequestResource\Pages\EditServiceRequest::class, [
-        'record' => $serviceRequest->getRouteKey(),
-    ])
-        ->fillForm($request->toArray())
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    assertDatabaseHas(
-        ServiceRequest::class,
-        $request->except(
-            [
-                'service_request_number',
-                'institution_id',
-                'status_id',
-                'priority_id',
-                'type_id',
-            ]
-        )->toArray()
-    );
-
-    $serviceRequest->refresh();
-
-    expect($serviceRequest->institution->id)
-        ->toEqual($request->get('institution_id'))
-        ->and($serviceRequest->status->id)
-        ->toEqual($request->get('status_id'))
-        ->and($serviceRequest->priority->id)
-        ->toEqual($request->get('priority_id'))
-        ->and($serviceRequest->type->id)
-        ->toEqual($request->get('type_id'))
-        ->and($serviceRequest->service_request_number)
-        ->not()
-        ->toEqual($request->get('service_request_number'));
-});
-
 // Permission Tests
 
 test('EditServiceRequest is gated with proper access control', function () {
@@ -169,10 +119,6 @@ test('EditServiceRequest is gated with proper access control', function () {
                 'record' => $serviceRequest,
             ])
         )->assertForbidden();
-
-    $request = collect(EditServiceRequestRequestFactory::new()->create());
-
-    $request->merge(['service_request_number' => fake()->randomNumber(9)]);
 
     livewire(ServiceRequestResource\Pages\EditServiceRequest::class, [
         'record' => $serviceRequest->getRouteKey(),

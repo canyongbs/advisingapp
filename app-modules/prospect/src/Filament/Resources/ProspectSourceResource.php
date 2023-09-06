@@ -10,9 +10,9 @@ class ProspectSourceResource extends Resource
 {
     protected static ?string $model = ProspectSource::class;
 
-    protected static ?string $navigationGroup = 'Field Settings';
+    protected static ?string $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationIcon = 'heroicon-o-viewfinder-circle';
 

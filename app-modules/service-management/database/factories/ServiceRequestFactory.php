@@ -19,8 +19,6 @@ class ServiceRequestFactory extends Factory
     public function definition(): array
     {
         return [
-            // TODO: When we decide on how to generate these numbers, we can update this.
-            'service_request_number' => $this->faker->randomNumber(9),
             'respondent_id' => Student::factory(),
             'respondent_type' => function (array $attributes) {
                 return Student::find($attributes['respondent_id'])->getMorphClass();

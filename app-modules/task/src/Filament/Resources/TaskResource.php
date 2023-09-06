@@ -10,7 +10,13 @@ class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
+    protected static ?string $navigationLabel = 'Task';
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+
+    protected static ?string $navigationGroup = 'Tools';
+
+    protected static ?int $navigationSort = 3;
 
     public static function getRelations(): array
     {

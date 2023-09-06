@@ -10,9 +10,9 @@ class KnowledgeBaseCategoryResource extends Resource
 {
     protected static ?string $model = KnowledgeBaseCategory::class;
 
-    protected static ?string $navigationGroup = 'Field Settings';
+    protected static ?string $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

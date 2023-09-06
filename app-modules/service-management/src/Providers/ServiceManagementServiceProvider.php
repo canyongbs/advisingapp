@@ -13,12 +13,16 @@ use Assist\ServiceManagement\Models\ServiceRequestUpdate;
 use Assist\ServiceManagement\Models\ServiceRequestPriority;
 use Assist\ServiceManagement\Observers\ServiceRequestObserver;
 use Assist\ServiceManagement\Observers\ServiceRequestUpdateObserver;
+use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use Assist\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServiceRequestNumberGenerator;
 
 class ServiceManagementServiceProvider extends ServiceProvider
 {
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ServiceManagementPlugin()));
+
+        $this->app->bind(ServiceRequestNumberGenerator::class, SqidPlusSixServiceRequestNumberGenerator::class);
     }
 
     public function boot()

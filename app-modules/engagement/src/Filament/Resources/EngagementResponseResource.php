@@ -11,11 +11,9 @@ class EngagementResponseResource extends Resource
 {
     protected static ?string $model = EngagementResponse::class;
 
-    protected static ?string $navigationGroup = 'Engagement';
-
-    protected static ?int $navigationSort = 2;
-
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {

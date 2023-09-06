@@ -23,11 +23,9 @@ class ServiceRequestUpdateResource extends Resource
 {
     protected static ?string $model = ServiceRequestUpdate::class;
 
-    protected static ?string $navigationGroup = 'Service Management';
-
-    protected static ?int $navigationSort = 2;
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {
