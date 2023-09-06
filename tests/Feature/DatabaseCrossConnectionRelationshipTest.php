@@ -1,26 +1,26 @@
 <?php
 
-use Assist\Case\Models\CaseItem;
-use Assist\Case\Models\CaseItemType;
 use Assist\AssistDataModel\Models\Student;
+use Assist\ServiceManagement\Models\ServiceRequest;
+use Assist\ServiceManagement\Models\ServiceRequestType;
 
 test('relationships work cross connections', function () {
-    CaseItemType::withoutSyncingToSearch(function () {
+    ServiceRequestType::withoutSyncingToSearch(function () {
         $student = Student::factory()
             ->has(
-                CaseItem::factory()
+                ServiceRequest::factory()
                     ->count(3),
-                'cases'
+                'serviceRequests'
             )
             ->create();
 
-        expect($student->cases)->toHaveCount(3);
+        expect($student->serviceRequests)->toHaveCount(3);
 
         Student::factory()->create();
 
         expect(Student::all())->toHaveCount(2);
 
-        $whereHas = Student::whereHas('cases', function ($query) {
+        $whereHas = Student::whereHas('serviceRequests', function ($query) {
             $query->whereNotNull('res_details');
         })->get();
 

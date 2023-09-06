@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Filament\Panel;
 use DateTimeInterface;
 use Assist\Audit\Models\Audit;
-use Assist\Case\Models\CaseItem;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
@@ -22,6 +21,7 @@ use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Notifications\DatabaseNotification;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
@@ -55,8 +55,6 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read int|null $alerts_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, CaseItem> $caseItems
- * @property-read int|null $case_items_count
  * @property-read mixed $is_admin
  * @property-read mixed $type_label
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
@@ -67,6 +65,8 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read int|null $role_groups_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
+ * @property-read Collection<int, ServiceRequest> $serviceRequests
+ * @property-read int|null $service_requests_count
  * @property-read Collection<int, Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read Collection<int, RoleGroup> $traitRoleGroups
@@ -174,10 +174,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
-    public function caseItems(): HasMany
+    public function serviceRequests(): HasMany
     {
         return $this->hasMany(
-            related: CaseItem::class,
+            related: ServiceRequest::class,
             foreignKey: 'assigned_to_id',
         );
     }

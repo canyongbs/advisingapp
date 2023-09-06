@@ -5,7 +5,6 @@ namespace Assist\AssistDataModel\Models;
 use Eloquent;
 use Assist\Task\Models\Task;
 use Assist\Audit\Models\Audit;
-use Assist\Case\Models\CaseItem;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notifiable;
@@ -14,7 +13,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\Notifications\Models\Subscription;
+use Assist\Engagement\Models\EngagementResponse;
 use Illuminate\Notifications\DatabaseNotification;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,16 +32,16 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Collection<int, CaseItem> $cases
- * @property-read int|null $cases_count
  * @property-read Collection<int, EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
- * @property-read Collection<int, \Assist\Engagement\Models\EngagementResponse> $engagementResponses
+ * @property-read Collection<int, EngagementResponse> $engagementResponses
  * @property-read int|null $engagement_responses_count
  * @property-read Collection<int, Engagement> $engagements
  * @property-read int|null $engagements_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read Collection<int, ServiceRequest> $serviceRequests
+ * @property-read int|null $service_requests_count
  * @property-read Collection<int, Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read Collection<int, Task> $tasks
@@ -72,10 +73,10 @@ class Student extends Model implements Auditable, Subscribable
         'sisid' => 'string',
     ];
 
-    public function cases(): MorphMany
+    public function serviceRequests(): MorphMany
     {
         return $this->morphMany(
-            related: CaseItem::class,
+            related: ServiceRequest::class,
             name: 'respondent',
             type: 'respondent_type',
             id: 'respondent_id',

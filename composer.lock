@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "96dd297d3f7fb950cc7b84f8e8067fad",
+    "content-hash": "fbf203bb1e3411b65d687289b8cb281a",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -616,41 +616,6 @@
             }
         },
         {
-            "name": "canyon-gbs/case",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/case",
-                "reference": "308ad69c4af460f9031d8c7027a0f546d194fa50"
-            },
-            "require": {
-                "filament/filament": "^3.0-stable"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Assist\\Case\\Providers\\CaseServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Assist\\Case\\": "src/",
-                    "Assist\\Case\\Tests\\": "tests/",
-                    "Assist\\Case\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Case\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/engagement",
             "version": "1.0",
             "dist": {
@@ -818,6 +783,41 @@
                     "Assist\\Prospect\\Tests\\": "tests/",
                     "Assist\\Prospect\\Database\\Factories\\": "database/factories/",
                     "Assist\\Prospect\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/service-management",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/service-management",
+                "reference": "c161a3c63db221b9ce34c526d07d5e125f1b5ad0"
+            },
+            "require": {
+                "filament/filament": "^3.0-stable"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\ServiceManagement\\": "src/",
+                    "Assist\\ServiceManagement\\Tests\\": "tests/",
+                    "Assist\\ServiceManagement\\Database\\Factories\\": "database/factories/",
+                    "Assist\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

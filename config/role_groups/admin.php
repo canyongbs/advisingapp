@@ -6,7 +6,7 @@ return [
         'api' => [
         ],
         'web' => [
-            'case_management',
+            'service_management',
             'custom_management',
             'engagement_management',
             'journey_management',

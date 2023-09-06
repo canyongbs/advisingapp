@@ -123,9 +123,9 @@ return [
         'title' => 'Engagement',
         'title_singular' => 'Engagement',
     ],
-    'caseMenu' => [
-        'title' => 'Case Management',
-        'title_singular' => 'Case Management',
+    'serviceManagementMenu' => [
+        'title' => 'Service Management',
+        'title_singular' => 'Service Management',
     ],
     'supportMenu' => [
         'title' => 'Support',
@@ -155,15 +155,15 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
-    'caseItem' => [
-        'title' => 'Cases',
-        'title_singular' => 'Case',
+    'serviceRequest' => [
+        'title' => 'Service Requests',
+        'title_singular' => 'Service Request',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',
             'close_details' => 'Close Details/Description',
             'close_details_helper' => ' ',
-            'res_details' => 'Internal Case Details',
+            'res_details' => 'Internal Service Request Details',
             'res_details_helper' => ' ',
             'created_by' => 'Created By',
             'created_by_helper' => ' ',
@@ -173,8 +173,8 @@ return [
             'updated_at_helper' => ' ',
             'deleted_at' => 'Deleted at',
             'deleted_at_helper' => ' ',
-            'casenumber' => 'Case Number',
-            'casenumber_helper' => ' ',
+            'service_request_number' => 'Service Request Number',
+            'service_request_number_helper' => ' ',
             'student' => 'Student',
             'student_helper' => ' ',
             'institution' => 'Institution',
@@ -189,9 +189,9 @@ return [
             'assigned_to_helper' => ' ',
         ],
     ],
-    'caseItemStatus' => [
-        'title' => 'Case Statuses',
-        'title_singular' => 'Case Status',
+    'serviceRequestStatus' => [
+        'title' => 'Service Request Statuses',
+        'title_singular' => 'Service Request Status',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',
@@ -205,9 +205,9 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
-    'caseItemType' => [
-        'title' => 'Case Item Type',
-        'title_singular' => 'Case Item Type',
+    'serviceRequestType' => [
+        'title' => 'Service Request Type',
+        'title_singular' => 'Service Request Type',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',
@@ -221,9 +221,9 @@ return [
             'deleted_at_helper' => ' ',
         ],
     ],
-    'caseItemPriority' => [
-        'title' => 'Case Priorities',
-        'title_singular' => 'Case Priority',
+    'serviceRequestPriority' => [
+        'title' => 'Service Request Priorities',
+        'title_singular' => 'Service Request Priority',
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',
@@ -672,7 +672,7 @@ return [
             'source_helper' => ' ',
         ],
     ],
-    'caseUpdateItem' => [
+    'serviceRequestUpdate' => [
         'title' => 'Updates',
         'title_singular' => 'Update',
         'fields' => [
@@ -686,8 +686,8 @@ return [
             'updated_at_helper' => ' ',
             'deleted_at' => 'Deleted at',
             'deleted_at_helper' => ' ',
-            'case' => 'Case',
-            'case_helper' => ' ',
+            'service_request' => 'Service Request',
+            'service_request_helper' => ' ',
             'update' => 'Update',
             'update_helper' => ' ',
             'internal' => 'Internal',

@@ -1,0 +1,31 @@
+{
+	"name": "canyon-gbs/service-management",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {
+		"filament/filament": "^3.0-stable"
+	},
+	"autoload": {
+		"psr-4": {
+			"Assist\\ServiceManagement\\": "src/",
+			"Assist\\ServiceManagement\\Tests\\": "tests/",
+			"Assist\\ServiceManagement\\Database\\Factories\\": "database/factories/",
+			"Assist\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "dev",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Assist\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
+			]
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"pestphp/pest-plugin": true
+		}
+	}
+}
