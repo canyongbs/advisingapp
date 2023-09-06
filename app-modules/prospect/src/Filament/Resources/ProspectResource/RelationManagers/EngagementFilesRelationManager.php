@@ -23,8 +23,6 @@ class EngagementFilesRelationManager extends RelationManager
                     ->maxLength(255),
                 SpatieMediaLibraryFileUpload::make('file')
                     ->label('File')
-                    // TODO: Determine if this is needed
-                    //->visibility('private')
                     ->disk('s3')
                     ->collection('file')
                     ->required(),
@@ -38,7 +36,8 @@ class EngagementFilesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('description'),
                 SpatieMediaLibraryImageColumn::make('file')
-                    ->collection('file'),
+                    ->collection('file')
+                    ->visibility('private'),
             ])
             ->filters([
             ])

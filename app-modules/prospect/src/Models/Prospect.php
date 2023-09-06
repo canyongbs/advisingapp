@@ -24,6 +24,7 @@ use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -70,12 +71,12 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $notifications_count
  * @property-read Collection<int, ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
- * @property-read \Assist\Prospect\Models\ProspectSource $source
- * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read ProspectSource $source
+ * @property-read ProspectStatus $status
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
- * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
+ * @method static ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()
@@ -183,7 +184,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable
             table: 'engagement_file_entities',
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
-            relation: 'prospects',
+            relation: 'engagementFiles',
         )
             ->using(EngagementFileEntities::class)
             ->withTimestamps();
