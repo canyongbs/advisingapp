@@ -22,6 +22,8 @@ class DeliverEngagements implements ShouldQueue
         Engagement::query()
             ->where('deliver_at', '<=', now())
             ->hasNotBeenDelivered()
+            // TODO Need to add this to our test case
+            ->isNotPartOfABatch()
             ->cursor()
             ->each(function (Engagement $engagement) {
                 $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {

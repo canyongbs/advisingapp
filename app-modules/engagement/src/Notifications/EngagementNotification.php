@@ -4,10 +4,11 @@ namespace Assist\Engagement\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Assist\Engagement\Models\EngagementDeliverable;
 
-class EngagementNotification extends Notification
+class EngagementNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

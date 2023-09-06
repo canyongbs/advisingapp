@@ -4,7 +4,6 @@ namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use Filament\Forms\Form;
 use Assist\Prospect\Models\Prospect;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
@@ -26,14 +25,12 @@ class CreateEngagement extends CreateRecord
     {
         return parent::form($form)
             ->schema([
-                // TODO Do this behind the scenes in the model
-                Hidden::make('user_id')
-                    ->default(auth()->user()->id),
                 TextInput::make('subject')
                     ->autofocus()
                     ->translateLabel()
                     ->required()
                     ->placeholder(__('Subject')),
+                // TODO Add validation to ensure that the description abides by sms standards
                 Textarea::make('description')
                     ->translateLabel()
                     ->placeholder(__('Description'))
@@ -60,6 +57,8 @@ class CreateEngagement extends CreateRecord
                             ->visible(fn (callable $get) => $get('send_later')),
                     ]),
                 // TODO Better validation error messages here, "You must select at least 1 delivery method"
+                // TODO We might want to make this option first,
+                // so we can better and more easily validate the contents of the message
                 Select::make('delivery_methods')
                     ->label('How would you like to send this engagement?')
                     ->translateLabel()

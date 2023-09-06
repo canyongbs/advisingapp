@@ -2,32 +2,33 @@
 
 namespace Assist\Engagement\Actions;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Assist\Engagement\Models\Engagement;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Assist\Engagement\Models\EngagementDeliverable;
-use Assist\Engagement\Actions\Contracts\EngagementChannel;
 
-abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue
+class DeliverEngagement implements ShouldQueue
 {
+    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
     public function __construct(
-        public EngagementDeliverable $deliverable
+        public Engagement $engagement
     ) {}
 
     public function handle(): void
     {
-        ray('QueuedEngagementDelivery()');
+        ray('DeliverEngagement()');
 
-        // TODO Remove this simulation of the delivery taking a bit of time...
-        sleep(5);
-
-        $this->deliver();
+        $this->engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
+            $deliverable->deliver();
+        });
     }
 }
