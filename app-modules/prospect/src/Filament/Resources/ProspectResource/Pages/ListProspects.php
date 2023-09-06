@@ -21,10 +21,6 @@ class ListProspects extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->translateLabel()
-                    ->sortable(),
                 TextColumn::make('full')
                     ->label('Name')
                     ->translateLabel()
@@ -54,8 +50,8 @@ class ListProspects extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
                     BulkEngagementAction::make(context: 'prospects'),
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -6,7 +6,9 @@ use Filament\Resources\Resource;
 use Assist\Prospect\Models\Prospect;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
+use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementsRelationManager;
 use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementFilesRelationManager;
+use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementResponsesRelationManager;
 
 class ProspectResource extends Resource
 {
@@ -17,6 +19,8 @@ class ProspectResource extends Resource
     public static function getRelations(): array
     {
         return [
+            EngagementsRelationManager::class,
+            EngagementResponsesRelationManager::class,
             EngagementFilesRelationManager::class,
             TasksRelationManager::class,
         ];

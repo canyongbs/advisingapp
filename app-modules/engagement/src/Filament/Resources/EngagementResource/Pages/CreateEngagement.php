@@ -25,6 +25,15 @@ class CreateEngagement extends CreateRecord
     {
         return parent::form($form)
             ->schema([
+                // TODO Better validation error messages here, "You must select at least 1 delivery method"
+                Select::make('delivery_methods')
+                    ->label('How would you like to send this engagement?')
+                    ->translateLabel()
+                    ->options(EngagementDeliveryMethod::class)
+                    ->multiple()
+                    ->minItems(1)
+                    ->validationAttribute('Delivery Methods')
+                    ->helperText('You can select multiple delivery methods.'),
                 TextInput::make('subject')
                     ->autofocus()
                     ->translateLabel()
@@ -56,17 +65,6 @@ class CreateEngagement extends CreateRecord
                             ->required()
                             ->visible(fn (callable $get) => $get('send_later')),
                     ]),
-                // TODO Better validation error messages here, "You must select at least 1 delivery method"
-                // TODO We might want to make this option first,
-                // so we can better and more easily validate the contents of the message
-                Select::make('delivery_methods')
-                    ->label('How would you like to send this engagement?')
-                    ->translateLabel()
-                    ->options(EngagementDeliveryMethod::class)
-                    ->multiple()
-                    ->minItems(1)
-                    ->validationAttribute('Delivery Methods')
-                    ->helperText('You can select multiple delivery methods.'),
             ]);
     }
 
