@@ -9,7 +9,7 @@ return new class () extends Migration {
     {
         Schema::create('service_requests', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->integer('service_request_number');
+            $table->string('service_request_number')->unique();
             $table->string('respondent_type')->nullable();
             $table->string('respondent_id')->nullable();
             $table->longText('close_details')->nullable();

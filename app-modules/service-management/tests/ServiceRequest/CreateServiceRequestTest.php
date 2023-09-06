@@ -70,14 +70,6 @@ test('CreateServiceRequest requires valid data', function ($data, $errors, $setu
     assertDatabaseMissing(ServiceRequest::class, $request->except(['institution', 'status', 'priority', 'type'])->toArray());
 })->with(
     [
-        'service_request_number missing' => [CreateServiceRequestRequestFactory::new()->without('service_request_number'), ['service_request_number' => 'required']],
-        'service_request_number should be unique' => [
-            CreateServiceRequestRequestFactory::new()->state(['service_request_number' => 99]),
-            ['service_request_number' => 'unique'],
-            function () {
-                ServiceRequest::factory()->create(['service_request_number' => 99]);
-            },
-        ],
         'institution_id missing' => [CreateServiceRequestRequestFactory::new()->without('institution_id'), ['institution_id' => 'required']],
         'institution_id does not exist' => [
             CreateServiceRequestRequestFactory::new()->state(['institution_id' => fake()->uuid()]),

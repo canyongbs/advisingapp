@@ -9,6 +9,7 @@ use App\Models\BaseModel;
 use App\Models\Institution;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -20,14 +21,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
+use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 /**
  * Assist\ServiceManagement\Models\ServiceRequest
  *
  * @property string $id
- * @property int $service_request_number
+ * @property string $service_request_number
  * @property string|null $respondent_type
  * @property string|null $respondent_id
  * @property string|null $close_details
@@ -86,7 +90,6 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use HasUuids;
 
     protected $fillable = [
-        'service_request_number',
         'respondent_type',
         'respondent_id',
         'institution_id',
@@ -98,6 +101,42 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         'res_details',
         'created_by_id',
     ];
+
+    public function save(array $options = [])
+    {
+        $attempts = 0;
+
+        do {
+            try {
+                DB::beginTransaction();
+
+                $save = parent::save($options);
+            } catch (UniqueConstraintViolationException $e) {
+                $attempts++;
+                $save = false;
+
+                if ($attempts < 3) {
+                    $this->service_request_number = app(ServiceRequestNumberGenerator::class)->generate();
+                }
+
+                DB::rollBack();
+
+                if ($attempts >= 3) {
+                    throw new ServiceRequestNumberExceededReRollsException(
+                        previous: $e,
+                    );
+                }
+
+                continue;
+            }
+
+            DB::commit();
+
+            break;
+        } while ($attempts < 3);
+
+        return $save;
+    }
 
     public function getSubscribable(): ?Subscribable
     {
