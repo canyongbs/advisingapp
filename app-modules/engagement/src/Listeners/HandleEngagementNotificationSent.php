@@ -6,7 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationSent;
 use Assist\Engagement\Notifications\EngagementNotification;
 
-class HandleNotificationSent implements ShouldQueue
+class HandleEngagementNotificationSent implements ShouldQueue
 {
     public function handle(NotificationSent $event): void
     {
