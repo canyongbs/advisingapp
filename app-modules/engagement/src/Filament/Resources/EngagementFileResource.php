@@ -10,11 +10,9 @@ class EngagementFileResource extends Resource
 {
     protected static ?string $model = EngagementFile::class;
 
-    protected static ?string $navigationGroup = 'Engagement';
-
-    protected static ?int $navigationSort = 3;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getRelations(): array
     {

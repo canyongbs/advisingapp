@@ -13,6 +13,10 @@ class InboundWebhookResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-signal';
 
+    protected static ?string $navigationGroup = 'Administration';
+
+    protected static ?int $navigationSort = 6;
+
     public static function getPages(): array
     {
         return [

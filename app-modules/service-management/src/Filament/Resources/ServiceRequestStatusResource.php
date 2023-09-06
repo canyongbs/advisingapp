@@ -13,9 +13,9 @@ class ServiceRequestStatusResource extends Resource
 {
     protected static ?string $model = ServiceRequestStatus::class;
 
-    protected static ?string $navigationGroup = 'Field Settings';
+    protected static ?string $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 

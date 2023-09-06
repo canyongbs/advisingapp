@@ -11,9 +11,9 @@ class ProspectStatusResource extends Resource
 {
     protected static ?string $model = ProspectStatus::class;
 
-    protected static ?string $navigationGroup = 'Field Settings';
+    protected static ?string $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 

@@ -13,7 +13,13 @@ class KnowledgeBaseItemResource extends Resource
 {
     protected static ?string $model = KnowledgeBaseItem::class;
 
+    protected static ?string $navigationLabel = 'Knowledge Base';
+
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
+
+    protected static ?string $navigationGroup = 'Tools';
+
+    protected static ?int $navigationSort = 4;
 
     public static function getRelations(): array
     {

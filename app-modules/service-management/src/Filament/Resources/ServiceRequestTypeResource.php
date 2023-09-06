@@ -13,9 +13,9 @@ class ServiceRequestTypeResource extends Resource
 {
     protected static ?string $model = ServiceRequestType::class;
 
-    protected static ?string $navigationGroup = 'Field Settings';
+    protected static ?string $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 

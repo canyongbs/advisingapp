@@ -9,6 +9,7 @@ use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
 use Filament\Infolists\Components\Entry;
+use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
@@ -64,6 +65,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Records'),
+                NavigationGroup::make()
+                    ->label('Tools'),
+                NavigationGroup::make()
+                    ->label('Administration'),
+                NavigationGroup::make()
+                    ->label('Settings')
+                    ->collapsed(),
             ]);
     }
 

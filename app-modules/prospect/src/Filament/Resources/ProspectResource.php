@@ -14,6 +14,10 @@ class ProspectResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $navigationGroup = 'Records';
+
+    protected static ?int $navigationSort = 2;
+
     public static function getRelations(): array
     {
         return [

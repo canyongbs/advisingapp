@@ -10,9 +10,9 @@ class KnowledgeBaseStatusResource extends Resource
 {
     protected static ?string $model = KnowledgeBaseStatus::class;
 
-    protected static ?string $navigationGroup = 'Field Settings';
+    protected static ?string $navigationGroup = 'Settings';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 9;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
