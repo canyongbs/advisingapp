@@ -24,7 +24,6 @@ use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
-use Assist\ServiceManagement\Database\Factories\ServiceRequestFactory;
 use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
@@ -32,7 +31,7 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  * Assist\ServiceManagement\Models\ServiceRequest
  *
  * @property string $id
- * @property int $service_request_number
+ * @property string $service_request_number
  * @property string|null $respondent_type
  * @property string|null $respondent_id
  * @property string|null $close_details
@@ -51,14 +50,14 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  * @property-read int|null $audits_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
- * @property-read ServiceRequestPriority|null $priority
- * @property-read Model|Eloquent $respondent
- * @property-read Collection<int, ServiceRequestUpdate> $serviceRequestUpdates
+ * @property-read \Assist\ServiceManagement\Models\ServiceRequestPriority|null $priority
+ * @property-read Model|\Eloquent $respondent
+ * @property-read Collection<int, \Assist\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
  * @property-read int|null $service_request_updates_count
- * @property-read ServiceRequestStatus|null $status
- * @property-read ServiceRequestType|null $type
+ * @property-read \Assist\ServiceManagement\Models\ServiceRequestStatus|null $status
+ * @property-read \Assist\ServiceManagement\Models\ServiceRequestType|null $type
  *
- * @method static ServiceRequestFactory factory($count = null, $state = [])
+ * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
  * @method static Builder|ServiceRequest newModelQuery()
  * @method static Builder|ServiceRequest newQuery()
  * @method static Builder|ServiceRequest onlyTrashed()
