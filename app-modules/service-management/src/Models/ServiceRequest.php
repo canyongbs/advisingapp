@@ -9,6 +9,7 @@ use App\Models\BaseModel;
 use App\Models\Institution;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Kirschbaum\PowerJoins\PowerJoins;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -24,6 +25,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 use Assist\ServiceManagement\Database\Factories\ServiceRequestFactory;
+use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 /**
@@ -107,6 +109,8 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
         do {
             try {
+                DB::beginTransaction();
+
                 $save = parent::save($options);
             } catch (UniqueConstraintViolationException $e) {
                 $attempts++;
@@ -116,8 +120,18 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                     $this->service_request_number = app(ServiceRequestNumberGenerator::class)->generate();
                 }
 
+                DB::rollBack();
+
+                if ($attempts >= 3) {
+                    throw new ServiceRequestNumberExceededReRollsException(
+                        previous: $e,
+                    );
+                }
+
                 continue;
             }
+
+            DB::commit();
 
             break;
         } while ($attempts < 3);

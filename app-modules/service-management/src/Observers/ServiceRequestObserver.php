@@ -2,9 +2,9 @@
 
 namespace Assist\ServiceManagement\Observers;
 
-use Exception;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
+use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 class ServiceRequestObserver
@@ -23,6 +23,6 @@ class ServiceRequestObserver
 
     public function updating(ServiceRequest $serviceRequest): void
     {
-        throw_if($serviceRequest->isDirty('service_request_number'), new Exception('service_request_number cannot be changed.'));
+        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
     }
 }
