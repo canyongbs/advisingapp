@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71e2dd093d28342dcc162cba931969d2",
+    "content-hash": "f006b859e6937c94d3aacd8be220f714",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "dev-feature/insert-media-signed-urls-3.x",
+            "version": "v3.0.0-beta.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Orrison/filament-tiptap-editor.git",
-                "reference": "2be3f158b2985cbe0c01c1090ca4f3dd5293ae09"
+                "url": "https://github.com/awcodes/filament-tiptap-editor.git",
+                "reference": "9eda96095d906b853abe74835413691021fed783"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Orrison/filament-tiptap-editor/zipball/2be3f158b2985cbe0c01c1090ca4f3dd5293ae09",
-                "reference": "2be3f158b2985cbe0c01c1090ca4f3dd5293ae09",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/9eda96095d906b853abe74835413691021fed783",
+                "reference": "9eda96095d906b853abe74835413691021fed783",
                 "shasum": ""
             },
             "require": {
@@ -52,16 +52,7 @@
                     "FilamentTiptapEditor\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "FilamentTiptapEditor\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "pint": [
-                    "vendor/bin/pint"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -82,15 +73,16 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/Orrison/filament-tiptap-editor/tree/feature/insert-media-signed-urls-3.x"
+                "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.0.0-beta.2"
             },
             "funding": [
                 {
-                    "type": "github",
-                    "url": "https://github.com/awcodes"
+                    "url": "https://github.com/awcodes",
+                    "type": "github"
                 }
             ],
-            "time": "2023-09-07T00:07:18+00:00"
+            "time": "2023-09-07T17:24:40+00:00"
         },
         {
             "name": "aws/aws-crt-php",
