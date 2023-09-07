@@ -26,7 +26,7 @@ class EngagementFactory extends Factory
             'recipient_id' => $recipient->id,
             'recipient_type' => $recipient->getMorphClass(),
             'subject' => fake()->sentence,
-            'description' => fake()->paragraph,
+            'body' => fake()->paragraph,
             'deliver_at' => fake()->dateTime,
         ];
     }

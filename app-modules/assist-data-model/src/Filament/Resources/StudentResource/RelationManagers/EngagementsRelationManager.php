@@ -55,7 +55,7 @@ class EngagementsRelationManager extends RelationManager
                 Fieldset::make('Content')
                     ->schema([
                         TextEntry::make('subject'),
-                        TextEntry::make('description'),
+                        TextEntry::make('body'),
                     ]),
                 RepeatableEntry::make('deliverables')
                     ->columnSpanFull()
@@ -86,7 +86,7 @@ class EngagementsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('id'),
                 TextColumn::make('subject'),
-                TextColumn::make('description'),
+                TextColumn::make('body'),
                 TextColumn::make('channels')
                     ->label('Delivery Channels')
                     ->state(function (Engagement $record) {

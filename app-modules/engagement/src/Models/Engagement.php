@@ -25,7 +25,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property string|null $recipient_id
  * @property string|null $recipient_type
  * @property string $subject
- * @property string|null $description
+ * @property string|null $body
  * @property string $deliver_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -46,7 +46,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement query()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDeliverAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientType($value)
@@ -64,7 +64,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'user_id',
         'engagement_batch_id',
         'subject',
-        'description',
+        'body',
         'recipient_id',
         'recipient_type',
         'deliver_at',

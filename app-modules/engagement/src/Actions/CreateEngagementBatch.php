@@ -45,7 +45,7 @@ class CreateEngagementBatch implements ShouldQueue
                 'recipient_id' => $record->identifier(),
                 'recipient_type' => $record->getMorphClass(),
                 'subject' => $this->data['subject'],
-                'description' => $this->data['description'],
+                'body' => $this->data['body'],
                 // TODO Determine if we want to support future delivery fot batching
                 // If so, we might need to carry the delivery time upwards to the batch itself
                 // And have an independent process that picks up batch engagements similar

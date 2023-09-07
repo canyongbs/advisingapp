@@ -58,7 +58,7 @@ class ViewEngagement extends ViewRecord
                     ->schema([
                         TextEntry::make('subject')
                             ->translateLabel(),
-                        TextEntry::make('description')
+                        TextEntry::make('body')
                             ->translateLabel(),
                     ]),
             ]);
