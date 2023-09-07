@@ -6,8 +6,8 @@ use Filament\Actions;
 use Filament\Forms\Form;
 use App\Models\Institution;
 use Filament\Forms\Components\Radio;
+use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
-use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
@@ -61,7 +61,7 @@ class EditKnowledgeBaseItem extends EditRecord
                     ->searchable(['name', 'code'])
                     ->preload()
                     ->exists((new Institution())->getTable(), (new Institution())->getKeyName()),
-                \App\Filament\Fields\TiptapEditor::make('solution')
+                TiptapEditor::make('solution')
                     ->label('Solution')
                     ->translateLabel()
                     ->columnSpanFull()

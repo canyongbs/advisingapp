@@ -5,8 +5,8 @@ namespace Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Page
 use Filament\Forms\Form;
 use App\Models\Institution;
 use Filament\Forms\Components\Radio;
+use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
-use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
@@ -60,7 +60,7 @@ class CreateKnowledgeBaseItem extends CreateRecord
                     ->searchable(['name', 'code'])
                     ->preload()
                     ->exists((new Institution())->getTable(), (new Institution())->getKeyName()),
-                \App\Filament\Fields\TiptapEditor::make('solution')
+                TiptapEditor::make('solution')
                     ->label('Solution')
                     ->translateLabel()
                     ->columnSpanFull()
