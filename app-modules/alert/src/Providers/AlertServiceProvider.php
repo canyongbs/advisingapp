@@ -6,6 +6,7 @@ use Filament\Panel;
 use Assist\Alert\AlertPlugin;
 use Assist\Alert\Models\Alert;
 use Illuminate\Support\ServiceProvider;
+use Assist\Alert\Observers\AlertObserver;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
@@ -24,6 +25,8 @@ class AlertServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+
+        $this->registerObservers();
     }
 
     protected function registerRolesAndPermissions()
@@ -51,5 +54,10 @@ class AlertServiceProvider extends ServiceProvider
             module: 'alert',
             path: 'roles/web'
         );
+    }
+
+    protected function registerObservers(): void
+    {
+        Alert::observe(AlertObserver::class);
     }
 }
