@@ -57,7 +57,7 @@ class CreateEngagementBatch implements ShouldQueue
         });
 
         $batch = Bus::batch($deliverEngagementJobs)
-            ->name('Process Bulk Engagement {$engagementBatch->id}')
+            ->name("Process Bulk Engagement {$engagementBatch->id}")
             ->finally(function (Batch $batchQueue) use ($engagementBatch) {
                 $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->processedJobs(), $batchQueue->failedJobs));
             })
