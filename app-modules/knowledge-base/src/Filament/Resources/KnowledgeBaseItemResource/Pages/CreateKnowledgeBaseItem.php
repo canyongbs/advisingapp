@@ -5,8 +5,8 @@ namespace Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Page
 use Filament\Forms\Form;
 use App\Models\Institution;
 use Filament\Forms\Components\Radio;
+use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
-use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;

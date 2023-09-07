@@ -183,7 +183,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable
             table: 'engagement_file_entities',
             foreignPivotKey: 'entity_id',
             relatedPivotKey: 'engagement_file_id',
-            relation: 'prospects',
+            relation: 'engagementFiles',
         )
             ->using(EngagementFileEntities::class)
             ->withTimestamps();
