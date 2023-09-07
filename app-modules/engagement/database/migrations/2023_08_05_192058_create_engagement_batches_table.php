@@ -12,7 +12,8 @@ return new class () extends Migration {
             // TODO Figure out how we're going to identify the batches
             $table->string('identifier')->unique()->nullable();
             $table->foreignUuid('user_id')->constrained('users');
-            $table->foreignUuid('job_batch_id')->nullable()->constrained('job_batches');
+            // I've removed the constraint here, as that was causing issues in tests.
+            $table->uuid('job_batch_id')->nullable();
             $table->timestamps();
         });
     }

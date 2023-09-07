@@ -25,8 +25,6 @@ class DeliverEngagement implements ShouldQueue
 
     public function handle(): void
     {
-        ray('DeliverEngagement()');
-
         $this->engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
             $deliverable->deliver();
         });

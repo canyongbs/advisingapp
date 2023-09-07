@@ -23,11 +23,6 @@ abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueu
 
     public function handle(): void
     {
-        ray('QueuedEngagementDelivery()');
-
-        // TODO Remove this simulation of the delivery taking a bit of time...
-        sleep(5);
-
         $this->deliver();
     }
 }

@@ -32,13 +32,10 @@ class CreateEngagementBatch implements ShouldQueue
 
     public function handle(): void
     {
-        ray('CreateEngagementBatch()');
-
         $engagementBatch = EngagementBatch::create([
             'user_id' => $this->user->id,
         ]);
 
-        // Create Engagements for each record
         $this->records->each(function (Student|Prospect $record) use ($engagementBatch) {
             $engagement = $engagementBatch->engagements()->create([
                 'user_id' => $engagementBatch->user_id,
@@ -46,10 +43,7 @@ class CreateEngagementBatch implements ShouldQueue
                 'recipient_type' => $record->getMorphClass(),
                 'subject' => $this->data['subject'],
                 'body' => $this->data['body'],
-                // TODO Determine if we want to support future delivery fot batching
-                // If so, we might need to carry the delivery time upwards to the batch itself
-                // And have an independent process that picks up batch engagements similar
-                // To how it currently picks up individual engagements
+                // TODO Determine if we want to support future delivery for batches
                 // 'deliver_at' => $data['deliver_at'],
             ]);
 
@@ -62,16 +56,12 @@ class CreateEngagementBatch implements ShouldQueue
             return new DeliverEngagement($engagement);
         });
 
-        // After we've done this, we'll want to dispatch the batch job
         $batch = Bus::batch($deliverEngagementJobs)
+            ->name('Process Bulk Engagement')
             ->finally(function (Batch $batchQueue) use ($engagementBatch) {
-                // TODO Currently we have handling in place for sending notifications of success
-                // Or a warning if at least one job in the batch failed
-                // But, we might also want to be able to let users know if ALL jobs in a batch failed
                 $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->processedJobs(), $batchQueue->failedJobs));
             })
             ->allowFailures()
-            ->name('Process Bulk Engagement')
             ->dispatch();
 
         $engagementBatch->update([
