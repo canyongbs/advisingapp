@@ -12,7 +12,7 @@
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
-        "awcodes/filament-tiptap-editor": "^3.0@beta",
+        "awcodes/filament-tiptap-editor": "dev-feature/insert-media-signed-urls-3.x",
         "bvtterfly/model-state-machine": "^0.3.0",
         "canyon-gbs/assist-data-model": "*",
         "canyon-gbs/audit": "*",
@@ -176,6 +176,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/canyongbs/laravel-auditing"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Orrison/filament-tiptap-editor.git"
         }
     ]
 }

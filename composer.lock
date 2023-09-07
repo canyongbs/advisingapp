@@ -4,24 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f006b859e6937c94d3aacd8be220f714",
+    "content-hash": "71e2dd093d28342dcc162cba931969d2",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.0.0-beta.1",
+            "version": "dev-feature/insert-media-signed-urls-3.x",
             "source": {
                 "type": "git",
-                "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "9ec2dceec29d5fc06245341633291136aceb8a99"
+                "url": "https://github.com/Orrison/filament-tiptap-editor.git",
+                "reference": "2be3f158b2985cbe0c01c1090ca4f3dd5293ae09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/9ec2dceec29d5fc06245341633291136aceb8a99",
-                "reference": "9ec2dceec29d5fc06245341633291136aceb8a99",
+                "url": "https://api.github.com/repos/Orrison/filament-tiptap-editor/zipball/2be3f158b2985cbe0c01c1090ca4f3dd5293ae09",
+                "reference": "2be3f158b2985cbe0c01c1090ca4f3dd5293ae09",
                 "shasum": ""
             },
             "require": {
-                "filament/filament": "^3.0@beta",
+                "filament/filament": "^3.0",
                 "intervention/image": "^2.7",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.9.2",
@@ -29,8 +29,8 @@
             },
             "require-dev": {
                 "laravel/pint": "^1.0",
-                "nunomaduro/collision": "^6.0|^7.0",
-                "orchestra/testbench": "^7.0|^8.0",
+                "nunomaduro/collision": "^7.0",
+                "orchestra/testbench": "^8.0",
                 "spatie/laravel-ray": "^1.26"
             },
             "type": "package",
@@ -52,7 +52,16 @@
                     "FilamentTiptapEditor\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "FilamentTiptapEditor\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "pint": [
+                    "vendor/bin/pint"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -73,16 +82,15 @@
                 "wysiwyg"
             ],
             "support": {
-                "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.0.0-beta.1"
+                "source": "https://github.com/Orrison/filament-tiptap-editor/tree/feature/insert-media-signed-urls-3.x"
             },
             "funding": [
                 {
-                    "url": "https://github.com/awcodes",
-                    "type": "github"
+                    "type": "github",
+                    "url": "https://github.com/awcodes"
                 }
             ],
-            "time": "2023-08-06T17:02:35+00:00"
+            "time": "2023-09-07T00:07:18+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -16117,7 +16125,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "awcodes/filament-tiptap-editor": 10,
         "livewire/livewire": 10
     },
     "prefer-stable": true,

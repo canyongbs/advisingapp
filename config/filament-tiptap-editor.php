@@ -1,5 +1,7 @@
 <?php
 
+use App\Filament\Actions\MediaAction;
+
 return [
     'direction' => 'ltr',
     'max_content_width' => '5xl',
@@ -45,7 +47,7 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'media_action' => FilamentTiptapEditor\Actions\MediaAction::class,
+    'media_action' => MediaAction::class,
     //    'media_action' => Awcodes\Curator\Actions\MediaAction::class,
     'link_action' => FilamentTiptapEditor\Actions\LinkAction::class,
 
@@ -75,7 +77,7 @@ return [
     'accepted_file_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf'],
     'disk' => 's3',
     'directory' => 'kb-images',
-    'visibility' => 'public',
+    'visibility' => 'private',
     'preserve_file_names' => false,
     'max_file_size' => 2042,
     'image_crop_aspect_ratio' => null,
