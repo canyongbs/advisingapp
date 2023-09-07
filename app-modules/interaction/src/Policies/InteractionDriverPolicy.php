@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\InteractionDriver\Policies;
+namespace Assist\Interaction\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;

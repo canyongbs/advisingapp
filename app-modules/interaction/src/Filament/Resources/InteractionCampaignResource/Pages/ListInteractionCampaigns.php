@@ -2,13 +2,40 @@
 
 namespace Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
 
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
 use Filament\Actions;
+use Filament\Tables\Table;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
 
 class ListInteractionCampaigns extends ListRecords
 {
     protected static string $resource = InteractionCampaignResource::class;
+
+    public function table(Table $table): Table
+    {
+        return parent::table($table)
+            ->columns([
+                TextColumn::make('name'),
+            ])
+            ->filters([
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ])
+            ->emptyStateActions([
+                CreateAction::make(),
+            ]);
+    }
 
     protected function getHeaderActions(): array
     {

@@ -13,6 +13,7 @@ use Assist\Interaction\Models\InteractionOutcome;
 use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Interaction\Observers\InteractionObserver;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class InteractionServiceProvider extends ServiceProvider
@@ -34,6 +35,7 @@ class InteractionServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+        $this->bootObservers();
     }
 
     protected function registerRolesAndPermissions()
@@ -61,5 +63,10 @@ class InteractionServiceProvider extends ServiceProvider
             module: 'interaction',
             path: 'roles/web'
         );
+    }
+
+    protected function bootObservers(): void
+    {
+        Interaction::observe(InteractionObserver::class);
     }
 }

@@ -14,6 +14,21 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
 {
     use AuditableTrait;
 
+    protected $fillable = [
+        'user_id',
+        'interactable_id',
+        'interactable_type',
+        'interaction_campaign_id',
+        'interaction_driver_id',
+        'interaction_outcome_id',
+        'interaction_status_id',
+        'interaction_type_id',
+        'start_datetime',
+        'end_datetime',
+        'subject',
+        'description',
+    ];
+
     public function getSubscribable(): ?Subscribable
     {
         return $this->interactable instanceof Subscribable ? $this->interactable : null;

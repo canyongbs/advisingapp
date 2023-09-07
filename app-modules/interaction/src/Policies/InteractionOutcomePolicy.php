@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\InteractionOutcome\Policies;
+namespace Assist\Interaction\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;

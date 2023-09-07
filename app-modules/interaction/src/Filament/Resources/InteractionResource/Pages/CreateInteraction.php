@@ -2,11 +2,90 @@
 
 namespace Assist\Interaction\Filament\Resources\InteractionResource\Pages;
 
-use Assist\Interaction\Filament\Resources\InteractionResource;
-use Filament\Actions;
+use Filament\Forms\Form;
+use Assist\Prospect\Models\Prospect;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\DateTimePicker;
+use Assist\Interaction\Models\InteractionType;
+use Assist\Interaction\Models\InteractionDriver;
+use Assist\Interaction\Models\InteractionStatus;
+use Assist\Interaction\Models\InteractionOutcome;
+use Assist\Interaction\Models\InteractionCampaign;
+use Assist\ServiceManagement\Models\ServiceRequest;
+use Assist\Interaction\Filament\Resources\InteractionResource;
 
 class CreateInteraction extends CreateRecord
 {
     protected static string $resource = InteractionResource::class;
+
+    public function form(Form $form): Form
+    {
+        return parent::form($form)
+            ->schema([
+                MorphToSelect::make('interactable')
+                    ->label('Interacted With')
+                    ->translateLabel()
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->types([
+                        MorphToSelect\Type::make(Student::class)
+                            ->titleAttribute('full'),
+                        MorphToSelect\Type::make(Prospect::class)
+                            ->titleAttribute('full'),
+                        MorphToSelect\Type::make(ServiceRequest::class)
+                            ->label('Service Request')
+                            ->titleAttribute('service_request_number'),
+                    ]),
+                Fieldset::make('Details')
+                    ->schema([
+                        Select::make('interaction_campaign_id')
+                            ->relationship('campaign', 'name')
+                            ->preload()
+                            ->label('Campaign')
+                            ->required()
+                            ->exists((new InteractionCampaign())->getTable(), 'id'),
+                        Select::make('interaction_driver_id')
+                            ->relationship('driver', 'name')
+                            ->preload()
+                            ->label('Driver')
+                            ->required()
+                            ->exists((new InteractionDriver())->getTable(), 'id'),
+                        Select::make('interaction_outcome_id')
+                            ->relationship('outcome', 'name')
+                            ->preload()
+                            ->label('Outcome')
+                            ->required()
+                            ->exists((new InteractionOutcome())->getTable(), 'id'),
+                        Select::make('interaction_status_id')
+                            ->relationship('status', 'name')
+                            ->preload()
+                            ->label('Status')
+                            ->required()
+                            ->exists((new InteractionStatus())->getTable(), 'id'),
+                        Select::make('interaction_type_id')
+                            ->relationship('type', 'name')
+                            ->preload()
+                            ->label('Type')
+                            ->required()
+                            ->exists((new InteractionType())->getTable(), 'id'),
+                    ]),
+                Fieldset::make('Time')
+                    ->schema([
+                        DateTimePicker::make('start_datetime'),
+                        DateTimePicker::make('end_datetime'),
+                    ]),
+                Fieldset::make('Notes')
+                    ->schema([
+                        TextInput::make('subject'),
+                        Textarea::make('description'),
+                    ]),
+            ]);
+    }
 }
