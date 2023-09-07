@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Task\Database\Seeders\TaskSeeder;
+use Illuminate\Support\Facades\Notification;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
@@ -23,6 +24,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // TODO Let's talk about this
+        Notification::fake();
+
         Artisan::call(SyncRolesAndPermissions::class);
 
         $this->call([

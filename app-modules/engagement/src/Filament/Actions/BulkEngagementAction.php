@@ -76,7 +76,7 @@ class BulkEngagementAction
                     ]),
             ])
             ->action(function (Collection $records, array $data) {
-                auth()->user()->notify(new EngagementBatchStartedNotification());
+                auth()->user()->notify(new EngagementBatchStartedNotification(recordsToProcess: $records->count()));
 
                 CreateEngagementBatch::dispatch(auth()->user(), $records, $data);
             })

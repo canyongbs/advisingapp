@@ -14,6 +14,7 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
     use Queueable;
 
     public function __construct(
+        public int $recordsToProcess,
     ) {}
 
     public function via(User $notifiable): array
@@ -24,7 +25,8 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject("We've started processing your bulk engagement, and we'll keep you updated on the progress.");
+            ->subject('Bulk Engagement processing started')
+            ->line("We've started processing your bulk engagement of {$this->recordsToProcess} records, and we'll keep you updated on the progress.");
     }
 
     public function toDatabase(User $notifiable): array
@@ -32,6 +34,7 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
         return FilamentNotification::make()
             ->status('success')
             ->title('Bulk Engagement processing started')
+            ->body("{$this->recordsToProcess} records due for processing.")
             ->getDatabaseMessage();
     }
 }
