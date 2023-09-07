@@ -4,10 +4,16 @@ namespace Assist\Interaction\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use Assist\Interaction\InteractionPlugin;
+use Assist\Interaction\Models\Interaction;
+use Assist\Interaction\Models\InteractionType;
+use Assist\Interaction\Models\InteractionDriver;
+use Assist\Interaction\Models\InteractionStatus;
+use Assist\Interaction\Models\InteractionOutcome;
+use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Interaction\InteractionPlugin;
 
 class InteractionServiceProvider extends ServiceProvider
 {
@@ -18,7 +24,14 @@ class InteractionServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+            'interaction' => Interaction::class,
+            'interaction_campaign' => InteractionCampaign::class,
+            'interaction_driver' => InteractionDriver::class,
+            'interaction_outcome' => InteractionOutcome::class,
+            'interaction_status' => InteractionStatus::class,
+            'interaction_type' => InteractionType::class,
+        ]);
 
         $this->registerRolesAndPermissions();
     }

@@ -17,6 +17,8 @@ return new class () extends Migration {
             $table->foreignUuid('driver_id')->nullable()->constrained('interaction_drivers');
             $table->foreignUuid('status_id')->nullable()->constrained('interaction_statuses');
             $table->foreignUuid('outcome_id')->nullable()->constrained('interaction_outcomes');
+            // TODO I need to figure out how institutions will work here
+            // $table->foreignUuid('institution_id')->nullable()->constrained('institutions');
             $table->timestamp('start_datetime');
             $table->timestamp('end_datetime')->nullable();
             $table->string('subject')->nullable();
