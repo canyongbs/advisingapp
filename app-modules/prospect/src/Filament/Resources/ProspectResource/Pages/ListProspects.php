@@ -11,6 +11,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 
 class ListProspects extends ListRecords
 {
@@ -20,10 +21,6 @@ class ListProspects extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->translateLabel()
-                    ->sortable(),
                 TextColumn::make('full')
                     ->label('Name')
                     ->translateLabel()
@@ -53,6 +50,7 @@ class ListProspects extends ListRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
+                    BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
                 ]),
             ]);

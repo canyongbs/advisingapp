@@ -26,18 +26,14 @@ class ViewEngagement extends ViewRecord
                 TextEntry::make('id')
                     ->label('ID')
                     ->translateLabel(),
-                TextEntry::make('user')
+                TextEntry::make('user.name')
                     ->label('Created By')
                     ->translateLabel()
                     ->color('primary')
-                    ->state(function (Engagement $record): string {
-                        return $record->user->name;
-                    })
                     ->url(function (Engagement $record) {
                         return UserResource::getUrl('view', ['record' => $record->user->id]);
                     }),
                 TextEntry::make('recipient')
-                    ->label('Recipient')
                     ->translateLabel()
                     ->color('primary')
                     ->state(function (Engagement $record): string {
@@ -62,7 +58,7 @@ class ViewEngagement extends ViewRecord
                     ->schema([
                         TextEntry::make('subject')
                             ->translateLabel(),
-                        TextEntry::make('description')
+                        TextEntry::make('body')
                             ->translateLabel(),
                     ]),
             ]);

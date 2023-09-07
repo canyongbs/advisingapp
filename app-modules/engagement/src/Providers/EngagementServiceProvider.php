@@ -8,12 +8,14 @@ use Illuminate\Support\ServiceProvider;
 use Assist\Engagement\Models\Engagement;
 use Illuminate\Console\Scheduling\Schedule;
 use Assist\Engagement\Models\EngagementFile;
+use Assist\Engagement\Models\EngagementBatch;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\Engagement\Actions\DeliverEngagements;
 use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Observers\EngagementObserver;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Engagement\Observers\EngagementBatchObserver;
 use Assist\Engagement\Observers\EngagementFileEntitiesObserver;
 
 class EngagementServiceProvider extends ServiceProvider
@@ -28,6 +30,7 @@ class EngagementServiceProvider extends ServiceProvider
         Relation::morphMap([
             'engagement' => Engagement::class,
             'engagement_deliverable' => EngagementDeliverable::class,
+            'engagement_batch' => EngagementBatch::class,
             'engagement_response' => EngagementResponse::class,
             'engagement_file' => EngagementFile::class,
         ]);
@@ -43,5 +46,6 @@ class EngagementServiceProvider extends ServiceProvider
     {
         EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
         Engagement::observe(EngagementObserver::class);
+        EngagementBatch::observe(EngagementBatchObserver::class);
     }
 }

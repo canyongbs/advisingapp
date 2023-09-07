@@ -24,7 +24,7 @@ class ListEngagements extends ListRecords
                 TextColumn::make('user.name')
                     ->label('Created By'),
                 TextColumn::make('subject'),
-                TextColumn::make('description'),
+                TextColumn::make('body'),
                 TextColumn::make('recipient.full')
                     ->label('Recipient'),
             ])

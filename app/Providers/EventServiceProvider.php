@@ -7,19 +7,19 @@ use Illuminate\Auth\Events\Registered;
 use Assist\Audit\Listeners\AuditingListener;
 use Assist\Authorization\Events\RoleRemovedFromUser;
 use Illuminate\Notifications\Events\NotificationSent;
-use Assist\Engagement\Listeners\HandleNotificationSent;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Assist\Authorization\Events\RoleAttachedToRoleGroup;
 use Assist\Authorization\Events\UserAttachedToRoleGroup;
 use Assist\Authorization\Events\RoleRemovedFromRoleGroup;
 use Assist\Authorization\Events\UserRemovedFromRoleGroup;
-use Assist\Engagement\Listeners\HandleNotificationFailed;
 use Assist\Authorization\Listeners\HandleRoleRemovedFromUser;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Assist\Authorization\Listeners\HandleRoleAttachedToRoleGroup;
 use Assist\Authorization\Listeners\HandleUserAttachedToRoleGroup;
+use Assist\Engagement\Listeners\HandleEngagementNotificationSent;
 use Assist\Authorization\Listeners\HandleRoleRemovedFromRoleGroup;
 use Assist\Authorization\Listeners\HandleUserRemovedFromRoleGroup;
+use Assist\Engagement\Listeners\HandleEngagementNotificationFailed;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -55,10 +55,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         // Move this to the appropriate module - currently being used with Engagement
         NotificationSent::class => [
-            HandleNotificationSent::class,
+            HandleEngagementNotificationSent::class,
         ],
         NotificationFailed::class => [
-            HandleNotificationFailed::class,
+            HandleEngagementNotificationFailed::class,
         ],
     ];
 

@@ -9,11 +9,12 @@ return new class () extends Migration {
     {
         Schema::create('engagements', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->nullable();
+            $table->foreignUuid('user_id')->nullable()->constrained('users');
+            $table->foreignUuid('engagement_batch_id')->nullable()->constrained('engagement_batches');
             $table->string('recipient_id')->nullable();
             $table->string('recipient_type')->nullable();
             $table->string('subject');
-            $table->longText('description')->nullable();
+            $table->longText('body')->nullable();
             $table->timestamp('deliver_at');
             $table->timestamps();
         });
