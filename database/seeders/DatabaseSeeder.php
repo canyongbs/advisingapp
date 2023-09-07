@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // TODO Let's talk about this
+        // Reduce notifications sent during seeding
         Notification::fake();
 
         Artisan::call(SyncRolesAndPermissions::class);

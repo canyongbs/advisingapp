@@ -30,6 +30,7 @@ class EngagementServiceProvider extends ServiceProvider
         Relation::morphMap([
             'engagement' => Engagement::class,
             'engagement_deliverable' => EngagementDeliverable::class,
+            'engagement_batch' => EngagementBatch::class,
             'engagement_response' => EngagementResponse::class,
             'engagement_file' => EngagementFile::class,
         ]);
