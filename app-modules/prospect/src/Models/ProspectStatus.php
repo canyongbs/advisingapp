@@ -47,7 +47,6 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  */
 class ProspectStatus extends BaseModel implements Auditable
 {
-    use HasUuids;
     use SoftDeletes;
     use AuditableTrait;
 

@@ -25,6 +25,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
+use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
@@ -62,6 +63,7 @@ class Student extends Model implements Auditable, Subscribable
     use Notifiable;
     use HasManyMorphedEngagements;
     use HasManyMorphedEngagementResponses;
+    use HasManyMorphedInteractions;
 
     protected $primaryKey = 'sisid';
 

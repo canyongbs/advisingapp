@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
@@ -88,6 +89,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use PowerJoins;
     use AuditableTrait;
     use HasUuids;
+    use HasManyMorphedInteractions;
 
     protected $fillable = [
         'respondent_type',

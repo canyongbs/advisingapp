@@ -2,10 +2,17 @@
 
 namespace Assist\Interaction\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Interaction\Models\Concerns\HasManyInteractions;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-class InteractionType extends Model
+class InteractionType extends BaseModel implements Auditable
 {
-    use HasFactory;
+    use AuditableTrait;
+    use HasManyInteractions;
+
+    protected $fillable = [
+        'name',
+    ];
 }
