@@ -5,6 +5,7 @@ namespace Assist\Engagement\Database\Factories;
 use App\Models\User;
 use Assist\Prospect\Models\Prospect;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -58,6 +59,13 @@ class EngagementFactory extends Factory
     {
         return $this->state([
             'deliver_at' => fake()->dateTimeBetween('+1 day', '+1 week'),
+        ]);
+    }
+
+    public function ofBatch(): self
+    {
+        return $this->state([
+            'engagement_batch_id' => EngagementBatch::factory(),
         ]);
     }
 }

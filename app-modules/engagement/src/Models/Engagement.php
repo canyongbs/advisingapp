@@ -118,7 +118,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function scopeIsNotPartOfABatch(Builder $query): void
     {
-        $query->whereNull('batch_id');
+        $query->whereNull('engagement_batch_id');
     }
 
     public function hasBeenDelivered(): bool
