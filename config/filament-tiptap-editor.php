@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Actions\MediaAction;
+use FilamentTiptapEditor\Actions\MediaAction;
 
 return [
     'direction' => 'ltr',

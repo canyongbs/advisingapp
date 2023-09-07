@@ -3,7 +3,9 @@
 namespace App\Filament\Fields;
 
 use App\Support\TiptapMediaEncoder;
+use App\Filament\Actions\MediaAction;
 use FilamentTiptapEditor\TiptapEditor as BaseTiptapEditor;
+use FilamentTiptapEditor\Actions\MediaAction as FilamentTiptapEditorMediaAction;
 
 class TiptapEditor extends BaseTiptapEditor
 {
@@ -11,18 +13,27 @@ class TiptapEditor extends BaseTiptapEditor
     {
         parent::setUp();
 
+        $this->actions = collect($this->actions)
+            ->filter(function ($action) {
+                return $action::class !== FilamentTiptapEditorMediaAction::class;
+            })
+            ->push(MediaAction::make())
+            ->toArray();
+
         $this->afterStateHydrated(function (BaseTiptapEditor $component, string | array | null $state) {
             if (! $state) {
                 $component->state('<p></p>');
             }
 
-            $component->state(TiptapMediaEncoder::decode($component, $state));
+            if (! empty($state)) {
+                $component->state(TiptapMediaEncoder::decode($state));
+            }
 
             $component->state($component->getHTML());
         });
 
         $this->dehydrateStateUsing(function (BaseTiptapEditor $component, string | array | null $state) {
-            $state = TiptapMediaEncoder::encode($component, $state);
+            $state = TiptapMediaEncoder::encode($component->getDisk(), $state);
 
             $component->state($state);
 
