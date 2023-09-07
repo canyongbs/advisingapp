@@ -7,6 +7,7 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Task\Models\Task;
+use Assist\Alert\Models\Alert;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use Assist\Engagement\Models\Engagement;
@@ -198,6 +199,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Identifiabl
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'concern');
+    }
+
+    public function alerts(): MorphMany
+    {
+        return $this->morphMany(Alert::class, 'concern');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

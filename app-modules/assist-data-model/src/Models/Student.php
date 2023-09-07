@@ -4,6 +4,7 @@ namespace Assist\AssistDataModel\Models;
 
 use Eloquent;
 use Assist\Task\Models\Task;
+use Assist\Alert\Models\Alert;
 use Assist\Audit\Models\Audit;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
@@ -107,6 +108,11 @@ class Student extends Model implements Auditable, Subscribable, Identifiable
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'concern');
+    }
+
+    public function alerts(): MorphMany
+    {
+        return $this->morphMany(Alert::class, 'concern');
     }
 
     public function subscriptions(): MorphMany
