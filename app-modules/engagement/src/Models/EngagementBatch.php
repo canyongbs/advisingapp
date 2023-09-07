@@ -13,7 +13,6 @@ class EngagementBatch extends BaseModel
 
     protected $fillable = [
         'user_id',
-        'job_batch_id',
     ];
 
     public function user(): BelongsTo
