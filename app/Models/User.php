@@ -57,6 +57,10 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  * @property-read int|null $alerts_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read Collection<int, \Assist\Engagement\Models\EngagementBatch> $engagementBatches
+ * @property-read int|null $engagement_batches_count
+ * @property-read Collection<int, \Assist\Engagement\Models\Engagement> $engagements
+ * @property-read int|null $engagements_count
  * @property-read mixed $is_admin
  * @property-read mixed $type_label
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
