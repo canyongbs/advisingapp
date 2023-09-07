@@ -5,11 +5,14 @@ namespace Assist\Alert\Providers;
 use Filament\Panel;
 use Assist\Alert\AlertPlugin;
 use Assist\Alert\Models\Alert;
+use Assist\Alert\Events\AlertCreated;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Assist\Alert\Observers\AlertObserver;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
+use Assist\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
 class AlertServiceProvider extends ServiceProvider
 {
@@ -27,6 +30,8 @@ class AlertServiceProvider extends ServiceProvider
         $this->registerRolesAndPermissions();
 
         $this->registerObservers();
+
+        $this->registerEvents();
     }
 
     protected function registerRolesAndPermissions()
@@ -59,5 +64,13 @@ class AlertServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         Alert::observe(AlertObserver::class);
+    }
+
+    protected function registerEvents(): void
+    {
+        Event::listen(
+            AlertCreated::class,
+            NotifySubscribersOfAlertCreated::class
+        );
     }
 }
