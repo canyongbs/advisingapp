@@ -4,14 +4,15 @@ namespace Assist\Alert\Observers;
 
 use Assist\Alert\Models\Alert;
 use Assist\Alert\Events\AlertCreated;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
+use Assist\Notifications\Actions\SubscriptionCreate;
 
 class AlertObserver
 {
     public function created(Alert $alert): void
     {
         if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $alert);
+            // Creating the subscription directly so that the alert can be sent to this User as well
+            resolve(SubscriptionCreate::class)->handle($user, $alert->getSubscribable(), false);
         }
 
         AlertCreated::dispatch($alert);
