@@ -58,6 +58,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property-read Collection<int, Alert> $alerts
+ * @property-read int|null $alerts_count
  * @property-read User|null $assignedTo
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count

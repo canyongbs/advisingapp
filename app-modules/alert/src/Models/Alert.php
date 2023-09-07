@@ -24,15 +24,16 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property string $concern_type
  * @property string $concern_id
  * @property string $description
- * @property string $severity
+ * @property AlertSeverity $severity
  * @property string $suggested_intervention
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Model|Eloquent $concern
+ * @property-read Model|\Eloquent $concern
  *
+ * @method static \Assist\Alert\Database\Factories\AlertFactory factory($count = null, $state = [])
  * @method static Builder|Alert newModelQuery()
  * @method static Builder|Alert newQuery()
  * @method static Builder|Alert onlyTrashed()

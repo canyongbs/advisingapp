@@ -3,6 +3,7 @@
 namespace Assist\Alert\Observers;
 
 use Assist\Alert\Models\Alert;
+use Assist\Alert\Events\AlertCreated;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 
 class AlertObserver
@@ -12,5 +13,7 @@ class AlertObserver
         if ($user = auth()->user()) {
             TriggeredAutoSubscription::dispatch($user, $alert);
         }
+
+        AlertCreated::dispatch($alert);
     }
 }

@@ -32,6 +32,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 /**
  * Assist\AssistDataModel\Models\Student
  *
+ * @property-read Collection<int, Alert> $alerts
+ * @property-read int|null $alerts_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
  * @property-read Collection<int, EngagementFile> $engagementFiles
