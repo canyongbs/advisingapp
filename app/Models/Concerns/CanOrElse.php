@@ -6,8 +6,8 @@ use Illuminate\Auth\Access\Response;
 
 trait CanOrElse
 {
-    // For now, this is assuming the operator is 'or'
-    // Though we may want to provide support for 'and' also
+    // For now, this is assuming the operator is always 'or'
+    // Though we may also want to provide support for 'and'
     public function canOrElse(iterable|string $abilities, string $denyResponse, mixed $arguments = []): Response
     {
         $abilities = is_iterable($abilities) ? $abilities : [$abilities];

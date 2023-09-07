@@ -12,11 +12,12 @@ return new class () extends Migration {
             $table->foreignUuid('user_id')->nullable()->constrained('users');
             $table->string('interactable_id')->nullable();
             $table->string('interactable_type')->nullable();
-            $table->foreignUuid('type_id')->nullable()->constrained('interaction_types');
-            $table->foreignUuid('campaign_id')->nullable()->constrained('interaction_campaigns');
-            $table->foreignUuid('driver_id')->nullable()->constrained('interaction_drivers');
-            $table->foreignUuid('status_id')->nullable()->constrained('interaction_statuses');
-            $table->foreignUuid('outcome_id')->nullable()->constrained('interaction_outcomes');
+            // TODO Might change these to lose the interaction prefix, but would have to change relationships
+            $table->foreignUuid('interaction_type_id')->nullable()->constrained('interaction_types');
+            $table->foreignUuid('interaction_campaign_id')->nullable()->constrained('interaction_campaigns');
+            $table->foreignUuid('interaction_driver_id')->nullable()->constrained('interaction_drivers');
+            $table->foreignUuid('interaction_status_id')->nullable()->constrained('interaction_statuses');
+            $table->foreignUuid('interaction_outcome_id')->nullable()->constrained('interaction_outcomes');
             // TODO I need to figure out how institutions will work here
             // $table->foreignUuid('institution_id')->nullable()->constrained('institutions');
             $table->timestamp('start_datetime');
