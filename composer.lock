@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71e2dd093d28342dcc162cba931969d2",
+    "content-hash": "d02d04c5e69cdca8a2e2d9b9449ff22b",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -686,6 +686,41 @@
                     "Assist\\IntegrationTwilio\\Tests\\": "tests/",
                     "Assist\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
                     "Assist\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/interaction",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/interaction",
+                "reference": "3af7de8ea9aa204e28cb246f3fd28cb8bae67bb7"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Interaction\\Providers\\InteractionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Interaction\\": "src/",
+                    "Assist\\Interaction\\Tests\\": "tests/",
+                    "Assist\\Interaction\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Interaction\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -16125,6 +16160,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "awcodes/filament-tiptap-editor": 20,
         "livewire/livewire": 10
     },
     "prefer-stable": true,
