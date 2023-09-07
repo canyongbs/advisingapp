@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
@@ -83,7 +84,7 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  *
  * @mixin Eloquent
  */
-class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription
+class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
 {
     use SoftDeletes;
     use PowerJoins;
@@ -138,6 +139,11 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         } while ($attempts < 3);
 
         return $save;
+    }
+
+    public function identifier(): string
+    {
+        return $this->id;
     }
 
     public function getSubscribable(): ?Subscribable

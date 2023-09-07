@@ -78,13 +78,17 @@ class CreateInteraction extends CreateRecord
                     ]),
                 Fieldset::make('Time')
                     ->schema([
-                        DateTimePicker::make('start_datetime'),
-                        DateTimePicker::make('end_datetime'),
+                        DateTimePicker::make('start_datetime')
+                            ->required(),
+                        DateTimePicker::make('end_datetime')
+                            ->required(),
                     ]),
                 Fieldset::make('Notes')
                     ->schema([
-                        TextInput::make('subject'),
-                        Textarea::make('description'),
+                        TextInput::make('subject')
+                            ->required(),
+                        Textarea::make('description')
+                            ->required(),
                     ]),
             ]);
     }

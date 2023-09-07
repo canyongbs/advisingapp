@@ -29,6 +29,11 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'description',
     ];
 
+    protected $casts = [
+        'start_datetime' => 'datetime',
+        'end_datetime' => 'datetime',
+    ];
+
     public function getSubscribable(): ?Subscribable
     {
         return $this->interactable instanceof Subscribable ? $this->interactable : null;

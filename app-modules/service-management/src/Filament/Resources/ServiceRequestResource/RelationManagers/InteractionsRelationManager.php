@@ -1,14 +1,14 @@
 <?php
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
+namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Component;
-use Assist\AssistDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationManager;
 use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use Assist\Interaction\Filament\ExternalRelationManagers\HasManyMorphedInteractionsRelationManager;
@@ -32,7 +32,7 @@ class InteractionsRelationManager extends RelationManager
                 Hidden::make('interactable_id')
                     ->default($this->ownerRecord->identifier()),
                 Hidden::make('interactable_type')
-                    ->default(resolve(Student::class)->getMorphClass()),
+                    ->default(resolve(ServiceRequest::class)->getMorphClass()),
                 ...$formComponents,
             ]);
     }

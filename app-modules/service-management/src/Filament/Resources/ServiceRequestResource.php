@@ -11,6 +11,7 @@ use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\Lis
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\CreatedByRelationManager;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\AssignedToRelationManager;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\InteractionsRelationManager;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\ServiceRequestUpdatesRelationManager;
 
 class ServiceRequestResource extends Resource
@@ -35,6 +36,7 @@ class ServiceRequestResource extends Resource
                 AssignedToRelationManager::class,
                 CreatedByRelationManager::class,
             ]),
+            InteractionsRelationManager::class,
         ];
     }
 
