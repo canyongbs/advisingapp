@@ -60,7 +60,7 @@ class CreateKnowledgeBaseItem extends CreateRecord
                     ->searchable(['name', 'code'])
                     ->preload()
                     ->exists((new Institution())->getTable(), (new Institution())->getKeyName()),
-                TiptapEditor::make('solution')
+                \App\Filament\Fields\TiptapEditor::make('solution')
                     ->label('Solution')
                     ->translateLabel()
                     ->columnSpanFull()
