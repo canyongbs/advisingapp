@@ -17,6 +17,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Notifications\Actions\SubscriptionToggle;
+use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 
@@ -50,6 +51,7 @@ class ListStudents extends ListRecords
                     BulkAction::make('toggle_subscription')
                         ->icon('heroicon-s-bell')
                         ->action(fn (Collection $records) => $records->each(fn (Student $record) => resolve(SubscriptionToggle::class)->handle(auth()->user(), $record))),
+                    BulkEngagementAction::make(context: 'students'),
                     DeleteBulkAction::make(),
                 ]),
             ])

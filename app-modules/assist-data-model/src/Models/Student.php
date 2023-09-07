@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -55,7 +56,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @mixin Eloquent
  */
-class Student extends Model implements Auditable, Subscribable
+class Student extends Model implements Auditable, Subscribable, Identifiable
 {
     use AuditableTrait;
     use HasFactory;
@@ -74,6 +75,11 @@ class Student extends Model implements Auditable, Subscribable
     protected $casts = [
         'sisid' => 'string',
     ];
+
+    public function identifier(): string
+    {
+        return $this->sisid;
+    }
 
     public function serviceRequests(): MorphMany
     {

@@ -25,7 +25,8 @@ class ViewInboundWebhook extends ViewRecord
                 TextEntry::make('url')
                     ->translateLabel(),
                 TextEntry::make('payload')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->limit(100),
             ]);
     }
 }

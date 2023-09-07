@@ -3,12 +3,12 @@
 namespace Assist\Engagement\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Events\NotificationSent;
 use Assist\Engagement\Notifications\EngagementNotification;
 
-class HandleNotificationFailed implements ShouldQueue
+class HandleEngagementNotificationSent implements ShouldQueue
 {
-    public function handle(NotificationFailed $event): void
+    public function handle(NotificationSent $event): void
     {
         if (! $event->notification instanceof EngagementNotification) {
             return;
@@ -20,6 +20,6 @@ class HandleNotificationFailed implements ShouldQueue
         /** @var EngagementDeliverable $deliverable */
         $deliverable = $notification->deliverable;
 
-        $deliverable->markDeliveryFailed();
+        $deliverable->markDeliverySuccessful();
     }
 }

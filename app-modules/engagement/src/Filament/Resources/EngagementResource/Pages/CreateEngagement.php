@@ -4,7 +4,6 @@ namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use Filament\Forms\Form;
 use Assist\Prospect\Models\Prospect;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Fieldset;
@@ -26,18 +25,44 @@ class CreateEngagement extends CreateRecord
     {
         return parent::form($form)
             ->schema([
-                // TODO Do this behind the scenes in the model
-                Hidden::make('user_id')
-                    ->default(auth()->user()->id),
-                TextInput::make('subject')
-                    ->autofocus()
+                // TODO Better validation error messages here, "You must select at least 1 delivery method"
+                Select::make('delivery_methods')
+                    ->label('How would you like to send this engagement?')
                     ->translateLabel()
-                    ->required()
-                    ->placeholder(__('Subject')),
-                Textarea::make('description')
-                    ->translateLabel()
-                    ->placeholder(__('Description'))
-                    ->columnSpanFull(),
+                    ->options(EngagementDeliveryMethod::class)
+                    ->multiple()
+                    ->minItems(1)
+                    ->validationAttribute('Delivery Methods')
+                    ->helperText('You can select multiple delivery methods.')
+                    ->reactive(),
+                Fieldset::make('Content')
+                    ->schema([
+                        TextInput::make('subject')
+                            ->autofocus()
+                            ->translateLabel()
+                            ->required()
+                            ->placeholder(__('Subject'))
+                            ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::EMAIL->value))
+                            ->helperText('The subject will only be used for the email delivery method.'),
+                        Textarea::make('body')
+                            ->translateLabel()
+                            ->placeholder(__('Body'))
+                            ->required()
+                            ->maxLength(function (callable $get) {
+                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::SMS->value)) {
+                                    return 320;
+                                }
+
+                                return 65535;
+                            })
+                            ->helperText(function (callable $get) {
+                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::SMS->value)) {
+                                    return 'The body of your message can be up to 320 characters long.';
+                                }
+
+                                return 'The body of your message can be up to 65,535 characters long.';
+                            }),
+                    ]),
                 MorphToSelect::make('recipient')
                     ->label('Recipient')
                     ->translateLabel()
@@ -59,15 +84,6 @@ class CreateEngagement extends CreateRecord
                             ->required()
                             ->visible(fn (callable $get) => $get('send_later')),
                     ]),
-                // TODO Better validation error messages here, "You must select at least 1 delivery method"
-                Select::make('delivery_methods')
-                    ->label('How would you like to send this engagement?')
-                    ->translateLabel()
-                    ->options(EngagementDeliveryMethod::class)
-                    ->multiple()
-                    ->minItems(1)
-                    ->validationAttribute('Delivery Methods')
-                    ->helperText('You can select multiple delivery methods.'),
             ]);
     }
 

@@ -30,9 +30,9 @@ class EditEngagement extends EditRecord
                     ->autofocus()
                     ->required()
                     ->placeholder(__('Subject')),
-                Textarea::make('description')
+                Textarea::make('body')
                     ->autofocus()
-                    ->placeholder(__('Description'))
+                    ->placeholder(__('Body'))
                     ->columnSpanFull(),
                 MorphToSelect::make('recipient')
                     ->label('Recipient')

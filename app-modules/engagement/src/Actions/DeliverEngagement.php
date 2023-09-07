@@ -2,6 +2,7 @@
 
 namespace Assist\Engagement\Actions;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Assist\Engagement\Models\Engagement;
@@ -10,24 +11,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Assist\Engagement\Models\EngagementDeliverable;
 
-class DeliverEngagements implements ShouldQueue
+class DeliverEngagement implements ShouldQueue
 {
+    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    public function __construct(
+        public Engagement $engagement
+    ) {}
+
     public function handle(): void
     {
-        Engagement::query()
-            ->where('deliver_at', '<=', now())
-            ->hasNotBeenDelivered()
-            ->isNotPartOfABatch()
-            ->cursor()
-            ->each(function (Engagement $engagement) {
-                $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
-                    $deliverable->deliver();
-                });
-            });
+        $this->engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
+            $deliverable->deliver();
+        });
     }
 }

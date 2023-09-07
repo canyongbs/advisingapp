@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -109,7 +110,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @mixin Eloquent
  */
-class Prospect extends BaseModel implements Auditable, Subscribable
+class Prospect extends BaseModel implements Auditable, Subscribable, Identifiable
 {
     use HasUuids;
     use SoftDeletes;
@@ -145,6 +146,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable
         'sms_opt_out' => 'boolean',
         'email_bounce' => 'boolean',
     ];
+
+    public function identifier(): string
+    {
+        return $this->id;
+    }
 
     public function assignedTo(): BelongsTo
     {

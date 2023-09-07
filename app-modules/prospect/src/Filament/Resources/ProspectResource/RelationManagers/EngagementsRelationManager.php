@@ -1,17 +1,17 @@
 <?php
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
+namespace Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Assist\Engagement\Models\Engagement;
 use Filament\Forms\Components\Component;
 use Filament\Tables\Actions\CreateAction;
-use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\IconEntry;
@@ -41,7 +41,7 @@ class EngagementsRelationManager extends RelationManager
                 Hidden::make('recipient_id')
                     ->default($this->ownerRecord->identifier()),
                 Hidden::make('recipient_type')
-                    ->default(resolve(Student::class)->getMorphClass()),
+                    ->default(resolve(Prospect::class)->getMorphClass()),
                 ...$formComponents,
             ]);
     }

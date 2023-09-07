@@ -89,3 +89,21 @@ it('will not dispatch a job to send an engagement that has already been delivere
     // A job to "send" the engagement should not be dispatched again
     Queue::assertPushed(EngagementEmailChannelDelivery::class, 1);
 });
+
+it('will not dispatch a job to send an engagement that is part of a batch', function () {
+    Queue::fake(EngagementEmailChannelDelivery::class);
+    Notification::fake();
+
+    // Given that we have an engagement
+    $engagement = Engagement::factory()
+        ->ofBatch()
+        ->deliverNow()
+        ->has(EngagementDeliverable::factory()->email()->count(1))
+        ->create();
+
+    // When our job runs to pick up engagements
+    DeliverEngagements::dispatchSync();
+
+    // This engagement should not be picked up and delivered
+    Queue::assertPushed(EngagementEmailChannelDelivery::class, 0);
+});

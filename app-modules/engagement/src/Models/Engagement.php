@@ -25,7 +25,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property string|null $recipient_id
  * @property string|null $recipient_type
  * @property string $subject
- * @property string|null $description
+ * @property string|null $body
  * @property string $deliver_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -46,7 +46,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement query()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDeliverAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientType($value)
@@ -62,8 +62,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     protected $fillable = [
         'user_id',
+        'engagement_batch_id',
         'subject',
-        'description',
+        'body',
         'recipient_id',
         'recipient_type',
         'deliver_at',
@@ -98,11 +99,26 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         );
     }
 
+    public function engagementBatch(): BelongsTo
+    {
+        return $this->belongsTo(EngagementBatch::class);
+    }
+
+    public function batch(): BelongsTo
+    {
+        return $this->engagementBatch();
+    }
+
     public function scopeHasNotBeenDelivered(Builder $query): void
     {
         $query->whereDoesntHave('engagementDeliverables', function (Builder $query) {
             $query->whereNotNull('delivered_at');
         });
+    }
+
+    public function scopeIsNotPartOfABatch(Builder $query): void
+    {
+        $query->whereNull('engagement_batch_id');
     }
 
     public function hasBeenDelivered(): bool
@@ -113,14 +129,5 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getSubscribable(): ?Subscribable
     {
         return $this->recipient instanceof Subscribable ? $this->recipient : null;
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($engagement) {
-            $engagement->deliver_at = $engagement->deliver_at ?? now();
-        });
     }
 }

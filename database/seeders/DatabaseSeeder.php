@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Task\Database\Seeders\TaskSeeder;
+use Illuminate\Support\Facades\Notification;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
-use Assist\Engagement\Database\Seeders\EngagementSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Reduce notifications sent during seeding
+        Notification::fake();
+
         Artisan::call(SyncRolesAndPermissions::class);
 
         $this->call([
@@ -42,7 +45,6 @@ class DatabaseSeeder extends Seeder
             KnowledgeBaseItemSeeder::class,
             TaskSeeder::class,
             StudentSeeder::class,
-            EngagementSeeder::class,
         ]);
     }
 }

@@ -52,6 +52,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
         'channel',
         'delivery_status',
         'delivered_at',
+        'last_delivery_attempt',
         'delivery_response',
     ];
 
@@ -59,6 +60,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
         'channel' => EngagementDeliveryMethod::class,
         'delivery_status' => EngagementDeliveryStatus::class,
         'delivered_at' => 'datetime',
+        'last_delivery_attempt' => 'datetime',
     ];
 
     public function engagement(): BelongsTo
@@ -76,6 +78,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
         $this->update([
             'delivery_status' => EngagementDeliveryStatus::SUCCESSFUL,
             'delivered_at' => now(),
+            'last_delivery_attempt' => now(),
         ]);
     }
 
@@ -83,6 +86,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
     {
         $this->update([
             'delivery_status' => EngagementDeliveryStatus::FAILED,
+            'last_delivery_attempt' => now(),
             'delivery_response' => $reason,
         ]);
     }
