@@ -2,10 +2,8 @@
 
 namespace Assist\Engagement\Actions;
 
-use App\Models\User;
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Assist\Prospect\Models\Prospect;
 use Illuminate\Queue\SerializesModels;
@@ -15,6 +13,9 @@ use Assist\AssistDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Assist\Engagement\Models\EngagementBatch;
+use Assist\Engagement\Models\EngagementDeliverable;
+use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use Assist\Engagement\Notifications\EngagementBatchStartedNotification;
 use Assist\Engagement\Notifications\EngagementBatchFinishedNotification;
 
 class CreateEngagementBatch implements ShouldQueue
@@ -25,41 +26,46 @@ class CreateEngagementBatch implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public User $user,
-        public Collection $records,
-        public array $data,
+        public EngagementBatchCreationData $data
     ) {}
 
     public function handle(): void
     {
         $engagementBatch = EngagementBatch::create([
-            'user_id' => $this->user->id,
+            'user_id' => $this->data->user->id,
         ]);
 
-        $this->records->each(function (Student|Prospect $record) use ($engagementBatch) {
+        $this->data->records->each(function (Student|Prospect $record) use ($engagementBatch) {
             $engagement = $engagementBatch->engagements()->create([
                 'user_id' => $engagementBatch->user_id,
                 'recipient_id' => $record->identifier(),
                 'recipient_type' => $record->getMorphClass(),
-                'subject' => $this->data['subject'],
-                'body' => $this->data['body'],
+                'subject' => $this->data->subject,
+                'body' => $this->data->body,
                 // TODO Determine if we want to support future delivery for batches
                 // 'deliver_at' => $data['deliver_at'],
             ]);
 
-            // Create Deliverables for each Engagement
             $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
-            $createDeliverablesForEngagement($engagement, $this->data['delivery_methods']);
+            $createDeliverablesForEngagement($engagement, $this->data->deliveryMethods);
         });
 
-        $deliverEngagementJobs = $engagementBatch->engagements->map(function (Engagement $engagement) {
-            return new DeliverEngagement($engagement);
+        $deliverables = $engagementBatch->engagements->map(function (Engagement $engagement) {
+            return $engagement->deliverables->each(function (EngagementDeliverable $deliverable) {
+                return $deliverable;
+            });
         });
 
-        $batch = Bus::batch($deliverEngagementJobs)
+        $deliverableJobs = $deliverables->flatten()->map(function (EngagementDeliverable $deliverable) {
+            return $deliverable->jobForDelivery();
+        });
+
+        $engagementBatch->user->notify(new EngagementBatchStartedNotification(jobsToProcess: $deliverableJobs->count()));
+
+        Bus::batch($deliverableJobs)
             ->name("Process Bulk Engagement {$engagementBatch->id}")
             ->finally(function (Batch $batchQueue) use ($engagementBatch) {
-                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->processedJobs(), $batchQueue->failedJobs));
+                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->totalJobs, $batchQueue->failedJobs));
             })
             ->allowFailures()
             ->dispatch();
