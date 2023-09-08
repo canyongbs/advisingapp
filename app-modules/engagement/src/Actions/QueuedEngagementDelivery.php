@@ -2,6 +2,7 @@
 
 namespace Assist\Engagement\Actions;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -12,6 +13,7 @@ use Assist\Engagement\Actions\Contracts\EngagementChannel;
 
 abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue
 {
+    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
