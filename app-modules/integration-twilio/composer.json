@@ -5,7 +5,7 @@
     "version": "1.0",
     "license": "proprietary",
     "require": {
-        "filament/filament": "^3.0-stable",
+        "filament/filament": "^3.0",
         "canyon-gbs/engagement": "*",
         "canyon-gbs/webhook": "*"
     },
@@ -17,7 +17,7 @@
             "Assist\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
