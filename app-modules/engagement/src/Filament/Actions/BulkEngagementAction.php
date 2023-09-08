@@ -11,7 +11,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Assist\Engagement\Actions\CreateEngagementBatch;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Notifications\EngagementBatchStartedNotification;
 
 class BulkEngagementAction
 {
@@ -76,8 +75,6 @@ class BulkEngagementAction
                     ]),
             ])
             ->action(function (Collection $records, array $data) {
-                auth()->user()->notify(new EngagementBatchStartedNotification(recordsToProcess: $records->count()));
-
                 CreateEngagementBatch::dispatch(auth()->user(), $records, $data);
             })
             ->modalSubmitActionLabel('Send')

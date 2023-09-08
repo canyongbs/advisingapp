@@ -13,7 +13,7 @@ return new class () extends Migration {
             $table->foreignUuid('engagement_batch_id')->nullable()->constrained('engagement_batches');
             $table->string('recipient_id')->nullable();
             $table->string('recipient_type')->nullable();
-            $table->string('subject');
+            $table->string('subject')->nullable();
             $table->longText('body')->nullable();
             $table->timestamp('deliver_at');
             $table->timestamps();

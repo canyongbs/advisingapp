@@ -7,6 +7,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Engagement\Actions\QueuedEngagementDelivery;
 use Assist\Engagement\Actions\EngagementSmsChannelDelivery;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Actions\EngagementEmailChannelDelivery;
@@ -89,6 +90,15 @@ class EngagementDeliverable extends BaseModel implements Auditable
             'last_delivery_attempt' => now(),
             'delivery_response' => $reason,
         ]);
+    }
+
+    public function jobForDelivery(): QueuedEngagementDelivery
+    {
+        return match ($this->channel) {
+            EngagementDeliveryMethod::EMAIL => new EngagementEmailChannelDelivery($this),
+            EngagementDeliveryMethod::SMS => new EngagementSmsChannelDelivery($this),
+            default => throw new UnknownDeliveryMethodException("Delivery channel '{$this->channel}' is not supported."),
+        };
     }
 
     public function deliver(): void

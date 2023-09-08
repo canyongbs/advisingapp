@@ -15,6 +15,8 @@ use Assist\AssistDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Assist\Engagement\Models\EngagementBatch;
+use Assist\Engagement\Models\EngagementDeliverable;
+use Assist\Engagement\Notifications\EngagementBatchStartedNotification;
 use Assist\Engagement\Notifications\EngagementBatchFinishedNotification;
 
 class CreateEngagementBatch implements ShouldQueue
@@ -47,19 +49,29 @@ class CreateEngagementBatch implements ShouldQueue
                 // 'deliver_at' => $data['deliver_at'],
             ]);
 
-            // Create Deliverables for each Engagement
             $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
             $createDeliverablesForEngagement($engagement, $this->data['delivery_methods']);
         });
 
-        $deliverEngagementJobs = $engagementBatch->engagements->map(function (Engagement $engagement) {
-            return new DeliverEngagement($engagement);
+        $deliverables = $engagementBatch->engagements->map(function (Engagement $engagement) {
+            return $engagement->deliverables->each(function (EngagementDeliverable $deliverable) {
+                return $deliverable;
+            });
         });
 
-        $batch = Bus::batch($deliverEngagementJobs)
+        $deliverableJobs = $deliverables->flatten()->map(function (EngagementDeliverable $deliverable) {
+            return $deliverable->jobForDelivery();
+        });
+
+        $engagementBatch->user->notify(new EngagementBatchStartedNotification(jobsToProcess: $deliverableJobs->count()));
+
+        Bus::batch($deliverableJobs)
             ->name("Process Bulk Engagement {$engagementBatch->id}")
             ->finally(function (Batch $batchQueue) use ($engagementBatch) {
-                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->processedJobs(), $batchQueue->failedJobs));
+                ray('finally()');
+                ray($engagementBatch->user);
+                $engagementBatch->user->notify(new EngagementBatchFinishedNotification($engagementBatch, $batchQueue->totalJobs, $batchQueue->failedJobs));
+                ray('after...');
             })
             ->allowFailures()
             ->dispatch();
