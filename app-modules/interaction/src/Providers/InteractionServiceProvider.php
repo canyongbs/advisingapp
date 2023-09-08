@@ -35,7 +35,7 @@ class InteractionServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
-        $this->bootObservers();
+        $this->registerObservers();
     }
 
     protected function registerRolesAndPermissions()
@@ -65,7 +65,7 @@ class InteractionServiceProvider extends ServiceProvider
         );
     }
 
-    protected function bootObservers(): void
+    protected function registerObservers(): void
     {
         Interaction::observe(InteractionObserver::class);
     }

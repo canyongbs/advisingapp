@@ -12,6 +12,7 @@ return new class () extends Migration {
             $table->foreignUuid('user_id')->nullable()->constrained('users');
             $table->string('interactable_id')->nullable();
             $table->string('interactable_type')->nullable();
+            // TODO What is the configurable "relation" field supposed to be
             // TODO Might change these to lose the interaction prefix, but would have to change relationships
             $table->foreignUuid('interaction_type_id')->nullable()->constrained('interaction_types');
             $table->foreignUuid('interaction_campaign_id')->nullable()->constrained('interaction_campaigns');
