@@ -20,19 +20,15 @@ it('will create a new engagement batch', function () {
     Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
     Notification::fake();
 
-    $data = [
-        'subject' => 'Test Subject',
-        'body' => 'Test Body',
-        'delivery_methods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-            EngagementDeliveryMethod::SMS->value,
-        ],
-    ];
-
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(1)->create(),
-        'data' => $data,
+        'subject' => 'Test Subject',
+        'body' => 'Test Body',
+        'deliveryMethods' => [
+            EngagementDeliveryMethod::EMAIL->value,
+            EngagementDeliveryMethod::SMS->value,
+        ],
     ]));
 
     expect(EngagementBatch::count())->toBe(1);
@@ -42,19 +38,15 @@ it('will create an engagement for every record provided', function () {
     Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
     Notification::fake();
 
-    $data = [
-        'subject' => 'Test Subject',
-        'body' => 'Test Body',
-        'delivery_methods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-            EngagementDeliveryMethod::SMS->value,
-        ],
-    ];
-
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(3)->create(),
-        'data' => $data,
+        'subject' => 'Test Subject',
+        'body' => 'Test Body',
+        'deliveryMethods' => [
+            EngagementDeliveryMethod::EMAIL->value,
+            EngagementDeliveryMethod::SMS->value,
+        ],
     ]));
 
     expect(Engagement::count())->toBe(3);
@@ -65,19 +57,15 @@ it('will associate the engagement with the batch', function () {
     Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
     Notification::fake();
 
-    $data = [
-        'subject' => 'Test Subject',
-        'body' => 'Test Body',
-        'delivery_methods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-            EngagementDeliveryMethod::SMS->value,
-        ],
-    ];
-
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(4)->create(),
-        'data' => $data,
+        'subject' => 'Test Subject',
+        'body' => 'Test Body',
+        'deliveryMethods' => [
+            EngagementDeliveryMethod::EMAIL->value,
+            EngagementDeliveryMethod::SMS->value,
+        ],
     ]));
 
     expect(EngagementBatch::first()->engagements()->count())->toBe(4);
@@ -87,18 +75,14 @@ it('will create deliverables for the created engagements', function () {
     Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
     Notification::fake();
 
-    $data = [
-        'subject' => 'Test Subject',
-        'body' => 'Test Body',
-        'delivery_methods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-        ],
-    ];
-
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(1)->create(),
-        'data' => $data,
+        'subject' => 'Test Subject',
+        'body' => 'Test Body',
+        'deliveryMethods' => [
+            EngagementDeliveryMethod::EMAIL->value,
+        ],
     ]));
 
     expect(EngagementDeliverable::count())->toBe(1);
@@ -109,18 +93,14 @@ it('will dispatch a batch of jobs for each engagement that needs to be delivered
     Notification::fake();
     Bus::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);
 
-    $data = [
-        'subject' => 'Test Subject',
-        'body' => 'Test Body',
-        'delivery_methods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-        ],
-    ];
-
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
         'user' => User::factory()->create(),
         'records' => Student::factory()->count(5)->create(),
-        'data' => $data,
+        'subject' => 'Test Subject',
+        'body' => 'Test Body',
+        'deliveryMethods' => [
+            EngagementDeliveryMethod::EMAIL->value,
+        ],
     ]));
 
     Bus::assertBatched(function (PendingBatch $batch) {
@@ -141,18 +121,14 @@ it('will dispatch a notification to the user who initiated the batch engagement 
 
     $user = User::factory()->create();
 
-    $data = [
-        'subject' => 'Test Subject',
-        'body' => 'Test Body',
-        'delivery_methods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-        ],
-    ];
-
     CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
         'user' => $user,
         'records' => Student::factory()->count(1)->create(),
-        'data' => $data,
+        'subject' => 'Test Subject',
+        'body' => 'Test Body',
+        'deliveryMethods' => [
+            EngagementDeliveryMethod::EMAIL->value,
+        ],
     ]));
 
     Notification::assertSentTo($user, EngagementBatchFinishedNotification::class);

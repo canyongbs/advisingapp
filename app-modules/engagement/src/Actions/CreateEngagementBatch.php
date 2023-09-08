@@ -40,14 +40,14 @@ class CreateEngagementBatch implements ShouldQueue
                 'user_id' => $engagementBatch->user_id,
                 'recipient_id' => $record->identifier(),
                 'recipient_type' => $record->getMorphClass(),
-                'subject' => $this->data->data['subject'],
-                'body' => $this->data->data['body'],
+                'subject' => $this->data->subject,
+                'body' => $this->data->body,
                 // TODO Determine if we want to support future delivery for batches
                 // 'deliver_at' => $data['deliver_at'],
             ]);
 
             $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
-            $createDeliverablesForEngagement($engagement, $this->data->data['delivery_methods']);
+            $createDeliverablesForEngagement($engagement, $this->data->deliveryMethods);
         });
 
         $deliverables = $engagementBatch->engagements->map(function (Engagement $engagement) {
