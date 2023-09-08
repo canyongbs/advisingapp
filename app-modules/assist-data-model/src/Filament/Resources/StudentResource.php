@@ -5,6 +5,7 @@ namespace Assist\AssistDataModel\Filament\Resources;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Alert\Filament\RelationManagers\AlertsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
@@ -37,6 +38,7 @@ class StudentResource extends Resource
             EngagementResponsesRelationManager::class,
             EngagementFilesRelationManager::class,
             TasksRelationManager::class,
+            AlertsRelationManager::class,
         ];
     }
 

@@ -21,7 +21,8 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * Assist\Engagement\Models\Engagement
  *
  * @property string $id
- * @property string $user_id
+ * @property string|null $user_id
+ * @property string|null $engagement_batch_id
  * @property string|null $recipient_id
  * @property string|null $recipient_type
  * @property string $subject
@@ -31,22 +32,26 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read User $createdBy
+ * @property-read \Assist\Engagement\Models\EngagementBatch|null $batch
+ * @property-read User|null $createdBy
  * @property-read Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $deliverables
  * @property-read int|null $deliverables_count
+ * @property-read \Assist\Engagement\Models\EngagementBatch|null $engagementBatch
  * @property-read Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $engagementDeliverables
  * @property-read int|null $engagement_deliverables_count
  * @property-read Model|\Eloquent $recipient
- * @property-read User $user
+ * @property-read User|null $user
  *
  * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDeliverAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereEngagementBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientType($value)
