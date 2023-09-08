@@ -20,10 +20,6 @@ class ListKnowledgeBaseItems extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->translateLabel()
-                    ->sortable(),
                 TextColumn::make('question')
                     ->label('Question/Issue/Feature')
                     ->translateLabel()
