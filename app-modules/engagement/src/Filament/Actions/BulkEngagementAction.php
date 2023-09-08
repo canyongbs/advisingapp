@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Assist\Engagement\Actions\CreateEngagementBatch;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
+use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
 
 class BulkEngagementAction
 {
@@ -75,7 +76,11 @@ class BulkEngagementAction
                     ]),
             ])
             ->action(function (Collection $records, array $data) {
-                CreateEngagementBatch::dispatch(auth()->user(), $records, $data);
+                CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
+                    'user' => auth()->user(),
+                    'records' => $records,
+                    'data' => $data,
+                ]));
             })
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
