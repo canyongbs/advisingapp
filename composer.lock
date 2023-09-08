@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02601928ab5642b8ec559e042c01500d",
+    "content-hash": "f414f9c8dbb6564f96b18acf3832cb8d",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -582,13 +582,13 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/audit",
-                "reference": "85c134ea8c41721c61445800e95500a6144273ba"
+                "reference": "5b173164efcc50db3d74c8a198b97becbea1889d"
             },
             "require": {
-                "filament/filament": "^3.0-stable",
-                "filament/spatie-laravel-settings-plugin": "^3.0-stable",
-                "owen-it/laravel-auditing": "dev-feature/queued-auditing",
-                "spatie/laravel-settings": "^3.2-stable"
+                "filament/filament": "^3.0",
+                "filament/spatie-laravel-settings-plugin": "^3.0",
+                "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
+                "spatie/laravel-settings": "^3.2"
             },
             "type": "library",
             "extra": {
@@ -16152,10 +16152,11 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
         "awcodes/filament-tiptap-editor": 10,
-        "livewire/livewire": 10
+        "canyon-gbs/audit": 20,
+        "owen-it/laravel-auditing": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
