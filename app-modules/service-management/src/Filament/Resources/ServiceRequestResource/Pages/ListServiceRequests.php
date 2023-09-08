@@ -23,9 +23,6 @@ class ListServiceRequests extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->sortable(),
                 TextColumn::make('service_request_number')
                     ->label('Service Request #')
                     ->searchable()
