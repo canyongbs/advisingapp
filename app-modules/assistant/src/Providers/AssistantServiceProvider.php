@@ -3,11 +3,13 @@
 namespace Assist\Assistant\Providers;
 
 use Filament\Panel;
+use Assist\Assistant\AssistantPlugin;
 use Illuminate\Support\ServiceProvider;
+use Assist\Assistant\Models\AssistantChat;
+use Assist\Assistant\Models\AssistantChatMessage;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Assistant\AssistantPlugin;
 
 class AssistantServiceProvider extends ServiceProvider
 {
@@ -18,7 +20,10 @@ class AssistantServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+            'assistant-chat' => AssistantChat::class,
+            'assistant-chat-message' => AssistantChatMessage::class,
+        ]);
 
         $this->registerRolesAndPermissions();
     }
