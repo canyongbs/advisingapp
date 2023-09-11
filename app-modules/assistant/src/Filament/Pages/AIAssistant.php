@@ -12,5 +12,5 @@ class AIAssistant extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.a-i-assistant';
+    protected static string $view = 'assistant::filament.pages.a-i-assistant';
 }
