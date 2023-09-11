@@ -2,12 +2,11 @@
 
 namespace Assist\Interaction\Filament\Resources;
 
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Assist\Interaction\Models\Interaction;
-use Assist\Interaction\Filament\Resources\InteractionResource\Pages;
+use Assist\Interaction\Filament\Resources\InteractionResource\Pages\EditInteraction;
+use Assist\Interaction\Filament\Resources\InteractionResource\Pages\ListInteractions;
+use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 
 class InteractionResource extends Resource
 {
@@ -19,33 +18,6 @@ class InteractionResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-            ])
-            ->filters([
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
-            ]);
-    }
-
     public static function getRelations(): array
     {
         return [
@@ -55,9 +27,9 @@ class InteractionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInteractions::route('/'),
-            'create' => Pages\CreateInteraction::route('/create'),
-            'edit' => Pages\EditInteraction::route('/{record}/edit'),
+            'index' => ListInteractions::route('/'),
+            'create' => CreateInteraction::route('/create'),
+            'edit' => EditInteraction::route('/{record}/edit'),
         ];
     }
 }
