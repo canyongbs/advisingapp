@@ -43,6 +43,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $engagement_responses_count
  * @property-read Collection<int, Engagement> $engagements
  * @property-read int|null $engagements_count
+ * @property-read Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read int|null $interactions_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, ServiceRequest> $serviceRequests
@@ -51,12 +53,10 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $subscriptions_count
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
- *
  * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
- *
  * @mixin Eloquent
  */
 class Student extends Model implements Auditable, Subscribable, Identifiable
