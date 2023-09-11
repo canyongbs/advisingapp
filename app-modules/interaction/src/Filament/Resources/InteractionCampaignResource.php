@@ -4,8 +4,11 @@ namespace Assist\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\TextInput;
 use Assist\Interaction\Models\InteractionCampaign;
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+use Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages\EditInteractionCampaign;
+use Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages\ListInteractionCampaigns;
+use Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages\CreateInteractionCampaign;
 
 class InteractionCampaignResource extends Resource
 {
@@ -21,6 +24,11 @@ class InteractionCampaignResource extends Resource
     {
         return $form
             ->schema([
+                TextInput::make('name')
+                    ->autofocus()
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('Interaction Campaign Name'),
             ]);
     }
 
@@ -33,9 +41,9 @@ class InteractionCampaignResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInteractionCampaigns::route('/'),
-            'create' => Pages\CreateInteractionCampaign::route('/create'),
-            'edit' => Pages\EditInteractionCampaign::route('/{record}/edit'),
+            'index' => ListInteractionCampaigns::route('/'),
+            'create' => CreateInteractionCampaign::route('/create'),
+            'edit' => EditInteractionCampaign::route('/{record}/edit'),
         ];
     }
 }

@@ -2,12 +2,13 @@
 
 namespace Assist\Interaction\Filament\Resources;
 
-use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\TextInput;
 use Assist\Interaction\Models\InteractionType;
-use Assist\Interaction\Filament\Resources\InteractionTypeResource\Pages;
+use Assist\Interaction\Filament\Resources\InteractionTypeResource\Pages\EditInteractionType;
+use Assist\Interaction\Filament\Resources\InteractionTypeResource\Pages\ListInteractionTypes;
+use Assist\Interaction\Filament\Resources\InteractionTypeResource\Pages\CreateInteractionType;
 
 class InteractionTypeResource extends Resource
 {
@@ -17,32 +18,17 @@ class InteractionTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 
-    protected static ?int $navigationSort = 14;
+    protected static ?int $navigationSort = 16;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-            ])
-            ->filters([
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                TextInput::make('name')
+                    ->autofocus()
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('Interaction Type Name'),
             ]);
     }
 
@@ -55,9 +41,9 @@ class InteractionTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInteractionTypes::route('/'),
-            'create' => Pages\CreateInteractionType::route('/create'),
-            'edit' => Pages\EditInteractionType::route('/{record}/edit'),
+            'index' => ListInteractionTypes::route('/'),
+            'create' => CreateInteractionType::route('/create'),
+            'edit' => EditInteractionType::route('/{record}/edit'),
         ];
     }
 }

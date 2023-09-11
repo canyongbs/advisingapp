@@ -2,9 +2,9 @@
 
 namespace Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
 
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
 
 class EditInteractionCampaign extends EditRecord
 {

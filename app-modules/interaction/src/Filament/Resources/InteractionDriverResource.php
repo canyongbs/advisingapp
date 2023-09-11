@@ -2,12 +2,13 @@
 
 namespace Assist\Interaction\Filament\Resources;
 
-use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\TextInput;
 use Assist\Interaction\Models\InteractionDriver;
-use Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages;
+use Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages\EditInteractionDriver;
+use Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages\ListInteractionDrivers;
+use Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages\CreateInteractionDriver;
 
 class InteractionDriverResource extends Resource
 {
@@ -23,26 +24,11 @@ class InteractionDriverResource extends Resource
     {
         return $form
             ->schema([
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-            ])
-            ->filters([
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                TextInput::make('name')
+                    ->autofocus()
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('Interaction Driver Name'),
             ]);
     }
 
@@ -55,9 +41,9 @@ class InteractionDriverResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInteractionDrivers::route('/'),
-            'create' => Pages\CreateInteractionDriver::route('/create'),
-            'edit' => Pages\EditInteractionDriver::route('/{record}/edit'),
+            'index' => ListInteractionDrivers::route('/'),
+            'create' => CreateInteractionDriver::route('/create'),
+            'edit' => EditInteractionDriver::route('/{record}/edit'),
         ];
     }
 }

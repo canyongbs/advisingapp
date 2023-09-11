@@ -2,9 +2,8 @@
 
 namespace Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
-use Assist\Interaction\Filament\Resources\InteractionDriverResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Assist\Interaction\Filament\Resources\InteractionDriverResource;
 
 class CreateInteractionDriver extends CreateRecord
 {

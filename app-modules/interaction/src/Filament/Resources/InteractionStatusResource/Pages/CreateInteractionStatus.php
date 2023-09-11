@@ -2,9 +2,8 @@
 
 namespace Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages;
 
-use Assist\Interaction\Filament\Resources\InteractionStatusResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Assist\Interaction\Filament\Resources\InteractionStatusResource;
 
 class CreateInteractionStatus extends CreateRecord
 {

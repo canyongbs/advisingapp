@@ -2,12 +2,13 @@
 
 namespace Assist\Interaction\Filament\Resources;
 
-use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\TextInput;
 use Assist\Interaction\Models\InteractionOutcome;
-use Assist\Interaction\Filament\Resources\InteractionOutcomeResource\Pages;
+use Assist\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\EditInteractionOutcome;
+use Assist\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\ListInteractionOutcomes;
+use Assist\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\CreateInteractionOutcome;
 
 class InteractionOutcomeResource extends Resource
 {
@@ -17,32 +18,17 @@ class InteractionOutcomeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-map';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 13;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-            ])
-            ->filters([
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                TextInput::make('name')
+                    ->autofocus()
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('Interaction Outcome Name'),
             ]);
     }
 
@@ -55,9 +41,9 @@ class InteractionOutcomeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInteractionOutcomes::route('/'),
-            'create' => Pages\CreateInteractionOutcome::route('/create'),
-            'edit' => Pages\EditInteractionOutcome::route('/{record}/edit'),
+            'index' => ListInteractionOutcomes::route('/'),
+            'create' => CreateInteractionOutcome::route('/create'),
+            'edit' => EditInteractionOutcome::route('/{record}/edit'),
         ];
     }
 }

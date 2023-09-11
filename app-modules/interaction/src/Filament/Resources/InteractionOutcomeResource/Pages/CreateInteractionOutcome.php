@@ -2,9 +2,8 @@
 
 namespace Assist\Interaction\Filament\Resources\InteractionOutcomeResource\Pages;
 
-use Assist\Interaction\Filament\Resources\InteractionOutcomeResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Assist\Interaction\Filament\Resources\InteractionOutcomeResource;
 
 class CreateInteractionOutcome extends CreateRecord
 {

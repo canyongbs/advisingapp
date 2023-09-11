@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages;
+namespace Assist\Interaction\Filament\Resources\InteractionRelationResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
@@ -10,22 +10,17 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Interaction\Models\InteractionStatus;
-use Assist\Interaction\Filament\Resources\InteractionStatusResource;
+use Assist\Interaction\Filament\Resources\InteractionRelationResource;
 
-class ListInteractionStatuses extends ListRecords
+class ListInteractionRelations extends ListRecords
 {
-    protected static string $resource = InteractionStatusResource::class;
+    protected static string $resource = InteractionRelationResource::class;
 
     public function table(Table $table): Table
     {
         return parent::table($table)
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('color')
-                    ->label('Color')
-                    ->badge()
-                    ->color(fn (InteractionStatus $interactionStatus) => $interactionStatus->color->value),
             ])
             ->filters([
             ])

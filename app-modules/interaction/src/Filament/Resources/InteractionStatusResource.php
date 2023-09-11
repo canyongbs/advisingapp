@@ -2,12 +2,15 @@
 
 namespace Assist\Interaction\Filament\Resources;
 
-use Filament\Tables;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Assist\Interaction\Models\InteractionStatus;
-use Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages;
+use Assist\Interaction\Enums\InteractionStatusColorOptions;
+use Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages\EditInteractionStatus;
+use Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages\CreateInteractionStatus;
+use Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages\ListInteractionStatuses;
 
 class InteractionStatusResource extends Resource
 {
@@ -17,32 +20,24 @@ class InteractionStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?int $navigationSort = 13;
+    protected static ?int $navigationSort = 15;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-            ]);
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-            ])
-            ->filters([
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                TextInput::make('name')
+                    ->autofocus()
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('Interaction Status Name'),
+                Select::make('color')
+                    ->label('Color')
+                    ->translateLabel()
+                    ->searchable()
+                    ->options(InteractionStatusColorOptions::class)
+                    ->required()
+                    ->enum(InteractionStatusColorOptions::class),
             ]);
     }
 
@@ -55,9 +50,9 @@ class InteractionStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInteractionStatuses::route('/'),
-            'create' => Pages\CreateInteractionStatus::route('/create'),
-            'edit' => Pages\EditInteractionStatus::route('/{record}/edit'),
+            'index' => ListInteractionStatuses::route('/'),
+            'create' => CreateInteractionStatus::route('/create'),
+            'edit' => EditInteractionStatus::route('/{record}/edit'),
         ];
     }
 }

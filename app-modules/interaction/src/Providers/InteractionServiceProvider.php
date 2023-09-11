@@ -11,8 +11,10 @@ use Assist\Interaction\Models\InteractionDriver;
 use Assist\Interaction\Models\InteractionStatus;
 use Assist\Interaction\Models\InteractionOutcome;
 use Assist\Interaction\Models\InteractionCampaign;
+use Assist\Interaction\Models\InteractionRelation;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Interaction\Models\InteractionInstitution;
 use Assist\Interaction\Observers\InteractionObserver;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 
@@ -29,7 +31,9 @@ class InteractionServiceProvider extends ServiceProvider
             'interaction' => Interaction::class,
             'interaction_campaign' => InteractionCampaign::class,
             'interaction_driver' => InteractionDriver::class,
+            'interaction_institution' => InteractionInstitution::class,
             'interaction_outcome' => InteractionOutcome::class,
+            'interaction_relation' => InteractionRelation::class,
             'interaction_status' => InteractionStatus::class,
             'interaction_type' => InteractionType::class,
         ]);

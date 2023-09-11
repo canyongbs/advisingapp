@@ -2,9 +2,9 @@
 
 namespace Assist\Interaction\Filament\Resources\InteractionTypeResource\Pages;
 
-use Assist\Interaction\Filament\Resources\InteractionTypeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Assist\Interaction\Filament\Resources\InteractionTypeResource;
 
 class EditInteractionType extends EditRecord
 {
