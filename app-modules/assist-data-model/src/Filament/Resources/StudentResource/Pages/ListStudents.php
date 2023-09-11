@@ -31,7 +31,10 @@ class ListStudents extends ListRecords
             ->columns([
                 TextColumn::make('full')
                     ->label('Name')
-                    ->searchable()
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('full', 'ilike', "%{$search}%");
+                    })
                     ->sortable(),
             ])
             ->filters([
