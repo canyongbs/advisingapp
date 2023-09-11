@@ -16,7 +16,7 @@
         "bvtterfly/model-state-machine": "^0.3.0",
         "canyon-gbs/alert": "*",
         "canyon-gbs/assist-data-model": "*",
-        "canyon-gbs/audit": "*",
+        "canyon-gbs/audit": "*@dev",
         "canyon-gbs/authorization": "*",
         "canyon-gbs/engagement": "*",
         "canyon-gbs/integration-twilio": "*",
@@ -26,8 +26,8 @@
         "canyon-gbs/service-management": "^1.0",
         "canyon-gbs/task": "*",
         "canyon-gbs/webhook": "*",
-        "filament/filament": "^3.0-stable",
-        "filament/spatie-laravel-media-library-plugin": "^3.0-stable",
+        "filament/filament": "^3.0",
+        "filament/spatie-laravel-media-library-plugin": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^3.0",
@@ -38,7 +38,8 @@
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "livewire/livewire": "^3.0@beta",
+        "livewire/livewire": "^3.0",
+        "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.1",
         "spatie/laravel-data": "^3.7",
@@ -165,7 +166,7 @@
         }
     },
     "prefer-stable": true,
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "repositories": [
         {
             "type": "path",

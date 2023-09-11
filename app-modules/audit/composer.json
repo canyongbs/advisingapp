@@ -5,10 +5,10 @@
   "version": "1.0",
   "license": "proprietary",
   "require": {
-    "filament/filament": "^3.0-stable",
-    "owen-it/laravel-auditing": "dev-feature/queued-auditing",
-    "spatie/laravel-settings": "^3.2-stable",
-    "filament/spatie-laravel-settings-plugin": "^3.0-stable"
+    "filament/filament": "^3.0",
+    "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
+    "spatie/laravel-settings": "^3.2",
+    "filament/spatie-laravel-settings-plugin": "^3.0"
   },
   "autoload": {
     "psr-4": {
@@ -18,7 +18,7 @@
       "Assist\\Audit\\Database\\Seeders\\": "database/seeders/"
     }
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
