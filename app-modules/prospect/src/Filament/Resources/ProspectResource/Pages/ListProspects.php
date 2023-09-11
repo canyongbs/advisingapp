@@ -33,26 +33,16 @@ class ListProspects extends ListRecords
                 TextColumn::make('email')
                     ->label('Email')
                     ->translateLabel()
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('email', 'ilike', "%{$search}%");
-                    })
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('mobile')
                     ->label('Mobile')
                     ->translateLabel()
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('mobile', 'ilike', "%{$search}%");
-                    })
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('birthdate')
                     ->label('Birthdate')
                     ->translateLabel()
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('birthdate', 'ilike', "%{$search}%");
-                    })
                     ->sortable(),
             ])
             ->filters([
