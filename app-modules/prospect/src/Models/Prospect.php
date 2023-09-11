@@ -7,6 +7,7 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Task\Models\Task;
+use Assist\Alert\Models\Alert;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use Assist\Engagement\Models\Engagement;
@@ -58,6 +59,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ * @property-read Collection<int, Alert> $alerts
+ * @property-read int|null $alerts_count
  * @property-read User|null $assignedTo
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
@@ -200,6 +203,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Identifiabl
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'concern');
+    }
+
+    public function alerts(): MorphMany
+    {
+        return $this->morphMany(Alert::class, 'concern');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

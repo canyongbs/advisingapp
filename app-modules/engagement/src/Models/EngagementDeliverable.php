@@ -7,6 +7,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Engagement\Actions\QueuedEngagementDelivery;
 use Assist\Engagement\Actions\EngagementSmsChannelDelivery;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Actions\EngagementEmailChannelDelivery;
@@ -20,6 +21,7 @@ use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
  * @property EngagementDeliveryMethod $channel
  * @property EngagementDeliveryStatus $delivery_status
  * @property \Illuminate\Support\Carbon|null $delivered_at
+ * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
  * @property string|null $delivery_response
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -40,6 +42,7 @@ use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereEngagementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereLastDeliveryAttempt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
  *
  * @mixin \Eloquent
@@ -89,6 +92,15 @@ class EngagementDeliverable extends BaseModel implements Auditable
             'last_delivery_attempt' => now(),
             'delivery_response' => $reason,
         ]);
+    }
+
+    public function jobForDelivery(): QueuedEngagementDelivery
+    {
+        return match ($this->channel) {
+            EngagementDeliveryMethod::EMAIL => new EngagementEmailChannelDelivery($this),
+            EngagementDeliveryMethod::SMS => new EngagementSmsChannelDelivery($this),
+            default => throw new UnknownDeliveryMethodException("Delivery channel '{$this->channel}' is not supported."),
+        };
     }
 
     public function deliver(): void

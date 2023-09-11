@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\RelationManagers\RelationGroup;
+use Assist\Alert\Filament\RelationManagers\AlertsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
@@ -42,6 +43,7 @@ class StudentResource extends Resource
             SubscriptionsRelationManager::class,
             TasksRelationManager::class,
             InteractionsRelationManager::class,
+            AlertsRelationManager::class,
         ];
     }
 

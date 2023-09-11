@@ -6,6 +6,7 @@ use Filament\Resources\Resource;
 use Assist\Prospect\Models\Prospect;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+use Assist\Alert\Filament\RelationManagers\AlertsRelationManager;
 use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
 use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementsRelationManager;
 use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\InteractionsRelationManager;
@@ -32,6 +33,7 @@ class ProspectResource extends Resource
             ]),
             TasksRelationManager::class,
             InteractionsRelationManager::class,
+            AlertsRelationManager::class,
         ];
     }
 

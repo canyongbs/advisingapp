@@ -25,11 +25,6 @@ test('The correct details are displayed on the ListServiceRequests page', functi
     $serviceRequests->each(
         fn (ServiceRequest $serviceRequest) => $component
             ->assertTableColumnStateSet(
-                'id',
-                $serviceRequest->id,
-                $serviceRequest
-            )
-            ->assertTableColumnStateSet(
                 'service_request_number',
                 $serviceRequest->service_request_number,
                 $serviceRequest

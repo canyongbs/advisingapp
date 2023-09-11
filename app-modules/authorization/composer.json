@@ -5,7 +5,7 @@
   "version": "1.0",
   "license": "proprietary",
   "require": {
-    "filament/filament": "^3.0-stable",
+    "filament/filament": "^3.0",
     "spatie/laravel-permission": "^5.10"
   },
   "autoload": {
@@ -16,7 +16,7 @@
       "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
     }
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
