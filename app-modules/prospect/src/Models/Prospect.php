@@ -81,6 +81,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read \Assist\Prospect\Models\ProspectStatus $status
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
+ *
  * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
@@ -111,6 +112,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @method static Builder|Prospect whereUpdatedAt($value)
  * @method static Builder|Prospect withTrashed()
  * @method static Builder|Prospect withoutTrashed()
+ *
  * @mixin Eloquent
  */
 class Prospect extends BaseModel implements Auditable, Subscribable, Identifiable

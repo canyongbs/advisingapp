@@ -20,6 +20,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
+ *
  * @method static \Assist\Interaction\Database\Factories\InteractionRelationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation newQuery()
@@ -32,6 +33,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class InteractionRelation extends BaseModel implements Auditable

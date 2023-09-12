@@ -60,6 +60,7 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  * @property-read int|null $service_request_updates_count
  * @property-read \Assist\ServiceManagement\Models\ServiceRequestStatus|null $status
  * @property-read \Assist\ServiceManagement\Models\ServiceRequestType|null $type
+ *
  * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
  * @method static Builder|ServiceRequest newModelQuery()
  * @method static Builder|ServiceRequest newQuery()
@@ -82,6 +83,7 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  * @method static Builder|ServiceRequest whereUpdatedAt($value)
  * @method static Builder|ServiceRequest withTrashed()
  * @method static Builder|ServiceRequest withoutTrashed()
+ *
  * @mixin Eloquent
  */
 class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
