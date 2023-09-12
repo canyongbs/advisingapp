@@ -3,6 +3,7 @@
 namespace Assist\Assistant\Filament\Pages;
 
 use Filament\Pages\Page;
+use Livewire\Attributes\On;
 use Assist\Assistant\Services\AIInterface\Contracts\AIInterface;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
@@ -28,16 +29,22 @@ class AIAssistant extends Page
         );
     }
 
-    public function send(): void
+    public function saveCurrentMessage()
     {
-        $ai = app(AIInterface::class);
-
         $this->chat->messages[] = new ChatMessage(
             message: $this->message,
             from: 'user',
         );
 
         $this->message = '';
+
+        $this->dispatch('current-message-saved');
+    }
+
+    #[On('ask')]
+    public function ask()
+    {
+        $ai = app(AIInterface::class);
 
         $response = $ai->ask($this->chat);
 
