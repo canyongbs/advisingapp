@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c36a3b878e40818579eaa7f6ee93546c",
+    "content-hash": "690374a9655c0a90f69189b57f7726b3",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -674,6 +674,76 @@
                     "Assist\\Engagement\\Tests\\": "tests/",
                     "Assist\\Engagement\\Database\\Factories\\": "database/factories/",
                     "Assist\\Engagement\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/integration-google-analytics",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/integration-google-analytics",
+                "reference": "dec73ef1cd1c2701b4e5b788001482335b47ff8b"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\IntegrationGoogleAnalytics\\Providers\\IntegrationGoogleAnalyticsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\IntegrationGoogleAnalytics\\": "src/",
+                    "Assist\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
+                    "Assist\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
+                    "Assist\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/integration-microsoft-clarity",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/integration-microsoft-clarity",
+                "reference": "8c415fd2877630b6301e0020700e9f8275ba7b45"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\IntegrationMicrosoftClarity\\Providers\\IntegrationMicrosoftClarityServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\IntegrationMicrosoftClarity\\": "src/",
+                    "Assist\\IntegrationMicrosoftClarity\\Tests\\": "tests/",
+                    "Assist\\IntegrationMicrosoftClarity\\Database\\Factories\\": "database/factories/",
+                    "Assist\\IntegrationMicrosoftClarity\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
