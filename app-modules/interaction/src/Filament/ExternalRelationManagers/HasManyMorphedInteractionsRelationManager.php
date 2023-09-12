@@ -37,7 +37,6 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                         TextEntry::make('end_datetime')
                             ->label('End Time')
                             ->dateTime(),
-                        // TODO Add calculated duration field
                         TextEntry::make('start_datetime')
                             ->label('Duration')
                             ->state(fn ($record) => $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6)),
