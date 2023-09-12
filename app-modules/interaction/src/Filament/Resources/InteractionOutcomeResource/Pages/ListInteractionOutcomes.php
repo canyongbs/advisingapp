@@ -20,7 +20,8 @@ class ListInteractionOutcomes extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->searchable(),
             ])
             ->filters([
             ])
