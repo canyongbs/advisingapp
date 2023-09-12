@@ -18,7 +18,6 @@ class AuditServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AuditPlugin()));
 
         app('config')->set('audit', require base_path('app-modules/audit/config/audit.php'));
-        app('config')->set('settings', require base_path('app-modules/audit/config/settings.php'));
     }
 
     public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void

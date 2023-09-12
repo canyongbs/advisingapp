@@ -1,12 +1,15 @@
 <?php
 
-namespace Assist\Audit\Models;
+namespace App\Models;
 
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
 
 /**
- * Assist\Audit\Models\SettingsProperty
+ * App\Models\SettingsProperty
  *
  * @property string $id
  * @property string $group
@@ -15,6 +18,8 @@ use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
  * @property mixed $payload
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
+ * @property-read int|null $media_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder|SettingsProperty newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SettingsProperty newQuery()
@@ -29,7 +34,25 @@ use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
  *
  * @mixin \Eloquent
  */
-class SettingsProperty extends BaseSettingsProperty
+class SettingsProperty extends BaseSettingsProperty implements HasMedia
 {
     use HasUuids;
+    use InteractsWithMedia;
+
+    public static function getInstance(string $property): ?static
+    {
+        [$group, $name] = explode('.', $property);
+
+        return static::query()
+            ->where('group', $group)
+            ->where('name', $name)
+            ->first();
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('logo-height-250px')
+            ->performOnCollections('logo')
+            ->height(250);
+    }
 }
