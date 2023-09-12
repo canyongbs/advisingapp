@@ -11,7 +11,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Resources\RelationManagers\RelationManager;
 use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use Assist\Interaction\Filament\ExternalRelationManagers\HasManyMorphedInteractionsRelationManager;
+use Assist\Interaction\Filament\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 
 class InteractionsRelationManager extends RelationManager
 {

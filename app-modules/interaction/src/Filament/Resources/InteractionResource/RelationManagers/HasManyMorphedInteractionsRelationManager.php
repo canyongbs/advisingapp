@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Interaction\Filament\ExternalRelationManagers;
+namespace Assist\Interaction\Filament\InteractionResource\RelationManagers;
 
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
@@ -25,7 +25,9 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                     ->schema([
                         TextEntry::make('campaign.name'),
                         TextEntry::make('driver.name'),
+                        TextEntry::make('institution.name'),
                         TextEntry::make('outcome.name'),
+                        TextEntry::make('relation.name'),
                         TextEntry::make('status.name'),
                         TextEntry::make('type.name'),
                     ]),
@@ -57,9 +59,20 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                 TextColumn::make('id'),
                 TextColumn::make('campaign.name'),
                 TextColumn::make('driver.name'),
+                TextColumn::make('institution.name'),
                 TextColumn::make('outcome.name'),
+                TextColumn::make('relation.name'),
                 TextColumn::make('status.name'),
                 TextColumn::make('type.name'),
+                TextColumn::make('start_datetime')
+                    ->label('Start Time')
+                    ->dateTime(),
+                TextColumn::make('end_datetime')
+                    ->label('End Time')
+                    ->dateTime(),
+                TextColumn::make('created_at')
+                    ->state(fn ($record) => $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6))
+                    ->label('Duration'),
                 TextColumn::make('subject'),
                 TextColumn::make('description'),
             ])

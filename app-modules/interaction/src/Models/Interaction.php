@@ -43,6 +43,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property-read \Assist\Interaction\Models\InteractionOutcome|null $outcome
  * @property-read \Assist\Interaction\Models\InteractionStatus|null $status
  * @property-read \Assist\Interaction\Models\InteractionType|null $type
+ *
  * @method static \Assist\Interaction\Database\Factories\InteractionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newQuery()
@@ -64,6 +65,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription
@@ -76,7 +78,9 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'interactable_type',
         'interaction_campaign_id',
         'interaction_driver_id',
+        'interaction_institution_id',
         'interaction_outcome_id',
+        'interaction_relation_id',
         'interaction_status_id',
         'interaction_type_id',
         'start_datetime',
@@ -124,6 +128,16 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         return $this->interactionDriver();
     }
 
+    public function interactionInstitution(): BelongsTo
+    {
+        return $this->belongsTo(InteractionInstitution::class);
+    }
+
+    public function institution(): BelongsTo
+    {
+        return $this->interactionInstitution();
+    }
+
     public function interactionOutcome(): BelongsTo
     {
         return $this->belongsTo(InteractionOutcome::class);
@@ -132,6 +146,16 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     public function outcome(): BelongsTo
     {
         return $this->interactionOutcome();
+    }
+
+    public function interactionRelation(): BelongsTo
+    {
+        return $this->belongsTo(InteractionRelation::class);
+    }
+
+    public function relation(): BelongsTo
+    {
+        return $this->interactionRelation();
     }
 
     public function interactionStatus(): BelongsTo

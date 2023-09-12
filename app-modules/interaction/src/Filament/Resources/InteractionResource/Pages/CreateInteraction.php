@@ -17,7 +17,9 @@ use Assist\Interaction\Models\InteractionDriver;
 use Assist\Interaction\Models\InteractionStatus;
 use Assist\Interaction\Models\InteractionOutcome;
 use Assist\Interaction\Models\InteractionCampaign;
+use Assist\Interaction\Models\InteractionRelation;
 use Assist\ServiceManagement\Models\ServiceRequest;
+use Assist\Interaction\Models\InteractionInstitution;
 use Assist\Interaction\Filament\Resources\InteractionResource;
 
 class CreateInteraction extends CreateRecord
@@ -57,12 +59,24 @@ class CreateInteraction extends CreateRecord
                             ->label('Driver')
                             ->required()
                             ->exists((new InteractionDriver())->getTable(), 'id'),
+                        Select::make('interaction_institution_id')
+                            ->relationship('institution', 'name')
+                            ->preload()
+                            ->label('Institution')
+                            ->required()
+                            ->exists((new InteractionInstitution())->getTable(), 'id'),
                         Select::make('interaction_outcome_id')
                             ->relationship('outcome', 'name')
                             ->preload()
                             ->label('Outcome')
                             ->required()
                             ->exists((new InteractionOutcome())->getTable(), 'id'),
+                        Select::make('interaction_relation_id')
+                            ->relationship('relation', 'name')
+                            ->preload()
+                            ->label('Relation')
+                            ->required()
+                            ->exists((new InteractionRelation())->getTable(), 'id'),
                         Select::make('interaction_status_id')
                             ->relationship('status', 'name')
                             ->preload()
