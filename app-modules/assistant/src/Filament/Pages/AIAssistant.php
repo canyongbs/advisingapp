@@ -5,6 +5,7 @@ namespace Assist\Assistant\Filament\Pages;
 use App\Models\User;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Rule;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Assistant\Services\AIInterface\Contracts\AIInterface;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
@@ -22,6 +23,7 @@ class AIAssistant extends Page
 
     public Chat $chat;
 
+    #[Rule(['required', 'string'])]
     public string $message = '';
 
     public function mount()
@@ -40,6 +42,8 @@ class AIAssistant extends Page
 
     public function saveCurrentMessage(): void
     {
+        $this->validate();
+
         $this->setMessage($this->message, 'user');
 
         $this->message = '';

@@ -30,7 +30,10 @@
                     <span class="sr-only">Save</span>
                 </button>
                 @endif
-                <textarea wire:model.debounce="message" id="chat" rows="5" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
+                <div class="block mx-4 p-2.5 w-full">
+                    <textarea wire:model.debounce="message" id="chat" rows="5" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
+                    <div class="text-red-600">@error('message') {{ $message }} @enderror</div>
+                </div>
                 <button wire:loading.remove type="submit" class="inline-flex justify-center p-2 text-primary-600 rounded-full cursor-pointer hover:bg-primary-100 dark:text-primary-500 dark:hover:bg-gray-600">
                     <x-heroicon-s-paper-airplane class="w-6 h-6" />
                     <span class="sr-only">Send message</span>
