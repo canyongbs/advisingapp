@@ -3,7 +3,9 @@
 namespace Assist\Assistant\Filament\Pages;
 
 use Filament\Pages\Page;
-use Assist\Assistant\Models\AssistantChat;
+use Assist\Assistant\Services\AIInterface\Contracts\AIInterface;
+use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
+use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 class AIAssistant extends Page
 {
@@ -15,7 +17,9 @@ class AIAssistant extends Page
 
     protected static string $view = 'assistant::filament.pages.a-i-assistant';
 
-    public AssistantChat $chat;
+    protected AIInterface $ai;
+
+    public Chat $chat;
 
     public array $messages = [];
 
@@ -23,19 +27,21 @@ class AIAssistant extends Page
 
     public function mount()
     {
-        $this->chat = AssistantChat::firstOrCreate([
-            'user_id' => auth()->id(),
-        ]);
+        $this->ai = app(AIInterface::class);
+
+        $this->chat = new Chat(
+            ChatMessage::collection([]),
+        );
 
         $this->messages = $this->chat->messages->toArray();
     }
 
     public function send(): void
     {
-        $this->chat->messages()->create([
-            'message' => $this->message,
-            'from' => 'user',
-        ]);
+        $this->chat->messages[] = new ChatMessage(
+            message: $this->message,
+            from: 'user',
+        );
 
         $this->message = '';
 
