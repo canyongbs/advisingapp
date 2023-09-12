@@ -7,7 +7,6 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -47,7 +46,6 @@ class ListStudents extends ListRecords
                     ->label(fn (Student $record) => $record->subscriptions()->whereHas('user', fn (Builder $query) => $query->where('user_id', auth()->id()))->exists() ? 'Unsubscribe' : 'Subscribe')
                     ->icon(fn (Student $record) => $record->subscriptions()->whereHas('user', fn (Builder $query) => $query->where('user_id', auth()->id()))->exists() ? 'heroicon-s-bell-slash' : 'heroicon-s-bell')
                     ->action(fn (Student $record) => resolve(SubscriptionToggle::class)->handle(auth()->user(), $record)),
-                EditAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

@@ -27,7 +27,6 @@ class ViewStudent extends ViewRecord
                     $this->cachedHeaderActions = [];
                     $this->cacheHeaderActions();
                 }),
-            Actions\EditAction::make(),
         ];
     }
 }

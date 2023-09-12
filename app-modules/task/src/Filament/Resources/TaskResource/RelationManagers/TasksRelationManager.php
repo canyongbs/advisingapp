@@ -18,7 +18,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Forms\Components\DateTimePicker;
 use Assist\Prospect\Filament\Resources\ProspectResource;
-use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\RelationManagers\RelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
@@ -44,11 +44,6 @@ class TasksRelationManager extends RelationManager
                     ->searchable(['name', 'email'])
                     ->default(auth()->id()),
             ]);
-    }
-
-    public function isReadOnly(): bool
-    {
-        return false;
     }
 
     public function table(Table $table): Table
