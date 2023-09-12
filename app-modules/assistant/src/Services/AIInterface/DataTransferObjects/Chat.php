@@ -13,6 +13,7 @@ class Chat extends Data implements Wireable
     use WireableData;
 
     public function __construct(
+        public ?string $id = null,
         #[DataCollectionOf(ChatMessage::class)]
         public DataCollection $messages,
     ) {}

@@ -14,6 +14,7 @@ use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\Assistant\Models\AssistantChat;
 use Assist\Authorization\Models\RoleGroup;
 use Assist\Authorization\Models\Permission;
 use Filament\Models\Contracts\FilamentUser;
@@ -210,6 +211,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function preferredLocale()
     {
         return $this->locale;
+    }
+
+    public function assistantChats(): HasMany
+    {
+        return $this->hasMany(AssistantChat::class);
     }
 
     public function getEmailVerifiedAtAttribute($value)
