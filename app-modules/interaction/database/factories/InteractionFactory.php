@@ -32,7 +32,7 @@ class InteractionFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'interactable_id' => $interactable->id,
+            'interactable_id' => $interactable->identifier(),
             'interactable_type' => $interactable->getMorphClass(),
             'interaction_type_id' => InteractionType::factory(),
             'interaction_relation_id' => InteractionRelation::factory(),
