@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Interaction\Filament\InteractionResource\RelationManagers;
+namespace Assist\Interaction\Filament\Resources\InteractionResource\RelationManagers;
 
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
