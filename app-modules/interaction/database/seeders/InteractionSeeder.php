@@ -14,7 +14,7 @@ class InteractionSeeder extends Seeder
             ->create();
     }
 
-    public static function supplementalSeeders(): array
+    public static function metadataSeeders(): array
     {
         return [
             InteractionCampaignSeeder::class,

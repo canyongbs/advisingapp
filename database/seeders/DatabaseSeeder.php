@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
             KnowledgeBaseItemSeeder::class,
             TaskSeeder::class,
             StudentSeeder::class,
-            ...InteractionSeeder::supplementalSeeders(),
+            ...InteractionSeeder::metadataSeeders(),
         ]);
     }
 }
