@@ -17,27 +17,21 @@ class AIAssistant extends Page
 
     protected static string $view = 'assistant::filament.pages.a-i-assistant';
 
-    protected AIInterface $ai;
-
     public Chat $chat;
-
-    public array $messages = [];
 
     public string $message = '';
 
     public function mount()
     {
-        $this->ai = app(AIInterface::class);
-
         $this->chat = new Chat(
             ChatMessage::collection([]),
         );
-
-        $this->messages = $this->chat->messages->toArray();
     }
 
     public function send(): void
     {
+        $ai = app(AIInterface::class);
+
         $this->chat->messages[] = new ChatMessage(
             message: $this->message,
             from: 'user',
@@ -45,6 +39,11 @@ class AIAssistant extends Page
 
         $this->message = '';
 
-        $this->messages = $this->chat->messages->toArray();
+        $response = $ai->ask($this->chat);
+
+        $this->chat->messages[] = new ChatMessage(
+            message: $response,
+            from: 'assistant',
+        );
     }
 }

@@ -1,16 +1,16 @@
 <x-filament-panels::page>
-    @foreach($messages as $message)
+    @foreach($chat->messages as $message)
         <div
             @class(
                 [
                     'mx-auto w-full p-4 sm:p-6 lg:px-8',
-                    'bg-primary-500' => $message['from'] === 'user',
-                    'bg-gray-500' => $message['from'] === 'assistant',
+                    'bg-primary-500' => $message->from === 'user',
+                    'bg-gray-500' => $message->from === 'assistant',
                 ]
             )
         >
-            <h1 class="text-2xl">{{ $message['from'] === 'user' ? 'You' : 'AI Assistant' }}</h1>
-            <p>{{ $message['message'] }}</p>
+            <h1 class="text-2xl">{{ $message->from === 'user' ? 'You' : 'AI Assistant' }}</h1>
+            <p>{{ $message->message }}</p>
         </div>
     @endforeach
 
