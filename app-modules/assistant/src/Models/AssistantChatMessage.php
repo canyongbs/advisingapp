@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $from
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read AssistantChat|null $chat
+ * @property-read \Assist\Assistant\Models\AssistantChat|null $chat
  *
  * @method static Builder|AssistantChatMessage newModelQuery()
  * @method static Builder|AssistantChatMessage newQuery()

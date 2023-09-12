@@ -57,6 +57,8 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read Collection<int, \App\Models\UserAlert> $alerts
  * @property-read int|null $alerts_count
+ * @property-read Collection<int, AssistantChat> $assistantChats
+ * @property-read int|null $assistant_chats_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
  * @property-read Collection<int, \Assist\Engagement\Models\EngagementBatch> $engagementBatches
