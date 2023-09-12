@@ -32,14 +32,10 @@ class AIAssistant extends Page
 
     public function send(): void
     {
-        ray('hi');
-
-        $test = $this->chat->messages()->create([
+        $this->chat->messages()->create([
             'message' => $this->message,
             'from' => 'user',
         ]);
-
-        ray($test);
 
         $this->message = '';
 
