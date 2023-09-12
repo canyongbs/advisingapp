@@ -5,6 +5,7 @@ namespace Assist\Interaction\Filament\InteractionResource\RelationManagers;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Infolist;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\CreateAction;
@@ -20,7 +21,6 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
             ->schema([
                 TextEntry::make('user.name')
                     ->label('Created By'),
-
                 Fieldset::make('Details')
                     ->schema([
                         TextEntry::make('campaign.name'),
@@ -83,6 +83,7 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
             ])
