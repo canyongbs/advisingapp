@@ -17,9 +17,9 @@ class AIAssistant extends Page
 
     protected static ?string $title = 'AI Assistant';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static string $view = 'assistant::filament.pages.a-i-assistant';
+    protected static string $view = 'assistant::filament.pages.ai-assistant';
 
     public Chat $chat;
 
