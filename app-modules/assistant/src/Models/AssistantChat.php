@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, AssistantChatMessage> $messages
+ * @property-read Collection<int, \Assist\Assistant\Models\AssistantChatMessage> $messages
  * @property-read int|null $messages_count
  * @property-read User $user
  *

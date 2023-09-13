@@ -53,10 +53,8 @@ class AIAssistant extends Page
     }
 
     #[On('ask')]
-    public function ask(): void
+    public function ask(AIInterface $ai): void
     {
-        $ai = app(AIInterface::class);
-
         $response = $ai->ask($this->chat);
 
         $this->setMessage($response, AIChatMessageFrom::Assistant);
