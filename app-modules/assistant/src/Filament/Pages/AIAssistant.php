@@ -64,19 +64,21 @@ class AIAssistant extends Page
 
     public function save(): void
     {
-        if (empty($this->chat->id)) {
-            /** @var User $user */
-            $user = auth()->user();
-
-            /** @var AssistantChat $assistantChat */
-            $assistantChat = $user->assistantChats()->create();
-
-            $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
-                $assistantChat->messages()->create($message->toArray());
-            });
-
-            $this->chat->id = $assistantChat->id;
+        if (filled($this->chat->id)) {
+            return;
         }
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        /** @var AssistantChat $assistantChat */
+        $assistantChat = $user->assistantChats()->create();
+
+        $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
+            $assistantChat->messages()->create($message->toArray());
+        });
+
+        $this->chat->id = $assistantChat->id;
     }
 
     protected function setMessage(string $message, AIChatMessageFrom $from): void
