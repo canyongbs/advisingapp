@@ -18,14 +18,14 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServiceReq
 
 class ServiceManagementServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ServiceManagementPlugin()));
 
         $this->app->bind(ServiceRequestNumberGenerator::class, SqidPlusSixServiceRequestNumberGenerator::class);
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'service_request' => ServiceRequest::class,

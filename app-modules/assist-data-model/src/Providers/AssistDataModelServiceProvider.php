@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AssistDataModelServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AssistDataModelPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'student' => Student::class,

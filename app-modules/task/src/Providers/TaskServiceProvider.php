@@ -13,12 +13,12 @@ use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class TaskServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new TaskPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap(
             [

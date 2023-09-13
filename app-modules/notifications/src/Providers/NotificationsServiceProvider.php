@@ -16,9 +16,9 @@ use Assist\Notifications\Listeners\NotifyUserOfSubscriptionDeleted;
 
 class NotificationsServiceProvider extends ServiceProvider
 {
-    public function register() {}
+    public function register(): void {}
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'subscription' => Subscription::class,

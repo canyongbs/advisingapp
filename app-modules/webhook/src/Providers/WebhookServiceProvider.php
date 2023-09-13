@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class WebhookServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new WebhookPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'inbound_webhook' => InboundWebhook::class,

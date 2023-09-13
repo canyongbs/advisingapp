@@ -16,12 +16,12 @@ use Assist\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
 class AlertServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AlertPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'alert' => Alert::class,
