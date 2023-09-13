@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
      * A result store is responsible for saving the results of the checks. The
      * `EloquentHealthResultStore` will save results in the database. You
