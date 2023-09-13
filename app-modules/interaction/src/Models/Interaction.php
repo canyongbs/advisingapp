@@ -108,73 +108,38 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         );
     }
 
-    public function interactionCampaign(): BelongsTo
-    {
-        return $this->belongsTo(InteractionCampaign::class);
-    }
-
     public function campaign(): BelongsTo
     {
-        return $this->interactionCampaign();
-    }
-
-    public function interactionDriver(): BelongsTo
-    {
-        return $this->belongsTo(InteractionDriver::class);
+        return $this->belongsTo(InteractionCampaign::class, 'interaction_campaign_id');
     }
 
     public function driver(): BelongsTo
     {
-        return $this->interactionDriver();
-    }
-
-    public function interactionInstitution(): BelongsTo
-    {
-        return $this->belongsTo(InteractionInstitution::class);
+        return $this->belongsTo(InteractionDriver::class, 'interaction_driver_id');
     }
 
     public function institution(): BelongsTo
     {
-        return $this->interactionInstitution();
-    }
-
-    public function interactionOutcome(): BelongsTo
-    {
-        return $this->belongsTo(InteractionOutcome::class);
+        return $this->belongsTo(InteractionInstitution::class, 'interaction_institution_id');
     }
 
     public function outcome(): BelongsTo
     {
-        return $this->interactionOutcome();
-    }
-
-    public function interactionRelation(): BelongsTo
-    {
-        return $this->belongsTo(InteractionRelation::class);
+        return $this->belongsTo(InteractionOutcome::class, 'interaction_outcome_id');
     }
 
     public function relation(): BelongsTo
     {
-        return $this->interactionRelation();
-    }
-
-    public function interactionStatus(): BelongsTo
-    {
-        return $this->belongsTo(InteractionStatus::class);
+        return $this->belongsTo(InteractionRelation::class, 'interaction_relation_id');
     }
 
     public function status(): BelongsTo
     {
-        return $this->interactionStatus();
-    }
-
-    public function interactionType(): BelongsTo
-    {
-        return $this->belongsTo(InteractionType::class);
+        return $this->belongsTo(InteractionStatus::class, 'interaction_status_id');
     }
 
     public function type(): BelongsTo
     {
-        return $this->interactionType();
+        return $this->belongsTo(InteractionType::class, 'interaction_type_id');
     }
 }
