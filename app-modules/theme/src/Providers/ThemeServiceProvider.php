@@ -2,13 +2,12 @@
 
 namespace Assist\Theme\Providers;
 
-use Assist\Audit\Models\Audit;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Authorization\AuthorizationRoleRegistry;
 use Filament\Panel;
 use Assist\Theme\ThemePlugin;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Assist\Authorization\AuthorizationRoleRegistry;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class ThemeServiceProvider extends ServiceProvider
 {
