@@ -20,6 +20,7 @@
         "canyon-gbs/authorization": "*",
         "canyon-gbs/engagement": "*",
         "canyon-gbs/integration-twilio": "*",
+        "canyon-gbs/interaction": "*",
         "canyon-gbs/knowledge-base": "*",
         "canyon-gbs/notifications": "*",
         "canyon-gbs/prospect": "*",

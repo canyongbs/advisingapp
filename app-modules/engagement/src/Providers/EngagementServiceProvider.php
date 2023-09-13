@@ -39,10 +39,10 @@ class EngagementServiceProvider extends ServiceProvider
             $schedule->job(DeliverEngagements::class)->everyMinute();
         });
 
-        $this->observers();
+        $this->registerObservers();
     }
 
-    public function observers(): void
+    public function registerObservers(): void
     {
         EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
         Engagement::observe(EngagementObserver::class);

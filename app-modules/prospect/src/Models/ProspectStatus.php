@@ -11,7 +11,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
@@ -47,7 +46,6 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  */
 class ProspectStatus extends BaseModel implements Auditable
 {
-    use HasUuids;
     use SoftDeletes;
     use AuditableTrait;
 

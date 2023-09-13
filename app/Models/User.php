@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Filament\Panel;
 use DateTimeInterface;
 use Assist\Audit\Models\Audit;
+use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
@@ -120,6 +121,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use AuditableTrait;
     use HasManyEngagements;
     use HasManyEngagementBatches;
+    use CanOrElse;
 
     public const TYPE_RADIO = [
         'local' => 'Local',

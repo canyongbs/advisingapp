@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f414f9c8dbb6564f96b18acf3832cb8d",
+    "content-hash": "abf6babaa5a74e1bc2a7b6280ce4f361",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -713,6 +713,41 @@
                     "Assist\\IntegrationTwilio\\Tests\\": "tests/",
                     "Assist\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
                     "Assist\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/interaction",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/interaction",
+                "reference": "3af7de8ea9aa204e28cb246f3fd28cb8bae67bb7"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Interaction\\Providers\\InteractionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Interaction\\": "src/",
+                    "Assist\\Interaction\\Tests\\": "tests/",
+                    "Assist\\Interaction\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Interaction\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

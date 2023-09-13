@@ -21,8 +21,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
@@ -50,6 +52,8 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  * @property-read int|null $audits_count
  * @property-read User|null $createdBy
  * @property-read Institution|null $institution
+ * @property-read Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read int|null $interactions_count
  * @property-read \Assist\ServiceManagement\Models\ServiceRequestPriority|null $priority
  * @property-read Model|\Eloquent $respondent
  * @property-read Collection<int, \Assist\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
@@ -82,12 +86,13 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  *
  * @mixin Eloquent
  */
-class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription
+class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
 {
     use SoftDeletes;
     use PowerJoins;
     use AuditableTrait;
     use HasUuids;
+    use HasManyMorphedInteractions;
 
     protected $fillable = [
         'respondent_type',
@@ -136,6 +141,11 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         } while ($attempts < 3);
 
         return $save;
+    }
+
+    public function identifier(): string
+    {
+        return $this->id;
     }
 
     public function getSubscribable(): ?Subscribable

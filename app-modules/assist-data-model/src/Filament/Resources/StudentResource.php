@@ -5,10 +5,12 @@ namespace Assist\AssistDataModel\Filament\Resources;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Assist\AssistDataModel\Models\Student;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Assist\Alert\Filament\RelationManagers\AlertsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\SubscriptionsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementResponsesRelationManager;
@@ -33,11 +35,14 @@ class StudentResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationGroup::make('Engagement', [
+                EngagementsRelationManager::class,
+                EngagementResponsesRelationManager::class,
+                EngagementFilesRelationManager::class,
+            ]),
             SubscriptionsRelationManager::class,
-            EngagementsRelationManager::class,
-            EngagementResponsesRelationManager::class,
-            EngagementFilesRelationManager::class,
             TasksRelationManager::class,
+            InteractionsRelationManager::class,
             AlertsRelationManager::class,
         ];
     }

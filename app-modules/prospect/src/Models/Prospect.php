@@ -30,6 +30,7 @@ use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
+use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
@@ -70,6 +71,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $engagement_responses_count
  * @property-read Collection<int, Engagement> $engagements
  * @property-read int|null $engagements_count
+ * @property-read Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read int|null $interactions_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, ServiceRequest> $serviceRequests
@@ -120,6 +123,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Identifiabl
     use Notifiable;
     use HasManyMorphedEngagements;
     use HasManyMorphedEngagementResponses;
+    use HasManyMorphedInteractions;
 
     protected $fillable = [
         'first_name',
