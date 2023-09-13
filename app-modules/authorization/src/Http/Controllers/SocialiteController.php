@@ -3,9 +3,8 @@
 namespace Assist\Authorization\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Filament\Pages\Dashboard;
+use Filament\Facades\Filament;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Assist\Authorization\Enums\SocialiteProvider;
@@ -28,23 +27,27 @@ class SocialiteController extends Controller
 
     public function callback(SocialiteProvider $provider)
     {
-        $socialite = $provider
+        $socialiteUser = $provider
             ->driver()
             ->setConfig($provider->config())
             ->user();
 
-        $user = User::updateOrCreate(
-            ['email' => $socialite->getEmail()],
-            [
-                'name' => $socialite->getName(),
-                'password' => bcrypt(Str::random()),
-            ]
-        );
+        $user = User::query()
+            ->where('email', $socialiteUser->getEmail())
+            ->first();
+
+        if (! $user?->is_external) {
+            abort(403);
+        }
+
+        $user->update([
+            'name' => $socialiteUser->getName(),
+        ]);
 
         Auth::login($user);
 
         session(['auth_via' => $provider]);
 
-        return redirect()->to(Dashboard::getUrl());
+        return redirect()->to(Filament::getUrl());
     }
 }

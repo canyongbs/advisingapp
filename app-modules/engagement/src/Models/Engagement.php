@@ -25,7 +25,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property string|null $engagement_batch_id
  * @property string|null $recipient_id
  * @property string|null $recipient_type
- * @property string $subject
+ * @property string|null $subject
  * @property string|null $body
  * @property string $deliver_at
  * @property Carbon|null $created_at
