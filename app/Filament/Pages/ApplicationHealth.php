@@ -14,7 +14,7 @@ class ApplicationHealth extends HealthCheckResults
     {
         $count = app(ResultStore::class)
             ->latestResults()
-            ->storedCheckResults
+            ?->storedCheckResults
             ->filter(fn ($check) => $check->status !== Status::ok()->value)
             ->count();
 
