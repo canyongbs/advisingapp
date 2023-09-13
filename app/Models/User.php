@@ -14,6 +14,7 @@ use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\Assistant\Models\AssistantChat;
 use Assist\Authorization\Models\RoleGroup;
 use Assist\Authorization\Models\Permission;
 use Filament\Models\Contracts\FilamentUser;
@@ -56,6 +57,8 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read Collection<int, \App\Models\UserAlert> $alerts
  * @property-read int|null $alerts_count
+ * @property-read Collection<int, AssistantChat> $assistantChats
+ * @property-read int|null $assistant_chats_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
  * @property-read Collection<int, \Assist\Engagement\Models\EngagementBatch> $engagementBatches
@@ -210,6 +213,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function preferredLocale()
     {
         return $this->locale;
+    }
+
+    public function assistantChats(): HasMany
+    {
+        return $this->hasMany(AssistantChat::class);
     }
 
     public function getEmailVerifiedAtAttribute($value)
