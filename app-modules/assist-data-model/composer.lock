@@ -216,7 +216,7 @@
                 "reference": "4a45eb33e21759ea861da16151a1e7cb022b3d40"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.0"
             },
             "type": "library",
             "extra": {

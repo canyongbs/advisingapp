@@ -5,7 +5,9 @@
   "version": "1.0",
   "license": "proprietary",
   "require": {
-    "filament/filament": "^3.0.0"
+    "filament/filament": "^3.0",
+    "filament/spatie-laravel-settings-plugin": "^3.0",
+    "spatie/laravel-settings": "^3.2"
   },
   "autoload": {
     "psr-4": {
