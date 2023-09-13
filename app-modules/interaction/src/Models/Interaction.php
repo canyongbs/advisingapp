@@ -34,13 +34,10 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property-read int|null $audits_count
  * @property-read \Assist\Interaction\Models\InteractionCampaign|null $campaign
  * @property-read \Assist\Interaction\Models\InteractionDriver|null $driver
+ * @property-read \Assist\Interaction\Models\InteractionInstitution|null $institution
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $interactable
- * @property-read \Assist\Interaction\Models\InteractionCampaign|null $interactionCampaign
- * @property-read \Assist\Interaction\Models\InteractionDriver|null $interactionDriver
- * @property-read \Assist\Interaction\Models\InteractionOutcome|null $interactionOutcome
- * @property-read \Assist\Interaction\Models\InteractionStatus|null $interactionStatus
- * @property-read \Assist\Interaction\Models\InteractionType|null $interactionType
  * @property-read \Assist\Interaction\Models\InteractionOutcome|null $outcome
+ * @property-read \Assist\Interaction\Models\InteractionRelation|null $relation
  * @property-read \Assist\Interaction\Models\InteractionStatus|null $status
  * @property-read \Assist\Interaction\Models\InteractionType|null $type
  *
