@@ -147,6 +147,10 @@
         "checks": [
             "@lint-dryrun",
             "@larastan"
+        ],
+        "ci": [
+            "rm -rf ./vendor",
+            "composer install"
         ]
     },
     "extra": {
