@@ -8,6 +8,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Prospect\Filament\Resources\ProspectResource;
@@ -24,7 +25,10 @@ class ListProspects extends ListRecords
                 TextColumn::make('full')
                     ->label('Name')
                     ->translateLabel()
-                    ->searchable()
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->where('full', 'ilike', "%{$search}%");
+                    })
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('Email')
@@ -39,7 +43,6 @@ class ListProspects extends ListRecords
                 TextColumn::make('birthdate')
                     ->label('Birthdate')
                     ->translateLabel()
-                    ->searchable()
                     ->sortable(),
             ])
             ->filters([

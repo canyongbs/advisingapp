@@ -53,7 +53,8 @@ class StudentResource extends Resource
             'index' => Pages\ListStudents::route('/'),
             'create' => Pages\CreateStudent::route('/create'),
             'view' => Pages\ViewStudent::route('/{record}'),
-            'edit' => Pages\EditStudent::route('/{record}/edit'),
+            // TODO: completely remove edit page
+            // 'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
 }
