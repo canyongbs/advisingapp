@@ -18,7 +18,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
  * @property AIChatMessageFrom $from
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \Assist\Assistant\Models\AssistantChat|null $chat
+ * @property-read AssistantChat|null $chat
  *
  * @method static Builder|AssistantChatMessage newModelQuery()
  * @method static Builder|AssistantChatMessage newQuery()
@@ -35,7 +35,6 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 class AssistantChatMessage extends BaseModel
 {
     protected $fillable = [
-        'assistant_chat_id',
         'message',
         'from',
     ];
