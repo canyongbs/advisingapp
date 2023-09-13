@@ -25,8 +25,8 @@ class AssistantServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'assistant-chat' => AssistantChat::class,
-            'assistant-chat-message' => AssistantChatMessage::class,
+            'assistant_chat' => AssistantChat::class,
+            'assistant_chat_message' => AssistantChatMessage::class,
         ]);
 
         $this->registerRolesAndPermissions();
