@@ -11,7 +11,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('assistant_chat_id')->constrained('assistant_chats');
             $table->longText('message');
-            $table->enum('from', ['user', 'assistant']);
+            $table->string('from');
             $table->timestamps();
         });
     }

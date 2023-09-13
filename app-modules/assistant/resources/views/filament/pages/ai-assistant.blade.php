@@ -1,3 +1,7 @@
+<?php
+    use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+?>
+
 <x-filament-panels::page>
     <div>
         <div class="h-[50vh] overflow-auto flex flex-col-reverse">
@@ -7,12 +11,12 @@
                             @class(
                                 [
                                     'mx-auto my-4 w-full p-4 sm:p-6 lg:px-8',
-                                    'bg-primary-500' => $message->from === 'user',
-                                    'bg-gray-500' => $message->from === 'assistant',
+                                    'bg-primary-500' => $message->from === AIChatMessageFrom::User,
+                                    'bg-gray-500' => $message->from === AIChatMessageFrom::Assistant,
                                 ]
                             )
                     >
-                        <h1 class="text-2xl">{{ $message->from === 'user' ? 'You' : 'AI Assistant' }}</h1>
+                        <h1 class="text-2xl">{{ $message->from === AIChatMessageFrom::User ? 'You' : 'AI Assistant' }}</h1>
                         <p>{{ $message->message }}</p>
                     </div>
                 @endforeach

@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 /**
  * Assist\Assistant\Models\AssistantChatMessage
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $id
  * @property string $assistant_chat_id
  * @property string $message
- * @property string $from
+ * @property AIChatMessageFrom $from
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \Assist\Assistant\Models\AssistantChat|null $chat
@@ -37,6 +38,10 @@ class AssistantChatMessage extends BaseModel
         'assistant_chat_id',
         'message',
         'from',
+    ];
+
+    protected $casts = [
+        'from' => AIChatMessageFrom::class,
     ];
 
     public function chat(): BelongsTo
