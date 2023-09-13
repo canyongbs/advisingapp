@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
-use Assist\AssistDataModel\Database\Factories\StudentFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
@@ -55,7 +54,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
- * @method static StudentFactory factory($count = null, $state = [])
+ * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
