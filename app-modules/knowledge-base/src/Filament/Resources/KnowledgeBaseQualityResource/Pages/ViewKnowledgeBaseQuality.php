@@ -5,6 +5,7 @@ namespace Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\P
 use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
 
@@ -16,12 +17,16 @@ class ViewKnowledgeBaseQuality extends ViewRecord
     {
         return parent::infolist($infolist)
             ->schema([
-                TextEntry::make('id')
-                    ->label('ID')
-                    ->translateLabel(),
-                TextEntry::make('name')
-                    ->label('Name')
-                    ->translateLabel(),
+                Section::make()
+                    ->schema([
+                        TextEntry::make('id')
+                            ->label('ID')
+                            ->translateLabel(),
+                        TextEntry::make('name')
+                            ->label('Name')
+                            ->translateLabel(),
+                    ])
+                    ->columns(),
             ]);
     }
 

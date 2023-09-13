@@ -5,6 +5,7 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResour
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Assist\ServiceManagement\Models\ServiceRequestStatus;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
@@ -17,17 +18,21 @@ class ViewServiceRequestStatus extends ViewRecord
     {
         return parent::infolist($infolist)
             ->schema([
-                TextEntry::make('id')
-                    ->label('ID')
-                    ->translateLabel(),
-                TextEntry::make('name')
-                    ->label('Name')
-                    ->translateLabel(),
-                TextEntry::make('color')
-                    ->label('Color')
-                    ->translateLabel()
-                    ->badge()
-                    ->color(fn (ServiceRequestStatus $serviceRequestStatus) => $serviceRequestStatus->color),
+                Section::make()
+                    ->schema([
+                        TextEntry::make('id')
+                            ->label('ID')
+                            ->translateLabel(),
+                        TextEntry::make('name')
+                            ->label('Name')
+                            ->translateLabel(),
+                        TextEntry::make('color')
+                            ->label('Color')
+                            ->translateLabel()
+                            ->badge()
+                            ->color(fn (ServiceRequestStatus $serviceRequestStatus) => $serviceRequestStatus->color),
+                    ])
+                    ->columns(),
             ]);
     }
 

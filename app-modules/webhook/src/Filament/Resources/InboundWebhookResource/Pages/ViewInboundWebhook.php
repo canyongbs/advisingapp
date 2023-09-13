@@ -4,6 +4,7 @@ namespace Assist\Webhook\Filament\Resources\InboundWebhookResource\Pages;
 
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Webhook\Filament\Resources\InboundWebhookResource;
 
@@ -15,18 +16,22 @@ class ViewInboundWebhook extends ViewRecord
     {
         return parent::infolist($infolist)
             ->schema([
-                TextEntry::make('id')
-                    ->label('ID')
-                    ->translateLabel(),
-                TextEntry::make('source')
-                    ->translateLabel(),
-                TextEntry::make('event')
-                    ->translateLabel(),
-                TextEntry::make('url')
-                    ->translateLabel(),
-                TextEntry::make('payload')
-                    ->translateLabel()
-                    ->limit(100),
+                Section::make()
+                    ->schema([
+                        TextEntry::make('id')
+                            ->label('ID')
+                            ->translateLabel(),
+                        TextEntry::make('source')
+                            ->translateLabel(),
+                        TextEntry::make('event')
+                            ->translateLabel(),
+                        TextEntry::make('url')
+                            ->translateLabel(),
+                        TextEntry::make('payload')
+                            ->translateLabel()
+                            ->limit(100),
+                    ])
+                    ->columns(),
             ]);
     }
 }
