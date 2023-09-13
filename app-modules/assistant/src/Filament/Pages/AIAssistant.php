@@ -83,7 +83,7 @@ class AIAssistant extends Page
 
     protected function setMessage(string $message, AIChatMessageFrom $from): void
     {
-        if ($this->chat->id) {
+        if (filled($this->chat->id)) {
             /** @var User $user */
             $user = auth()->user();
 
