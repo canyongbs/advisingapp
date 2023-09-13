@@ -6,7 +6,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\RelationManagers\RelationManager;
 
 class PermissionsRelationManager extends RelationManager
 {

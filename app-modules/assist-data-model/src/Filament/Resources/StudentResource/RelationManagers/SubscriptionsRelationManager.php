@@ -8,7 +8,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
-use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\RelationManagers\RelationManager;
 
 class SubscriptionsRelationManager extends RelationManager
 {
