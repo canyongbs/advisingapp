@@ -9,6 +9,7 @@ use App\Filament\Resources\UserResource;
 use Assist\Engagement\Models\Engagement;
 use Filament\Resources\Pages\ViewRecord;
 use Assist\AssistDataModel\Models\Student;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Prospect\Filament\Resources\ProspectResource;
@@ -23,44 +24,48 @@ class ViewEngagement extends ViewRecord
     {
         return parent::infolist($infolist)
             ->schema([
-                TextEntry::make('id')
-                    ->label('ID')
-                    ->translateLabel(),
-                TextEntry::make('user.name')
-                    ->label('Created By')
-                    ->translateLabel()
-                    ->color('primary')
-                    ->url(function (Engagement $record) {
-                        return UserResource::getUrl('view', ['record' => $record->user->id]);
-                    }),
-                TextEntry::make('recipient')
-                    ->translateLabel()
-                    ->color('primary')
-                    ->state(function (Engagement $record): string {
-                        /** @var Student|Prospect $recipient */
-                        $recipient = $record->recipient;
-
-                        return match ($recipient::class) {
-                            Student::class => "{$recipient->full} (Student)",
-                            Prospect::class => "{$recipient->full} (Prospect)",
-                        };
-                    })
-                    ->url(function (Engagement $record) {
-                        /** @var Student|Prospect $recipient */
-                        $recipient = $record->recipient;
-
-                        return match ($recipient::class) {
-                            Student::class => StudentResource::getUrl('view', ['record' => $recipient->sisid]),
-                            Prospect::class => ProspectResource::getUrl('view', ['record' => $recipient->id]),
-                        };
-                    }),
-                Fieldset::make('Content')
+                Section::make()
                     ->schema([
-                        TextEntry::make('subject')
+                        TextEntry::make('id')
+                            ->label('ID')
                             ->translateLabel(),
-                        TextEntry::make('body')
-                            ->translateLabel(),
-                    ]),
+                        TextEntry::make('user.name')
+                            ->label('Created By')
+                            ->translateLabel()
+                            ->color('primary')
+                            ->url(function (Engagement $record) {
+                                return UserResource::getUrl('view', ['record' => $record->user->id]);
+                            }),
+                        TextEntry::make('recipient')
+                            ->translateLabel()
+                            ->color('primary')
+                            ->state(function (Engagement $record): string {
+                                /** @var Student|Prospect $recipient */
+                                $recipient = $record->recipient;
+
+                                return match ($recipient::class) {
+                                    Student::class => "{$recipient->full} (Student)",
+                                    Prospect::class => "{$recipient->full} (Prospect)",
+                                };
+                            })
+                            ->url(function (Engagement $record) {
+                                /** @var Student|Prospect $recipient */
+                                $recipient = $record->recipient;
+
+                                return match ($recipient::class) {
+                                    Student::class => StudentResource::getUrl('view', ['record' => $recipient->sisid]),
+                                    Prospect::class => ProspectResource::getUrl('view', ['record' => $recipient->id]),
+                                };
+                            }),
+                        Fieldset::make('Content')
+                            ->schema([
+                                TextEntry::make('subject')
+                                    ->translateLabel(),
+                                TextEntry::make('body')
+                                    ->translateLabel(),
+                            ]),
+                    ])
+                    ->columns(),
             ]);
     }
 
