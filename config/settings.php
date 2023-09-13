@@ -1,6 +1,6 @@
 <?php
 
-use Assist\Audit\Models\SettingsProperty;
+use App\Models\SettingsProperty;
 
 return [
     /*

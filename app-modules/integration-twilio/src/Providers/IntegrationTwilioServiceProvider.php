@@ -9,7 +9,7 @@ use Assist\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as 
 
 class IntegrationTwilioServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         $this->app->bind(EngagementResponseSenderFinder::class, function ($app) {
             if (config('services.twilio.enable_test_sender') === true) {
@@ -20,5 +20,5 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
         });
     }
 
-    public function boot() {}
+    public function boot(): void {}
 }

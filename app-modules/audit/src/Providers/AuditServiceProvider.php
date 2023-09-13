@@ -13,12 +13,11 @@ use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class AuditServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AuditPlugin()));
 
         app('config')->set('audit', require base_path('app-modules/audit/config/audit.php'));
-        app('config')->set('settings', require base_path('app-modules/audit/config/settings.php'));
     }
 
     public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void

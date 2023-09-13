@@ -14,7 +14,7 @@ use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class ProspectServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ProspectPlugin()));
     }

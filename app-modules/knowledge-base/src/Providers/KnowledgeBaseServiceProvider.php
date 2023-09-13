@@ -13,12 +13,12 @@ use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new KnowledgeBasePlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'knowledge_base_item' => KnowledgeBaseItem::class,
