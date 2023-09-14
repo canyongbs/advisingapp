@@ -18,26 +18,27 @@ return new class () extends Migration {
                 $table->string('email')->nullable();
                 $table->string('email_2')->nullable();
                 $table->string('mobile')->nullable();
-                // TODO: Should sms_opt_out be a boolean?
-                $table->string('sms_opt_out')->nullable();
-                // TODO: Should email_bounce be a boolean?
-                $table->string('email_bounce')->nullable();
+                $table->boolean('sms_opt_out');
+                $table->boolean('email_bounce');
                 $table->string('phone')->nullable();
                 $table->string('address')->nullable();
                 $table->string('address_2')->nullable();
+                $table->string('address_3')->nullable();
+                $table->string('city')->nullable();
+                $table->string('state')->nullable();
+                $table->string('postal')->nullable();
                 $table->date('birthdate')->nullable();
                 $table->integer('hsgrad')->nullable();
-                // TODO: Should dual be a boolean?
-                $table->string('dual')->nullable();
-                // TODO: Should ferpa be a boolean?
-                $table->string('ferpa')->nullable();
-                $table->float('gpa', 4, 3)->nullable();
-                $table->string('dfw')->nullable();
-                // TODO: Should firstgen be a boolean?
-                $table->string('firstgen')->nullable();
+                $table->boolean('dual')->nullable();
+                $table->boolean('ferpa')->nullable();
+                $table->date('dfw')->nullable();
+                $table->boolean('sap')->nullable();
+                $table->string('holds')->nullable();
+                $table->boolean('firstgen')->nullable();
                 $table->string('ethnicity')->nullable();
                 $table->datetime('lastlmslogin')->nullable();
-                $table->timestamps();
+                $table->string('f_e_term')->nullable();
+                $table->string('mr_e_term')->nullable();
             });
     }
 };
