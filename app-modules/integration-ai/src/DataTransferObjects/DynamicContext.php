@@ -3,11 +3,11 @@
 namespace Assist\IntegrationAI\DataTransferObjects;
 
 use Spatie\LaravelData\Data;
-use Illuminate\Database\Eloquent\Model;
+use Assist\IntegrationAi\Models\Concerns\ProvidesDynamicContext;
 
 class DynamicContext extends Data
 {
-    public Model $record;
+    public ProvidesDynamicContext $record;
 
     public ?string $context;
 

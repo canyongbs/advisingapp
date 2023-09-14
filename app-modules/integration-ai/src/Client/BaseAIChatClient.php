@@ -99,6 +99,7 @@ abstract class BaseAIChatClient implements AIChatClient
         return $response->choices[0]?->delta?->content ?: null;
     }
 
+    // TODO We can utilize the finishReason in order to flag audit records that might need attention
     protected function examineFinishReason(CreateStreamedResponse $response): void
     {
         match ($response->choices[0]->finishReason) {
