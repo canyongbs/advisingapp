@@ -12,7 +12,9 @@ use Assist\IntegrationAI\Events\AIPromptInitiated;
 use Assist\IntegrationAI\DataTransferObjects\AIPrompt;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Client\Concerns\InitializesClient;
+use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\DataTransferObjects\DynamicContext;
+use Assist\IntegrationAI\Exceptions\TokensExceededException;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 
 abstract class BaseAIChatClient implements AIChatClient
@@ -44,9 +46,10 @@ abstract class BaseAIChatClient implements AIChatClient
             $this->setSystemContext();
         }
 
-        $this->promptInitiated($chat);
+        $this->dispatchPromptInitiatedEvent($chat);
 
         /** @var StreamResponse $stream */
+        // This simply creates our stream, which we want to handle the response
         $stream = $this->client->chat()->createStreamed([
             'messages' => $this->formatMessagesFromChat($chat),
         ]);
@@ -68,10 +71,8 @@ abstract class BaseAIChatClient implements AIChatClient
         foreach ($stream as $response) {
             $streamedContent = $this->shouldSendResponse($response);
 
-            if (! is_null($callback)) {
-                if (! is_null($streamedContent)) {
-                    $callback($streamedContent);
-                }
+            if (! is_null($streamedContent)) {
+                $callback($streamedContent);
             }
 
             $fullResponse .= $streamedContent;
@@ -92,11 +93,20 @@ abstract class BaseAIChatClient implements AIChatClient
 
     protected function shouldSendResponse(CreateStreamedResponse $response): ?string
     {
-        if ($response->choices[0]->finishReason === 'stop') {
-            return null;
+        if ($response->choices[0]) {
+            $this->examineFinishReason($response);
         }
 
         return $response->choices[0]->delta->content ?: null;
+    }
+
+    protected function examineFinishReason(CreateStreamedResponse $response): void
+    {
+        match ($response->choices[0]->finishReason) {
+            'length' => throw new TokensExceededException('Your response was not successfully generated due to the max_tokens parameter or token limit being exceeded.'),
+            'content_filter' => throw new ContentFilterException('Your response was not successfully generated due to a flag from our content filters.'),
+            default => null,
+        };
     }
 
     protected function formatMessagesFromChat(Chat $chat): array
@@ -117,7 +127,7 @@ abstract class BaseAIChatClient implements AIChatClient
         return $this->systemContext . ' ' . $this->dynamicContext;
     }
 
-    protected function promptInitiated(Chat $chat): void
+    protected function dispatchPromptInitiatedEvent(Chat $chat): void
     {
         AIPromptInitiated::dispatch(AIPrompt::from([
             'user' => auth()->user(),

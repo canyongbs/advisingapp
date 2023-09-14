@@ -8,6 +8,8 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Rule;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
+use Assist\IntegrationAI\Exceptions\ContentFilterException;
+use Assist\IntegrationAI\Exceptions\TokensExceededException;
 use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
@@ -33,6 +35,10 @@ class AIAssistant extends Page
 
     public string $currentResponse = '';
 
+    public bool $renderError = false;
+
+    public string $error = '';
+
     public function mount(): void
     {
         /** @var User $user */
@@ -49,6 +55,9 @@ class AIAssistant extends Page
 
     public function sendMessage(): void
     {
+        $this->reset('renderError');
+        $this->reset('error');
+
         $this->validate();
 
         $this->prompt = $this->message;
@@ -67,13 +76,20 @@ class AIAssistant extends Page
         // Does not result in the frontend reflecting the changes.
         // $this->showCurrentResponse = true;
 
-        $this->currentResponse = $ai->ask($this->chat, function ($partial) {
-            $this->stream('currentResponse', $partial);
-        });
+        try {
+            $this->currentResponse = $ai->ask($this->chat, function (string $partial) {
+                $this->stream('currentResponse', $partial);
+            });
+        } catch (ContentFilterException|TokensExceededException $e) {
+            $this->renderError = true;
+            $this->error = $e->getMessage();
+        }
 
         $this->reset('showCurrentResponse');
 
-        $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant);
+        if ($this->error === false) {
+            $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant);
+        }
 
         $this->reset('currentResponse');
     }

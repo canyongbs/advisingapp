@@ -4,9 +4,13 @@ namespace Assist\IntegrationAI\Client\Playground;
 
 class MockStreamResponseGenerator
 {
-    private $minChunkSize = 2;
+    protected $minChunkSize = 2;
 
-    private $maxChunkSize = 4;
+    protected $maxChunkSize = 4;
+
+    protected $terminateWithLength = false;
+
+    protected $terminateWithContentFilter = false;
 
     public function generateFakeStreamResponse(string $type = 'paragraph', int $quantity = 2): string
     {
@@ -22,10 +26,29 @@ class MockStreamResponseGenerator
             $responses[] = $this->addContentToChat($chatId, $content);
         }
 
-        $responses[] = $this->terminateChat($chatId);
+        match (true) {
+            $this->terminateWithLength => $responses[] = $this->terminateChatWithLengthFinishReason($chatId),
+            $this->terminateWithContentFilter => $responses[] = $this->terminateChatWithContentFilterFinishReason($chatId),
+            default => $responses[] = $this->terminateChat($chatId),
+        };
+
         $responses[] = "data: [DONE]\n";
 
         return implode('', $responses);
+    }
+
+    public function withLengthError(): self
+    {
+        $this->terminateWithLength = true;
+
+        return $this;
+    }
+
+    public function withContentFilterError(): self
+    {
+        $this->terminateWithContentFilter = true;
+
+        return $this;
     }
 
     protected function generateFakeContent(string $type, int $quantity): array
@@ -118,6 +141,40 @@ class MockStreamResponseGenerator
                     'delta' => [],
                     'index' => 0,
                     'finish_reason' => 'stop',
+                ],
+            ],
+        ]) . "\n";
+    }
+
+    protected function terminateChatWithLengthFinishReason(string $chatId): string
+    {
+        return 'data: ' . json_encode([
+            'id' => $chatId,
+            'object' => 'chat.completion.chunk',
+            'created' => time(),
+            'model' => 'canyon-test-model',
+            'choices' => [
+                [
+                    'delta' => [],
+                    'index' => 0,
+                    'finish_reason' => 'length',
+                ],
+            ],
+        ]) . "\n";
+    }
+
+    protected function terminateChatWithContentFilterFinishReason(string $chatId): string
+    {
+        return 'data: ' . json_encode([
+            'id' => $chatId,
+            'object' => 'chat.completion.chunk',
+            'created' => time(),
+            'model' => 'canyon-test-model',
+            'choices' => [
+                [
+                    'delta' => [],
+                    'index' => 0,
+                    'finish_reason' => 'content_filter',
                 ],
             ],
         ]) . "\n";

@@ -12,7 +12,9 @@ class AzureOpenAI extends BaseAIChatClient
 {
     protected function initializeClient(): void
     {
-        $fakeText = resolve(MockStreamResponseGenerator::class)->generateFakeStreamResponse();
+        $fakeText = resolve(MockStreamResponseGenerator::class)
+            ->withLengthError()
+            ->generateFakeStreamResponse();
 
         $handle = fopen('php://memory', 'r+');
         fwrite($handle, $fakeText);
