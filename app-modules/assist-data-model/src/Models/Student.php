@@ -2,6 +2,7 @@
 
 namespace Assist\AssistDataModel\Models;
 
+use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Eloquent;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
@@ -70,6 +71,7 @@ class Student extends Model implements Auditable, Subscribable, Identifiable
     use HasManyMorphedEngagements;
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
+    use HasSubscriptions;
 
     protected $primaryKey = 'sisid';
 
@@ -119,10 +121,5 @@ class Student extends Model implements Auditable, Subscribable, Identifiable
     public function alerts(): MorphMany
     {
         return $this->morphMany(Alert::class, 'concern');
-    }
-
-    public function subscriptions(): MorphMany
-    {
-        return $this->morphMany(Subscription::class, 'subscribable');
     }
 }

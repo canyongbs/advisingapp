@@ -2,6 +2,9 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
+use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
+use Assist\Notifications\Filament\Actions\SubscribeTableAction;
+use Assist\Notifications\Models\Contracts\Subscribable;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\Action;
@@ -42,16 +45,11 @@ class ListStudents extends ListRecords
             ])
             ->actions([
                 ViewAction::make(),
-                Action::make('subscribe')
-                    ->label(fn (Student $record) => $record->subscriptions()->whereHas('user', fn (Builder $query) => $query->where('user_id', auth()->id()))->exists() ? 'Unsubscribe' : 'Subscribe')
-                    ->icon(fn (Student $record) => $record->subscriptions()->whereHas('user', fn (Builder $query) => $query->where('user_id', auth()->id()))->exists() ? 'heroicon-s-bell-slash' : 'heroicon-s-bell')
-                    ->action(fn (Student $record) => resolve(SubscriptionToggle::class)->handle(auth()->user(), $record)),
+                SubscribeTableAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    BulkAction::make('toggle_subscription')
-                        ->icon('heroicon-s-bell')
-                        ->action(fn (Collection $records) => $records->each(fn (Student $record) => resolve(SubscriptionToggle::class)->handle(auth()->user(), $record))),
+                    SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
                     DeleteBulkAction::make(),
                 ]),

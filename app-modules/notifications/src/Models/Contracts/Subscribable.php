@@ -3,6 +3,7 @@
 namespace Assist\Notifications\Models\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * Interface Subscribable
@@ -11,4 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin Model
  */
-interface Subscribable {}
+interface Subscribable
+{
+    public function subscriptions(): MorphMany;
+}

@@ -2,8 +2,9 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Actions;
+use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
 use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -15,6 +16,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
+use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 
 class ListProspects extends ListRecords
 {
@@ -79,9 +81,11 @@ class ListProspects extends ListRecords
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
+                SubscribeTableAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
+                    SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
                 ]),
@@ -91,7 +95,7 @@ class ListProspects extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }
