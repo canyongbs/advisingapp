@@ -2,6 +2,8 @@
 
 namespace Assist\IntegrationAI\Client\Playground;
 
+use Illuminate\Support\Str;
+
 class MockStreamResponseGenerator
 {
     protected $minChunkSize = 2;
@@ -17,7 +19,7 @@ class MockStreamResponseGenerator
         $contents = $this->generateFakeContent($type, $quantity);
         $streamedContents = $this->prepareForStreaming($contents, $type);
 
-        $chatId = 'chatcmpl-' . bin2hex(random_bytes(10));
+        $chatId = 'chatcmpl-' . Str::random(8);
 
         $responses = [];
         $responses[] = $this->initChat($chatId);
