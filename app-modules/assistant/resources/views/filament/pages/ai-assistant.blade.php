@@ -26,8 +26,9 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                 @endforeach
                 @if ($showCurrentResponse)
                     <div class="my-4 w-3/4 rounded-lg bg-gray-500 p-4 sm:p-6 lg:px-8">
-                        <h1 class="text-2xl">AI Assistant</h1>
+                        <h1 class="mb-1 text-2xl">AI Assistant</h1>
                         <p wire:stream="currentResponse">{{ $currentResponse }}</p>
+
                     </div>
                 @endif
                 @if ($renderError)
