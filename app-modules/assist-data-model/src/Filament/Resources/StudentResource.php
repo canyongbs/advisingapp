@@ -11,6 +11,7 @@ use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\PerformanceRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\SubscriptionsRelationManager;
@@ -39,6 +40,7 @@ class StudentResource extends Resource
         return [
             RelationGroup::make('Student Information', [
                 ProgramsRelationManager::class,
+                EnrollmentsRelationManager::class,
                 PerformanceRelationManager::class,
             ]),
             RelationGroup::make('Engagement', [

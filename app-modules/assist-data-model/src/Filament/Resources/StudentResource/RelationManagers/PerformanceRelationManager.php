@@ -2,8 +2,10 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class PerformanceRelationManager extends RelationManager
@@ -15,27 +17,27 @@ class PerformanceRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('acad_career')
             ->columns([
-                Tables\Columns\TextColumn::make('acad_career')
+                TextColumn::make('acad_career')
                     ->label('Academic Career'),
-                Tables\Columns\TextColumn::make('division')
+                TextColumn::make('division')
                     ->label('College'),
-                Tables\Columns\IconColumn::make('first_gen')
+                IconColumn::make('first_gen')
                     ->label('First Gen')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('cum_att')
+                TextColumn::make('cum_att')
                     ->label('Cumulative Attempted'),
-                Tables\Columns\TextColumn::make('cum_ern')
+                TextColumn::make('cum_ern')
                     ->label('Cumulative Earned'),
-                Tables\Columns\TextColumn::make('pct_ern')
+                TextColumn::make('pct_ern')
                     ->label('Percent Earned'),
-                Tables\Columns\TextColumn::make('cum_gpa')
+                TextColumn::make('cum_gpa')
                     ->label('Cumulative GPA'),
             ])
             ->filters([
             ])
             ->headerActions([])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make(),
             ])
             ->bulkActions([])
             ->emptyStateActions([]);

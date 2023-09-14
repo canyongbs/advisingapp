@@ -25,7 +25,7 @@ class SetupForeignDataWrapper extends Command
                 tables: [
                     'students',
                     'programs',
-                    'enrollment',
+                    'enrollments',
                     'performance',
                 ],
             )
