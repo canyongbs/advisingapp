@@ -115,6 +115,7 @@ _For more examples, please refer to the [Documentation](https://assistforhighere
 ## Integrations
 
 [Twilio](./docs/integrations/twilio.md)
+[Azure OpenAI](./docs/integrations/azure_open_ai.md)
 ## Roadmap
 
 Coming Soon
