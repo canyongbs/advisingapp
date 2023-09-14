@@ -72,9 +72,9 @@ abstract class BaseAIChatClient implements AIChatClient
 
             if (! is_null($streamedContent)) {
                 $callback($streamedContent);
-            }
 
-            $fullResponse .= $streamedContent;
+                $fullResponse .= $streamedContent;
+            }
         }
 
         return $fullResponse;
