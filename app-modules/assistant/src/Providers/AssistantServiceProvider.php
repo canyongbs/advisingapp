@@ -9,17 +9,13 @@ use Assist\Assistant\Models\AssistantChat;
 use Assist\Assistant\Models\AssistantChatMessage;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Assistant\Services\AIInterface\AzureOpenAI;
 use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Assistant\Services\AIInterface\Contracts\AIInterface;
 
 class AssistantServiceProvider extends ServiceProvider
 {
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AssistantPlugin()));
-
-        $this->app->bind(AIInterface::class, AzureOpenAI::class);
     }
 
     public function boot()
