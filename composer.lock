@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db950f4c1e3ae61b8564ece669ad8824",
+    "content-hash": "d6f82ed4328c7f7766d71d5de6996a99",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -140,16 +140,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.281.5",
+            "version": "3.281.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "53cb798ca9b0b817dd2584f9406ee84d0214e6fc"
+                "reference": "b83c543a9ff07fc1d9f11766ee77fc7f4deed2b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/53cb798ca9b0b817dd2584f9406ee84d0214e6fc",
-                "reference": "53cb798ca9b0b817dd2584f9406ee84d0214e6fc",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b83c543a9ff07fc1d9f11766ee77fc7f4deed2b9",
+                "reference": "b83c543a9ff07fc1d9f11766ee77fc7f4deed2b9",
                 "shasum": ""
             },
             "require": {
@@ -229,9 +229,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.281.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.281.6"
             },
-            "time": "2023-09-12T18:13:00+00:00"
+            "time": "2023-09-13T18:07:28+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -727,10 +727,11 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-ai",
-                "reference": "6d82d70f68c497f778a89dd7284d81e85efcc605"
+                "reference": "c8362d509f5faadae903aa66575c00bd0c11c2e9"
             },
             "require": {
                 "filament/filament": "^3.0.0",
+                "openai-php/client": "^0.7.3",
                 "spatie/laravel-settings": "^3.2"
             },
             "type": "library",
@@ -13258,16 +13259,16 @@
         },
         {
             "name": "pestphp/pest",
-            "version": "v2.18.1",
+            "version": "v2.18.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest.git",
-                "reference": "74df53c72b0d77a1f66d365ccfe0df704b73aa66"
+                "reference": "b53e396aac18ceae8cd5f4bb05dcb10f4a63b87d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest/zipball/74df53c72b0d77a1f66d365ccfe0df704b73aa66",
-                "reference": "74df53c72b0d77a1f66d365ccfe0df704b73aa66",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/b53e396aac18ceae8cd5f4bb05dcb10f4a63b87d",
+                "reference": "b53e396aac18ceae8cd5f4bb05dcb10f4a63b87d",
                 "shasum": ""
             },
             "require": {
@@ -13277,10 +13278,10 @@
                 "pestphp/pest-plugin": "^2.1.1",
                 "pestphp/pest-plugin-arch": "^2.3.3",
                 "php": "^8.1.0",
-                "phpunit/phpunit": "^10.3.3"
+                "phpunit/phpunit": "^10.3.4"
             },
             "conflict": {
-                "phpunit/phpunit": ">10.3.3",
+                "phpunit/phpunit": ">10.3.4",
                 "webmozart/assert": "<1.11.0"
             },
             "require-dev": {
@@ -13344,7 +13345,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pestphp/pest/issues",
-                "source": "https://github.com/pestphp/pest/tree/v2.18.1"
+                "source": "https://github.com/pestphp/pest/tree/v2.18.2"
             },
             "funding": [
                 {
@@ -13356,7 +13357,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-11T10:38:47+00:00"
+            "time": "2023-09-13T22:14:31+00:00"
         },
         {
             "name": "pestphp/pest-plugin",
@@ -14332,16 +14333,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.3.3",
+            "version": "10.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "241ed4dd0db1c096984e62d414c4e1ac8d5dbff4"
+                "reference": "b8d59476f19115c9774b3b447f78131781c6c32b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/241ed4dd0db1c096984e62d414c4e1ac8d5dbff4",
-                "reference": "241ed4dd0db1c096984e62d414c4e1ac8d5dbff4",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b8d59476f19115c9774b3b447f78131781c6c32b",
+                "reference": "b8d59476f19115c9774b3b447f78131781c6c32b",
                 "shasum": ""
             },
             "require": {
@@ -14355,7 +14356,7 @@
                 "phar-io/manifest": "^2.0.3",
                 "phar-io/version": "^3.0.2",
                 "php": ">=8.1",
-                "phpunit/php-code-coverage": "^10.1.1",
+                "phpunit/php-code-coverage": "^10.1.5",
                 "phpunit/php-file-iterator": "^4.0",
                 "phpunit/php-invoker": "^4.0",
                 "phpunit/php-text-template": "^3.0",
@@ -14413,7 +14414,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.3"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.4"
             },
             "funding": [
                 {
@@ -14429,7 +14430,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-05T04:34:51+00:00"
+            "time": "2023-09-12T14:42:28+00:00"
         },
         {
             "name": "pimple/pimple",
