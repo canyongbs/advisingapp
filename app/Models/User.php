@@ -26,6 +26,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Assistant\Models\AssistantChatMessageLog;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
@@ -52,11 +53,14 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  * @property string|null $remember_token
  * @property string|null $locale
  * @property string|null $type
+ * @property bool $is_external
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read Collection<int, \App\Models\UserAlert> $alerts
  * @property-read int|null $alerts_count
+ * @property-read Collection<int, AssistantChatMessageLog> $assistantChatMessageLogs
+ * @property-read int|null $assistant_chat_message_logs_count
  * @property-read Collection<int, AssistantChat> $assistantChats
  * @property-read int|null $assistant_chats_count
  * @property-read Collection<int, Audit> $audits
@@ -97,6 +101,7 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  * @method static Builder|User whereEmailVerifiedAt($value)
  * @method static Builder|User whereEmplid($value)
  * @method static Builder|User whereId($value)
+ * @method static Builder|User whereIsExternal($value)
  * @method static Builder|User whereLocale($value)
  * @method static Builder|User whereName($value)
  * @method static Builder|User wherePassword($value)
@@ -216,6 +221,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assistantChats(): HasMany
     {
         return $this->hasMany(AssistantChat::class);
+    }
+
+    public function assistantChatMessageLogs(): HasMany
+    {
+        return $this->hasMany(AssistantChatMessageLog::class);
     }
 
     public function getEmailVerifiedAtAttribute($value)
