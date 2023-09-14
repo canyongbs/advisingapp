@@ -2,7 +2,6 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Assist\Prospect\Models\Prospect;
@@ -16,6 +15,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
+use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 
 class ListProspects extends ListRecords

@@ -2,7 +2,6 @@
 
 namespace Assist\AssistDataModel\Models;
 
-use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Eloquent;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
@@ -24,6 +23,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
+use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
