@@ -6,7 +6,7 @@ use Spatie\LaravelSettings\Settings;
 
 class AISettings extends Settings
 {
-    public string $prompt_context;
+    public string $prompt_system_context;
 
     public int $max_tokens;
 

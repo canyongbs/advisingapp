@@ -7,7 +7,6 @@ use Illuminate\Support\ServiceProvider;
 use Assist\IntegrationAI\Client\AzureOpenAI;
 use Assist\IntegrationAI\IntegrationAIPlugin;
 use Assist\Authorization\AuthorizationRoleRegistry;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\IntegrationAI\Client\Playground\AzureOpenAI as PlaygroundAzureOpenAI;
@@ -29,8 +28,6 @@ class IntegrationAIServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([]);
-
         $this->registerRolesAndPermissions();
     }
 

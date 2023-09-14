@@ -82,7 +82,7 @@ abstract class BaseAIChatClient implements AIChatClient
 
     protected function setSystemContext(): void
     {
-        $this->systemContext = resolve(AISettings::class)->prompt_context;
+        $this->systemContext = resolve(AISettings::class)->prompt_system_context;
     }
 
     protected function setDynamicContext(string $context): void
