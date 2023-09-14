@@ -15,6 +15,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
@@ -59,6 +60,7 @@ class UserResource extends Resource
             ->filters([
             ])
             ->actions([
+                Impersonate::make(),
                 ViewAction::make(),
                 EditAction::make(),
             ])

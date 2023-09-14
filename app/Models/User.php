@@ -9,9 +9,11 @@ use DateTimeInterface;
 use Assist\Audit\Models\Audit;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
+use Database\Factories\UserFactory;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
+use Lab404\Impersonate\Models\Impersonate;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Assistant\Models\AssistantChat;
@@ -85,7 +87,7 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  *
  * @method static Builder|User admins()
  * @method static Builder|User advancedFilter($data)
- * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User onlyTrashed()
@@ -127,6 +129,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasManyEngagements;
     use HasManyEngagementBatches;
     use CanOrElse;
+    use Impersonate;
 
     public const TYPE_RADIO = [
         'local' => 'Local',
@@ -260,6 +263,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->can('authorization.impersonate');
+    }
+
+    public function canBeImpersonated(): bool
+    {
+        return $this->cannot('authorization.super_admin');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

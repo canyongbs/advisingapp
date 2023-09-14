@@ -18,7 +18,7 @@
         "canyon-gbs/assist-data-model": "*",
         "canyon-gbs/assistant": "*",
         "canyon-gbs/audit": "*@dev",
-        "canyon-gbs/authorization": "*",
+        "canyon-gbs/authorization": "^1.0",
         "canyon-gbs/engagement": "*",
         "canyon-gbs/integration-google-analytics": "*",
         "canyon-gbs/integration-microsoft-clarity": "*",
@@ -54,6 +54,7 @@
         "spatie/laravel-settings": "^3.2",
         "sqids/sqids": "^0.3.1",
         "staudenmeir/eloquent-has-many-deep": "^1.18",
+        "stechstudio/filament-impersonate": "^3.5",
         "tpetry/laravel-postgresql-enhanced": "^0.31.0",
         "twilio/sdk": "^7.7",
         "zing/laravel-scout-opensearch": "^3.2"
