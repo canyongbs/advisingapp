@@ -13,7 +13,7 @@ class AzureOpenAI extends BaseAIChatClient
     protected function initializeClient(): void
     {
         $fakeText = resolve(MockStreamResponseGenerator::class)
-            ->withLengthError()
+            // ->withLengthError()
             ->generateFakeStreamResponse();
 
         $handle = fopen('php://memory', 'r+');
@@ -36,10 +36,8 @@ class AzureOpenAI extends BaseAIChatClient
             sleep(1);
             $streamedContent = $this->shouldSendResponse($response);
 
-            if (! is_null($callback)) {
-                if (! is_null($streamedContent)) {
-                    $callback($streamedContent);
-                }
+            if (! is_null($streamedContent)) {
+                $callback($streamedContent);
             }
 
             $fullResponse .= $streamedContent;

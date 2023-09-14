@@ -87,7 +87,7 @@ class AIAssistant extends Page
 
         $this->reset('showCurrentResponse');
 
-        if ($this->error === false) {
+        if ($this->renderError === false) {
             $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant);
         }
 
