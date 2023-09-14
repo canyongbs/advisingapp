@@ -22,8 +22,8 @@ return new class () extends Migration {
                 $table->boolean('email_bounce');
                 $table->string('phone')->nullable();
                 $table->string('address')->nullable();
-                $table->string('address_2')->nullable();
-                $table->string('address_3')->nullable();
+                $table->string('address2')->nullable();
+                $table->string('address3')->nullable();
                 $table->string('city')->nullable();
                 $table->string('state')->nullable();
                 $table->string('postal')->nullable();
