@@ -97,7 +97,7 @@ abstract class BaseAIChatClient implements AIChatClient
             $this->examineFinishReason($response);
         }
 
-        return $response->choices[0]->delta->content ?: null;
+        return $response->choices[0]?->delta?->content ?: null;
     }
 
     protected function examineFinishReason(CreateStreamedResponse $response): void
