@@ -49,7 +49,6 @@ abstract class BaseAIChatClient implements AIChatClient
         $this->dispatchPromptInitiatedEvent($chat);
 
         /** @var StreamResponse $stream */
-        // This simply creates our stream, which we want to handle the response
         $stream = $this->client->chat()->createStreamed([
             'messages' => $this->formatMessagesFromChat($chat),
         ]);
