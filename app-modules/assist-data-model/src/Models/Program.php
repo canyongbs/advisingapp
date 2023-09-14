@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
+/**
+ * Assist\AssistDataModel\Models\Program
+ *
+ * @method static \Assist\AssistDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Program newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Program newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Program query()
+ *
+ * @mixin \Eloquent
+ */
 class Program extends Model
 {
     use HasFactory;

@@ -80,6 +80,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $service_requests_count
  * @property-read \Assist\Prospect\Models\ProspectSource $source
  * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
+ * @property-read int|null $subscriptions_count
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
