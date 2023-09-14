@@ -133,9 +133,9 @@ abstract class BaseAIChatClient implements AIChatClient
             'request' => request(),
             'timestamp' => now(),
             'message' => $chat->messages->last()->message,
-            'metadata' => json_encode([
+            'metadata' => [
                 'systemContext' => $this->systemContext,
-            ]),
+            ],
         ]));
     }
 }

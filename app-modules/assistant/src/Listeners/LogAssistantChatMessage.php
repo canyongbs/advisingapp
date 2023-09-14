@@ -2,6 +2,7 @@
 
 namespace Assist\Assistant\Listeners;
 
+use Illuminate\Support\Arr;
 use Assist\IntegrationAI\Events\AIPromptInitiated;
 
 class LogAssistantChatMessage
@@ -15,7 +16,10 @@ class LogAssistantChatMessage
             'metadata' => $prompt->metadata,
             'request' => [
                 'ip' => $prompt->request->ip(),
-                'headers' => $prompt->request->headers->all(),
+                'headers' => Arr::except(
+                    $prompt->request->headers->all(),
+                    ['cookie'],
+                ),
             ],
         ]);
     }

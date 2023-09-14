@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property string $id
  * @property string $message
- * @property string $metadata
+ * @property array $metadata
  * @property string $user_id
  * @property array $request
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -45,6 +45,7 @@ class AssistantChatMessageLog extends BaseModel
     ];
 
     protected $casts = [
+        'metadata' => 'encrypted:array',
         'request' => 'encrypted:array',
     ];
 

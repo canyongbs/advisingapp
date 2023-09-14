@@ -17,5 +17,5 @@ class AIPrompt extends Data
 
     public string $message;
 
-    public string $metadata;
+    public array $metadata;
 }
