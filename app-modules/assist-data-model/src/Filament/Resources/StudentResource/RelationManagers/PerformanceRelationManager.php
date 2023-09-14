@@ -3,14 +3,43 @@
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Infolists\Components\TextEntry;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class PerformanceRelationManager extends RelationManager
 {
     protected static string $relationship = 'performances';
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return parent::infolist($infolist)
+            ->schema(
+                [
+                    TextEntry::make('sisid')
+                        ->label('SISID'),
+                    TextEntry::make('acad_career')
+                        ->label('Academic Career'),
+                    TextEntry::make('division')
+                        ->label('College'),
+                    TextEntry::make('first_gen')
+                        ->label('First Gen'),
+                    TextEntry::make('cum_att')
+                        ->label('Cumulative Attempted'),
+                    TextEntry::make('cum_ern')
+                        ->label('Cumulative Earned'),
+                    TextEntry::make('pct_ern')
+                        ->label('Percent Earned'),
+                    TextEntry::make('cum_gpa')
+                        ->label('Cumulative GPA'),
+                    TextEntry::make('max_dt')
+                        ->label('Max Dt'),
+                ]
+            );
+    }
 
     public function table(Table $table): Table
     {
