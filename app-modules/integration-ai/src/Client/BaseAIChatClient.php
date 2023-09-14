@@ -16,6 +16,7 @@ use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\DataTransferObjects\DynamicContext;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
+use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 abstract class BaseAIChatClient implements AIChatClient
 {
@@ -113,10 +114,10 @@ abstract class BaseAIChatClient implements AIChatClient
     {
         return [
             ['role' => 'system', 'content' => $this->addContextToMessages()],
-            ...collect($chat->messages)->map(function (array $message) {
+            ...$chat->messages->toCollection()->map(function (ChatMessage $message) {
                 return [
-                    'role' => $message['from'],
-                    'content' => $message['message'],
+                    'role' => $message->from,
+                    'content' => $message->message,
                 ];
             }),
         ];
