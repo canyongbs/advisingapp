@@ -125,7 +125,7 @@ abstract class BaseAIChatClient implements AIChatClient
 
     protected function addContextToMessages(): string
     {
-        return $this->systemContext . ' ' . $this->dynamicContext;
+        return "{$this->systemContext} {$this->dynamicContext}";
     }
 
     protected function dispatchPromptInitiatedEvent(Chat $chat): void
