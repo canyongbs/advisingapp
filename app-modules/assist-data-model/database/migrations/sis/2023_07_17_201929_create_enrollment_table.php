@@ -22,7 +22,6 @@ return new class () extends Migration {
                 $table->string('crse_grade_off');
                 $table->integer('unt_taken');
                 $table->unsignedInteger('unt_earned');
-                $table->unsignedInteger('unt_earned');
                 $table->dateTimeTz('last_upd_dt_stmp');
             });
     }
