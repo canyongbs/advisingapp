@@ -126,4 +126,19 @@ class Student extends Model implements Auditable, Subscribable, Identifiable
     {
         return $this->morphMany(Alert::class, 'concern');
     }
+
+    public function programs(): HasMany
+    {
+        return $this->hasMany(Program::class, 'sisid', 'sisid');
+    }
+
+    public function performances(): HasMany
+    {
+        return $this->hasMany(Performance::class, 'sisid', 'sisid');
+    }
+
+    public function subscriptions(): MorphMany
+    {
+        return $this->morphMany(Subscription::class, 'subscribable');
+    }
 }

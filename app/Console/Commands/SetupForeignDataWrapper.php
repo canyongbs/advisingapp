@@ -26,6 +26,7 @@ class SetupForeignDataWrapper extends Command
                     'students',
                     'programs',
                     'enrollment',
+                    'performance',
                 ],
             )
         );
