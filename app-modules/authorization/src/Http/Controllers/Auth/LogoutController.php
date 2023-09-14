@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Authorization\Http\Controllers\auth;
+namespace Assist\Authorization\Http\Controllers\Auth;
 
 use Filament\Facades\Filament;
 use Assist\Authorization\Enums\SocialiteProvider;

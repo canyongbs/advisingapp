@@ -6,9 +6,11 @@ use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\UserResource\Pages\EditUser;
@@ -33,6 +35,16 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('email')
+                    ->label('Email address')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                Toggle::make('is_external')
+                    ->label('User can only log in via a social provider.'),
             ]);
     }
 
@@ -41,7 +53,8 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('email'),
+                TextColumn::make('email')
+                    ->label('Email address'),
             ])
             ->filters([
             ])

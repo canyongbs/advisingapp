@@ -5,6 +5,7 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityReso
 use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 
@@ -16,12 +17,16 @@ class ViewServiceRequestPriority extends ViewRecord
     {
         return parent::infolist($infolist)
             ->schema([
-                TextEntry::make('name')
-                    ->label('Name')
-                    ->translateLabel(),
-                TextEntry::make('order')
-                    ->label('Order')
-                    ->translateLabel(),
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name')
+                            ->translateLabel(),
+                        TextEntry::make('order')
+                            ->label('Order')
+                            ->translateLabel(),
+                    ])
+                    ->columns(),
             ]);
     }
 

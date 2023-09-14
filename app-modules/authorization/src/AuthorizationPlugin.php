@@ -3,8 +3,12 @@
 namespace Assist\Authorization;
 
 use Filament\Panel;
+use Livewire\Livewire;
 use Filament\Contracts\Plugin;
 use Filament\Navigation\MenuItem;
+use Livewire\Mechanisms\ComponentRegistry;
+use Assist\Authorization\Filament\Pages\Auth\SetPassword;
+use Assist\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
 
 class AuthorizationPlugin implements Plugin
 {
@@ -21,7 +25,15 @@ class AuthorizationPlugin implements Plugin
                 for: 'Assist\\Authorization\\Filament\\Resources'
             )
             ->databaseNotifications()
-            ->databaseNotificationsPolling('10s');
+            ->databaseNotificationsPolling('10s')
+            ->authMiddleware([
+                RedirectIfPasswordNotSet::class,
+            ])
+            ->authenticatedRoutes(function () use ($panel) {
+                SetPassword::routes($panel);
+            });
+
+        Livewire::component(app(ComponentRegistry::class)->getName(SetPassword::class), SetPassword::class);
     }
 
     public function boot(Panel $panel): void
