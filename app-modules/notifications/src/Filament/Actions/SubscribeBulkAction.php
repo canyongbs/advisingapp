@@ -24,6 +24,6 @@ class SubscribeBulkAction extends BulkAction
 
     public static function getDefaultName(): ?string
     {
-        return 'toggle_subscription';
+        return 'toggleSubscription';
     }
 }
