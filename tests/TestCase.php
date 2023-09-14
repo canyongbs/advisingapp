@@ -31,9 +31,11 @@ abstract class TestCase extends BaseTestCase
 
         $this->artisan('migrate:fresh', [
             '--database' => 'sis',
-            '--path' => 'database/migrations/sis',
+            '--path' => 'app-modules/assist-data-model/database/migrations/sis',
             ...$this->migrateFreshUsing(),
         ]);
+
+        $this->artisan('app:remove-foreign-data-wrapper');
 
         $this->artisan('app:setup-foreign-data-wrapper');
 
