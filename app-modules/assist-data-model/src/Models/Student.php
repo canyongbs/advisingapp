@@ -83,6 +83,8 @@ class Student extends Model implements Auditable, Subscribable, Identifiable
         'sisid' => 'string',
     ];
 
+    public $timestamps = false;
+
     public function identifier(): string
     {
         return $this->sisid;
