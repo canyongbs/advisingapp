@@ -1,0 +1,33 @@
+{
+    "name": "canyon-gbs/integration-ai",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0",
+        "openai-php/client": "^0.7.3",
+        "spatie/laravel-settings": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Assist\\IntegrationAI\\": "src/",
+            "Assist\\IntegrationAI\\Tests\\": "tests/",
+            "Assist\\IntegrationAI\\Database\\Factories\\": "database/factories/",
+            "Assist\\IntegrationAI\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Assist\\IntegrationAI\\Providers\\IntegrationAIServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}

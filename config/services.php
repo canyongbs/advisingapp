@@ -52,4 +52,13 @@ return [
         'test_to_number' => env('TWILIO_TEST_TO_NUMBER', null),
         'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
     ],
+
+    // TODO Find a way to move this setting to the Integration AI module
+    'azure_open_ai' => [
+        'endpoint' => env('AZURE_OPEN_AI_BASE_ENDPOINT'),
+        'api_key' => env('AZURE_OPEN_AI_API_KEY'),
+        'api_version' => env('AZURE_OPEN_AI_API_VERSION'),
+        'deployment_name' => env('AZURE_OPEN_AI_DEPLOYMENT_NAME'),
+        'enable_test_mode' => env('AZURE_ENABLE_TEST_MODE', false),
+    ],
 ];
