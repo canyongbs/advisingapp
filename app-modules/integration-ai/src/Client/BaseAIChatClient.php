@@ -44,6 +44,8 @@ abstract class BaseAIChatClient implements AIChatClient
             $this->setSystemContext();
         }
 
+        // $this->emitEvent($chat);
+
         /** @var StreamResponse $stream */
         $stream = $this->client->chat()->createStreamed([
             'messages' => $this->formatMessagesFromChat($chat),

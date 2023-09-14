@@ -29,8 +29,6 @@ class AzureOpenAI extends BaseAIChatClient
     {
         $fullResponse = '';
 
-        // TODO We can probably extract some of this into pieces that both the playground and the real instance share.
-        // The core difference between the real implementation and the playground is simply the connection/client itself
         foreach ($stream as $response) {
             sleep(1);
             $streamedContent = $this->shouldSendResponse($response);
