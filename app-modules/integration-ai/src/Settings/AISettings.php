@@ -10,7 +10,7 @@ class AISettings extends Settings
 
     public int $max_tokens;
 
-    public int $temperature;
+    public float $temperature;
 
     public static function group(): string
     {

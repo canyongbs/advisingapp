@@ -44,7 +44,7 @@ abstract class BaseAIChatClient implements AIChatClient
             $this->setSystemContext();
         }
 
-        $this->emitEvent($chat);
+        $this->promptInitiated($chat);
 
         /** @var StreamResponse $stream */
         $stream = $this->client->chat()->createStreamed([
@@ -65,8 +65,6 @@ abstract class BaseAIChatClient implements AIChatClient
     {
         $fullResponse = '';
 
-        // TODO We can probably extract some of this into pieces that both the playground and the real instance share.
-        // The core difference between the real implementation and the playground is simply the connection/client itself
         foreach ($stream as $response) {
             $streamedContent = $this->shouldSendResponse($response);
 
@@ -94,6 +92,10 @@ abstract class BaseAIChatClient implements AIChatClient
 
     protected function shouldSendResponse(CreateStreamedResponse $response): ?string
     {
+        if ($response->choices[0]->finishReason === 'stop') {
+            return null;
+        }
+
         return $response->choices[0]->delta->content ?: null;
     }
 
@@ -115,7 +117,7 @@ abstract class BaseAIChatClient implements AIChatClient
         return $this->systemContext . ' ' . $this->dynamicContext;
     }
 
-    protected function emitEvent(Chat $chat): void
+    protected function promptInitiated(Chat $chat): void
     {
         AIPromptInitiated::dispatch(AIPrompt::from([
             'user' => auth()->user(),

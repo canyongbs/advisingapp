@@ -2,14 +2,12 @@
 
 namespace Assist\IntegrationAI\Client\Playground;
 
-// TODO Find a better place and a better name for this...
 class MockStreamResponseGenerator
 {
     private $minChunkSize = 2;
 
     private $maxChunkSize = 4;
 
-    // TODO Make the type an enum here for the fakeage
     public function generateFakeStreamResponse(string $type = 'paragraph', int $quantity = 2): string
     {
         $contents = $this->generateFakeContent($type, $quantity);
@@ -34,15 +32,12 @@ class MockStreamResponseGenerator
     {
         $contents = [];
 
-        // TODO Use "match" here
         for ($i = 0; $i < $quantity; $i++) {
-            if ($type === 'sentence') {
-                $contents[] = fake()->sentence;
-            } elseif ($type === 'paragraph') {
-                $contents[] = fake()->paragraph;
-            } else {
-                throw new \InvalidArgumentException('Unsupported type for fake content.');
-            }
+            match ($type) {
+                'sentence' => $contents[] = fake()->sentence,
+                'paragraph' => $contents[] = fake()->paragraph,
+                default => throw new \InvalidArgumentException('Unsupported type for fake content.'),
+            };
         }
 
         return $contents;

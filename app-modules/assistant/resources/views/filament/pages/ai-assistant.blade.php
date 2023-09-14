@@ -17,7 +17,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                             'bg-primary-500' => $message->from === AIChatMessageFrom::User,
                             'bg-gray-500' => $message->from === AIChatMessageFrom::Assistant,
                         ])>
-                            <h1 class="text-2xl">
+                            <h1 class="mb-1 text-2xl">
                                 {{ $message->from === AIChatMessageFrom::User ? 'You' : 'AI Assistant' }}
                             </h1>
                             <p>{{ $message->message }}</p>

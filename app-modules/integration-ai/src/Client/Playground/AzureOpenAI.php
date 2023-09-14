@@ -30,6 +30,7 @@ class AzureOpenAI extends BaseAIChatClient
         $fullResponse = '';
 
         foreach ($stream as $response) {
+            // artificial delay to make the playground client seem more realistic
             sleep(1);
             $streamedContent = $this->shouldSendResponse($response);
 
