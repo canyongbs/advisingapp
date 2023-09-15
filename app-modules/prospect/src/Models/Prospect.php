@@ -219,9 +219,14 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable
         return $this->morphMany(Alert::class, 'concern');
     }
 
+    public function displayNameKey(): string
+    {
+        return 'full_name';
+    }
+
     public function displayName(): string
     {
-        return $this->full_name;
+        return $this->{$this->displayNameKey()};
     }
 
     protected function serializeDate(DateTimeInterface $date): string

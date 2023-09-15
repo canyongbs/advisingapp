@@ -9,6 +9,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
@@ -25,12 +26,10 @@ class ListStudents extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('full')
+                TextColumn::make('display_name')
                     ->label('Name')
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('full', 'ilike', "%{$search}%");
-                    })
+                    ->getStateUsing(fn (Student $record) => $record->displayName())
+                    ->searchable((new Student())->displayNameKey())
                     ->sortable(),
             ])
             ->filters([

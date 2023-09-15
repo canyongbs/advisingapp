@@ -99,9 +99,14 @@ class Student extends Model implements Auditable, Subscribable, Educatable
         return $this->sisid;
     }
 
+    public function displayNameKey(): string
+    {
+        return 'full_name';
+    }
+
     public function displayName(): string
     {
-        return $this->full_name;
+        return $this->{$this->displayNameKey()};
     }
 
     public function serviceRequests(): MorphMany
