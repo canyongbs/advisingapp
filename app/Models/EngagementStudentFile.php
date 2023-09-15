@@ -26,7 +26,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
  * @property-read mixed $file
  * @property-read MediaCollection<int, Media> $media
  * @property-read int|null $media_count
- * @property-read \App\Models\RecordStudentItem|null $student
  *
  * @method static Builder|EngagementStudentFile advancedFilter($data)
  * @method static Builder|EngagementStudentFile newModelQuery()

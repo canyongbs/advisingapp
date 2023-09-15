@@ -26,10 +26,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -121,7 +121,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @mixin Eloquent
  */
-class Prospect extends BaseModel implements Auditable, Subscribable, Identifiable
+class Prospect extends BaseModel implements Auditable, Subscribable, Educatable
 {
     use HasUuids;
     use SoftDeletes;
@@ -217,6 +217,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Identifiabl
     public function alerts(): MorphMany
     {
         return $this->morphMany(Alert::class, 'concern');
+    }
+
+    public function displayName(): string
+    {
+        return $this->full_name;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

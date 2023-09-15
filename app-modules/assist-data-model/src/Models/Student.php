@@ -22,12 +22,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
+use Assist\AssistDataModel\Database\Factories\StudentFactory;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
@@ -46,15 +47,15 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $engagement_responses_count
  * @property-read Collection<int, Engagement> $engagements
  * @property-read int|null $engagements_count
- * @property-read Collection<int, \Assist\AssistDataModel\Models\Enrollment> $enrollments
+ * @property-read Collection<int, Enrollment> $enrollments
  * @property-read int|null $enrollments_count
  * @property-read Collection<int, Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read Collection<int, \Assist\AssistDataModel\Models\Performance> $performances
+ * @property-read Collection<int, Performance> $performances
  * @property-read int|null $performances_count
- * @property-read Collection<int, \Assist\AssistDataModel\Models\Program> $programs
+ * @property-read Collection<int, Program> $programs
  * @property-read int|null $programs_count
  * @property-read Collection<int, ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
@@ -63,14 +64,14 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
- * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
+ * @method static StudentFactory factory($count = null, $state = [])
  * @method static Builder|Student newModelQuery()
  * @method static Builder|Student newQuery()
  * @method static Builder|Student query()
  *
  * @mixin Eloquent
  */
-class Student extends Model implements Auditable, Subscribable, Identifiable
+class Student extends Model implements Auditable, Subscribable, Educatable
 {
     use AuditableTrait;
     use HasFactory;
@@ -96,6 +97,11 @@ class Student extends Model implements Auditable, Subscribable, Identifiable
     public function identifier(): string
     {
         return $this->sisid;
+    }
+
+    public function displayName(): string
+    {
+        return $this->full_name;
     }
 
     public function serviceRequests(): MorphMany
