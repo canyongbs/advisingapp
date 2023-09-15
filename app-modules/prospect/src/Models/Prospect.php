@@ -14,8 +14,10 @@ use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\Interaction\Models\Interaction;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\Collection;
+use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\Engagement\Models\EngagementResponse;
 use Illuminate\Notifications\DatabaseNotification;
@@ -25,6 +27,7 @@ use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\Prospect\Database\Factories\ProspectFactory;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Assist\Notifications\Models\Concerns\HasSubscriptions;
@@ -42,7 +45,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property string $source_id
  * @property string $first_name
  * @property string $last_name
- * @property string $full
+ * @property string $full_name
  * @property string|null $preferred
  * @property string|null $description
  * @property string|null $email
@@ -72,20 +75,20 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $engagement_responses_count
  * @property-read Collection<int, Engagement> $engagements
  * @property-read int|null $engagements_count
- * @property-read Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read Collection<int, Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
- * @property-read \Assist\Prospect\Models\ProspectSource $source
- * @property-read \Assist\Prospect\Models\ProspectStatus $status
- * @property-read Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
+ * @property-read ProspectSource $source
+ * @property-read ProspectStatus $status
+ * @property-read Collection<int, Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
- * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
+ * @method static ProspectFactory factory($count = null, $state = [])
  * @method static Builder|Prospect newModelQuery()
  * @method static Builder|Prospect newQuery()
  * @method static Builder|Prospect onlyTrashed()
@@ -102,7 +105,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @method static Builder|Prospect whereEmail2($value)
  * @method static Builder|Prospect whereEmailBounce($value)
  * @method static Builder|Prospect whereFirstName($value)
- * @method static Builder|Prospect whereFull($value)
+ * @method static Builder|Prospect whereFullName($value)
  * @method static Builder|Prospect whereHsgrad($value)
  * @method static Builder|Prospect whereId($value)
  * @method static Builder|Prospect whereLastName($value)
@@ -132,7 +135,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Identifiabl
     protected $fillable = [
         'first_name',
         'last_name',
-        'full',
+        'full_name',
         'preferred',
         'description',
         'email',
