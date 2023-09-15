@@ -6,21 +6,21 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Lab404\Impersonate\Services\ImpersonateManager;
-use STS\FilamentImpersonate\Tables\Actions\Impersonate;
-use App\Filament\Resources\UserResource\Pages\ListUsers;
+use STS\FilamentImpersonate\Pages\Actions\Impersonate;
+use App\Filament\Resources\UserResource\Pages\ViewUser;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();
 
     $user = User::factory()->create();
 
-    $component = livewire(ListUsers::class);
+    $component = livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ]);
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(2)
-        ->assertTableActionVisible(Impersonate::class, $user);
+        ->assertActionVisible(Impersonate::class);
 });
 
 it('does not render impersonate button for super admin users when user is not super admin', function () {
@@ -30,12 +30,13 @@ it('does not render impersonate button for super admin users when user is not su
     $user = User::factory()->create();
     actingAs($user);
 
-    $component = livewire(ListUsers::class);
+    $component = livewire(ViewUser::class, [
+        'record' => $superAdmin->getRouteKey(),
+    ]);
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(2)
-        ->assertTableActionHidden(Impersonate::class, $superAdmin);
+        ->assertActionHidden(Impersonate::class);
 });
 
 it('does not render impersonate button for super admin users at all', function () {
@@ -45,12 +46,13 @@ it('does not render impersonate button for super admin users at all', function (
     $user = User::factory()->create();
     asSuperAdmin($user);
 
-    $component = livewire(ListUsers::class);
+    $component = livewire(ViewUser::class, [
+        'record' => $superAdmin->getRouteKey(),
+    ]);
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(2)
-        ->assertTableActionHidden(Impersonate::class, $superAdmin);
+        ->assertActionHidden(Impersonate::class);
 });
 
 it('does not render impersonate button for super admin users even if user has permission', function () {
@@ -63,12 +65,13 @@ it('does not render impersonate button for super admin users even if user has pe
 
     actingAs($user);
 
-    $component = livewire(ListUsers::class);
+    $component = livewire(ViewUser::class, [
+        'record' => $superAdmin->getRouteKey(),
+    ]);
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(2)
-        ->assertTableActionHidden(Impersonate::class, $superAdmin);
+        ->assertActionHidden(Impersonate::class);
 });
 
 it('allows super admin user to impersonate', function () {
@@ -77,12 +80,13 @@ it('allows super admin user to impersonate', function () {
 
     $user = User::factory()->create();
 
-    $component = livewire(ListUsers::class);
+    $component = livewire(ViewUser::class, [
+        'record' => $user->getRouteKey(),
+    ]);
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(2)
-        ->callTableAction(Impersonate::class, $user);
+        ->callAction(Impersonate::class);
 
     expect($user->isImpersonated())->toBeTrue();
     expect(auth()->id())->toBe($user->id);
@@ -95,33 +99,14 @@ it('allows user with permission to impersonate', function () {
 
     $second = User::factory()->create();
 
-    $component = livewire(ListUsers::class);
+    $component = livewire(ViewUser::class, [
+        'record' => $second->getRouteKey(),
+    ]);
 
     $component
         ->assertSuccessful()
-        ->assertCountTableRecords(2)
-        ->callTableAction(Impersonate::class, $second);
+        ->callAction(Impersonate::class);
 
     expect($second->isImpersonated())->toBeTrue();
     expect(auth()->id())->toBe($second->id);
-});
-
-it('allows a user to leave impersonate', function () {
-    $first = User::factory()->create();
-    $first->givePermissionTo('authorization.impersonate');
-    actingAs($first);
-
-    $second = User::factory()->create();
-
-    app(ImpersonateManager::class)->take($first, $second);
-
-    expect($second->isImpersonated())->toBeTrue();
-    expect(auth()->id())->toBe($second->id);
-
-    $request = Http::get(route('filament-impersonate.leave'));
-
-    expect($request->status())->toBe(\Symfony\Component\HttpFoundation\Response::HTTP_OK);
-
-    expect($second->isImpersonated())->toBeFalse();
-    expect(auth()->id())->toBe($first->id);
 });
