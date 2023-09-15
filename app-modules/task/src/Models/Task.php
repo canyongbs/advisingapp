@@ -2,16 +2,24 @@
 
 namespace Assist\Task\Models;
 
+use Eloquent;
 use App\Models\User;
 use App\Models\BaseModel;
+use Assist\Audit\Models\Audit;
+use Illuminate\Support\Carbon;
 use Assist\Task\Enums\TaskStatus;
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Task\Database\Factories\TaskFactory;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
@@ -22,40 +30,40 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property string $id
  * @property string $description
  * @property TaskStatus $status
- * @property \Illuminate\Support\Carbon|null $due
+ * @property Carbon|null $due
  * @property string|null $assigned_to
  * @property string|null $created_by
  * @property string|null $concern_type
  * @property string|null $concern_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read User|null $assignedTo
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $concern
+ * @property-read Model|Eloquent $concern
  * @property-read User|null $createdBy
  *
- * @method static \Assist\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Task onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Task query()
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereAssignedTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereConcernId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereConcernType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereDue($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Task withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Task withoutTrashed()
+ * @method static TaskFactory factory($count = null, $state = [])
+ * @method static Builder|Task newModelQuery()
+ * @method static Builder|Task newQuery()
+ * @method static Builder|Task onlyTrashed()
+ * @method static Builder|Task query()
+ * @method static Builder|Task whereAssignedTo($value)
+ * @method static Builder|Task whereConcernId($value)
+ * @method static Builder|Task whereConcernType($value)
+ * @method static Builder|Task whereCreatedAt($value)
+ * @method static Builder|Task whereCreatedBy($value)
+ * @method static Builder|Task whereDeletedAt($value)
+ * @method static Builder|Task whereDescription($value)
+ * @method static Builder|Task whereDue($value)
+ * @method static Builder|Task whereId($value)
+ * @method static Builder|Task whereStatus($value)
+ * @method static Builder|Task whereUpdatedAt($value)
+ * @method static Builder|Task withTrashed()
+ * @method static Builder|Task withoutTrashed()
  *
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {
@@ -84,6 +92,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
         ];
     }
 
+    /** @return MorphTo<Educatable> */
     public function concern(): MorphTo
     {
         return $this->morphTo();

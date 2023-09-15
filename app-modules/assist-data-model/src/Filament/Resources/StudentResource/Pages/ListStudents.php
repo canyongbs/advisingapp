@@ -26,10 +26,10 @@ class ListStudents extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make((new Student())->displayNameKey())
+                TextColumn::make(Student::displayNameKey())
                     ->label('Name')
-                    ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 Filter::make('subscribed')
