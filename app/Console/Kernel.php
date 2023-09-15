@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(PruneCommand::class, [
             '--model' => [Audit::class, AssistantChatMessageLog::class],
-        ]);
+        ])->daily()->evenInMaintenanceMode()->onOneServer();
 
         // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
         $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();

@@ -26,7 +26,8 @@ class AssistantChatMessageLogResource extends Resource
         return $infolist
             ->schema([
                 TextEntry::make('user.name'),
-                TextEntry::make('created_at')
+                TextEntry::make('sent_at')
+                    ->label('Sent')
                     ->dateTime(),
                 TextEntry::make('message')
                     ->prose()
@@ -47,7 +48,8 @@ class AssistantChatMessageLogResource extends Resource
                 Tables\Columns\TextColumn::make('message')
                     ->limit(50)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('sent_at')
+                    ->label('Sent')
                     ->sortable()
                     ->dateTime(),
             ])
@@ -65,7 +67,7 @@ class AssistantChatMessageLogResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('sent_at', 'desc');
     }
 
     public static function getPages(): array

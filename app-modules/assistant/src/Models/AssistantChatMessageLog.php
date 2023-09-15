@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array $metadata
  * @property string $user_id
  * @property array $request
+ * @property int $sent_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read User $user
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|AssistantChatMessageLog whereMessage($value)
  * @method static Builder|AssistantChatMessageLog whereMetadata($value)
  * @method static Builder|AssistantChatMessageLog whereRequest($value)
+ * @method static Builder|AssistantChatMessageLog whereSentAt($value)
  * @method static Builder|AssistantChatMessageLog whereUpdatedAt($value)
  * @method static Builder|AssistantChatMessageLog whereUserId($value)
  *
@@ -42,11 +44,13 @@ class AssistantChatMessageLog extends BaseModel
         'message',
         'metadata',
         'request',
+        'sent_at',
     ];
 
     protected $casts = [
         'metadata' => 'encrypted:array',
         'request' => 'encrypted:array',
+        'sent_at' => 'timestamp',
     ];
 
     public function user(): BelongsTo
@@ -57,7 +61,7 @@ class AssistantChatMessageLog extends BaseModel
     public function prunable(): Builder
     {
         return static::where(
-            'created_at',
+            'sent_at',
             '<=',
             now()->subDays(
                 app(AuditSettings::class)

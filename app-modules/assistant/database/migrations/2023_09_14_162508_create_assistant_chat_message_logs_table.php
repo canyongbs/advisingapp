@@ -16,15 +16,8 @@ return new class () extends Migration {
             $table->longText('metadata');
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->longText('request');
+            $table->timestamp('sent_at');
             $table->timestamps();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('assistant_chat_message_logs');
     }
 };

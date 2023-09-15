@@ -2,10 +2,10 @@
 
 namespace Assist\Assistant\Listeners;
 
-use Illuminate\Support\Arr;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\IntegrationAI\Events\AIPromptInitiated;
 
-class LogAssistantChatMessage
+class LogAssistantChatMessage implements ShouldQueue
 {
     public function handle(AIPromptInitiated $event): void
     {
@@ -14,13 +14,8 @@ class LogAssistantChatMessage
         $prompt->user->assistantChatMessageLogs()->create([
             'message' => $prompt->message,
             'metadata' => $prompt->metadata,
-            'request' => [
-                'ip' => $prompt->request->ip(),
-                'headers' => Arr::except(
-                    $prompt->request->headers->all(),
-                    ['cookie'],
-                ),
-            ],
+            'request' => $prompt->request,
+            'sent_at' => $prompt->timestamp,
         ]);
     }
 }
