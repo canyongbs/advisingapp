@@ -47,8 +47,18 @@ class ListTasks extends ListRecords
                     ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
                 TextColumn::make('concern.display_name')
                     ->label('Concern')
-                    ->getStateUsing(fn (Task $record) => $record->concern->displayNameKey())
-                    ->searchable(query: fn (Builder $query, $search) => $query->whereHasMorph('concern', [Student::class, Prospect::class], fn (Builder $query, string $type) => $query->where('display_name', 'like', "%{$search}%")))
+                    ->getStateUsing(fn (Task $record) => $record->concern->{$record->concern::displayNameKey()})
+                    ->searchable(
+                        query: fn (Builder $query, $search) => $query->whereHasMorph(
+                            'concern',
+                            [Student::class, Prospect::class],
+                            fn (Builder $query, string $type) => $query->where(
+                                app($type)::displayNameKey(),
+                                'like',
+                                "%{$search}%"
+                            )
+                        )
+                    )
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),

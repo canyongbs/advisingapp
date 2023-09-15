@@ -8,12 +8,10 @@ use App\Models\BaseModel;
 use Assist\Audit\Models\Audit;
 use Illuminate\Support\Carbon;
 use Assist\Task\Enums\TaskStatus;
-use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Assist\Task\Database\Factories\TaskFactory;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -41,10 +39,10 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @property-read User|null $assignedTo
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read Model|Eloquent $concern
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $concern
  * @property-read User|null $createdBy
  *
- * @method static TaskFactory factory($count = null, $state = [])
+ * @method static \Assist\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static Builder|Task newModelQuery()
  * @method static Builder|Task newQuery()
  * @method static Builder|Task onlyTrashed()
