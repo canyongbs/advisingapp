@@ -28,7 +28,7 @@ class RecentLeadsList extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Recent Leads')
+            ->heading('Recent Prospects')
             ->query(
                 Prospect::latest()->limit(10)
             )
