@@ -26,10 +26,9 @@ class ListStudents extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('display_name')
+                TextColumn::make((new Student())->displayNameKey())
                     ->label('Name')
-                    ->getStateUsing(fn (Student $record) => $record->displayName())
-                    ->searchable((new Student())->displayNameKey())
+                    ->searchable()
                     ->sortable(),
             ])
             ->filters([

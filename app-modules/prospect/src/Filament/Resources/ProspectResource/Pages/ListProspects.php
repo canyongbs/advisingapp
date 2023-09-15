@@ -26,10 +26,9 @@ class ListProspects extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('display_name')
+                TextColumn::make((new Prospect())->displayNameKey())
                     ->label('Name')
-                    ->getStateUsing(fn (Prospect $record) => $record->displayName())
-                    ->searchable((new Prospect())->displayNameKey())
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('Email')
