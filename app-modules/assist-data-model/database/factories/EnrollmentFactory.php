@@ -13,6 +13,7 @@ class EnrollmentFactory extends Factory
     public function definition(): array
     {
         return [
+            // TODO: Determine if we can have a different ID as the primary
             'sisid' => $this->faker->randomNumber(9),
             'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
             'division' => $this->faker->randomElement(['ABC01', 'ABD02', 'ABE03']),

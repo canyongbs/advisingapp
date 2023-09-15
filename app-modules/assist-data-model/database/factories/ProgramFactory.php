@@ -13,6 +13,7 @@ class ProgramFactory extends Factory
     public function definition(): array
     {
         return [
+            // TODO: Determine if we can have a different ID as the primary
             'sisid' => $this->faker->randomNumber(9),
             'otherid' => $this->faker->randomNumber(9),
             'acad_career' => $this->faker->randomElement(['NC', 'CRED']),
