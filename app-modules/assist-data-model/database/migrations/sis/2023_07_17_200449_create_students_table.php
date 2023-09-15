@@ -29,12 +29,12 @@ return new class () extends Migration {
                 $table->string('postal')->nullable();
                 $table->date('birthdate')->nullable();
                 $table->integer('hsgrad')->nullable();
-                $table->boolean('dual')->nullable();
-                $table->boolean('ferpa')->nullable();
+                $table->boolean('dual');
+                $table->boolean('ferpa');
                 $table->date('dfw')->nullable();
-                $table->boolean('sap')->nullable();
+                $table->boolean('sap');
                 $table->string('holds')->nullable();
-                $table->boolean('firstgen')->nullable();
+                $table->boolean('firstgen');
                 $table->string('ethnicity')->nullable();
                 $table->datetime('lastlmslogin')->nullable();
                 $table->string('f_e_term')->nullable();
