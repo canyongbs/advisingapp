@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
+use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -70,6 +71,7 @@ class Student extends Model implements Auditable, Subscribable, Identifiable
     use HasManyMorphedEngagements;
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
+    use HasSubscriptions;
 
     protected $primaryKey = 'sisid';
 
@@ -119,10 +121,5 @@ class Student extends Model implements Auditable, Subscribable, Identifiable
     public function alerts(): MorphMany
     {
         return $this->morphMany(Alert::class, 'concern');
-    }
-
-    public function subscriptions(): MorphMany
-    {
-        return $this->morphMany(Subscription::class, 'subscribable');
     }
 }

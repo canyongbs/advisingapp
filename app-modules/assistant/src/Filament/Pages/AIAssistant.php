@@ -7,7 +7,9 @@ use Filament\Pages\Page;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Rule;
 use Assist\Assistant\Models\AssistantChat;
-use Assist\Assistant\Services\AIInterface\Contracts\AIInterface;
+use Assist\IntegrationAI\Client\Contracts\AIChatClient;
+use Assist\IntegrationAI\Exceptions\ContentFilterException;
+use Assist\IntegrationAI\Exceptions\TokensExceededException;
 use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
@@ -27,6 +29,16 @@ class AIAssistant extends Page
     #[Rule(['required', 'string'])]
     public string $message = '';
 
+    public string $prompt = '';
+
+    public bool $showCurrentResponse = false;
+
+    public string $currentResponse = '';
+
+    public bool $renderError = false;
+
+    public string $error = '';
+
     public function mount(): void
     {
         /** @var User $user */
@@ -41,23 +53,45 @@ class AIAssistant extends Page
         );
     }
 
-    public function saveCurrentMessage(): void
+    public function sendMessage(): void
     {
+        $this->reset('renderError');
+        $this->reset('error');
+
         $this->validate();
 
-        $this->setMessage($this->message, AIChatMessageFrom::User);
+        $this->prompt = $this->message;
 
         $this->message = '';
 
-        $this->dispatch('current-message-saved');
+        $this->setMessage($this->prompt, AIChatMessageFrom::User);
+
+        $this->js('$wire.ask()');
     }
 
     #[On('ask')]
-    public function ask(AIInterface $ai): void
+    public function ask(AIChatClient $ai): void
     {
-        $response = $ai->ask($this->chat);
+        // TODO Figure out why setting this value in the ask() method
+        // Does not result in the frontend reflecting the changes.
+        // $this->showCurrentResponse = true;
 
-        $this->setMessage($response, AIChatMessageFrom::Assistant);
+        try {
+            $this->currentResponse = $ai->ask($this->chat, function (string $partial) {
+                $this->stream('currentResponse', $partial);
+            });
+        } catch (ContentFilterException|TokensExceededException $e) {
+            $this->renderError = true;
+            $this->error = $e->getMessage();
+        }
+
+        $this->reset('showCurrentResponse');
+
+        if ($this->renderError === false) {
+            $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant);
+        }
+
+        $this->reset('currentResponse');
     }
 
     public function save(): void

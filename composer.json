@@ -20,6 +20,7 @@
         "canyon-gbs/audit": "*@dev",
         "canyon-gbs/authorization": "^1.0",
         "canyon-gbs/engagement": "*",
+        "canyon-gbs/integration-ai": "^1.0",
         "canyon-gbs/integration-google-analytics": "*",
         "canyon-gbs/integration-microsoft-clarity": "*",
         "canyon-gbs/integration-twilio": "*",

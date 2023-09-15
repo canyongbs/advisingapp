@@ -1,30 +1,33 @@
 <?php
 
-namespace Assist\Assistant\Providers;
+namespace Assist\IntegrationAI\Providers;
 
 use Filament\Panel;
-use Assist\Assistant\AssistantPlugin;
 use Illuminate\Support\ServiceProvider;
-use Assist\Assistant\Models\AssistantChat;
-use Assist\Assistant\Models\AssistantChatMessage;
+use Assist\IntegrationAI\Client\AzureOpenAI;
+use Assist\IntegrationAI\IntegrationAIPlugin;
 use Assist\Authorization\AuthorizationRoleRegistry;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\Authorization\AuthorizationPermissionRegistry;
+use Assist\IntegrationAI\Client\Playground\AzureOpenAI as PlaygroundAzureOpenAI;
 
-class AssistantServiceProvider extends ServiceProvider
+class IntegrationAIServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AssistantPlugin()));
+        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new IntegrationAIPlugin()));
+
+        $this->app->singleton(AIChatClient::class, function () {
+            if (config('services.azure_open_ai.enable_test_mode') === true) {
+                return new PlaygroundAzureOpenAI();
+            }
+
+            return new AzureOpenAI();
+        });
     }
 
     public function boot()
     {
-        Relation::morphMap([
-            'assistant_chat' => AssistantChat::class,
-            'assistant_chat_message' => AssistantChatMessage::class,
-        ]);
-
         $this->registerRolesAndPermissions();
     }
 
@@ -33,24 +36,24 @@ class AssistantServiceProvider extends ServiceProvider
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 
         $permissionRegistry->registerApiPermissions(
-            module: 'assistant',
+            module: 'integration-ai',
             path: 'permissions/api/custom'
         );
 
         $permissionRegistry->registerWebPermissions(
-            module: 'assistant',
+            module: 'integration-ai',
             path: 'permissions/web/custom'
         );
 
         $roleRegistry = app(AuthorizationRoleRegistry::class);
 
         $roleRegistry->registerApiRoles(
-            module: 'assistant',
+            module: 'integration-ai',
             path: 'roles/api'
         );
 
         $roleRegistry->registerWebRoles(
-            module: 'assistant',
+            module: 'integration-ai',
             path: 'roles/web'
         );
     }

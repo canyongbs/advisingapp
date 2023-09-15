@@ -54,7 +54,6 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  * @property string|null $remember_token
  * @property string|null $locale
  * @property string|null $type
- * @property bool $is_external
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -100,7 +99,6 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  * @method static Builder|User whereEmailVerifiedAt($value)
  * @method static Builder|User whereEmplid($value)
  * @method static Builder|User whereId($value)
- * @method static Builder|User whereIsExternal($value)
  * @method static Builder|User whereLocale($value)
  * @method static Builder|User whereName($value)
  * @method static Builder|User wherePassword($value)
