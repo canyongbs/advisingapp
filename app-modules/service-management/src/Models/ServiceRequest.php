@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Assist\AssistDataModel\Models\Traits\EducatableSortScope;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
@@ -93,6 +94,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use AuditableTrait;
     use HasUuids;
     use HasManyMorphedInteractions;
+    use EducatableSortScope;
 
     protected $fillable = [
         'respondent_type',

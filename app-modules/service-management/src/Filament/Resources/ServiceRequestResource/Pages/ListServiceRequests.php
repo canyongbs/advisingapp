@@ -4,7 +4,6 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pag
 
 use Filament\Actions;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
 use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -35,22 +34,8 @@ class ListServiceRequests extends ListRecords
                     ->label('Respondent')
                     ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->{$record->respondent::displayNameKey()})
                     ->searchable([Student::displayNameKey(), Prospect::displayNameKey()])
-                    ->sortable(query: function (Builder $query, string $direction): Builder {
-                        $studentNameColumn = Student::displayNameKey();
-
-                        $prospectNameColumn = Prospect::displayNameKey();
-
-                        return $query->leftJoin('students', function ($join) {
-                            $join->on('service_requests.respondent_type', '=', DB::raw("'student'"))
-                                ->on(DB::raw('service_requests.respondent_id::VARCHAR'), '=', 'students.sisid');
-                        })
-                            ->leftJoin('prospects', function ($join) {
-                                $join->on('service_requests.respondent_type', '=', DB::raw("'prospect'"))
-                                    ->on(DB::raw('CAST(service_requests.respondent_id AS VARCHAR)'), '=', DB::raw('CAST(prospects.id AS VARCHAR)'));
-                            })
-                            ->select('service_requests.*', DB::raw("COALESCE(students.{$studentNameColumn}, prospects.{$prospectNameColumn}) as respondent_name"))
-                            ->orderBy('respondent_name', $direction);
-                    }),
+                    // TODO: Find a way to get IDE to recognize educatableSort() method
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->educatableSort($direction)),
                 TextColumn::make('respondent.sisid')
                     ->label('SIS ID')
                     ->searchable()
