@@ -4,11 +4,14 @@ namespace Assist\Assistant\Providers;
 
 use Filament\Panel;
 use Assist\Assistant\AssistantPlugin;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Assistant\Models\AssistantChatMessage;
+use Assist\IntegrationAI\Events\AIPromptInitiated;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Assistant\Listeners\LogAssistantChatMessage;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class AssistantServiceProvider extends ServiceProvider
@@ -25,7 +28,13 @@ class AssistantServiceProvider extends ServiceProvider
             'assistant_chat_message' => AssistantChatMessage::class,
         ]);
 
+        $this->registerEvents();
         $this->registerRolesAndPermissions();
+    }
+
+    protected function registerEvents(): void
+    {
+        Event::listen(AIPromptInitiated::class, LogAssistantChatMessage::class);
     }
 
     protected function registerRolesAndPermissions()

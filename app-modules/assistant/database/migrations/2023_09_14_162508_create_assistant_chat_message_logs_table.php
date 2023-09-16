@@ -10,9 +10,13 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('assistant_chats', function (Blueprint $table) {
+        Schema::create('assistant_chat_message_logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->longText('message');
+            $table->longText('metadata');
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->longText('request');
+            $table->timestamp('sent_at');
             $table->timestamps();
         });
     }

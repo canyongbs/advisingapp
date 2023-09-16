@@ -14,6 +14,6 @@ class AIPromptInitiated
     use SerializesModels;
 
     public function __construct(
-        public AIPrompt $prompt,
+        readonly public AIPrompt $prompt,
     ) {}
 }
