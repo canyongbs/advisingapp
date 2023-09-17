@@ -6,6 +6,7 @@ use Eloquent;
 use Carbon\Carbon;
 use Filament\Panel;
 use DateTimeInterface;
+use Assist\Task\Models\Task;
 use Assist\Audit\Models\Audit;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
@@ -211,6 +212,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function alerts()
     {
         return $this->belongsToMany(UserAlert::class)->withPivot('seen_at');
+    }
+
+    public function assignedTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
     }
 
     public function preferredLocale()

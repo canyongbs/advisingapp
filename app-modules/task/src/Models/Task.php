@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Task\Enums\TaskStatus;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -102,5 +103,10 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
     public function getSubscribable(): ?Subscribable
     {
         return $this->concern instanceof Subscribable ? $this->concern : null;
+    }
+
+    public function scopeByDueDateDesc(Builder $query): void
+    {
+        $query->orderBy('due', 'desc');
     }
 }
