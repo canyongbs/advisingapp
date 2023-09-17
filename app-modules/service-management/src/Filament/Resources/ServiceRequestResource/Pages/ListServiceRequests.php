@@ -4,7 +4,6 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pag
 
 use Filament\Actions;
 use Filament\Tables\Table;
-use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -12,7 +11,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
-use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\ServiceManagement\Models\ServiceRequest;
@@ -33,7 +31,7 @@ class ListServiceRequests extends ListRecords
                 TextColumn::make('respondent.display_name')
                     ->label('Respondent')
                     ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->{$record->respondent::displayNameKey()})
-                    ->searchable([Student::displayNameKey(), Prospect::displayNameKey()])
+                    ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'respondent', search: $search))
                     // TODO: Find a way to get IDE to recognize educatableSort() method
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->educatableSort($direction)),
                 TextColumn::make('respondent.sisid')

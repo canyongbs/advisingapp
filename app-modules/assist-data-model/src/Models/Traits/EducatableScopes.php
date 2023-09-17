@@ -7,7 +7,7 @@ use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 
-trait EducatableSortScope
+trait EducatableScopes
 {
     public function scopeEducatableSort(Builder $query, string $direction): Builder
     {
@@ -25,5 +25,18 @@ trait EducatableSortScope
             })
             ->select('service_requests.*', DB::raw("COALESCE(students.{$studentNameColumn}, prospects.{$prospectNameColumn}) as respondent_name"))
             ->orderBy('respondent_name', $direction);
+    }
+
+    public function scopeEducatableSearch(Builder $query, string $relationship, string $search): Builder
+    {
+        return $query->whereHasMorph(
+            $relationship,
+            [Student::class, Prospect::class],
+            fn (Builder $query, string $type) => $query->where(
+                app($type)::displayNameKey(),
+                'like',
+                "%{$search}%"
+            )
+        );
     }
 }
