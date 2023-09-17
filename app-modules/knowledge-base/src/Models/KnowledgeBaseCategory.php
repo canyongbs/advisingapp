@@ -2,46 +2,15 @@
 
 namespace Assist\KnowledgeBase\Models;
 
-use Eloquent;
 use DateTimeInterface;
 use App\Models\BaseModel;
-use Assist\Audit\Models\Audit;
-use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
- * Assist\KnowledgeBase\Models\KnowledgeBaseCategory
- *
- * @property string $id
- * @property string $name
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
- * @property-read Collection<int, Audit> $audits
- * @property-read int|null $audits_count
- * @property-read Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
- * @property-read int|null $knowledge_base_items_count
- *
- * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory factory($count = null, $state = [])
- * @method static Builder|KnowledgeBaseCategory newModelQuery()
- * @method static Builder|KnowledgeBaseCategory newQuery()
- * @method static Builder|KnowledgeBaseCategory onlyTrashed()
- * @method static Builder|KnowledgeBaseCategory query()
- * @method static Builder|KnowledgeBaseCategory whereCreatedAt($value)
- * @method static Builder|KnowledgeBaseCategory whereDeletedAt($value)
- * @method static Builder|KnowledgeBaseCategory whereId($value)
- * @method static Builder|KnowledgeBaseCategory whereName($value)
- * @method static Builder|KnowledgeBaseCategory whereUpdatedAt($value)
- * @method static Builder|KnowledgeBaseCategory withTrashed()
- * @method static Builder|KnowledgeBaseCategory withoutTrashed()
- *
- * @mixin Eloquent
  * @mixin IdeHelperKnowledgeBaseCategory
  */
 class KnowledgeBaseCategory extends BaseModel implements Auditable

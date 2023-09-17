@@ -11,59 +11,6 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
- * Assist\Interaction\Models\Interaction
- *
- * @property string $id
- * @property string|null $user_id
- * @property string|null $interactable_id
- * @property string|null $interactable_type
- * @property string|null $interaction_type_id
- * @property string|null $interaction_relation_id
- * @property string|null $interaction_campaign_id
- * @property string|null $interaction_driver_id
- * @property string|null $interaction_status_id
- * @property string|null $interaction_outcome_id
- * @property string|null $interaction_institution_id
- * @property \Illuminate\Support\Carbon $start_datetime
- * @property \Illuminate\Support\Carbon|null $end_datetime
- * @property string|null $subject
- * @property string|null $description
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Assist\Interaction\Models\InteractionCampaign|null $campaign
- * @property-read \Assist\Interaction\Models\InteractionDriver|null $driver
- * @property-read \Assist\Interaction\Models\InteractionInstitution|null $institution
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $interactable
- * @property-read \Assist\Interaction\Models\InteractionOutcome|null $outcome
- * @property-read \Assist\Interaction\Models\InteractionRelation|null $relation
- * @property-read \Assist\Interaction\Models\InteractionStatus|null $status
- * @property-read \Assist\Interaction\Models\InteractionType|null $type
- *
- * @method static \Assist\Interaction\Database\Factories\InteractionFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction query()
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereEndDatetime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionCampaignId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionDriverId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionInstitutionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionOutcomeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionRelationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereInteractionTypeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereStartDatetime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereUserId($value)
- *
- * @mixin \Eloquent
  * @mixin IdeHelperInteraction
  */
 class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription
