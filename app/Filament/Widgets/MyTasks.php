@@ -26,7 +26,7 @@ class MyTasks extends BaseWidget
                 auth()->user()
                     ->assignedTasks()
                     ->getQuery()
-                    ->byDueDate()
+                    ->byNextDue()
             )
             ->columns([
                 TextColumn::make('description')
