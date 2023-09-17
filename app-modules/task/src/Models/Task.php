@@ -5,7 +5,9 @@ namespace Assist\Task\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Task\Enums\TaskStatus;
+use Assist\Prospect\Models\Prospect;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -20,7 +22,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 /**
  * @mixin IdeHelperTask
  *
- * @property-read Educatable $concern
+ * @property-read Student|Prospect $concern
  */
 class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {

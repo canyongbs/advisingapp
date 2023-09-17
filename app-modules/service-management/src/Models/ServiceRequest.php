@@ -7,8 +7,10 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\Institution;
 use Illuminate\Support\Facades\DB;
+use Assist\Prospect\Models\Prospect;
 use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,7 +30,7 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
 /**
  * @mixin IdeHelperServiceRequest
  *
- * @property-read Educatable $respondent
+ * @property-read Student|Prospect $respondent
  */
 class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
 {

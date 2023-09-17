@@ -19,7 +19,7 @@ class EditProspectRequestFactory extends RequestFactory
             'source_id' => ProspectSource::inRandomOrder()->first()?->id ?? ProspectSource::factory()->create()->id,
             'first_name' => $firstName,
             'last_name' => $lastName,
-            'full' => "{$firstName} {$lastName}",
+            'full_name' => "{$firstName} {$lastName}",
             'preferred' => $this->faker->firstName(),
             'description' => $this->faker->paragraph(),
             'email' => $this->faker->email(),
