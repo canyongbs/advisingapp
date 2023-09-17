@@ -1,25 +1,20 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-use Rector\CodeQuality\Rector\Class_\InlineConstructorDefaultToPropertyRector;
 use Rector\Config\RectorConfig;
-use Rector\Set\ValueObject\LevelSetList;
+use Rector\Transform\Rector\Class_\AddAllowDynamicPropertiesAttributeRector;
 
 return static function (RectorConfig $rectorConfig): void {
+    // Required to fix an issue with IDE Helper Generator Model mixin generation with PHP8.2
+    // Can be removed if https://github.com/barryvdh/laravel-ide-helper/pull/1428 is merged
+
     $rectorConfig->paths([
-        __DIR__ . '/app',
-        __DIR__ . '/app-modules',
-        __DIR__ . '/bootstrap',
-        __DIR__ . '/config',
-        __DIR__ . '/public',
-        __DIR__ . '/resources',
-        __DIR__ . '/routes',
-        __DIR__ . '/tests',
+        __DIR__ . '/_ide_helper_models.php',
     ]);
 
     // register a single rule
-    $rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
+    $rectorConfig->rule(AddAllowDynamicPropertiesAttributeRector::class);
 
     // define sets of rules
     //    $rectorConfig->sets([

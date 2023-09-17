@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -26,6 +27,8 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
 
 /**
  * @mixin IdeHelperServiceRequest
+ *
+ * @property-read Educatable $respondent
  */
 class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
 {
@@ -95,6 +98,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return $this->respondent instanceof Subscribable ? $this->respondent : null;
     }
 
+    /** @return MorphTo<Educatable> */
     public function respondent(): MorphTo
     {
         return $this->morphTo(

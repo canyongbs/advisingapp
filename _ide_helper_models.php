@@ -38,7 +38,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperEngagementEmailItem {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEngagementEmailItem {}
 }
 
 namespace App\Models{
@@ -70,7 +71,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperEngagementTextItem {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEngagementTextItem {}
 }
 
 namespace App\Models{
@@ -84,7 +86,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperEnrollment {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEnrollment {}
 }
 
 namespace App\Models{
@@ -117,7 +120,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperInstitution {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInstitution {}
 }
 
 namespace App\Models{
@@ -156,7 +160,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperJourneyEmailItem {}
+	#[\AllowDynamicProperties]
+ class IdeHelperJourneyEmailItem {}
 }
 
 namespace App\Models{
@@ -192,7 +197,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperJourneyItem {}
+	#[\AllowDynamicProperties]
+ class IdeHelperJourneyItem {}
 }
 
 namespace App\Models{
@@ -225,7 +231,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperJourneyTargetList {}
+	#[\AllowDynamicProperties]
+ class IdeHelperJourneyTargetList {}
 }
 
 namespace App\Models{
@@ -264,7 +271,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperJourneyTextItem {}
+	#[\AllowDynamicProperties]
+ class IdeHelperJourneyTextItem {}
 }
 
 namespace App\Models{
@@ -278,7 +286,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperProgram {}
+	#[\AllowDynamicProperties]
+ class IdeHelperProgram {}
 }
 
 namespace App\Models{
@@ -291,7 +300,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperReportProspect {}
+	#[\AllowDynamicProperties]
+ class IdeHelperReportProspect {}
 }
 
 namespace App\Models{
@@ -304,7 +314,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperReportStudent {}
+	#[\AllowDynamicProperties]
+ class IdeHelperReportStudent {}
 }
 
 namespace App\Models{
@@ -332,7 +343,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SettingsProperty whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	class IdeHelperSettingsProperty {}
+	#[\AllowDynamicProperties]
+ class IdeHelperSettingsProperty {}
 }
 
 namespace App\Models{
@@ -405,7 +417,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperUser {}
+	#[\AllowDynamicProperties]
+ class IdeHelperUser {}
 }
 
 namespace App\Models{
@@ -436,7 +449,8 @@ namespace App\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperUserAlert {}
+	#[\AllowDynamicProperties]
+ class IdeHelperUserAlert {}
 }
 
 namespace Assist\Alert\Models{
@@ -474,7 +488,8 @@ namespace Assist\Alert\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperAlert {}
+	#[\AllowDynamicProperties]
+ class IdeHelperAlert {}
 }
 
 namespace Assist\AssistDataModel\Models{
@@ -487,7 +502,8 @@ namespace Assist\AssistDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment query()
  * @mixin \Eloquent
  */
-	class IdeHelperEnrollment {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEnrollment {}
 }
 
 namespace Assist\AssistDataModel\Models{
@@ -500,7 +516,8 @@ namespace Assist\AssistDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Performance query()
  * @mixin \Eloquent
  */
-	class IdeHelperPerformance {}
+	#[\AllowDynamicProperties]
+ class IdeHelperPerformance {}
 }
 
 namespace Assist\AssistDataModel\Models{
@@ -513,7 +530,8 @@ namespace Assist\AssistDataModel\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Program query()
  * @mixin \Eloquent
  */
-	class IdeHelperProgram {}
+	#[\AllowDynamicProperties]
+ class IdeHelperProgram {}
 }
 
 namespace Assist\AssistDataModel\Models{
@@ -553,7 +571,8 @@ namespace Assist\AssistDataModel\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperStudent {}
+	#[\AllowDynamicProperties]
+ class IdeHelperStudent {}
 }
 
 namespace Assist\Assistant\Models{
@@ -577,7 +596,8 @@ namespace Assist\Assistant\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperAssistantChat {}
+	#[\AllowDynamicProperties]
+ class IdeHelperAssistantChat {}
 }
 
 namespace Assist\Assistant\Models{
@@ -603,7 +623,8 @@ namespace Assist\Assistant\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperAssistantChatMessage {}
+	#[\AllowDynamicProperties]
+ class IdeHelperAssistantChatMessage {}
 }
 
 namespace Assist\Audit\Models{
@@ -646,7 +667,8 @@ namespace Assist\Audit\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Audit whereUserAgent($value)
  * @mixin \Eloquent
  */
-	class IdeHelperAudit {}
+	#[\AllowDynamicProperties]
+ class IdeHelperAudit {}
 }
 
 namespace Assist\Authorization\Models{
@@ -682,7 +704,8 @@ namespace Assist\Authorization\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperPermission {}
+	#[\AllowDynamicProperties]
+ class IdeHelperPermission {}
 }
 
 namespace Assist\Authorization\Models\Pivots{
@@ -694,7 +717,8 @@ namespace Assist\Authorization\Models\Pivots{
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot query()
  * @mixin \Eloquent
  */
-	class IdeHelperRoleGroupRolePivot {}
+	#[\AllowDynamicProperties]
+ class IdeHelperRoleGroupRolePivot {}
 }
 
 namespace Assist\Authorization\Models\Pivots{
@@ -706,7 +730,8 @@ namespace Assist\Authorization\Models\Pivots{
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot query()
  * @mixin \Eloquent
  */
-	class IdeHelperRoleGroupUserPivot {}
+	#[\AllowDynamicProperties]
+ class IdeHelperRoleGroupUserPivot {}
 }
 
 namespace Assist\Authorization\Models{
@@ -744,7 +769,8 @@ namespace Assist\Authorization\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperRole {}
+	#[\AllowDynamicProperties]
+ class IdeHelperRole {}
 }
 
 namespace Assist\Authorization\Models{
@@ -779,7 +805,8 @@ namespace Assist\Authorization\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperRoleGroup {}
+	#[\AllowDynamicProperties]
+ class IdeHelperRoleGroup {}
 }
 
 namespace Assist\Engagement\Models{
@@ -826,7 +853,8 @@ namespace Assist\Engagement\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperEngagement {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEngagement {}
 }
 
 namespace Assist\Engagement\Models{
@@ -852,7 +880,8 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementBatch whereUserId($value)
  * @mixin \Eloquent
  */
-	class IdeHelperEngagementBatch {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEngagementBatch {}
 }
 
 namespace Assist\Engagement\Models{
@@ -888,7 +917,8 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	class IdeHelperEngagementDeliverable {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEngagementDeliverable {}
 }
 
 namespace Assist\Engagement\Models{
@@ -918,7 +948,8 @@ namespace Assist\Engagement\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperEngagementFile {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEngagementFile {}
 }
 
 namespace Assist\Engagement\Models{
@@ -942,7 +973,8 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	class IdeHelperEngagementFileEntities {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEngagementFileEntities {}
 }
 
 namespace Assist\Engagement\Models{
@@ -972,7 +1004,8 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-	class IdeHelperEngagementResponse {}
+	#[\AllowDynamicProperties]
+ class IdeHelperEngagementResponse {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1029,7 +1062,8 @@ namespace Assist\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereUserId($value)
  * @mixin \Eloquent
  */
-	class IdeHelperInteraction {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInteraction {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1059,7 +1093,8 @@ namespace Assist\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign withoutTrashed()
  * @mixin \Eloquent
  */
-	class IdeHelperInteractionCampaign {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInteractionCampaign {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1089,7 +1124,8 @@ namespace Assist\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver withoutTrashed()
  * @mixin \Eloquent
  */
-	class IdeHelperInteractionDriver {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInteractionDriver {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1119,7 +1155,8 @@ namespace Assist\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionInstitution withoutTrashed()
  * @mixin \Eloquent
  */
-	class IdeHelperInteractionInstitution {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInteractionInstitution {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1149,7 +1186,8 @@ namespace Assist\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome withoutTrashed()
  * @mixin \Eloquent
  */
-	class IdeHelperInteractionOutcome {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInteractionOutcome {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1179,7 +1217,8 @@ namespace Assist\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation withoutTrashed()
  * @mixin \Eloquent
  */
-	class IdeHelperInteractionRelation {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInteractionRelation {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1211,7 +1250,8 @@ namespace Assist\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus withoutTrashed()
  * @mixin \Eloquent
  */
-	class IdeHelperInteractionStatus {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInteractionStatus {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1241,7 +1281,8 @@ namespace Assist\Interaction\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType withoutTrashed()
  * @mixin \Eloquent
  */
-	class IdeHelperInteractionType {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInteractionType {}
 }
 
 namespace Assist\KnowledgeBase\Models{
@@ -1272,7 +1313,8 @@ namespace Assist\KnowledgeBase\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperKnowledgeBaseCategory {}
+	#[\AllowDynamicProperties]
+ class IdeHelperKnowledgeBaseCategory {}
 }
 
 namespace Assist\KnowledgeBase\Models{
@@ -1318,7 +1360,8 @@ namespace Assist\KnowledgeBase\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperKnowledgeBaseItem {}
+	#[\AllowDynamicProperties]
+ class IdeHelperKnowledgeBaseItem {}
 }
 
 namespace Assist\KnowledgeBase\Models{
@@ -1349,7 +1392,8 @@ namespace Assist\KnowledgeBase\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperKnowledgeBaseQuality {}
+	#[\AllowDynamicProperties]
+ class IdeHelperKnowledgeBaseQuality {}
 }
 
 namespace Assist\KnowledgeBase\Models{
@@ -1380,7 +1424,8 @@ namespace Assist\KnowledgeBase\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperKnowledgeBaseStatus {}
+	#[\AllowDynamicProperties]
+ class IdeHelperKnowledgeBaseStatus {}
 }
 
 namespace Assist\Notifications\Models{
@@ -1412,7 +1457,8 @@ namespace Assist\Notifications\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperSubscription {}
+	#[\AllowDynamicProperties]
+ class IdeHelperSubscription {}
 }
 
 namespace Assist\Prospect\Models{
@@ -1499,7 +1545,8 @@ namespace Assist\Prospect\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperProspect {}
+	#[\AllowDynamicProperties]
+ class IdeHelperProspect {}
 }
 
 namespace Assist\Prospect\Models{
@@ -1530,7 +1577,8 @@ namespace Assist\Prospect\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperProspectSource {}
+	#[\AllowDynamicProperties]
+ class IdeHelperProspectSource {}
 }
 
 namespace Assist\Prospect\Models{
@@ -1563,7 +1611,8 @@ namespace Assist\Prospect\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperProspectStatus {}
+	#[\AllowDynamicProperties]
+ class IdeHelperProspectStatus {}
 }
 
 namespace Assist\ServiceManagement\Models{
@@ -1623,7 +1672,8 @@ namespace Assist\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest withoutTrashed()
  * @mixin \Eloquent
  */
-	class IdeHelperServiceRequest {}
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequest {}
 }
 
 namespace Assist\ServiceManagement\Models{
@@ -1656,7 +1706,8 @@ namespace Assist\ServiceManagement\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperServiceRequestPriority {}
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestPriority {}
 }
 
 namespace Assist\ServiceManagement\Models{
@@ -1689,7 +1740,8 @@ namespace Assist\ServiceManagement\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperServiceRequestStatus {}
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestStatus {}
 }
 
 namespace Assist\ServiceManagement\Models{
@@ -1720,7 +1772,8 @@ namespace Assist\ServiceManagement\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperServiceRequestType {}
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestType {}
 }
 
 namespace Assist\ServiceManagement\Models{
@@ -1756,7 +1809,8 @@ namespace Assist\ServiceManagement\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperServiceRequestUpdate {}
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestUpdate {}
 }
 
 namespace Assist\Task\Models{
@@ -1800,7 +1854,8 @@ namespace Assist\Task\Models{
  * @mixin Eloquent
  * @mixin \Eloquent
  */
-	class IdeHelperTask {}
+	#[\AllowDynamicProperties]
+ class IdeHelperTask {}
 }
 
 namespace Assist\Webhook\Models{
@@ -1828,6 +1883,7 @@ namespace Assist\Webhook\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|InboundWebhook whereUrl($value)
  * @mixin \Eloquent
  */
-	class IdeHelperInboundWebhook {}
+	#[\AllowDynamicProperties]
+ class IdeHelperInboundWebhook {}
 }
 

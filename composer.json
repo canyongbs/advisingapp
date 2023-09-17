@@ -148,6 +148,7 @@
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:models -M",
             "@php artisan ide-helper:meta",
+            "./vendor/bin/rector",
             "@lint"
         ],
         "larastan": [
