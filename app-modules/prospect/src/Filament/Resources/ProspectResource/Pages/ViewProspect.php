@@ -35,7 +35,7 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('last_name')
                             ->label('Last Name')
                             ->translateLabel(),
-                        TextEntry::make('full')
+                        TextEntry::make('full_name')
                             ->label('Full Name')
                             ->translateLabel(),
                         TextEntry::make('preferred')

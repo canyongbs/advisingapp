@@ -48,7 +48,7 @@ class CreateProspect extends CreateRecord
                     ->translateLabel()
                     ->required()
                     ->string(),
-                TextInput::make('full')
+                TextInput::make('full_name')
                     ->label('Full Name')
                     ->translateLabel()
                     ->required()
