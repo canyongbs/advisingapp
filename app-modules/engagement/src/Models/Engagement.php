@@ -15,9 +15,9 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
- * @mixin IdeHelperEngagement
- *
  * @property-read Educatable $recipient
+ *
+ * @mixin IdeHelperEngagement
  */
 class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {

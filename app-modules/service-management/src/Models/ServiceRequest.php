@@ -28,9 +28,9 @@ use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsExcep
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 /**
- * @mixin IdeHelperServiceRequest
- *
  * @property-read Student|Prospect $respondent
+ *
+ * @mixin IdeHelperServiceRequest
  */
 class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
 {

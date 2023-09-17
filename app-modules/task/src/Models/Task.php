@@ -20,9 +20,9 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
- * @mixin IdeHelperTask
- *
  * @property-read Student|Prospect $concern
+ *
+ * @mixin IdeHelperTask
  */
 class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {
