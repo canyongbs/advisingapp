@@ -17,7 +17,6 @@ use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Assistant\Models\AssistantChatMessageLog;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
