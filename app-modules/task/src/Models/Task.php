@@ -62,6 +62,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @method static Builder|Task withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperTask
  */
 class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {

@@ -42,6 +42,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static Builder|KnowledgeBaseCategory withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperKnowledgeBaseCategory
  */
 class KnowledgeBaseCategory extends BaseModel implements Auditable
 {

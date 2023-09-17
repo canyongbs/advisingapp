@@ -35,6 +35,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign withoutTrashed()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperInteractionCampaign
  */
 class InteractionCampaign extends BaseModel implements Auditable
 {

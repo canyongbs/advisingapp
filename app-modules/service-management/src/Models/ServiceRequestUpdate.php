@@ -51,6 +51,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @method static Builder|ServiceRequestUpdate withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperServiceRequestUpdate
  */
 class ServiceRequestUpdate extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {

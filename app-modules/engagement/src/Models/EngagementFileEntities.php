@@ -29,6 +29,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperEngagementFileEntities
  */
 class EngagementFileEntities extends MorphPivot implements CanTriggerAutoSubscription
 {

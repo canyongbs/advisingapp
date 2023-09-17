@@ -43,6 +43,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static Builder|ServiceRequestType withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperServiceRequestType
  */
 class ServiceRequestType extends BaseModel implements Auditable
 {

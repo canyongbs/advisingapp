@@ -44,6 +44,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
  * @method static Builder|EngagementFile whereUpdatedAt($value)
  *
  * @mixin Eloquent
+ * @mixin IdeHelperEngagementFile
  */
 class EngagementFile extends BaseModel implements HasMedia, Auditable
 {

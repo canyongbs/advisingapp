@@ -64,6 +64,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction whereUserId($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperInteraction
  */
 class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {

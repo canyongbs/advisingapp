@@ -119,6 +119,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @method static Builder|Prospect withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperProspect
  */
 class Prospect extends BaseModel implements Auditable, Subscribable, Educatable
 {

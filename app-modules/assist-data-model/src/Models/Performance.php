@@ -15,6 +15,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @method static \Illuminate\Database\Eloquent\Builder|Performance query()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperPerformance
  */
 class Performance extends Model
 {

@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|AssistantChat whereUserId($value)
  *
  * @mixin Eloquent
+ * @mixin IdeHelperAssistantChat
  */
 class AssistantChat extends BaseModel
 {

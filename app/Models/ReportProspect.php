@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static Builder|ReportProspect query()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperReportProspect
  */
 class ReportProspect extends Model
 {

@@ -31,6 +31,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
  * @method static Builder|AssistantChatMessage whereUpdatedAt($value)
  *
  * @mixin Eloquent
+ * @mixin IdeHelperAssistantChatMessage
  */
 class AssistantChatMessage extends BaseModel
 {

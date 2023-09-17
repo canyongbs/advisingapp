@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder|JourneyTextItem withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperJourneyTextItem
  */
 class JourneyTextItem extends BaseModel
 {

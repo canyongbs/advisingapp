@@ -52,6 +52,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static Builder|Role whereUpdatedAt($value)
  *
  * @mixin Eloquent
+ * @mixin IdeHelperRole
  */
 class Role extends SpatieRole implements Auditable
 {

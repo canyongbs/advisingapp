@@ -43,6 +43,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static Builder|ProspectStatus withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperProspectStatus
  */
 class ProspectStatus extends BaseModel implements Auditable
 {

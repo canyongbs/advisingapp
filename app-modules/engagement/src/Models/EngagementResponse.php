@@ -34,6 +34,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperEngagementResponse
  */
 class EngagementResponse extends BaseModel implements Auditable
 {

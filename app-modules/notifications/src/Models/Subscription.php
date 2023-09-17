@@ -41,6 +41,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|Subscription withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperSubscription
  */
 class Subscription extends BaseModel
 {

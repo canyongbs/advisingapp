@@ -42,6 +42,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static Builder|Institution withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperInstitution
  */
 class Institution extends BaseModel implements Auditable
 {

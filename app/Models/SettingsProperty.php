@@ -33,6 +33,7 @@ use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
  * @method static \Illuminate\Database\Eloquent\Builder|SettingsProperty whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperSettingsProperty
  */
 class SettingsProperty extends BaseSettingsProperty implements HasMedia
 {

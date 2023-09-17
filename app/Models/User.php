@@ -112,6 +112,7 @@ use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
  * @method static Builder|User withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperUser
  */
 class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable
 {

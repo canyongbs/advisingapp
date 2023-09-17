@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static Builder|UserAlert withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperUserAlert
  */
 class UserAlert extends BaseModel
 {

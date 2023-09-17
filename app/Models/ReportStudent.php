@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static Builder|ReportStudent query()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperReportStudent
  */
 class ReportStudent extends Model
 {

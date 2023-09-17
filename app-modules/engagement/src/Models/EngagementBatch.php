@@ -30,6 +30,7 @@ use Assist\Engagement\Models\Concerns\HasManyEngagements;
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementBatch whereUserId($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperEngagementBatch
  */
 class EngagementBatch extends BaseModel
 {

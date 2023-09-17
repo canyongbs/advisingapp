@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder|EngagementEmailItem withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperEngagementEmailItem
  */
 class EngagementEmailItem extends BaseModel
 {

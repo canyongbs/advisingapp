@@ -50,6 +50,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static Builder|RoleGroup withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperRoleGroup
  */
 class RoleGroup extends Model implements Auditable
 {

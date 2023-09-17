@@ -15,6 +15,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment query()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperEnrollment
  */
 class Enrollment extends Model
 {

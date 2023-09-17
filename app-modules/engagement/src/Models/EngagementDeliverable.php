@@ -46,6 +46,7 @@ use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperEngagementDeliverable
  */
 class EngagementDeliverable extends BaseModel implements Auditable
 {

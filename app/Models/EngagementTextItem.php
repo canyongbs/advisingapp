@@ -37,6 +37,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder|EngagementTextItem withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperEngagementTextItem
  */
 class EngagementTextItem extends BaseModel
 {

@@ -38,6 +38,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus withoutTrashed()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperInteractionStatus
  */
 class InteractionStatus extends BaseModel implements Auditable
 {

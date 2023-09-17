@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static Builder|JourneyTargetList withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperJourneyTargetList
  */
 class JourneyTargetList extends BaseModel
 {

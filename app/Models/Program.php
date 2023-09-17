@@ -17,6 +17,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @method static Builder|Program query()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperProgram
  */
 class Program extends Model
 {

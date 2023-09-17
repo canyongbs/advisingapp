@@ -44,6 +44,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static Builder|ServiceRequestPriority withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperServiceRequestPriority
  */
 class ServiceRequestPriority extends BaseModel implements Auditable
 {

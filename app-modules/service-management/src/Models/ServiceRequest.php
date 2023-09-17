@@ -2,19 +2,13 @@
 
 namespace Assist\ServiceManagement\Models;
 
-use Eloquent;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\Institution;
-use Assist\Audit\Models\Audit;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\PowerJoins\PowerJoins;
-use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,61 +25,7 @@ use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsExcep
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 /**
- * Assist\ServiceManagement\Models\ServiceRequest
- *
- * @property string $id
- * @property string $service_request_number
- * @property string|null $respondent_type
- * @property string|null $respondent_id
- * @property string|null $close_details
- * @property string|null $res_details
- * @property string|null $institution_id
- * @property string|null $status_id
- * @property string|null $type_id
- * @property string|null $priority_id
- * @property string|null $assigned_to_id
- * @property string|null $created_by_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
- * @property-read User|null $assignedTo
- * @property-read Collection<int, Audit> $audits
- * @property-read int|null $audits_count
- * @property-read User|null $createdBy
- * @property-read Institution|null $institution
- * @property-read Collection<int, \Assist\Interaction\Models\Interaction> $interactions
- * @property-read int|null $interactions_count
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestPriority|null $priority
- * @property-read Model|\Eloquent $respondent
- * @property-read Collection<int, \Assist\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
- * @property-read int|null $service_request_updates_count
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestStatus|null $status
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestType|null $type
- *
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
- * @method static Builder|ServiceRequest newModelQuery()
- * @method static Builder|ServiceRequest newQuery()
- * @method static Builder|ServiceRequest onlyTrashed()
- * @method static Builder|ServiceRequest query()
- * @method static Builder|ServiceRequest whereAssignedToId($value)
- * @method static Builder|ServiceRequest whereCloseDetails($value)
- * @method static Builder|ServiceRequest whereCreatedAt($value)
- * @method static Builder|ServiceRequest whereCreatedById($value)
- * @method static Builder|ServiceRequest whereDeletedAt($value)
- * @method static Builder|ServiceRequest whereId($value)
- * @method static Builder|ServiceRequest whereInstitutionId($value)
- * @method static Builder|ServiceRequest wherePriorityId($value)
- * @method static Builder|ServiceRequest whereResDetails($value)
- * @method static Builder|ServiceRequest whereRespondentId($value)
- * @method static Builder|ServiceRequest whereRespondentType($value)
- * @method static Builder|ServiceRequest whereServiceRequestNumber($value)
- * @method static Builder|ServiceRequest whereStatusId($value)
- * @method static Builder|ServiceRequest whereTypeId($value)
- * @method static Builder|ServiceRequest whereUpdatedAt($value)
- * @method static Builder|ServiceRequest withTrashed()
- * @method static Builder|ServiceRequest withoutTrashed()
- *
- * @mixin Eloquent
+ * @mixin IdeHelperServiceRequest
  */
 class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
 {

@@ -51,6 +51,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  * @method static Builder|Alert withoutTrashed()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperAlert
  */
 class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {

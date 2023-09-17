@@ -49,6 +49,7 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
  * @method static Builder|Audit whereUserAgent($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperAudit
  */
 class Audit extends BaseAudit
 {

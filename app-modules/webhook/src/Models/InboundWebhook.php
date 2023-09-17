@@ -30,6 +30,7 @@ use Assist\Webhook\Enums\InboundWebhookSource;
  * @method static \Illuminate\Database\Eloquent\Builder|InboundWebhook whereUrl($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperInboundWebhook
  */
 class InboundWebhook extends BaseModel
 {

@@ -46,6 +46,7 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|Permission whereUpdatedAt($value)
  *
  * @mixin Eloquent
+ * @mixin IdeHelperPermission
  */
 class Permission extends SpatiePermission implements Auditable
 {

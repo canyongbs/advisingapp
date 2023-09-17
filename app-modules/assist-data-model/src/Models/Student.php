@@ -69,6 +69,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @method static Builder|Student query()
  *
  * @mixin Eloquent
+ * @mixin IdeHelperStudent
  */
 class Student extends Model implements Auditable, Subscribable, Educatable
 {
