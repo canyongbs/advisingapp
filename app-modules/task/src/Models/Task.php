@@ -105,7 +105,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
         return $this->concern instanceof Subscribable ? $this->concern : null;
     }
 
-    public function scopeByDueDateDesc(Builder $query): void
+    public function scopeByDueDate(Builder $query): void
     {
         $query->orderBy('due', 'desc');
     }
