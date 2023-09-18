@@ -5,6 +5,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Forms\Form;
+use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -49,7 +50,7 @@ class EditProspect extends EditRecord
                     ->translateLabel()
                     ->required()
                     ->string(),
-                TextInput::make('full_name')
+                TextInput::make(Prospect::displayNameKey())
                     ->label('Full Name')
                     ->translateLabel()
                     ->required()
