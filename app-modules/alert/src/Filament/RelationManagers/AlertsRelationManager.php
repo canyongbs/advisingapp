@@ -30,7 +30,7 @@ class AlertsRelationManager extends RelationManager
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
         /** @var Student|Prospect $ownerRecord */
-        $alertCount = Cache::tags('alert-count')->remember('alert-count-' . $ownerRecord->id, now()->addMinute(), function () use ($ownerRecord) {
+        $alertCount = Cache::tags('alert-count')->remember('alert-count-' . $ownerRecord->id, now()->addMinutes(5), function () use ($ownerRecord) {
             // TODO: When it is decided how alerts are "resolved" this will need to take that into account to only display unresolved alerts
             return $ownerRecord->alerts()->count();
         });
