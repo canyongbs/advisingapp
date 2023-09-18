@@ -29,7 +29,7 @@ class ListStudents extends ListRecords
             ->columns([
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')
-                    ->searchable(),
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
                     ->searchable(),
