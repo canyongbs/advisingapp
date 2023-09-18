@@ -13,7 +13,7 @@ return new class () extends Migration {
                 $table->string('otherid')->nullable();
                 $table->string('first')->nullable();
                 $table->string('last')->nullable();
-                $table->string('full')->nullable();
+                $table->string('full_name')->nullable();
                 $table->string('preferred')->nullable();
                 $table->string('email')->nullable();
                 $table->string('email_2')->nullable();

@@ -17,7 +17,7 @@ class StudentFactory extends Factory
             'otherid' => $this->faker->randomNumber(9),
             'first' => $this->faker->firstName(),
             'last' => $this->faker->lastName(),
-            'full' => $this->faker->name(),
+            'full_name' => $this->faker->name(),
             'preferred' => $this->faker->firstName(),
             'email' => $this->faker->email(),
             'email_2' => $this->faker->email(),

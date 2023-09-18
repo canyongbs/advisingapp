@@ -44,8 +44,8 @@ class ViewEngagement extends ViewRecord
                                 $recipient = $record->recipient;
 
                                 return match ($recipient::class) {
-                                    Student::class => "{$recipient->full} (Student)",
-                                    Prospect::class => "{$recipient->full} (Prospect)",
+                                    Student::class => "{$recipient->{Student::displayNameKey()}} (Student)",
+                                    Prospect::class => "{$recipient->{Prospect::displayNameKey()}} (Prospect)",
                                 };
                             })
                             ->url(function (Engagement $record) {

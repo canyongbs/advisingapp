@@ -14,6 +14,7 @@ use Assist\Authorization\Events\UserRemovedFromRoleGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot query()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperRoleGroupUserPivot
  */
 class RoleGroupUserPivot extends Pivot
 {
