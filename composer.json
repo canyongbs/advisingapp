@@ -19,7 +19,7 @@
         "canyon-gbs/assistant": "*",
         "canyon-gbs/audit": "*@dev",
         "canyon-gbs/authorization": "*",
-        "canyon-gbs/consent": "*",
+        "canyon-gbs/consent": "^1.0",
         "canyon-gbs/engagement": "*",
         "canyon-gbs/integration-ai": "^1.0",
         "canyon-gbs/integration-google-analytics": "*",
@@ -56,6 +56,7 @@
         "spatie/laravel-settings": "^3.2",
         "sqids/sqids": "^0.3.1",
         "staudenmeir/eloquent-has-many-deep": "^1.18",
+        "stechstudio/filament-impersonate": "^3.5",
         "tpetry/laravel-postgresql-enhanced": "^0.31.0",
         "twilio/sdk": "^7.7",
         "zing/laravel-scout-opensearch": "^3.2"
@@ -75,6 +76,7 @@
         "pestphp/pest-plugin-laravel": "^2.1",
         "pestphp/pest-plugin-livewire": "^2.1",
         "phpunit/phpunit": "^10.0",
+        "rector/rector": "^0.18.3",
         "spatie/laravel-ignition": "^2.0",
         "spatie/laravel-ray": "^1.32",
         "worksome/request-factories": "^3.2"
@@ -146,8 +148,9 @@
         ],
         "helper-regen": [
             "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:models -W -R",
+            "@php artisan ide-helper:models -M",
             "@php artisan ide-helper:meta",
+            "./vendor/bin/rector",
             "@lint"
         ],
         "larastan": [

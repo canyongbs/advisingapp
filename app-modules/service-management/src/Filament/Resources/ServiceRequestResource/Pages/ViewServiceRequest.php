@@ -59,8 +59,8 @@ class ViewServiceRequest extends ViewRecord
                                 $respondent = $record->respondent;
 
                                 return match ($respondent::class) {
-                                    Student::class => "{$respondent->full} (Student)",
-                                    Prospect::class => "{$respondent->full} (Prospect)",
+                                    Student::class => "{$respondent->{Student::displayNameKey()}} (Student)",
+                                    Prospect::class => "{$respondent->{Prospect::displayNameKey()}} (Prospect)",
                                 };
                             })
                             ->url(function (ServiceRequest $record) {

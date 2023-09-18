@@ -43,9 +43,9 @@ class EditTask extends EditRecord
                     ->preload()
                     ->types([
                         Type::make(Student::class)
-                            ->titleAttribute('full'),
+                            ->titleAttribute(Student::displayNameKey()),
                         Type::make(Prospect::class)
-                            ->titleAttribute('full'),
+                            ->titleAttribute(Prospect::displayNameKey()),
                     ]),
             ]);
     }

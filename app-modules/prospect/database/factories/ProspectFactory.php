@@ -23,7 +23,7 @@ class ProspectFactory extends Factory
             'source_id' => ProspectSource::inRandomOrder()->first() ?? ProspectSource::factory(),
             'first_name' => $firstName,
             'last_name' => $lastName,
-            'full' => "{$firstName} {$lastName}",
+            'full_name' => "{$firstName} {$lastName}",
             'preferred' => $this->faker->firstName(),
             'description' => $this->faker->paragraph(),
             'email' => $this->faker->email(),

@@ -35,9 +35,8 @@ class RecentLeadsList extends BaseWidget
             ->columns([
                 TextColumn::make('id')
                     ->hidden(),
-                TextColumn::make('full')
-                    ->label('Name')
-                    ->translateLabel(),
+                TextColumn::make(Prospect::displayNameKey())
+                    ->label('Name'),
                 TextColumn::make('email')
                     ->translateLabel(),
                 TextColumn::make('mobile')
