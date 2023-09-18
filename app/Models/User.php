@@ -11,6 +11,7 @@ use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Assistant\Models\AssistantChat;
+use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,6 +52,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasManyEngagements;
     use HasManyEngagementBatches;
     use CanOrElse;
+    use Impersonate;
 
     protected $hidden = [
         'remember_token',
@@ -142,6 +144,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->can('authorization.impersonate');
+    }
+
+    public function canBeImpersonated(): bool
+    {
+        return ! $this->hasRole('authorization.super_admin');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

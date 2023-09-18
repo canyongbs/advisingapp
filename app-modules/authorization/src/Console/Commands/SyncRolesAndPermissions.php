@@ -89,7 +89,7 @@ class SyncRolesAndPermissions extends Command
         $foundPermissions = Permission::firstWhere([
             'name' => $specificPermission,
             'guard_name' => $permissionType,
-        ])->id;
+        ])->name;
 
         $role->syncPermissions([$role->permissions, $foundPermissions]);
     }
