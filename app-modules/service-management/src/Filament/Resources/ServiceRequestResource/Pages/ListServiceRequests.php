@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ListServiceRequests extends ListRecords
@@ -27,25 +28,12 @@ class ListServiceRequests extends ListRecords
                     ->label('Service Request #')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('respondent.full')
+                TextColumn::make('respondent.display_name')
                     ->label('Respondent')
-                    ->searchable()
-                    ->sortable(query: function (Builder $query, string $direction): Builder {
-                        // TODO: Look into issues with the Power Joins package being able to handle this
-                        //ray($query->joinRelationship('respondent', [
-                        //    'respondent' => [
-                        //        'students' => function ($join) {
-                        //            // ...
-                        //        },
-                        //    ],
-                        //])->toSql());
-
-                        // Update this if any other relations are added to the ServiceRequest model respondent relationship
-                        return $query->join('students', function (JoinClause $join) {
-                            $join->on('service_requests.respondent_id', '=', 'students.sisid')
-                                ->where('service_requests.respondent_type', '=', 'student');
-                        })->orderBy('full', $direction);
-                    }),
+                    ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->{$record->respondent::displayNameKey()})
+                    ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'respondent', search: $search))
+                    // TODO: Find a way to get IDE to recognize educatableSort() method
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->educatableSort($direction)),
                 TextColumn::make('respondent.sisid')
                     ->label('SIS ID')
                     ->searchable()

@@ -26,13 +26,9 @@ class ListProspects extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('full')
+                TextColumn::make(Prospect::displayNameKey())
                     ->label('Name')
-                    ->translateLabel()
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('full', 'ilike', "%{$search}%");
-                    })
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
                     ->label('Email')

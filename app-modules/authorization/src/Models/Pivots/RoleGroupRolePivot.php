@@ -14,6 +14,7 @@ use Assist\Authorization\Events\RoleRemovedFromRoleGroup;
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot query()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperRoleGroupRolePivot
  */
 class RoleGroupRolePivot extends Pivot
 {

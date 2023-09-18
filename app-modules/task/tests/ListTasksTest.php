@@ -56,8 +56,8 @@ test('ListTasks page displays the correct details for available my tasks', funct
                 $task
             )
             ->assertTableColumnStateSet(
-                'concern.full',
-                $task->concern->full,
+                'concern.display_name',
+                $task->concern->full_name,
                 $task
             )
     );
