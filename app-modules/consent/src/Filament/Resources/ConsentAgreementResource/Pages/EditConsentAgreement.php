@@ -2,9 +2,8 @@
 
 namespace Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
-use Assist\Consent\Filament\Resources\ConsentAgreementResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Assist\Consent\Filament\Resources\ConsentAgreementResource;
 
 class EditConsentAgreement extends EditRecord
 {
