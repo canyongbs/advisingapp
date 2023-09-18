@@ -7,6 +7,7 @@ use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Assist\Prospect\Filament\Resources\ProspectResource;
 
 class RecentLeadsList extends BaseWidget
 {
@@ -60,10 +61,10 @@ class RecentLeadsList extends BaseWidget
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (Prospect $record): string => route('filament.admin.resources.prospects.view', $record)),
+                    ->url(fn (Prospect $record): string => ProspectResource::getUrl(name: 'view', parameters: ['record' => $record])),
             ])
             ->recordUrl(
-                fn (Prospect $record): string => route('filament.admin.resources.prospects.view', ['record' => $record]),
+                fn (Prospect $record): string => ProspectResource::getUrl(name: 'view', parameters: ['record' => $record]),
             )
             ->paginated(false);
     }
