@@ -16,7 +16,7 @@ class ConsentAgreement extends BaseModel
     public function user(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
-            ->withPivot('request')
+            ->withPivot('ip_address')
             ->withTimestamps();
     }
 }

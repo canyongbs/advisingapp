@@ -7,11 +7,9 @@ use Filament\Pages\Page;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
-use Illuminate\Support\Facades\Redirect;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
-use Livewire\Features\SupportRedirects\Redirector;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
@@ -92,21 +90,21 @@ class AIAssistant extends Page
 
     public function confirmConsent(): void
     {
-        // TODO Real validation
+        /** @var User $user */
+        $user = auth()->user();
+
         if ($this->consentedToTerms === false) {
             return;
         }
 
-        auth()->user()->consentTo($this->consentAgreement);
-
-        $this->consentedToTerms = true;
+        $user->consentTo($this->consentAgreement);
 
         $this->dispatch('close-modal', id: 'consent-agreement');
     }
 
-    public function denyConsent(): Redirector
+    public function denyConsent(): void
     {
-        return Redirect::to(Dashboard::getUrl());
+        $this->redirect(Dashboard::getUrl());
     }
 
     public function sendMessage(): void

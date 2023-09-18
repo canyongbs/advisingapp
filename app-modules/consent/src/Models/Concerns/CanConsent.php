@@ -10,13 +10,8 @@ trait CanConsent
     public function consentAgreements(): BelongsToMany
     {
         return $this->belongsToMany(ConsentAgreement::class)
-            ->withPivot('request')
+            ->withPivot('ip_address')
             ->withTimestamps();
-    }
-
-    public function hasNotConsentedTo(ConsentAgreement $agreement): bool
-    {
-        return ! $this->hasConsentedTo($agreement);
     }
 
     public function hasConsentedTo(ConsentAgreement $agreement): bool
@@ -26,6 +21,11 @@ trait CanConsent
             ->exists();
     }
 
+    public function hasNotConsentedTo(ConsentAgreement $agreement): bool
+    {
+        return ! $this->hasConsentedTo($agreement);
+    }
+
     public function consentTo(ConsentAgreement $agreement): void
     {
         if ($this->hasConsentedTo($agreement)) {
@@ -33,7 +33,7 @@ trait CanConsent
         }
 
         $this->consentAgreements()->attach($agreement->id, [
-            'request' => request()->ip(),
+            'ip_address' => request()->ip(),
         ]);
     }
 }

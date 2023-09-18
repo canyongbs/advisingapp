@@ -43,7 +43,6 @@ it('is properly gated with access control', function () {
 });
 
 it('will show a consent modal if the user has not yet agreed to the terms and conditions of use', function () {
-    // Given that a user tries to access the AI Assistant page
     $consentAgreement = ConsentAgreement::factory()->create([
         'type' => ConsentAgreementType::AZURE_OPEN_AI,
     ]);
@@ -86,11 +85,43 @@ it('will redirect the user back to the dashboard if they dismiss the consent mod
         'type' => ConsentAgreementType::AZURE_OPEN_AI,
     ]);
 
-    asSuperAdmin();
+    $user = User::factory()->create();
+    $user->givePermissionTo('assistant.access');
+
+    actingAs($user);
 
     Livewire::test(AIAssistant::class)
         ->call('denyConsent')
         ->assertRedirect(Dashboard::getUrl());
 });
 
-it('will allow a user to access the AI Assistant interface if they agree to the terms and conditions of use', function () {});
+it('will allow a user to access the AI Assistant interface if they agree to the terms and conditions of use', function () {
+    $consentAgreement = ConsentAgreement::factory()->create([
+        'type' => ConsentAgreementType::AZURE_OPEN_AI,
+    ]);
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('assistant.access');
+
+    actingAs($user);
+
+    expect($user->hasConsentedTo($consentAgreement))->toBeFalse();
+
+    $aiAssistant = Livewire::test(AIAssistant::class);
+
+    $aiAssistant
+        ->call('determineIfConsentWasGiven')
+        ->assertViewHas('consentedToTerms', false)
+        ->assertSee($consentAgreement->title)
+        ->assertSee($consentAgreement->description)
+        ->assertSee($consentAgreement->body);
+
+    $aiAssistant
+        ->set('consentedToTerms', true)
+        ->call('confirmConsent')
+        ->assertDontSee($consentAgreement->title)
+        ->assertDontSee($consentAgreement->description)
+        ->assertDontSee($consentAgreement->body);
+
+    expect($user->hasConsentedTo($consentAgreement))->toBeTrue();
+});
