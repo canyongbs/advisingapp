@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Models\User;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use App\Filament\Resources\UserResource;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use App\Notifications\SetPasswordNotification;
+use STS\FilamentImpersonate\Pages\Actions\Impersonate;
 
 class EditUser extends EditRecord
 {
@@ -19,7 +21,9 @@ class EditUser extends EditRecord
         $user = $this->getRecord();
 
         return [
-            Actions\Action::make('resetPassword')
+            Impersonate::make()
+                ->record($user),
+            Action::make('resetPassword')
                 ->color('gray')
                 ->requiresConfirmation()
                 ->modalDescription('This will remove the user\'s current password and send them an email with a link to set a new password.')
@@ -35,7 +39,7 @@ class EditUser extends EditRecord
                         ->success()
                         ->send();
                 }),
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }
