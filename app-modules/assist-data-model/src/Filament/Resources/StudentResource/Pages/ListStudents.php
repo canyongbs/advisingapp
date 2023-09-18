@@ -9,6 +9,8 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\AssistDataModel\Models\Student;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
@@ -32,10 +34,27 @@ class ListStudents extends ListRecords
                             ->where('full', 'ilike', "%{$search}%");
                     })
                     ->sortable(),
+                TextColumn::make('email')
+                    ->searchable(),
+                TextColumn::make('mobile')
+                    ->searchable(),
+                TextColumn::make('phone')
+                    ->searchable(),
+                TextColumn::make('sisid')
+                    ->searchable(),
+                TextColumn::make('otherid')
+                    ->searchable(),
             ])
             ->filters([
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
+                TernaryFilter::make('sap')
+                    ->label('SAP'),
+                TernaryFilter::make('dual'),
+                TernaryFilter::make('ferpa')
+                    ->label('FERPA'),
+                Filter::make('has_service_request')
+                    ->query(fn (Student $record): bool => $record->serviceRequests()->count() > 0),
             ])
             ->actions([
                 ViewAction::make(),
