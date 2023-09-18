@@ -50,10 +50,20 @@ class AIAssistant extends Page
 
     public bool $loading = true;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('assistant.access');
+    }
+
     public function mount(): void
     {
         /** @var User $user */
         $user = auth()->user();
+
+        $this->authorize('assistant.access');
 
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AZURE_OPEN_AI)->first();
 
@@ -72,7 +82,6 @@ class AIAssistant extends Page
         $user = auth()->user();
 
         if ($user->hasNotConsentedTo($this->consentAgreement)) {
-            $this->consentedToTerms = false;
             $this->dispatch('open-modal', id: 'consent-agreement');
         } else {
             $this->consentedToTerms = true;

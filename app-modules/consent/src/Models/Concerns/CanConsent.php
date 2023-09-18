@@ -28,8 +28,6 @@ trait CanConsent
 
     public function consentTo(ConsentAgreement $agreement): void
     {
-        ray('consentTo()');
-
         if ($this->hasConsentedTo($agreement)) {
             return;
         }
