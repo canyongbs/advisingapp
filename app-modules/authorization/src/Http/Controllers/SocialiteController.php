@@ -36,7 +36,7 @@ class SocialiteController extends Controller
             ->where('email', $socialiteUser->getEmail())
             ->first();
 
-        if (! $user?->is_external) {
+        if ($user?->is_external) {
             abort(403);
         }
 
