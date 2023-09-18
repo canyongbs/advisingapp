@@ -27,12 +27,9 @@ class ListStudents extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('full')
+                TextColumn::make(Student::displayNameKey())
                     ->label('Name')
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query
-                            ->where('full', 'ilike', "%{$search}%");
-                    })
+                    ->searchable(),
                     ->sortable(),
                 TextColumn::make('email')
                     ->searchable(),
@@ -42,8 +39,7 @@ class ListStudents extends ListRecords
                     ->searchable(),
                 TextColumn::make('sisid')
                     ->searchable(),
-                TextColumn::make('otherid')
-                    ->searchable(),
+                TextColumn::make('otherid'),
             ])
             ->filters([
                 Filter::make('subscribed')
@@ -53,8 +49,6 @@ class ListStudents extends ListRecords
                 TernaryFilter::make('dual'),
                 TernaryFilter::make('ferpa')
                     ->label('FERPA'),
-                Filter::make('has_service_request')
-                    ->query(fn (Student $record): bool => $record->serviceRequests()->count() > 0),
             ])
             ->actions([
                 ViewAction::make(),

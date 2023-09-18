@@ -14,7 +14,7 @@ class CreateProspectsTable extends Migration
             $table->foreignUuid('source_id')->references('id')->on('prospect_sources');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('full');
+            $table->string('full_name');
             $table->string('preferred')->nullable();
             $table->longText('description')->nullable();
             $table->string('email')->nullable();
