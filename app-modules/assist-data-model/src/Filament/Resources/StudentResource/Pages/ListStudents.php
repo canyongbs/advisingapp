@@ -39,7 +39,8 @@ class ListStudents extends ListRecords
                     ->searchable(),
                 TextColumn::make('sisid')
                     ->searchable(),
-                TextColumn::make('otherid'),
+                TextColumn::make('otherid')
+                    ->searchable(),
             ])
             ->filters([
                 Filter::make('subscribed')
