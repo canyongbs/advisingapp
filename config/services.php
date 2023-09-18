@@ -59,6 +59,6 @@ return [
         'api_key' => env('AZURE_OPEN_AI_API_KEY'),
         'api_version' => env('AZURE_OPEN_AI_API_VERSION'),
         'deployment_name' => env('AZURE_OPEN_AI_DEPLOYMENT_NAME'),
-        'enable_test_mode' => env('AZURE_OPEN_AI_ENABLE_TEST_MODE', false),
+        'enable_test_mode' => env('AZURE_OPEN_AI_ENABLE_TEST_MODE', true),
     ],
 ];

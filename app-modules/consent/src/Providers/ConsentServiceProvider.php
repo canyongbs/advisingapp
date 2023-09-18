@@ -1,33 +1,28 @@
 <?php
 
-namespace Assist\IntegrationAI\Providers;
+namespace Assist\Consent\Providers;
 
 use Filament\Panel;
+use Assist\Consent\ConsentPlugin;
 use Illuminate\Support\ServiceProvider;
-use Assist\IntegrationAI\Client\AzureOpenAI;
-use Assist\IntegrationAI\IntegrationAIPlugin;
+use Assist\Consent\Models\ConsentAgreement;
 use Assist\Authorization\AuthorizationRoleRegistry;
-use Assist\IntegrationAI\Client\Contracts\AIChatClient;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\IntegrationAI\Client\Playground\AzureOpenAI as PlaygroundAzureOpenAI;
 
-class IntegrationAIServiceProvider extends ServiceProvider
+class ConsentServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new IntegrationAIPlugin()));
-
-        $this->app->singleton(AIChatClient::class, function () {
-            if ($this->app->runningUnitTests() || config('services.azure_open_ai.enable_test_mode') === true) {
-                return new PlaygroundAzureOpenAI();
-            }
-
-            return new AzureOpenAI();
-        });
+        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ConsentPlugin()));
     }
 
     public function boot()
     {
+        Relation::morphMap([
+            'consent_agreement' => ConsentAgreement::class,
+        ]);
+
         $this->registerRolesAndPermissions();
     }
 
@@ -36,24 +31,24 @@ class IntegrationAIServiceProvider extends ServiceProvider
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 
         $permissionRegistry->registerApiPermissions(
-            module: 'integration-ai',
+            module: 'consent',
             path: 'permissions/api/custom'
         );
 
         $permissionRegistry->registerWebPermissions(
-            module: 'integration-ai',
+            module: 'consent',
             path: 'permissions/web/custom'
         );
 
         $roleRegistry = app(AuthorizationRoleRegistry::class);
 
         $roleRegistry->registerApiRoles(
-            module: 'integration-ai',
+            module: 'consent',
             path: 'roles/api'
         );
 
         $roleRegistry->registerWebRoles(
-            module: 'integration-ai',
+            module: 'consent',
             path: 'roles/web'
         );
     }

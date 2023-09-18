@@ -6,7 +6,11 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Rule;
+use App\Filament\Pages\Dashboard;
+use Illuminate\Support\Facades\Redirect;
 use Assist\Assistant\Models\AssistantChat;
+use Assist\Consent\Models\ConsentAgreement;
+use Assist\Consent\Enums\ConsentAgreementType;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
@@ -39,10 +43,25 @@ class AIAssistant extends Page
 
     public string $error = '';
 
+    public ConsentAgreement $consentAgreement;
+
+    public bool $consentedToTerms = false;
+
     public function mount(): void
     {
         /** @var User $user */
         $user = auth()->user();
+
+        $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AZURE_OPEN_AI)->first();
+
+        if ($user->hasNotConsentedTo($this->consentAgreement)) {
+            ray('user has not consented...');
+            $this->consentedToTerms = false;
+            $this->dispatch('open-modal', id: 'consent-agreement');
+        } else {
+            $this->consentedToTerms = true;
+            ray('user has consented...');
+        }
 
         /** @var AssistantChat $chat */
         $chat = $user->assistantChats()->latest()->first();
@@ -51,6 +70,27 @@ class AIAssistant extends Page
             id: $chat?->id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
         );
+    }
+
+    public function confirmConsent(): void
+    {
+        ray('confirmConsent()');
+
+        // TODO Real validation
+        if ($this->consentedToTerms === false) {
+            return;
+        }
+
+        auth()->user()->consentTo($this->consentAgreement);
+
+        $this->consentedToTerms = true;
+
+        $this->dispatch('close-modal', id: 'consent-agreement');
+    }
+
+    public function denyConsent()
+    {
+        return Redirect::to(Dashboard::getUrl());
     }
 
     public function sendMessage(): void
@@ -72,10 +112,6 @@ class AIAssistant extends Page
     #[On('ask')]
     public function ask(AIChatClient $ai): void
     {
-        // TODO Figure out why setting this value in the ask() method
-        // Does not result in the frontend reflecting the changes.
-        // $this->showCurrentResponse = true;
-
         try {
             $this->currentResponse = $ai->ask($this->chat, function (string $partial) {
                 $this->stream('currentResponse', $partial);

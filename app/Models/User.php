@@ -21,6 +21,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Consent\Models\Concerns\CanConsent;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Notifications\DatabaseNotification;
 use Assist\ServiceManagement\Models\ServiceRequest;
@@ -130,6 +131,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasManyEngagements;
     use HasManyEngagementBatches;
     use CanOrElse;
+    use CanConsent;
 
     public const TYPE_RADIO = [
         'local' => 'Local',

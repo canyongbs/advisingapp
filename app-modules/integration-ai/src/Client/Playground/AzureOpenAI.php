@@ -12,11 +12,7 @@ class AzureOpenAI extends BaseAIChatClient
 {
     protected function initializeClient(): void
     {
-        $fakeText = resolve(MockStreamResponseGenerator::class)
-            // You can chain on either of the following methods to simulate an error from the API
-            // ->withLengthError()
-            // ->withContentFilterError()
-            ->generateFakeStreamResponse();
+        $fakeText = $this->generateFakeText();
 
         $handle = fopen('php://memory', 'r+');
         fwrite($handle, $fakeText);
@@ -27,6 +23,15 @@ class AzureOpenAI extends BaseAIChatClient
         ]);
 
         fclose($handle);
+    }
+
+    protected function generateFakeText(): string
+    {
+        return resolve(MockStreamResponseGenerator::class)
+            // You can chain on either of the following methods to simulate an error from the API
+            // ->withLengthError()
+            // ->withContentFilterError()
+            ->generateFakeStreamResponse();
     }
 
     protected function generateStreamedResponse(StreamResponse $stream, Closure $callback): string
