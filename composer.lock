@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9fd135fd91d3034554ba064236b7e434",
+    "content-hash": "ae72f9cb66c3697e4e2730763124e846",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
