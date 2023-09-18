@@ -25,7 +25,7 @@ class ViewAudit extends ViewRecord
                             ->label('Auditable'),
                         TextEntry::make('user.name')
                             ->label('Change Agent (User)')
-                            ->placeholder('Never'),
+                            ->placeholder('N/A'),
                         TextEntry::make('event')
                             ->label('Event'),
                         TextEntry::make('url')
