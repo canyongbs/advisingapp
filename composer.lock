@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1905a382ffc2bb1a0d81806fcaaade4",
+    "content-hash": "9fd135fd91d3034554ba064236b7e434",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -675,6 +675,41 @@
                     "Assist\\Authorization\\Tests\\": "tests/",
                     "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
                     "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/division",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/division",
+                "reference": "68f84a47f5ba57acc72311d2830d843a225eebd9"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Division\\Providers\\DivisionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Division\\": "src/",
+                    "Assist\\Division\\Tests\\": "tests/",
+                    "Assist\\Division\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Division\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -16968,5 +17003,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
