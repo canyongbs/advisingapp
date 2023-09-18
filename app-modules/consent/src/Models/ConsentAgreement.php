@@ -13,6 +13,12 @@ class ConsentAgreement extends BaseModel
         'type' => ConsentAgreementType::class,
     ];
 
+    protected $fillable = [
+        'title',
+        'description',
+        'body',
+    ];
+
     public function user(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
