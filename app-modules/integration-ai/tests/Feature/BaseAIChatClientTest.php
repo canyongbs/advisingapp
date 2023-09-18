@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\User;
+
+use function Pest\Laravel\{actingAs};
+
 use Assist\IntegrationAI\Events\AIPromptInitiated;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
@@ -10,9 +13,8 @@ use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 it('will return a streamed response of strings when prompted', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user);
+    actingAs($user);
 
-    // Given that we initiate a Chat
     $chat = new Chat(
         id: null,
         messages: ChatMessage::collection([]),
@@ -35,9 +37,8 @@ it('will dispatch an event when a prompt is initiated', function () {
 
     $user = User::factory()->create();
 
-    $this->actingAs($user);
+    actingAs($user);
 
-    // Given that we initiate a Chat
     $chat = new Chat(
         id: null,
         messages: ChatMessage::collection([]),

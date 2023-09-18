@@ -27,11 +27,6 @@ parameters:
 
 		-
 			message: "#^Undefined variable\\: \\$this$#"
-			count: 2
-			path: app-modules/integration-ai/tests/Feature/BaseAIChatClientTest.php
-
-		-
-			message: "#^Undefined variable\\: \\$this$#"
 			count: 4
 			path: app-modules/integration-twilio/tests/Feature/Actions/MessageReceivedTest.php
 
