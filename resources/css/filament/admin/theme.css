@@ -3,8 +3,3 @@
 @import 'tippy.js/dist/tippy.css';
 
 @config '../../../../tailwind.config.js';
-
-/* Override the impersonate banner height issue */
-div.fi-layout > aside.fi-sidebar {
-    padding-top: 0 !important;
-}
