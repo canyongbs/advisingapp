@@ -4,6 +4,7 @@ namespace Assist\IntegrationAI\Client;
 
 use Closure;
 use OpenAI\Client;
+use Illuminate\Support\Arr;
 use OpenAI\Testing\ClientFake;
 use OpenAI\Responses\StreamResponse;
 use Assist\IntegrationAI\Settings\AISettings;
@@ -16,6 +17,7 @@ use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\DataTransferObjects\DynamicContext;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
+use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 abstract class BaseAIChatClient implements AIChatClient
 {
@@ -99,6 +101,7 @@ abstract class BaseAIChatClient implements AIChatClient
         return $response->choices[0]?->delta?->content ?: null;
     }
 
+    // TODO We can utilize the finishReason in order to flag audit records that might need attention
     protected function examineFinishReason(CreateStreamedResponse $response): void
     {
         match ($response->choices[0]->finishReason) {
@@ -112,10 +115,10 @@ abstract class BaseAIChatClient implements AIChatClient
     {
         return [
             ['role' => 'system', 'content' => $this->addContextToMessages()],
-            ...collect($chat->messages)->map(function (array $message) {
+            ...$chat->messages->toCollection()->map(function (ChatMessage $message) {
                 return [
-                    'role' => $message['from'],
-                    'content' => $message['message'],
+                    'role' => $message->from,
+                    'content' => $message->message,
                 ];
             }),
         ];
@@ -123,19 +126,25 @@ abstract class BaseAIChatClient implements AIChatClient
 
     protected function addContextToMessages(): string
     {
-        return $this->systemContext . ' ' . $this->dynamicContext;
+        return "{$this->systemContext} {$this->dynamicContext}";
     }
 
     protected function dispatchPromptInitiatedEvent(Chat $chat): void
     {
         AIPromptInitiated::dispatch(AIPrompt::from([
             'user' => auth()->user(),
-            'request' => request(),
+            'request' => [
+                'ip' => request()->ip(),
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+            ],
             'timestamp' => now(),
             'message' => $chat->messages->last()->message,
-            'metadata' => json_encode([
+            'metadata' => [
                 'systemContext' => $this->systemContext,
-            ]),
+            ],
         ]));
     }
 }

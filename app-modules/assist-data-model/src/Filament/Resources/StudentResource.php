@@ -9,7 +9,10 @@ use Filament\Resources\RelationManagers\RelationGroup;
 use Assist\Alert\Filament\RelationManagers\AlertsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\PerformanceRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\SubscriptionsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
@@ -35,6 +38,11 @@ class StudentResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationGroup::make('Student Information', [
+                ProgramsRelationManager::class,
+                EnrollmentsRelationManager::class,
+                PerformanceRelationManager::class,
+            ]),
             RelationGroup::make('Engagement', [
                 EngagementsRelationManager::class,
                 EngagementResponsesRelationManager::class,

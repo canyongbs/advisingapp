@@ -2,8 +2,11 @@
 
 namespace App\Console;
 
+use Assist\Audit\Models\Audit;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Console\PruneCommand;
 use Spatie\Health\Commands\RunHealthChecksCommand;
+use Assist\Assistant\Models\AssistantChatMessageLog;
 use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -21,7 +24,11 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(DispatchQueueCheckJobsCommand::class)->everyMinute();
 
-        //should be the last command per: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
+        $schedule->command(PruneCommand::class, [
+            '--model' => [Audit::class, AssistantChatMessageLog::class],
+        ])->daily()->evenInMaintenanceMode()->onOneServer();
+
+        // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
         $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
     }
 

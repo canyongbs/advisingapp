@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
+use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -79,6 +80,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  * @property-read int|null $service_requests_count
  * @property-read \Assist\Prospect\Models\ProspectSource $source
  * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
+ * @property-read int|null $subscriptions_count
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *
@@ -124,6 +127,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Identifiabl
     use HasManyMorphedEngagements;
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
+    use HasSubscriptions;
 
     protected $fillable = [
         'first_name',
