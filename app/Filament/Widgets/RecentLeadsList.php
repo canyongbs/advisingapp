@@ -28,16 +28,15 @@ class RecentLeadsList extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Recent Leads')
+            ->heading('Recent Prospects')
             ->query(
                 Prospect::latest()->limit(10)
             )
             ->columns([
                 TextColumn::make('id')
                     ->hidden(),
-                TextColumn::make('full')
-                    ->label('Name')
-                    ->translateLabel(),
+                TextColumn::make(Prospect::displayNameKey())
+                    ->label('Name'),
                 TextColumn::make('email')
                     ->translateLabel(),
                 TextColumn::make('mobile')

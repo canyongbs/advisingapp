@@ -4,6 +4,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Assist\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -35,7 +36,7 @@ class ViewProspect extends ViewRecord
                         TextEntry::make('last_name')
                             ->label('Last Name')
                             ->translateLabel(),
-                        TextEntry::make('full')
+                        TextEntry::make(Prospect::displayNameKey())
                             ->label('Full Name')
                             ->translateLabel(),
                         TextEntry::make('preferred')

@@ -4,6 +4,7 @@ namespace Assist\IntegrationAI\Client;
 
 use Closure;
 use OpenAI\Client;
+use Illuminate\Support\Arr;
 use OpenAI\Testing\ClientFake;
 use OpenAI\Responses\StreamResponse;
 use Assist\IntegrationAI\Settings\AISettings;
@@ -132,12 +133,18 @@ abstract class BaseAIChatClient implements AIChatClient
     {
         AIPromptInitiated::dispatch(AIPrompt::from([
             'user' => auth()->user(),
-            'request' => request(),
+            'request' => [
+                'ip' => request()->ip(),
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+            ],
             'timestamp' => now(),
             'message' => $chat->messages->last()->message,
-            'metadata' => json_encode([
+            'metadata' => [
                 'systemContext' => $this->systemContext,
-            ]),
+            ],
         ]));
     }
 }

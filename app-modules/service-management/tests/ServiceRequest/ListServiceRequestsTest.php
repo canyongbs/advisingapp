@@ -30,8 +30,8 @@ test('The correct details are displayed on the ListServiceRequests page', functi
                 $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'respondent.full',
-                $serviceRequest->respondent->full,
+                'respondent.display_name',
+                $serviceRequest->respondent->full_name,
                 $serviceRequest
             )
             ->assertTableColumnStateSet(

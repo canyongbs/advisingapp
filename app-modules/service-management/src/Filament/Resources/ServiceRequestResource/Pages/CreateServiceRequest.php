@@ -64,9 +64,9 @@ class CreateServiceRequest extends CreateRecord
                     ->preload()
                     ->types([
                         MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute('full'),
+                            ->titleAttribute(Student::displayNameKey()),
                         MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute('full'),
+                            ->titleAttribute(Prospect::displayNameKey()),
                     ]),
             ]);
     }

@@ -25,8 +25,9 @@ class ListEngagements extends ListRecords
                     ->label('Created By'),
                 TextColumn::make('subject'),
                 TextColumn::make('body'),
-                TextColumn::make('recipient.full')
-                    ->label('Recipient'),
+                TextColumn::make('recipient.display_name')
+                    ->label('Recipient')
+                    ->getStateUsing(fn (Engagement $record) => $record->recipient->{$record->recipient::displayNameKey()}),
             ])
             ->filters([
             ])

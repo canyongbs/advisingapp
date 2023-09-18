@@ -2,64 +2,22 @@
 
 namespace Assist\Engagement\Models;
 
-use Eloquent;
 use App\Models\User;
 use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
- * Assist\Engagement\Models\Engagement
+ * @property-read Educatable $recipient
  *
- * @property string $id
- * @property string|null $user_id
- * @property string|null $engagement_batch_id
- * @property string|null $recipient_id
- * @property string|null $recipient_type
- * @property string|null $subject
- * @property string|null $body
- * @property string $deliver_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read Collection<int, \Assist\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Assist\Engagement\Models\EngagementBatch|null $batch
- * @property-read User|null $createdBy
- * @property-read Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $deliverables
- * @property-read int|null $deliverables_count
- * @property-read \Assist\Engagement\Models\EngagementBatch|null $engagementBatch
- * @property-read Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $engagementDeliverables
- * @property-read int|null $engagement_deliverables_count
- * @property-read Model|\Eloquent $recipient
- * @property-read User|null $user
- *
- * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement query()
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDeliverAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereEngagementBatchId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereUserId($value)
- *
- * @mixin Eloquent
+ * @mixin IdeHelperEngagement
  */
 class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription
 {

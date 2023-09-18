@@ -14,6 +14,7 @@ use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -44,8 +45,10 @@ class ListTasks extends ListRecords
                 TextColumn::make('assignedTo.name')
                     ->label('Assigned To')
                     ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
-                TextColumn::make('concern.full')
+                TextColumn::make('concern.display_name')
                     ->label('Concern')
+                    ->getStateUsing(fn (Task $record) => $record->concern->{$record->concern::displayNameKey()})
+                    ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'concern', search: $search))
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),

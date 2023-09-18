@@ -38,9 +38,9 @@ class CreateInteraction extends CreateRecord
                     ->required()
                     ->types([
                         MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute('full'),
+                            ->titleAttribute(Student::displayNameKey()),
                         MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute('full'),
+                            ->titleAttribute(Prospect::displayNameKey()),
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),

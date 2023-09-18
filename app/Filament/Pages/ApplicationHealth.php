@@ -8,6 +8,8 @@ use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
 
 class ApplicationHealth extends HealthCheckResults
 {
+    protected static ?string $navigationGroup = 'Administration';
+
     protected static ?int $navigationSort = 7;
 
     public static function getNavigationBadge(): ?string
@@ -24,10 +26,5 @@ class ApplicationHealth extends HealthCheckResults
     public static function getNavigationBadgeColor(): string | array | null
     {
         return 'danger';
-    }
-
-    public static function getNavigationGroup(): ?string
-    {
-        return 'Administration';
     }
 }
