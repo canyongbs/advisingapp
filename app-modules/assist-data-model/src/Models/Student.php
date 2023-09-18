@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
-use Assist\Notifications\Models\Subscription;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Engagement\Models\EngagementFileEntities;
@@ -108,10 +107,5 @@ class Student extends Model implements Auditable, Subscribable, Educatable
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');
-    }
-
-    public function subscriptions(): MorphMany
-    {
-        return $this->morphMany(Subscription::class, 'subscribable');
     }
 }
