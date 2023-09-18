@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use Assist\Task\Enums\TaskStatus;
 use Assist\Prospect\Models\Prospect;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
@@ -70,5 +71,10 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
     public function getSubscribable(): ?Subscribable
     {
         return $this->concern instanceof Subscribable ? $this->concern : null;
+    }
+
+    public function scopeByNextDue(Builder $query): void
+    {
+        $query->orderBy('due', 'asc');
     }
 }
