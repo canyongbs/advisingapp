@@ -118,7 +118,6 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
         @endif
 
         @if ($consentedToTerms === false)
-            {{-- TODO potentially explore extracting this modal... --}}
             {{-- TODO potentially prevent closure of modal by pressing escape --}}
             <x-filament::modal
                 id="consent-agreement"
