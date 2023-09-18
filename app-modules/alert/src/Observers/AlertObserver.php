@@ -4,6 +4,7 @@ namespace Assist\Alert\Observers;
 
 use Assist\Alert\Models\Alert;
 use Assist\Alert\Events\AlertCreated;
+use Illuminate\Support\Facades\Cache;
 use Assist\Notifications\Actions\SubscriptionCreate;
 
 class AlertObserver
@@ -16,5 +17,10 @@ class AlertObserver
         }
 
         AlertCreated::dispatch($alert);
+    }
+
+    public function saved(Alert $alert): void
+    {
+        Cache::tags('alert-count')->flush();
     }
 }
