@@ -3,8 +3,8 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 ?>
 
 <x-filament-panels::page>
-    <div>
-        @if ($consentedToTerms === true)
+    <div wire:init="determineIfConsentWasGiven">
+        @if ($consentedToTerms === true && $loading === false)
             <div class="flex h-[50vh] flex-col-reverse overflow-auto">
                 <div>
                     @foreach ($chat->messages as $message)
@@ -105,81 +105,89 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                     </svg>
                 </div>
             </form>
-        @else
+        @elseif($consentedToTerms === false && $loading === false)
             <div class="flex flex-col justify-center">
                 <p class="mb-4">
                     You must agree to the terms and conditions before continuing use of this feature.
                 </p>
+            </div>
+        @else
+            <div class="flex h-full w-full items-center justify-center">
+                <x-filament::loading-indicator class="h-12 w-12" />
+            </div>
+        @endif
 
-                {{-- TODO potentially explore extracting this modal... --}}
-                <x-filament::modal
-                    id="consent-agreement"
-                    width="5xl"
-                    alignment="center"
-                    :close-by-clicking-away="false"
-                    :close-button="false"
-                >
+        @if ($consentedToTerms === false)
+            {{-- TODO potentially explore extracting this modal... --}}
+            <x-filament::modal
+                id="consent-agreement"
+                width="5xl"
+                alignment="center"
+                :close-by-clicking-away="false"
+                :close-button="false"
+            >
+                @if ($loading === false)
                     <x-slot name="trigger">
                         <x-filament::button>
                             Terms and Conditions
                         </x-filament::button>
                     </x-slot>
+                @endif
 
-                    <x-slot name="heading">
-                        <h1 class="text-center text-xl">
-                            {{ $consentAgreement->title }}
-                        </h1>
-                    </x-slot>
+                <x-slot name="heading">
+                    <h1 class="text-center text-xl">
+                        {{ $consentAgreement->title }}
+                    </h1>
+                </x-slot>
 
-                    <x-slot name="description">
-                        <div class="my-4 border-gray-100 text-center">
-                            <p class="prose mx-auto text-gray-100">{{ $consentAgreement->description }}</p>
+                <x-slot name="description">
+                    <div class="my-4 border-gray-100 text-center">
+                        <p class="prose mx-auto text-gray-100">{{ $consentAgreement->description }}</p>
+                    </div>
+
+                    <x-filament::section>
+                        <div class="text-center">
+                            <p class="prose mx-auto text-gray-100">{{ $consentAgreement->body }}</p>
+                        </div>
+                    </x-filament::section>
+                </x-slot>
+
+                <x-slot name="footer">
+                    <form
+                        class="flex w-full flex-col"
+                        wire:submit="confirmConsent"
+                    >
+                        <label class="mx-auto">
+                            <x-filament::input.checkbox
+                                wire:model="consentedToTerms"
+                                required
+                            />
+                            <span class="ml-2">
+                                I agree to the terms and conditions
+                            </span>
+                        </label>
+
+                        <div class="mt-4 flex justify-center space-x-4">
+                            <x-filament::button
+                                class="mt-4 md:mt-0"
+                                wire:click="denyConsent"
+                                outlined
+                                color="warning"
+                            >
+                                Cancel
+                            </x-filament::button>
+                            <x-filament::button
+                                class="mt-4 md:mt-0"
+                                type="submit"
+                                color="success"
+                            >
+                                I understand
+                            </x-filament::button>
                         </div>
 
-                        <x-filament::section>
-                            <div class="text-center">
-                                <p class="prose mx-auto text-gray-100">{{ $consentAgreement->body }}</p>
-                            </div>
-                        </x-filament::section>
-                    </x-slot>
-
-                    <x-slot name="footer">
-                        <form
-                            class="flex w-full flex-col"
-                            wire:submit="confirmConsent"
-                        >
-                            <label class="mx-auto">
-                                <x-filament::input.checkbox
-                                    wire:model="consentedToTerms"
-                                    required
-                                />
-                                <span class="ml-2">
-                                    I agree to the terms and conditions
-                                </span>
-                            </label>
-
-                            <div class="mt-4 flex justify-center space-x-4">
-                                <x-filament::button
-                                    class="mt-4 md:mt-0"
-                                    wire:click="denyConsent"
-                                    outlined
-                                    color="warning"
-                                >
-                                    Cancel
-                                </x-filament::button>
-                                <x-filament::button
-                                    class="mt-4 md:mt-0"
-                                    type="submit"
-                                    color="success"
-                                >
-                                    I understand
-                                </x-filament::button>
-                            </div>
-
-                        </form>
-                    </x-slot>
-                </x-filament::modal>
-            </div>
+                    </form>
+                </x-slot>
+            </x-filament::modal>
         @endif
 
     </div>

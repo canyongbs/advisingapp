@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
+use Livewire\Features\SupportRedirects\Redirector;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
@@ -47,21 +48,14 @@ class AIAssistant extends Page
 
     public bool $consentedToTerms = false;
 
+    public bool $loading = true;
+
     public function mount(): void
     {
         /** @var User $user */
         $user = auth()->user();
 
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AZURE_OPEN_AI)->first();
-
-        if ($user->hasNotConsentedTo($this->consentAgreement)) {
-            ray('user has not consented...');
-            $this->consentedToTerms = false;
-            $this->dispatch('open-modal', id: 'consent-agreement');
-        } else {
-            $this->consentedToTerms = true;
-            ray('user has consented...');
-        }
 
         /** @var AssistantChat $chat */
         $chat = $user->assistantChats()->latest()->first();
@@ -72,10 +66,23 @@ class AIAssistant extends Page
         );
     }
 
+    public function determineIfConsentWasGiven(): void
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($user->hasNotConsentedTo($this->consentAgreement)) {
+            $this->consentedToTerms = false;
+            $this->dispatch('open-modal', id: 'consent-agreement');
+        } else {
+            $this->consentedToTerms = true;
+        }
+
+        $this->loading = false;
+    }
+
     public function confirmConsent(): void
     {
-        ray('confirmConsent()');
-
         // TODO Real validation
         if ($this->consentedToTerms === false) {
             return;
@@ -88,7 +95,7 @@ class AIAssistant extends Page
         $this->dispatch('close-modal', id: 'consent-agreement');
     }
 
-    public function denyConsent()
+    public function denyConsent(): Redirector
     {
         return Redirect::to(Dashboard::getUrl());
     }
