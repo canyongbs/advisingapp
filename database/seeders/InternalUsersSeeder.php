@@ -19,7 +19,7 @@ class InternalUsersSeeder extends Seeder
                     'name' => Str::title(Str::replace('.', ' ', Str::before($email, '@'))),
                     'email' => $email,
                     'password' => Hash::make('password'),
-                    'is_external' => false,
+                    'is_external' => true,
                 ]);
             }
         });
