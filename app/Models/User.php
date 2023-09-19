@@ -164,11 +164,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return ! $this->hasRole('authorization.super_admin');
     }
 
-    public function assistantChatMessageLogs(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessageLog::class);
-    }
-
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
