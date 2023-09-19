@@ -5,7 +5,6 @@ namespace Assist\Theme\Filament\Pages;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
 use App\Models\SettingsProperty;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
@@ -37,6 +36,7 @@ class ManageThemeSettings extends SettingsPage
                         SpatieMediaLibraryFileUpload::make('logo')
                             ->disk('s3')
                             ->collection('logo')
+                            ->visibility('private')
                             ->image()
                             ->model(
                                 SettingsProperty::getInstance('theme.is_logo_active'),

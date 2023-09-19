@@ -10,7 +10,10 @@
         src="{{
             SettingsProperty::getInstance('theme.is_logo_active')
                 ->getFirstMedia('logo')
-                ->getUrl('logo-height-250px')
+                ->getTemporaryUrl(
+                    expiration: now()->addMinutes(5),
+                    conversionName: 'logo-height-250px',
+                )
         }}"
         alt="{{ config('app.name') }}"
         class="h-9"

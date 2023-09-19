@@ -7,9 +7,11 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
@@ -28,12 +30,38 @@ class ListStudents extends ListRecords
             ->columns([
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')
-                    ->sortable()
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email')
+                    ->searchable(),
+                TextColumn::make('mobile')
+                    ->searchable(),
+                TextColumn::make('phone')
+                    ->searchable(),
+                TextColumn::make('sisid')
+                    ->searchable(),
+                TextColumn::make('otherid')
                     ->searchable(),
             ])
             ->filters([
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
+                TernaryFilter::make('sap')
+                    ->label('SAP'),
+                TernaryFilter::make('dual'),
+                TernaryFilter::make('ferpa')
+                    ->label('FERPA'),
+                Filter::make('holds')
+                    ->form([
+                        TextInput::make('hold'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['hold'],
+                                fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
+                            );
+                    }),
             ])
             ->actions([
                 ViewAction::make(),

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Filament\Panel;
 use DateTimeInterface;
+use Assist\Task\Models\Task;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
 use Assist\Authorization\Models\Role;
@@ -128,6 +129,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
     }
 
+    public function assignedTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
+    }
+
     public function preferredLocale()
     {
         return $this->locale;
@@ -156,6 +162,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function canBeImpersonated(): bool
     {
         return ! $this->hasRole('authorization.super_admin');
+    }
+
+    public function assistantChatMessageLogs(): HasMany
+    {
+        return $this->hasMany(AssistantChatMessageLog::class);
     }
 
     protected function serializeDate(DateTimeInterface $date): string
