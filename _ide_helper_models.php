@@ -12,6 +12,42 @@
 
 namespace App\Models{
 /**
+ * App\Models\Import
+ *
+ * @property int $id
+ * @property int|null $completed_at
+ * @property int|null $failed_at
+ * @property string $file_name
+ * @property string $file_path
+ * @property string $importer
+ * @property int $processed_rows
+ * @property int $total_rows
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Import newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Import newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Import query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereFailedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereFileName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereFilePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereImporter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereProcessedRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereTotalRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperImport {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Institution
  *
  * @property string $id
@@ -89,6 +125,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $assignedTasks
+ * @property-read int|null $assigned_tasks_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChat> $assistantChats
  * @property-read int|null $assistant_chats_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
@@ -324,18 +362,18 @@ namespace Assist\Assistant\Models{
  * @property int $sent_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read User $user
- * @method static Builder|AssistantChatMessageLog newModelQuery()
- * @method static Builder|AssistantChatMessageLog newQuery()
- * @method static Builder|AssistantChatMessageLog query()
- * @method static Builder|AssistantChatMessageLog whereCreatedAt($value)
- * @method static Builder|AssistantChatMessageLog whereId($value)
- * @method static Builder|AssistantChatMessageLog whereMessage($value)
- * @method static Builder|AssistantChatMessageLog whereMetadata($value)
- * @method static Builder|AssistantChatMessageLog whereRequest($value)
- * @method static Builder|AssistantChatMessageLog whereSentAt($value)
- * @method static Builder|AssistantChatMessageLog whereUpdatedAt($value)
- * @method static Builder|AssistantChatMessageLog whereUserId($value)
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereMetadata($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereRequest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereSentAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessageLog whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1532,6 +1570,7 @@ namespace Assist\Task\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
+ * @method static \Illuminate\Database\Eloquent\Builder|Task byNextDue()
  * @method static \Assist\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()
