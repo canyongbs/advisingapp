@@ -37,7 +37,7 @@ class ListAudits extends ListRecords
             ->filters([
                 SelectFilter::make('change_agent_user')
                     ->label('Change Agent (User)')
-                    ->options(fn () => User::query()->pluck('name', 'id')->toArray())
+                    ->options(fn (): array => User::query()->pluck('name', 'id')->all())
                     ->searchable()
                     ->query(fn (Builder $query, array $data) => $data['value'] ? $query->where('change_agent_type', 'user')->where('change_agent_id', $data['value']) : null),
                 SelectFilter::make('auditable')
