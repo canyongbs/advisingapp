@@ -86,16 +86,18 @@ class ProspectImporter extends Importer
                 ->rules(['email']),
             ImportColumn::make('email_2')
                 ->rules(['email']),
-            ImportColumn::make('mobile')
-                ->ignoreBlankState(),
+            ImportColumn::make('mobile'),
             ImportColumn::make('sms_opt_out')
-                ->boolean(),
+                ->boolean()
+                ->rules(['boolean']),
             ImportColumn::make('email_bounce')
-                ->boolean(),
+                ->boolean()
+                ->rules(['boolean']),
             ImportColumn::make('phone'),
             ImportColumn::make('address'),
             ImportColumn::make('address_2'),
-            ImportColumn::make('birthdate'),
+            ImportColumn::make('birthdate')
+                ->rules(['date']),
             ImportColumn::make('hsgrad'),
         ];
     }
