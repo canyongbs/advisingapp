@@ -18,7 +18,7 @@ class EditConsentAgreement extends EditRecord
         return parent::form($form)
             ->schema([
                 TextInput::make('type')
-                    ->readonly()
+                    ->disabled()
                     ->helperText('This field is not editable.'),
                 TextInput::make('title')
                     ->required(),
@@ -26,19 +26,11 @@ class EditConsentAgreement extends EditRecord
                     ->schema([
                         Textarea::make('description')
                             ->required()
-                            ->columnSpan([
-                                'sm' => 2,
-                                'xl' => 3,
-                                '2xl' => 4,
-                            ]),
+                            ->columnSpan('full'),
                         Textarea::make('body')
                             ->required()
                             ->rows(5)
-                            ->columnSpan([
-                                'sm' => 2,
-                                'xl' => 3,
-                                '2xl' => 4,
-                            ]),
+                            ->columnSpan('full'),
                     ]),
             ]);
     }

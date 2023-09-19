@@ -63,7 +63,9 @@ class AIAssistant extends Page
 
         $this->authorize('assistant.access');
 
-        $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AZURE_OPEN_AI)->first();
+        $this->consentAgreement = ConsentAgreement::query()
+            ->where('type', ConsentAgreementType::AZURE_OPEN_AI)
+            ->first();
 
         /** @var AssistantChat $chat */
         $chat = $user->assistantChats()->latest()->first();
