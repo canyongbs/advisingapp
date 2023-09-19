@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
             TaskSeeder::class,
             StudentSeeder::class,
             ...InteractionSeeder::metadataSeeders(),
+            InternalUsersSeeder::class,
         ]);
     }
 }
