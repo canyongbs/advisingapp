@@ -9,11 +9,11 @@ class DivisionObserver
     public function creating(Division $division): void
     {
         $division->createdBy()->associate($division->createdBy ?? auth()->user());
-        $division->updatedBy()->associate($division->updatedBy ?? auth()->user());
+        $division->lastUpdatedBy()->associate($division->lastUpdatedBy ?? auth()->user());
     }
 
     public function updating(Division $division): void
     {
-        $division->updatedBy()->associate(auth()->user());
+        $division->lastUpdatedBy()->associate(auth()->user());
     }
 }

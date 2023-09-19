@@ -23,11 +23,13 @@ class Division extends BaseModel implements Auditable
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this
+            ->belongsTo(User::class);
     }
 
-    public function updatedBy(): BelongsTo
+    public function lastUpdatedBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this
+            ->belongsTo(User::class);
     }
 }

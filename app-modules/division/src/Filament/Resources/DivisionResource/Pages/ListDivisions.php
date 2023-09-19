@@ -28,6 +28,7 @@ class ListDivisions extends ListRecords
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('createdBy.name')
+                    ->default('N/A')
                     ->label('Created By')
                     ->sortable(),
                 TextColumn::make('updated_at')

@@ -18,11 +18,19 @@ class EditDivision extends EditRecord
     {
         return parent::form($form)
             ->schema([
-                TextInput::make('name'),
-                Textarea::make('code'),
+                TextInput::make('name')
+                    ->required()
+                    ->string()
+                    ->unique(ignoreRecord: true),
+                Textarea::make('code')
+                    ->required()
+                    ->string()
+                    ->unique(ignoreRecord: true),
                 TiptapEditor::make('header')
+                    ->string()
                     ->columnSpanFull(),
                 TiptapEditor::make('footer')
+                    ->string()
                     ->columnSpanFull(),
             ]);
     }

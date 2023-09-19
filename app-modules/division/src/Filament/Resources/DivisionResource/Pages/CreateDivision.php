@@ -17,11 +17,19 @@ class CreateDivision extends CreateRecord
     {
         return parent::form($form)
             ->schema([
-                TextInput::make('name'),
-                Textarea::make('code'),
+                TextInput::make('name')
+                    ->required()
+                    ->string()
+                    ->unique(),
+                Textarea::make('code')
+                    ->required()
+                    ->string()
+                    ->unique(),
                 TiptapEditor::make('header')
+                    ->string()
                     ->columnSpanFull(),
                 TiptapEditor::make('footer')
+                    ->string()
                     ->columnSpanFull(),
             ]);
     }
