@@ -3,6 +3,7 @@
 return [
     'view-any',
     'create',
+    'import',
     '*.view',
     '*.update',
     '*.delete',

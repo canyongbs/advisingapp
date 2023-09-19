@@ -94,7 +94,8 @@ class ListProspects extends ListRecords
     {
         return [
             ImportAction::make()
-                ->importer(ProspectImporter::class),
+                ->importer(ProspectImporter::class)
+                ->authorize('import', Prospect::class),
             CreateAction::make(),
         ];
     }
