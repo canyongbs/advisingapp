@@ -23,4 +23,9 @@ class AlertObserver
     {
         Cache::tags('alert-count')->flush();
     }
+
+    public function deleted(Alert $alert): void
+    {
+        Cache::tags('alert-count')->flush();
+    }
 }
