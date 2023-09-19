@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5fa267ac125f4908aca1d14fd0f0d28",
+    "content-hash": "f5d8d293b63550cb32a2f6961c2a872e",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -675,6 +675,41 @@
                     "Assist\\Authorization\\Tests\\": "tests/",
                     "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
                     "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/consent",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/consent",
+                "reference": "48a28e0abeb8dddae91988316bb842b971331c6e"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Consent\\Providers\\ConsentServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Consent\\": "src/",
+                    "Assist\\Consent\\Tests\\": "tests/",
+                    "Assist\\Consent\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Consent\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
