@@ -15,7 +15,7 @@ class ConsentAgreementSeeder extends Seeder
             ->create([
                 'title' => 'Azure OpenAI Consent Agreement',
                 'description' => 'Please confirm that you have read the following agreement and consent to the terms and conditions.',
-                'type' => ConsentAgreementType::AZURE_OPEN_AI,
+                'type' => ConsentAgreementType::AzureOpenAI,
             ]);
     }
 }
