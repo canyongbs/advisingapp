@@ -89,7 +89,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: gmp
+          extensions: gmp, redis
 
       - uses: actions/checkout@v3
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ae72f9cb66c3697e4e2730763124e846",
+    "content-hash": "f5d8d293b63550cb32a2f6961c2a872e",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -686,12 +686,12 @@
             }
         },
         {
-            "name": "canyon-gbs/division",
+            "name": "canyon-gbs/consent",
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/division",
-                "reference": "68f84a47f5ba57acc72311d2830d843a225eebd9"
+                "url": "app-modules/consent",
+                "reference": "48a28e0abeb8dddae91988316bb842b971331c6e"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -700,16 +700,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Division\\Providers\\DivisionServiceProvider"
+                        "Assist\\Consent\\Providers\\ConsentServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Division\\": "src/",
-                    "Assist\\Division\\Tests\\": "tests/",
-                    "Assist\\Division\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Division\\Database\\Seeders\\": "database/seeders/"
+                    "Assist\\Consent\\": "src/",
+                    "Assist\\Consent\\Tests\\": "tests/",
+                    "Assist\\Consent\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Consent\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

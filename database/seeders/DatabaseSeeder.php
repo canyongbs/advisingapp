@@ -11,6 +11,7 @@ use Assist\Prospect\Database\Seeders\ProspectSeeder;
 use Assist\Interaction\Database\Seeders\InteractionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
+use Assist\Consent\Database\Seeders\ConsentAgreementSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
@@ -49,6 +50,8 @@ class DatabaseSeeder extends Seeder
             StudentSeeder::class,
             DivisionSeeder::class,
             ...InteractionSeeder::metadataSeeders(),
+            ConsentAgreementSeeder::class,
+            InternalUsersSeeder::class,
         ]);
     }
 }
