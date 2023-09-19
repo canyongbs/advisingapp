@@ -7,6 +7,7 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
@@ -50,6 +51,17 @@ class ListStudents extends ListRecords
                 TernaryFilter::make('dual'),
                 TernaryFilter::make('ferpa')
                     ->label('FERPA'),
+                Filter::make('holds')
+                    ->form([
+                        TextInput::make('hold'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['hold'],
+                                fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
+                            );
+                    }),
             ])
             ->actions([
                 ViewAction::make(),
