@@ -13,5 +13,9 @@ export default {
         './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         './vendor/awcodes/filament-tiptap-editor/resources/**/*.blade.php',
+        "./node_modules/flowbite/**/*.js",
+    ],
+    plugins: [
+        require('flowbite/plugin')
     ],
 }
