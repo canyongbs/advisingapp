@@ -15,7 +15,7 @@ use Assist\Assistant\Filament\Pages\AIAssistant;
 
 it('renders successfully', function () {
     ConsentAgreement::factory()->create([
-        'type' => ConsentAgreementType::AZURE_OPEN_AI,
+        'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
     asSuperAdmin();
@@ -26,7 +26,7 @@ it('renders successfully', function () {
 
 it('is properly gated with access control', function () {
     ConsentAgreement::factory()->create([
-        'type' => ConsentAgreementType::AZURE_OPEN_AI,
+        'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
     $user = User::factory()->create();
@@ -44,7 +44,7 @@ it('is properly gated with access control', function () {
 
 it('will show a consent modal if the user has not yet agreed to the terms and conditions of use', function () {
     $consentAgreement = ConsentAgreement::factory()->create([
-        'type' => ConsentAgreementType::AZURE_OPEN_AI,
+        'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
     $user = User::factory()->create();
@@ -62,7 +62,7 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
 
 it('will show the AI Assistant interface if the user has agreed to the terms and conditions of use', function () {
     $consentAgreement = ConsentAgreement::factory()->create([
-        'type' => ConsentAgreementType::AZURE_OPEN_AI,
+        'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
     $user = User::factory()->create();
@@ -82,7 +82,7 @@ it('will show the AI Assistant interface if the user has agreed to the terms and
 
 it('will redirect the user back to the dashboard if they dismiss the consent modal', function () {
     ConsentAgreement::factory()->create([
-        'type' => ConsentAgreementType::AZURE_OPEN_AI,
+        'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
     $user = User::factory()->create();
@@ -97,7 +97,7 @@ it('will redirect the user back to the dashboard if they dismiss the consent mod
 
 it('will allow a user to access the AI Assistant interface if they agree to the terms and conditions of use', function () {
     $consentAgreement = ConsentAgreement::factory()->create([
-        'type' => ConsentAgreementType::AZURE_OPEN_AI,
+        'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
     $user = User::factory()->create();
