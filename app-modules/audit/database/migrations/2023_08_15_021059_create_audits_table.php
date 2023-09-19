@@ -14,7 +14,7 @@ class CreateAuditsTable extends Migration
         Schema::connection($connection)->create($table, function (Blueprint $table) {
             $morphPrefix = config('audit.user.morph_prefix', 'change_agent');
 
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->nullableUuidMorphs($morphPrefix);
             $table->string('event');
             $table->string('auditable_type');
