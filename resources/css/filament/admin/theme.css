@@ -3,3 +3,7 @@
 @import 'tippy.js/dist/tippy.css';
 
 @config '../../../../tailwind.config.js';
+
+.min-w-kanban {
+    min-width: 20rem;
+}

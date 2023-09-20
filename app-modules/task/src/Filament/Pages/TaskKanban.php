@@ -6,6 +6,7 @@ use Exception;
 use Filament\Pages\Page;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Collection;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -27,7 +28,7 @@ class TaskKanban extends Page
         $this->tasks = Task::all()->groupBy('status');
     }
 
-    public function movedTask(string $taskId, string $fromStatusString, string $toStatusString)
+    public function movedTask(string $taskId, string $fromStatusString, string $toStatusString): JsonResponse
     {
         $fromStatus = TaskStatus::from($fromStatusString);
         $toStatus = TaskStatus::from($toStatusString);
