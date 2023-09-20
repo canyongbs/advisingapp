@@ -12,7 +12,7 @@
                             <div class="min-w-kanban">
                                 <div class="py-4 text-base font-semibold text-gray-900 dark:text-gray-300">{{ $status->displayName() }}</div>
 
-                                <div id="kanban-list-1" class="mb-4 space-y-4 min-w-kanban">
+                                <div id="kanban-list-{{ $status->value }}" data-status="{{ $status->value }}" class="mb-4 space-y-4 min-w-kanban">
                                     @foreach($tasks[$status->value] as $task)
                                         <div class="flex flex-col max-w-md p-5 transform bg-white rounded-lg shadow cursor-move dark:bg-gray-800">
                                             <div class="flex items-center justify-between pb-4">
@@ -102,4 +102,30 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            const kanbanLists = document.querySelectorAll('[id^="kanban-list-"]');
+
+            kanbanLists.forEach(kanbanList => {
+                window.Sortable.create(kanbanList, {
+                    group: 'kanban',
+                    sort: false,
+                    animation: 100,
+                    forceFallback: true,
+                    dragClass: 'drag-card',
+                    ghostClass: 'ghost-card',
+                    easing: 'cubic-bezier(0, 0.55, 0.45, 1)',
+                    onMove: function (evt) {
+                        console.log(evt)
+                        if (evt.to.dataset.status === 'completed') {
+                            return false;
+                        }
+                    },
+                    onAdd: function (evt) {
+                        this.$dispatch('moved-task');
+                    },
+                });
+            });
+        })
+    </script>
 </x-filament-panels::page>

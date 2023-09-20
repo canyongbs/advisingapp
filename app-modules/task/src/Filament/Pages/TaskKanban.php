@@ -3,6 +3,7 @@
 namespace Assist\Task\Filament\Pages;
 
 use Filament\Pages\Page;
+use Livewire\Attributes\On;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Collection;
@@ -22,7 +23,11 @@ class TaskKanban extends Page
         $this->statuses = TaskStatus::cases();
 
         $this->tasks = Task::all()->groupBy('status');
+    }
 
-        ray($this->tasks);
+    #[On('moved-task')]
+    public function movedTask()
+    {
+        ray('here');
     }
 }
