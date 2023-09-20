@@ -26,8 +26,15 @@ class TaskKanban extends Page
     }
 
     #[On('moved-task')]
-    public function movedTask()
+    public function movedTask(string $taskId, string $fromStatusString, string $toStatusString)
     {
-        ray('here');
+        ray($this->tasks);
+
+        $fromStatus = TaskStatus::from($fromStatusString);
+        $toStatus = TaskStatus::from($toStatusString);
+
+        $task = $this->tasks[$fromStatusString]->firstWhere('id', $taskId);
+
+        $task->getStateMachine('status')->transitionTo($toStatus);
     }
 }
