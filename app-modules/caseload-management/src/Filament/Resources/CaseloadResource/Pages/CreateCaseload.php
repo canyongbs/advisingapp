@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Filament\Resources\CaseloadResource\Pages;
+namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Resources\CaseloadResource;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Assist\CaseloadManagement\Enums\CaseloadType;
+use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class CreateCaseload extends CreateRecord implements HasTable
 {
@@ -29,13 +28,22 @@ class CreateCaseload extends CreateRecord implements HasTable
         return parent::form($form)
             ->schema([
                 TextInput::make('name'),
+                Select::make('type')
+                    ->options(CaseloadType::class),
                 Select::make('model')
                     ->options([
                         'student' => 'Student',
                         'prospect' => 'Prospect',
                     ])
                     ->default('student')
-                    ->live(),
+                    ->selectablePlaceholder(false)
+                    ->live()
+                    ->afterStateUpdated(function () {
+                        $this->tableFilters = null;
+                        $this->shouldMountInteractsWithTable = true;
+                        $this->bootedInteractsWithTable();
+                        $this->resetTableFiltersForm();
+                    }),
             ]);
     }
 
@@ -45,14 +53,10 @@ class CreateCaseload extends CreateRecord implements HasTable
             ->columns([
                 TextColumn::make('full_name'),
             ])
-            ->filters([
-                Filter::make('sap')
-                    ->query(fn (Builder $query) => $query->where('sap', true)),
-            ])
+            ->filters(CaseloadResource::filters($this->data['model']))
             ->query(fn () => match ($this->data['model']) {
                 'student' => Student::query(),
                 'prospect' => Prospect::query(),
-                default => null,
             });
     }
 

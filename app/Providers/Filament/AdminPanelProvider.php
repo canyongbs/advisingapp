@@ -75,6 +75,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Tools'),
                 NavigationGroup::make()
+                    ->label('Mass Engagement'),
+                NavigationGroup::make()
                     ->label('Administration'),
                 NavigationGroup::make()
                     ->label('Integrations'),
@@ -85,7 +87,8 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(ApplicationHealth::class),
-            ]);
+            ])
+            ->readOnlyRelationManagersOnResourceViewPagesByDefault(false);
     }
 
     public function boot(): void

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\CaseloadResource\Pages;
+namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
-use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Actions\DeleteAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
@@ -14,8 +14,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
-use App\Filament\Resources\CaseloadResource;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class EditCaseload extends EditRecord implements HasTable
 {
@@ -56,7 +56,6 @@ class EditCaseload extends EditRecord implements HasTable
                 //static pass in keys wherekey
                 'student' => Student::query(),
                 'prospect' => Prospect::query(),
-                default => null,
             });
     }
 
@@ -71,7 +70,7 @@ class EditCaseload extends EditRecord implements HasTable
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 

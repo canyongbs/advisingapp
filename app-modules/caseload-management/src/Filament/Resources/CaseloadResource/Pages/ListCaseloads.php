@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\CaseloadResource\Pages;
+namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use App\Filament\Resources\CaseloadResource;
+use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class ListCaseloads extends ListRecords
 {
@@ -22,7 +22,7 @@ class ListCaseloads extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

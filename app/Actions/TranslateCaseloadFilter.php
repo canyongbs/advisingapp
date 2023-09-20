@@ -2,11 +2,11 @@
 
 namespace App\Actions;
 
-use App\Models\Caseload;
-use Filament\Tables\Filters\Filter;
-use Assist\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
+use Assist\CaseloadManagement\Models\Caseload;
+use Assist\Prospect\Models\Prospect;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class TranslateCaseloadFilter

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5fa267ac125f4908aca1d14fd0f0d28",
+    "content-hash": "bd036ac1e9db0620a8331a19724dbf4d",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -675,6 +675,41 @@
                     "Assist\\Authorization\\Tests\\": "tests/",
                     "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
                     "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/caseload-management",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/caseload-management",
+                "reference": "72067b427669d30ad665acfc253677f2d6d73a92"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\CaseloadManagement\\Providers\\CaseloadManagementServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\CaseloadManagement\\": "src/",
+                    "Assist\\CaseloadManagement\\Tests\\": "tests/",
+                    "Assist\\CaseloadManagement\\Database\\Factories\\": "database/factories/",
+                    "Assist\\CaseloadManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -17083,5 +17118,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
