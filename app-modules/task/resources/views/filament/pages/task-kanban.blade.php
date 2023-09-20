@@ -4,7 +4,7 @@
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
                 <div class="overflow-hidden shadow">
-                    <div x-data="kanban" class="flex items-start justify-start px-4 mb-6 space-x-4">
+                    <div x-data="kanban($wire)" class="flex items-start justify-start px-4 mb-6 space-x-4">
                         @foreach($statuses as $status)
                             @php
                                 /** @var TaskStatus $status */
@@ -104,7 +104,7 @@
     </div>
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('kanban', () => ({
+            Alpine.data('kanban', ($wire) => ({
                 init() {
                     const kanbanLists = document.querySelectorAll('[id^="kanban-list-"]');
 
@@ -117,18 +117,36 @@
                             dragClass: 'drag-card',
                             ghostClass: 'ghost-card',
                             easing: 'cubic-bezier(0, 0.55, 0.45, 1)',
-                            onMove: function (evt) {
-                                console.log(evt)
-                                if (evt.to.dataset.status === 'completed') {
-                                    return false;
+                            // onMove: function (evt) {
+                            //     console.log(evt)
+                            //     if (evt.to.dataset.status === 'completed') {
+                            //         return false;
+                            //     }
+                            // },
+                            onAdd: async function (evt) {
+                                try {
+                                    const result = await $wire.movedTask(evt.item.dataset.task, evt.from.dataset.status, evt.to.dataset.status);
+
+                                    if (result.original.success) {
+                                        new FilamentNotification()
+                                            .icon('heroicon-o-check-circle')
+                                            .title(result.original.message)
+                                            .iconColor('success')
+                                            .send()
+                                    } else {
+                                        new FilamentNotification()
+                                            .icon('heroicon-o-x-circle')
+                                            .title(result.original.message)
+                                            .iconColor('danger')
+                                            .send()
+                                    }
+                                } catch (e) {
+                                    new FilamentNotification()
+                                        .icon('heroicon-o-x-circle')
+                                        .title('Something went wrong, please try again later')
+                                        .iconColor('danger')
+                                        .send()
                                 }
-                            },
-                            onAdd: function (evt) {
-                                @this.dispatch('moved-task', {
-                                    taskId: evt.item.dataset.task,
-                                    fromStatusString: evt.from.dataset.status,
-                                    toStatusString: evt.to.dataset.status
-                                });
                             },
                         });
                     });
