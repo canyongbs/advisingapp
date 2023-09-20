@@ -29,6 +29,7 @@ class DemoDatabaseSeeder extends Seeder
         Artisan::call(SyncRolesAndPermissions::class);
 
         $this->call([
+            InternalUsersSeeder::class,
             UsersTableSeeder::class,
             ServiceRequestPrioritySeeder::class,
             ServiceRequestStatusSeeder::class,

@@ -6,7 +6,10 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Rule;
+use App\Filament\Pages\Dashboard;
 use Assist\Assistant\Models\AssistantChat;
+use Assist\Consent\Models\ConsentAgreement;
+use Assist\Consent\Enums\ConsentAgreementType;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
@@ -39,10 +42,30 @@ class AIAssistant extends Page
 
     public string $error = '';
 
+    public ConsentAgreement $consentAgreement;
+
+    public bool $consentedToTerms = false;
+
+    public bool $loading = true;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('assistant.access');
+    }
+
     public function mount(): void
     {
         /** @var User $user */
         $user = auth()->user();
+
+        $this->authorize('assistant.access');
+
+        $this->consentAgreement = ConsentAgreement::query()
+            ->where('type', ConsentAgreementType::AzureOpenAI)
+            ->first();
 
         /** @var AssistantChat $chat */
         $chat = $user->assistantChats()->latest()->first();
@@ -51,6 +74,39 @@ class AIAssistant extends Page
             id: $chat?->id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
         );
+    }
+
+    public function determineIfConsentWasGiven(): void
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($user->hasNotConsentedTo($this->consentAgreement)) {
+            $this->dispatch('open-modal', id: 'consent-agreement');
+        } else {
+            $this->consentedToTerms = true;
+        }
+
+        $this->loading = false;
+    }
+
+    public function confirmConsent(): void
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($this->consentedToTerms === false) {
+            return;
+        }
+
+        $user->consentTo($this->consentAgreement);
+
+        $this->dispatch('close-modal', id: 'consent-agreement');
+    }
+
+    public function denyConsent(): void
+    {
+        $this->redirect(Dashboard::getUrl());
     }
 
     public function sendMessage(): void
@@ -72,10 +128,6 @@ class AIAssistant extends Page
     #[On('ask')]
     public function ask(AIChatClient $ai): void
     {
-        // TODO Figure out why setting this value in the ask() method
-        // Does not result in the frontend reflecting the changes.
-        // $this->showCurrentResponse = true;
-
         try {
             $this->currentResponse = $ai->ask($this->chat, function (string $partial) {
                 $this->stream('currentResponse', $partial);

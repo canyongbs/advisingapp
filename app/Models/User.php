@@ -15,10 +15,12 @@ use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Consent\Models\Concerns\CanConsent;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Assistant\Models\AssistantChatMessageLog;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
@@ -52,6 +54,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasManyEngagements;
     use HasManyEngagementBatches;
     use CanOrElse;
+    use CanConsent;
     use Impersonate;
 
     protected $hidden = [
@@ -139,6 +142,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assistantChats(): HasMany
     {
         return $this->hasMany(AssistantChat::class);
+    }
+
+    public function assistantChatMessageLogs(): HasMany
+    {
+        return $this->hasMany(AssistantChatMessageLog::class);
     }
 
     public function canAccessPanel(Panel $panel): bool
