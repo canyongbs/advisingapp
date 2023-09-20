@@ -103,12 +103,6 @@
                             dragClass: 'drag-card',
                             ghostClass: 'ghost-card',
                             easing: 'cubic-bezier(0, 0.55, 0.45, 1)',
-                            // onMove: function (evt) {
-                            //     console.log(evt)
-                            //     if (evt.to.dataset.status === 'completed') {
-                            //         return false;
-                            //     }
-                            // },
                             onAdd: async function (evt) {
                                 try {
                                     const result = await $wire.movedTask(evt.item.dataset.task, evt.from.dataset.status, evt.to.dataset.status);
