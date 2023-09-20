@@ -7,9 +7,10 @@ use Filament\Pages\Page;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class TaskKanban extends Page
 {
@@ -19,13 +20,16 @@ class TaskKanban extends Page
 
     public array $statuses = [];
 
-    public Collection $tasks;
+    public EloquentCollection|Collection $tasks;
 
     public function mount(): void
     {
         $this->statuses = TaskStatus::cases();
 
-        $this->tasks = Task::all()->groupBy('status');
+        $this->tasks = collect($this->statuses)
+            ->mapWithKeys(fn ($status) => [$status->value => collect()]);
+
+        Task::all()->groupBy('status')->each(fn ($tasks, $status) => $this->tasks[$status] = $tasks);
     }
 
     public function movedTask(string $taskId, string $fromStatusString, string $toStatusString): JsonResponse
