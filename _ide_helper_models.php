@@ -155,10 +155,14 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $assignedTasks
  * @property-read int|null $assigned_tasks_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChatMessageLog> $assistantChatMessageLogs
+ * @property-read int|null $assistant_chat_message_logs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChat> $assistantChats
  * @property-read int|null $assistant_chats_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\ConsentAgreement> $consentAgreements
+ * @property-read int|null $consent_agreements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementBatch> $engagementBatches
  * @property-read int|null $engagement_batches_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
@@ -585,6 +589,21 @@ namespace Assist\Authorization\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperRoleGroup {}
+}
+
+namespace Assist\Consent\Models{
+/**
+ * Assist\Consent\Models\ConsentAgreement
+ *
+ * @property \Assist\Consent\Enums\ConsentAgreementType $type
+ * @method static \Assist\Consent\Database\Factories\ConsentAgreementFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperConsentAgreement {}
 }
 
 namespace Assist\Engagement\Models{
