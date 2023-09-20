@@ -39,8 +39,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                     ->selectablePlaceholder(false)
                     ->live()
                     ->afterStateUpdated(function () {
-                        $this->tableFilters = null;
-                        $this->shouldMountInteractsWithTable = true;
+                        $this->cacheForms();
                         $this->bootedInteractsWithTable();
                         $this->resetTableFiltersForm();
                     }),
