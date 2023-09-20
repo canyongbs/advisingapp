@@ -49,18 +49,7 @@ abstract class Importer
         }
 
         $this->callHook('beforeValidate');
-
-        try {
-            $this->validateData();
-        } catch (ValidationException $exception) {
-            Notification::make()
-                ->title($this->getValidationFailureNotificationTitle($exception->getMessage()))
-                ->body($this->getValidationFailureNotificationBody($exception->getMessage()))
-                ->danger()
-                ->sendToDatabase($this->import->user);
-
-            return;
-        }
+        $this->validateData();
         $this->callHook('afterValidate');
 
         $this->callHook('beforeFill');
@@ -74,6 +63,8 @@ abstract class Importer
         $this->saveRecord();
         $this->callHook('afterSave');
         $this->callHook($recordExists ? 'afterUpdate' : 'afterCreate');
+
+        $this->import->increment('successful_rows');
     }
 
     public function remapData(): void

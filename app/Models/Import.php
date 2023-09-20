@@ -3,19 +3,19 @@
 namespace App\Models;
 
 use App\Imports\Importer;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperImport
  */
-class Import extends Model
+class Import extends BaseModel
 {
     protected $casts = [
         'failed_at' => 'timestamp',
         'completed_at' => 'timestamp',
         'processed_rows' => 'integer',
         'total_rows' => 'integer',
+        'successful_rows' => 'integer',
     ];
 
     /**

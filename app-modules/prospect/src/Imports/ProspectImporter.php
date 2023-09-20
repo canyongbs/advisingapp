@@ -44,7 +44,8 @@ class ProspectImporter extends Importer
                 ->guess(['status'])
                 ->fillRecordUsing(function (Prospect $record, string $state) {
                     $status = ProspectStatus::query()
-                        ->where('name', $state)
+                        ->whereKey($state)
+                        ->orWhere('name', $state)
                         ->first();
 
                     if (! $status) {
@@ -71,7 +72,8 @@ class ProspectImporter extends Importer
                 ->guess(['source'])
                 ->fillRecordUsing(function (Prospect $record, string $state) {
                     $source = ProspectSource::query()
-                        ->where('name', $state)
+                        ->whereKey($state)
+                        ->orWhere('name', $state)
                         ->first();
 
                     if (! $source) {

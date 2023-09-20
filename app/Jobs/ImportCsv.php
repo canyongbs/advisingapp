@@ -6,12 +6,16 @@ use App\Models\User;
 use App\Models\Import;
 use App\Imports\Importer;
 use Carbon\CarbonInterface;
+use Filament\Notifications\Notification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class ImportCsv implements ShouldQueue
 {
@@ -57,11 +61,44 @@ class ImportCsv implements ShouldQueue
 
         auth()->login($user);
 
+        $exceptions = [];
+
         foreach ($this->rows as $row) {
-            ($this->importer)($row);
+            try {
+                ($this->importer)($row);
+            } catch (ValidationException $exception) {
+                Notification::make()
+                    ->title($this->importer->getValidationFailureNotificationTitle($exception->getMessage()))
+                    ->body($this->importer->getValidationFailureNotificationBody($exception->getMessage()))
+                    ->danger()
+                    ->sendToDatabase($this->import->user);
+
+                continue;
+            } catch (Throwable $exception) {
+                $exceptions[$exception::class] = $exception;
+
+                continue;
+            }
 
             $this->import->increment('processed_rows');
         }
+
+        $this->handleExceptions($exceptions);
+    }
+
+    protected function handleExceptions(array $exceptions): void
+    {
+        if (empty($exceptions)) {
+            return;
+        }
+
+        if (count($exceptions) > 1) {
+            $this->fail('Multiple types of exceptions occurred: ' . implode(', ', array_keys($exceptions)));
+
+            return;
+        }
+
+        $this->fail(Arr::first($exceptions));
     }
 
     public function retryUntil(): CarbonInterface

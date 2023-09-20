@@ -2,11 +2,15 @@
 
 namespace App\Filament\Actions;
 
+use Closure;
 use Filament\Forms;
 use App\Models\User;
 use App\Models\Import;
 use App\Jobs\ImportCsv;
 use App\Imports\Importer;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use League\Csv\Statement;
 use Illuminate\Support\Arr;
 use Filament\Actions\Action;
@@ -28,6 +32,10 @@ class ImportAction extends Action
 
     protected ?string $job = null;
 
+    protected int | Closure $chunkSize = 100;
+
+    protected int | Closure | null $maximumRows = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,7 +47,7 @@ class ImportAction extends Action
         $this->groupedIcon('heroicon-m-arrow-up-tray');
 
         $this->form(fn (ImportAction $action): array => array_merge([
-            Forms\Components\FileUpload::make('file')
+            FileUpload::make('file')
                 ->placeholder('Upload a .csv file')
                 ->acceptedFileTypes(['text/csv', 'text/plain'])
                 ->afterStateUpdated(function (Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
@@ -81,7 +89,7 @@ class ImportAction extends Action
                 ->visibility('private')
                 ->required()
                 ->hiddenLabel(),
-            Forms\Components\Fieldset::make('Columns')
+            Fieldset::make('Columns')
                 ->schema(function (Forms\Get $get) use ($action): array {
                     $csvFile = Arr::first((array) ($get('file') ?? []));
 
@@ -102,7 +110,7 @@ class ImportAction extends Action
                     $csvColumnOptions = array_combine($csvColumns, $csvColumns);
 
                     return array_map(
-                        fn (ImportColumn $column): Forms\Components\Select => $column->getSelect()->options($csvColumnOptions),
+                        fn (ImportColumn $column): Select => $column->getSelect()->options($csvColumnOptions),
                         $action->getImporter()::getColumns(),
                     );
                 })
@@ -124,6 +132,19 @@ class ImportAction extends Action
             $csvReader->setHeaderOffset(0);
             $csvResults = Statement::create()->process($csvReader);
 
+            $totalRows = $csvResults->count();
+            $maximumRows = $action->getMaximumRows() ?? $totalRows;
+
+            if ($maximumRows < $totalRows) {
+                Notification::make()
+                    ->title('That file is too large to import')
+                    ->body('You may not import more than ' . number_format($maximumRows) . ' at once.')
+                    ->success()
+                    ->send();
+
+                return;
+            }
+
             $user = auth()->user();
 
             $import = new Import();
@@ -131,10 +152,10 @@ class ImportAction extends Action
             $import->file_name = $csvFile->getClientOriginalName();
             $import->file_path = $csvFile->getRealPath();
             $import->importer = $action->getImporter();
-            $import->total_rows = $csvResults->count();
+            $import->total_rows = $totalRows;
             $import->save();
 
-            $importChunkIterator = new ChunkIterator($csvResults->getRecords(), chunkSize: 20);
+            $importChunkIterator = new ChunkIterator($csvResults->getRecords(), chunkSize: $action->getChunkSize());
 
             /** @var array<array<array<string, string>>> $importChunks */
             $importChunks = $importChunkIterator->get();
@@ -249,6 +270,20 @@ class ImportAction extends Action
         return $this;
     }
 
+    public function chunkSize(int | Closure $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function maximumRows(int | Closure | null $rows): static
+    {
+        $this->maximumRows = $rows;
+
+        return $this;
+    }
+
     /**
      * @return class-string<Importer>
      */
@@ -263,5 +298,15 @@ class ImportAction extends Action
     public function getJob(): string
     {
         return $this->job ?? ImportCsv::class;
+    }
+
+    public function getChunkSize(): int
+    {
+        return $this->evaluate($this->chunkSize);
+    }
+
+    public function getMaximumRows(): ?int
+    {
+        return $this->evaluate($this->maximumRows);
     }
 }

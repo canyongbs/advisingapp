@@ -8,6 +8,7 @@ use App\Models\BaseModel;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -134,5 +135,10 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+    }
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['import', ...$this->webPermissions()]);
     }
 }
