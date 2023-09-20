@@ -3,9 +3,12 @@
 namespace Assist\Prospect\Imports;
 
 use Closure;
+use App\Models\Import;
 use App\Imports\Importer;
+use Illuminate\Support\Str;
 use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Assist\Prospect\Models\ProspectSource;
 use Assist\Prospect\Models\ProspectStatus;
 use App\Filament\Actions\ImportAction\ImportColumn;
@@ -19,20 +22,27 @@ class ProspectImporter extends Importer
         return [
             ImportColumn::make('first_name')
                 ->rules(['required'])
-                ->requiredMapping(),
+                ->requiredMapping()
+                ->example('Jonathan'),
             ImportColumn::make('last_name')
                 ->rules(['required'])
-                ->requiredMapping(),
+                ->requiredMapping()
+                ->example('Smith'),
             ImportColumn::make('full_name')
                 ->rules(['required'])
-                ->requiredMapping(),
-            ImportColumn::make('preferred'),
+                ->requiredMapping()
+                ->example('Jonathan Smith'),
+            ImportColumn::make('preferred')
+                ->example('John'),
             ImportColumn::make('status_id')
                 ->label('Status')
                 ->rules([function (string $attribute, mixed $value, Closure $fail) {
                     $status = ProspectStatus::query()
-                        ->whereKey($value)
-                        ->orWhere('name', $value)
+                        ->when(
+                            Str::isUuid($value),
+                            fn (Builder $query) => $query->whereKey($value),
+                            fn (Builder $query) => $query->where('name', $value),
+                        )
                         ->first();
 
                     if ($status) {
@@ -44,8 +54,11 @@ class ProspectImporter extends Importer
                 ->guess(['status'])
                 ->fillRecordUsing(function (Prospect $record, string $state) {
                     $status = ProspectStatus::query()
-                        ->whereKey($state)
-                        ->orWhere('name', $state)
+                        ->when(
+                            Str::isUuid($state),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->where('name', $state),
+                        )
                         ->first();
 
                     if (! $status) {
@@ -54,13 +67,17 @@ class ProspectImporter extends Importer
 
                     $record->status()->associate($status);
                 })
-                ->requiredMapping(),
+                ->requiredMapping()
+                ->example(ProspectStatus::query()->value('name')),
             ImportColumn::make('source_id')
                 ->label('Source')
                 ->rules([function (string $attribute, mixed $value, Closure $fail) {
                     $source = ProspectSource::query()
-                        ->whereKey($value)
-                        ->orWhere('name', $value)
+                        ->when(
+                            Str::isUuid($value),
+                            fn (Builder $query) => $query->whereKey($value),
+                            fn (Builder $query) => $query->where('name', $value),
+                        )
                         ->first();
 
                     if ($source) {
@@ -72,8 +89,11 @@ class ProspectImporter extends Importer
                 ->guess(['source'])
                 ->fillRecordUsing(function (Prospect $record, string $state) {
                     $source = ProspectSource::query()
-                        ->whereKey($state)
-                        ->orWhere('name', $state)
+                        ->when(
+                            Str::isUuid($state),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->where('name', $state),
+                        )
                         ->first();
 
                     if (! $source) {
@@ -82,25 +102,37 @@ class ProspectImporter extends Importer
 
                     $record->source()->associate($source);
                 })
-                ->requiredMapping(),
-            ImportColumn::make('description'),
+                ->requiredMapping()
+                ->example(ProspectSource::query()->value('name')),
+            ImportColumn::make('description')
+                ->example('A description of the prospect.'),
             ImportColumn::make('email')
-                ->rules(['email']),
+                ->rules(['email'])
+                ->example('johnsmith@gmail.com'),
             ImportColumn::make('email_2')
-                ->rules(['email']),
-            ImportColumn::make('mobile'),
+                ->rules(['email'])
+                ->example('johnsmith@hotmail.com'),
+            ImportColumn::make('mobile')
+                ->example('+1 (555) 555-5555'),
             ImportColumn::make('sms_opt_out')
                 ->boolean()
-                ->rules(['boolean']),
+                ->rules(['boolean'])
+                ->example('no'),
             ImportColumn::make('email_bounce')
                 ->boolean()
-                ->rules(['boolean']),
-            ImportColumn::make('phone'),
-            ImportColumn::make('address'),
-            ImportColumn::make('address_2'),
+                ->rules(['boolean'])
+                ->example('yes'),
+            ImportColumn::make('phone')
+                ->example('+1 (555) 555-5555'),
+            ImportColumn::make('address')
+                ->example('123 Main St.'),
+            ImportColumn::make('address_2')
+                ->example('Apt. 1'),
             ImportColumn::make('birthdate')
-                ->rules(['date']),
-            ImportColumn::make('hsgrad'),
+                ->rules(['date'])
+                ->example('1990-01-01'),
+            ImportColumn::make('hsgrad')
+                ->example('2009'),
         ];
     }
 
@@ -139,18 +171,14 @@ class ProspectImporter extends Importer
         $this->record->createdBy()->associate($this->import->user);
     }
 
-    public static function getCompletedNotificationBody(int $totalRows): string
+    public static function getCompletedNotificationBody(Import $import): string
     {
-        return "Your prospect import has completed and {$totalRows} rows were processed.";
-    }
+        $body = 'Your prospect import has completed and ' . number_format($import->successful_rows) . ' ' . Str::plural('row', $import->successful_rows) . ' imported.';
 
-    public static function getFailureNotificationBody(int $processedRows): string
-    {
-        return "Something went wrong after importing {$processedRows} rows of prospects.";
-    }
+        if ($failedRowsCount = $import->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . Str::plural('row', $failedRowsCount) . ' failed to import.';
+        }
 
-    public function getValidationFailureNotificationBody(string $message): string
-    {
-        return "A validation error occurred while importing a prospect: {$message}. This skipped row belonged to the prospect with full name \"{$this->data['full_name']}\".";
+        return $body;
     }
 }

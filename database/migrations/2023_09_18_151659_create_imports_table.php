@@ -13,7 +13,6 @@ return new class () extends Migration {
         Schema::create('imports', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamp('completed_at')->nullable();
-            $table->timestamp('failed_at')->nullable();
             $table->string('file_name');
             $table->string('file_path');
             $table->string('importer');

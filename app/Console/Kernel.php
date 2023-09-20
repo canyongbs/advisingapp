@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use Assist\Audit\Models\Audit;
+use App\Models\FailedImportRow;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
 use Spatie\Health\Commands\RunHealthChecksCommand;
@@ -25,7 +26,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(DispatchQueueCheckJobsCommand::class)->everyMinute();
 
         $schedule->command(PruneCommand::class, [
-            '--model' => [Audit::class, AssistantChatMessageLog::class],
+            '--model' => [Audit::class, AssistantChatMessageLog::class, FailedImportRow::class],
         ])->daily()->evenInMaintenanceMode()->onOneServer();
 
         // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule

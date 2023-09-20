@@ -6,7 +6,6 @@ use App\Models\Import;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\Component;
-use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Filament\Actions\ImportAction\ImportColumn;
@@ -201,16 +200,7 @@ abstract class Importer
             ->prepend('App\\Models\\');
     }
 
-    abstract public static function getCompletedNotificationBody(int $totalRows): string;
-
-    abstract public static function getFailureNotificationBody(int $processedRows): string;
-
-    public function getValidationFailureNotificationTitle(string $message): string
-    {
-        return 'Import validation error';
-    }
-
-    abstract public function getValidationFailureNotificationBody(string $message): string;
+    abstract public static function getCompletedNotificationBody(Import $import): string;
 
     /**
      * @return array<int, object>

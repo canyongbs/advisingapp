@@ -6,22 +6,29 @@ use Closure;
 use Filament\Forms;
 use App\Models\User;
 use App\Models\Import;
+use League\Csv\Writer;
+use SplTempFileObject;
 use App\Jobs\ImportCsv;
 use App\Imports\Importer;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
 use League\Csv\Statement;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
 use App\Support\ChunkIterator;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Bus;
 use League\Csv\Reader as CsvReader;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Fieldset;
 use Illuminate\Support\Facades\Storage;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Filesystem\AwsS3V3Adapter;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Actions\ImportAction\ImportColumn;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Filament\Notifications\Actions\Action as NotificationAction;
 
 class ImportAction extends Action
 {
@@ -41,6 +48,8 @@ class ImportAction extends Action
         parent::setUp();
 
         $this->modalHeading(fn (ImportAction $action): string => "Import {$action->getPluralModelLabel()}");
+
+        $this->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('<p>' . $action->getModalAction('downloadExample')->toHtml() . '</p>'));
 
         $this->modalSubmitActionLabel('Start import');
 
@@ -172,19 +181,6 @@ class ImportAction extends Action
 
             Bus::batch($importJobs->all())
                 ->allowFailures()
-                ->catch(function () use ($import) {
-                    $import->touch('failed_at');
-
-                    if (! $import->user instanceof User) {
-                        return;
-                    }
-
-                    Notification::make()
-                        ->title('Import failed')
-                        ->body($import->importer::getImportFailureNotificationBody($import->processed_rows))
-                        ->danger()
-                        ->sendToDatabase($import->user);
-                })
                 ->finally(function () use ($import) {
                     if ($import->failed_at) {
                         return;
@@ -196,10 +192,32 @@ class ImportAction extends Action
                         return;
                     }
 
+                    $failedRowsCount = $import->getFailedRowsCount();
+
                     Notification::make()
                         ->title('Import completed')
-                        ->body($import->importer::getCompletedNotificationBody($import->total_rows))
-                        ->success()
+                        ->body($import->importer::getCompletedNotificationBody($import))
+                        ->when(
+                            ! $failedRowsCount,
+                            fn (Notification $notification) => $notification->success(),
+                        )
+                        ->when(
+                            $failedRowsCount && ($failedRowsCount < $import->total_rows),
+                            fn (Notification $notification) => $notification->warning(),
+                        )
+                        ->when(
+                            $failedRowsCount === $import->total_rows,
+                            fn (Notification $notification) => $notification->danger(),
+                        )
+                        ->when(
+                            $failedRowsCount,
+                            fn (Notification $notification) => $notification->actions([
+                                NotificationAction::make('downloadFailedRowsCsv')
+                                    ->label('Download information about the failed ' . Str::plural('row', $failedRowsCount))
+                                    ->color('danger')
+                                    ->url(route('imports.failed-rows.download', ['import' => $import])),
+                            ]),
+                        )
                         ->sendToDatabase($import->user);
                 })
                 ->dispatch();
@@ -210,6 +228,40 @@ class ImportAction extends Action
                 ->success()
                 ->send();
         });
+
+        $this->registerModalActions([
+            Action::make('downloadExample')
+                ->label('Download an example .csv file.')
+                ->link()
+                ->action(function (): StreamedResponse {
+                    $columns = $this->getImporter()::getColumns();
+
+                    $csv = Writer::createFromFileObject(new SplTempFileObject());
+
+                    $csv->insertOne(array_map(
+                        fn (ImportColumn $column): string => $column->getName(),
+                        $columns,
+                    ));
+
+                    $example = array_map(
+                        fn (ImportColumn $column) => $column->getExample(),
+                        $columns,
+                    );
+
+                    if (array_filter(
+                        $example,
+                        fn ($value): bool => filled($value),
+                    )) {
+                        $csv->insertOne($example);
+                    }
+
+                    return response()->streamDownload(function () use ($csv) {
+                        echo $csv->toString();
+                    }, str($this->getImporter())->classBasename()->kebab()->append('-example.csv'), [
+                        'Content-Type' => 'text/csv',
+                    ]);
+                }),
+        ]);
 
         $this->color('gray');
 

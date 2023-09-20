@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Imports\Importer;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -11,12 +12,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Import extends BaseModel
 {
     protected $casts = [
-        'failed_at' => 'timestamp',
         'completed_at' => 'timestamp',
         'processed_rows' => 'integer',
         'total_rows' => 'integer',
         'successful_rows' => 'integer',
     ];
+
+    public function failedRows(): HasMany
+    {
+        return $this->hasMany(FailedImportRow::class);
+    }
 
     /**
      * @return BelongsTo<User, Import>
@@ -39,5 +44,10 @@ class Import extends BaseModel
             'columnMap' => $columnMap,
             'options' => $options,
         ]);
+    }
+
+    public function getFailedRowsCount(): int
+    {
+        return $this->total_rows - $this->successful_rows;
     }
 }

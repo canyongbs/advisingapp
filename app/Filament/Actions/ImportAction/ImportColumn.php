@@ -42,6 +42,8 @@ class ImportColumn extends Component
 
     protected ?Importer $importer = null;
 
+    protected mixed $example = null;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -73,6 +75,13 @@ class ImportColumn extends Component
     public function label(string | Closure | null $label): static
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function example(mixed $example): static
+    {
+        $this->example = $example;
 
         return $this;
     }
@@ -267,6 +276,11 @@ class ImportColumn extends Component
     public function getImporter(): ?Importer
     {
         return $this->importer;
+    }
+
+    public function getExample(): mixed
+    {
+        return $this->evaluate($this->example);
     }
 
     protected function sanitizeStateItem(mixed $state): mixed
