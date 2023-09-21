@@ -5,10 +5,8 @@ namespace Assist\AssistDataModel\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Assist\AssistDataModel\Models\Student;
-use Assist\CaseloadManagement\Models\Caseload;
 use Assist\AssistDataModel\AssistDataModelPlugin;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\CaseloadManagement\Observers\CaseloadObserver;
 
 class AssistDataModelServiceProvider extends ServiceProvider
 {
