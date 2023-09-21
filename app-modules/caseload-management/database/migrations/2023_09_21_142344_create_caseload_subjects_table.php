@@ -14,7 +14,7 @@ return new class () extends Migration {
             $table->string('subject_type');
 
             $table->foreignUuid('caseload_id')->constrained('caseloads');
-            
+
             $table->index(['subject_type', 'subject_id']);
 
             $table->timestamps();
