@@ -54,7 +54,8 @@ class ManageStudentAlerts extends ManageRelatedRecords
                 },
             );
 
-        $item->badge($alertsCount > 0 ? $alertsCount : null);
+        $item
+            ->badge($alertsCount > 0 ? $alertsCount : null, 'danger');
 
         return [$item];
     }
