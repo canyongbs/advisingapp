@@ -41,7 +41,7 @@ class ImportAction extends Action
 
     protected int | Closure $chunkSize = 100;
 
-    protected int | Closure | null $maximumRows = null;
+    protected int | Closure | null $maxRows = null;
 
     protected function setUp(): void
     {
@@ -142,12 +142,12 @@ class ImportAction extends Action
             $csvResults = Statement::create()->process($csvReader);
 
             $totalRows = $csvResults->count();
-            $maximumRows = $action->getMaximumRows() ?? $totalRows;
+            $maxRows = $action->getMaxRows() ?? $totalRows;
 
-            if ($maximumRows < $totalRows) {
+            if ($maxRows < $totalRows) {
                 Notification::make()
                     ->title('That file is too large to import')
-                    ->body('You may not import more than ' . number_format($maximumRows) . ' at once.')
+                    ->body('You may not import more than ' . number_format($maxRows) . ' at once.')
                     ->success()
                     ->send();
 
@@ -329,9 +329,9 @@ class ImportAction extends Action
         return $this;
     }
 
-    public function maximumRows(int | Closure | null $rows): static
+    public function max(int | Closure | null $rows): static
     {
-        $this->maximumRows = $rows;
+        $this->maxRows = $rows;
 
         return $this;
     }
@@ -357,8 +357,8 @@ class ImportAction extends Action
         return $this->evaluate($this->chunkSize);
     }
 
-    public function getMaximumRows(): ?int
+    public function getMaxRows(): ?int
     {
-        return $this->evaluate($this->maximumRows);
+        return $this->evaluate($this->maxRows);
     }
 }

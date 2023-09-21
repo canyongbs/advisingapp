@@ -107,7 +107,8 @@ class ProspectImporter extends Importer
             ImportColumn::make('description')
                 ->example('A description of the prospect.'),
             ImportColumn::make('email')
-                ->rules(['email'])
+                ->rules(['required', 'email'])
+                ->requiredMapping()
                 ->example('johnsmith@gmail.com'),
             ImportColumn::make('email_2')
                 ->rules(['email'])
@@ -138,28 +139,20 @@ class ProspectImporter extends Importer
 
     public function resolveRecord(): ?Model
     {
-        $email = $this->data['email'] ?? null;
+        $email = $this->data['email'];
         $email2 = $this->data['email_2'] ?? null;
 
-        $emails = array_filter(
-            [$email, $email2],
-            fn (mixed $state): bool => filled($state),
-        );
-
-        if (empty($emails)) {
-            return new Prospect();
-        }
+        $emails = [
+            $email,
+            ...filled($email2) ? [$email2] : [],
+        ];
 
         $prospect = Prospect::query()
             ->whereIn('email', $emails)
             ->orWhereIn('email_2', $emails)
             ->first();
 
-        if ($prospect) {
-            return $prospect;
-        }
-
-        return new Prospect([
+        return $prospect ?? new Prospect([
             'email' => $email,
             'email_2' => $email2,
         ]);
