@@ -46,7 +46,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
         /** @var Student|Prospect $ownerRecord */
         $alertsCount = Cache::tags('alert-count')
             ->remember(
-                'alert-count-' . $ownerRecord->id,
+                "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     // TODO: When it is decided how alerts are "resolved" this will need to take that into account to only display unresolved alerts
