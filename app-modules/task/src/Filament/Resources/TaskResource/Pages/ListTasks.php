@@ -97,15 +97,15 @@ class ListTasks extends ListRecords
             ]);
     }
 
+    public function setViewType(string $viewType): void
+    {
+        $this->viewType = $viewType;
+    }
+
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
         ];
-    }
-
-    public function setViewType(string $viewType): void
-    {
-        $this->viewType = $viewType;
     }
 }

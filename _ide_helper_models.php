@@ -12,70 +12,6 @@
 
 namespace App\Models{
 /**
- * App\Models\FailedImportRow
- *
- * @property string $id
- * @property array $data
- * @property string $import_id
- * @property string|null $validation_error
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Import $import
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow query()
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereData($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereImportId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereValidationError($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperFailedImportRow {}
-}
-
-namespace App\Models{
-/**
- * App\Models\Import
- *
- * @property string $id
- * @property int|null $completed_at
- * @property string $file_name
- * @property string $file_path
- * @property string $importer
- * @property int $processed_rows
- * @property int $total_rows
- * @property int $successful_rows
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
- * @property-read int|null $failed_rows_count
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|Import newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Import newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Import query()
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereCompletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereFileName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereFilePath($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereImporter($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereProcessedRows($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereSuccessfulRows($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereTotalRows($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Import whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperImport {}
-}
-
-namespace App\Models{
-/**
  * App\Models\Institution
  *
  * @property string $id
@@ -416,7 +352,7 @@ namespace Assist\Audit\Models{
 /**
  * Assist\Audit\Models\Audit
  *
- * @property int $id
+ * @property string $id
  * @property string|null $change_agent_type
  * @property string|null $change_agent_id
  * @property string $event
@@ -595,36 +531,30 @@ namespace Assist\Consent\Models{
 /**
  * Assist\Consent\Models\ConsentAgreement
  *
+ * @property string $id
  * @property \Assist\Consent\Enums\ConsentAgreementType $type
+ * @property string $title
+ * @property string $description
+ * @property string $body
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Assist\Consent\Database\Factories\ConsentAgreementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
  class IdeHelperConsentAgreement {}
-}
-
-namespace Assist\Division\Models{
-/**
- * Assist\Division\Models\Division
- *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \App\Models\User|null $createdBy
- * @property-read \App\Models\User|null $lastUpdatedBy
- * @method static \Assist\Division\Database\Factories\DivisionFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Division newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Division newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Division onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Division query()
- * @method static \Illuminate\Database\Eloquent\Builder|Division withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Division withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperDivision {}
 }
 
 namespace Assist\Engagement\Models{
