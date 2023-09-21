@@ -14,14 +14,13 @@
 
                                 <div id="kanban-list-{{ $status->value }}" data-status="{{ $status->value }}" class="mb-4 space-y-4 min-w-kanban">
                                     @foreach($tasks[$status->value] as $task)
-                                        <!-- removed transform class from here as it conflicted with modal -->
-                                        <div wire:key="task-{{ $task->id }}" data-task="{{ $task->id }}" class="flex flex-col max-w-md p-5 bg-white rounded-lg shadow cursor-move dark:bg-gray-800">
+                                        <div wire:key="task-{{ $task->id }}" data-task="{{ $task->id }}" class="flex flex-col max-w-md p-5 transform bg-white rounded-lg shadow cursor-move dark:bg-gray-800">
                                             <div class="flex items-center justify-between pb-4">
                                                 <div class="text-base font-semibold text-gray-900 dark:text-white">
                                                     {{ $task->description }}
                                                 </div>
 
-                                                <livewire:task-kanban-edit-button :task="$task" wire:key="task-edit-{{ $task->id }}" />
+                                                <livewire:task-kanban-edit-button :task="$task" />
                                             </div>
 
                                             <div class="flex flex-col">
@@ -90,7 +89,6 @@
                     kanbanLists.forEach(kanbanList => {
                         window.Sortable.create(kanbanList, {
                             group: 'kanban',
-                            sort: false,
                             animation: 100,
                             forceFallback: true,
                             dragClass: 'drag-card',

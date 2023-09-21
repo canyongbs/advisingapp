@@ -1,5 +1,7 @@
 <div>
     {{ $this->editAction }}
 
-    <x-filament-actions::modals wire:key="task-edit-modal-{{ $task->id }}" />
+    @teleport('body')
+    <x-filament-actions::modals />
+    @endteleport
 </div>
