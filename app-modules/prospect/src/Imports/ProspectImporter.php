@@ -71,6 +71,7 @@ class ProspectImporter extends Importer
             ImportColumn::make('mobile')
                 ->example('+1 (555) 555-5555'),
             ImportColumn::make('sms_opt_out')
+                ->label('SMS opt out')
                 ->boolean()
                 ->rules(['boolean'])
                 ->example('no'),
