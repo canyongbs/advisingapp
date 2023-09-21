@@ -21,7 +21,7 @@ enum CaseloadType: string implements HasLabel
     public function disabled(): bool
     {
         return match ($this) {
-            // CaseloadType::Static => true,
+            CaseloadType::Static => true,
             default => false
         };
     }

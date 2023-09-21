@@ -57,7 +57,7 @@ class CreateCaseload extends CreateRecord implements HasTable
         return $table
             ->columns(CaseloadResource::columns($this->data['model']))
             ->filters(CaseloadResource::filters($this->data['model']))
-            ->actions(CaseloadResource::actions($this->data['model']))
+            // ->actions(CaseloadResource::actions($this->data['model']))
             ->query(fn () => $this->data['model']->query());
     }
 

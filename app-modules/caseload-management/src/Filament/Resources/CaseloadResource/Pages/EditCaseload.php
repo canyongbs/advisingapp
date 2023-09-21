@@ -5,6 +5,7 @@ namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
@@ -29,24 +30,31 @@ class EditCaseload extends EditRecord implements HasTable
     {
         $this->data['model'] = CaseloadModel::from($this->data['model']);
         $this->data['type'] = CaseloadType::from($this->data['type']);
+        $this->data['user']['name'] = $this->getRecord()->user->name;
     }
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 TextInput::make('name')
                     ->autocomplete(false)
                     ->string()
                     ->required()
                     ->columnSpanFull(),
-                Select::make('type')
-                    ->options(CaseloadType::class)
-                    ->disabled(),
-                Select::make('model')
-                    ->label('Population')
-                    ->options(CaseloadModel::class)
-                    ->disabled(),
+                Grid::make()
+                    ->schema([
+                        Select::make('type')
+                            ->options(CaseloadType::class)
+                            ->disabled(),
+                        Select::make('model')
+                            ->label('Population')
+                            ->options(CaseloadModel::class)
+                            ->disabled(),
+                        TextInput::make('user.name')
+                            ->disabled(),
+                    ])
+                    ->columns(3),
             ]);
     }
 
@@ -55,7 +63,7 @@ class EditCaseload extends EditRecord implements HasTable
         return $table
             ->columns(CaseloadResource::columns($this->data['model']))
             ->filters(CaseloadResource::filters($this->data['model']))
-            ->actions(CaseloadResource::actions($this->data['model']))
+            // ->actions(CaseloadResource::actions($this->data['model']))
             ->query(function () {
                 $model = $this->data['model'];
                 $query = $model->query();
