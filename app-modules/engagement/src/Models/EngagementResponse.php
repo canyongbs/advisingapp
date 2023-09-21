@@ -4,14 +4,13 @@ namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Engagement\Models\Contracts\Sortable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperEngagementResponse
  */
-class EngagementResponse extends BaseModel implements Auditable, Sortable
+class EngagementResponse extends BaseModel implements Auditable
 {
     use AuditableTrait;
 
