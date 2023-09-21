@@ -38,7 +38,7 @@ class TaskKanban extends Page implements HasForms, HasActions
 
     public EloquentCollection|Collection $tasks;
 
-    public Task $currentTask;
+    public ?Task $currentTask = null;
 
     public function mount(): void
     {
