@@ -24,7 +24,7 @@ class EditCaseload extends EditRecord implements HasTable
 
     protected static string $resource = CaseloadResource::class;
 
-    protected static string $view = 'filament.resources.caseloads.pages.edit-caseload';
+    protected static string $view = 'caseload-management::filament.resources.caseloads.pages.edit-caseload';
 
     public function afterFill(): void
     {
