@@ -606,6 +606,27 @@ namespace Assist\Consent\Models{
  class IdeHelperConsentAgreement {}
 }
 
+namespace Assist\Division\Models{
+/**
+ * Assist\Division\Models\Division
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \App\Models\User|null $createdBy
+ * @property-read \App\Models\User|null $lastUpdatedBy
+ * @method static \Assist\Division\Database\Factories\DivisionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Division newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperDivision {}
+}
+
 namespace Assist\Engagement\Models{
 /**
  * Assist\Engagement\Models\Engagement

@@ -2,7 +2,6 @@
 
 namespace Assist\Prospect\Imports;
 
-use Closure;
 use App\Models\Import;
 use App\Imports\Importer;
 use Illuminate\Support\Str;
@@ -34,76 +33,32 @@ class ProspectImporter extends Importer
                 ->example('Jonathan Smith'),
             ImportColumn::make('preferred')
                 ->example('John'),
-            ImportColumn::make('status_id')
-                ->label('Status')
-                ->rules([function (string $attribute, mixed $value, Closure $fail) {
-                    $status = ProspectStatus::query()
-                        ->when(
-                            Str::isUuid($value),
-                            fn (Builder $query) => $query->whereKey($value),
-                            fn (Builder $query) => $query->where('name', $value),
-                        )
-                        ->first();
-
-                    if ($status) {
-                        return;
-                    }
-
-                    $fail('The selected status is invalid.');
-                }])
-                ->guess(['status'])
-                ->fillRecordUsing(function (Prospect $record, string $state) {
-                    $status = ProspectStatus::query()
+            ImportColumn::make('status')
+                ->relationship(
+                    resolveUsing: fn (mixed $state) => ProspectStatus::query()
                         ->when(
                             Str::isUuid($state),
                             fn (Builder $query) => $query->whereKey($state),
                             fn (Builder $query) => $query->where('name', $state),
                         )
-                        ->first();
-
-                    if (! $status) {
-                        return;
-                    }
-
-                    $record->status()->associate($status);
-                })
+                        ->first(),
+                )
+                ->guess(['status_id', 'status_name'])
                 ->requiredMapping()
-                ->example(ProspectStatus::query()->value('name')),
-            ImportColumn::make('source_id')
-                ->label('Source')
-                ->rules([function (string $attribute, mixed $value, Closure $fail) {
-                    $source = ProspectSource::query()
-                        ->when(
-                            Str::isUuid($value),
-                            fn (Builder $query) => $query->whereKey($value),
-                            fn (Builder $query) => $query->where('name', $value),
-                        )
-                        ->first();
-
-                    if ($source) {
-                        return;
-                    }
-
-                    $fail('The selected source is invalid.');
-                }])
-                ->guess(['source'])
-                ->fillRecordUsing(function (Prospect $record, string $state) {
-                    $source = ProspectSource::query()
+                ->example(fn (): ?string => ProspectStatus::query()->value('name')),
+            ImportColumn::make('source')
+                ->relationship(
+                    resolveUsing: fn (mixed $state) => ProspectSource::query()
                         ->when(
                             Str::isUuid($state),
                             fn (Builder $query) => $query->whereKey($state),
                             fn (Builder $query) => $query->where('name', $state),
                         )
-                        ->first();
-
-                    if (! $source) {
-                        return;
-                    }
-
-                    $record->source()->associate($source);
-                })
+                        ->first(),
+                )
+                ->guess(['source_id', 'source_name'])
                 ->requiredMapping()
-                ->example(ProspectSource::query()->value('name')),
+                ->example(fn (): ?string => ProspectSource::query()->value('name')),
             ImportColumn::make('description')
                 ->example('A description of the prospect.'),
             ImportColumn::make('email')

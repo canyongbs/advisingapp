@@ -4,10 +4,13 @@ namespace App\Filament\Actions\ImportAction;
 
 use Closure;
 use App\Imports\Importer;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Support\Components\Component;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ImportColumn extends Component
 {
@@ -43,6 +46,12 @@ class ImportColumn extends Component
     protected ?Importer $importer = null;
 
     protected mixed $example = null;
+
+    protected string | Closure | null $relationship = null;
+
+    protected string | array | Closure | null $resolveRelationshipUsing = null;
+
+    protected array $resolvedRelatedRecords = [];
 
     final public function __construct(string $name)
     {
@@ -225,7 +234,15 @@ class ImportColumn extends Component
             return;
         }
 
-        $this->getImporter()->getRecord()->{$this->getName()} = $state;
+        $relationship = $this->getRelationship();
+
+        if ($relationship) {
+            $relationship->associate($this->resolveRelatedRecord($state));
+
+            return;
+        }
+
+        $this->getRecord()->{$this->getName()} = $state;
     }
 
     public function getName(): string
@@ -235,7 +252,67 @@ class ImportColumn extends Component
 
     public function getDataValidationRules(): array
     {
-        return $this->evaluate($this->dataValidationRules);
+        $rules = $this->evaluate($this->dataValidationRules);
+
+        if ($this->hasRelationship()) {
+            $rules[] = function (string $attribute, mixed $state, Closure $fail) {
+                if (blank($state)) {
+                    return;
+                }
+
+                $record = $this->resolveRelatedRecord($state);
+
+                if ($record) {
+                    return;
+                }
+
+                $fail(__('validation.exists', ['attribute' => $attribute]));
+            };
+        }
+
+        return $rules;
+    }
+
+    public function resolveRelatedRecord(mixed $state): ?Model
+    {
+        if (array_key_exists($state, $this->resolvedRelatedRecords)) {
+            return $this->resolvedRelatedRecords[$state];
+        }
+
+        /** @var BelongsTo $relationship */
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
+        $relationshipQuery = $relationship->getQuery();
+
+        if (blank($this->resolveRelationshipUsing)) {
+            return $this->resolvedRelatedRecords[$state] = $relationshipQuery
+                ->where($relationship->getQualifiedOwnerKeyName(), $state)
+                ->first();
+        }
+
+        $resolveUsing = $this->evaluate($this->resolveRelationshipUsing, [
+            'state' => $state,
+        ]);
+
+        if ($resolveUsing instanceof Model) {
+            return $this->resolvedRelatedRecords[$state] = $resolveUsing;
+        }
+
+        $resolveUsing = Arr::wrap($resolveUsing);
+
+        $isFirst = true;
+
+        foreach ($resolveUsing as $columnToResolve) {
+            $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            $relationshipQuery->{$whereClause}(
+                $columnToResolve,
+                $state,
+            );
+
+            $isFirst = false;
+        }
+
+        return $this->resolvedRelatedRecords[$state] = $relationshipQuery->first();
     }
 
     public function getNestedRecursiveDataValidationRules(): array
@@ -281,6 +358,40 @@ class ImportColumn extends Component
     public function getExample(): mixed
     {
         return $this->evaluate($this->example);
+    }
+
+    public function relationship(string | Closure | null $name = null, string | array | Closure | null $resolveUsing = null): static
+    {
+        $this->relationship = $name ?? $this->getName();
+        $this->resolveRelationshipUsing = $resolveUsing;
+
+        return $this;
+    }
+
+    public function getRelationship(): ?BelongsTo
+    {
+        $name = $this->getRelationshipName();
+
+        if (blank($name)) {
+            return null;
+        }
+
+        return $this->getRecord()->{$name}();
+    }
+
+    public function getRelationshipName(): ?string
+    {
+        return $this->evaluate($this->relationship);
+    }
+
+    public function getRecord(): ?Model
+    {
+        return $this->getImporter()->getRecord();
+    }
+
+    public function hasRelationship(): bool
+    {
+        return filled($this->getRelationshipName());
     }
 
     protected function sanitizeStateItem(mixed $state): mixed
@@ -336,16 +447,18 @@ class ImportColumn extends Component
             'importer' => [$this->getImporter()],
             'options' => [$this->getImporter()->getOptions()],
             'originalData' => [$this->getImporter()->getOriginalData()],
-            'record' => [$this->getImporter()->getRecord()],
+            'record' => [$this->getRecord()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
+        $record = $this->getRecord();
+
         return match ($parameterType) {
             Importer::class => [$this->getImporter()],
-            Model::class => [$this->getImporter()->getRecord()],
+            Model::class, $record ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
