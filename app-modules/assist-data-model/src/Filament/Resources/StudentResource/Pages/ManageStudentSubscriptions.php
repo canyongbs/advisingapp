@@ -25,7 +25,9 @@ class ManageStudentSubscriptions extends ManageRelatedRecords
 
     protected static ?string $navigationLabel = 'Subscriptions';
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $breadcrumb = 'Subscriptions';
+
+    protected static ?string $navigationIcon = 'heroicon-o-user';
 
     public function form(Form $form): Form
     {

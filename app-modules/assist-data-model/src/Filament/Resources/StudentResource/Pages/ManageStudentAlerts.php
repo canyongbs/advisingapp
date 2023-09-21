@@ -34,6 +34,8 @@ class ManageStudentAlerts extends ManageRelatedRecords
 
     protected static ?string $navigationLabel = 'Alerts';
 
+    protected static ?string $breadcrumb = 'Alerts';
+
     protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
 
     public static function getNavigationItems(array $urlParameters = []): array

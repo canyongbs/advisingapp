@@ -22,6 +22,8 @@ class ManageStudentInteractions extends ManageRelatedRecords
 
     protected static string $relationship = 'interactions';
 
+    protected static ?string $breadcrumb = 'Interactions';
+
     protected static ?string $navigationLabel = 'Interactions';
 
     public function form(Form $form): Form

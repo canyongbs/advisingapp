@@ -36,6 +36,8 @@ class ManageStudentTasks extends ManageRelatedRecords
 
     protected static ?string $navigationLabel = 'Tasks';
 
+    protected static ?string $breadcrumb = 'Tasks';
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     public function form(Form $form): Form

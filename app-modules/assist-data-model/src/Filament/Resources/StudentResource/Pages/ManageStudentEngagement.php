@@ -22,6 +22,8 @@ class ManageStudentEngagement extends ManageRelatedRecords
 
     protected static ?string $navigationLabel = 'Engagements';
 
+    protected static ?string $breadcrumb = 'Engagements';
+
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
     public static function canAccess(?Model $record = null): bool

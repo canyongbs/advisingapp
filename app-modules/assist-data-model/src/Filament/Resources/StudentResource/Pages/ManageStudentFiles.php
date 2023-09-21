@@ -22,6 +22,8 @@ class ManageStudentFiles extends ManageRelatedRecords
 
     protected static ?string $navigationLabel = 'Files';
 
+    protected static ?string $breadcrumb = 'Files';
+
     protected static ?string $navigationIcon = 'heroicon-o-folder';
 
     public static function canAccess(?Model $record = null): bool

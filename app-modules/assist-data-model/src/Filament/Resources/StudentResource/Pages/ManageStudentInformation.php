@@ -23,6 +23,8 @@ class ManageStudentInformation extends ManageRelatedRecords
 
     protected static ?string $navigationLabel = 'Information';
 
+    protected static ?string $breadcrumb = 'Information';
+
     protected static ?string $navigationIcon = 'heroicon-o-information-circle';
 
     public static function canAccess(?Model $record = null): bool
