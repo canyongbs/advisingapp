@@ -8,12 +8,19 @@ use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
-class TaskKanban extends Page
+class TaskKanban extends Page implements HasForms, HasActions
 {
+    use InteractsWithActions;
+    use InteractsWithForms;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'task::filament.pages.task-kanban';

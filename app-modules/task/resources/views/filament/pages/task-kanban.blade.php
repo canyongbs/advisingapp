@@ -20,6 +20,7 @@
                                                     {{ $task->description }}
                                                 </div>
 
+                                                <livewire:task-kanban-edit-button :task="$task" />
                                                 <button type="button" data-modal-toggle="kanban-card-modal"
                                                         class="p-2 text-sm text-gray-500 rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700">
                                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -88,6 +89,7 @@
             </div>
         </div>
     </div>
+    <x-filament-actions::modals />
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('kanban', ($wire) => ({

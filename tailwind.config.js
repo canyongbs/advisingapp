@@ -1,4 +1,6 @@
 import preset from './vendor/filament/support/tailwind.config.preset'
+import forms from "@tailwindcss/forms";
+import typography from "@tailwindcss/typography";
 
 export default {
     presets: [preset],
@@ -16,6 +18,8 @@ export default {
         "./node_modules/flowbite/**/*.js",
     ],
     plugins: [
-        require('flowbite/plugin')
+        forms,
+        typography,
+        // require('flowbite/plugin')
     ],
 }
