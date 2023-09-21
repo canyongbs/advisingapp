@@ -1,4 +1,6 @@
-@php use Filament\Support\Facades\FilamentView; @endphp
+@php
+    use Assist\Livewire\Task\TaskKanban;use Filament\Support\Facades\FilamentView;
+@endphp
 <x-filament-panels::page
         @class([
             'fi-resource-list-records-page',
@@ -8,26 +10,26 @@
     <div class="w-full flex justify-start">
         <div class="grid max-w-xs grid-cols-2 gap-1 p-1 bg-gray-100 rounded-lg dark:bg-gray-800" role="group">
             <button
-                type="button"
-                @class([
-                    'px-5 py-1.5 text-xs font-medium rounded-lg',
-                    'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' => $viewType === 'table',
-                    'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' => $viewType !== 'table',
-                ])
-                wire:click="setViewType('table')"
+                    type="button"
+                    @class([
+                        'px-5 py-1.5 text-xs font-medium rounded-lg',
+                        'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' => $viewType === 'table',
+                        'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' => $viewType !== 'table',
+                    ])
+                    wire:click="setViewType('table')"
             >
-                <x-filament::icon class="w-6 h-6" icon="heroicon-m-table-cells" />
+                <x-filament::icon class="w-6 h-6" icon="heroicon-m-table-cells"/>
             </button>
             <button
-                type="button"
-                @class([
-                    'px-5 py-1.5 text-xs font-medium rounded-lg',
-                    'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' => $viewType === 'kanban',
-                    'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' => $viewType !== 'kanban',
-                ])
-                wire:click="setViewType('kanban')"
+                    type="button"
+                    @class([
+                        'px-5 py-1.5 text-xs font-medium rounded-lg',
+                        'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' => $viewType === 'kanban',
+                        'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' => $viewType !== 'kanban',
+                    ])
+                    wire:click="setViewType('kanban')"
             >
-                <x-filament::icon class="w-6 h-6" icon="heroicon-m-view-columns" />
+                <x-filament::icon class="w-6 h-6" icon="heroicon-m-view-columns"/>
             </button>
         </div>
     </div>
@@ -65,6 +67,6 @@
             {{ FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
         </div>
     @elseif($viewType === 'kanban')
-        <p>hi</p>
+        <livewire:task-kanban />
     @endif
 </x-filament-panels::page>
