@@ -12,6 +12,70 @@
 
 namespace App\Models{
 /**
+ * App\Models\FailedImportRow
+ *
+ * @property string $id
+ * @property array $data
+ * @property string $import_id
+ * @property string|null $validation_error
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Import $import
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereValidationError($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFailedImportRow {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Import
+ *
+ * @property string $id
+ * @property int|null $completed_at
+ * @property string $file_name
+ * @property string $file_path
+ * @property string $importer
+ * @property int $processed_rows
+ * @property int $total_rows
+ * @property int $successful_rows
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
+ * @property-read int|null $failed_rows_count
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Import newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Import newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Import query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereFileName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereFilePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereImporter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereProcessedRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereSuccessfulRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereTotalRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperImport {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Institution
  *
  * @property string $id
