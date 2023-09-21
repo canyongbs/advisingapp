@@ -23,6 +23,7 @@
                                             </div>
 
                                             <div class="flex flex-col">
+                                                <!-- TODO: Need to discuss with product as to whether or not Tasks should have a title AND description? -->
                                                 <div class="pb-4 text-sm font-normal text-gray-700 dark:text-gray-400">This
                                                     is the task description
                                                 </div>
