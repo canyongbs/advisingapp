@@ -79,7 +79,7 @@ class TaskKanban extends Page implements HasForms, HasActions
         ], ResponseAlias::HTTP_OK);
     }
 
-    public function editTask(Task $task)
+    public function viewTask(Task $task)
     {
         $this->currentTask = $task;
 

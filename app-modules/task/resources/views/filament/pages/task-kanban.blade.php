@@ -19,7 +19,7 @@
                                                 <div class="text-base font-semibold text-gray-900 dark:text-white">
                                                     {{ $task->description }}
                                                 </div>
-                                                <x-filament::icon-button wire:click="editTask('{{ $task->id }}')" icon="heroicon-m-pencil-square" />
+                                                <x-filament::icon-button wire:click="viewTask('{{ $task->id }}')" icon="heroicon-m-arrow-top-right-on-square" />
                                             </div>
 
                                             <div class="flex flex-col">
