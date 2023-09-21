@@ -8,10 +8,12 @@ use Assist\Task\Database\Seeders\TaskSeeder;
 use Illuminate\Support\Facades\Notification;
 use Assist\Division\Database\Seeders\DivisionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
+use Assist\Engagement\Database\Seeders\EngagementSeeder;
 use Assist\Interaction\Database\Seeders\InteractionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
 use Assist\Consent\Database\Seeders\ConsentAgreementSeeder;
+use Assist\Engagement\Database\Seeders\EngagementResponseSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
@@ -52,6 +54,8 @@ class DatabaseSeeder extends Seeder
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
             InternalUsersSeeder::class,
+            EngagementSeeder::class,
+            EngagementResponseSeeder::class,
         ]);
     }
 }

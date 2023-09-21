@@ -4,13 +4,14 @@ namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Engagement\Models\Contracts\Sortable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperEngagementResponse
  */
-class EngagementResponse extends BaseModel implements Auditable
+class EngagementResponse extends BaseModel implements Auditable, Sortable
 {
     use AuditableTrait;
 
@@ -19,6 +20,10 @@ class EngagementResponse extends BaseModel implements Auditable
         'sender_type',
         'content',
         'sent_at',
+    ];
+
+    protected $casts = [
+        'sent_at' => 'datetime',
     ];
 
     public function sender(): MorphTo

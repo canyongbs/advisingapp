@@ -5,6 +5,7 @@ namespace Assist\Engagement\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Engagement\Models\Contracts\Sortable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -19,7 +20,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperEngagement
  */
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, Sortable
 {
     use AuditableTrait;
 
@@ -31,6 +32,10 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'recipient_id',
         'recipient_type',
         'deliver_at',
+    ];
+
+    protected $casts = [
+        'deliver_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

@@ -2,6 +2,7 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
+use Filament\Actions\Action;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -48,6 +49,9 @@ class ViewStudent extends ViewRecord
     {
         return [
             SubscribeHeaderAction::make(),
+            Action::make('engagement_timeline')
+                ->label('Engagement Timeline')
+                ->url(fn (): string => "/students/{$this->record->getKey()}/engagement-timeline"),
         ];
     }
 }

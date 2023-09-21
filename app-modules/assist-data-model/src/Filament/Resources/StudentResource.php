@@ -2,6 +2,8 @@
 
 namespace Assist\AssistDataModel\Filament\Resources;
 
+use Filament\Forms\Form;
+use StudentEngagementTimeline;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Assist\AssistDataModel\Models\Student;
@@ -44,6 +46,7 @@ class StudentResource extends Resource
             'manage-subscriptions' => Pages\ManageStudentSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => Pages\ManageStudentTasks::route('/{record}/tasks'),
             'view' => Pages\ViewStudent::route('/{record}'),
+            'engagement_timeline' => StudentEngagementTimeline::route('/{record}/engagement-timeline'),
         ];
     }
 }
