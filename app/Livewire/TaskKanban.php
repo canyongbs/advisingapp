@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Exception;
 use Livewire\Component;
 use Assist\Task\Models\Task;
 use Filament\Actions\EditAction;
