@@ -39,7 +39,7 @@ class EngagementsRelationManager extends RelationManager
         return parent::form($createEngagementForm)
             ->schema([
                 Hidden::make('recipient_id')
-                    ->default($this->ownerRecord->identifier()),
+                    ->default($this->getOwnerRecord()->identifier()),
                 Hidden::make('recipient_type')
                     ->default(resolve(Prospect::class)->getMorphClass()),
                 ...$formComponents,

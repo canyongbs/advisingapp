@@ -2,31 +2,29 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use App\Filament\Resources\UserResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Prospect\Models\Prospect;
-use Assist\Task\Enums\TaskStatus;
-use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
-use Assist\Task\Models\Task;
-use Filament\Actions;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Tables\Table;
+use Assist\Task\Models\Task;
+use Assist\Task\Enums\TaskStatus;
+use Filament\Tables\Filters\Filter;
+use Assist\Prospect\Models\Prospect;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use App\Filament\Resources\UserResource;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Filters\SelectFilter;
+use Assist\AssistDataModel\Models\Student;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 class ManageStudentTasks extends ManageRelatedRecords
 {
@@ -34,9 +32,11 @@ class ManageStudentTasks extends ManageRelatedRecords
 
     protected static string $relationship = 'tasks';
 
+    // TODO: Automatically set from Filament based on relationship name
     protected static ?string $navigationLabel = 'Tasks';
 
-    protected static ?string $breadcrumb = 'Tasks';
+    // TODO: Automatically set from Filament based on relationship name
+    public static ?string $breadcrumb = 'Tasks';
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 

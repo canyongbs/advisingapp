@@ -416,7 +416,7 @@ namespace Assist\Audit\Models{
 /**
  * Assist\Audit\Models\Audit
  *
- * @property int $id
+ * @property string $id
  * @property string|null $change_agent_type
  * @property string|null $change_agent_id
  * @property string $event
@@ -595,11 +595,26 @@ namespace Assist\Consent\Models{
 /**
  * Assist\Consent\Models\ConsentAgreement
  *
+ * @property string $id
  * @property \Assist\Consent\Enums\ConsentAgreementType $type
+ * @property string $title
+ * @property string $description
+ * @property string $body
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @method static \Assist\Consent\Database\Factories\ConsentAgreementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -610,6 +625,16 @@ namespace Assist\Division\Models{
 /**
  * Assist\Division\Models\Division
  *
+ * @property string $id
+ * @property string $name
+ * @property string $code
+ * @property string|null $header
+ * @property string|null $footer
+ * @property string|null $created_by_id
+ * @property string|null $last_updated_by_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
@@ -619,6 +644,16 @@ namespace Assist\Division\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Division newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Division onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Division query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereFooter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereHeader($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereLastUpdatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Division withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Division withoutTrashed()
  * @mixin \Eloquent

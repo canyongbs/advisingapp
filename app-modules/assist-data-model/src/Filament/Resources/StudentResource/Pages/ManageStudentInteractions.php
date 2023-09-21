@@ -2,19 +2,17 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Component;
 use Assist\AssistDataModel\Models\Student;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use Assist\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
-use Filament\Actions;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Tables\Table;
 
 class ManageStudentInteractions extends ManageRelatedRecords
 {
@@ -22,9 +20,13 @@ class ManageStudentInteractions extends ManageRelatedRecords
 
     protected static string $relationship = 'interactions';
 
+    // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Interactions';
 
+    // TODO: Automatically set from Filament based on relationship name
     protected static ?string $navigationLabel = 'Interactions';
+
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
     public function form(Form $form): Form
     {

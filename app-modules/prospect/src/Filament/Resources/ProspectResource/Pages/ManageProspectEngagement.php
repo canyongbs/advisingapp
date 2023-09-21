@@ -1,16 +1,16 @@
 <?php
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementResponsesRelationManager;
+use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementsRelationManager;
+use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementResponsesRelationManager;
 
-class ManageStudentEngagement extends ManageRelatedRecords
+class ManageProspectEngagement extends ManageRelatedRecords
 {
-    protected static string $resource = StudentResource::class;
+    protected static string $resource = ProspectResource::class;
 
     // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'engagements';

@@ -2,22 +2,10 @@
 
 namespace Assist\AssistDataModel\Filament\Resources;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Assist\AssistDataModel\Models\Student;
-use Filament\Resources\RelationManagers\RelationGroup;
-use Assist\Alert\Filament\RelationManagers\AlertsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
-use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\PerformanceRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\SubscriptionsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementResponsesRelationManager;
 
 class StudentResource extends Resource
 {
@@ -29,13 +17,6 @@ class StudentResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-            ]);
-    }
-
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
@@ -46,6 +27,7 @@ class StudentResource extends Resource
             Pages\ManageStudentAlerts::class,
             Pages\ManageStudentTasks::class,
             Pages\ManageStudentSubscriptions::class,
+            Pages\ManageStudentInteractions::class,
         ]);
     }
 

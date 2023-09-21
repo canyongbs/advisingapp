@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -13,11 +13,11 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use Assist\Prospect\Filament\Resources\ProspectResource;
 
-class ManageStudentSubscriptions extends ManageRelatedRecords
+class ManageProspectSubscriptions extends ManageRelatedRecords
 {
-    protected static string $resource = StudentResource::class;
+    protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'subscriptions';
 
