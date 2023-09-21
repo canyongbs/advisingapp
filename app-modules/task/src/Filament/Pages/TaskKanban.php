@@ -4,6 +4,7 @@ namespace Assist\Task\Filament\Pages;
 
 use Exception;
 use Filament\Pages\Page;
+use Livewire\Attributes\On;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
 use Illuminate\Http\JsonResponse;
@@ -69,5 +70,11 @@ class TaskKanban extends Page implements HasForms, HasActions
             'success' => true,
             'message' => 'Task moved successfully.',
         ], ResponseAlias::HTTP_OK);
+    }
+
+    #[On('refresh-tasks')]
+    public function refreshTasks($task): void
+    {
+        ray($task);
     }
 }

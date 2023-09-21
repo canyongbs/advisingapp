@@ -14,23 +14,14 @@
 
                                 <div id="kanban-list-{{ $status->value }}" data-status="{{ $status->value }}" class="mb-4 space-y-4 min-w-kanban">
                                     @foreach($tasks[$status->value] as $task)
-                                        <div data-task="{{ $task->id }}" class="flex flex-col max-w-md p-5 transform bg-white rounded-lg shadow cursor-move dark:bg-gray-800">
+                                        <!-- removed transform class from here as it conflicted with modal -->
+                                        <div wire:key="task-{{ $task->id }}" data-task="{{ $task->id }}" class="flex flex-col max-w-md p-5 bg-white rounded-lg shadow cursor-move dark:bg-gray-800">
                                             <div class="flex items-center justify-between pb-4">
                                                 <div class="text-base font-semibold text-gray-900 dark:text-white">
                                                     {{ $task->description }}
                                                 </div>
 
                                                 <livewire:task-kanban-edit-button :task="$task" />
-                                                <button type="button" data-modal-toggle="kanban-card-modal"
-                                                        class="p-2 text-sm text-gray-500 rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700">
-                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                                                         xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
-                                                        <path fill-rule="evenodd"
-                                                              d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                                                              clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </button>
                                             </div>
 
                                             <div class="flex flex-col">

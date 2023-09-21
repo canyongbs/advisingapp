@@ -11,6 +11,7 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Task\Filament\Pages\TaskKanban;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
@@ -39,6 +40,8 @@ class TaskKanbanEditButton extends Component implements HasForms, HasActions
     {
         return EditAction::make('edit')
             ->record($this->task)
+            ->icon('heroicon-m-pencil-square')
+            ->iconButton()
             ->form([
                 TextInput::make('description')
                     ->label('Description')
@@ -75,6 +78,9 @@ class TaskKanbanEditButton extends Component implements HasForms, HasActions
                 $record->save();
 
                 return $record;
+            })
+            ->after(function (Model $record): void {
+                $this->dispatch('refresh-tasks', task: $record->id)->to(TaskKanban::class);
             });
     }
 }
