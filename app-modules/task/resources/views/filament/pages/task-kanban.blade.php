@@ -21,7 +21,7 @@
                                                     {{ $task->description }}
                                                 </div>
 
-                                                <livewire:task-kanban-edit-button :task="$task" />
+                                                <livewire:task-kanban-edit-button :task="$task" wire:key="task-edit-{{ $task->id }}" />
                                             </div>
 
                                             <div class="flex flex-col">
