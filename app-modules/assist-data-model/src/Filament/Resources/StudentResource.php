@@ -3,6 +3,7 @@
 namespace Assist\AssistDataModel\Filament\Resources;
 
 use Filament\Forms\Form;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\RelationManagers\RelationGroup;
@@ -35,24 +36,17 @@ class StudentResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    public static function getRecordSubNavigation(Page $page): array
     {
-        return [
-            RelationGroup::make('Student Information', [
-                ProgramsRelationManager::class,
-                EnrollmentsRelationManager::class,
-                PerformanceRelationManager::class,
-            ]),
-            RelationGroup::make('Engagement', [
-                EngagementsRelationManager::class,
-                EngagementResponsesRelationManager::class,
-                EngagementFilesRelationManager::class,
-            ]),
-            SubscriptionsRelationManager::class,
-            TasksRelationManager::class,
-            InteractionsRelationManager::class,
-            AlertsRelationManager::class,
-        ];
+        return $page->generateNavigationItems([
+            Pages\ViewStudent::class,
+            Pages\ManageStudentInformation::class,
+            Pages\ManageStudentEngagement::class,
+            Pages\ManageStudentFiles::class,
+            Pages\ManageStudentAlerts::class,
+            Pages\ManageStudentTasks::class,
+            Pages\ManageStudentSubscriptions::class,
+        ]);
     }
 
     public static function getPages(): array
@@ -60,9 +54,14 @@ class StudentResource extends Resource
         return [
             'index' => Pages\ListStudents::route('/'),
             'create' => Pages\CreateStudent::route('/create'),
+            'manage-alerts' => Pages\ManageStudentAlerts::route('/{record}/alerts'),
+            'manage-engagement' => Pages\ManageStudentEngagement::route('/{record}/engagement'),
+            'manage-files' => Pages\ManageStudentFiles::route('/{record}/files'),
+            'manage-information' => Pages\ManageStudentInformation::route('/{record}/information'),
+            'manage-interactions' => Pages\ManageStudentInteractions::route('/{record}/interactions'),
+            'manage-subscriptions' => Pages\ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            'manage-tasks' => Pages\ManageStudentTasks::route('/{record}/tasks'),
             'view' => Pages\ViewStudent::route('/{record}'),
-            // TODO: completely remove edit page
-            // 'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
 }

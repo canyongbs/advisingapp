@@ -1,21 +1,28 @@
 <?php
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
+namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Component;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\AssistDataModel\Models\Student;
-use Filament\Forms\Components\MorphToSelect;
-use App\Filament\Resources\RelationManagers\RelationManager;
 use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use Assist\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
+use Filament\Actions;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Tables\Table;
 
-class InteractionsRelationManager extends RelationManager
+class ManageStudentInteractions extends ManageRelatedRecords
 {
+    protected static string $resource = StudentResource::class;
+
     protected static string $relationship = 'interactions';
+
+    protected static ?string $navigationLabel = 'Interactions';
 
     public function form(Form $form): Form
     {
@@ -30,7 +37,7 @@ class InteractionsRelationManager extends RelationManager
         return parent::form($createInteractionForm)
             ->schema([
                 Hidden::make('interactable_id')
-                    ->default($this->ownerRecord->identifier()),
+                    ->default($this->getOwnerRecord()->identifier()),
                 Hidden::make('interactable_type')
                     ->default(resolve(Student::class)->getMorphClass()),
                 ...$formComponents,
