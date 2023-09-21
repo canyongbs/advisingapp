@@ -7,6 +7,7 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
+use Illuminate\Support\Collection;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
@@ -129,6 +130,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable
     public static function displayNameKey(): string
     {
         return 'full_name';
+    }
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['import', ...$this->webPermissions()]);
     }
 
     protected function serializeDate(DateTimeInterface $date): string

@@ -15,6 +15,7 @@ use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Consent\Models\Concerns\CanConsent;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -53,6 +54,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasManyEngagements;
     use HasManyEngagementBatches;
     use CanOrElse;
+    use CanConsent;
     use Impersonate;
 
     protected $hidden = [
@@ -142,6 +144,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasMany(AssistantChat::class);
     }
 
+    public function assistantChatMessageLogs(): HasMany
+    {
+        return $this->hasMany(AssistantChatMessageLog::class);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
@@ -155,11 +162,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function canBeImpersonated(): bool
     {
         return ! $this->hasRole('authorization.super_admin');
-    }
-
-    public function assistantChatMessageLogs(): HasMany
-    {
-        return $this->hasMany(AssistantChatMessageLog::class);
     }
 
     protected function serializeDate(DateTimeInterface $date): string
