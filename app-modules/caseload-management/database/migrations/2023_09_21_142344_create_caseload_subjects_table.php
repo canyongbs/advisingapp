@@ -12,6 +12,7 @@ return new class () extends Migration {
 
             $table->string('subject_id');
             $table->string('subject_type');
+
             $table->foreignUuid('caseload_id')->constrained('caseloads');
 
             $table->unique(['subject_id', 'subject_type', 'caseload_id']);

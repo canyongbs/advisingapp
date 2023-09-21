@@ -4,10 +4,10 @@ namespace Assist\CaseloadManagement\Filament\Resources;
 
 use Exception;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\SelectFilter;
