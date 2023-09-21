@@ -11,6 +11,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Assist\CaseloadManagement\Enums\CaseloadType;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
+use Assist\CaseloadManagement\Models\CaseloadSubject;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class CreateCaseload extends CreateRecord implements HasTable
@@ -56,16 +57,33 @@ class CreateCaseload extends CreateRecord implements HasTable
         return $table
             ->columns(CaseloadResource::columns($this->data['model']))
             ->filters(CaseloadResource::filters($this->data['model']))
+            ->actions(CaseloadResource::actions($this->data['model']))
             ->query(fn () => $this->data['model']->query());
+    }
+
+    public function afterCreate(): void
+    {
+        if ($this->data['type'] === CaseloadType::Static) {
+            $caseload = $this->getRecord();
+
+            $this
+                ->getFilteredTableQuery()
+                ->chunk(1000, function ($subjects) use ($caseload) {
+                    $subjects
+                        ->each(function ($item) use ($caseload) {
+                            $subject = new CaseloadSubject();
+                            $subject->subject()->associate($item);
+                            $subject->caseload()->associate($caseload);
+                            $subject->save();
+                        });
+                });
+        }
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         if ($this->data['type'] === CaseloadType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
-        } elseif ($this->data['type'] === CaseloadType::Static) {
-            //$this->getFilteredTableQuery()->pluck('id');
-            //bulk insert
         }
 
         return $data;

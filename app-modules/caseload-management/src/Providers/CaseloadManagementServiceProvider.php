@@ -2,6 +2,7 @@
 
 namespace Assist\CaseloadManagement\Providers;
 
+use Assist\CaseloadManagement\Models\CaseloadSubject;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Assist\CaseloadManagement\Models\Caseload;
@@ -21,6 +22,7 @@ class CaseloadManagementServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'caseload' => Caseload::class,
+            'caseload_subject' => CaseloadSubject::class
         ]);
 
         $this->registerRolesAndPermissions();

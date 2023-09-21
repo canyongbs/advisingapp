@@ -30,4 +30,12 @@ enum CaseloadModel: string implements HasLabel
             CaseloadModel::Prospect => Prospect::query(),
         };
     }
+
+    public function class(): string
+    {
+        return match ($this) {
+            CaseloadModel::Student => Student::class,
+            CaseloadModel::Prospect => Prospect::class,
+        };
+    }
 }

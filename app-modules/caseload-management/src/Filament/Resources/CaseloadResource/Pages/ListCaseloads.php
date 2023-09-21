@@ -4,6 +4,7 @@ namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -25,10 +26,24 @@ class ListCaseloads extends ListRecords
                     ->sortable(),
                 TextColumn::make('type')
                     ->sortable(),
+                TextColumn::make('user.name')
+                    ->label('Owner')
+                    ->sortable()
+                    ->hidden(function (Table $table) {
+                        return $table->getFilter('my_caseloads')->getState()['isActive'];
+                    }),
             ])
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
+            ])
+            ->filters([
+                Filter::make('my_caseloads')
+                    ->label('My Caseloads')
+                    ->query(
+                        fn ($query) => $query->where('user_id', auth()->id())
+                    )
+                    ->default(),
             ]);
     }
 

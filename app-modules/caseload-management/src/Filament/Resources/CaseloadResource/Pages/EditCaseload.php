@@ -12,6 +12,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Assist\CaseloadManagement\Enums\CaseloadType;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
+use Assist\CaseloadManagement\Models\CaseloadSubject;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class EditCaseload extends EditRecord implements HasTable
@@ -54,7 +55,20 @@ class EditCaseload extends EditRecord implements HasTable
         return $table
             ->columns(CaseloadResource::columns($this->data['model']))
             ->filters(CaseloadResource::filters($this->data['model']))
-            ->query(fn () => $this->data['model']->query());
+            ->actions(CaseloadResource::actions($this->data['model']))
+            ->query(function () {
+                $model = $this->data['model'];
+                $query = $model->query();
+
+                if ($this->data['type'] === CaseloadType::Static) {
+                    $column = app($model->class())->getKeyName();
+                    $ids = $this->getRecord()->subjects()->pluck('subject_id');
+
+                    $query->whereIn($column, $ids);
+                }
+
+                return $query;
+            });
     }
 
     public function bootedInteractsWithTable(): void
@@ -63,6 +77,29 @@ class EditCaseload extends EditRecord implements HasTable
             $this->tableFilters = $this->getRecord()->filters;
         }
         $this->baseBootedInteractsWithTable();
+    }
+
+    public function afterSave(): void
+    {
+        if ($this->data['type'] === CaseloadType::Static) {
+            $caseload = $this->getRecord();
+            $query = $this->getFilteredTableQuery();
+
+            $caseload
+                ->subjects()
+                ->chunk(1000, fn ($subjects) => $subjects->each->delete());
+
+            $query
+                ->chunk(1000, function ($subjects) use ($caseload) {
+                    $subjects
+                        ->each(function ($item) use ($caseload) {
+                            $subject = new CaseloadSubject();
+                            $subject->subject()->associate($item);
+                            $subject->caseload()->associate($caseload);
+                            $subject->save();
+                        });
+                });
+        }
     }
 
     protected function getHeaderActions(): array
@@ -76,9 +113,6 @@ class EditCaseload extends EditRecord implements HasTable
     {
         if ($this->data['type'] === CaseloadType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
-        } elseif ($this->data['type'] === CaseloadType::Static) {
-            // ray($this->getFilteredTableQuery()->get());
-            //bulk insert
         }
 
         return $data;

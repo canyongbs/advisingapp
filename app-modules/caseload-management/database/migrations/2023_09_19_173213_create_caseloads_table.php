@@ -16,17 +16,10 @@ return new class () extends Migration {
             $table->string('model');
             $table->string('type');
 
-            $table->foreignIdFor(User::class)->constrained();
+            $table->foreignUuid('user_id')->constrained('users');
 
             $table->timestamps();
             $table->softDeletes();
         });
-
-        // Schema::create('caseload_static_subjects', function (Blueprint $table) {
-        //     $table->string('subject_id');
-        //     $table->string('subject_type');
-        //     $table->morphs('caseloadable');
-        //     $table->timestamps();
-        // });
     }
 };

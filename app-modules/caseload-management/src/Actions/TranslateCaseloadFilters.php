@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 
-class TranslateCaseloadFilter
+class TranslateCaseloadFilters
 {
     public function handle(Caseload $caseload): Collection|array
     {

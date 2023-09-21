@@ -4,7 +4,7 @@ namespace Assist\CaseloadManagement\Console\Commands;
 
 use Illuminate\Console\Command;
 use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Actions\TranslateCaseloadFilter;
+use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 
 class TranslateCaseload extends Command
 {
@@ -19,7 +19,7 @@ class TranslateCaseload extends Command
     {
         Caseload::all()
             ->each(function (Caseload $caseload) {
-                ray(resolve(TranslateCaseloadFilter::class)->handle($caseload));
+                ray(resolve(TranslateCaseloadFilters::class)->handle($caseload));
             });
     }
 }

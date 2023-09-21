@@ -4,6 +4,8 @@ namespace Assist\CaseloadManagement\Filament\Resources;
 
 use Exception;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Columns\TextColumn;
@@ -28,12 +30,6 @@ class CaseloadResource extends Resource
 
     protected static ?string $navigationLabel = 'Define Caseload';
 
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->where('user_id', auth()->id());
-    }
-
     public static function filters(CaseloadModel $subject): array
     {
         return match ($subject) {
@@ -49,6 +45,15 @@ class CaseloadResource extends Resource
             CaseloadModel::Student => static::studentColumns(),
             CaseloadModel::Prospect => static::prospectColumns(),
             default => throw new Exception("{$subject->name} columns not implemented"),
+        };
+    }
+
+    public static function actions(CaseloadModel $subject): array
+    {
+        return match ($subject) {
+            CaseloadModel::Student => static::studentActions(),
+            CaseloadModel::Prospect => static::prospectActions(),
+            default => throw new Exception("{$subject->name} actions not implemented"),
         };
     }
 
@@ -151,6 +156,22 @@ class CaseloadResource extends Resource
                 ->label('Created')
                 ->dateTime('g:ia - M j, Y ')
                 ->sortable(),
+        ];
+    }
+
+    private static function studentActions(): array
+    {
+        return [
+            ViewAction::make(),
+            EditAction::make(),
+        ];
+    }
+
+    private static function prospectActions(): array
+    {
+        return [
+            ViewAction::make(),
+            EditAction::make(),
         ];
     }
 }
