@@ -19,8 +19,7 @@
                                                 <div class="text-base font-semibold text-gray-900 dark:text-white">
                                                     {{ $task->description }}
                                                 </div>
-
-                                                <livewire:task-kanban-edit-button :task="$task" />
+                                                <x-filament::icon-button wire:click="editTask('{{ $task->id }}')" icon="heroicon-m-pencil-square" />
                                             </div>
 
                                             <div class="flex flex-col">

@@ -4,14 +4,22 @@ namespace Assist\Task\Filament\Pages;
 
 use Exception;
 use Filament\Pages\Page;
-use Livewire\Attributes\On;
 use Assist\Task\Models\Task;
+use Filament\Actions\EditAction;
 use Assist\Task\Enums\TaskStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Assist\Prospect\Models\Prospect;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Assist\AssistDataModel\Models\Student;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -29,6 +37,8 @@ class TaskKanban extends Page implements HasForms, HasActions
     public array $statuses = [];
 
     public EloquentCollection|Collection $tasks;
+
+    public Task $currentTask;
 
     public function mount(): void
     {
@@ -72,9 +82,53 @@ class TaskKanban extends Page implements HasForms, HasActions
         ], ResponseAlias::HTTP_OK);
     }
 
-    #[On('refresh-tasks')]
-    public function refreshTasks($task): void
+    public function editTask(Task $task)
     {
-        ray($task);
+        $this->currentTask = $task;
+
+        $this->mountAction('edit');
+    }
+
+    public function editAction()
+    {
+        return EditAction::make('edit')
+            ->record($this->currentTask)
+            ->form([
+                TextInput::make('description')
+                    ->label('Description')
+                    ->required()
+                    ->string(),
+                DateTimePicker::make('due')
+                    ->label('Due Date')
+                    ->native(false),
+                Select::make('assigned_to')
+                    ->label('Assigned To')
+                    ->relationship('assignedTo', 'name')
+                    ->nullable()
+                    ->searchable(['name', 'email'])
+                    ->default(auth()->id()),
+                MorphToSelect::make('concern')
+                    ->label('Concern')
+                    ->searchable()
+                    ->preload()
+                    ->types([
+                        Type::make(Student::class)
+                            ->titleAttribute(Student::displayNameKey()),
+                        Type::make(Prospect::class)
+                            ->titleAttribute(Prospect::displayNameKey()),
+                    ]),
+            ])
+            ->using(function (Model $record, array $data): Model {
+                $data = collect($data);
+
+                /** @var Task $record */
+                $record->fill($data->except('assigned_to')->toArray());
+
+                $record->assigned_to = $data->get('assigned_to');
+
+                $record->save();
+
+                return $record;
+            });
     }
 }

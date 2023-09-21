@@ -1,7 +1,9 @@
 <div>
     {{ $this->editAction }}
 
-    @teleport('body')
-    <x-filament-actions::modals />
-    @endteleport
+    @once
+        @teleport('body')
+        <x-filament-actions::modals />
+        @endteleport
+    @endonce
 </div>
