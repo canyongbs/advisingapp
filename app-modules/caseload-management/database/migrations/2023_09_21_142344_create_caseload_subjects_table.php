@@ -15,8 +15,6 @@ return new class () extends Migration {
 
             $table->foreignUuid('caseload_id')->constrained('caseloads');
 
-            $table->unique(['subject_id', 'subject_type', 'caseload_id']);
-
             $table->timestamps();
         });
     }

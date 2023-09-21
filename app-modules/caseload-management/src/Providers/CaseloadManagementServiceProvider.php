@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\CaseloadManagement\Models\CaseloadSubject;
 use Assist\CaseloadManagement\CaseloadManagementPlugin;
 use Assist\Authorization\AuthorizationPermissionRegistry;
+use Assist\CaseloadManagement\Observers\CaseloadObserver;
 
 class CaseloadManagementServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,8 @@ class CaseloadManagementServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+
+        $this->registerObservers();
     }
 
     protected function registerRolesAndPermissions()
@@ -53,5 +56,10 @@ class CaseloadManagementServiceProvider extends ServiceProvider
             module: 'caseload-management',
             path: 'roles/web'
         );
+    }
+
+    protected function registerObservers(): void
+    {
+        Caseload::observe(CaseloadObserver::class);
     }
 }

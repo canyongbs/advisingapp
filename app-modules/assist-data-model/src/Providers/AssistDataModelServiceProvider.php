@@ -22,12 +22,5 @@ class AssistDataModelServiceProvider extends ServiceProvider
         Relation::morphMap([
             'student' => Student::class,
         ]);
-
-        $this->registerObservers();
-    }
-
-    protected function registerObservers(): void
-    {
-        Caseload::observe(CaseloadObserver::class);
     }
 }
