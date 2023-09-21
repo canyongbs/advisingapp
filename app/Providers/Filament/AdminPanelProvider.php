@@ -8,6 +8,7 @@ use App\Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
+use App\Filament\Actions\ImportAction;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Pages\ApplicationHealth;
@@ -34,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
         Field::configureUsing(fn ($field) => $field->translateLabel());
         Entry::configureUsing(fn ($entry) => $entry->translateLabel());
         Column::configureUsing(fn ($column) => $column->translateLabel());
+        ImportAction::configureUsing(fn (ImportAction $action) => $action->max(100000));
     }
 
     public function panel(Panel $panel): Panel

@@ -29,6 +29,14 @@ class ProspectPolicy
             : Response::deny('You do not have permission to create prospects.');
     }
 
+    public function import(User $user): Response
+    {
+        return $user->canOrElse(
+            abilities: 'prospect.import',
+            denyResponse: 'You do not have permission to import prospects.',
+        );
+    }
+
     public function update(User $user, Prospect $prospect): Response
     {
         return $user->can('prospect.*.update') || $user->can("prospect.{$prospect->id}.update")

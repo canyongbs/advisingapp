@@ -7,6 +7,9 @@ use App\Models\BaseModel;
 use Assist\Audit\Overrides\BelongsToMany;
 use Assist\Consent\Enums\ConsentAgreementType;
 
+/**
+ * @mixin IdeHelperConsentAgreement
+ */
 class ConsentAgreement extends BaseModel
 {
     protected $casts = [
