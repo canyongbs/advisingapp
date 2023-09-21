@@ -9,19 +9,15 @@ use Filament\Actions\EditAction;
 use Assist\Task\Enums\TaskStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Assist\Prospect\Models\Prospect;
-use Filament\Forms\Components\Select;
+use Assist\Task\Actions\UpdateTask;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Assist\AssistDataModel\Models\Student;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Components\DateTimePicker;
+use Assist\Task\Filament\Concerns\TaskEditForm;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
+use Assist\Task\Filament\Pages\Components\TaskKanbanViewAction;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
@@ -29,6 +25,7 @@ class TaskKanban extends Page implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
+    use TaskEditForm;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -86,49 +83,21 @@ class TaskKanban extends Page implements HasForms, HasActions
     {
         $this->currentTask = $task;
 
-        $this->mountAction('edit');
+        $this->mountAction('view');
     }
 
-    public function editAction()
+    public function viewAction()
     {
-        return EditAction::make('edit')
-            ->record($this->currentTask)
-            ->form([
-                TextInput::make('description')
-                    ->label('Description')
-                    ->required()
-                    ->string(),
-                DateTimePicker::make('due')
-                    ->label('Due Date')
-                    ->native(false),
-                Select::make('assigned_to')
-                    ->label('Assigned To')
-                    ->relationship('assignedTo', 'name')
-                    ->nullable()
-                    ->searchable(['name', 'email'])
-                    ->default(auth()->id()),
-                MorphToSelect::make('concern')
-                    ->label('Concern')
-                    ->searchable()
-                    ->preload()
-                    ->types([
-                        Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
-            ])
-            ->using(function (Model $record, array $data): Model {
-                $data = collect($data);
-
-                /** @var Task $record */
-                $record->fill($data->except('assigned_to')->toArray());
-
-                $record->assigned_to = $data->get('assigned_to');
-
-                $record->save();
-
-                return $record;
-            });
+        return TaskKanbanViewAction::make()->record($this->currentTask)
+            ->extraModalFooterActions(
+                [
+                    EditAction::make('edit')
+                        ->record($this->currentTask)
+                        ->form($this->editFormFields())
+                        ->using(function (Model $record, array $data): Model {
+                            return app(UpdateTask::class)->handle($record, $data);
+                        }),
+                ]
+            );
     }
 }
