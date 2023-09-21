@@ -5,8 +5,10 @@ namespace Assist\AssistDataModel\Providers;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Assist\AssistDataModel\Models\Student;
+use Assist\CaseloadManagement\Models\Caseload;
 use Assist\AssistDataModel\AssistDataModelPlugin;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\CaseloadManagement\Observers\CaseloadObserver;
 
 class AssistDataModelServiceProvider extends ServiceProvider
 {
@@ -20,5 +22,12 @@ class AssistDataModelServiceProvider extends ServiceProvider
         Relation::morphMap([
             'student' => Student::class,
         ]);
+
+        $this->registerObservers();
+    }
+
+    protected function registerObservers(): void
+    {
+        Caseload::observe(CaseloadObserver::class);
     }
 }

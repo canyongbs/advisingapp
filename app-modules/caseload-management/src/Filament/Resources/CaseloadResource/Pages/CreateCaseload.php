@@ -4,15 +4,13 @@ namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
-use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Assist\CaseloadManagement\Enums\CaseloadType;
+use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class CreateCaseload extends CreateRecord implements HasTable
@@ -27,15 +25,22 @@ class CreateCaseload extends CreateRecord implements HasTable
     {
         return parent::form($form)
             ->schema([
-                TextInput::make('name'),
+                TextInput::make('name')
+                    ->autocomplete(false)
+                    ->string()
+                    ->required()
+                    ->columnSpanFull(),
                 Select::make('type')
-                    ->options(CaseloadType::class),
+                    ->options(CaseloadType::class)
+                    ->default(CaseloadType::default())
+                    ->disableOptionWhen(fn ($value) => CaseloadType::from($value)->disabled())
+                    ->selectablePlaceholder(false)
+                    ->required(),
                 Select::make('model')
-                    ->options([
-                        'student' => 'Student',
-                        'prospect' => 'Prospect',
-                    ])
-                    ->default('student')
+                    ->label('Population')
+                    ->options(CaseloadModel::class)
+                    ->required()
+                    ->default(CaseloadModel::default())
                     ->selectablePlaceholder(false)
                     ->live()
                     ->afterStateUpdated(function () {
@@ -49,26 +54,19 @@ class CreateCaseload extends CreateRecord implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->columns([
-                TextColumn::make('full_name'),
-            ])
+            ->columns(CaseloadResource::columns($this->data['model']))
             ->filters(CaseloadResource::filters($this->data['model']))
-            ->query(fn () => match ($this->data['model']) {
-                'student' => Student::query(),
-                'prospect' => Prospect::query(),
-            });
+            ->query(fn () => $this->data['model']->query());
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        //dyanmic
-        $data['filters'] = $this->tableFilters ?? [];
-
-        //static
-        //$this->getFilteredTableQuery()->pluck('id');
-        //bulk insert
-
-        ray($data);
+        if ($this->data['type'] === CaseloadType::Dynamic) {
+            $data['filters'] = $this->tableFilters ?? [];
+        } elseif ($this->data['type'] === CaseloadType::Static) {
+            //$this->getFilteredTableQuery()->pluck('id');
+            //bulk insert
+        }
 
         return $data;
     }

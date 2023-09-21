@@ -47,6 +47,8 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex('#2bb8b3'),
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
+            ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
+            // ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -87,8 +89,7 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(ApplicationHealth::class),
-            ])
-            ->readOnlyRelationManagersOnResourceViewPagesByDefault(false);
+            ]);
     }
 
     public function boot(): void

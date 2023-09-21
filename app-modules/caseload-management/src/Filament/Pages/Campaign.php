@@ -6,7 +6,7 @@ use Filament\Pages\Page;
 
 class Campaign extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-megaphone';
 
     protected static ?string $navigationGroup = 'Mass Engagement';
 

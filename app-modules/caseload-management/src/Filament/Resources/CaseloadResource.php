@@ -5,11 +5,15 @@ namespace Assist\CaseloadManagement\Filament\Resources;
 use Exception;
 use Filament\Resources\Resource;
 use Filament\Tables\Filters\Filter;
+use Assist\Prospect\Models\Prospect;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Filters\TernaryFilter;
 use Assist\CaseloadManagement\Models\Caseload;
+use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\ListCaseloads;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\CreateCaseload;
@@ -18,22 +22,33 @@ class CaseloadResource extends Resource
 {
     protected static ?string $model = Caseload::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
 
     protected static ?string $navigationGroup = 'Mass Engagement';
 
     protected static ?string $navigationLabel = 'Define Caseload';
 
-    // public static function prospects
-
-    public static function filters(string $class): array
+    public static function getEloquentQuery(): Builder
     {
-        ray($class);
+        return parent::getEloquentQuery()
+            ->where('user_id', auth()->id());
+    }
 
-        return match ($class) {
-            'student' => static::studentFilters(),
-            'prospect' => static::prospectFilters(),
-            default => throw new Exception("{$class} filters not implemented"),
+    public static function filters(CaseloadModel $subject): array
+    {
+        return match ($subject) {
+            CaseloadModel::Student => static::studentFilters(),
+            CaseloadModel::Prospect => static::prospectFilters(),
+            default => throw new Exception("{$subject->name} filters not implemented"),
+        };
+    }
+
+    public static function columns(CaseloadModel $subject): array
+    {
+        return match ($subject) {
+            CaseloadModel::Student => static::studentColumns(),
+            CaseloadModel::Prospect => static::prospectColumns(),
+            default => throw new Exception("{$subject->name} columns not implemented"),
         };
     }
 
@@ -62,17 +77,17 @@ class CaseloadResource extends Resource
             TernaryFilter::make('dual'),
             TernaryFilter::make('ferpa')
                 ->label('FERPA'),
-            // Filter::make('holds')
-            //     ->form([
-            //         TextInput::make('hold'),
-            //     ])
-            //     ->query(function (Builder $query, array $data): Builder {
-            //         return $query
-            //             ->when(
-            //                 $data['hold'],
-            //                 fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
-            //             );
-            //     }),
+            Filter::make('holds')
+                ->form([
+                    TextInput::make('hold'),
+                ])
+                ->query(function (Builder $query, array $data): Builder {
+                    return $query
+                        ->when(
+                            $data['hold'],
+                            fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
+                        );
+                }),
         ];
     }
 
@@ -87,6 +102,55 @@ class CaseloadResource extends Resource
                 ->relationship('source', 'name')
                 ->multiple()
                 ->preload(),
+        ];
+    }
+
+    private static function studentColumns(): array
+    {
+        return [
+            TextColumn::make(Student::displayNameKey())
+                ->label('Name')
+                ->sortable(),
+            TextColumn::make('email'),
+            TextColumn::make('mobile'),
+            TextColumn::make('phone'),
+            TextColumn::make('sisid'),
+            TextColumn::make('otherid'),
+        ];
+    }
+
+    private static function prospectColumns(): array
+    {
+        return [
+            TextColumn::make(Prospect::displayNameKey())
+                ->label('Name')
+                ->sortable(),
+            TextColumn::make('email')
+                ->label('Email')
+                ->sortable(),
+            TextColumn::make('mobile')
+                ->label('Mobile')
+                ->sortable(),
+            TextColumn::make('status')
+                ->badge()
+                ->state(function (Prospect $record) {
+                    return $record->status->name;
+                })
+                ->color(function (Prospect $record) {
+                    return $record->status->color;
+                })
+                ->sortable(query: function (Builder $query, string $direction): Builder {
+                    return $query
+                        ->join('prospect_statuses', 'prospects.status_id', '=', 'prospect_statuses.id')
+                        ->orderBy('prospect_statuses.name', $direction);
+                }),
+            TextColumn::make('source.name')
+                ->label('Source')
+                ->sortable(),
+            TextColumn::make('created_at')
+                ->label('Created')
+                ->dateTime('g:ia - M j, Y ')
+                ->sortable(),
         ];
     }
 }
