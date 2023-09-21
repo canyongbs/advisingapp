@@ -27,6 +27,10 @@ class ListTasks extends ListRecords
 {
     protected static string $resource = TaskResource::class;
 
+    protected static string $view = 'task::filament.pages.list-tasks';
+
+    public string $viewType = 'table';
+
     public function table(Table $table): Table
     {
         return parent::table($table)
@@ -98,5 +102,10 @@ class ListTasks extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    public function setViewType(string $viewType): void
+    {
+        $this->viewType = $viewType;
     }
 }
