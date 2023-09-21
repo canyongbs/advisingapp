@@ -5,6 +5,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Assist\Prospect\Models\Prospect;
+use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -12,6 +13,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
+use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
@@ -91,6 +93,9 @@ class ListProspects extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            ImportAction::make()
+                ->importer(ProspectImporter::class)
+                ->authorize('import', Prospect::class),
             CreateAction::make(),
         ];
     }
