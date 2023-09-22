@@ -1,9 +1,3 @@
-{{-- Title --}}
-{{-- Datetime Indicator --}}
-{{-- Datetime --}}
-{{-- Description --}}
-
-{{-- TODO Build out this default component --}}
 <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
     {{ $title }}
 </h3>

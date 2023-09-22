@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Engagement\Filament\Pages\Components;
+namespace Assist\Engagement\Filament\Resources\EngagementResource\Components;
 
 use Filament\Actions\ViewAction;
 use Assist\Engagement\Filament\Concerns\EngagementInfolist;

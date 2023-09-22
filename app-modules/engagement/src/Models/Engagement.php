@@ -8,17 +8,17 @@ use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Timeline\Models\Contracts\Timelineable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Assist\Engagement\Models\Contracts\Timelineable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Engagement\Models\Contracts\RendersCustomTimelineView;
-use Assist\Engagement\Filament\Pages\Components\EngagementViewAction;
+use Assist\Timeline\Models\Contracts\RendersCustomTimelineView;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use Assist\Engagement\Filament\Resources\EngagementResource\Components\EngagementViewAction;
 
 /**
  * @property-read Educatable $recipient

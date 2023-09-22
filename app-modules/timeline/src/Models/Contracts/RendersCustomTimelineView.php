@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Engagement\Models\Contracts;
+namespace Assist\Timeline\Models\Contracts;
 
 interface RendersCustomTimelineView
 {

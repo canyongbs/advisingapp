@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
+namespace Assist\Timeline\Filament\Pages;
 
 use Exception;
 use Carbon\Carbon;
@@ -8,16 +8,16 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Models\Contracts\Timelineable;
+use Assist\Timeline\Models\Contracts\Timelineable;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Timeline\Exceptions\ModelMustBeTimelineable;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
-// TODO Create a timeline module where this lives
 abstract class Timeline extends Page
 {
     use InteractsWithRecord;
 
-    protected static string $view = 'engagement::filament.pages.timeline';
+    protected static string $view = 'timeline::timeline';
 
     public string $emptyStateMessage = 'There are no records to show on this timeline.';
 
@@ -33,8 +33,7 @@ abstract class Timeline extends Page
 
         foreach ($this->modelsToTimeline as $model) {
             if (! in_array(Timelineable::class, class_implements($model))) {
-                // TODO Custom exception once extracted into timeline module
-                throw new Exception("Model {$model} must implement Timelineable");
+                throw new ModelMustBeTimelineable("Model {$model} must implement Timelineable");
             }
 
             $this->aggregateRecords = $this->aggregateRecords->concat($model::getTimeline($this->recordModel));
@@ -52,13 +51,11 @@ abstract class Timeline extends Page
         $this->mountAction('view');
     }
 
-    // TODO Potentially extract this somewhere it can be re-used
     public function getRecordFromMorphAndKey($morphReference, $key)
     {
         $className = Relation::getMorphedModel($morphReference);
 
         if (is_null($className)) {
-            // TODO Custom exception
             throw new Exception("Model not found for reference: {$morphReference}");
         }
 
@@ -75,7 +72,7 @@ abstract class Timeline extends Page
         static::authorizeResourceAccess();
 
         // TODO We also need to check access for the other entities that are going to be included in the timeline
-        // This should now be pretty straightforward since we are defining the models in the $modelsToTimeline variable
+        // We probably just need to establish that the user can view any of a model, but might need to be more specific
         abort_unless(static::getResource()::canView($this->getRecord()), 403);
     }
 }

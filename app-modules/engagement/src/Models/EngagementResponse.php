@@ -7,11 +7,11 @@ use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Timeline\Models\Contracts\Timelineable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Assist\Engagement\Models\Contracts\Timelineable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Engagement\Models\Contracts\RendersCustomTimelineView;
-use Assist\Engagement\Filament\Pages\Components\EngagementResponseViewAction;
+use Assist\Timeline\Models\Contracts\RendersCustomTimelineView;
+use Assist\Engagement\Filament\Resources\EngagementResponseResource\Components\EngagementResponseViewAction;
 
 /**
  * @mixin IdeHelperEngagementResponse

@@ -1,9 +1,9 @@
 <?php
 
 use Assist\Engagement\Models\Engagement;
+use Assist\Timeline\Filament\Pages\Timeline;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\Engagement\Filament\Resources\EngagementResource\Pages\Timeline;
 
 class StudentEngagementTimeline extends Timeline
 {

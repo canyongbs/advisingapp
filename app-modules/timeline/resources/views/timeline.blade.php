@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     @if ($aggregateRecords->count() < 1)
-        <x-engagement::empty-state :message="$emptyStateMessage" />
+        <x-timeline::empty-state :message="$emptyStateMessage" />
     @else
         <ol class="relative">
             @foreach ($aggregateRecords as $record)
@@ -36,7 +36,7 @@
                             </x-slot:view-record-icon>
                         </x-dynamic-component>
                     @else
-                        <x-engagement::timeline-record :record="$record">
+                        <x-timeline::timeline-record :record="$record">
                             <x-slot:view-record-icon>
                                 <x-filament::icon-button
                                     class="absolute right-2 top-2"
@@ -44,7 +44,7 @@
                                     icon="heroicon-o-eye"
                                 />
                             </x-slot:view-record-icon>
-                        </x-engagement::timeline-record>
+                        </x-timeline::timeline-record>
                     @endif
 
                 </li>
