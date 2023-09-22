@@ -16,6 +16,5 @@ interface Timelineable
 
     public function modalViewAction(): ViewAction;
 
-    // We need a method that assures that we return a collection from any relationship this is called on
     public static function getTimeline(Model $forModel): Collection;
 }
