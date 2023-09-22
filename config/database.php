@@ -3,7 +3,6 @@
 use Illuminate\Support\Str;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Database Connection Name
@@ -34,7 +33,6 @@ return [
     */
 
     'connections' => [
-
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),
@@ -93,6 +91,20 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'sis' => [
+            'driver' => 'pgsql',
+            'url' => env('SIS_DATABASE_URL'),
+            'host' => env('SIS_DB_HOST', 'redshift'),
+            'port' => env('SIS_DB_PORT', '5433'),
+            'database' => env('SIS_DB_DATABASE', 'sis'),
+            'username' => env('SIS_DB_USERNAME', 'sail'),
+            'password' => env('SIS_DB_PASSWORD', 'password'),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
     ],
 
     /*
@@ -120,12 +132,11 @@ return [
     */
 
     'redis' => [
-
         'client' => env('REDIS_CLIENT', 'phpredis'),
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [
@@ -145,7 +156,15 @@ return [
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
-
     ],
 
+    'fdw' => [
+        'connection' => env('FDW_CONNECTION', 'pgsql'),
+        'server_name' => env('FDW_SERVER_NAME', 'sis_bridge'),
+        'external_host' => env('FDW_EXTERNAL_HOST', 'redshift'),
+        'external_port' => env('FDW_EXTERNAL_PORT', '5433'),
+        'external_user' => env('FDW_EXTERNAL_USER', 'sail'),
+        'external_password' => env('FDW_EXTERNAL_PASSWORD', 'password'),
+        'external_database' => env('FDW_EXTERNAL_DBNAME', 'sis'),
+    ],
 ];

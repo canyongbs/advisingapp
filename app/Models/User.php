@@ -2,40 +2,69 @@
 
 namespace App\Models;
 
-use App\Models\UserAlert;
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
-use Carbon\Carbon;
+use Filament\Panel;
 use DateTimeInterface;
-use Hash;
-use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Assist\Task\Models\Task;
+use App\Models\Concerns\CanOrElse;
+use App\Support\HasAdvancedFilter;
+use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Assistant\Models\AssistantChat;
+use Lab404\Impersonate\Models\Impersonate;
+use Filament\Models\Contracts\FilamentUser;
+use Assist\Notifications\Models\Subscription;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\Consent\Models\Concerns\CanConsent;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Assist\ServiceManagement\Models\ServiceRequest;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Assistant\Models\AssistantChatMessageLog;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Authorization\Models\Concerns\HasRoleGroups;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Assist\Engagement\Models\Concerns\HasManyEngagements;
+use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
+use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
 
-class User extends Authenticatable implements HasLocalePreference
+/**
+ * @mixin IdeHelperUser
+ */
+class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable
 {
-    use HasFactory, HasAdvancedFilter, Notifiable, SoftDeletes, Auditable;
-
-    public $table = 'users';
+    use HasFactory;
+    use HasAdvancedFilter;
+    use Notifiable;
+    use SoftDeletes;
+    use HasRoleGroups {
+        HasRoleGroups::roleGroups as traitRoleGroups;
+    }
+    use HasRolesWithPivot;
+    use DefinesPermissions;
+    use HasRelationships;
+    use HasUuids;
+    use AuditableTrait;
+    use HasManyEngagements;
+    use HasManyEngagementBatches;
+    use CanOrElse;
+    use CanConsent;
+    use Impersonate;
 
     protected $hidden = [
         'remember_token',
         'password',
     ];
 
-    public const TYPE_RADIO = [
-        'local' => 'Local',
-        'sso'   => 'SSO',
-    ];
-
-    protected $dates = [
-        'email_verified_at',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+    protected $casts = [
+        'is_external' => 'boolean',
+        'email_verified_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -66,6 +95,30 @@ class User extends Authenticatable implements HasLocalePreference
         'locale',
     ];
 
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function roleGroups(): BelongsToMany
+    {
+        return $this->traitRoleGroups()
+            ->using(RoleGroupUserPivot::class);
+    }
+
+    public function permissionsFromRoles(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+    }
+
+    public function serviceRequests(): HasMany
+    {
+        return $this->hasMany(
+            related: ServiceRequest::class,
+            foreignKey: 'assigned_to_id',
+        );
+    }
+
     public function getIsAdminAttribute()
     {
         return $this->roles()->where('title', 'Admin')->exists();
@@ -76,9 +129,9 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->whereHas('roles', fn ($q) => $q->where('title', 'Admin'));
     }
 
-    public function alerts()
+    public function assignedTasks(): HasMany
     {
-        return $this->belongsToMany(UserAlert::class)->withPivot('seen_at');
+        return $this->hasMany(Task::class, 'assigned_to');
     }
 
     public function preferredLocale()
@@ -86,50 +139,33 @@ class User extends Authenticatable implements HasLocalePreference
         return $this->locale;
     }
 
-    protected function serializeDate(DateTimeInterface $date)
+    public function assistantChats(): HasMany
     {
-        return $date->format('Y-m-d H:i:s');
+        return $this->hasMany(AssistantChat::class);
     }
 
-    public function getEmailVerifiedAtAttribute($value)
+    public function assistantChatMessageLogs(): HasMany
     {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+        return $this->hasMany(AssistantChatMessageLog::class);
     }
 
-    public function setEmailVerifiedAtAttribute($value)
+    public function canAccessPanel(Panel $panel): bool
     {
-        $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('project.datetime_format'), $value)->format('Y-m-d H:i:s') : null;
+        return true;
     }
 
-    public function setPasswordAttribute($input)
+    public function canImpersonate(): bool
     {
-        if ($input) {
-            $this->attributes['password'] = Hash::needsRehash($input) ? Hash::make($input) : $input;
-        }
+        return $this->can('authorization.impersonate');
     }
 
-    public function roles()
+    public function canBeImpersonated(): bool
     {
-        return $this->belongsToMany(Role::class);
+        return ! $this->hasRole('authorization.super_admin');
     }
 
-    public function getTypeLabelAttribute($value)
+    protected function serializeDate(DateTimeInterface $date): string
     {
-        return static::TYPE_RADIO[$this->type] ?? null;
-    }
-
-    public function getCreatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getUpdatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getDeletedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

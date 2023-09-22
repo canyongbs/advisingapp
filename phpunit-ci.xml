@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        backupGlobals="false"
+        bootstrap="vendor/autoload.php"
+        colors="true"
+        processIsolation="false"
+        stopOnFailure="true"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd"
+        cacheDirectory=".phpunit.cache"
+        backupStaticProperties="false"
+        failOnDeprecation="true"
+>
+  <testsuites>
+    <testsuite name="Unit">
+      <directory suffix="Test.php">./tests/Unit</directory>
+    </testsuite>
+    <testsuite name="Feature">
+      <directory suffix="Test.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Modules">
+      <directory suffix="Test.php">./app-modules/*/tests</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <server name="APP_ENV" value="testing"/>
+    <server name="BCRYPT_ROUNDS" value="4"/>
+    <server name="CACHE_DRIVER" value="array"/>
+    <server name="MAIL_MAILER" value="array"/>
+    <server name="QUEUE_CONNECTION" value="sync"/>
+    <server name="AUDIT_QUEUE_CONNECTION" value="sync"/>
+    <server name="SESSION_DRIVER" value="array"/>
+    <server name="TELESCOPE_ENABLED" value="false"/>
+    <server name="SCOUT_QUEUE" value="false"/>
+    <env name="REDIS_HOST" value="redis"/>
+    <env name="DB_CONNECTION" value="pgsql"/>
+    <env name="DB_HOST" value="postgres"/>
+    <env name="DB_PORT" value="5432"/>
+    <env name="DB_DATABASE" value="testing"/>
+    <env name="DB_USERNAME" value="root"/>
+    <env name="DB_PASSWORD" value="root"/>
+    <env name="SIS_DB_CONNECTION" value="sis"/>
+    <env name="SIS_DB_HOST" value="redshift"/>
+    <env name="SIS_DB_PORT" value="5432"/>
+    <env name="SIS_DB_DATABASE" value="testing"/>
+    <env name="SIS_DB_USERNAME" value="root"/>
+    <env name="SIS_DB_PASSWORD" value="root"/>
+    <env name="AZURE_OPEN_AI_ENABLE_TEST_MODE" value="true"/>
+  </php>
+</phpunit>

@@ -1,0 +1,26 @@
+{
+  "name": "canyon-gbs/task",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Task\\": "src/",
+      "Assist\\Task\\Tests\\": "tests/",
+      "Assist\\Task\\Database\\Factories\\": "database/factories/",
+      "Assist\\Task\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "stable",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Task\\Providers\\TaskServiceProvider"
+      ]
+    }
+  }
+}

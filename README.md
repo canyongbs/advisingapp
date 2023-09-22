@@ -98,18 +98,24 @@ Coming Soon
 
 ### Installation
 
-Coming Soon...
+[Local Development Setup Documentation](./docs/local-setup.md)
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Coming Soon
+[Roles and Permissions](./docs/roles-and-permissions.md)
+[Inbound Webhooks](./docs/inbound-webhooks.md)
 
 _For more examples, please refer to the [Documentation](https://assistforhighered.org)_
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- ROADMAP -->
+
+## Integrations
+
+[Twilio](./docs/integrations/twilio.md)
+[Azure OpenAI](./docs/integrations/azure_open_ai.md)
 ## Roadmap
 
 Coming Soon
@@ -141,6 +147,10 @@ Don't forget to give the project a star! Thanks again!
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+### Contribution Guidelines
+
+[Coding Standards Documentation](./docs/coding-standards.md)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

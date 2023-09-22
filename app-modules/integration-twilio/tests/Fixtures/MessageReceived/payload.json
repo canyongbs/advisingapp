@@ -1,0 +1,22 @@
+{
+    "ToCountry": "US",
+    "ToState": "AZ",
+    "SmsMessageSid": "SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "NumMedia": "0",
+    "ToCity": null,
+    "FromZip": "60202",
+    "SmsSid": "SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "FromState": "IL",
+    "SmsStatus": "received",
+    "FromCity": "CITY",
+    "Body": "This is a test message.",
+    "FromCountry": "US",
+    "To": "+16026915649",
+    "MessagingServiceSid": "MGXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "ToZip": null,
+    "NumSegments": "1",
+    "MessageSid": "SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "AccountSid": "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "From": "+12223334455",
+    "ApiVersion": "2010-04-01"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "canyon-gbs/theme",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0",
+    "filament/spatie-laravel-settings-plugin": "^3.0",
+    "spatie/laravel-settings": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Theme\\": "src/",
+      "Assist\\Theme\\Tests\\": "tests/",
+      "Assist\\Theme\\Database\\Factories\\": "database/factories/",
+      "Assist\\Theme\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "stable",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Theme\\Providers\\ThemeServiceProvider"
+      ]
+    }
+  }
+}

@@ -2,31 +2,20 @@
 
 namespace App\Models;
 
-use App\Support\HasAdvancedFilter;
-use App\Traits\Auditable;
-use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-class Institution extends Model
+/**
+ * @mixin IdeHelperInstitution
+ */
+class Institution extends BaseModel implements Auditable
 {
-    use HasFactory, HasAdvancedFilter, SoftDeletes, Auditable;
-
-    public $table = 'institutions';
-
-    public $orderable = [
-        'id',
-        'code',
-        'name',
-    ];
-
-    public $filterable = [
-        'id',
-        'code',
-        'name',
-    ];
+    use SoftDeletes;
+    use HasUuids;
+    use AuditableTrait;
 
     protected $fillable = [
         'code',
@@ -34,29 +23,8 @@ class Institution extends Model
         'description',
     ];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
-    protected function serializeDate(DateTimeInterface $date)
+    protected function serializeDate(DateTimeInterface $date): string
     {
-        return $date->format('Y-m-d H:i:s');
-    }
-
-    public function getCreatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getUpdatedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
-    }
-
-    public function getDeletedAtAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('project.datetime_format')) : null;
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

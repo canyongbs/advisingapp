@@ -1,0 +1,28 @@
+{
+    "name": "canyon-gbs/integration-twilio",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0",
+        "canyon-gbs/engagement": "*",
+        "canyon-gbs/webhook": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Assist\\IntegrationTwilio\\": "src/",
+            "Assist\\IntegrationTwilio\\Tests\\": "tests/",
+            "Assist\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
+            "Assist\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Assist\\IntegrationTwilio\\Providers\\IntegrationTwilioServiceProvider"
+            ]
+        }
+    }
+}

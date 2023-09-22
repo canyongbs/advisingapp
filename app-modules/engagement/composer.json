@@ -1,0 +1,27 @@
+{
+    "name": "canyon-gbs/engagement",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0",
+        "spatie/laravel-data": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Assist\\Engagement\\": "src/",
+            "Assist\\Engagement\\Tests\\": "tests/",
+            "Assist\\Engagement\\Database\\Factories\\": "database/factories/",
+            "Assist\\Engagement\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Assist\\Engagement\\Providers\\EngagementServiceProvider"
+            ]
+        }
+    }
+}

@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -31,4 +30,35 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // TODO: Find a way to move this setting to the Auth Module
+    'azure' => [
+        'client_id' => env('AZURE_CLIENT_ID'),
+        'client_secret' => env('AZURE_CLIENT_SECRET'),
+        'redirect' => env('AZURE_REDIRECT_URI'),
+        'tenant_id' => env('AZURE_TENANT_ID', 'common'),
+    ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
+    // TODO Find a way to move this setting to the Integration Twilio module
+    'twilio' => [
+        'account_sid' => env('TWILIO_ACCOUNT_SID'),
+        'auth_token' => env('TWILIO_AUTH_TOKEN'),
+        'from_number' => env('TWILIO_FROM_NUMBER'),
+        'test_to_number' => env('TWILIO_TEST_TO_NUMBER', null),
+        'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
+    ],
+
+    // TODO Find a way to move this setting to the Integration AI module
+    'azure_open_ai' => [
+        'endpoint' => env('AZURE_OPEN_AI_BASE_ENDPOINT'),
+        'api_key' => env('AZURE_OPEN_AI_API_KEY'),
+        'api_version' => env('AZURE_OPEN_AI_API_VERSION'),
+        'deployment_name' => env('AZURE_OPEN_AI_DEPLOYMENT_NAME'),
+        'enable_test_mode' => env('AZURE_OPEN_AI_ENABLE_TEST_MODE', true),
+    ],
 ];

@@ -1,0 +1,26 @@
+{
+  "name": "canyon-gbs/interaction",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Interaction\\": "src/",
+      "Assist\\Interaction\\Tests\\": "tests/",
+      "Assist\\Interaction\\Database\\Factories\\": "database/factories/",
+      "Assist\\Interaction\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Interaction\\Providers\\InteractionServiceProvider"
+      ]
+    }
+  }
+}

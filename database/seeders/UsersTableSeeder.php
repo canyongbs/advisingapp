@@ -4,23 +4,28 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Assist\Authorization\Models\Role;
 
 class UsersTableSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        $users = [
-            [
-                'id'             => 1,
-                'name'           => 'Admin',
-                'email'          => 'admin@admin.com',
-                'password'       => bcrypt('password'),
-                'remember_token' => null,
-                'locale'         => '',
-                'emplid'         => '',
-            ],
-        ];
+        /** Super Admin */
+        $superAdmin = User::factory()->create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@assist.com',
+            'password' => Hash::make('password'),
+        ]);
 
-        User::insert($users);
+        $superAdminRoles = Role::superAdmin()->get();
+
+        $superAdmin->assignRole($superAdminRoles);
+
+        User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'admin@assist.com',
+            'password' => Hash::make('password'),
+        ]);
     }
 }

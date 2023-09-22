@@ -1,0 +1,35 @@
+{
+  "name": "canyon-gbs/audit",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0",
+    "filament/spatie-laravel-settings-plugin": "^3.0",
+    "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
+    "spatie/laravel-settings": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Audit\\": "src/",
+      "Assist\\Audit\\Tests\\": "tests/",
+      "Assist\\Audit\\Database\\Factories\\": "database/factories/",
+      "Assist\\Audit\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "stable",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Audit\\Providers\\AuditServiceProvider"
+      ]
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/canyongbs/laravel-auditing"
+    }
+  ]
+}
