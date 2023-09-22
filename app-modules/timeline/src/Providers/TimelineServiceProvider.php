@@ -3,11 +3,11 @@
 namespace Assist\Timeline\Providers;
 
 use Filament\Panel;
+use Assist\Timeline\TimelinePlugin;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Timeline\TimelinePlugin;
 
 class TimelineServiceProvider extends ServiceProvider
 {
