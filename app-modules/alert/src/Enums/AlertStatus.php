@@ -4,13 +4,14 @@ namespace Assist\Alert\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum AlertSeverity: string implements HasLabel
+enum AlertStatus: string implements HasLabel
 {
-    case Low = 'low';
+    case Active = 'active';
 
-    case Medium = 'medium';
+    case Resolved = 'resolved';
 
-    case High = 'high';
+    case Cancelled = 'cancelled';
+
 
     public function getLabel(): ?string
     {

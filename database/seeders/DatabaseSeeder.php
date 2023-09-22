@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Task\Database\Seeders\TaskSeeder;
 use Illuminate\Support\Facades\Notification;
+use Assist\Alert\Database\Seeders\AlertSeeder;
 use Assist\Division\Database\Seeders\DivisionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
 use Assist\Interaction\Database\Seeders\InteractionSeeder;
@@ -52,6 +53,7 @@ class DatabaseSeeder extends Seeder
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
             InternalUsersSeeder::class,
+            AlertSeeder::class,
         ]);
     }
 }

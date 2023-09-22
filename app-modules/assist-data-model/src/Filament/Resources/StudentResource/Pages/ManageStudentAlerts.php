@@ -5,6 +5,7 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Assist\Alert\Enums\AlertStatus;
 use Assist\Prospect\Models\Prospect;
 use Assist\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\Select;
@@ -50,7 +51,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     // TODO: When it is decided how alerts are "resolved" this will need to take that into account to only display unresolved alerts
-                    return $ownerRecord->alerts()->count();
+                    return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
                 },
             );
 
@@ -64,9 +65,9 @@ class ManageStudentAlerts extends ManageRelatedRecords
         return $infolist
             ->schema([
                 TextEntry::make('description'),
-                TextEntry::make('severity')
-                    ->formatStateUsing(fn (AlertSeverity $state): string => ucfirst($state->value)),
+                TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
+                TextEntry::make('status'),
             ]);
     }
 
@@ -78,9 +79,12 @@ class ManageStudentAlerts extends ManageRelatedRecords
                     ->required(),
                 Select::make('severity')
                     ->options(AlertSeverity::class)
-                    ->enum(AlertSeverity::class),
+                    ->selectablePlaceholder(false),
                 Textarea::make('suggested_intervention')
                     ->required(),
+                Select::make('status')
+                    ->options(AlertStatus::class)
+                    ->selectablePlaceholder(false),
             ]);
     }
 
@@ -92,14 +96,15 @@ class ManageStudentAlerts extends ManageRelatedRecords
                 TextColumn::make('description')
                     ->limit(),
                 TextColumn::make('severity')
-                    ->sortable()
-                    ->formatStateUsing(fn (AlertSeverity $state): string => ucfirst($state->value)),
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
+                SelectFilter::make('status')
+                    ->options(AlertStatus::class),
             ])
             ->headerActions([
                 CreateAction::make(),
