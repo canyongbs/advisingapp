@@ -16,10 +16,10 @@ use Assist\Consent\Database\Seeders\ConsentAgreementSeeder;
 use Assist\Engagement\Database\Seeders\EngagementResponseSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
-use Assist\Engagement\Database\Seeders\DemoStudentEngagementSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
+use Assist\Engagement\Database\Seeders\DemoEducatableEngagementSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
             InternalUsersSeeder::class,
             EngagementSeeder::class,
             EngagementResponseSeeder::class,
-            DemoStudentEngagementSeeder::class,
+            DemoEducatableEngagementSeeder::class,
         ]);
     }
 }

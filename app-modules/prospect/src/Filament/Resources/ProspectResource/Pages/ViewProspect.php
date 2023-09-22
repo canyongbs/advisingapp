@@ -2,6 +2,7 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Assist\Prospect\Models\Prospect;
@@ -96,6 +97,9 @@ class ViewProspect extends ViewRecord
         return [
             EditAction::make(),
             SubscribeHeaderAction::make(),
+            Action::make('timeline')
+                ->label('Engagement Timeline')
+                ->url(fn (): string => "/prospects/{$this->record->getKey()}/engagement-timeline"),
         ];
     }
 }

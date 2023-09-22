@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Assist\Timeline\Models\Contracts\HasFilamentResource;
 use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -27,7 +28,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 /**
  * @mixin IdeHelperStudent
  */
-class Student extends Model implements Auditable, Subscribable, Educatable
+class Student extends Model implements Auditable, Subscribable, Educatable, HasFilamentResource
 {
     use AuditableTrait;
     use HasFactory;
@@ -110,7 +111,6 @@ class Student extends Model implements Auditable, Subscribable, Educatable
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');
     }
 
-    // TODO This needs to be in a contract somewhere
     public static function filamentResource(): string
     {
         return StudentResource::class;

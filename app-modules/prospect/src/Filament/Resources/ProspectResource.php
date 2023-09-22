@@ -6,6 +6,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Assist\Prospect\Models\Prospect;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 
 class ProspectResource extends Resource
 {
@@ -44,6 +45,7 @@ class ProspectResource extends Resource
             'manage-subscriptions' => Pages\ManageProspectSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => Pages\ManageProspectTasks::route('/{record}/tasks'),
             'view' => Pages\ViewProspect::route('/{record}'),
+            'engagement_timeline' => ProspectEngagementTimeline::route('/{record}/engagement-timeline'),
         ];
     }
 }

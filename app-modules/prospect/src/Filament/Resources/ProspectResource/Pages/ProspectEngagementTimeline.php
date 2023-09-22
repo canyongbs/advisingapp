@@ -1,17 +1,17 @@
 <?php
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Assist\Engagement\Models\Engagement;
 use Assist\Timeline\Filament\Pages\Timeline;
 use Assist\Engagement\Models\EngagementResponse;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use Assist\Prospect\Filament\Resources\ProspectResource;
 
-class StudentEngagementTimeline extends Timeline
+class ProspectEngagementTimeline extends Timeline
 {
-    protected static string $resource = StudentResource::class;
+    protected static string $resource = ProspectResource::class;
 
-    public string $emptyStateMessage = 'There are no engagements to show for this student.';
+    public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
 
     public array $modelsToTimeline = [
         Engagement::class,
