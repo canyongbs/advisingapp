@@ -1,0 +1,26 @@
+{
+  "name": "canyon-gbs/caseload-management",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\CaseloadManagement\\": "src/",
+      "Assist\\CaseloadManagement\\Tests\\": "tests/",
+      "Assist\\CaseloadManagement\\Database\\Factories\\": "database/factories/",
+      "Assist\\CaseloadManagement\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\CaseloadManagement\\Providers\\CaseloadManagementServiceProvider"
+      ]
+    }
+  }
+}

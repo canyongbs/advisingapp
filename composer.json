@@ -19,6 +19,7 @@
         "canyon-gbs/assistant": "*",
         "canyon-gbs/audit": "*@dev",
         "canyon-gbs/authorization": "*",
+        "canyon-gbs/caseload-management": "*",
         "canyon-gbs/consent": "*",
         "canyon-gbs/division": "*",
         "canyon-gbs/engagement": "*",
