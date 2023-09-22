@@ -4,6 +4,9 @@ namespace Assist\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Filament\Actions\ViewAction;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +17,7 @@ use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Contracts\RendersCustomTimelineView;
+use Assist\Engagement\Filament\Pages\Components\EngagementViewAction;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
@@ -57,6 +61,16 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function renderCustomView(): string
     {
         return 'engagement::engagement-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return EngagementViewAction::make()->record($this);
+    }
+
+    public static function getTimeline(Model $forModel): Collection
+    {
+        return $forModel->engagements()->with(['deliverables', 'batch'])->get();
     }
 
     public function user(): BelongsTo

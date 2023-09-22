@@ -29,10 +29,10 @@
                 @endforeach
             </span>
         </h3>
-        <x-filament::icon-button
-            wire:click="viewRecord('{{ $record }}')"
-            icon="heroicon-o-eye"
-        />
+
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
     </div>
 
     <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">

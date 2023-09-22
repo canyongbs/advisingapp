@@ -6,5 +6,5 @@ namespace Assist\Engagement\Models\Contracts;
 // A normalized set of data to be consumed and injected into the timeline view
 interface RendersNormalizedTimelineView
 {
-    public function renderCustomView(): string;
+
 }
