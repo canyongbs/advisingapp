@@ -1,5 +1,5 @@
 @php
-    use Assist\Livewire\Task\TaskKanban;use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Facades\FilamentView;
 @endphp
 <x-filament-panels::page
         @class([

@@ -20,6 +20,7 @@ export default {
     plugins: [
         forms,
         typography,
+        // TODO: Look into bringing this back but prevent it from causing issues with application wide colors
         // require('flowbite/plugin')
     ],
 }
