@@ -90,7 +90,7 @@ Key Features
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Coming soon
+Coming soon!
 
 ### Prerequisites
 
