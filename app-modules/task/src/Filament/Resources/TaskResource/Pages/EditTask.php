@@ -4,7 +4,7 @@ namespace Assist\Task\Filament\Resources\TaskResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
-use Assist\Task\Actions\UpdateTask;
+use Assist\Task\Models\Task;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\EditRecord;
 use Assist\Task\Filament\Concerns\TaskEditForm;
@@ -32,6 +32,8 @@ class EditTask extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        return app(UpdateTask::class)->handle($record, $data);
+        Task::unguarded(fn () => $record->update($data));
+
+        return $record;
     }
 }

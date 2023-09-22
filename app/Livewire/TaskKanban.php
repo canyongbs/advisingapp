@@ -9,7 +9,6 @@ use Filament\Actions\EditAction;
 use Assist\Task\Enums\TaskStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Assist\Task\Actions\UpdateTask;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\Contracts\HasActions;
@@ -93,7 +92,9 @@ class TaskKanban extends Component implements HasForms, HasActions
                         ->record($this->currentTask)
                         ->form($this->editFormFields())
                         ->using(function (Model $record, array $data): Model {
-                            return app(UpdateTask::class)->handle($record, $data);
+                            Task::unguarded(fn () => $record->update($data));
+
+                            return $record;
                         }),
                 ]
             );

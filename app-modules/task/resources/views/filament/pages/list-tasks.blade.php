@@ -1,5 +1,5 @@
 @php
-    use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Facades\FilamentView;use Filament\Support\Facades\FilamentAsset;
 @endphp
 <x-filament-panels::page
         @class([
@@ -46,11 +46,11 @@
                         @endphp
 
                         <x-filament::tabs.item
-                            :active="$activeTab === $tabKey"
-                            :badge="$tab->getBadge()"
-                            :icon="$tab->getIcon()"
-                            :icon-position="$tab->getIconPosition()"
-                            :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                                :active="$activeTab === $tabKey"
+                                :badge="$tab->getBadge()"
+                                :icon="$tab->getIcon()"
+                                :icon-position="$tab->getIconPosition()"
+                                :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                         >
                             {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
                         </x-filament::tabs.item>
@@ -67,51 +67,7 @@
             {{ FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
         </div>
     @elseif($viewType === 'kanban')
-        <livewire:task-kanban />
+        <livewire:task-kanban/>
     @endif
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('kanban', ($wire) => ({
-                init() {
-                    const kanbanLists = document.querySelectorAll('[id^="kanban-list-"]');
-
-                    kanbanLists.forEach(kanbanList => {
-                        window.Sortable.create(kanbanList, {
-                            group: 'kanban',
-                            animation: 100,
-                            forceFallback: true,
-                            dragClass: 'drag-card',
-                            ghostClass: 'ghost-card',
-                            easing: 'cubic-bezier(0, 0.55, 0.45, 1)',
-                            onAdd: async function (evt) {
-                                try {
-                                    const result = await $wire.movedTask(evt.item.dataset.task, evt.from.dataset.status, evt.to.dataset.status);
-
-                                    if (result.original.success) {
-                                        new FilamentNotification()
-                                            .icon('heroicon-o-check-circle')
-                                            .title(result.original.message)
-                                            .iconColor('success')
-                                            .send()
-                                    } else {
-                                        new FilamentNotification()
-                                            .icon('heroicon-o-x-circle')
-                                            .title(result.original.message)
-                                            .iconColor('danger')
-                                            .send()
-                                    }
-                                } catch (e) {
-                                    new FilamentNotification()
-                                        .icon('heroicon-o-x-circle')
-                                        .title('Something went wrong, please try again later')
-                                        .iconColor('danger')
-                                        .send()
-                                }
-                            },
-                        });
-                    });
-                },
-            }))
-        })
-    </script>
+    <script src="{{ FilamentAsset::getScriptSrc('kanban', 'canyon-gbs/task') }}"></script>
 </x-filament-panels::page>
