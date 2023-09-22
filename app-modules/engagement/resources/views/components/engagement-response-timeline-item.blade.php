@@ -6,10 +6,9 @@
 <div>
     <div class="flex flex-row justify-between">
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-            {{-- TODO We need to figure out whether this is a student/prospect --}}
             <a
                 class="font-medium underline"
-                href="{{ StudentResource::getUrl('view', ['record' => $record->sender]) }}"
+                href="{{ $record->sender->filamentResource()::getUrl('view', ['record' => $record->sender]) }}"
             >
                 {{ $record->sender->full_name }}
             </a>

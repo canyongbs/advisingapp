@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
@@ -107,5 +108,11 @@ class Student extends Model implements Auditable, Subscribable, Educatable
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');
+    }
+
+    // TODO This needs to be in a contract somewhere
+    public static function filamentResource(): string
+    {
+        return StudentResource::class;
     }
 }
