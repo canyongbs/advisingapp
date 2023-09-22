@@ -23,6 +23,8 @@ abstract class Timeline extends Page
 
     public $aggregateRecords;
 
+    public array $modelsToTimeline = [];
+
     public Model $currentRecordToView;
 
     public Model $recordModel;
