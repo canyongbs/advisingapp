@@ -1,6 +1,4 @@
 import preset from './vendor/filament/support/tailwind.config.preset'
-import forms from "@tailwindcss/forms";
-import typography from "@tailwindcss/typography";
 
 export default {
     presets: [preset],
@@ -17,10 +15,14 @@ export default {
         './vendor/awcodes/filament-tiptap-editor/resources/**/*.blade.php',
         "./node_modules/flowbite/**/*.js",
     ],
+    theme: {
+        extend: {
+            colors: {
+                gray: require('tailwindcss/colors').zinc,
+            },
+        },
+    },
     plugins: [
-        forms,
-        typography,
-        // TODO: Look into bringing this back but prevent it from causing issues with application wide colors
-        // require('flowbite/plugin')
+        require('flowbite/plugin')
     ],
 }
