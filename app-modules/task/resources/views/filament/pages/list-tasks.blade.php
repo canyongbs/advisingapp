@@ -47,11 +47,11 @@
                         @endphp
 
                         <x-filament::tabs.item
-                                :active="$activeTab === $tabKey"
-                                :badge="$tab->getBadge()"
-                                :icon="$tab->getIcon()"
-                                :icon-position="$tab->getIconPosition()"
-                                :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                            :active="$activeTab === $tabKey"
+                            :badge="$tab->getBadge()"
+                            :icon="$tab->getIcon()"
+                            :icon-position="$tab->getIconPosition()"
+                            :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                         >
                             {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
                         </x-filament::tabs.item>
