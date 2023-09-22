@@ -3,26 +3,47 @@
 namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use Exception;
+use Carbon\Carbon;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Assist\Engagement\Models\Contracts\Timelineable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
+// TODO Create a timeline module where this lives
 abstract class Timeline extends Page
 {
     use InteractsWithRecord;
 
     protected static string $view = 'engagement::filament.pages.timeline';
 
-    public string $emptyStateMessage = 'There are no records to show on this timeline';
+    public string $emptyStateMessage = 'There are no records to show on this timeline.';
 
     public $aggregateRecords;
 
     public Model $currentRecordToView;
 
-    abstract public function aggregateRecords(): Collection;
+    public Model $recordModel;
+
+    public function aggregateRecords(): Collection
+    {
+        $this->aggregateRecords = collect();
+
+        foreach ($this->modelsToTimeline as $model) {
+            if (! in_array(Timelineable::class, class_implements($model))) {
+                // TODO Custom exception once extracted into timeline module
+                throw new Exception("Model {$model} must implement Timelineable");
+            }
+
+            $this->aggregateRecords = $this->aggregateRecords->concat($model::getTimeline($this->recordModel));
+        }
+
+        return $this->aggregateRecords = $this->aggregateRecords->sortByDesc(function ($record) {
+            return Carbon::parse($record->sortableBy())->timestamp;
+        });
+    }
 
     public function viewRecord($record, $morphReference)
     {
@@ -37,7 +58,7 @@ abstract class Timeline extends Page
         $className = Relation::getMorphedModel($morphReference);
 
         if (is_null($className)) {
-            // TODO Potentially custom exception
+            // TODO Custom exception
             throw new Exception("Model not found for reference: {$morphReference}");
         }
 
