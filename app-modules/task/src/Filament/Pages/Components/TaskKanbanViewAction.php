@@ -1,14 +1,14 @@
 <?php
 
-namespace Assist\Task\Filament\Resources\TaskResource\Components;
+namespace Assist\Task\Filament\Pages\Components;
 
 use Assist\Task\Models\Task;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Assist\Task\Enums\TaskStatus;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ViewAction;
 use Assist\Task\Filament\Concerns\TaskViewActionInfoList;
 
-class TaskViewAction extends ViewAction
+class TaskKanbanViewAction extends ViewAction
 {
     use TaskViewActionInfoList;
 

@@ -29,4 +29,14 @@ enum TaskStatus: string
             self::CANCELLED => 'danger',
         };
     }
+
+    public function displayName(): string
+    {
+        return match ($this) {
+            self::PENDING => 'Pending',
+            self::IN_PROGRESS => 'In Progress',
+            self::COMPLETED => 'Completed',
+            self::CANCELLED => 'Cancelled',
+        };
+    }
 }

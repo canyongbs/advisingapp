@@ -17,7 +17,11 @@ class TaskPlugin implements Plugin
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
             for: 'Assist\\Task\\Filament\\Resources'
-        );
+        )
+            ->discoverPages(
+                in: __DIR__ . '/Filament/Pages',
+                for: 'Assist\\Task\\Filament\\Pages'
+            );
     }
 
     public function boot(Panel $panel): void {}
