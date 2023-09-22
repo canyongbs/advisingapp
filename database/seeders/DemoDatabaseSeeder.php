@@ -11,6 +11,7 @@ use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
 use Assist\Consent\Database\Seeders\ConsentAgreementSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
+use Assist\Engagement\Database\Seeders\DemoStudentEngagementSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
@@ -46,6 +47,7 @@ class DemoDatabaseSeeder extends Seeder
             KnowledgeBaseItemSeeder::class,
             TaskSeeder::class,
             ConsentAgreementSeeder::class,
+            DemoStudentEngagementSeeder::class,
         ]);
     }
 }

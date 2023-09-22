@@ -47,8 +47,6 @@
                         </x-engagement::timeline-record>
                     @endif
 
-                    {{-- TODO Can we extract this? Or perhaps keep it outside of the specific timeline files??? --}}
-
                 </li>
             @endforeach
         </ol>

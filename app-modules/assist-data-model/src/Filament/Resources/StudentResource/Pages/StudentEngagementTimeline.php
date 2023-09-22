@@ -20,7 +20,6 @@ class StudentEngagementTimeline extends Timeline
     {
         $this->recordModel = $this->record = $this->resolveRecord($record);
 
-        // TODO Authorization
         $this->authorizeAccess();
 
         $this->aggregateRecords();

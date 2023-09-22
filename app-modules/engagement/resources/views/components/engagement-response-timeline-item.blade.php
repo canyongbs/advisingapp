@@ -24,6 +24,7 @@
     <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
         Sent {{ $record->sent_at->diffForHumans() }}
     </time>
+
     <div
         class="my-4 rounded-lg border-2 border-gray-300 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
         <div class="flex flex-col">
