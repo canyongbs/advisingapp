@@ -26,7 +26,7 @@ class CreateTask extends CreateRecord
             ->schema([
                 TextInput::make('title')
                     ->required()
-                    ->length(100)
+                    ->maxLength(100)
                     ->string(),
                 Textarea::make('description')
                     ->required()

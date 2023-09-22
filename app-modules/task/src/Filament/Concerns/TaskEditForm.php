@@ -18,7 +18,7 @@ trait TaskEditForm
         return [
             TextInput::make('title')
                 ->required()
-                ->length(100)
+                ->maxLength(100)
                 ->string(),
             Textarea::make('description')
                 ->required()
