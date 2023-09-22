@@ -1,5 +1,6 @@
 @php
-    use Filament\Support\Facades\FilamentView;use Filament\Support\Facades\FilamentAsset;
+    use Filament\Support\Facades\FilamentView;
+    use Filament\Support\Facades\FilamentAsset;
 @endphp
 <x-filament-panels::page
         @class([
