@@ -6,11 +6,19 @@ use Assist\Engagement\Models\Engagement;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\Engagement\Filament\Resources\EngagementResource\Pages\EngagementTimeline;
+use Assist\Engagement\Filament\Resources\EngagementResource\Pages\Timeline;
 
-class StudentEngagementTimeline extends EngagementTimeline
+class StudentEngagementTimeline extends Timeline
 {
     protected static string $resource = StudentResource::class;
+
+    public string $emptyStateMessage = 'There are no engagements to show.';
+
+    // TODO Implement this
+    public array $modelsToTimeline = [
+        Engagement::class,
+        EngagementResponse::class,
+    ];
 
     public Student $student;
 
@@ -21,14 +29,18 @@ class StudentEngagementTimeline extends EngagementTimeline
         // TODO Authorization
         $this->authorizeAccess();
 
-        $this->aggregateEngagements = $this->aggregateEngagements();
+        $this->aggregateRecords = $this->aggregateRecords();
     }
 
-    public function aggregateEngagements(): Collection
+    public function aggregateRecords(): Collection
     {
-        $this->aggregateEngagements = collect();
+        $this->aggregateRecords = collect();
 
-        // TODO Extract this logic to a trait that can be shared across models/resources that are going to use this timeline
+        // TODO Now we need some sort of way to find the connection
+        // Between the record and the models being timelined
+        // We can use reflection in order to easily find the relationships
+        // To call from the morph label of the class
+
         $engagements = $this->student->engagements()
             ->with(['deliverables', 'batch'])
             ->get();
@@ -36,20 +48,12 @@ class StudentEngagementTimeline extends EngagementTimeline
         $engagementResponses = $this->student->engagementResponses()
             ->get();
 
-        $this->aggregateEngagements = $engagements->concat($engagementResponses);
+        $this->aggregateRecords = $engagements->concat($engagementResponses);
 
-        $this->aggregateEngagements = $this->aggregateEngagements->sortByDesc(function (Engagement|EngagementResponse $record) {
-            if ($record instanceof Engagement) {
-                return Carbon::parse($record->deliver_at)->timestamp;
-            }
-
-            if ($record instanceof EngagementResponse) {
-                return Carbon::parse($record->sent_at)->timestamp;
-            }
-
-            return null;
+        return $this->aggregateRecords = $this->aggregateRecords->sortByDesc(function (Engagement|EngagementResponse $record) {
+            // TODO This field needs to be defined on a timelineable model
+            // So that we don't need to do different checks here
+            return Carbon::parse($record->sortableBy())->timestamp;
         });
-
-        return $this->aggregateEngagements;
     }
 }

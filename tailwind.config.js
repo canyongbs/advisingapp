@@ -1,10 +1,10 @@
-import preset from './vendor/filament/support/tailwind.config.preset'
+import preset from './vendor/filament/support/tailwind.config.preset';
+import forms from '@tailwindcss/forms';
+import typography from '@tailwindcss/typography';
 
 export default {
     presets: [preset],
-    safelist: [
-        'text-black',
-    ],
+    safelist: ['text-black'],
     content: [
         './app/Filament/**/*.php',
         './app-modules/**/src/Filament/**/*.php',
@@ -25,4 +25,5 @@ export default {
     plugins: [
         require('flowbite/plugin')
     ],
-}
+    plugins: [forms, typography],
+};

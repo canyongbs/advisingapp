@@ -8,10 +8,12 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Assist\Engagement\Models\Contracts\Timelineable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Engagement\Models\Contracts\RendersCustomTimelineView;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
@@ -19,7 +21,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperEngagement
  */
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, Timelineable, RendersCustomTimelineView
 {
     use AuditableTrait;
 
@@ -36,6 +38,26 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     protected $casts = [
         'deliver_at' => 'datetime',
     ];
+
+    public function icon(): string
+    {
+        return 'heroicon-o-arrow-small-right';
+    }
+
+    public function sortableBy(): string
+    {
+        return $this->deliver_at;
+    }
+
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return 'engagement::engagement-timeline-item';
+    }
 
     public function user(): BelongsTo
     {

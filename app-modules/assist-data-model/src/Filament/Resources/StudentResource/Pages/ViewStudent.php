@@ -49,8 +49,10 @@ class ViewStudent extends ViewRecord
     {
         return [
             SubscribeHeaderAction::make(),
-            Action::make('engagement_timeline')
+            // TODO Clean this action up and extract it to be re-usable (extract to Timeline component)
+            Action::make('timeline')
                 ->label('Engagement Timeline')
+                // TODO Figure out how to route to this more effectively
                 ->url(fn (): string => "/students/{$this->record->getKey()}/engagement-timeline"),
         ];
     }
