@@ -7,11 +7,12 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Assist\Engagement\Models\Contracts\Timelineable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Engagement\Models\Contracts\RendersCustomTimelineView;
 
 /**
  * @mixin IdeHelperEngagementResponse
  */
-class EngagementResponse extends BaseModel implements Auditable, Timelineable
+class EngagementResponse extends BaseModel implements Auditable, Timelineable, RendersCustomTimelineView
 {
     use AuditableTrait;
 
@@ -38,7 +39,12 @@ class EngagementResponse extends BaseModel implements Auditable, Timelineable
 
     public function providesCustomView(): bool
     {
-        return false;
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return 'engagement::engagement-response-timeline-item';
     }
 
     public function sender(): MorphTo

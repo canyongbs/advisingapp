@@ -2,7 +2,7 @@
     @if ($aggregateRecords->count() < 1)
         <x-engagement::empty-state :message="$emptyStateMessage" />
     @else
-        <ol>
+        <ol class="relative">
             @foreach ($aggregateRecords as $record)
                 {{-- TODO Figure out how to ensure this doesn't show on the last record --}}
                 {{-- We don't want a "carry over" line to a non existing item --}}
@@ -22,12 +22,6 @@
                         />
                     </span>
 
-                    {{-- TODO We should provide a bit of flexibility here --}}
-                    {{-- Some models and there contents are probably going to require custom views --}}
-                    {{-- Others can probably operate on some sort of normalized standard --}}
-                    {{-- If the record does not have an associated view --}}
-                    {{-- We need to guarantee that it has some fields we're expecting --}}
-                    {{-- And we'll inject those into the standardized view --}}
                     @if ($record->providesCustomView())
                         <x-dynamic-component
                             :component="$record->renderCustomView()"
@@ -41,5 +35,4 @@
             @endforeach
         </ol>
     @endif
-
 </x-filament-panels::page>
