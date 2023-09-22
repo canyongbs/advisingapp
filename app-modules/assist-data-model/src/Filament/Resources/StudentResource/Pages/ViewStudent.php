@@ -13,6 +13,9 @@ class ViewStudent extends ViewRecord
 {
     protected static string $resource = StudentResource::class;
 
+    // TODO: Automatically set from Filament
+    protected static ?string $navigationLabel = 'View';
+
     public function infolist(Infolist $infolist): Infolist
     {
         return parent::infolist($infolist)

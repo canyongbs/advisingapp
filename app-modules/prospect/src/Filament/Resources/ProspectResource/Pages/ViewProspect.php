@@ -15,6 +15,9 @@ class ViewProspect extends ViewRecord
 {
     protected static string $resource = ProspectResource::class;
 
+    // TODO: Automatically set from Filament
+    protected static ?string $navigationLabel = 'View';
+
     public function infolist(Infolist $infolist): Infolist
     {
         return parent::infolist($infolist)

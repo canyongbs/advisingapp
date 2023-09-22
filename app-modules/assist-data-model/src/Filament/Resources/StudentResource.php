@@ -2,21 +2,10 @@
 
 namespace Assist\AssistDataModel\Filament\Resources;
 
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Assist\AssistDataModel\Models\Student;
-use Filament\Resources\RelationManagers\RelationGroup;
-use Assist\Alert\Filament\RelationManagers\AlertsRelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
-use Assist\Task\Filament\Resources\TaskResource\RelationManagers\TasksRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\PerformanceRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\InteractionsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\SubscriptionsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementResponsesRelationManager;
 
 class StudentResource extends Resource
 {
@@ -28,31 +17,18 @@ class StudentResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function getRecordSubNavigation(Page $page): array
     {
-        return $form
-            ->schema([
-            ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            RelationGroup::make('Student Information', [
-                ProgramsRelationManager::class,
-                EnrollmentsRelationManager::class,
-                PerformanceRelationManager::class,
-            ]),
-            RelationGroup::make('Engagement', [
-                EngagementsRelationManager::class,
-                EngagementResponsesRelationManager::class,
-                EngagementFilesRelationManager::class,
-            ]),
-            SubscriptionsRelationManager::class,
-            TasksRelationManager::class,
-            InteractionsRelationManager::class,
-            AlertsRelationManager::class,
-        ];
+        return $page->generateNavigationItems([
+            Pages\ViewStudent::class,
+            Pages\ManageStudentInformation::class,
+            Pages\ManageStudentEngagement::class,
+            Pages\ManageStudentFiles::class,
+            Pages\ManageStudentAlerts::class,
+            Pages\ManageStudentTasks::class,
+            Pages\ManageStudentSubscriptions::class,
+            Pages\ManageStudentInteractions::class,
+        ]);
     }
 
     public static function getPages(): array
@@ -60,9 +36,14 @@ class StudentResource extends Resource
         return [
             'index' => Pages\ListStudents::route('/'),
             'create' => Pages\CreateStudent::route('/create'),
+            'manage-alerts' => Pages\ManageStudentAlerts::route('/{record}/alerts'),
+            'manage-engagement' => Pages\ManageStudentEngagement::route('/{record}/engagement'),
+            'manage-files' => Pages\ManageStudentFiles::route('/{record}/files'),
+            'manage-information' => Pages\ManageStudentInformation::route('/{record}/information'),
+            'manage-interactions' => Pages\ManageStudentInteractions::route('/{record}/interactions'),
+            'manage-subscriptions' => Pages\ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            'manage-tasks' => Pages\ManageStudentTasks::route('/{record}/tasks'),
             'view' => Pages\ViewStudent::route('/{record}'),
-            // TODO: completely remove edit page
-            // 'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
     }
 }

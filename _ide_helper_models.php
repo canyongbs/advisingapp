@@ -621,6 +621,47 @@ namespace Assist\Consent\Models{
  class IdeHelperConsentAgreement {}
 }
 
+namespace Assist\Division\Models{
+/**
+ * Assist\Division\Models\Division
+ *
+ * @property string $id
+ * @property string $name
+ * @property string $code
+ * @property string|null $header
+ * @property string|null $footer
+ * @property string|null $created_by_id
+ * @property string|null $last_updated_by_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \App\Models\User|null $createdBy
+ * @property-read \App\Models\User|null $lastUpdatedBy
+ * @method static \Assist\Division\Database\Factories\DivisionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Division newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereCreatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereFooter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereHeader($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereLastUpdatedById($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Division withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Division withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperDivision {}
+}
+
 namespace Assist\Engagement\Models{
 /**
  * Assist\Engagement\Models\Engagement

@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
+namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -9,13 +9,24 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Component;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use Assist\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 
-class InteractionsRelationManager extends RelationManager
+class ManageStudentInteractions extends ManageRelatedRecords
 {
+    protected static string $resource = StudentResource::class;
+
     protected static string $relationship = 'interactions';
+
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $breadcrumb = 'Interactions';
+
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $navigationLabel = 'Interactions';
+
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
     public function form(Form $form): Form
     {
@@ -30,7 +41,7 @@ class InteractionsRelationManager extends RelationManager
         return parent::form($createInteractionForm)
             ->schema([
                 Hidden::make('interactable_id')
-                    ->default($this->ownerRecord->identifier()),
+                    ->default($this->getOwnerRecord()->identifier()),
                 Hidden::make('interactable_type')
                     ->default(resolve(Student::class)->getMorphClass()),
                 ...$formComponents,

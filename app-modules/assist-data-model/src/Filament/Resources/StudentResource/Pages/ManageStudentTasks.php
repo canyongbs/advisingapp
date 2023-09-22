@@ -1,8 +1,7 @@
 <?php
 
-namespace Assist\Task\Filament\Resources\TaskResource\RelationManagers;
+namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
@@ -10,21 +9,36 @@ use Assist\Task\Enums\TaskStatus;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Filters\SelectFilter;
 use Assist\AssistDataModel\Models\Student;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
-use App\Filament\Resources\RelationManagers\RelationManager;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
-class TasksRelationManager extends RelationManager
+class ManageStudentTasks extends ManageRelatedRecords
 {
+    protected static string $resource = StudentResource::class;
+
     protected static string $relationship = 'tasks';
+
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $navigationLabel = 'Tasks';
+
+    // TODO: Automatically set from Filament based on relationship name
+    public static ?string $breadcrumb = 'Tasks';
+
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     public function form(Form $form): Form
     {
@@ -100,13 +114,13 @@ class TasksRelationManager extends RelationManager
             ])
             ->actions([
                 TaskViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
+                EditAction::make(),
+                DetachAction::make(),
             ])
             ->recordUrl(null)
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make(),
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
@@ -116,7 +130,7 @@ class TasksRelationManager extends RelationManager
 
     protected function createAction()
     {
-        return Tables\Actions\CreateAction::make()
+        return CreateAction::make()
             ->using(function (array $data, string $model): Model {
                 $data = collect($data);
 

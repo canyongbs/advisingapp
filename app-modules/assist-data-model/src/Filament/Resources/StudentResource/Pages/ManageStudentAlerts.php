@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Alert\Filament\RelationManagers;
+namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -13,7 +13,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
@@ -21,18 +20,33 @@ use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 
-class AlertsRelationManager extends RelationManager
+class ManageStudentAlerts extends ManageRelatedRecords
 {
+    protected static string $resource = StudentResource::class;
+
     protected static string $relationship = 'alerts';
 
-    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $navigationLabel = 'Alerts';
+
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $breadcrumb = 'Alerts';
+
+    protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
+
+    public static function getNavigationItems(array $urlParameters = []): array
     {
+        $item = parent::getNavigationItems($urlParameters)[0];
+
+        $ownerRecord = $urlParameters['record'];
+
         /** @var Student|Prospect $ownerRecord */
-        $alertCount = Cache::tags('alert-count')
+        $alertsCount = Cache::tags('alert-count')
             ->remember(
-                'alert-count-' . $ownerRecord->id,
+                "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     // TODO: When it is decided how alerts are "resolved" this will need to take that into account to only display unresolved alerts
@@ -40,7 +54,9 @@ class AlertsRelationManager extends RelationManager
                 },
             );
 
-        return $alertCount > 0 ? $alertCount : null;
+        $item->badge($alertsCount > 0 ? $alertsCount : null, color: 'danger');
+
+        return [$item];
     }
 
     public function infolist(Infolist $infolist): Infolist
