@@ -13,5 +13,16 @@ export default {
         './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         './vendor/awcodes/filament-tiptap-editor/resources/**/*.blade.php',
+        "./node_modules/flowbite/**/*.js",
+    ],
+    theme: {
+        extend: {
+            colors: {
+                gray: require('tailwindcss/colors').zinc,
+            },
+        },
+    },
+    plugins: [
+        require('flowbite/plugin')
     ],
 }

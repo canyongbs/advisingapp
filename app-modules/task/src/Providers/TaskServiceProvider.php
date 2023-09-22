@@ -5,8 +5,10 @@ namespace Assist\Task\Providers;
 use Filament\Panel;
 use Assist\Task\TaskPlugin;
 use Assist\Task\Models\Task;
+use Filament\Support\Assets\Js;
 use Assist\Task\Observers\TaskObserver;
 use Illuminate\Support\ServiceProvider;
+use Filament\Support\Facades\FilamentAsset;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
@@ -29,6 +31,8 @@ class TaskServiceProvider extends ServiceProvider
         $this->registerRolesAndPermissions();
 
         $this->registerObservers();
+
+        $this->registerAssets();
     }
 
     protected function registerRolesAndPermissions()
@@ -61,5 +65,10 @@ class TaskServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         Task::observe(TaskObserver::class);
+    }
+
+    protected function registerAssets(): void
+    {
+        FilamentAsset::register([Js::make('kanban', __DIR__ . '/../../resources/js/kanban.js')], 'canyon-gbs/task');
     }
 }

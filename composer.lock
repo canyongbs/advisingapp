@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "28f3bfd07de0b989c6d5ae2c3bda18ac",
+    "content-hash": "e287395d860e84f2e8c3497797d61c11",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -675,6 +675,41 @@
                     "Assist\\Authorization\\Tests\\": "tests/",
                     "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
                     "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/caseload-management",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/caseload-management",
+                "reference": "72067b427669d30ad665acfc253677f2d6d73a92"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\CaseloadManagement\\Providers\\CaseloadManagementServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\CaseloadManagement\\": "src/",
+                    "Assist\\CaseloadManagement\\Tests\\": "tests/",
+                    "Assist\\CaseloadManagement\\Database\\Factories\\": "database/factories/",
+                    "Assist\\CaseloadManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
