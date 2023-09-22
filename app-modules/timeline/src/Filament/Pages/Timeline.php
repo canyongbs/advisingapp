@@ -17,6 +17,8 @@ abstract class Timeline extends Page
 {
     use InteractsWithRecord;
 
+    protected static ?string $navigationIcon = 'heroicon-o-queue-list';
+
     protected static string $view = 'timeline::timeline';
 
     public string $emptyStateMessage = 'There are no records to show on this timeline.';

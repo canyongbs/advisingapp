@@ -11,6 +11,8 @@ class ProspectEngagementTimeline extends Timeline
 {
     protected static string $resource = ProspectResource::class;
 
+    protected static ?string $navigationLabel = 'Engagement Timeline';
+
     public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
 
     public array $modelsToTimeline = [

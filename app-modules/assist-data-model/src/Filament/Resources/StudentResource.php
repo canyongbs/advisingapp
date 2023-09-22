@@ -29,6 +29,7 @@ class StudentResource extends Resource
             Pages\ManageStudentTasks::class,
             Pages\ManageStudentSubscriptions::class,
             Pages\ManageStudentInteractions::class,
+            StudentEngagementTimeline::class,
         ]);
     }
 
@@ -45,7 +46,7 @@ class StudentResource extends Resource
             'manage-subscriptions' => Pages\ManageStudentSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => Pages\ManageStudentTasks::route('/{record}/tasks'),
             'view' => Pages\ViewStudent::route('/{record}'),
-            'engagement_timeline' => StudentEngagementTimeline::route('/{record}/engagement-timeline'),
+            'engagement-timeline' => StudentEngagementTimeline::route('/{record}/engagement-timeline'),
         ];
     }
 }

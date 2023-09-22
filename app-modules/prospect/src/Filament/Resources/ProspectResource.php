@@ -29,6 +29,7 @@ class ProspectResource extends Resource
             Pages\ManageProspectTasks::class,
             Pages\ManageProspectSubscriptions::class,
             Pages\ManageProspectInteractions::class,
+            ProspectEngagementTimeline::class,
         ]);
     }
 
@@ -45,7 +46,7 @@ class ProspectResource extends Resource
             'manage-subscriptions' => Pages\ManageProspectSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => Pages\ManageProspectTasks::route('/{record}/tasks'),
             'view' => Pages\ViewProspect::route('/{record}'),
-            'engagement_timeline' => ProspectEngagementTimeline::route('/{record}/engagement-timeline'),
+            'engagement-timeline' => ProspectEngagementTimeline::route('/{record}/engagement-timeline'),
         ];
     }
 }
