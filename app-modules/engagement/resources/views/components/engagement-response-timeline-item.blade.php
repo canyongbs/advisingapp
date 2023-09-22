@@ -1,8 +1,3 @@
-@php
-    use Assist\AssistDataModel\Filament\Resources\StudentResource;
-    use Assist\Engagement\Enums\EngagementDeliveryMethod;
-@endphp
-
 <div>
     <div class="flex flex-row justify-between">
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
