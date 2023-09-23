@@ -51,7 +51,7 @@ class ListTasks extends ListRecords
                     ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
                 TextColumn::make('concern.display_name')
                     ->label('Concern')
-                    ->getStateUsing(fn (Task $record) => $record->concern?->{$record->concern::displayNameKey()})
+                    ->getStateUsing(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
                     ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'concern', search: $search))
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
