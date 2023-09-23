@@ -13,7 +13,7 @@ export default {
         './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         './vendor/awcodes/filament-tiptap-editor/resources/**/*.blade.php',
-        "./node_modules/flowbite/**/*.js",
+        './node_modules/flowbite/**/*.js',
     ],
     theme: {
         extend: {
@@ -22,8 +22,5 @@ export default {
             },
         },
     },
-    plugins: [
-        require('flowbite/plugin')
-    ],
-    plugins: [forms, typography],
+    plugins: [forms, typography, require('flowbite/plugin')],
 };
