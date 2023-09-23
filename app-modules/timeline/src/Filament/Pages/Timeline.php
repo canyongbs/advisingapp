@@ -8,9 +8,9 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Timeline\Models\Contracts\Timelineable;
+use Assist\Timeline\Models\Contracts\HasATimeline;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Timeline\Exceptions\ModelMustBeTimelineable;
+use Assist\Timeline\Exceptions\ModelMustHaveATimeline;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
 abstract class Timeline extends Page
@@ -36,15 +36,15 @@ abstract class Timeline extends Page
         $this->aggregateRecords = collect();
 
         foreach ($this->modelsToTimeline as $model) {
-            if (! in_array(Timelineable::class, class_implements($model))) {
-                throw new ModelMustBeTimelineable("Model {$model} must implement Timelineable");
+            if (! in_array(HasATimeline::class, class_implements($model))) {
+                throw new ModelMustHaveATimeline("Model {$model} must have a timeline available");
             }
 
-            $this->aggregateRecords = $this->aggregateRecords->concat($model::getTimeline($this->recordModel));
+            $this->aggregateRecords = $this->aggregateRecords->concat($model::getTimelineData($this->recordModel));
         }
 
         return $this->aggregateRecords = $this->aggregateRecords->sortByDesc(function ($record) {
-            return Carbon::parse($record->sortableBy())->timestamp;
+            return Carbon::parse($record->timeline()->sortableBy())->timestamp;
         });
     }
 
@@ -68,7 +68,7 @@ abstract class Timeline extends Page
 
     public function viewAction(): ViewAction
     {
-        return $this->currentRecordToView->modalViewAction();
+        return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
     }
 
     protected function authorizeAccess(): void

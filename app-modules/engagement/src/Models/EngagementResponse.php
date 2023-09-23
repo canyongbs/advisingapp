@@ -3,20 +3,18 @@
 namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
-use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Timeline\Models\Contracts\Timelineable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Assist\Timeline\Models\Contracts\ProvidesATimeline;
+use Assist\Timeline\Timelines\EngagementResponseTimeline;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Timeline\Models\Contracts\RendersCustomTimelineView;
-use Assist\Engagement\Filament\Resources\EngagementResponseResource\Components\EngagementResponseViewAction;
 
 /**
  * @mixin IdeHelperEngagementResponse
  */
-class EngagementResponse extends BaseModel implements Auditable, Timelineable, RendersCustomTimelineView
+class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeline
 {
     use AuditableTrait;
 
@@ -31,32 +29,12 @@ class EngagementResponse extends BaseModel implements Auditable, Timelineable, R
         'sent_at' => 'datetime',
     ];
 
-    public function icon(): string
+    public function timeline(): EngagementResponseTimeline
     {
-        return 'heroicon-o-arrow-small-left';
+        return new EngagementResponseTimeline($this);
     }
 
-    public function sortableBy(): string
-    {
-        return $this->sent_at;
-    }
-
-    public function providesCustomView(): bool
-    {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return 'engagement::engagement-response-timeline-item';
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return EngagementResponseViewAction::make()->record($this);
-    }
-
-    public static function getTimeline(Model $forModel): Collection
+    public static function getTimelineData(Model $forModel): Collection
     {
         return $forModel->engagementResponses()->get();
     }

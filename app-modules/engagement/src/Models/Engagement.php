@@ -4,28 +4,26 @@ namespace Assist\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Timeline\Models\Contracts\Timelineable;
+use Assist\Timeline\Timelines\EngagementTimeline;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\Timeline\Models\Contracts\ProvidesATimeline;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Timeline\Models\Contracts\RendersCustomTimelineView;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
-use Assist\Engagement\Filament\Resources\EngagementResource\Components\EngagementViewAction;
 
 /**
  * @property-read Educatable $recipient
  *
  * @mixin IdeHelperEngagement
  */
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, Timelineable, RendersCustomTimelineView
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use AuditableTrait;
 
@@ -43,32 +41,12 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'deliver_at' => 'datetime',
     ];
 
-    public function icon(): string
+    public function timeline(): EngagementTimeline
     {
-        return 'heroicon-o-arrow-small-right';
+        return new EngagementTimeline($this);
     }
 
-    public function sortableBy(): string
-    {
-        return $this->deliver_at;
-    }
-
-    public function providesCustomView(): bool
-    {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return 'engagement::engagement-timeline-item';
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return EngagementViewAction::make()->record($this);
-    }
-
-    public static function getTimeline(Model $forModel): Collection
+    public static function getTimelineData(Model $forModel): Collection
     {
         return $forModel->engagements()->with(['deliverables', 'batch'])->get();
     }

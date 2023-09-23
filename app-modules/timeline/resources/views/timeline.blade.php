@@ -15,14 +15,14 @@
                     >
                         <x-filament::icon
                             class="h-4 w-4 text-gray-800 dark:text-gray-100"
-                            icon="{{ $record->icon() }}"
+                            icon="{{ $record->timeline()->icon() }}"
                         />
                     </span>
 
                     <div class="ml-2">
-                        @if ($record->providesCustomView())
+                        @if ($record->timeline()->providesCustomView())
                             <x-dynamic-component
-                                :component="$record->renderCustomView()"
+                                :component="$record->timeline()->renderCustomView()"
                                 :record="$record"
                             >
                                 <x-slot:view-record-icon>
