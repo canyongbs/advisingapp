@@ -8,9 +8,9 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Timeline\Models\Contracts\HasATimeline;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Timeline\Exceptions\ModelMustHaveATimeline;
+use Assist\Timeline\Models\Contracts\ProvidesATimeline;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
 abstract class Timeline extends Page
@@ -36,7 +36,7 @@ abstract class Timeline extends Page
         $this->aggregateRecords = collect();
 
         foreach ($this->modelsToTimeline as $model) {
-            if (! in_array(HasATimeline::class, class_implements($model))) {
+            if (! in_array(ProvidesATimeline::class, class_implements($model))) {
                 throw new ModelMustHaveATimeline("Model {$model} must have a timeline available");
             }
 
