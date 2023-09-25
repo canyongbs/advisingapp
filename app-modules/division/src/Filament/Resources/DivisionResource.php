@@ -2,6 +2,7 @@
 
 namespace Assist\Division\Filament\Resources;
 
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Filament\Resources\Resource;
 use Assist\Division\Models\Division;
 use Assist\Division\Filament\Resources\DivisionResource\Pages\EditDivision;
@@ -11,6 +12,8 @@ use Assist\Division\Filament\Resources\DivisionResource\Pages\CreateDivision;
 
 class DivisionResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = Division::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';

@@ -18,6 +18,8 @@ class EngagementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function getRelations(): array
     {
         return [

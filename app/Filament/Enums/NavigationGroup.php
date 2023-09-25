@@ -14,6 +14,7 @@ use Assist\Audit\Filament\Resources\AuditResource;
 use Assist\Audit\Filament\Pages\ManageAuditSettings;
 use Assist\Assistant\Filament\Pages\PersonalAssistant;
 use Assist\CaseloadManagement\Filament\Pages\Campaign;
+use Assist\Division\Filament\Resources\DivisionResource;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Authorization\Filament\Resources\RoleResource;
 use Assist\Webhook\Filament\Resources\InboundWebhookResource;
@@ -23,6 +24,7 @@ use Assist\Interaction\Filament\Resources\InteractionResource;
 use Assist\Prospect\Filament\Resources\ProspectSourceResource;
 use Assist\Prospect\Filament\Resources\ProspectStatusResource;
 use Assist\Authorization\Filament\Resources\PermissionResource;
+use Assist\Consent\Filament\Resources\ConsentAgreementResource;
 use Assist\Theme\Filament\Pages\ManageBrandConfigurationSettings;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 use Assist\Interaction\Filament\Resources\InteractionTypeResource;
@@ -34,6 +36,7 @@ use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
 use Assist\Interaction\Filament\Resources\InteractionRelationResource;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use Assist\Assistant\Filament\Resources\AssistantChatMessageLogResource;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
 use Assist\Interaction\Filament\Resources\InteractionInstitutionResource;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
@@ -69,9 +72,9 @@ enum NavigationGroup implements HasLabel
             PersonalAssistant::class, MessageCenter::class, ServiceRequestResource::class, ProactiveAlerts::class, InteractionResource::class, FilesAndDocuments::class, KnowledgeBaseItemResource::class, TaskResource::class => NavigationGroup::ProductivityTools,
             CaseloadResource::class, Campaign::class => NavigationGroup::MassEngagement,
             UserResource::class, RoleGroupResource::class, RoleResource::class, PermissionResource::class, Team::class => NavigationGroup::UsersAndPermissions,
-            ManageAuditSettings::class, ManageBrandConfigurationSettings::class, AuditResource::class, InboundWebhookResource::class, ProductHealth::class => NavigationGroup::ProductAdministration,
+            ConsentAgreementResource::class, ManageAuditSettings::class, ManageBrandConfigurationSettings::class, AuditResource::class, AssistantChatMessageLogResource::class, InboundWebhookResource::class, ProductHealth::class => NavigationGroup::ProductAdministration,
             ManageGoogleAnalyticsSettings::class, ManageMicrosoftClaritySettings::class => NavigationGroup::UsageAnalyticsIntegrations,
-            ProspectStatusResource::class, ProspectSourceResource::class, ServiceRequestPriorityResource::class, ServiceRequestStatusResource::class, ServiceRequestTypeResource::class, KnowledgeBaseCategoryResource::class, KnowledgeBaseQualityResource::class, KnowledgeBaseStatusResource::class, InteractionCampaignResource::class, InteractionDriverResource::class, InteractionInstitutionResource::class, InteractionOutcomeResource::class, InteractionRelationResource::class, InteractionStatusResource::class, InteractionTypeResource::class => NavigationGroup::ProductSettings,
+            DivisionResource::class, ProspectStatusResource::class, ProspectSourceResource::class, ServiceRequestPriorityResource::class, ServiceRequestStatusResource::class, ServiceRequestTypeResource::class, KnowledgeBaseCategoryResource::class, KnowledgeBaseQualityResource::class, KnowledgeBaseStatusResource::class, InteractionCampaignResource::class, InteractionDriverResource::class, InteractionInstitutionResource::class, InteractionOutcomeResource::class, InteractionRelationResource::class, InteractionStatusResource::class, InteractionTypeResource::class => NavigationGroup::ProductSettings,
         };
     }
 
@@ -104,9 +107,11 @@ enum NavigationGroup implements HasLabel
                 Team::class,
             ]),
             NavigationGroup::ProductAdministration => array_search($class, [
+                ConsentAgreementResource::class,
                 ManageAuditSettings::class,
                 ManageBrandConfigurationSettings::class,
                 AuditResource::class,
+                AssistantChatMessageLogResource::class,
                 InboundWebhookResource::class,
                 ProductHealth::class,
             ]),
@@ -115,6 +120,7 @@ enum NavigationGroup implements HasLabel
                 ManageMicrosoftClaritySettings::class,
             ]),
             NavigationGroup::ProductSettings => array_search($class, [
+                DivisionResource::class,
                 ProspectStatusResource::class,
                 ProspectSourceResource::class,
                 ServiceRequestPriorityResource::class,
