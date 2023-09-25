@@ -16,4 +16,9 @@ enum AlertSeverity: string implements HasLabel
     {
         return $this->name;
     }
+
+    public static function default(): AlertSeverity
+    {
+        return AlertSeverity::Low;
+    }
 }

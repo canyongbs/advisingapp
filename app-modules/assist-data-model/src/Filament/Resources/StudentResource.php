@@ -2,10 +2,19 @@
 
 namespace Assist\AssistDataModel\Filament\Resources;
 
+use Filament\Pages\Page;
 use Filament\Resources\Resource;
-use Filament\Resources\Pages\Page;
 use Assist\AssistDataModel\Models\Student;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\CreateStudent;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 
 class StudentResource extends Resource
 {
@@ -20,30 +29,30 @@ class StudentResource extends Resource
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
-            Pages\ViewStudent::class,
-            Pages\ManageStudentInformation::class,
-            Pages\ManageStudentEngagement::class,
-            Pages\ManageStudentFiles::class,
-            Pages\ManageStudentAlerts::class,
-            Pages\ManageStudentTasks::class,
-            Pages\ManageStudentSubscriptions::class,
-            Pages\ManageStudentInteractions::class,
+            ViewStudent::class,
+            ManageStudentInformation::class,
+            ManageStudentEngagement::class,
+            ManageStudentFiles::class,
+            ManageStudentAlerts::class,
+            ManageStudentTasks::class,
+            ManageStudentSubscriptions::class,
+            ManageStudentInteractions::class,
         ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListStudents::route('/'),
-            'create' => Pages\CreateStudent::route('/create'),
-            'manage-alerts' => Pages\ManageStudentAlerts::route('/{record}/alerts'),
-            'manage-engagement' => Pages\ManageStudentEngagement::route('/{record}/engagement'),
-            'manage-files' => Pages\ManageStudentFiles::route('/{record}/files'),
-            'manage-information' => Pages\ManageStudentInformation::route('/{record}/information'),
-            'manage-interactions' => Pages\ManageStudentInteractions::route('/{record}/interactions'),
-            'manage-subscriptions' => Pages\ManageStudentSubscriptions::route('/{record}/subscriptions'),
-            'manage-tasks' => Pages\ManageStudentTasks::route('/{record}/tasks'),
-            'view' => Pages\ViewStudent::route('/{record}'),
+            'index' => ListStudents::route('/'),
+            'create' => CreateStudent::route('/create'),
+            'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
+            'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
+            'manage-files' => ManageStudentFiles::route('/{record}/files'),
+            'manage-information' => ManageStudentInformation::route('/{record}/information'),
+            'manage-interactions' => ManageStudentInteractions::route('/{record}/interactions'),
+            'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            'manage-tasks' => ManageStudentTasks::route('/{record}/tasks'),
+            'view' => ViewStudent::route('/{record}'),
         ];
     }
 }

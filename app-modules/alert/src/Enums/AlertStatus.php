@@ -12,9 +12,13 @@ enum AlertStatus: string implements HasLabel
 
     case Cancelled = 'cancelled';
 
-
     public function getLabel(): ?string
     {
         return $this->name;
+    }
+
+    public static function default(): AlertStatus
+    {
+        return AlertStatus::Active;
     }
 }

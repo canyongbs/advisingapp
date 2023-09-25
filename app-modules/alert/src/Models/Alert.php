@@ -26,6 +26,7 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription
         'concern_type',
         'description',
         'severity',
+        'status',
         'suggested_intervention',
     ];
 

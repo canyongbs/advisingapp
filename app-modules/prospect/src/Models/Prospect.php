@@ -3,6 +3,8 @@
 namespace Assist\Prospect\Models;
 
 use App\Models\User;
+use Assist\Alert\Models\Concerns\HasAlerts;
+use Assist\Alert\Models\Contracts\Alertable;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Task\Models\Task;
@@ -29,7 +31,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 /**
  * @mixin IdeHelperProspect
  */
-class Prospect extends BaseModel implements Auditable, Subscribable, Educatable
+class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, Alertable
 {
     use HasUuids;
     use SoftDeletes;
@@ -39,6 +41,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
     use HasSubscriptions;
+    use HasAlerts;
 
     protected $fillable = [
         'first_name',
@@ -120,11 +123,6 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'concern');
-    }
-
-    public function alerts(): MorphMany
-    {
-        return $this->morphMany(Alert::class, 'concern');
     }
 
     public static function displayNameKey(): string

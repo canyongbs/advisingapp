@@ -2,6 +2,8 @@
 
 namespace Assist\AssistDataModel\Models;
 
+use Assist\Alert\Models\Concerns\HasAlerts;
+use Assist\Alert\Models\Contracts\Alertable;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +28,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 /**
  * @mixin IdeHelperStudent
  */
-class Student extends Model implements Auditable, Subscribable, Educatable
+class Student extends Model implements Auditable, Subscribable, Educatable, Alertable
 {
     use AuditableTrait;
     use HasFactory;
@@ -36,6 +38,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
     use HasSubscriptions;
+    use HasAlerts;
 
     protected $primaryKey = 'sisid';
 
@@ -87,11 +90,6 @@ class Student extends Model implements Auditable, Subscribable, Educatable
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'concern');
-    }
-
-    public function alerts(): MorphMany
-    {
-        return $this->morphMany(Alert::class, 'concern');
     }
 
     public function programs(): HasMany
