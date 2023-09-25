@@ -2,13 +2,12 @@
 
 namespace Assist\AssistDataModel\Models;
 
-use Assist\Alert\Models\Concerns\HasAlerts;
-use Assist\Alert\Models\Contracts\Alertable;
 use Assist\Task\Models\Task;
-use Assist\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Alert\Models\Concerns\HasAlerts;
+use Assist\Alert\Models\Contracts\Alertable;
 use Assist\Engagement\Models\EngagementFile;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;

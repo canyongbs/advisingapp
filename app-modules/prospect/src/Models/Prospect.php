@@ -3,15 +3,14 @@
 namespace Assist\Prospect\Models;
 
 use App\Models\User;
-use Assist\Alert\Models\Concerns\HasAlerts;
-use Assist\Alert\Models\Contracts\Alertable;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Task\Models\Task;
-use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Alert\Models\Concerns\HasAlerts;
+use Assist\Alert\Models\Contracts\Alertable;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\ServiceManagement\Models\ServiceRequest;
