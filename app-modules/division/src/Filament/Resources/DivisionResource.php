@@ -2,9 +2,9 @@
 
 namespace Assist\Division\Filament\Resources;
 
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Filament\Resources\Resource;
 use Assist\Division\Models\Division;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Division\Filament\Resources\DivisionResource\Pages\EditDivision;
 use Assist\Division\Filament\Resources\DivisionResource\Pages\ViewDivision;
 use Assist\Division\Filament\Resources\DivisionResource\Pages\ListDivisions;

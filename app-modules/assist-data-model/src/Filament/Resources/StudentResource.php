@@ -2,11 +2,10 @@
 
 namespace Assist\AssistDataModel\Filament\Resources;
 
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
-use App\Filament\Enums\NavigationGroup;
 use Assist\AssistDataModel\Models\Student;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 class StudentResource extends Resource

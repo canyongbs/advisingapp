@@ -2,13 +2,12 @@
 
 namespace Assist\IntegrationGoogleAnalytics\Filament\Pages;
 
-use App\Filament\Enums\NavigationGroup;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Toggle;g
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
 
 class ManageGoogleAnalyticsSettings extends SettingsPage

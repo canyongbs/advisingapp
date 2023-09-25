@@ -2,19 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Toggle;
-use App\Filament\Enums\NavigationGroup;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;

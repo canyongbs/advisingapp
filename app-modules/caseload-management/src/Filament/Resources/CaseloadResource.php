@@ -2,12 +2,10 @@
 
 namespace Assist\CaseloadManagement\Filament\Resources;
 
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Exception;
 use Filament\Resources\Resource;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
-use App\Filament\Enums\NavigationGroup;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -18,6 +16,7 @@ use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Filters\TernaryFilter;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\ListCaseloads;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\CreateCaseload;
