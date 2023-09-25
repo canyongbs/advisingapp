@@ -2,6 +2,8 @@
 
 namespace Assist\IntegrationGoogleAnalytics\Filament\Pages;
 
+use App\Filament\Enums\NavigationGroup;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
@@ -11,11 +13,11 @@ use Assist\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
 
 class ManageGoogleAnalyticsSettings extends SettingsPage
 {
+    use HasNavigationGroup;
+
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static string $settings = GoogleAnalyticsSettings::class;
-
-    protected static ?string $navigationGroup = 'Integrations';
 
     protected static ?string $title = 'Google Analytics Settings';
 

@@ -15,11 +15,7 @@ class AssistantChatMessageLogResource extends Resource
 {
     protected static ?string $model = AssistantChatMessageLog::class;
 
-    protected static ?string $navigationGroup = 'Administration';
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
-
-    protected static ?int $navigationSort = 8;
 
     public static function infolist(Infolist $infolist): Infolist
     {

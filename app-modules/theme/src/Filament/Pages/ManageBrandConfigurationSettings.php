@@ -10,21 +10,20 @@ use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Assist\Theme\Settings\ThemeSettings;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-class ManageThemeSettings extends SettingsPage
+class ManageBrandConfigurationSettings extends SettingsPage
 {
+    use HasNavigationGroup;
+
     protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static ?string $navigationLabel = 'Theme Settings';
-
-    protected static ?string $navigationGroup = 'Settings';
-
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationLabel = 'Brand Configuration';
 
     protected static string $settings = ThemeSettings::class;
 
-    protected static ?string $title = 'Theme Settings';
+    protected static ?string $title = 'Brand Configuration';
 
     public function form(Form $form): Form
     {
@@ -64,6 +63,6 @@ class ManageThemeSettings extends SettingsPage
     {
         // After saving, redirect to the current page to refresh
         // the logo preview in the layout.
-        return ManageThemeSettings::getUrl();
+        return ManageBrandConfigurationSettings::getUrl();
     }
 }

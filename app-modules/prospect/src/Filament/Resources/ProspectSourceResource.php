@@ -4,15 +4,14 @@ namespace Assist\Prospect\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Assist\Prospect\Models\ProspectSource;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
 class ProspectSourceResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = ProspectSource::class;
-
-    protected static ?string $navigationGroup = 'Settings';
-
-    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationIcon = 'heroicon-o-viewfinder-circle';
 

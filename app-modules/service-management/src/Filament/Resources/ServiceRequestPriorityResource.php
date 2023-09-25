@@ -3,6 +3,7 @@
 namespace Assist\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\ServiceManagement\Models\ServiceRequestPriority;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\EditServiceRequestPriority;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\ViewServiceRequestPriority;
@@ -11,11 +12,9 @@ use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\P
 
 class ServiceRequestPriorityResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = ServiceRequestPriority::class;
-
-    protected static ?string $navigationGroup = 'Settings';
-
-    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-up-down';
 

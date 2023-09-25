@@ -2,10 +2,12 @@
 
 namespace Assist\CaseloadManagement\Filament\Resources;
 
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Exception;
 use Filament\Resources\Resource;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
+use App\Filament\Enums\NavigationGroup;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -22,13 +24,11 @@ use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\CreateCa
 
 class CaseloadResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = Caseload::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
-
-    protected static ?string $navigationGroup = 'Mass Engagement';
-
-    protected static ?string $navigationLabel = 'Define Caseload';
 
     public static function filters(CaseloadModel $subject): array
     {

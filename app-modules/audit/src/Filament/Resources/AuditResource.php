@@ -4,19 +4,18 @@ namespace Assist\Audit\Filament\Resources;
 
 use Assist\Audit\Models\Audit;
 use Filament\Resources\Resource;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Audit\Filament\Resources\AuditResource\Pages;
 
 class AuditResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = Audit::class;
 
-    protected static ?string $navigationLabel = 'Audit';
+    protected static ?string $navigationLabel = 'Record Auditing';
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-
-    protected static ?string $navigationGroup = 'Administration';
-
-    protected static ?int $navigationSort = 5;
 
     public static function getRelations(): array
     {

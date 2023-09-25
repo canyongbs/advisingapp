@@ -6,19 +6,18 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
 use Assist\Interaction\Models\InteractionOutcome;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\EditInteractionOutcome;
 use Assist\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\ListInteractionOutcomes;
 use Assist\Interaction\Filament\Resources\InteractionOutcomeResource\Pages\CreateInteractionOutcome;
 
 class InteractionOutcomeResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = InteractionOutcome::class;
 
-    protected static ?string $navigationGroup = 'Settings';
-
     protected static ?string $navigationIcon = 'heroicon-o-map';
-
-    protected static ?int $navigationSort = 13;
 
     public static function form(Form $form): Form
     {

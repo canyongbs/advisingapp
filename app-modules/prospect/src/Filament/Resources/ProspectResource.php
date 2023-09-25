@@ -5,17 +5,16 @@ namespace Assist\Prospect\Filament\Resources;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Assist\Prospect\Models\Prospect;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 class ProspectResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = Prospect::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-
-    protected static ?string $navigationGroup = 'Records';
-
-    protected static ?int $navigationSort = 2;
 
     public static function getRecordSubNavigation(Page $page): array
     {

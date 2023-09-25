@@ -3,6 +3,7 @@
 namespace Assist\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\ServiceManagement\Models\ServiceRequestType;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\EditServiceRequestType;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\ViewServiceRequestType;
@@ -11,11 +12,9 @@ use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages
 
 class ServiceRequestTypeResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = ServiceRequestType::class;
-
-    protected static ?string $navigationGroup = 'Settings';
-
-    protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 

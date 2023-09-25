@@ -5,6 +5,7 @@ namespace Assist\Interaction\Filament\Resources;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Interaction\Models\InteractionInstitution;
 use Assist\Interaction\Filament\Resources\InteractionInstitutionResource\Pages\EditInteractionInstitution;
 use Assist\Interaction\Filament\Resources\InteractionInstitutionResource\Pages\ListInteractionInstitutions;
@@ -12,13 +13,11 @@ use Assist\Interaction\Filament\Resources\InteractionInstitutionResource\Pages\C
 
 class InteractionInstitutionResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = InteractionInstitution::class;
 
-    protected static ?string $navigationGroup = 'Settings';
-
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
-
-    protected static ?int $navigationSort = 12;
 
     public static function form(Form $form): Form
     {

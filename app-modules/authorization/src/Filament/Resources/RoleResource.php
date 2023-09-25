@@ -10,6 +10,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Authorization\Filament\Resources\RoleResource\Pages\EditRole;
 use Assist\Authorization\Filament\Resources\RoleResource\Pages\ViewRole;
 use Assist\Authorization\Filament\Resources\RoleResource\Pages\ListRoles;
@@ -18,13 +19,11 @@ use Assist\Authorization\Filament\Resources\RoleResource\RelationManagers\Permis
 
 class RoleResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = Role::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-
-    protected static ?string $navigationGroup = 'Administration';
-
-    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

@@ -10,11 +10,7 @@ class ConsentAgreementResource extends Resource
 {
     protected static ?string $model = ConsentAgreement::class;
 
-    protected static ?string $navigationGroup = 'Settings';
-
     protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
-
-    protected static ?int $navigationSort = 17;
 
     public static function getRelations(): array
     {

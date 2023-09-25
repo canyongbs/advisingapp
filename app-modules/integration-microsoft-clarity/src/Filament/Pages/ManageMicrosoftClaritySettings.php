@@ -7,15 +7,16 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\IntegrationMicrosoftClarity\Settings\MicrosoftClaritySettings;
 
 class ManageMicrosoftClaritySettings extends SettingsPage
 {
+    use HasNavigationGroup;
+
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static string $settings = MicrosoftClaritySettings::class;
-
-    protected static ?string $navigationGroup = 'Integrations';
 
     protected static ?string $title = 'Microsoft Clarity Settings';
 

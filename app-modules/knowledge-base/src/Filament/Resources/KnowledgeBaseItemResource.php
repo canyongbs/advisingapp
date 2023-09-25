@@ -4,6 +4,7 @@ namespace Assist\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\EditKnowledgeBaseItem;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\ViewKnowledgeBaseItem;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\ListKnowledgeBaseItems;
@@ -11,15 +12,13 @@ use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\Crea
 
 class KnowledgeBaseItemResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = KnowledgeBaseItem::class;
 
     protected static ?string $navigationLabel = 'Knowledge Base';
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-
-    protected static ?string $navigationGroup = 'Tools';
-
-    protected static ?int $navigationSort = 4;
 
     public static function getRelations(): array
     {

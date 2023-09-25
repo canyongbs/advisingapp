@@ -8,10 +8,10 @@ use App\Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
+use App\Filament\Pages\ProductHealth;
 use App\Filament\Actions\ImportAction;
+use App\Filament\Enums\NavigationGroup;
 use Filament\Infolists\Components\Entry;
-use Filament\Navigation\NavigationGroup;
-use App\Filament\Pages\ApplicationHealth;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
@@ -73,24 +73,10 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->navigationGroups([
-                NavigationGroup::make()
-                    ->label('Records'),
-                NavigationGroup::make()
-                    ->label('Tools'),
-                NavigationGroup::make()
-                    ->label('Mass Engagement'),
-                NavigationGroup::make()
-                    ->label('Administration'),
-                NavigationGroup::make()
-                    ->label('Integrations'),
-                NavigationGroup::make()
-                    ->label('Settings')
-                    ->collapsed(),
-            ])
+            ->navigationGroups(NavigationGroup::groups())
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()
-                    ->usingPage(ApplicationHealth::class),
+                    ->usingPage(ProductHealth::class),
             ]);
     }
 

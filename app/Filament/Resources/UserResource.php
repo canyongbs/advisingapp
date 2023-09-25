@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Pages\Concerns\HasNavigationGroup;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Toggle;
+use App\Filament\Enums\NavigationGroup;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -24,13 +26,11 @@ use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationMana
 
 class UserResource extends Resource
 {
+    use HasNavigationGroup;
+
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'Administration';
-
-    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
