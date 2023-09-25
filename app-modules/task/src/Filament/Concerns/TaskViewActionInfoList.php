@@ -32,7 +32,7 @@ trait TaskViewActionInfoList
                             ->default('Unassigned'),
                         TextEntry::make('concern.display_name')
                             ->label('Concern')
-                            ->getStateUsing(fn (Task $record) => $record->concern->{$record->concern::displayNameKey()})
+                            ->getStateUsing(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
                             ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                                 Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                                 Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
