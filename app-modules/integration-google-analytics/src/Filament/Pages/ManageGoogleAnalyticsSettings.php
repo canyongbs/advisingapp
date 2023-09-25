@@ -5,7 +5,7 @@ namespace Assist\IntegrationGoogleAnalytics\Filament\Pages;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use Filament\Forms\Components\Toggle;g
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
