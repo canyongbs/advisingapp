@@ -17,8 +17,9 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'description' => $this->faker->sentence,
-            'status' => $this->faker->randomElement(TaskStatus::cases())->value,
+            'title' => str(fake()->words(asText: 3))->title()->toString(),
+            'description' => fake()->sentence(),
+            'status' => fake()->randomElement(TaskStatus::cases())->value,
             'due' => null,
             'assigned_to' => null,
             'created_by' => User::factory(),
@@ -53,14 +54,14 @@ class TaskFactory extends Factory
     public function pastDue(): self
     {
         return $this->state([
-            'due' => $this->faker->dateTimeBetween('-2 weeks', '-1 week'),
+            'due' => fake()->dateTimeBetween('-2 weeks', '-1 week'),
         ]);
     }
 
     public function dueLater(): self
     {
         return $this->state([
-            'due' => $this->faker->dateTimeBetween('+1 week', '+2 weeks'),
+            'due' => fake()->dateTimeBetween('+1 week', '+2 weeks'),
         ]);
     }
 }

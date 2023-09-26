@@ -36,8 +36,8 @@ test('ListTasks page displays the correct details for available my tasks', funct
     $tasks->each(
         fn (Task $task) => $component
             ->assertTableColumnStateSet(
-                'description',
-                $task->description,
+                'title',
+                $task->title,
                 $task
             )
             ->assertTableColumnFormattedStateSet(

@@ -29,7 +29,7 @@
                                         >
                                             <div class="flex items-center justify-between pb-4">
                                                 <div class="text-base font-semibold text-gray-900 dark:text-white">
-                                                    {{ $task->description }}
+                                                    {{ str($task->title)->limit(50) }}
                                                 </div>
                                                 <x-filament::icon-button
                                                     wire:click="viewTask('{{ $task->id }}')"
@@ -40,8 +40,7 @@
                                             <div class="flex flex-col">
                                                 <!-- TODO: Need to discuss with product as to whether or not Tasks should have a title AND description? -->
                                                 <div class="pb-4 text-sm font-normal text-gray-700 dark:text-gray-400">
-                                                    This
-                                                    is the task description
+                                                    {{ str($task->description)->limit(50) }}
                                                 </div>
 
                                                 <div class="flex justify-end">

@@ -2,17 +2,16 @@
 
 namespace Assist\Task\Filament\Resources\TaskResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
@@ -21,6 +20,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Task\Filament\Resources\TaskResource;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 class ListTasks extends ListRecords
@@ -35,7 +35,7 @@ class ListTasks extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('description')
+                TextColumn::make('title')
                     ->searchable()
                     ->wrap()
                     ->limit(50),
@@ -48,7 +48,10 @@ class ListTasks extends ListRecords
                     ->sortable(),
                 TextColumn::make('assignedTo.name')
                     ->label('Assigned To')
-                    ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
+                    ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null)
+                    ->hidden(function (Table $table) {
+                        return $table->getFilter('my_tasks')->getState()['isActive'];
+                    }),
                 TextColumn::make('concern.display_name')
                     ->label('Concern')
                     ->getStateUsing(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
@@ -93,7 +96,7 @@ class ListTasks extends ListRecords
                 ]),
             ])
             ->emptyStateActions([
-                CreateAction::make(),
+                TableCreateAction::make(),
             ]);
     }
 
@@ -105,7 +108,7 @@ class ListTasks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }
