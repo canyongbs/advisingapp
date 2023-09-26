@@ -5,8 +5,10 @@ namespace App\Models;
 use Filament\Panel;
 use DateTimeInterface;
 use Assist\Task\Models\Task;
+use Assist\Team\Models\Team;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
+use Assist\Team\Models\Membership;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -142,6 +144,13 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assistantChats(): HasMany
     {
         return $this->hasMany(AssistantChat::class);
+    }
+
+    public function teams(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(Team::class, Membership::class)
+            ->withTimestamps();
     }
 
     public function assistantChatMessageLogs(): HasMany
