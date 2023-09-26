@@ -4,6 +4,7 @@ namespace Assist\Team\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Team extends BaseModel
@@ -13,10 +14,9 @@ class Team extends BaseModel
         'description',
     ];
 
-    public function users(): BelongsToMany
+    public function users(): HasMany
     {
         return $this
-            ->belongsToMany(User::class, Membership::class)
-            ->withTimestamps();
+            ->hasMany(User::class);
     }
 }

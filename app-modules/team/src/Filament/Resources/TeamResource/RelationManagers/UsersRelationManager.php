@@ -6,8 +6,8 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\AssociateAction;
+use Filament\Tables\Actions\DissociateAction;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class UsersRelationManager extends RelationManager
@@ -36,14 +36,15 @@ class UsersRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
-                AttachAction::make()
+                AssociateAction::make()
                     ->label('Add user to this team'),
             ])
             ->actions([
-                DetachAction::make()
+                DissociateAction::make()
                     ->label('Remove from this team'),
             ])
             ->bulkActions([
-            ]);
+            ])
+            ->inverseRelationship('team');
     }
 }

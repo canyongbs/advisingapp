@@ -8,7 +8,6 @@ use Assist\Task\Models\Task;
 use Assist\Team\Models\Team;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
-use Assist\Team\Models\Membership;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -23,6 +22,7 @@ use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Assistant\Models\AssistantChatMessageLog;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
@@ -146,11 +146,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasMany(AssistantChat::class);
     }
 
-    public function teams(): BelongsToMany
+    public function team(): BelongsTo
     {
-        return $this
-            ->belongsToMany(Team::class, Membership::class)
-            ->withTimestamps();
+        return $this->belongsTo(Team::class);
     }
 
     public function assistantChatMessageLogs(): HasMany

@@ -10,13 +10,11 @@ class TeamSeeder extends Seeder
 {
     public function run(): void
     {
-        Team::factory()
+        $teams = Team::factory()
             ->count(10)
-            ->afterCreating(function (Team $team) {
-                $users = collect(User::inRandomOrder()->take(3)->get() ?? User::factory()->create());
-
-                $users->each(fn (User $user) => $team->users()->attach($user));
-            })
             ->create();
+
+        User::all()
+            ->each(fn (User $user) => $user->team()->associate($teams->random())->save());
     }
 }
