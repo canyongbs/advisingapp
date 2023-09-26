@@ -24,7 +24,7 @@ class AlertCreatedNotification extends Notification implements ShouldQueue
     {
         return FilamentNotification::make()
             ->status('warning')
-            ->title("A {$this->alert->severity->value} severity alert has been created for {$this->alert->concern->full}")
+            ->title("A {$this->alert->severity->value} severity alert has been created for {$this->alert->getSubscribable()?->getSubscriptionDisplayName()}")
             ->toDatabase()
             ->data;
     }

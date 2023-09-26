@@ -12,7 +12,7 @@ class NotifyUserOfSubscriptionCreated implements ShouldQueue
     {
         Notification::make()
             ->status('success')
-            ->title("You have been subscribed to {$event->subscription->subscribable->full}")
+            ->title("You have been subscribed to {$event->subscription->subscribable->getSubscriptionDisplayName()}")
             ->sendToDatabase($event->subscription->user);
     }
 }

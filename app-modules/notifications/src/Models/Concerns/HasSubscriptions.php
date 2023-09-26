@@ -11,4 +11,9 @@ trait HasSubscriptions
     {
         return $this->morphMany(Subscription::class, 'subscribable');
     }
+
+    public function getSubscriptionDisplayName(): string
+    {
+        return $this->full_name;
+    }
 }

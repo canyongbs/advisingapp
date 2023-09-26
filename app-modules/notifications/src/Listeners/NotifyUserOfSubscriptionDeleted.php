@@ -12,7 +12,7 @@ class NotifyUserOfSubscriptionDeleted implements ShouldQueue
     {
         Notification::make()
             ->status('warning')
-            ->title("You have been unsubscribed from {$event->subscription->subscribable->full}")
+            ->title("You have been unsubscribed from {$event->subscription->subscribable->getSubscriptionDisplayName()}")
             ->sendToDatabase($event->subscription->user);
     }
 }
