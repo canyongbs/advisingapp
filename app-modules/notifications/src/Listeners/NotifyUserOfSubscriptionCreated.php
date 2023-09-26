@@ -10,9 +10,11 @@ class NotifyUserOfSubscriptionCreated implements ShouldQueue
 {
     public function handle(SubscriptionCreated $event): void
     {
+        $name = $event->subscription->subscribable->{$event->subscription->subscribable->displayNameKey()};
+
         Notification::make()
             ->status('success')
-            ->title("You have been subscribed to {$event->subscription->subscribable->getSubscriptionDisplayName()}")
+            ->title("You have been subscribed to {$name}")
             ->sendToDatabase($event->subscription->user);
     }
 }

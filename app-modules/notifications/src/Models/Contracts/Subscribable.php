@@ -15,6 +15,4 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 interface Subscribable
 {
     public function subscriptions(): MorphMany;
-
-    public function getSubscriptionDisplayName(): string;
 }
