@@ -5,7 +5,6 @@ namespace Assist\Team\Providers;
 use Filament\Panel;
 use Assist\Team\TeamPlugin;
 use Assist\Team\Models\Team;
-use Assist\Team\Observers\TeamObserver;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
