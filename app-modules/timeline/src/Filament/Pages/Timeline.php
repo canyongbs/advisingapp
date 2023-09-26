@@ -71,6 +71,26 @@ abstract class Timeline extends Page
         return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return static::getResource()::getRecordSubNavigation($this);
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canEdit($parameters['record']);
+    }
+
     protected function authorizeAccess(): void
     {
         static::authorizeResourceAccess();
