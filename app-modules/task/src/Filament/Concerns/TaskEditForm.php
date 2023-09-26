@@ -4,6 +4,7 @@ namespace Assist\Task\Filament\Concerns;
 
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
@@ -15,8 +16,11 @@ trait TaskEditForm
     public function editFormFields(): array
     {
         return [
-            TextInput::make('description')
-                ->label('Description')
+            TextInput::make('title')
+                ->required()
+                ->maxLength(100)
+                ->string(),
+            Textarea::make('description')
                 ->required()
                 ->string(),
             DateTimePicker::make('due')
@@ -29,7 +33,6 @@ trait TaskEditForm
                 ->searchable(['name', 'email'])
                 ->default(auth()->id()),
             MorphToSelect::make('concern')
-                ->label('Concern')
                 ->searchable()
                 ->preload()
                 ->types([
