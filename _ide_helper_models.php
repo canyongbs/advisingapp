@@ -14,10 +14,22 @@ namespace App\Models{
 /**
  * App\Models\FailedImportRow
  *
- * @property-read \App\Models\Import|null $import
+ * @property string $id
+ * @property array $data
+ * @property string $import_id
+ * @property string|null $validation_error
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Import $import
  * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereImportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FailedImportRow whereValidationError($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -28,12 +40,34 @@ namespace App\Models{
 /**
  * App\Models\Import
  *
+ * @property string $id
+ * @property int|null $completed_at
+ * @property string $file_name
+ * @property string $file_path
+ * @property string $importer
+ * @property int $processed_rows
+ * @property int $total_rows
+ * @property int $successful_rows
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
  * @property-read int|null $failed_rows_count
- * @property-read \App\Models\User|null $user
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|Import newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Import newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Import query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereCompletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereFileName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereFilePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereImporter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereProcessedRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereSuccessfulRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereTotalRows($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Import whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -561,8 +595,15 @@ namespace Assist\CaseloadManagement\Models{
 /**
  * Assist\CaseloadManagement\Models\Caseload
  *
+ * @property string $id
+ * @property string $name
+ * @property array|null $filters
  * @property \Assist\CaseloadManagement\Enums\CaseloadModel $model
  * @property \Assist\CaseloadManagement\Enums\CaseloadType $type
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\CaseloadSubject> $subjects
  * @property-read int|null $subjects_count
  * @property-read \App\Models\User $user
@@ -570,6 +611,15 @@ namespace Assist\CaseloadManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereFilters($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -580,11 +630,23 @@ namespace Assist\CaseloadManagement\Models{
 /**
  * Assist\CaseloadManagement\Models\CaseloadSubject
  *
- * @property-read \Assist\CaseloadManagement\Models\Caseload|null $caseload
+ * @property string $id
+ * @property string $subject_id
+ * @property string $subject_type
+ * @property string $caseload_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\CaseloadManagement\Models\Caseload $caseload
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereCaseloadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereSubjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereSubjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1659,6 +1721,7 @@ namespace Assist\Task\Models{
  *
  * @property-read Student|Prospect $concern
  * @property string $id
+ * @property string $title
  * @property string $description
  * @property \Assist\Task\Enums\TaskStatus $status
  * @property \Illuminate\Support\Carbon|null $due
@@ -1689,6 +1752,7 @@ namespace Assist\Task\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereDue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Task withoutTrashed()
