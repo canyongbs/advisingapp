@@ -8,7 +8,6 @@ use App\Filament\Pages\ProductHealth;
 use App\Filament\Pages\ProactiveAlerts;
 use App\Filament\Resources\UserResource;
 use Filament\Support\Contracts\HasLabel;
-use App\Filament\Pages\FilesAndDocuments;
 use Assist\Task\Filament\Resources\TaskResource;
 use Assist\Audit\Filament\Resources\AuditResource;
 use Assist\Audit\Filament\Pages\ManageAuditSettings;
@@ -25,6 +24,7 @@ use Assist\Prospect\Filament\Resources\ProspectSourceResource;
 use Assist\Prospect\Filament\Resources\ProspectStatusResource;
 use Assist\Authorization\Filament\Resources\PermissionResource;
 use Assist\Consent\Filament\Resources\ConsentAgreementResource;
+use Assist\Engagement\Filament\Resources\EngagementFileResource;
 use Assist\Theme\Filament\Pages\ManageBrandConfigurationSettings;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
 use Assist\Interaction\Filament\Resources\InteractionTypeResource;
@@ -69,7 +69,7 @@ enum NavigationGroup implements HasLabel
     {
         return match ($class) {
             StudentResource::class, ProspectResource::class => NavigationGroup::RecordManagement,
-            PersonalAssistant::class, MessageCenter::class, ServiceRequestResource::class, ProactiveAlerts::class, InteractionResource::class, FilesAndDocuments::class, KnowledgeBaseItemResource::class, TaskResource::class => NavigationGroup::ProductivityTools,
+            PersonalAssistant::class, MessageCenter::class, ServiceRequestResource::class, ProactiveAlerts::class, InteractionResource::class, EngagementFileResource::class, KnowledgeBaseItemResource::class, TaskResource::class => NavigationGroup::ProductivityTools,
             CaseloadResource::class, Campaign::class => NavigationGroup::MassEngagement,
             UserResource::class, RoleGroupResource::class, RoleResource::class, PermissionResource::class, Team::class => NavigationGroup::UsersAndPermissions,
             ConsentAgreementResource::class, ManageAuditSettings::class, ManageBrandConfigurationSettings::class, AuditResource::class, AssistantChatMessageLogResource::class, InboundWebhookResource::class, ProductHealth::class => NavigationGroup::ProductAdministration,
@@ -91,7 +91,7 @@ enum NavigationGroup implements HasLabel
                 ServiceRequestResource::class,
                 ProactiveAlerts::class,
                 InteractionResource::class,
-                FilesAndDocuments::class,
+                EngagementFileResource::class,
                 KnowledgeBaseItemResource::class,
                 TaskResource::class,
             ]),
