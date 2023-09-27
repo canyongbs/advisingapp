@@ -1253,6 +1253,41 @@
             }
         },
         {
+            "name": "canyon-gbs/timeline",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/timeline",
+                "reference": "d093c1f588309e2f0f360bbdea08ed252258032b"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Timeline\\Providers\\TimelineServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Timeline\\": "src/",
+                    "Assist\\Timeline\\Tests\\": "tests/",
+                    "Assist\\Timeline\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Timeline\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/webhook",
             "version": "1.0",
             "dist": {
@@ -17311,5 +17346,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

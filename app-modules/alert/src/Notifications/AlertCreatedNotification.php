@@ -22,9 +22,11 @@ class AlertCreatedNotification extends Notification implements ShouldQueue
 
     public function toDatabase(User $notifiable): array
     {
+        $name = $this->alert->concern->{$this->alert->concern->displayNameKey()};
+
         return FilamentNotification::make()
             ->status('warning')
-            ->title("A {$this->alert->severity->value} severity alert has been created for {$this->alert->concern->full}")
+            ->title("A {$this->alert->severity->value} severity alert has been created for {$name}")
             ->toDatabase()
             ->data;
     }

@@ -9,6 +9,9 @@ use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperCaseload
+ */
 class Caseload extends BaseModel
 {
     protected $fillable = [

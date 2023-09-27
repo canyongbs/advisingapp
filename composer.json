@@ -35,6 +35,7 @@
         "canyon-gbs/task": "*",
         "canyon-gbs/team": "^1.0",
         "canyon-gbs/theme": "*",
+        "canyon-gbs/timeline": "*",
         "canyon-gbs/webhook": "*",
         "filament/filament": "^3.0",
         "filament/spatie-laravel-media-library-plugin": "^3.0",
