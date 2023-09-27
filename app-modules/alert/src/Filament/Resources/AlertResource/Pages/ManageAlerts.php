@@ -45,7 +45,7 @@ class ManageAlerts extends ManageRelatedRecords
             ->remember(
                 "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
-                function () use ($ownerRecord): int {g
+                function () use ($ownerRecord): int {
                     return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
                 },
             );
