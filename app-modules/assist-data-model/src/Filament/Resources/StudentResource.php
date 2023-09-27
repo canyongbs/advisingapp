@@ -7,6 +7,7 @@ use Filament\Resources\Pages\Page;
 use Assist\AssistDataModel\Models\Student;
 use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
 
 class StudentResource extends Resource
 {
@@ -27,6 +28,7 @@ class StudentResource extends Resource
             Pages\ManageStudentTasks::class,
             Pages\ManageStudentSubscriptions::class,
             Pages\ManageStudentInteractions::class,
+            StudentEngagementTimeline::class,
         ]);
     }
 
@@ -43,6 +45,7 @@ class StudentResource extends Resource
             'manage-subscriptions' => Pages\ManageStudentSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => Pages\ManageStudentTasks::route('/{record}/tasks'),
             'view' => Pages\ViewStudent::route('/{record}'),
+            'engagement-timeline' => StudentEngagementTimeline::route('/{record}/engagement-timeline'),
         ];
     }
 }
