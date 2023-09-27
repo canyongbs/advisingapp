@@ -4,13 +4,17 @@ namespace Assist\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Timeline\Timelines\EngagementTimeline;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\Timeline\Models\Contracts\ProvidesATimeline;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
@@ -19,7 +23,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperEngagement
  */
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use AuditableTrait;
 
@@ -32,6 +36,20 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'recipient_type',
         'deliver_at',
     ];
+
+    protected $casts = [
+        'deliver_at' => 'datetime',
+    ];
+
+    public function timeline(): EngagementTimeline
+    {
+        return new EngagementTimeline($this);
+    }
+
+    public static function getTimelineData(Model $forModel): Collection
+    {
+        return $forModel->engagements()->with(['deliverables', 'batch'])->get();
+    }
 
     public function user(): BelongsTo
     {

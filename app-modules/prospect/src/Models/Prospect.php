@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\Timeline\Models\Contracts\HasFilamentResource;
 use Assist\Notifications\Models\Concerns\HasSubscriptions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -30,7 +32,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 /**
  * @mixin IdeHelperProspect
  */
-class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, Alertable
+class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, HasFilamentResource, Alertable
 {
     use HasUuids;
     use SoftDeletes;
@@ -132,6 +134,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     public function getWebPermissions(): Collection
     {
         return collect(['import', ...$this->webPermissions()]);
+    }
+
+    public static function filamentResource(): string
+    {
+        return ProspectResource::class;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

@@ -6,6 +6,9 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperCaseloadSubject
+ */
 class CaseloadSubject extends BaseModel
 {
     public function caseload(): BelongsTo

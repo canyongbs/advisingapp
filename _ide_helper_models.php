@@ -591,6 +591,68 @@ namespace Assist\Authorization\Models{
  class IdeHelperRoleGroup {}
 }
 
+namespace Assist\CaseloadManagement\Models{
+/**
+ * Assist\CaseloadManagement\Models\Caseload
+ *
+ * @property string $id
+ * @property string $name
+ * @property array|null $filters
+ * @property \Assist\CaseloadManagement\Enums\CaseloadModel $model
+ * @property \Assist\CaseloadManagement\Enums\CaseloadType $type
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\CaseloadSubject> $subjects
+ * @property-read int|null $subjects_count
+ * @property-read \App\Models\User $user
+ * @method static \Assist\CaseloadManagement\Database\Factories\CaseloadFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereFilters($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCaseload {}
+}
+
+namespace Assist\CaseloadManagement\Models{
+/**
+ * Assist\CaseloadManagement\Models\CaseloadSubject
+ *
+ * @property string $id
+ * @property string $subject_id
+ * @property string $subject_type
+ * @property string $caseload_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\CaseloadManagement\Models\Caseload $caseload
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereCaseloadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereSubjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereSubjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCaseloadSubject {}
+}
+
 namespace Assist\Consent\Models{
 /**
  * Assist\Consent\Models\ConsentAgreement
@@ -674,7 +736,7 @@ namespace Assist\Engagement\Models{
  * @property string|null $recipient_type
  * @property string|null $subject
  * @property string|null $body
- * @property string $deliver_at
+ * @property \Illuminate\Support\Carbon $deliver_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
@@ -836,7 +898,7 @@ namespace Assist\Engagement\Models{
  * @property string|null $sender_id
  * @property string|null $sender_type
  * @property string|null $content
- * @property string|null $sent_at
+ * @property \Illuminate\Support\Carbon|null $sent_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
@@ -1659,6 +1721,7 @@ namespace Assist\Task\Models{
  *
  * @property-read Student|Prospect $concern
  * @property string $id
+ * @property string $title
  * @property string $description
  * @property \Assist\Task\Enums\TaskStatus $status
  * @property \Illuminate\Support\Carbon|null $due
@@ -1689,6 +1752,7 @@ namespace Assist\Task\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereDue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Task withoutTrashed()

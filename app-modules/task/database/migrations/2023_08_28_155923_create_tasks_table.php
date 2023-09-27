@@ -9,7 +9,8 @@ return new class () extends Migration {
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('description');
+            $table->string('title');
+            $table->longText('description');
             $table->string('status');
             $table->timestamp('due')->nullable();
             $table->foreignUuid('assigned_to')->nullable()->constrained('users');

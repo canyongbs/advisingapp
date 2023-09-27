@@ -28,7 +28,7 @@ class EngagementFactory extends Factory
             'recipient_type' => $recipient->getMorphClass(),
             'subject' => fake()->sentence,
             'body' => fake()->paragraph,
-            'deliver_at' => fake()->dateTime,
+            'deliver_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
         ];
     }
 
