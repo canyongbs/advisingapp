@@ -14,8 +14,8 @@ use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTask
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
-use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
+use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
 
 class ProspectResource extends Resource
 {

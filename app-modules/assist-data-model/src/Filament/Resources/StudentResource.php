@@ -14,8 +14,8 @@ use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStuden
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 
 class StudentResource extends Resource
 {

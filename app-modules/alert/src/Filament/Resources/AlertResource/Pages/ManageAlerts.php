@@ -45,8 +45,7 @@ class ManageAlerts extends ManageRelatedRecords
             ->remember(
                 "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
-                function () use ($ownerRecord): int {
-                    // TODO: When it is decided how alerts are "resolved" this will need to take that into account to only display unresolved alerts
+                function () use ($ownerRecord): int {g
                     return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
                 },
             );
