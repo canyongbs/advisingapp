@@ -6,18 +6,19 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
 use Assist\Interaction\Models\InteractionDriver;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages\EditInteractionDriver;
 use Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages\ListInteractionDrivers;
 use Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages\CreateInteractionDriver;
 
 class InteractionDriverResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = InteractionDriver::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cursor-arrow-ripple';
+
+    protected static ?string $navigationGroup = 'Product Settings';
+
+    protected static ?int $navigationSort = 11;
 
     public static function form(Form $form): Form
     {

@@ -8,15 +8,16 @@ use Filament\Forms\Components\Select;
 use Assist\Audit\Settings\AuditSettings;
 use Filament\Forms\Components\TextInput;
 use Assist\Audit\Actions\Finders\AuditableModels;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 
 class ManageAuditSettings extends SettingsPage
 {
-    use HasNavigationGroup;
-
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static ?string $navigationLabel = 'Audit Configuration';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 2;
 
     protected static string $settings = AuditSettings::class;
 

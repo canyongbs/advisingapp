@@ -9,18 +9,19 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Assist\Authorization\Models\Permission;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Authorization\Filament\Resources\PermissionResource\Pages\ViewPermission;
 use Assist\Authorization\Filament\Resources\PermissionResource\Pages\ListPermissions;
 use Assist\Authorization\Filament\Resources\PermissionResource\RelationManagers\RolesRelationManager;
 
 class PermissionResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = Permission::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-key';
+
+    protected static ?string $navigationGroup = 'Users and Permissions';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

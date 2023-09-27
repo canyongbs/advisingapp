@@ -7,7 +7,6 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Assist\Interaction\Models\InteractionStatus;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Interaction\Enums\InteractionStatusColorOptions;
 use Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages\EditInteractionStatus;
 use Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages\CreateInteractionStatus;
@@ -15,11 +14,13 @@ use Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages\ListIn
 
 class InteractionStatusResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = InteractionStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
+
+    protected static ?string $navigationGroup = 'Product Settings';
+
+    protected static ?int $navigationSort = 15;
 
     public static function form(Form $form): Form
     {

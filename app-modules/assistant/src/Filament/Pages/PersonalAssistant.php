@@ -10,7 +10,6 @@ use App\Filament\Pages\Dashboard;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
@@ -20,11 +19,13 @@ use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 class PersonalAssistant extends Page
 {
-    use HasNavigationGroup;
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string $view = 'assistant::filament.pages.ai-assistant';
+
+    protected static ?string $navigationGroup = 'Productivity Tools';
+
+    protected static ?int $navigationSort = 1;
 
     public Chat $chat;
 

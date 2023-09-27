@@ -5,17 +5,18 @@ namespace Assist\AssistDataModel\Filament\Resources;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Assist\AssistDataModel\Models\Student;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
 
 class StudentResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = Student::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-users';
+
+    protected static ?string $navigationGroup = 'Record Management';
+
+    protected static ?int $navigationSort = 1;
 
     public static function getRecordSubNavigation(Page $page): array
     {

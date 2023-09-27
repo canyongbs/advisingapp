@@ -7,13 +7,10 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
 
 class ManageGoogleAnalyticsSettings extends SettingsPage
 {
-    use HasNavigationGroup;
-
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static string $settings = GoogleAnalyticsSettings::class;
@@ -21,6 +18,10 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
     protected static ?string $title = 'Google Analytics Settings';
 
     protected static ?string $navigationLabel = 'Google Analytics';
+
+    protected static ?string $navigationGroup = 'Usage Analytics Integrations';
+
+    protected static ?int $navigationSort = 1;
 
     public function form(Form $form): Form
     {

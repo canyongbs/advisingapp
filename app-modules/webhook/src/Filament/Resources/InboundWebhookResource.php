@@ -4,17 +4,18 @@ namespace Assist\Webhook\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Assist\Webhook\Models\InboundWebhook;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Webhook\Filament\Resources\InboundWebhookResource\Pages\ViewInboundWebhook;
 use Assist\Webhook\Filament\Resources\InboundWebhookResource\Pages\ListInboundWebhooks;
 
 class InboundWebhookResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = InboundWebhook::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-signal';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 6;
 
     public static function getPages(): array
     {

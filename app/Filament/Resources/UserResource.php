@@ -13,7 +13,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages\ViewUser;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
@@ -25,11 +24,13 @@ use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationMana
 
 class UserResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Users and Permissions';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

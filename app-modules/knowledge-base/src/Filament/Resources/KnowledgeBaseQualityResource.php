@@ -3,17 +3,18 @@
 namespace Assist\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages;
 
 class KnowledgeBaseQualityResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = KnowledgeBaseQuality::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Settings';
+
+    protected static ?int $navigationSort = 8;
 
     public static function getRelations(): array
     {

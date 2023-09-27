@@ -3,15 +3,16 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 
 class Team extends Page
 {
-    use HasNavigationGroup;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'assist.filament.pages.coming-soon';
+
+    protected static ?string $navigationGroup = 'Users and Permissions';
+
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationLabel = 'Teams';
 

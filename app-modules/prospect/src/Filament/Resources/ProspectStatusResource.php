@@ -5,16 +5,17 @@ namespace Assist\Prospect\Filament\Resources;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Assist\Prospect\Models\ProspectStatus;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
 class ProspectStatusResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = ProspectStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
+
+    protected static ?string $navigationGroup = 'Product Settings';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

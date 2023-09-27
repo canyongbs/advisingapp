@@ -5,13 +5,10 @@ namespace App\Filament\Pages;
 use Spatie\Health\Enums\Status;
 use Illuminate\Contracts\Support\Htmlable;
 use Spatie\Health\ResultStores\ResultStore;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
 
 class ProductHealth extends HealthCheckResults
 {
-    use HasNavigationGroup;
-
     public static function getNavigationLabel(): string
     {
         return 'Product Health Dashboard';
@@ -20,6 +17,19 @@ class ProductHealth extends HealthCheckResults
     public function getHeading(): string | Htmlable
     {
         return 'Product Health Dashboard';
+    }
+
+    /**
+ * @return string|null
+ */
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Product Administration';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 7;
     }
 
     public static function getNavigationBadge(): ?string

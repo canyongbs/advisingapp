@@ -16,7 +16,6 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\EditRoleGroup;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\ViewRoleGroup;
@@ -28,13 +27,15 @@ use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\P
 
 class RoleGroupResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = RoleGroup::class;
 
     protected static ?string $modelLabel = 'Profile';
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    protected static ?string $navigationGroup = 'Users and Permissions';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

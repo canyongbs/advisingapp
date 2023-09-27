@@ -3,7 +3,6 @@
 namespace Assist\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
@@ -17,13 +16,15 @@ use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationM
 
 class ServiceRequestResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = ServiceRequest::class;
 
     protected static ?string $navigationLabel = 'Service Management';
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+
+    protected static ?string $navigationGroup = 'Productivity Tools';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $modelLabel = 'Service Management';
 

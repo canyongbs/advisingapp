@@ -8,19 +8,20 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use App\Infolists\Components\CodeEntry;
 use Filament\Infolists\Components\TextEntry;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\Assistant\Models\AssistantChatMessageLog;
 use Assist\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages;
 
 class AssistantChatMessageLogResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = AssistantChatMessageLog::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
     protected static ?string $navigationLabel = 'Conversational AI Audit';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $modelLabel = 'Conversational AI Audit';
 

@@ -16,18 +16,19 @@ use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Filters\TernaryFilter;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\ListCaseloads;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\CreateCaseload;
 
 class CaseloadResource extends Resource
 {
-    use HasNavigationGroup;
-
     protected static ?string $model = Caseload::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
+
+    protected static ?string $navigationGroup = 'Mass Engagement';
+
+    protected static ?int $navigationSort = 1;
 
     public static function filters(CaseloadModel $subject): array
     {

@@ -10,16 +10,17 @@ use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Assist\Theme\Settings\ThemeSettings;
-use App\Filament\Pages\Concerns\HasNavigationGroup;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManageBrandConfigurationSettings extends SettingsPage
 {
-    use HasNavigationGroup;
-
     protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
 
     protected static ?string $navigationLabel = 'Brand Configuration';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 3;
 
     protected static string $settings = ThemeSettings::class;
 
