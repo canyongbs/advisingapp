@@ -13,6 +13,8 @@ return new class () extends Migration {
         Schema::create('form_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->text('label');
+            $table->text('type');
             $table->json('content');
 
             $table->foreignUuid('form_id')->constrained('forms');
