@@ -14,8 +14,10 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->text('label');
+            $table->string('key')->unique();
             $table->text('type');
             $table->json('content');
+            $table->unsignedInteger('order');
 
             $table->foreignUuid('form_id')->constrained('forms');
 

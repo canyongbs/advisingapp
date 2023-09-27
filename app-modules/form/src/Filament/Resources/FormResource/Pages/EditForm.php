@@ -2,12 +2,13 @@
 
 namespace Assist\Form\Filament\Resources\FormResource\Pages;
 
-use Filament\Forms\Form;
+use Assist\Form\Models\Form;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\KeyValue;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\Builder\Block;
 use Assist\Form\Filament\Resources\FormResource;
@@ -16,7 +17,7 @@ class EditForm extends EditRecord
 {
     protected static string $resource = FormResource::class;
 
-    public function form(Form $form): Form
+    public function form(FilamentForm $form): FilamentForm
     {
         return parent::form($form)
             ->schema([
@@ -35,10 +36,10 @@ class EditForm extends EditRecord
                                     ->required()
                                     ->string()
                                     ->maxLength(255),
-                                // TextInput::make('key')
-                                //     ->required()
-                                //     ->string()
-                                //     ->maxLength(255),
+                                TextInput::make('key')
+                                    ->required()
+                                    ->string()
+                                    ->maxLength(255),
                             ]),
                         Block::make('text_area')
                             ->label('Text Area')
@@ -47,10 +48,10 @@ class EditForm extends EditRecord
                                     ->required()
                                     ->string()
                                     ->maxLength(255),
-                                // TextInput::make('key')
-                                //     ->required()
-                                //     ->string()
-                                //     ->maxLength(255),
+                                TextInput::make('key')
+                                    ->required()
+                                    ->string()
+                                    ->maxLength(255),
                             ]),
                         Block::make('select')
                             ->schema([
@@ -58,25 +59,59 @@ class EditForm extends EditRecord
                                     ->required()
                                     ->string()
                                     ->maxLength(255),
-                                // TextInput::make('key')
-                                //     ->required()
-                                //     ->string()
-                                //     ->maxLength(255),
+                                TextInput::make('key')
+                                    ->required()
+                                    ->string()
+                                    ->maxLength(255),
                                 KeyValue::make('options'),
                             ]),
                     ]),
             ]);
     }
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        /** @var Form $record */
+        $record = $this->getRecord();
+
+        $data['content'] = $record
+            ->items
+            ->map(fn ($item) => [
+                'type' => $item['type'],
+                'data' => [
+                    'label' => $item['label'],
+                    'key' => $item['key'],
+                    ...$item['content'],
+                ],
+            ])
+            ->toArray();
+
+        ray($data);
+
+        return $data;
+    }
+
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record = parent::handleRecordUpdate($record, $data);
 
-        ray($record, $data);
+        ray($data);
 
-        foreach ($data['content'] as $item) {
-            ray($item);
-        }
+        collect($data['content'])
+            ->each(function ($item, $index) use ($record) {
+                $data = collect($item['data']);
+
+                $record
+                    ->items()
+                    ->updateOrCreate([
+                        'key' => $data->get('key'),
+                    ], [
+                        'type' => $item['type'],
+                        'label' => $data->get('label'),
+                        'content' => $data->except(['key', 'label']),
+                        'order' => $index,
+                    ]);
+            });
 
         return $record;
     }

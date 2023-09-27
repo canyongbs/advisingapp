@@ -9,6 +9,10 @@ class FormItem extends BaseModel
 {
     protected $fillable = [
         'content',
+        'label',
+        'key',
+        'type',
+        'order',
     ];
 
     protected $casts = [
@@ -17,6 +21,8 @@ class FormItem extends BaseModel
 
     public function form(): BelongsTo
     {
-        return $this->belongsTo(Form::class);
+        return $this
+            ->belongsTo(Form::class)
+            ->orderBy('order');
     }
 }
