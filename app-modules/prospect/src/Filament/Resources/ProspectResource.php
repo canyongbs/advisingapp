@@ -5,8 +5,8 @@ namespace Assist\Prospect\Filament\Resources;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Assist\Prospect\Models\Prospect;
-use Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Illuminate\Database\Eloquent\Model;
+use Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 
 class ProspectResource extends Resource

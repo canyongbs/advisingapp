@@ -6,6 +6,9 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @mixin IdeHelperTeam
+ */
 class Team extends BaseModel
 {
     protected $fillable = [

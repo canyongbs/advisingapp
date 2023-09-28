@@ -4,9 +4,9 @@ namespace Assist\AssistDataModel\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
+use Illuminate\Database\Eloquent\Model;
 use Assist\AssistDataModel\Models\Student;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
-use Illuminate\Database\Eloquent\Model;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
 
 class StudentResource extends Resource
