@@ -14,7 +14,7 @@ class InteractionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path-rounded-square';
 
-    protected static ?string $navigationGroup = 'Tools';
+    protected static ?string $navigationGroup = 'Productivity Tools';
 
     protected static ?int $navigationSort = 5;
 

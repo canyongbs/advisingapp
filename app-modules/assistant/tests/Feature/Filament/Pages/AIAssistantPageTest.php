@@ -11,7 +11,7 @@ use function Pest\Laravel\{actingAs};
 
 use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
-use Assist\Assistant\Filament\Pages\AIAssistant;
+use Assist\Assistant\Filament\Pages\PersonalAssistant;
 
 it('renders successfully', function () {
     ConsentAgreement::factory()->create([
@@ -20,7 +20,7 @@ it('renders successfully', function () {
 
     asSuperAdmin();
 
-    Livewire::test(AIAssistant::class)
+    Livewire::test(PersonalAssistant::class)
         ->assertStatus(200);
 });
 
@@ -33,12 +33,12 @@ it('is properly gated with access control', function () {
 
     actingAs($user);
 
-    Livewire::test(AIAssistant::class)
+    Livewire::test(PersonalAssistant::class)
         ->assertStatus(403);
 
     $user->givePermissionTo('assistant.access');
 
-    Livewire::test(AIAssistant::class)
+    Livewire::test(PersonalAssistant::class)
         ->assertStatus(200);
 });
 
@@ -52,7 +52,7 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
 
     actingAs($user);
 
-    Livewire::test(AIAssistant::class)
+    Livewire::test(PersonalAssistant::class)
         ->call('determineIfConsentWasGiven')
         ->assertViewHas('consentedToTerms', false)
         ->assertSee($consentAgreement->title)
@@ -72,7 +72,7 @@ it('will show the AI Assistant interface if the user has agreed to the terms and
 
     actingAs($user);
 
-    Livewire::test(AIAssistant::class)
+    Livewire::test(PersonalAssistant::class)
         ->call('determineIfConsentWasGiven')
         ->assertViewHas('consentedToTerms', true)
         ->assertDontSee($consentAgreement->title)
@@ -90,7 +90,7 @@ it('will redirect the user back to the dashboard if they dismiss the consent mod
 
     actingAs($user);
 
-    Livewire::test(AIAssistant::class)
+    Livewire::test(PersonalAssistant::class)
         ->call('denyConsent')
         ->assertRedirect(Dashboard::getUrl());
 });
@@ -107,7 +107,7 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
 
     expect($user->hasConsentedTo($consentAgreement))->toBeFalse();
 
-    $aiAssistant = Livewire::test(AIAssistant::class);
+    $aiAssistant = Livewire::test(PersonalAssistant::class);
 
     $aiAssistant
         ->call('determineIfConsentWasGiven')

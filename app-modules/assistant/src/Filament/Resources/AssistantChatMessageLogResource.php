@@ -15,11 +15,17 @@ class AssistantChatMessageLogResource extends Resource
 {
     protected static ?string $model = AssistantChatMessageLog::class;
 
-    protected static ?string $navigationGroup = 'Administration';
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?string $navigationLabel = 'Conversational AI Audit';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 5;
+
+    protected static ?string $modelLabel = 'Conversational AI Audit';
+
+    protected static ?string $pluralLabel = 'Conversational AI Audit';
 
     public static function infolist(Infolist $infolist): Infolist
     {

@@ -13,15 +13,15 @@ class ManageAuditSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationLabel = 'Audit Settings';
+    protected static ?string $navigationLabel = 'Audit Configuration';
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected static string $settings = AuditSettings::class;
 
-    protected static ?string $title = 'Audit Settings';
+    protected static ?string $title = 'Audit Configuration';
 
     public function form(Form $form): Form
     {
