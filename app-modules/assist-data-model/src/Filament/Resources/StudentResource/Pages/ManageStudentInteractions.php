@@ -18,8 +18,6 @@ class ManageStudentInteractions extends ManageRelatedRecords
 {
     protected static string $resource = StudentResource::class;
 
-    protected static string $interactableType = Student::class;
-
     protected static string $relationship = 'interactions';
 
     // TODO: Automatically set from Filament based on relationship name
