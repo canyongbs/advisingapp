@@ -14,6 +14,10 @@ use App\Filament\Widgets\MyServiceRequests;
 
 class Dashboard extends BasePage
 {
+    protected static ?string $navigationLabel = 'My Dashboard';
+
+    protected ?string $heading = 'My Dashboard';
+
     public function getWidgets(): array
     {
         return [
