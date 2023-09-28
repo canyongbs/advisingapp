@@ -2,12 +2,15 @@
 
 namespace Assist\Task\Filament\Resources\TaskResource\Pages;
 
+use App\Models\User;
+use Filament\Forms\Set;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
+use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
@@ -66,9 +69,32 @@ class ListTasks extends ListRecords
                 Filter::make('my_tasks')
                     ->label('My Tasks')
                     ->query(
-                        fn ($query) => $query->where('assigned_to', auth()->id())
+                        fn (Builder $query) => $query->where('assigned_to', auth()->id())
                     )
-                    ->default(),
+                    ->form([
+                        Checkbox::make('isActive')
+                            ->label('My Tasks')
+                            ->afterStateUpdated(fn (Set $set) => $set('../my_teams_tasks.isActive', false))
+                            ->default(true),
+                    ]),
+                Filter::make('my_teams_tasks')
+                    ->label("My Team's Tasks")
+                    ->query(
+                        function (Builder $query) {
+                            /** @var User $user */
+                            $user = auth()->user();
+                            $teamUserIds = $user->team->users()->pluck('id');
+
+                            return $query->whereIn('assigned_to', $teamUserIds)->get();
+                        }
+                    )
+                    ->form([
+                        Checkbox::make('isActive')
+                            ->label("My Team's Tasks")
+                            ->afterStateUpdated(function (Set $set) {
+                                return $set('../my_tasks.isActive', false);
+                            }),
+                    ]),
                 SelectFilter::make('assignedTo')
                     ->label('Assigned To')
                     ->relationship('assignedTo', 'name')
@@ -78,12 +104,10 @@ class ListTasks extends ListRecords
                     ->label('Status')
                     ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
                     ->multiple()
-                    ->default(
-                        [
-                            TaskStatus::PENDING->value,
-                            TaskStatus::IN_PROGRESS->value,
-                        ]
-                    ),
+                    ->default([
+                        TaskStatus::PENDING->value,
+                        TaskStatus::IN_PROGRESS->value,
+                    ]),
             ])
             ->actions([
                 TaskViewAction::make(),

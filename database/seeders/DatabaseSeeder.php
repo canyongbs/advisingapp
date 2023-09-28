@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Task\Database\Seeders\TaskSeeder;
+use Assist\Team\Database\Seeders\TeamSeeder;
 use Illuminate\Support\Facades\Notification;
 use Assist\Division\Database\Seeders\DivisionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
@@ -55,6 +56,7 @@ class DatabaseSeeder extends Seeder
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
             InternalUsersSeeder::class,
+            TeamSeeder::class,
             EngagementSeeder::class,
             EngagementResponseSeeder::class,
             DemoEducatableEngagementSeeder::class,

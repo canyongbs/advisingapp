@@ -5,6 +5,7 @@ namespace App\Models;
 use Filament\Panel;
 use DateTimeInterface;
 use Assist\Task\Models\Task;
+use Assist\Team\Models\Team;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
 use Assist\Authorization\Models\Role;
@@ -21,6 +22,7 @@ use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Assistant\Models\AssistantChatMessageLog;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
@@ -142,6 +144,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assistantChats(): HasMany
     {
         return $this->hasMany(AssistantChat::class);
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 
     public function assistantChatMessageLogs(): HasMany
