@@ -3,6 +3,7 @@
 namespace Assist\Interaction\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,6 +39,11 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
     ];
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['import', ...$this->webPermissions()]);
+    }
 
     public function getSubscribable(): ?Subscribable
     {
