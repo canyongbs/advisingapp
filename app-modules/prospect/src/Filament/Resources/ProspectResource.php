@@ -6,6 +6,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Assist\Prospect\Models\Prospect;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+use Illuminate\Database\Eloquent\Model;
 
 class ProspectResource extends Resource
 {
@@ -16,6 +17,8 @@ class ProspectResource extends Resource
     protected static ?string $navigationGroup = 'Records';
 
     protected static ?int $navigationSort = 2;
+
+    protected static ?string $recordTitleAttribute = 'full_name';
 
     public static function getRecordSubNavigation(Page $page): array
     {
@@ -29,6 +32,21 @@ class ProspectResource extends Resource
             Pages\ManageProspectSubscriptions::class,
             Pages\ManageProspectInteractions::class,
         ]);
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['full_name', 'email', 'email_2', 'mobile', 'phone'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return array_filter([
+            'Student ID' => $record->sisid,
+            'Other ID' => $record->otherid,
+            'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
+        ], fn (mixed $value): bool => filled($value));
     }
 
     public static function getPages(): array
