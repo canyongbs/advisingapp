@@ -6,7 +6,6 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Assist\Alert\Enums\AlertStatus;
-use Assist\Prospect\Models\Prospect;
 use Assist\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
@@ -44,7 +43,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
 
         $ownerRecord = $urlParameters['record'];
 
-        /** @var Student|Prospect $ownerRecord */
+        /** @var Student $ownerRecord */
         $alertsCount = Cache::tags('alert-count')
             ->remember(
                 "alert-count-{$ownerRecord->getKey()}",

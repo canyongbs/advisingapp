@@ -91,6 +91,11 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
         return $this->morphMany(Task::class, 'concern');
     }
 
+    public function alerts(): MorphMany
+    {
+        return $this->morphMany(Alert::class, 'concern');
+    }
+
     public function programs(): HasMany
     {
         return $this->hasMany(Program::class, 'sisid', 'sisid');
@@ -104,11 +109,6 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');
-    }
-
-    public function alerts(): MorphMany
-    {
-        return $this->morphMany(Alert::class, 'concern');
     }
 
     public static function filamentResource(): string
