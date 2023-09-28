@@ -14,9 +14,9 @@ class InteractionTypeResource extends Resource
 {
     protected static ?string $model = InteractionType::class;
 
-    protected static ?string $navigationGroup = 'Settings';
-
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Settings';
 
     protected static ?int $navigationSort = 16;
 

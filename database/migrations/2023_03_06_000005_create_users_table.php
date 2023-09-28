@@ -10,6 +10,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('emplid')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable()->unique();
@@ -19,6 +20,9 @@ class CreateUsersTable extends Migration
             $table->string('locale')->nullable();
             $table->string('type')->nullable();
             $table->boolean('is_external')->default(false);
+
+            $table->foreignUuid('team_id')->nullable()->constrained('teams');
+
             $table->timestamps();
             $table->softDeletes();
         });

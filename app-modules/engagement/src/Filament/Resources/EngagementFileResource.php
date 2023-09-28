@@ -12,7 +12,13 @@ class EngagementFileResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $navigationGroup = 'Productivity Tools';
+
+    protected static ?int $navigationSort = 6;
+
+    protected static ?string $navigationLabel = 'Files and Documents';
+
+    protected ?string $heading = 'Files and Documents';
 
     public static function getRelations(): array
     {

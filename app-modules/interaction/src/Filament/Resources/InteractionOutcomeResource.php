@@ -14,9 +14,9 @@ class InteractionOutcomeResource extends Resource
 {
     protected static ?string $model = InteractionOutcome::class;
 
-    protected static ?string $navigationGroup = 'Settings';
-
     protected static ?string $navigationIcon = 'heroicon-o-map';
+
+    protected static ?string $navigationGroup = 'Product Settings';
 
     protected static ?int $navigationSort = 13;
 

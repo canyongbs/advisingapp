@@ -34,6 +34,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
     use HasStateMachine;
 
     protected $fillable = [
+        'title',
         'description',
         'due',
         'concern_id',

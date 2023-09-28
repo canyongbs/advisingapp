@@ -26,7 +26,6 @@ class TranslateCaseloadFilters
             $query = $caseload->subjects();
         }
 
-        /** @phpstan-ignore-next-line */
         return $query->get();
     }
 }

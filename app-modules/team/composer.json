@@ -1,0 +1,26 @@
+{
+  "name": "canyon-gbs/team",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Team\\": "src/",
+      "Assist\\Team\\Tests\\": "tests/",
+      "Assist\\Team\\Database\\Factories\\": "database/factories/",
+      "Assist\\Team\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Team\\Providers\\TeamServiceProvider"
+      ]
+    }
+  }
+}

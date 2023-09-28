@@ -14,9 +14,9 @@ class InteractionCampaignResource extends Resource
 {
     protected static ?string $model = InteractionCampaign::class;
 
-    protected static ?string $navigationGroup = 'Settings';
-
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
+
+    protected static ?string $navigationGroup = 'Product Settings';
 
     protected static ?int $navigationSort = 10;
 

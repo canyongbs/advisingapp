@@ -14,9 +14,9 @@ class InteractionRelationResource extends Resource
 {
     protected static ?string $model = InteractionRelation::class;
 
-    protected static ?string $navigationGroup = 'Settings';
-
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
+
+    protected static ?string $navigationGroup = 'Product Settings';
 
     protected static ?int $navigationSort = 14;
 

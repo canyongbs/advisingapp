@@ -19,9 +19,9 @@ class KnowledgeBaseItemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
-    protected static ?string $navigationGroup = 'Tools';
+    protected static ?string $navigationGroup = 'Productivity Tools';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $recordTitleAttribute = 'question';
 

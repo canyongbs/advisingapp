@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e287395d860e84f2e8c3497797d61c11",
+    "content-hash": "9d0feb5bd685cc9a7098dbeef3a35c03",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -1181,6 +1181,41 @@
             }
         },
         {
+            "name": "canyon-gbs/team",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/team",
+                "reference": "fcaf4222075803f266df353aed891ed9942fea3f"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Team\\Providers\\TeamServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Team\\": "src/",
+                    "Assist\\Team\\Tests\\": "tests/",
+                    "Assist\\Team\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Team\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/theme",
             "version": "1.0",
             "dist": {
@@ -1207,6 +1242,41 @@
                     "Assist\\Theme\\Tests\\": "tests/",
                     "Assist\\Theme\\Database\\Factories\\": "database/factories/",
                     "Assist\\Theme\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/timeline",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/timeline",
+                "reference": "d093c1f588309e2f0f360bbdea08ed252258032b"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Timeline\\Providers\\TimelineServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Timeline\\": "src/",
+                    "Assist\\Timeline\\Tests\\": "tests/",
+                    "Assist\\Timeline\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Timeline\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -17276,5 +17346,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

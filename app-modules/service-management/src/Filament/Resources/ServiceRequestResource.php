@@ -18,15 +18,17 @@ class ServiceRequestResource extends Resource
 {
     protected static ?string $model = ServiceRequest::class;
 
-    protected static ?string $navigationLabel = 'Service Request';
+    protected static ?string $navigationLabel = 'Service Management';
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
-    protected static ?string $label = 'Service Request';
+    protected static ?string $navigationGroup = 'Productivity Tools';
 
-    protected static ?string $navigationGroup = 'Tools';
+    protected static ?int $navigationSort = 3;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?string $modelLabel = 'Service Management';
+
+    protected static ?string $pluralLabel = 'Service Management';
 
     public static function getRelations(): array
     {

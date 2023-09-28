@@ -14,8 +14,9 @@ class EditTaskRequestFactory extends RequestFactory
         $student = Student::factory()->create();
 
         return [
-            'description' => $this->faker->sentence,
-            'status' => $this->faker->randomElement(TaskStatus::cases())->value,
+            'title' => str(fake()->words(asText: 3))->title()->toString(),
+            'description' => fake()->sentence(),
+            'status' => fake()->randomElement(TaskStatus::cases())->value,
             'due' => now()->addWeek(),
             'assigned_to' => User::factory()->create()->id,
             'concern_id' => $student->id,
