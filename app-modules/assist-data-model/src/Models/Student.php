@@ -3,11 +3,10 @@
 namespace Assist\AssistDataModel\Models;
 
 use Assist\Task\Models\Task;
+use Assist\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Alert\Models\Concerns\HasAlerts;
-use Assist\Alert\Models\Contracts\Alertable;
 use Assist\Engagement\Models\EngagementFile;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,7 +28,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 /**
  * @mixin IdeHelperStudent
  */
-class Student extends Model implements Auditable, Subscribable, Educatable, HasFilamentResource, Alertable
+class Student extends Model implements Auditable, Subscribable, Educatable, HasFilamentResource
 {
     use AuditableTrait;
     use HasFactory;
@@ -39,7 +38,6 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
     use HasSubscriptions;
-    use HasAlerts;
 
     protected $primaryKey = 'sisid';
 
@@ -106,6 +104,11 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');
+    }
+
+    public function alerts(): MorphMany
+    {
+        return $this->morphMany(Alert::class, 'concern');
     }
 
     public static function filamentResource(): string

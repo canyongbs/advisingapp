@@ -6,11 +6,10 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Task\Models\Task;
+use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Alert\Models\Concerns\HasAlerts;
-use Assist\Alert\Models\Contracts\Alertable;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\ServiceManagement\Models\ServiceRequest;
@@ -32,7 +31,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 /**
  * @mixin IdeHelperProspect
  */
-class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, HasFilamentResource, Alertable
+class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, HasFilamentResource
 {
     use HasUuids;
     use SoftDeletes;
@@ -42,7 +41,6 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
     use HasSubscriptions;
-    use HasAlerts;
 
     protected $fillable = [
         'first_name',
@@ -124,6 +122,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     public function tasks(): MorphMany
     {
         return $this->morphMany(Task::class, 'concern');
+    }
+
+    public function alerts(): MorphMany
+    {
+        return $this->morphMany(Alert::class, 'concern');
     }
 
     public static function displayNameKey(): string

@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Assist\Alert\Enums\AlertStatus;
+use Assist\Prospect\Models\Prospect;
 use Assist\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
@@ -16,7 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
-use Assist\Alert\Models\Contracts\Alertable;
+use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -43,7 +44,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
 
         $ownerRecord = $urlParameters['record'];
 
-        /** @var Alertable $ownerRecord */
+        /** @var Student|Prospect $ownerRecord */
         $alertsCount = Cache::tags('alert-count')
             ->remember(
                 "alert-count-{$ownerRecord->getKey()}",
