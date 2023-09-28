@@ -74,19 +74,23 @@ class ManageProspectAlerts extends ManageRelatedRecords
         return $form
             ->schema([
                 Textarea::make('description')
-                    ->required(),
+                    ->required()
+                    ->string(),
                 Select::make('severity')
                     ->options(AlertSeverity::class)
                     ->selectablePlaceholder(false)
                     ->default(AlertSeverity::default())
-                    ->required(),
+                    ->required()
+                    ->enum(AlertSeverity::class),
                 Textarea::make('suggested_intervention')
-                    ->required(),
+                    ->required()
+                    ->string(),
                 Select::make('status')
                     ->options(AlertStatus::class)
                     ->selectablePlaceholder(false)
                     ->default(AlertStatus::default())
-                    ->required(),
+                    ->required()
+                    ->enum(AlertStatus::class),
             ]);
     }
 
