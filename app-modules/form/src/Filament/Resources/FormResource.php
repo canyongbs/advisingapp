@@ -4,10 +4,13 @@ namespace Assist\Form\Filament\Resources;
 
 use Assist\Form\Models\Form;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Form\Filament\Resources\FormResource\Pages\EditForm;
 use Assist\Form\Filament\Resources\FormResource\Pages\ListForms;
 use Assist\Form\Filament\Resources\FormResource\Pages\CreateForm;
+use Assist\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
+use Assist\Form\Filament\Resources\FormResource\RelationManagers\FormSubmissionsRelationManager;
 
 class FormResource extends Resource
 {
@@ -20,10 +23,12 @@ class FormResource extends Resource
         return parent::getEloquentQuery()->with(['items']);
     }
 
-    public static function getRelations(): array
+    public static function getRecordSubNavigation(Page $page): array
     {
-        return [
-        ];
+        return $page->generateNavigationItems([
+            EditForm::class,
+            ManageFormSubmissions::class,
+        ]);
     }
 
     public static function getPages(): array
@@ -32,6 +37,7 @@ class FormResource extends Resource
             'index' => ListForms::route('/'),
             'create' => CreateForm::route('/create'),
             'edit' => EditForm::route('/{record}/edit'),
+            'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
         ];
     }
 }

@@ -15,4 +15,9 @@ class Form extends BaseModel
     {
         return $this->hasMany(FormItem::class);
     }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(FormSubmission::class);
+    }
 }

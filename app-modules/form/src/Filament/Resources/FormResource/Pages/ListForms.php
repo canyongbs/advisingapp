@@ -3,7 +3,9 @@
 namespace Assist\Form\Filament\Resources\FormResource\Pages;
 
 use Filament\Tables\Table;
+use Assist\Form\Models\Form;
 use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -24,6 +26,11 @@ class ListForms extends ListRecords
             ->filters([
             ])
             ->actions([
+                Action::make('Embed')
+                    ->url(fn (Form $form) => route('forms.embed.show', ['embed' => $form]))
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->openUrlInNewTab()
+                    ->color('gray'),
                 EditAction::make(),
             ])
             ->bulkActions([

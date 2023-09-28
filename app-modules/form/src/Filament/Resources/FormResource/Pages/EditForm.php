@@ -3,6 +3,7 @@
 namespace Assist\Form\Filament\Resources\FormResource\Pages;
 
 use Assist\Form\Models\Form;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\KeyValue;
@@ -16,6 +17,8 @@ use Assist\Form\Filament\Resources\FormResource;
 class EditForm extends EditRecord
 {
     protected static string $resource = FormResource::class;
+
+    protected static ?string $navigationLabel = 'Edit';
 
     public function form(FilamentForm $form): FilamentForm
     {
@@ -88,8 +91,6 @@ class EditForm extends EditRecord
             ])
             ->toArray();
 
-        ray($data);
-
         return $data;
     }
 
@@ -120,6 +121,10 @@ class EditForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('Embed')
+                ->url(fn (Form $form) => route('forms.embed.show', ['embed' => $form]))
+                ->icon('heroicon-m-arrow-top-right-on-square')
+                ->openUrlInNewTab(),
             DeleteAction::make(),
         ];
     }
