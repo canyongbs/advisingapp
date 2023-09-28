@@ -5,9 +5,12 @@ namespace Assist\AssistDataModel\Models;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
+use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Engagement\Models\EngagementFileEntities;
@@ -54,6 +57,14 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public function identifier(): string
     {
         return $this->sisid;
+    }
+
+    // TODO Move this or potentially even get rid of it
+    public function latestEngagement(): HasOne
+    {
+        return $this->hasOne(Engagement::class, 'recipient_id')
+            ->where('user_id', auth()->user()->id)
+            ->latestOfMany('deliver_at');
     }
 
     public static function displayNameKey(): string
@@ -114,5 +125,12 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public static function filamentResource(): string
     {
         return StudentResource::class;
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value, array $attributes) => $attributes['full_name'],
+        );
     }
 }
