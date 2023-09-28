@@ -28,6 +28,8 @@ class EditForm extends EditRecord
                     ->autocomplete(false),
                 Builder::make('content')
                     ->columnSpanFull()
+                    ->reorderableWithDragAndDrop(false)
+                    ->reorderableWithButtons()
                     ->blocks([
                         Block::make('text_input')
                             ->label('Text Input')
@@ -95,7 +97,7 @@ class EditForm extends EditRecord
     {
         $record = parent::handleRecordUpdate($record, $data);
 
-        ray($data);
+        $record->items()->delete();
 
         collect($data['content'])
             ->each(function ($item, $index) use ($record) {
@@ -103,9 +105,8 @@ class EditForm extends EditRecord
 
                 $record
                     ->items()
-                    ->updateOrCreate([
+                    ->create([
                         'key' => $data->get('key'),
-                    ], [
                         'type' => $item['type'],
                         'label' => $data->get('label'),
                         'content' => $data->except(['key', 'label']),

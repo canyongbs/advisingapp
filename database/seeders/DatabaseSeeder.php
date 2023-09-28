@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Assist\Form\Database\Seeders\FormSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Assist\Task\Database\Seeders\TaskSeeder;
@@ -52,6 +53,7 @@ class DatabaseSeeder extends Seeder
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
             InternalUsersSeeder::class,
+            FormSeeder::class,
         ]);
     }
 }

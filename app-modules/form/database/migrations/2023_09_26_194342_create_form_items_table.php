@@ -22,7 +22,6 @@ return new class () extends Migration {
             $table->foreignUuid('form_id')->constrained('forms');
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 };

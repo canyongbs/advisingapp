@@ -2,7 +2,7 @@
 
 namespace Assist\Form\Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Assist\Form\Models\Form;
 use Illuminate\Database\Seeder;
 
 class FormSeeder extends Seeder
@@ -12,6 +12,6 @@ class FormSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Form::factory()->count(10)->create();
     }
 }
