@@ -6,6 +6,7 @@ use App\Models\Import;
 use App\Imports\Importer;
 use Illuminate\Support\Str;
 use Assist\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Interaction\Models\Interaction;
 use Assist\Interaction\Models\InteractionType;
@@ -31,14 +32,20 @@ class InteractionsImporter extends Importer
                         $type = str($state)->before(':');
                         $value = str($state)->after(':');
 
-                        match ($type) {
+                        return match ($type->toString()) {
                             'prospect' => Prospect::query()
-                                ->whereKey($type)
-                                ->orWhere('email', $value)
+                                ->when(
+                                    str($value)->isUuid(),
+                                    fn (Builder $query) => $query->whereKey($value),
+                                    fn (Builder $query) => $query->where('email', $value),
+                                )
                                 ->first(),
                             'student' => Student::query()
-                                ->whereKey($type)
-                                ->orWhere('email', $value)
+                                ->when(
+                                    str($value)->isUuid(),
+                                    fn (Builder $query) => $query->whereKey($value),
+                                    fn (Builder $query) => $query->where('email', $value),
+                                )
                                 ->first(),
                         };
                     },
@@ -53,8 +60,11 @@ class InteractionsImporter extends Importer
             ImportColumn::make('type')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionType::query()
-                        ->whereKey($state)
-                        ->orWhereRaw('lower(name) = ?', [strtolower($state)])
+                        ->when(
+                            str($state)->isUuid(),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
+                        )
                         ->first(),
                 )
                 ->requiredMapping()
@@ -62,8 +72,11 @@ class InteractionsImporter extends Importer
             ImportColumn::make('relation')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionRelation::query()
-                        ->whereKey($state)
-                        ->orWhereRaw('lower(name) = ?', [strtolower($state)])
+                        ->when(
+                            str($state)->isUuid(),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
+                        )
                         ->first(),
                 )
                 ->requiredMapping()
@@ -71,8 +84,11 @@ class InteractionsImporter extends Importer
             ImportColumn::make('campaign')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionCampaign::query()
-                        ->whereKey($state)
-                        ->orWhereRaw('lower(name) = ?', [strtolower($state)])
+                        ->when(
+                            str($state)->isUuid(),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
+                        )
                         ->first(),
                 )
                 ->requiredMapping()
@@ -80,8 +96,11 @@ class InteractionsImporter extends Importer
             ImportColumn::make('driver')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionDriver::query()
-                        ->whereKey($state)
-                        ->orWhereRaw('lower(name) = ?', [strtolower($state)])
+                        ->when(
+                            str($state)->isUuid(),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
+                        )
                         ->first(),
                 )
                 ->requiredMapping()
@@ -89,8 +108,11 @@ class InteractionsImporter extends Importer
             ImportColumn::make('status')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionStatus::query()
-                        ->whereKey($state)
-                        ->orWhereRaw('lower(name) = ?', [strtolower($state)])
+                        ->when(
+                            str($state)->isUuid(),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
+                        )
                         ->first(),
                 )
                 ->requiredMapping()
@@ -98,8 +120,11 @@ class InteractionsImporter extends Importer
             ImportColumn::make('outcome')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionOutcome::query()
-                        ->whereKey($state)
-                        ->orWhereRaw('lower(name) = ?', [strtolower($state)])
+                        ->when(
+                            str($state)->isUuid(),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
+                        )
                         ->first(),
                 )
                 ->requiredMapping()
@@ -107,8 +132,11 @@ class InteractionsImporter extends Importer
             ImportColumn::make('institution')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionInstitution::query()
-                        ->whereKey($state)
-                        ->orWhereRaw('lower(name) = ?', [strtolower($state)])
+                        ->when(
+                            str($state)->isUuid(),
+                            fn (Builder $query) => $query->whereKey($state),
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
+                        )
                         ->first(),
                 )
                 ->requiredMapping()
@@ -127,26 +155,10 @@ class InteractionsImporter extends Importer
     }
 
     // TODO: Determine how to use this to prevent the duplicate of records
-    //public function resolveRecord(): ?Model
-    //{
-    //    $email = $this->data['email'];
-    //    $email2 = $this->data['email_2'] ?? null;
-    //
-    //    $emails = [
-    //        $email,
-    //        ...filled($email2) ? [$email2] : [],
-    //    ];
-    //
-    //    $prospect = Prospect::query()
-    //        ->whereIn('email', $emails)
-    //        ->orWhereIn('email_2', $emails)
-    //        ->first();
-    //
-    //    return $prospect ?? new Prospect([
-    //        'email' => $email,
-    //        'email_2' => $email2,
-    //    ]);
-    //}
+    public function resolveRecord(): Interaction
+    {
+        return new Interaction();
+    }
 
     public function beforeCreate(): void
     {
