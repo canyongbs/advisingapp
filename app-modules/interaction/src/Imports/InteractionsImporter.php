@@ -153,7 +153,7 @@ class InteractionsImporter extends Importer
                 ->example('A description of the interaction.'),
         ];
     }
-    
+
     public function resolveRecord(): Interaction
     {
         return new Interaction();
