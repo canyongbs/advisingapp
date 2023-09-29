@@ -5,7 +5,7 @@
 
 {{-- TODO We probably just want to make the base engagement timeline item a little bit more flexible --}}
 {{-- So that it can handle various cases and not depend on _all_ of the data that originates from the TL --}}
-<div class="rounded-lg border-2 border-gray-700 p-4">
+<div class="rounded-lg border-2 border-gray-300 p-4 dark:border-gray-700">
     <div class="flex flex-row justify-between">
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
             <a
@@ -45,8 +45,7 @@
         Sent {{ $record->deliver_at->diffForHumans() }}
     </time>
 
-    <div
-        class="my-4 rounded-lg border-2 border-gray-300 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+    <div class="my-4 rounded-lg p-2 text-base font-normal text-gray-500 dark:text-gray-400">
         @if (!blank($record->subject))
             <div class="mb-2 flex flex-col">
                 <p class="text-xs text-gray-400 dark:text-gray-500">Subject:</p>

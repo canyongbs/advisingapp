@@ -3,7 +3,7 @@
     <div
         class="block items-center rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
         <div class="flex items-center">
-            <span class="font-medium text-gray-500 dark:text-gray-400 sm:text-xs md:text-sm">
+            <span class="font-bold text-gray-500 dark:text-gray-400 sm:text-xs md:text-sm">
                 My Subscribed Engagements
             </span>
         </div>

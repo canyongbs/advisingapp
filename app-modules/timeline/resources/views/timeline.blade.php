@@ -4,14 +4,14 @@
     @else
         <ol class="relative">
             @foreach ($aggregateRecords as $record)
-                <li class="relative -left-6 mb-10 ml-6 rounded-lg p-4 hover:bg-gray-50 hover:dark:bg-gray-800">
+                <li class="relative -left-6 mb-10 ml-6 rounded-lg p-4 hover:bg-gray-200 hover:dark:bg-gray-800">
                     @if (!$loop->last)
                         <div class="absolute -bottom-12 -left-3 top-3 flex w-6 justify-center">
                             <div class="w-px bg-gray-200 dark:bg-gray-700"></div>
                         </div>
                     @endif
                     <span
-                        class="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 ring-8 ring-white dark:bg-blue-900 dark:ring-gray-900"
+                        class="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-300 ring-8 ring-gray-200 dark:bg-gray-900 dark:ring-gray-800"
                     >
                         <x-filament::icon
                             class="h-4 w-4 text-gray-800 dark:text-gray-100"
