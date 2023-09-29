@@ -16,6 +16,8 @@ class EmbedForm extends Component implements HasForms
 {
     use InteractsWithForms;
 
+    public bool $show = true;
+
     public Form $embed;
 
     public ?array $data = [];
@@ -24,7 +26,7 @@ class EmbedForm extends Component implements HasForms
     {
         $embed->loadMissing('items');
 
-        // $this->form->fill($embed->toArray());
+        $this->form->fill();
     }
 
     public function form(FilamentForm $form): FilamentForm
@@ -53,7 +55,18 @@ class EmbedForm extends Component implements HasForms
     {
         $this->embed->submissions()->create(['content' => $this->form->getState()]);
 
+        $this->show = false;
+
         $this->form->fill();
+    }
+
+    public function resetForm(): void
+    {
+        $this->form->fill();
+
+        $this->dispatch('close-modal', id: 'reset');
+
+        $this->show = true;
     }
 
     public function render(): View

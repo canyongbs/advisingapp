@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form as FilamentForm;
@@ -28,7 +29,11 @@ class EditForm extends EditRecord
                     ->required()
                     ->string()
                     ->maxLength(255)
-                    ->autocomplete(false),
+                    ->autocomplete(false)
+                    ->columnSpanFull(),
+                Textarea::make('description')
+                    ->string()
+                    ->columnSpanFull(),
                 Builder::make('content')
                     ->columnSpanFull()
                     ->reorderableWithDragAndDrop(false)
