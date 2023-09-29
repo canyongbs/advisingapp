@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 use Assist\Task\Database\Seeders\TaskSeeder;
 use Assist\Team\Database\Seeders\TeamSeeder;
 use Illuminate\Support\Facades\Notification;
+use Assist\Alert\Database\Seeders\AlertSeeder;
 use Assist\Division\Database\Seeders\DivisionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
 use Assist\Engagement\Database\Seeders\EngagementSeeder;
@@ -56,6 +57,7 @@ class DatabaseSeeder extends Seeder
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
             InternalUsersSeeder::class,
+            AlertSeeder::class,
             TeamSeeder::class,
             EngagementSeeder::class,
             EngagementResponseSeeder::class,
