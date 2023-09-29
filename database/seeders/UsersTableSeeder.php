@@ -56,6 +56,7 @@ class UsersTableSeeder extends Seeder
 
         $students->each(function (Student $student) use ($user) {
             Engagement::factory()
+                ->count(5)
                 ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
                 ->for($student, 'recipient')
                 ->create([

@@ -5,7 +5,7 @@
 
 {{-- TODO We probably just want to make the base engagement timeline item a little bit more flexible --}}
 {{-- So that it can handle various cases and not depend on _all_ of the data that originates from the TL --}}
-<div>
+<div class="rounded-lg border-2 border-gray-700 p-4">
     <div class="flex flex-row justify-between">
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
             <a
@@ -31,6 +31,14 @@
                 @endforeach
             </span>
         </h3>
+
+        <div>
+            <x-filament::icon-button
+                class="absolute right-2 top-2"
+                wire:click="viewRecord('{{ $record->id }}', '{{ $record->getMorphClass() }}')"
+                icon="heroicon-o-eye"
+            />
+        </div>
     </div>
 
     <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">

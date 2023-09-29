@@ -5,7 +5,9 @@ namespace Assist\Engagement\Filament\Pages;
 use Exception;
 use App\Models\User;
 use Filament\Pages\Page;
+use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
@@ -21,6 +23,8 @@ class MessageCenter extends Page
     protected static ?int $navigationSort = 2;
 
     public ?Educatable $selectedEducatable;
+
+    public Model $currentRecordToView;
 
     public Collection $subscribedStudentsWithEngagements;
 
@@ -71,5 +75,19 @@ class MessageCenter extends Page
         }
 
         return $className::whereKey($key)->firstOrFail();
+    }
+
+    // TODO This currently won't work as we aren't actually in the context
+    // Of the timeline and we don't have access to the view actions that we need
+    public function viewRecord($record, $morphReference)
+    {
+        $this->currentRecordToView = $this->getRecordFromMorphAndKey($morphReference, $record);
+
+        $this->mountAction('view');
+    }
+
+    public function viewAction(): ViewAction
+    {
+        return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
     }
 }
