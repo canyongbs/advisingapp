@@ -3,10 +3,12 @@
 namespace Assist\Assistant\Providers;
 
 use Filament\Panel;
+use Filament\Support\Assets\Js;
 use Assist\Assistant\AssistantPlugin;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Assist\Assistant\Models\AssistantChat;
+use Filament\Support\Facades\FilamentAsset;
 use Assist\Assistant\Models\AssistantChatMessage;
 use Assist\IntegrationAI\Events\AIPromptInitiated;
 use Assist\Authorization\AuthorizationRoleRegistry;
@@ -30,6 +32,12 @@ class AssistantServiceProvider extends ServiceProvider
 
         $this->registerEvents();
         $this->registerRolesAndPermissions();
+        $this->registerAssets();
+    }
+
+    public function registerAssets(): void
+    {
+        FilamentAsset::register([Js::make('assistantCurrentResponse', __DIR__ . '/../../resources/js/assistantCurrentResponse.js')], 'canyon-gbs/assistant');
     }
 
     protected function registerEvents(): void

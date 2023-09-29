@@ -28,6 +28,7 @@
     "type": "module",
     "dependencies": {
         "flowbite": "^1.8.1",
+        "showdown": "^2.1.0",
         "sortablejs": "^1.15.0"
     }
 }
