@@ -3,8 +3,10 @@
 namespace Assist\Alert\Models;
 
 use App\Models\BaseModel;
+use Assist\Alert\Enums\AlertStatus;
 use Assist\Alert\Enums\AlertSeverity;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
@@ -24,11 +26,13 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription
         'concern_type',
         'description',
         'severity',
+        'status',
         'suggested_intervention',
     ];
 
     protected $casts = [
         'severity' => AlertSeverity::class,
+        'status' => AlertStatus::class,
     ];
 
     public function concern(): MorphTo
@@ -39,5 +43,10 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription
     public function getSubscribable(): ?Subscribable
     {
         return $this->concern instanceof Subscribable ? $this->concern : null;
+    }
+
+    public function scopeStatus(Builder $query, AlertStatus $status)
+    {
+        $query->where('status', $status);
     }
 }

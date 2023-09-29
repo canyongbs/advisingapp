@@ -14,7 +14,7 @@ class ManageStudentFiles extends ManageRelatedRecords
     // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'engagementFiles';
 
-    protected static ?string $navigationLabel = 'Files';
+    protected static ?string $navigationLabel = 'Files and Documents';
 
     protected static ?string $breadcrumb = 'Files';
 

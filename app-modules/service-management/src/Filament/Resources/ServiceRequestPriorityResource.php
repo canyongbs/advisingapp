@@ -13,11 +13,11 @@ class ServiceRequestPriorityResource extends Resource
 {
     protected static ?string $model = ServiceRequestPriority::class;
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationIcon = 'heroicon-o-arrows-up-down';
+
+    protected static ?string $navigationGroup = 'Product Settings';
 
     protected static ?int $navigationSort = 4;
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrows-up-down';
 
     public static function getRelations(): array
     {

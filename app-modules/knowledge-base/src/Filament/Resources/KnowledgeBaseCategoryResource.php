@@ -10,11 +10,11 @@ class KnowledgeBaseCategoryResource extends Resource
 {
     protected static ?string $model = KnowledgeBaseCategory::class;
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Settings';
 
     protected static ?int $navigationSort = 7;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getRelations(): array
     {

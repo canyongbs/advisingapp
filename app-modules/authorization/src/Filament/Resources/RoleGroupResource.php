@@ -29,11 +29,11 @@ class RoleGroupResource extends Resource
 {
     protected static ?string $model = RoleGroup::class;
 
-    protected static ?string $modelLabel = 'Group';
+    protected static ?string $modelLabel = 'Profile';
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'Users and Permissions';
 
     protected static ?int $navigationSort = 2;
 

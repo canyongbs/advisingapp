@@ -1,0 +1,26 @@
+{
+  "name": "canyon-gbs/timeline",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\Timeline\\": "src/",
+      "Assist\\Timeline\\Tests\\": "tests/",
+      "Assist\\Timeline\\Database\\Factories\\": "database/factories/",
+      "Assist\\Timeline\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\Timeline\\Providers\\TimelineServiceProvider"
+      ]
+    }
+  }
+}

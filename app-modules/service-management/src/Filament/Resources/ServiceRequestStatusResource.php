@@ -13,11 +13,11 @@ class ServiceRequestStatusResource extends Resource
 {
     protected static ?string $model = ServiceRequestStatus::class;
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+
+    protected static ?string $navigationGroup = 'Product Settings';
 
     protected static ?int $navigationSort = 5;
-
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     public static function getRelations(): array
     {
