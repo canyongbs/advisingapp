@@ -6,14 +6,15 @@ use Assist\Form\Models\Form;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Textarea;
+use Assist\Form\Filament\Blocks\Select;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Forms\Components\Builder\Block;
+use Assist\Form\Filament\Blocks\TextArea;
+use Assist\Form\Filament\Blocks\TextInput;
 use Assist\Form\Filament\Resources\FormResource;
+use Filament\Forms\Components\Textarea as FilamentTextarea;
+use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 class EditForm extends EditRecord
 {
@@ -25,13 +26,13 @@ class EditForm extends EditRecord
     {
         return parent::form($form)
             ->schema([
-                TextInput::make('name')
+                FilamentTextInput::make('name')
                     ->required()
                     ->string()
                     ->maxLength(255)
                     ->autocomplete(false)
                     ->columnSpanFull(),
-                Textarea::make('description')
+                FilamentTextarea::make('description')
                     ->string()
                     ->columnSpanFull(),
                 Builder::make('content')
@@ -39,42 +40,9 @@ class EditForm extends EditRecord
                     ->reorderableWithDragAndDrop(false)
                     ->reorderableWithButtons()
                     ->blocks([
-                        Block::make('text_input')
-                            ->label('Text Input')
-                            ->schema([
-                                TextInput::make('label')
-                                    ->required()
-                                    ->string()
-                                    ->maxLength(255),
-                                TextInput::make('key')
-                                    ->required()
-                                    ->string()
-                                    ->maxLength(255),
-                            ]),
-                        Block::make('text_area')
-                            ->label('Text Area')
-                            ->schema([
-                                TextInput::make('label')
-                                    ->required()
-                                    ->string()
-                                    ->maxLength(255),
-                                TextInput::make('key')
-                                    ->required()
-                                    ->string()
-                                    ->maxLength(255),
-                            ]),
-                        Block::make('select')
-                            ->schema([
-                                TextInput::make('label')
-                                    ->required()
-                                    ->string()
-                                    ->maxLength(255),
-                                TextInput::make('key')
-                                    ->required()
-                                    ->string()
-                                    ->maxLength(255),
-                                KeyValue::make('options'),
-                            ]),
+                        TextInput::make(),
+                        TextArea::make(),
+                        Select::make(),
                     ]),
             ]);
     }
@@ -91,6 +59,7 @@ class EditForm extends EditRecord
                 'data' => [
                     'label' => $item['label'],
                     'key' => $item['key'],
+                    'required' => $item['required'],
                     ...$item['content'],
                 ],
             ])
@@ -115,7 +84,8 @@ class EditForm extends EditRecord
                         'key' => $data->get('key'),
                         'type' => $item['type'],
                         'label' => $data->get('label'),
-                        'content' => $data->except(['key', 'label']),
+                        'required' => $data->get('required'),
+                        'content' => $data->except(['key', 'label', 'required']),
                     ]);
             });
 

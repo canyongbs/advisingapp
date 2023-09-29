@@ -5,10 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Assist\Form\Models\Form;
 use Illuminate\Contracts\View\View;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Forms\Concerns\InteractsWithForms;
 
@@ -35,13 +32,9 @@ class EmbedForm extends Component implements HasForms
             ->embed
             ->items
             ->map(fn ($item) => match ($item->type) {
-                'text_input' => TextInput::make($item->key)
-                    ->label($item->label),
-                'text_area' => Textarea::make($item->key)
-                    ->label($item->label),
-                'select' => Select::make($item->key)
-                    ->label($item->label)
-                    ->options($item->content['options'])
+                'text_input' => \Assist\Form\Filament\Blocks\TextInput::display($item),
+                'text_area' => \Assist\Form\Filament\Blocks\TextArea::display($item),
+                'select' => \Assist\Form\Filament\Blocks\Select::display($item),
             })
             ->toArray();
 

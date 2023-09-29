@@ -12,6 +12,7 @@ class FormItem extends BaseModel
         'label',
         'key',
         'type',
+        'required',
     ];
 
     protected $casts = [

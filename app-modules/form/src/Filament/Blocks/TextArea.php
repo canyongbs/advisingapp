@@ -3,25 +3,25 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormItem;
-use Filament\Forms\Components\TextInput as FilamentTextInput;
+use Filament\Forms\Components\Textarea as FilamentTextArea;
 
-class TextInput extends Block
+class TextArea extends Block
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('Text Input');
+        $this->label('Text Area');
     }
 
-    public static function make(string $name = 'text_input'): static
+    public static function make(string $name = 'text_area'): static
     {
         return parent::make($name);
     }
 
-    public static function display(FormItem $item): FilamentTextInput
+    public static function display(FormItem $item): FilamentTextArea
     {
-        return FilamentTextInput::make($item->key)
+        return FilamentTextArea::make($item->key)
             ->label($item->label)
             ->required($item->required);
     }

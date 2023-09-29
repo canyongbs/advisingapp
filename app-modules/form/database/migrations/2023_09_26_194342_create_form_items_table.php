@@ -16,6 +16,7 @@ return new class () extends Migration {
             $table->text('label');
             $table->string('key')->unique();
             $table->text('type');
+            $table->boolean('required');
             $table->json('content');
 
             $table->foreignUuid('form_id')->constrained('forms');

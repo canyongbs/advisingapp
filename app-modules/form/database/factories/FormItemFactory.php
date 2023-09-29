@@ -25,6 +25,7 @@ class FormItemFactory extends Factory
         return [
             'label' => fake()->words(asText: true),
             'key' => fake()->unique()->word(),
+            'required' => fake()->boolean(),
             'type' => $type,
             'content' => $content,
         ];
