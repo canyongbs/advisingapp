@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Facades\Filament;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Assist\AssistDataModel\Models\Student;
@@ -23,8 +24,11 @@ class CreateTask extends CreateRecord
     {
         return parent::form($form)
             ->schema([
-                TextInput::make('description')
-                    ->label('Description')
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(100)
+                    ->string(),
+                Textarea::make('description')
                     ->required()
                     ->string(),
                 DateTimePicker::make('due')
@@ -37,7 +41,6 @@ class CreateTask extends CreateRecord
                     ->searchable(['name', 'email'])
                     ->default(auth()->id()),
                 MorphToSelect::make('concern')
-                    ->label('Concern')
                     ->searchable()
                     ->preload()
                     ->types([

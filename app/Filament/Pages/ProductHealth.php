@@ -3,14 +3,34 @@
 namespace App\Filament\Pages;
 
 use Spatie\Health\Enums\Status;
+use Illuminate\Contracts\Support\Htmlable;
 use Spatie\Health\ResultStores\ResultStore;
 use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
 
-class ApplicationHealth extends HealthCheckResults
+class ProductHealth extends HealthCheckResults
 {
-    protected static ?string $navigationGroup = 'Administration';
+    public static function getNavigationLabel(): string
+    {
+        return 'Product Health Dashboard';
+    }
 
-    protected static ?int $navigationSort = 7;
+    public function getHeading(): string | Htmlable
+    {
+        return 'Product Health Dashboard';
+    }
+
+    /**
+ * @return string|null
+ */
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Product Administration';
+    }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 7;
+    }
 
     public static function getNavigationBadge(): ?string
     {

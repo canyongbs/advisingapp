@@ -3,6 +3,7 @@
 namespace Assist\Alert\Database\Factories;
 
 use Assist\Alert\Models\Alert;
+use Assist\Alert\Enums\AlertStatus;
 use Assist\Prospect\Models\Prospect;
 use Assist\Alert\Enums\AlertSeverity;
 use Assist\AssistDataModel\Models\Student;
@@ -15,14 +16,15 @@ class AlertFactory extends Factory
 {
     public function definition(): array
     {
-        $concern = $this->faker->randomElement([new Student(), new Prospect()]);
+        $concern = fake()->randomElement([new Student(), new Prospect()]);
 
         return [
             'concern_id' => $concern::factory(),
             'concern_type' => $concern->getMorphClass(),
-            'description' => $this->faker->sentence,
-            'severity' => $this->faker->randomElement(AlertSeverity::cases())->value,
-            'suggested_intervention' => $this->faker->sentence,
+            'description' => fake()->sentence(),
+            'severity' => fake()->randomElement(AlertSeverity::cases()),
+            'status' => fake()->randomElement(AlertStatus::cases()),
+            'suggested_intervention' => fake()->sentence(),
         ];
     }
 }

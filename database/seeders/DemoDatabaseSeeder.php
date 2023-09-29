@@ -8,11 +8,13 @@ use Assist\Task\Database\Seeders\TaskSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
+use Assist\Consent\Database\Seeders\ConsentAgreementSeeder;
 use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
+use Assist\Engagement\Database\Seeders\DemoEducatableEngagementSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
@@ -44,6 +46,8 @@ class DemoDatabaseSeeder extends Seeder
             KnowledgeBaseStatusSeeder::class,
             KnowledgeBaseItemSeeder::class,
             TaskSeeder::class,
+            ConsentAgreementSeeder::class,
+            DemoEducatableEngagementSeeder::class,
         ]);
     }
 }

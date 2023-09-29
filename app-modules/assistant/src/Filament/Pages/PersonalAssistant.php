@@ -17,15 +17,15 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
-class AIAssistant extends Page
+class PersonalAssistant extends Page
 {
-    protected static ?string $navigationLabel = 'AI Assistant';
-
-    protected static ?string $title = 'AI Assistant';
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static string $view = 'assistant::filament.pages.ai-assistant';
+
+    protected static ?string $navigationGroup = 'Productivity Tools';
+
+    protected static ?int $navigationSort = 1;
 
     public Chat $chat;
 

@@ -10,7 +10,7 @@ class AlertSeeder extends Seeder
     public function run(): void
     {
         Alert::factory()
-            ->count(10)
+            ->count(50)
             ->create();
     }
 }

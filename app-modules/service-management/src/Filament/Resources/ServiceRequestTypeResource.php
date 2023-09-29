@@ -13,11 +13,11 @@ class ServiceRequestTypeResource extends Resource
 {
     protected static ?string $model = ServiceRequestType::class;
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Settings';
 
     protected static ?int $navigationSort = 6;
-
-    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 
     public static function getRelations(): array
     {

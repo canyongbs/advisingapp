@@ -15,11 +15,13 @@ class ManageMicrosoftClaritySettings extends SettingsPage
 
     protected static string $settings = MicrosoftClaritySettings::class;
 
-    protected static ?string $navigationGroup = 'Integrations';
-
     protected static ?string $title = 'Microsoft Clarity Settings';
 
     protected static ?string $navigationLabel = 'Microsoft Clarity';
+
+    protected static ?string $navigationGroup = 'Usage Analytics Integrations';
+
+    protected static ?int $navigationSort = 2;
 
     public function form(Form $form): Form
     {

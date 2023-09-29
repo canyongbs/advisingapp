@@ -28,7 +28,7 @@ class CaseloadResource extends Resource
 
     protected static ?string $navigationGroup = 'Mass Engagement';
 
-    protected static ?string $navigationLabel = 'Define Caseload';
+    protected static ?int $navigationSort = 1;
 
     public static function filters(CaseloadModel $subject): array
     {
