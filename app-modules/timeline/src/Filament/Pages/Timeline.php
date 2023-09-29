@@ -55,6 +55,7 @@ abstract class Timeline extends Page
         $this->mountAction('view');
     }
 
+    // TODO Extract this as it's shared between multiple resources at this point
     public function getRecordFromMorphAndKey($morphReference, $key)
     {
         $className = Relation::getMorphedModel($morphReference);

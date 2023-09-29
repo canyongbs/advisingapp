@@ -2,10 +2,13 @@
 
 namespace Assist\Engagement\Filament\Pages;
 
+use Exception;
 use App\Models\User;
 use Filament\Pages\Page;
 use Illuminate\Support\Collection;
 use Assist\AssistDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 
 class MessageCenter extends Page
 {
@@ -16,6 +19,8 @@ class MessageCenter extends Page
     protected static ?string $navigationGroup = 'Productivity Tools';
 
     protected static ?int $navigationSort = 2;
+
+    public ?Educatable $selectedEducatable;
 
     public Collection $subscribedStudentsWithEngagements;
 
@@ -50,7 +55,21 @@ class MessageCenter extends Page
                 $query->where('user_id', $user->id)
                     ->orderBy('deliver_at', 'desc');
             }]);
+    }
 
-        ray('subscribedStudentsWithEngagements', $this->subscribedStudentsWithEngagements);
+    public function selectEducatable(string $educatable, string $morphClass): void
+    {
+        $this->selectedEducatable = $this->getRecordFromMorphAndKey($morphClass, $educatable);
+    }
+
+    public function getRecordFromMorphAndKey($morphReference, $key)
+    {
+        $className = Relation::getMorphedModel($morphReference);
+
+        if (is_null($className)) {
+            throw new Exception("Model not found for reference: {$morphReference}");
+        }
+
+        return $className::whereKey($key)->firstOrFail();
     }
 }
