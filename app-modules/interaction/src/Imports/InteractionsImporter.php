@@ -153,11 +153,32 @@ class InteractionsImporter extends Importer
                 ->example('A description of the interaction.'),
         ];
     }
-
-    // TODO: Determine how to use this to prevent the duplicate of records
+    
     public function resolveRecord(): Interaction
     {
         return new Interaction();
+    }
+
+    public function afterFill(): void
+    {
+        /** @var Interaction $record */
+        $record = $this->record;
+
+        $query = Interaction::query();
+
+        foreach ($record->getAttributes() as $key => $value) {
+            if (in_array($key, ['id', 'created_at', 'updated_at'])) {
+                continue;
+            }
+
+            $query->where($key, $value);
+        }
+
+        $existingRecord = $query->first();
+
+        if ($existingRecord) {
+            $this->record = $existingRecord;
+        }
     }
 
     public function beforeCreate(): void
