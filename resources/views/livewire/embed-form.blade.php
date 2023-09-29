@@ -1,5 +1,5 @@
-<div class="flex justify-center items-center pt-16">
-    @if($show)
+<div class="flex items-center justify-center pt-16">
+    @if ($show)
         <x-filament::section class="w-1/2">
             <x-slot name="heading">
                 {{ $this->embed->name }}
@@ -12,7 +12,7 @@
             <form wire:submit="create">
                 {{ $this->form }}
 
-                <div class="pt-6 gap-3 flex flex-wrap items-center justify-start">
+                <div class="flex flex-wrap items-center justify-start gap-3 pt-6">
                     <x-filament::button type="submit">
                         Submit
                     </x-filament::button>
@@ -27,7 +27,10 @@
                             Are you sure?
                         </x-slot>
 
-                        <x-filament::button color="danger" wire:click="resetForm">
+                        <x-filament::button
+                            color="danger"
+                            wire:click="resetForm"
+                        >
                             Reset
                         </x-filament::button>
                     </x-filament::modal>
@@ -46,8 +49,11 @@
                 Thank you for your submission.
             </x-slot>
 
-            <div class="gap-3 flex flex-wrap items-center justify-start">
-                <x-filament::button type="button" wire:click="resetForm">
+            <div class="flex flex-wrap items-center justify-start gap-3">
+                <x-filament::button
+                    type="button"
+                    wire:click="resetForm"
+                >
                     Reset
                 </x-filament::button>
             </div>

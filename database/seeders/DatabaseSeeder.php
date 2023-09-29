@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Assist\Form\Database\Seeders\FormSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Assist\Form\Database\Seeders\FormSeeder;
 use Assist\Task\Database\Seeders\TaskSeeder;
 use Assist\Team\Database\Seeders\TeamSeeder;
 use Illuminate\Support\Facades\Notification;

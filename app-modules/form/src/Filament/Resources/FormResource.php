@@ -10,7 +10,6 @@ use Assist\Form\Filament\Resources\FormResource\Pages\EditForm;
 use Assist\Form\Filament\Resources\FormResource\Pages\ListForms;
 use Assist\Form\Filament\Resources\FormResource\Pages\CreateForm;
 use Assist\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
-use Assist\Form\Filament\Resources\FormResource\RelationManagers\FormSubmissionsRelationManager;
 
 class FormResource extends Resource
 {
