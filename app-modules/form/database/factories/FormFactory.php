@@ -18,6 +18,7 @@ class FormFactory extends Factory
     {
         return [
             'name' => fake()->unique()->word(),
+            'description' => fake()->sentences(asText: true),
         ];
     }
 

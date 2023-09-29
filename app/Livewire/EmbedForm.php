@@ -24,7 +24,7 @@ class EmbedForm extends Component implements HasForms
     {
         $embed->loadMissing('items');
 
-        $this->form->fill();
+        // $this->form->fill($embed->toArray());
     }
 
     public function form(FilamentForm $form): FilamentForm

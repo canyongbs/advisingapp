@@ -17,7 +17,6 @@ return new class () extends Migration {
             $table->string('key')->unique();
             $table->text('type');
             $table->json('content');
-            $table->unsignedInteger('order');
 
             $table->foreignUuid('form_id')->constrained('forms');
 

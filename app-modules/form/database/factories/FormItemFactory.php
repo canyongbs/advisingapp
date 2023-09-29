@@ -26,7 +26,6 @@ class FormItemFactory extends Factory
             'label' => fake()->words(asText: true),
             'key' => fake()->unique()->word(),
             'type' => $type,
-            'order' => fake()->numberBetween(0, 100),
             'content' => $content,
         ];
     }

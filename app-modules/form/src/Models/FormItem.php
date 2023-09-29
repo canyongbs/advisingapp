@@ -12,7 +12,6 @@ class FormItem extends BaseModel
         'label',
         'key',
         'type',
-        'order',
     ];
 
     protected $casts = [
@@ -22,7 +21,6 @@ class FormItem extends BaseModel
     public function form(): BelongsTo
     {
         return $this
-            ->belongsTo(Form::class)
-            ->orderBy('order');
+            ->belongsTo(Form::class);
     }
 }

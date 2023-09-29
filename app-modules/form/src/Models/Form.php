@@ -9,6 +9,7 @@ class Form extends BaseModel
 {
     protected $fillable = [
         'name',
+        'description',
     ];
 
     public function items(): HasMany

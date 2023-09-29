@@ -101,7 +101,7 @@ class EditForm extends EditRecord
         $record->items()->delete();
 
         collect($data['content'])
-            ->each(function ($item, $index) use ($record) {
+            ->each(function ($item) use ($record) {
                 $data = collect($item['data']);
 
                 $record
@@ -111,7 +111,6 @@ class EditForm extends EditRecord
                         'type' => $item['type'],
                         'label' => $data->get('label'),
                         'content' => $data->except(['key', 'label']),
-                        'order' => $index,
                     ]);
             });
 
