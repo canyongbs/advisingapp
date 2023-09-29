@@ -1,6 +1,5 @@
-{{-- TODO Make the inbox scrollable independent of the rest of the page --}}
 <div
-    class="border-b-1 max-h-screen w-full overflow-y-scroll rounded-lg border-l-2 border-r-2 border-t-2 border-gray-200 border-r-gray-50 bg-white dark:border-gray-700 dark:bg-gray-800 lg:w-1/3">
+    class="border-b-1 max-h-content w-full overflow-y-scroll rounded-l-lg border-l-2 border-r-2 border-t-2 border-gray-200 border-r-gray-50 bg-white dark:border-gray-700 dark:bg-gray-800 lg:w-1/3">
     <div
         class="block items-center rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
         <div class="flex items-center">
@@ -17,7 +16,11 @@
                         <ul class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
                             @foreach ($educatables as $educatable)
                                 <li
-                                    class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    @class([
+                                        'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700',
+                                        'bg-gray-100 dark:bg-gray-700' =>
+                                            $selectedEducatable?->identifier() === $educatable->identifier(),
+                                    ])
                                     wire:click="selectEducatable('{{ $educatable->identifier() }}', '{{ $educatable->getMorphClass() }}')"
                                 >
                                     <div class="justify-left flex flex-col items-center whitespace-nowrap p-4">

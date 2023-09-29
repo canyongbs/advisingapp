@@ -20,6 +20,9 @@ export default {
             colors: {
                 gray: require('tailwindcss/colors').zinc,
             },
+            maxHeight: {
+                content: 'calc(100vh - 6rem)',
+            },
         },
     },
     plugins: [forms, typography, require('flowbite/plugin')],

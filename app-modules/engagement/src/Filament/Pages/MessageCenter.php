@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -28,7 +29,6 @@ class MessageCenter extends Page
 
     public Collection $subscribedStudentsWithEngagements;
 
-    // TODO Add some seeding specifically for the auth user to get a better view subscribed/engaged students
     public function mount(): void
     {
         // TODO Global loading state
@@ -44,14 +44,19 @@ class MessageCenter extends Page
         // TODO We might want to add a scoped relation for engagements for "x" (students, prospects, etc)
         $engagedAndSubscribedStudentIds = $subscribedStudentIds->intersect($user->engagements()->where('recipient_type', resolve(Student::class)->getMorphClass())->pluck('recipient_id'));
 
-        $this->subscribedStudentsWithEngagements =
-            Student::whereIn('sisid', $engagedAndSubscribedStudentIds)
-                ->join('engagements', 'students.sisid', '=', 'engagements.recipient_id')
-                ->where('engagements.user_id', $user->id)
-                ->orderBy('engagements.deliver_at', 'desc')
-                ->distinct()
-                ->select('students.*', 'engagements.deliver_at')
-                ->get();
+        // TODO See if we can clean this up a bit
+        $latestEngagements = DB::table('engagements')
+            ->select('recipient_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
+            ->where('user_id', $user->id)
+            ->groupBy('recipient_id');
+
+        $this->subscribedStudentsWithEngagements = Student::whereIn('students.sisid', $engagedAndSubscribedStudentIds)
+            ->joinSub($latestEngagements, 'latest_engagements', function ($join) {
+                $join->on('students.sisid', '=', 'latest_engagements.recipient_id');
+            })
+            ->orderBy('latest_engagements.latest_deliver_at', 'desc')
+            ->select('students.*', 'latest_engagements.latest_deliver_at')
+            ->get();
 
         $this
             ->subscribedStudentsWithEngagements
