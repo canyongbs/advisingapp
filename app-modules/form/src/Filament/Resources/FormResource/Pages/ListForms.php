@@ -27,7 +27,7 @@ class ListForms extends ListRecords
             ])
             ->actions([
                 Action::make('Embed')
-                    ->url(fn (Form $form) => route('forms.embed.show', ['embed' => $form]))
+                    ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
                     ->openUrlInNewTab()
                     ->color('gray'),

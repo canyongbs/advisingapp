@@ -17,7 +17,7 @@ class FormFieldFactory extends Factory
     {
         $type = fake()->randomElement(['text_input', 'text_area', 'select']);
 
-        $content = match ($type) {
+        $config = match ($type) {
             'select' => json_decode('{"options":{"us":"United States","ca":"Canada","uk":"United Kingdom"}}'),
             default => [],
         };
@@ -27,7 +27,7 @@ class FormFieldFactory extends Factory
             'key' => fake()->unique()->word(),
             'required' => fake()->boolean(),
             'type' => $type,
-            'content' => $content,
+            'config' => $config,
         ];
     }
 }

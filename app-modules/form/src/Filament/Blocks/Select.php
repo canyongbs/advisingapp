@@ -25,7 +25,7 @@ class Select extends Block
         return FilamentSelect::make($field->key)
             ->label($field->label)
             ->required($field->required)
-            ->options($field->content['options']);
+            ->options($field->config['options']);
     }
 
     public function fields(): array

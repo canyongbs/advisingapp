@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class FormField extends BaseModel
 {
     protected $fillable = [
-        'content',
+        'config',
         'label',
         'key',
         'type',
@@ -16,7 +16,7 @@ class FormField extends BaseModel
     ];
 
     protected $casts = [
-        'content' => 'array',
+        'config' => 'array',
     ];
 
     public function form(): BelongsTo

@@ -60,7 +60,7 @@ class EditForm extends EditRecord
                     'label' => $field['label'],
                     'key' => $field['key'],
                     'required' => $field['required'],
-                    ...$field['content'],
+                    ...$field['config'],
                 ],
             ])
             ->toArray();
@@ -85,7 +85,7 @@ class EditForm extends EditRecord
                         'type' => $field['type'],
                         'label' => $data->get('label'),
                         'required' => $data->get('required'),
-                        'content' => $data->except(['key', 'label', 'required']),
+                        'config' => $data->except(['key', 'label', 'required']),
                     ]);
             });
 
@@ -96,7 +96,7 @@ class EditForm extends EditRecord
     {
         return [
             Action::make('Embed')
-                ->url(fn (Form $form) => route('forms.embed.show', ['embed' => $form]))
+                ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
             DeleteAction::make(),

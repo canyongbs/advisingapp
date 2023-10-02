@@ -10,13 +10,12 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class FormSubmissionFactory extends Factory
 {
     /**
-     * Define the model's default state.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
         return [
+            'content' => [fake()->word() => fake()->words(rand(1, 10), true)],
         ];
     }
 }

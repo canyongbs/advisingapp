@@ -5,9 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('form_fields', function (Blueprint $table) {
@@ -17,7 +14,7 @@ return new class () extends Migration {
             $table->string('key')->unique();
             $table->text('type');
             $table->boolean('required');
-            $table->json('content');
+            $table->json('config');
 
             $table->foreignUuid('form_id')->constrained('forms');
 

@@ -15,21 +15,21 @@ class EmbedForm extends Component implements HasForms
 
     public bool $show = true;
 
-    public Form $embed;
+    public Form $form;
 
     public ?array $data = [];
 
-    public function mount(Form $embed): void
+    public function mount(Form $form): void
     {
-        $embed->loadMissing('fields');
+        $form->loadMissing('fields');
 
-        $this->form->fill();
+        $this->getForm('form')->fill();
     }
 
     public function form(FilamentForm $form): FilamentForm
     {
         $fields = $this
-            ->embed
+            ->form
             ->fields
             ->map(fn ($item) => match ($item->type) {
                 'text_input' => \Assist\Form\Filament\Blocks\TextInput::display($item),
@@ -41,21 +41,21 @@ class EmbedForm extends Component implements HasForms
         return $form
             ->schema($fields)
             ->statePath('data')
-            ->model($this->embed);
+            ->model($this->form);
     }
 
     public function create(): void
     {
-        $this->embed->submissions()->create(['content' => $this->form->getState()]);
+        $this->form->submissions()->create(['content' => $this->getForm('form')->getState()]);
 
         $this->show = false;
 
-        $this->form->fill();
+        $this->getForm('form')->fill();
     }
 
     public function resetForm(): void
     {
-        $this->form->fill();
+        $this->getForm('form')->fill();
 
         $this->dispatch('close-modal', id: 'reset');
 
@@ -65,6 +65,6 @@ class EmbedForm extends Component implements HasForms
     public function render(): View
     {
         return view('livewire.embed-form')
-            ->title($this->embed->name);
+            ->title($this->form->name);
     }
 }

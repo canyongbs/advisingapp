@@ -2,15 +2,15 @@
     @if ($show)
         <x-filament::section class="w-1/2">
             <x-slot name="heading">
-                {{ $this->embed->name }}
+                {{ $this->form->name }}
             </x-slot>
 
             <x-slot name="description">
-                {{ $this->embed->description }}
+                {{ $this->form->description }}
             </x-slot>
 
             <form wire:submit="create">
-                {{ $this->form }}
+                {{ $this->getForm('form') }}
 
                 <div class="flex flex-wrap items-center justify-start gap-3 pt-6">
                     <x-filament::button type="submit">
@@ -42,7 +42,7 @@
     @else
         <x-filament::section class="w-1/2">
             <x-slot name="heading">
-                {{ $this->embed->name }}
+                {{ $this->form->name }}
             </x-slot>
 
             <x-slot name="description">
