@@ -150,6 +150,7 @@ namespace App\Models{
  * @property string|null $locale
  * @property string|null $type
  * @property bool $is_external
+ * @property string|null $team_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -180,8 +181,7 @@ namespace App\Models{
  * @property-read int|null $service_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Team\Models\Team> $teams
- * @property-read int|null $teams_count
+ * @property-read \Assist\Team\Models\Team|null $team
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
  * @property-read int|null $trait_role_groups_count
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
@@ -204,6 +204,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereTeamId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User withTrashed()
@@ -1793,31 +1794,6 @@ namespace Assist\Team\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperTeam {}
-}
-
-namespace Assist\Team\Models{
-/**
- * Assist\Team\Models\TeamUser
- *
- * @property string $id
- * @property string $team_id
- * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Team\Models\Team $team
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|TeamUser newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|TeamUser newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|TeamUser query()
- * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereTeamId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperTeamUser {}
 }
 
 namespace Assist\Webhook\Models{
