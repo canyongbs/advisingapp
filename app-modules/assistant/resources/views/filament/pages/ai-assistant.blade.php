@@ -51,8 +51,8 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                             class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
                                             <div class="flex max-w-full flex-grow flex-col gap-3">
                                                 <div
-                                                    class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto whitespace-pre-wrap break-words">
-                                                    <div class="markdown light prose w-full break-words dark:prose-invert">
+                                                    class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                    <div class="prose dark:prose-invert">
                                                         {!! str($message->message)->markdown()->sanitizeHtml() !!}
                                                     </div>
                                                 </div>
@@ -60,67 +60,8 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                             <div class="flex justify-between empty:hidden lg:block">
                                                 <div
                                                     class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2">
-                                                    <button
-                                                        class="ml-auto flex items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
-                                                    ><svg
-                                                            class="icon-sm"
-                                                            stroke="currentColor"
-                                                            fill="none"
-                                                            stroke-width="2"
-                                                            viewBox="0 0 24 24"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            height="1em"
-                                                            width="1em"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                        >
-                                                            <path
-                                                                d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-                                                            ></path>
-                                                            <rect
-                                                                x="8"
-                                                                y="2"
-                                                                width="8"
-                                                                height="4"
-                                                                rx="1"
-                                                                ry="1"
-                                                            ></rect>
-                                                        </svg></button>
-                                                    <div class="flex gap-1"><button
-                                                            class="rounded-md p-1 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
-                                                        ><svg
-                                                                class="icon-sm"
-                                                                stroke="currentColor"
-                                                                fill="none"
-                                                                stroke-width="2"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                height="1em"
-                                                                width="1em"
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                            >
-                                                                <path
-                                                                    d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
-                                                                ></path>
-                                                            </svg></button><button
-                                                            class="rounded-md p-1 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
-                                                        ><svg
-                                                                class="icon-sm"
-                                                                stroke="currentColor"
-                                                                fill="none"
-                                                                stroke-width="2"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                height="1em"
-                                                                width="1em"
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                            >
-                                                                <path
-                                                                    d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"
-                                                                ></path>
-                                                            </svg></button></div>
+                                                    <x-filament::icon icon="heroicon-o-clipboard" class="w-6 h-6 ml-auto flex items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400 cursor-pointer" />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -166,33 +107,10 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                 class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
                                                 <div class="flex max-w-full flex-grow flex-col gap-3">
                                                     <div
-                                                        class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto whitespace-pre-wrap break-words">
+                                                        class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                         <div>{{ $message->message }}</div>
                                                     </div>
                                                 </div>
-                                                <div
-                                                    class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2">
-                                                    <button
-                                                        class="rounded-md p-1 md:invisible hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400 md:group-hover:visible"
-                                                    ><svg
-                                                            class="icon-sm"
-                                                            stroke="currentColor"
-                                                            fill="none"
-                                                            stroke-width="2"
-                                                            viewBox="0 0 24 24"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            height="1em"
-                                                            width="1em"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                        >
-                                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7">
-                                                            </path>
-                                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">
-                                                            </path>
-                                                        </svg></button>
-                                                </div>
-                                                <div class="flex justify-between empty:hidden lg:block"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -204,7 +122,6 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                     @if ($showCurrentResponse)
                         <div
                             class="text-token-text-primary group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]"
-                            data-testid="conversation-turn-3"
                             style="--avatar-color: #19c37d;"
                             x-data="currentResponseData"
                         >
@@ -239,7 +156,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                         class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
                                         <div class="flex max-w-full flex-grow flex-col gap-3">
                                             <div
-                                                class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto whitespace-pre-wrap break-words">
+                                                class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                 <div
                                                     class="hidden"
                                                     id="hidden_current_response"
@@ -249,72 +166,6 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                     class="markdown light prose w-full break-words dark:prose-invert"
                                                     id="current_response"
                                                 ></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex justify-between empty:hidden lg:block">
-                                            <div
-                                                class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2">
-                                                <button
-                                                    class="ml-auto flex items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
-                                                ><svg
-                                                        class="icon-sm"
-                                                        stroke="currentColor"
-                                                        fill="none"
-                                                        stroke-width="2"
-                                                        viewBox="0 0 24 24"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        height="1em"
-                                                        width="1em"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-                                                        ></path>
-                                                        <rect
-                                                            x="8"
-                                                            y="2"
-                                                            width="8"
-                                                            height="4"
-                                                            rx="1"
-                                                            ry="1"
-                                                        ></rect>
-                                                    </svg></button>
-                                                <div class="flex gap-1"><button
-                                                        class="rounded-md p-1 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
-                                                    ><svg
-                                                            class="icon-sm"
-                                                            stroke="currentColor"
-                                                            fill="none"
-                                                            stroke-width="2"
-                                                            viewBox="0 0 24 24"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            height="1em"
-                                                            width="1em"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                        >
-                                                            <path
-                                                                d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"
-                                                            ></path>
-                                                        </svg></button><button
-                                                        class="rounded-md p-1 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
-                                                    ><svg
-                                                            class="icon-sm"
-                                                            stroke="currentColor"
-                                                            fill="none"
-                                                            stroke-width="2"
-                                                            viewBox="0 0 24 24"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            height="1em"
-                                                            width="1em"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                        >
-                                                            <path
-                                                                d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"
-                                                            ></path>
-                                                        </svg></button></div>
                                             </div>
                                         </div>
                                     </div>
@@ -365,7 +216,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                         class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
                                         <div class="flex max-w-full flex-grow flex-col gap-3">
                                             <div
-                                                class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto whitespace-pre-wrap break-words">
+                                                class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                 <h1 class="text-2xl font-bold text-red-400">Something went wrong</h1>
                                                 <p class="text-black">{{ $error }}</p>
                                             </div>
