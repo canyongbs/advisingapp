@@ -5,20 +5,16 @@ namespace Assist\Form\Filament\Resources\FormResource\Pages;
 use Assist\Form\Models\Form;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
 use Assist\Form\Filament\Resources\FormResource;
-use Assist\Form\Filament\Blocks\SelectFormFieldBlock;
-use Assist\Form\Filament\Blocks\TextAreaFormFieldBlock;
-use Assist\Form\Filament\Blocks\TextInputFormFieldBlock;
+use Assist\Form\Filament\Resources\FormResource\Pages\Concerns\HasSharedFormConfiguration;
 
 class EditForm extends EditRecord
 {
+    use HasSharedFormConfiguration;
+
     protected static string $resource = FormResource::class;
 
     protected static ?string $navigationLabel = 'Edit';
@@ -26,30 +22,7 @@ class EditForm extends EditRecord
     public function form(FilamentForm $form): FilamentForm
     {
         return parent::form($form)
-            ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->string()
-                    ->maxLength(255)
-                    ->autocomplete(false)
-                    ->columnSpanFull(),
-                Textarea::make('description')
-                    ->string()
-                    ->columnSpanFull(),
-                Section::make('Fields')
-                    ->schema([
-                        Builder::make('fields')
-                            ->label('')
-                            ->columnSpanFull()
-                            ->reorderableWithDragAndDrop(false)
-                            ->reorderableWithButtons()
-                            ->blocks([
-                                TextInputFormFieldBlock::make(),
-                                TextAreaFormFieldBlock::make(),
-                                SelectFormFieldBlock::make(),
-                            ]),
-                    ]),
-            ]);
+            ->schema($this->fields());
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
@@ -79,24 +52,12 @@ class EditForm extends EditRecord
     {
         //TODO: Look into versioning of form/form field configuration
 
+        /** @var Form $record */
         $record = parent::handleRecordUpdate($record, $data);
 
         $record->fields()->delete();
 
-        collect($data['fields'])
-            ->each(function ($field) use ($record) {
-                $data = collect($field['data']);
-
-                $record
-                    ->fields()
-                    ->create([
-                        'key' => $data->get('key'),
-                        'type' => $field['type'],
-                        'label' => $data->get('label'),
-                        'required' => $data->get('required'),
-                        'config' => $data->except(['key', 'label', 'required']),
-                    ]);
-            });
+        $this->handleFieldSaving($record, $data['fields']);
 
         return $record;
     }
@@ -104,7 +65,7 @@ class EditForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('Embed')
+            Action::make('Respond')
                 ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),

@@ -26,7 +26,7 @@ class ListForms extends ListRecords
             ->filters([
             ])
             ->actions([
-                Action::make('Embed')
+                Action::make('Respond')
                     ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
                     ->openUrlInNewTab()

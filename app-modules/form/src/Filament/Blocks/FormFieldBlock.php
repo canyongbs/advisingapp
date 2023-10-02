@@ -2,6 +2,7 @@
 
 namespace Assist\Form\Filament\Blocks;
 
+use Closure;
 use Assist\Form\Models\FormField;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Checkbox;
