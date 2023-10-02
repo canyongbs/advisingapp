@@ -57,6 +57,19 @@ class MessageCenter extends Page
         /** @var User $user */
         $this->user = auth()->user();
 
+        $this->resolveData();
+    }
+
+    public function hydrate(): void
+    {
+        $this->resolveData();
+    }
+
+    // TODO I don't think this is the best way to accomplish this
+    // But for some reason, the latest_activity is not being persisted
+    // Across the updated lifecycle hook, so we need to re-resolve the data
+    public function resolveData(): void
+    {
         $subscribedEducatableIds =
             $this->user->subscriptions()
                 // For now, we are just operating on Students
@@ -100,17 +113,8 @@ class MessageCenter extends Page
 
         $this->educatables = $this->subscribedStudentsWithEngagements;
 
-        ray('Educatables', $this->educatables);
-
         $this->loadingInbox = false;
     }
-
-    public function hydrate(): void
-    {
-        ray('hydrate()');
-    }
-
-    public function resolveData(): void {}
 
     public function selectEducatable(string $educatable, string $morphClass): void
     {

@@ -32,9 +32,9 @@
                                             {{ $educatable->display_name }}
                                         </div>
                                         <div class="w-full text-xs font-normal text-gray-700 dark:text-gray-400">
-                                            Last engaged at {{ $educatable }}
+                                            Last engaged at
 
-                                            {{-- {{ Carbon::parse($educatable->latest_activity)->format('g:ia - M j, Y') }} --}}
+                                            {{ Carbon::parse($educatable->latest_activity)->format('g:ia - M j, Y') }}
                                         </div>
                                     </div>
                                 </li>
