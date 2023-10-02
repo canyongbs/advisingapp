@@ -140,7 +140,7 @@ class PersonalAssistant extends Page
         $this->reset('showCurrentResponse');
 
         if ($this->renderError === false) {
-            $this->setMessage(nl2br($this->currentResponse), AIChatMessageFrom::Assistant);
+            $this->setMessage($this->currentResponse, AIChatMessageFrom::Assistant);
         }
 
         $this->reset('currentResponse');
