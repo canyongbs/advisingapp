@@ -1,3 +1,7 @@
+@php
+    use Carbon\Carbon;
+@endphp
+
 <div
     class="border-b-1 max-h-content w-full overflow-y-scroll rounded-l-lg border-l-2 border-r-2 border-t-2 border-gray-200 border-r-gray-50 bg-white dark:border-gray-700 dark:bg-gray-800 lg:w-1/3">
     <div
@@ -28,8 +32,9 @@
                                             {{ $educatable->display_name }}
                                         </div>
                                         <div class="w-full text-xs font-normal text-gray-700 dark:text-gray-400">
-                                            Last engaged at
-                                            {{ $educatable->engagements->first()->deliver_at->format('g:ia - M j, Y') }}
+                                            Last engaged at {{ $educatable }}
+
+                                            {{-- {{ Carbon::parse($educatable->latest_activity)->format('g:ia - M j, Y') }} --}}
                                         </div>
                                     </div>
                                 </li>

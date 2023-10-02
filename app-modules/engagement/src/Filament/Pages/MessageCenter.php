@@ -5,6 +5,7 @@ namespace Assist\Engagement\Filament\Pages;
 use Exception;
 use App\Models\User;
 use Filament\Pages\Page;
+use Livewire\Attributes\Locked;
 use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -37,8 +38,10 @@ class MessageCenter extends Page
 
     public bool $loadingTimeline = false;
 
+    #[Locked]
     public Collection $educatables;
 
+    #[Locked]
     public Collection $subscribedStudentsWithEngagements;
 
     public ?Educatable $selectedEducatable;
@@ -49,6 +52,8 @@ class MessageCenter extends Page
 
     public function mount(): void
     {
+        ray('mount()');
+
         /** @var User $user */
         $this->user = auth()->user();
 
@@ -66,26 +71,46 @@ class MessageCenter extends Page
                     ->pluck('recipient_id')
             );
 
-        // TODO Update this - the latest engagement needs to be either the latest outgoing engagement or incoming engagement response...
         $latestEngagements = DB::table('engagements')
-            ->select('recipient_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
+            ->select('recipient_id as educatable_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
             ->where('user_id', $this->user->id)
             ->whereIn('recipient_id', $engagedAndSubscribedEducatablesIds)
             ->groupBy('recipient_id');
 
-        $this->subscribedStudentsWithEngagements = Student::whereIn('students.sisid', $engagedAndSubscribedEducatablesIds)
-            ->joinSub($latestEngagements, 'latest_engagements', function ($join) {
-                $join->on('students.sisid', '=', 'latest_engagements.recipient_id');
+        $latestEngagementResponses = DB::table('engagement_responses')
+            ->select('sender_id as educatable_id', DB::raw('MAX(sent_at) as latest_deliver_at'))
+            ->whereIn('sender_id', $engagedAndSubscribedEducatablesIds)
+            ->groupBy('sender_id');
+
+        $combinedEngagements = $latestEngagements->unionAll($latestEngagementResponses);
+
+        $latestActivityForStudents = DB::table(DB::raw("({$combinedEngagements->toSql()}) as combined"))
+            ->select('educatable_id', DB::raw('MAX(latest_deliver_at) as latest_activity'))
+            ->groupBy('educatable_id')
+            ->mergeBindings($combinedEngagements);
+
+        $this->subscribedStudentsWithEngagements = Student::query()
+            ->whereIn('students.sisid', $engagedAndSubscribedEducatablesIds)
+            ->leftJoinSub($latestActivityForStudents, 'latest_activity', function ($join) {
+                $join->on('students.sisid', '=', 'latest_activity.educatable_id');
             })
-            ->orderBy('latest_engagements.latest_deliver_at', 'desc')
-            ->select('students.*', 'latest_engagements.latest_deliver_at')
+            ->select('students.*', 'latest_activity.latest_activity')
+            ->orderBy('latest_activity.latest_activity', 'desc')
             ->get();
 
-        // TODO This is where we'd also add prospects into the fold
         $this->educatables = $this->subscribedStudentsWithEngagements;
+
+        ray('Educatables', $this->educatables);
 
         $this->loadingInbox = false;
     }
+
+    public function hydrate(): void
+    {
+        ray('hydrate()');
+    }
+
+    public function resolveData(): void {}
 
     public function selectEducatable(string $educatable, string $morphClass): void
     {
