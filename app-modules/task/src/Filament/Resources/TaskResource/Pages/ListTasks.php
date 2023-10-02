@@ -83,7 +83,8 @@ class ListTasks extends ListRecords
                         function (Builder $query) {
                             /** @var User $user */
                             $user = auth()->user();
-                            $teamUserIds = $user->team->users()->pluck('id');
+                            //TODO: change this if we support multiple teams
+                            $teamUserIds = $user->teams()->first()->users()->get()->pluck('id');
 
                             return $query->whereIn('assigned_to', $teamUserIds)->get();
                         }
