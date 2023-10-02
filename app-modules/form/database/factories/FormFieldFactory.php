@@ -2,13 +2,13 @@
 
 namespace Assist\Form\Database\Factories;
 
-use Assist\Form\Models\FormItem;
+use Assist\Form\Models\FormField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<FormItem>
+ * @extends Factory<FormField>
  */
-class FormItemFactory extends Factory
+class FormFieldFactory extends Factory
 {
     /**
      * @return array<string, mixed>

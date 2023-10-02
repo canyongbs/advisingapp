@@ -21,7 +21,7 @@ class EmbedForm extends Component implements HasForms
 
     public function mount(Form $embed): void
     {
-        $embed->loadMissing('items');
+        $embed->loadMissing('fields');
 
         $this->form->fill();
     }
@@ -30,7 +30,7 @@ class EmbedForm extends Component implements HasForms
     {
         $fields = $this
             ->embed
-            ->items
+            ->fields
             ->map(fn ($item) => match ($item->type) {
                 'text_input' => \Assist\Form\Filament\Blocks\TextInput::display($item),
                 'text_area' => \Assist\Form\Filament\Blocks\TextArea::display($item),

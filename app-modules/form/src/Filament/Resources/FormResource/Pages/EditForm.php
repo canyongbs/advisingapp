@@ -53,14 +53,14 @@ class EditForm extends EditRecord
         $record = $this->getRecord();
 
         $data['content'] = $record
-            ->items
-            ->map(fn ($item) => [
-                'type' => $item['type'],
+            ->fields
+            ->map(fn ($field) => [
+                'type' => $field['type'],
                 'data' => [
-                    'label' => $item['label'],
-                    'key' => $item['key'],
-                    'required' => $item['required'],
-                    ...$item['content'],
+                    'label' => $field['label'],
+                    'key' => $field['key'],
+                    'required' => $field['required'],
+                    ...$field['content'],
                 ],
             ])
             ->toArray();
@@ -72,17 +72,17 @@ class EditForm extends EditRecord
     {
         $record = parent::handleRecordUpdate($record, $data);
 
-        $record->items()->delete();
+        $record->fields()->delete();
 
         collect($data['content'])
-            ->each(function ($item) use ($record) {
-                $data = collect($item['data']);
+            ->each(function ($field) use ($record) {
+                $data = collect($field['data']);
 
                 $record
-                    ->items()
+                    ->fields()
                     ->create([
                         'key' => $data->get('key'),
-                        'type' => $item['type'],
+                        'type' => $field['type'],
                         'label' => $data->get('label'),
                         'required' => $data->get('required'),
                         'content' => $data->except(['key', 'label', 'required']),

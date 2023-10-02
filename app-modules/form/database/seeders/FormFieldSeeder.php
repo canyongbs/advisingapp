@@ -4,7 +4,7 @@ namespace Assist\Form\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class FormItemSeeder extends Seeder
+class FormFieldSeeder extends Seeder
 {
     /**
      * Run the database seeds.

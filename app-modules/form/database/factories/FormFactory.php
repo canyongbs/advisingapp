@@ -3,7 +3,7 @@
 namespace Assist\Form\Database\Factories;
 
 use Assist\Form\Models\Form;
-use Assist\Form\Models\FormItem;
+use Assist\Form\Models\FormField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,8 +25,8 @@ class FormFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Form $form) {
-            if ($form->items()->doesntExist()) {
-                $form->items()->createMany(FormItem::factory()->count(3)->make()->toArray());
+            if ($form->fields()->doesntExist()) {
+                $form->fields()->createMany(FormField::factory()->count(3)->make()->toArray());
             }
         });
     }

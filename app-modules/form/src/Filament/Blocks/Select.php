@@ -2,7 +2,7 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormItem;
+use Assist\Form\Models\FormField;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select as FilamentSelect;
 
@@ -20,12 +20,12 @@ class Select extends Block
         return parent::make($name);
     }
 
-    public static function display(FormItem $item): FilamentSelect
+    public static function display(FormField $field): FilamentSelect
     {
-        return FilamentSelect::make($item->key)
-            ->label($item->label)
-            ->required($item->required)
-            ->options($item->content['options']);
+        return FilamentSelect::make($field->key)
+            ->label($field->label)
+            ->required($field->required)
+            ->options($field->content['options']);
     }
 
     public function fields(): array

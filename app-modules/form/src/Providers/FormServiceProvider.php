@@ -5,7 +5,7 @@ namespace Assist\Form\Providers;
 use Filament\Panel;
 use Assist\Form\FormPlugin;
 use Assist\Form\Models\Form;
-use Assist\Form\Models\FormItem;
+use Assist\Form\Models\FormField;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -22,7 +22,7 @@ class FormServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'form' => Form::class,
-            'form_item' => FormItem::class,
+            'form_field' => FormField::class,
         ]);
 
         $this->registerRolesAndPermissions();

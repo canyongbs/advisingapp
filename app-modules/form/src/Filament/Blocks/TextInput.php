@@ -2,7 +2,7 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormItem;
+use Assist\Form\Models\FormField;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 class TextInput extends Block
@@ -19,11 +19,11 @@ class TextInput extends Block
         return parent::make($name);
     }
 
-    public static function display(FormItem $item): FilamentTextInput
+    public static function display(FormField $field): FilamentTextInput
     {
-        return FilamentTextInput::make($item->key)
-            ->label($item->label)
-            ->required($item->required);
+        return FilamentTextInput::make($field->key)
+            ->label($field->label)
+            ->required($field->required);
     }
 
     public function fields(): array

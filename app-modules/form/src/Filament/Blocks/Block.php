@@ -2,7 +2,7 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormItem;
+use Assist\Form\Models\FormField;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Builder\Block as FilamentBlock;
@@ -28,7 +28,7 @@ abstract class Block extends FilamentBlock
         ]);
     }
 
-    abstract public static function display(FormItem $item): Field;
+    abstract public static function display(FormField $field): Field;
 
     abstract public function fields(): array;
 }

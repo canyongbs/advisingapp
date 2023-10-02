@@ -19,7 +19,7 @@ class FormResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with(['items']);
+        return parent::getEloquentQuery()->with(['fields']);
     }
 
     public static function getRecordSubNavigation(Page $page): array

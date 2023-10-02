@@ -12,9 +12,9 @@ class Form extends BaseModel
         'description',
     ];
 
-    public function items(): HasMany
+    public function fields(): HasMany
     {
-        return $this->hasMany(FormItem::class);
+        return $this->hasMany(FormField::class);
     }
 
     public function submissions(): HasMany

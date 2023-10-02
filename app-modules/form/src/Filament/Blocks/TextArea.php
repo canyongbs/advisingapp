@@ -2,7 +2,7 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormItem;
+use Assist\Form\Models\FormField;
 use Filament\Forms\Components\Textarea as FilamentTextArea;
 
 class TextArea extends Block
@@ -19,11 +19,11 @@ class TextArea extends Block
         return parent::make($name);
     }
 
-    public static function display(FormItem $item): FilamentTextArea
+    public static function display(FormField $field): FilamentTextArea
     {
-        return FilamentTextArea::make($item->key)
-            ->label($item->label)
-            ->required($item->required);
+        return FilamentTextArea::make($field->key)
+            ->label($field->label)
+            ->required($field->required);
     }
 
     public function fields(): array
