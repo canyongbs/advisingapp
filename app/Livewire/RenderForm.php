@@ -8,8 +8,11 @@ use Illuminate\Contracts\View\View;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Assist\Form\Filament\Blocks\SelectFormFieldBlock;
+use Assist\Form\Filament\Blocks\TextAreaFormFieldBlock;
+use Assist\Form\Filament\Blocks\TextInputFormFieldBlock;
 
-class EmbedForm extends Component implements HasForms
+class RenderForm extends Component implements HasForms
 {
     use InteractsWithForms;
 
@@ -32,9 +35,9 @@ class EmbedForm extends Component implements HasForms
             ->form
             ->fields
             ->map(fn ($item) => match ($item->type) {
-                'text_input' => \Assist\Form\Filament\Blocks\TextInput::display($item),
-                'text_area' => \Assist\Form\Filament\Blocks\TextArea::display($item),
-                'select' => \Assist\Form\Filament\Blocks\Select::display($item),
+                'text_input' => TextInputFormFieldBlock::display($item),
+                'text_area' => TextAreaFormFieldBlock::display($item),
+                'select' => SelectFormFieldBlock::display($item),
             })
             ->toArray();
 
@@ -44,7 +47,7 @@ class EmbedForm extends Component implements HasForms
             ->model($this->form);
     }
 
-    public function create(): void
+    public function submit(): void
     {
         $this->form->submissions()->create(['content' => $this->getForm('form')->getState()]);
 
@@ -64,7 +67,7 @@ class EmbedForm extends Component implements HasForms
 
     public function render(): View
     {
-        return view('livewire.embed-form')
+        return view('livewire.render-form')
             ->title($this->form->name);
     }
 }

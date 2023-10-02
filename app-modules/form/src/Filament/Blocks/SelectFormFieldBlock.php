@@ -6,7 +6,7 @@ use Assist\Form\Models\FormField;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select as FilamentSelect;
 
-class Select extends Block
+class SelectFormFieldBlock extends FormFieldBlock
 {
     protected function setUp(): void
     {
@@ -15,9 +15,9 @@ class Select extends Block
         $this->label('Select');
     }
 
-    public static function make(string $name = 'select'): static
+    public static function type(): string
     {
-        return parent::make($name);
+        return 'select';
     }
 
     public static function display(FormField $field): FilamentSelect

@@ -9,7 +9,7 @@
                 {{ $this->form->description }}
             </x-slot>
 
-            <form wire:submit="create">
+            <form wire:submit="submit">
                 {{ $this->getForm('form') }}
 
                 <div class="flex flex-wrap items-center justify-start gap-3 pt-6">

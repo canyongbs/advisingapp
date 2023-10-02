@@ -31,6 +31,8 @@ class FormSubmissionsRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('id'),
+                TextColumn::make('created_at')
+                    ->sortable(),
             ])
             ->filters([
             ])

@@ -259,7 +259,7 @@ return [
     'sample_answer' => 'Sample answer',
     'sample_category' => 'Sample category',
     'sample_question' => 'Sample question',
-    'select_all' => 'Select all',
+    'select_all' => 'SelectFormFieldBlock all',
     'select_crud_placeholder' => 'Please select one of your CRUDs',
     'select_dt_placeholder' => 'Please select one of date/time fields',
     'select_users_placeholder' => 'Please select one of your Users',

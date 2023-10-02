@@ -5,7 +5,7 @@ namespace Assist\Form\Filament\Blocks;
 use Assist\Form\Models\FormField;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
-class TextInput extends Block
+class TextInputFormFieldBlock extends FormFieldBlock
 {
     protected function setUp(): void
     {
@@ -14,9 +14,9 @@ class TextInput extends Block
         $this->label('Text Input');
     }
 
-    public static function make(string $name = 'text_input'): static
+    public static function type(): string
     {
-        return parent::make($name);
+        return 'text_input';
     }
 
     public static function display(FormField $field): FilamentTextInput

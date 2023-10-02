@@ -70,7 +70,7 @@ class ImportColumn extends Component
     {
         return Select::make($this->getName())
             ->label($this->label)
-            ->placeholder('Select a column')
+            ->placeholder('SelectFormFieldBlock a column')
             ->required($this->isMappingRequired);
     }
 

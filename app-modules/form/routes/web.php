@@ -1,11 +1,11 @@
 <?php
 
-use App\Livewire\EmbedForm;
+use App\Livewire\RenderForm;
 
 Route::middleware('web')
     ->prefix('forms')
     ->name('forms.')
     ->group(function () {
-        Route::get('/{form}/respond', EmbedForm::class)
+        Route::get('/{form}/respond', RenderForm::class)
             ->name('show');
     });

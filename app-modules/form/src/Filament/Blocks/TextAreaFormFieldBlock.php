@@ -5,7 +5,7 @@ namespace Assist\Form\Filament\Blocks;
 use Assist\Form\Models\FormField;
 use Filament\Forms\Components\Textarea as FilamentTextArea;
 
-class TextArea extends Block
+class TextAreaFormFieldBlock extends FormFieldBlock
 {
     protected function setUp(): void
     {
@@ -14,9 +14,9 @@ class TextArea extends Block
         $this->label('Text Area');
     }
 
-    public static function make(string $name = 'text_area'): static
+    public static function type(): string
     {
-        return parent::make($name);
+        return 'text_area';
     }
 
     public static function display(FormField $field): FilamentTextArea
