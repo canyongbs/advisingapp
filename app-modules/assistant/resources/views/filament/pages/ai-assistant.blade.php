@@ -195,8 +195,5 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
         @endif
 
     </div>
-    <!-- TODO: Need to figure out the best way to bring this in with npm and have it available to the assistantCurrentResponse script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
-{{--    <script src="https://cdn.jsdelivr.net/npm/sanitize-html@2.11.0/index.min.js"></script>--}}
     <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
 </x-filament-panels::page>

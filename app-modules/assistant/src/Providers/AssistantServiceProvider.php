@@ -37,7 +37,7 @@ class AssistantServiceProvider extends ServiceProvider
 
     public function registerAssets(): void
     {
-        FilamentAsset::register([Js::make('assistantCurrentResponse', __DIR__ . '/../../resources/js/assistantCurrentResponse.js')], 'canyon-gbs/assistant');
+        FilamentAsset::register([Js::make('assistantCurrentResponse', __DIR__ . '/../../resources/js/dist/assistantCurrentResponse.js')], 'canyon-gbs/assistant');
     }
 
     protected function registerEvents(): void

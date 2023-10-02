@@ -1,3 +1,6 @@
+import showdown from 'showdown';
+import DOMPurify from 'dompurify';
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('currentResponseData', () => ({
         init() {
@@ -6,8 +9,7 @@ document.addEventListener('alpine:init', () => {
                     if (mutation.type === 'childList') {
                         const converter = new showdown.Converter();
                         document.getElementById('current_response').innerHTML = converter.makeHtml(
-                            // sanitizeHtml(document.getElementById('hidden_current_response').innerText)
-                            document.getElementById('hidden_current_response').innerText
+                            DOMPurify.sanitize(document.getElementById('hidden_current_response').innerText)
                         );
                     }
                 });

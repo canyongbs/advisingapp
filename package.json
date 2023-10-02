@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "node ./bin/build.js && php artisan filament:assets && vite build"
     },
     "devDependencies": {
         "@shufo/prettier-plugin-blade": "^1.9.2",
@@ -13,6 +13,7 @@
         "browser-sync-webpack-plugin": "^2.3.0",
         "cross-env": "^7.0.3",
         "dropzone": "^5.9.2",
+        "esbuild": "^0.19.4",
         "flatpickr": "^4.6.9",
         "jquery": "^3.2",
         "laravel-vite-plugin": "^0.7.8",
@@ -27,6 +28,7 @@
     },
     "type": "module",
     "dependencies": {
+        "dompurify": "^3.0.6",
         "flowbite": "^1.8.1",
         "showdown": "^2.1.0",
         "sortablejs": "^1.15.0"
