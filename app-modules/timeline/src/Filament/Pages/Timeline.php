@@ -19,7 +19,7 @@ abstract class Timeline extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
 
-    protected static string $view = 'timeline::timeline';
+    protected static string $view = 'timeline::page';
 
     public string $emptyStateMessage = 'There are no records to show on this timeline.';
 

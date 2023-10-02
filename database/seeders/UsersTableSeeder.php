@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
 use Assist\Engagement\Models\Engagement;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Engagement\Models\EngagementResponse;
 use Assist\Engagement\Models\EngagementDeliverable;
 
 class UsersTableSeeder extends Seeder
@@ -39,29 +40,38 @@ class UsersTableSeeder extends Seeder
     protected function seedSubscribersFor(User $user): void
     {
         // Student subscriptions
-        $students = Student::orderBy('sisid')->limit(25)->get();
-
-        $students->each(function (Student $student) use ($user) {
-            $user->subscriptions()->create([
-                'subscribable_id' => $student->sisid,
-                'subscribable_type' => resolve(Student::class)->getMorphClass(),
-            ]);
-        });
+        Student::query()
+            ->orderBy('sisid')
+            ->limit(25)
+            ->get()
+            ->each(function (Student $student) use ($user) {
+                $user->subscriptions()->create([
+                    'subscribable_id' => $student->sisid,
+                    'subscribable_type' => resolve(Student::class)->getMorphClass(),
+                ]);
+            });
     }
 
     protected function seedEngagementsFor(User $user): void
     {
         // Student Engagements
-        $students = Student::orderBy('sisid')->limit(25)->get();
+        Student::query()
+            ->orderBy('sisid')
+            ->limit(25)
+            ->get()
+            ->each(function (Student $student) use ($user) {
+                Engagement::factory()
+                    ->count(rand(1, 10))
+                    ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
+                    ->for($student, 'recipient')
+                    ->create([
+                        'user_id' => $user->id,
+                    ]);
 
-        $students->each(function (Student $student) use ($user) {
-            Engagement::factory()
-                ->count(5)
-                ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
-                ->for($student, 'recipient')
-                ->create([
-                    'user_id' => $user->id,
-                ]);
-        });
+                EngagementResponse::factory()
+                    ->count(rand(1, 10))
+                    ->for($student, 'sender')
+                    ->create();
+            });
     }
 }

@@ -36,7 +36,7 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        return $forModel->engagementResponses()->get();
+        return $forModel->orderedEngagementResponses()->get();
     }
 
     public function sender(): MorphTo
