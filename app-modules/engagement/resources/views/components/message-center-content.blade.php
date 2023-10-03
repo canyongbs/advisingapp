@@ -1,5 +1,5 @@
 <div
-    class="max-h-mobile mt-2 w-full overflow-y-scroll rounded-l-lg rounded-r-lg border-b-2 border-l-2 border-r-2 border-t-2 bg-white dark:border-gray-700 dark:bg-gray-900 md:mt-0 md:max-h-content md:rounded-l-none md:border-l-0">
+    class="mt-2 w-full overflow-y-scroll rounded-l-lg rounded-r-lg border-b-2 border-l-2 border-r-2 border-t-2 bg-white dark:border-gray-700 dark:bg-gray-900 md:mt-0 md:max-h-content md:rounded-l-none md:border-l-0">
     @if ($loadingTimeline)
         <x-filament::loading-indicator class="h-12 w-12" />
     @else
