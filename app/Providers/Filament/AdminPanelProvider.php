@@ -85,8 +85,6 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Product Administration'),
                 NavigationGroup::make()
-                    ->label('Usage Analytics Integrations'),
-                NavigationGroup::make()
                     ->label('Product Settings')
                     ->collapsed(),
             ])

@@ -19,9 +19,9 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Google Analytics';
 
-    protected static ?string $navigationGroup = 'Usage Analytics Integrations';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 5;
 
     public function form(Form $form): Form
     {

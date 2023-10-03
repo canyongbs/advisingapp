@@ -11,7 +11,7 @@ class ProductHealth extends HealthCheckResults
 {
     public static function getNavigationLabel(): string
     {
-        return 'Product Health Dashboard';
+        return 'Product Administration';
     }
 
     public function getHeading(): string | Htmlable
@@ -19,9 +19,6 @@ class ProductHealth extends HealthCheckResults
         return 'Product Health Dashboard';
     }
 
-    /**
- * @return string|null
- */
     public static function getNavigationGroup(): ?string
     {
         return 'Product Administration';
@@ -29,7 +26,7 @@ class ProductHealth extends HealthCheckResults
 
     public static function getNavigationSort(): ?int
     {
-        return 7;
+        return 8;
     }
 
     public static function getNavigationBadge(): ?string
