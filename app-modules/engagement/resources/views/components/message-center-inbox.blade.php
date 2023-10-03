@@ -3,14 +3,32 @@
 @endphp
 
 <div
-    class="border-b-1 max-h-content w-full overflow-y-scroll rounded-l-lg rounded-r-lg border-l-2 border-r-2 border-t-2 border-gray-200 border-r-gray-50 bg-white dark:border-gray-700 dark:bg-gray-800 md:rounded-r-none lg:w-1/3">
+    class="border-b-1 max-h-content w-full overflow-y-scroll rounded-l-lg rounded-r-lg border-l-2 border-r-2 border-t-2 border-gray-200 border-r-gray-50 bg-white dark:border-gray-700 dark:bg-gray-800 md:rounded-r-none lg:w-1/3"
+    x-data="{ showSearchAndFilters: false }"
+>
     <div
-        class="block items-center rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
+        class="flex items-center justify-between rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
         <div class="flex items-center">
             <span class="font-bold text-gray-500 dark:text-gray-400 sm:text-xs md:text-sm">
                 My Subscribed Engagements
             </span>
         </div>
+        <x-filament::icon-button
+            icon="heroicon-m-funnel"
+            x-on:click="showSearchAndFilters = !showSearchAndFilters"
+            label="Show Filters and Search"
+        />
+    </div>
+    <div
+        class="flex flex-col items-center space-x-2 rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+        x-show="showSearchAndFilters"
+    >
+        <x-filament::input.wrapper class="mt-2 w-full">
+            <x-filament::input
+                type="text"
+                wire:model.live.debounce.150ms="search"
+            />
+        </x-filament::input.wrapper>
     </div>
     <div class="hidden flex-col md:flex">
         <div class="overflow-x-auto">

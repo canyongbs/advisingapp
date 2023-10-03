@@ -57,6 +57,11 @@ class MessageCenter extends Page
         $this->getData();
     }
 
+    public function updating(): void
+    {
+        $this->getData();
+    }
+
     public function hydrate(): void
     {
         $this->getData();
