@@ -3,7 +3,6 @@
 namespace Assist\Audit\Filament\Resources\AuditResource\Pages;
 
 use App\Models\User;
-use Filament\Actions;
 use Filament\Tables\Table;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -54,7 +53,6 @@ class ListAudits extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
         ];
     }
 }
