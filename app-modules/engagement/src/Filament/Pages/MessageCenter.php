@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Filament\Pages\Page;
 use Assist\Task\Models\Task;
+use Livewire\WithPagination;
 use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,8 @@ use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
 class MessageCenter extends Page
 {
+    use WithPagination;
+
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
     protected static string $view = 'engagement::filament.pages.message-center';
@@ -118,13 +121,14 @@ class MessageCenter extends Page
         return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
     }
 
+    // TODO Remove this if we don't make Filters extractable similar to Filament...
     public function getFilters(): array
     {
         return [
         ];
     }
 
-    public function filtersApplied(): bool
+    public function filtersAreApplied(): bool
     {
         return $this->filterSubscribed === true || $this->filterOpenTasks === true || $this->filterOpenServiceRequests === true;
     }
@@ -152,6 +156,25 @@ class MessageCenter extends Page
             ->when($this->filterEndDate, function (Builder $query) {
                 $query->where('deliver_at', '<=', Carbon::parse($this->filterEndDate));
             })
+            ->when($this->filterSubscribed === true, function (Builder $query) {
+                $query->whereIn('recipient_id', $this->user->subscriptions()->pluck('subscribable_id'));
+            })
+            ->when($this->filterOpenTasks === true, function (Builder $query) {
+                $query->whereIn(
+                    'recipient_id',
+                    Task::query()
+                        ->open()
+                        ->pluck('concern_id')
+                );
+            })
+            ->when($this->filterOpenServiceRequests === true, function (Builder $query) {
+                $query->whereIn(
+                    'recipient_id',
+                    ServiceRequest::query()
+                        ->open()
+                        ->pluck('respondent_id')
+                );
+            })
             ->pluck('recipient_id')
             ->unique();
 
@@ -171,48 +194,29 @@ class MessageCenter extends Page
             ->when($this->filterEndDate, function (Builder $query) {
                 $query->where('sent_at', '<=', Carbon::parse($this->filterEndDate));
             })
+            ->when($this->filterSubscribed === true, function (Builder $query) {
+                $query->whereIn('sender_id', $this->user->subscriptions()->pluck('subscribable_id'));
+            })
+            ->when($this->filterOpenTasks === true, function (Builder $query) {
+                $query->whereIn(
+                    'sender_id',
+                    Task::query()
+                        ->open()
+                        ->pluck('concern_id')
+                );
+            })
+            ->when($this->filterOpenServiceRequests === true, function (Builder $query) {
+                $query->whereIn(
+                    'sender_id',
+                    ServiceRequest::query()
+                        ->open()
+                        ->pluck('respondent_id')
+                );
+            })
             ->pluck('sender_id')
             ->unique();
 
-        $engagedEducatableIds = $engagementEducatableIds->concat($engagementResponseEducatableIds)->unique();
-
-        if ($this->filtersApplied()) {
-            $filteredEducatableIds = collect();
-        } else {
-            return $engagedEducatableIds;
-        }
-
-        if ($this->filterSubscribed === true) {
-            $filteredEducatableIds = $filteredEducatableIds->concat(
-                // TODO Extract this to apply filter
-                $this->user->subscriptions()->pluck('subscribable_id')
-            );
-        }
-
-        if ($this->filterOpenTasks === true) {
-            $filteredEducatableIds = $filteredEducatableIds->intersect(
-                // TODO Extract this to apply filter
-                Task::query()
-                    ->open()
-                    ->whereIn('concern_id', $filteredEducatableIds)
-                    ->pluck('concern_id')
-            );
-        }
-
-        if ($this->filterOpenServiceRequests === true) {
-            $filteredEducatableIds = $filteredEducatableIds->intersect(
-                // TODO Extract this to apply filter
-                ServiceRequest::query()
-                    ->open()
-                    ->whereIn('respondent_id', $filteredEducatableIds)
-                    ->pluck('respondent_id')
-            );
-        }
-
-        $educatableIds =
-            $engagedEducatableIds->intersect(
-                $filteredEducatableIds->unique()
-            );
+        $educatableIds = $engagementEducatableIds->concat($engagementResponseEducatableIds)->unique();
 
         return $educatableIds;
     }
@@ -225,7 +229,6 @@ class MessageCenter extends Page
 
         $latestEngagementsForEducatables = DB::table('engagements')
             ->select('recipient_id as educatable_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
-            ->where('user_id', $this->user->id)
             ->whereIn('recipient_id', $educatableIds)
             ->groupBy('recipient_id');
 
