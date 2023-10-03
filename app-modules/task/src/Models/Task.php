@@ -78,4 +78,10 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
     {
         $query->orderBy('due', 'asc');
     }
+
+    public function scopeOpen(Builder $query): void
+    {
+        $query->where('status', '=', TaskStatus::PENDING)
+            ->orWhere('status', '=', TaskStatus::IN_PROGRESS);
+    }
 }

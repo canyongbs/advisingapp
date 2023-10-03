@@ -4,8 +4,11 @@ namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
+use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\AssistDataModel\Models\Student;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Assist\Timeline\Models\Contracts\ProvidesATimeline;
 use Assist\Timeline\Timelines\EngagementResponseTimeline;
@@ -46,5 +49,15 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
             type: 'sender_type',
             id: 'sender_id',
         );
+    }
+
+    public function scopeSentByStudent(Builder $query): void
+    {
+        $query->where('sender_type', resolve(Student::class)->getMorphClass());
+    }
+
+    public function scopeSentByProspect(Builder $query): void
+    {
+        $query->where('sender_type', resolve(Prospect::class)->getMorphClass());
     }
 }
