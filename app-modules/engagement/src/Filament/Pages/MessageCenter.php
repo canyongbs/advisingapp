@@ -37,13 +37,9 @@ class MessageCenter extends Page
 
     public bool $loadingTimeline = false;
 
-    public $educatables;
-
-    public $subscribedStudentsWithEngagements;
-
     public ?Educatable $selectedEducatable;
 
-    public Collection $aggregateRecords;
+    public Collection $aggregateRecordsForEducatable;
 
     public Model $currentRecordToView;
 
@@ -53,25 +49,57 @@ class MessageCenter extends Page
     {
         /** @var User $user */
         $this->user = auth()->user();
-
-        $this->getData();
     }
 
-    public function updating(): void
+    public function selectEducatable(string $educatable, string $morphClass): void
     {
-        $this->getData();
+        $this->loadingTimeline = true;
+
+        $this->selectedEducatable = $this->getRecordFromMorphAndKey($morphClass, $educatable);
+
+        $this->aggregateRecordsForEducatable = resolve(AggregatesTimelineRecordsForModel::class)->handle($this->selectedEducatable, $this->modelsToTimeline);
+
+        $this->loadingTimeline = false;
     }
 
-    public function hydrate(): void
+    public function selectChanged($value): void
     {
-        $this->getData();
+        [$educatableId, $morphClass] = explode(',', $value);
+
+        $this->selectEducatable($educatableId, $morphClass);
     }
 
-    // TODO I don't think this is the best way to accomplish this
-    // But for some reason, the latest_activity is not being persisted
-    // Across the updated lifecycle hook, so we need to re-hydrate the data
-    public function getData(): void
+    // TODO Extract this away... This is used in multiple places
+    public function getRecordFromMorphAndKey($morphReference, $key)
     {
+        $className = Relation::getMorphedModel($morphReference);
+
+        if (is_null($className)) {
+            throw new Exception("Model not found for reference: {$morphReference}");
+        }
+
+        return $className::whereKey($key)->firstOrFail();
+    }
+
+    public function viewRecord($record, $morphReference)
+    {
+        $this->currentRecordToView = $this->getRecordFromMorphAndKey($morphReference, $record);
+
+        ray('viewRecord', $this->currentRecordToView);
+
+        $this->mountAction('view');
+        // dd($this->getMountedAction(), $this->currentRecordToView);
+    }
+
+    public function viewAction(): ViewAction
+    {
+        return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
+    }
+
+    protected function getViewData(): array
+    {
+        $this->loadingInbox = true;
+
         $subscribedEducatableIds =
             $this->user->subscriptions()
                 // For now, we are just operating on Students
@@ -104,64 +132,26 @@ class MessageCenter extends Page
             ->groupBy('educatable_id')
             ->mergeBindings($combinedEngagements);
 
-        $this->subscribedStudentsWithEngagements = Student::query()
+        $subscribedStudentsWithEngagements = Student::query()
             ->when($this->search, function ($query, $search) {
                 $query->where('first', 'like', "%{$search}%")
                     ->orWhere('last', 'like', "%{$search}%")
                     ->orWhere('full_name', 'like', "%{$search}%");
             })
             ->whereIn('students.sisid', $engagedAndSubscribedEducatablesIds)
-            ->leftJoinSub($latestActivityForStudents, 'latest_activity', function ($join) {
+            ->joinSub($latestActivityForStudents, 'latest_activity', function ($join) {
                 $join->on('students.sisid', '=', 'latest_activity.educatable_id');
             })
             ->select('students.*', 'latest_activity.latest_activity')
             ->orderBy('latest_activity.latest_activity', 'desc')
             ->get();
 
-        $this->educatables = $this->subscribedStudentsWithEngagements;
+        $educatables = $subscribedStudentsWithEngagements;
 
         $this->loadingInbox = false;
-    }
 
-    public function selectEducatable(string $educatable, string $morphClass): void
-    {
-        $this->loadingTimeline = true;
-
-        $this->selectedEducatable = $this->getRecordFromMorphAndKey($morphClass, $educatable);
-
-        $this->aggregateRecords = resolve(AggregatesTimelineRecordsForModel::class)->handle($this->selectedEducatable, $this->modelsToTimeline);
-
-        $this->loadingTimeline = false;
-    }
-
-    public function selectChanged($value)
-    {
-        [$educatableId, $morphClass] = explode(',', $value);
-
-        $this->selectEducatable($educatableId, $morphClass);
-    }
-
-    // TODO Extract this away... This is used in multiple places
-    public function getRecordFromMorphAndKey($morphReference, $key)
-    {
-        $className = Relation::getMorphedModel($morphReference);
-
-        if (is_null($className)) {
-            throw new Exception("Model not found for reference: {$morphReference}");
-        }
-
-        return $className::whereKey($key)->firstOrFail();
-    }
-
-    public function viewRecord($record, $morphReference)
-    {
-        $this->currentRecordToView = $this->getRecordFromMorphAndKey($morphReference, $record);
-
-        $this->mountAction('view');
-    }
-
-    public function viewAction(): ViewAction
-    {
-        return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
+        return [
+            'educatables' => $educatables,
+        ];
     }
 }
