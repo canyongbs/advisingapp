@@ -223,11 +223,11 @@ namespace Assist\Alert\Models{
  * @property string $concern_id
  * @property string $description
  * @property \Assist\Alert\Enums\AlertSeverity $severity
+ * @property \Assist\Alert\Enums\AlertStatus $status
  * @property string $suggested_intervention
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property \Assist\Alert\Enums\AlertStatus $status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $concern
@@ -244,6 +244,7 @@ namespace Assist\Alert\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereSeverity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Alert whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereSuggestedIntervention($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert withTrashed()
@@ -599,8 +600,15 @@ namespace Assist\CaseloadManagement\Models{
 /**
  * Assist\CaseloadManagement\Models\Caseload
  *
+ * @property string $id
+ * @property string $name
+ * @property array|null $filters
  * @property \Assist\CaseloadManagement\Enums\CaseloadModel $model
  * @property \Assist\CaseloadManagement\Enums\CaseloadType $type
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\CaseloadSubject> $subjects
  * @property-read int|null $subjects_count
  * @property-read \App\Models\User $user
@@ -608,6 +616,15 @@ namespace Assist\CaseloadManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereFilters($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereModel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -618,11 +635,23 @@ namespace Assist\CaseloadManagement\Models{
 /**
  * Assist\CaseloadManagement\Models\CaseloadSubject
  *
- * @property-read \Assist\CaseloadManagement\Models\Caseload|null $caseload
+ * @property string $id
+ * @property string $subject_id
+ * @property string $subject_type
+ * @property string $caseload_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\CaseloadManagement\Models\Caseload $caseload
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereCaseloadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereSubjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereSubjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -895,54 +924,6 @@ namespace Assist\Engagement\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperEngagementResponse {}
-}
-
-namespace Assist\Form\Models{
-/**
- * Assist\Form\Models\Form
- *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
- * @property-read int|null $fields_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $submissions
- * @property-read int|null $submissions_count
- * @method static \Assist\Form\Database\Factories\FormFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Form newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Form newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Form query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperForm {}
-}
-
-namespace Assist\Form\Models{
-/**
- * Assist\Form\Models\FormField
- *
- * @property-read \Assist\Form\Models\Form|null $form
- * @method static \Assist\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|FormField newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FormField newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FormField query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperFormField {}
-}
-
-namespace Assist\Form\Models{
-/**
- * Assist\Form\Models\FormSubmission
- *
- * @property-read \Assist\Form\Models\Form|null $form
- * @method static \Assist\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperFormSubmission {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1745,6 +1726,7 @@ namespace Assist\Task\Models{
  *
  * @property-read Student|Prospect $concern
  * @property string $id
+ * @property string $title
  * @property string $description
  * @property \Assist\Task\Enums\TaskStatus $status
  * @property \Illuminate\Support\Carbon|null $due
@@ -1775,6 +1757,7 @@ namespace Assist\Task\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereDue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Task withoutTrashed()
@@ -1788,12 +1771,24 @@ namespace Assist\Team\Models{
 /**
  * Assist\Team\Models\Team
  *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \Assist\Team\Database\Factories\TeamFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Team newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Team newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Team query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Team whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Team whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Team whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Team whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Team whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Team whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1804,11 +1799,21 @@ namespace Assist\Team\Models{
 /**
  * Assist\Team\Models\TeamUser
  *
- * @property-read \Assist\Team\Models\Team|null $team
+ * @property string $id
+ * @property string $team_id
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\Team\Models\Team $team
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|TeamUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TeamUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TeamUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereTeamId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamUser whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
