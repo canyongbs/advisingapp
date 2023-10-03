@@ -10,6 +10,8 @@ use Assist\Task\Enums\TaskStatus;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
+use Assist\Task\Imports\TaskImporter;
+use App\Filament\Actions\ImportAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -133,6 +135,9 @@ class ListTasks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            ImportAction::make()
+                ->importer(TaskImporter::class)
+                ->authorize('import', Task::class),
             CreateAction::make(),
         ];
     }
