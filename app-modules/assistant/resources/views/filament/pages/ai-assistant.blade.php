@@ -17,7 +17,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
             <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
                 <div class="col-span-1">
                     <div
-                        class="hidden rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:block">
+                        class="rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:block">
                         <li class="fi-sidebar-group flex flex-col gap-y-1">
                             <x-filament::button
                                 icon="heroicon-m-plus"
