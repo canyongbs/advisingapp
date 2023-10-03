@@ -21,7 +21,7 @@ class AssistantChatMessageLogResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $modelLabel = 'Personal Assistant Audit';
 
