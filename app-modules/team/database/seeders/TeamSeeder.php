@@ -15,6 +15,6 @@ class TeamSeeder extends Seeder
             ->create();
 
         User::all()
-            ->each(fn (User $user) => $user->team()->associate($teams->random())->save());
+            ->each(fn (User $user) => $user->teams()->attach($teams->random()));
     }
 }

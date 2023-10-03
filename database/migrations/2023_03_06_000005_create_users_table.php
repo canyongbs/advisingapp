@@ -21,8 +21,6 @@ class CreateUsersTable extends Migration
             $table->string('type')->nullable();
             $table->boolean('is_external')->default(false);
 
-            $table->foreignUuid('team_id')->nullable()->constrained('teams');
-
             $table->timestamps();
             $table->softDeletes();
         });
