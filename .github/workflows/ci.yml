@@ -36,7 +36,7 @@ jobs:
       SIS_DB_PASSWORD: root
       SIS_DB_DATABASE: testing
 
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     needs: [build-deps]
 
