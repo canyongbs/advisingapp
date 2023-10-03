@@ -24,6 +24,7 @@
         "canyon-gbs/consent": "*",
         "canyon-gbs/division": "*",
         "canyon-gbs/engagement": "*",
+        "canyon-gbs/form": "*",
         "canyon-gbs/integration-ai": "^1.0",
         "canyon-gbs/integration-google-analytics": "*",
         "canyon-gbs/integration-microsoft-clarity": "*",
