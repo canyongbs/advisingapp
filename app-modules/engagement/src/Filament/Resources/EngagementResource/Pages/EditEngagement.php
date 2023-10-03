@@ -37,7 +37,6 @@ class EditEngagement extends EditRecord
                 MorphToSelect::make('recipient')
                     ->label('Recipient')
                     ->searchable()
-                    ->preload()
                     ->required()
                     ->types([
                         MorphToSelect\Type::make(Student::class)
