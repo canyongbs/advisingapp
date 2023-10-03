@@ -28,13 +28,12 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                             <ul class="fi-sidebar-group-items flex flex-col gap-y-1">
                                 @foreach ($chats as $chatItem)
                                     <li @class([
-                                        'fi-sidebar-item cursor-pointer',
-                                        'fi-active fi-sidebar-item-active' => $chat->id === $chatItem->id,
+                                        'fi-sidebar-item group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                        'fi-active fi-sidebar-item-active bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
                                     ])>
                                         <a
                                             @class([
-                                                'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5',
-                                                'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
+                                                'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm',
                                             ])
                                             wire:click="selectChat('{{ $chatItem->id }}')"
                                         >
@@ -46,6 +45,9 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                 {{ $chatItem->name }}
                                             </span>
                                         </a>
+
+                                        {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}
+                                        {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}
                                     </li>
                                 @endforeach
                             </ul>
@@ -88,13 +90,13 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                             </div>
                                                         </div>
                                                         <div class="flex justify-between empty:hidden lg:block">
-{{--                                                            <div--}}
-{{--                                                                class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2">--}}
-{{--                                                                <x-filament::icon--}}
-{{--                                                                    class="ml-auto flex h-6 w-6 cursor-pointer items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"--}}
-{{--                                                                    icon="heroicon-o-clipboard"--}}
-{{--                                                                />--}}
-{{--                                                            </div>--}}
+                                                            {{--                                                            <div --}}
+                                                            {{--                                                                class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2"> --}}
+                                                            {{--                                                                <x-filament::icon --}}
+                                                            {{--                                                                    class="ml-auto flex h-6 w-6 cursor-pointer items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400" --}}
+                                                            {{--                                                                    icon="heroicon-o-clipboard" --}}
+                                                            {{--                                                                /> --}}
+                                                            {{--                                                            </div> --}}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -146,7 +148,11 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                 class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
                                                 <div class="relative flex flex-shrink-0 flex-col items-end">
                                                     <div>
-                                                        <img class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white" src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg') }}" alt="Small avatar">
+                                                        <img
+                                                            class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
+                                                            src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
+                                                            alt="Small avatar"
+                                                        >
                                                     </div>
                                                 </div>
                                                 <div
@@ -213,27 +219,31 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                         </div>
 
                         <form wire:submit.prevent="sendMessage">
-                            <div class="w-full border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                                <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
-                                    <label for="message_input" class="sr-only">Type here</label>
+                            <div
+                                class="w-full rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
+                                <div class="rounded-t-lg bg-white px-4 py-2 dark:bg-gray-800">
+                                    <label
+                                        class="sr-only"
+                                        for="message_input"
+                                    >Type here</label>
                                     <textarea
+                                        class="w-full border-0 bg-white px-0 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                                         id="message_input"
                                         rows="4"
-                                        class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
                                         placeholder="Type here..."
                                         required
                                         wire:model.debounce="message"
                                         wire:loading.attr="disabled"
-                                        {{-- TODO: For some reason this causes issues with the response streaming }}
+                                        {{-- TODO: For some reason this causes issues with the response streaming --}}
                                         {{-- @keydown.cmd.enter='$wire.sendMessage' --}}
                                     >
                                     </textarea>
                                 </div>
-                                <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
-                                    <div class="flex space-x-2 items-center">
+                                <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
+                                    <div class="flex items-center space-x-2">
                                         <button
+                                            class="inline-flex items-center rounded-lg bg-primary-500 px-4 py-2.5 text-center text-xs font-medium text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900"
                                             type="submit"
-                                            class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-500 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-700"
                                             wire:loading.remove
                                             x-on:click="$wire.showCurrentResponse = true"
                                         >
@@ -264,7 +274,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                             <p class="ml-auto text-xs text-red-500">{{ $message }}</p>
                                         @enderror
                                     </div>
-                                    <div class="flex pl-0 space-x-1 sm:pl-2">
+                                    <div class="flex space-x-1 pl-0 sm:pl-2">
                                         @if (!$chat->id && $chat->messages->count() > 0)
                                             {{ $this->saveChatAction }}
                                         @endif
@@ -329,7 +339,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                             <label class="mx-auto">
                                 <x-filament::input.checkbox
                                     wire:model="consentedToTerms"
-                                    required
+                                    required="true"
                                 />
                                 <span class="ml-2">
                                     I agree to the terms and conditions
@@ -358,6 +368,6 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                     </x-slot>
                 </x-filament::modal>
             @endif
-            <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
-        </div>
-    </x-filament-panels::page>
+        <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
+    </div>
+</x-filament-panels::page>

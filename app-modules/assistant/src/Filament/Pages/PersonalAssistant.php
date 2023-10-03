@@ -204,6 +204,57 @@ class PersonalAssistant extends Page
         $this->chat = new Chat(id: null, messages: ChatMessage::collection([]));
     }
 
+    public function deleteChatAction(): Action
+    {
+        return Action::make('deleteChat')
+            ->requiresConfirmation()
+            ->action(function (array $arguments) {
+                $chat = AssistantChat::find($arguments['chat']);
+
+                $chat?->delete();
+
+                $this->chats = $this->chats->filter(fn (AssistantChat $chat) => $chat->id !== $arguments['chat']);
+            })
+            ->icon('heroicon-o-trash')
+            ->color('danger')
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
+    }
+
+    public function editChatAction(): Action
+    {
+        return Action::make('editChat')
+            ->form(
+                [
+                    TextInput::make('name')
+                        ->label('Name')
+                        ->placeholder('Rename this chat')
+                        ->required(),
+                ]
+            )
+            ->action(function (array $arguments, array $data) {
+                $chat = AssistantChat::find($arguments['chat']);
+
+                $chat?->update($data);
+
+                $this->chats = $this->chats->map(function (AssistantChat $chat) use ($arguments, $data) {
+                    if ($chat->id === $arguments['chat']) {
+                        $chat->name = $data['name'];
+                    }
+
+                    return $chat;
+                });
+            })
+            ->icon('heroicon-o-pencil')
+            ->color('warning')
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
+    }
+
     protected function setMessage(string $message, AIChatMessageFrom $from): void
     {
         if (filled($this->chat->id)) {
