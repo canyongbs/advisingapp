@@ -23,7 +23,7 @@ class BulkEngagementAction
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to engage.")
             ->steps([
                 Step::make('Choose your delivery methods')
-                    ->description('SelectFormFieldBlock email, sms, or both.')
+                    ->description('Select email, sms, or both.')
                     ->schema([
                         Select::make('delivery_methods')
                             ->label('How would you like to send this engagement?')
