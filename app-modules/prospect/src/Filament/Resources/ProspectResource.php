@@ -2,9 +2,10 @@
 
 namespace Assist\Prospect\Filament\Resources;
 
-use Filament\Pages\Page;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Assist\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Model;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
@@ -27,6 +28,8 @@ class ProspectResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $recordTitleAttribute = 'full_name';
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
@@ -40,6 +43,21 @@ class ProspectResource extends Resource
             ManageProspectInteractions::class,
             ProspectEngagementTimeline::class,
         ]);
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['full_name', 'email', 'email_2', 'mobile', 'phone'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return array_filter([
+            'Student ID' => $record->sisid,
+            'Other ID' => $record->otherid,
+            'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
+        ], fn (mixed $value): bool => filled($value));
     }
 
     public static function getPages(): array
