@@ -5,8 +5,10 @@ namespace Assist\Assistant\Filament\Pages;
 use App\Models\User;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
+use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
+use Filament\Forms\Components\TextInput;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
 use Illuminate\Database\Eloquent\Collection;
@@ -170,6 +172,40 @@ class PersonalAssistant extends Page
         $this->chat->id = $assistantChat->id;
 
         $this->chats->prepend($assistantChat);
+    }
+
+    public function saveChatAction(): Action
+    {
+        return Action::make('saveChat')
+            ->form(
+                [
+                    TextInput::make('name')
+                        ->label('Name')
+                        ->placeholder('Name this chat')
+                        ->required(),
+                ]
+            )
+            ->action(function (array $data) {
+                ray($data);
+
+                if (filled($this->chat->id)) {
+                    return;
+                }
+
+                /** @var User $user */
+                $user = auth()->user();
+
+                /** @var AssistantChat $assistantChat */
+                $assistantChat = $user->assistantChats()->create(['name' => $data['name']]);
+
+                $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
+                    $assistantChat->messages()->create($message->toArray());
+                });
+
+                $this->chat->id = $assistantChat->id;
+
+                $this->chats->prepend($assistantChat);
+            });
     }
 
     public function selectChat(AssistantChat $chat): void

@@ -264,15 +264,16 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                     </div>
                                     <div class="flex pl-0 space-x-1 sm:pl-2">
                                         @if (!$chat->id)
-                                            <button
-                                                    class="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                    type="button"
-                                                    wire:loading.attr="disabled"
-                                                    wire:click="save"
-                                            >
-                                                <x-heroicon-s-bookmark class="h-6 w-6" />
-                                                <span class="sr-only">Save</span>
-                                            </button>
+{{--                                            <button--}}
+{{--                                                    class="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"--}}
+{{--                                                    type="button"--}}
+{{--                                                    wire:loading.attr="disabled"--}}
+{{--                                                    wire:click="save"--}}
+{{--                                            >--}}
+{{--                                                <x-heroicon-s-bookmark class="h-6 w-6" />--}}
+{{--                                                <span class="sr-only">Save</span>--}}
+{{--                                            </button>--}}
+                                            {{ $this->saveChatAction }}
                                         @endif
                                     </div>
                                 </div>
