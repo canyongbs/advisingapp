@@ -131,7 +131,12 @@ class MessageCenter extends Page
 
     public function getEducatableIds(): Collection
     {
-        ray('getEducatableIds', $this->filterStartDate, $this->filterEndDate);
+        // Filters we need to support
+        // Person Type (select - student or prospect) :check:
+        // Date range (start and end date) :check:
+        // Subscribed (checkbox - defaulted to true) :check:
+        // Open Tasks (checkbox - defaulted to false) :check:
+        // Open Service Requests (checkbox - defaulted to false) :check:
 
         $engagementEducatableIds = Engagement::query()
             ->when($this->peopleScope, function (Builder $query) {
@@ -169,12 +174,7 @@ class MessageCenter extends Page
             ->pluck('sender_id')
             ->unique();
 
-        ray('$engagementEducatableIds', $engagementEducatableIds);
-        ray('$engagementResponseEducatableIds', $engagementResponseEducatableIds);
-
         $engagedEducatableIds = $engagementEducatableIds->concat($engagementResponseEducatableIds)->unique();
-
-        ray('$engagedEducatableIds', $engagedEducatableIds);
 
         if ($this->filtersApplied()) {
             $filteredEducatableIds = collect();
@@ -182,16 +182,12 @@ class MessageCenter extends Page
             return $engagedEducatableIds;
         }
 
-        ray('filteredEducatableIds before', $filteredEducatableIds);
-
         if ($this->filterSubscribed === true) {
             $filteredEducatableIds = $filteredEducatableIds->concat(
                 // TODO Extract this to apply filter
                 $this->user->subscriptions()->pluck('subscribable_id')
             );
         }
-
-        ray('filteredEducatableIds w/ subscribed', $filteredEducatableIds);
 
         if ($this->filterOpenTasks === true) {
             $filteredEducatableIds = $filteredEducatableIds->intersect(
@@ -203,8 +199,6 @@ class MessageCenter extends Page
             );
         }
 
-        ray('filteredEducatableIds w/ open tasks', $filteredEducatableIds);
-
         if ($this->filterOpenServiceRequests === true) {
             $filteredEducatableIds = $filteredEducatableIds->intersect(
                 // TODO Extract this to apply filter
@@ -214,8 +208,6 @@ class MessageCenter extends Page
                     ->pluck('respondent_id')
             );
         }
-
-        ray('filteredEducatableIds w/ open service requests', $filteredEducatableIds);
 
         $educatableIds =
             $engagedEducatableIds->intersect(
@@ -229,16 +221,7 @@ class MessageCenter extends Page
     {
         $this->loadingInbox = true;
 
-        // Filters we need to support
-        // Person Type (select - student or prospect) :check:
-        // Date range (start and end date)
-        // Subscribed (checkbox - defaulted to true) :check:
-        // Open Tasks (checkbox - defaulted to false) :check:
-        // Open Service Requests (checkbox - defaulted to false) :check:
-
         $educatableIds = $this->getEducatableIds();
-
-        ray('educatableIds', $educatableIds);
 
         $latestEngagementsForEducatables = DB::table('engagements')
             ->select('recipient_id as educatable_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
@@ -276,11 +259,7 @@ class MessageCenter extends Page
             ->orderBy('latest_activity.latest_activity', 'desc')
             ->paginate($this->pagination);
 
-        ray('studentPopulation', $studentPopulation);
-
         $educatables = $studentPopulation;
-
-        ray('educatables', $educatables);
 
         $this->loadingInbox = false;
 
