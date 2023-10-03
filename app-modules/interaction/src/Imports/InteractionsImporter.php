@@ -56,7 +56,7 @@ class InteractionsImporter extends Importer
                         'starts_with:prospect:,student:',
                     ]
                 )
-                ->example(fn (): string => 'student:' . Student::query()->value('email') ?? fake()->safeEmail()),
+                ->example('student:johnsmith@gmail.com'),
             ImportColumn::make('type')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionType::query()
