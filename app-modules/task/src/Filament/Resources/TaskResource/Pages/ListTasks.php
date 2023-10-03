@@ -10,6 +10,8 @@ use Assist\Task\Enums\TaskStatus;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
+use Assist\Task\Imports\TaskImporter;
+use App\Filament\Actions\ImportAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -83,7 +85,8 @@ class ListTasks extends ListRecords
                         function (Builder $query) {
                             /** @var User $user */
                             $user = auth()->user();
-                            $teamUserIds = $user->team->users()->pluck('id');
+                            //TODO: change this if we support multiple teams
+                            $teamUserIds = $user->teams()->first()->users()->get()->pluck('id');
 
                             return $query->whereIn('assigned_to', $teamUserIds)->get();
                         }
@@ -132,6 +135,9 @@ class ListTasks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            ImportAction::make()
+                ->importer(TaskImporter::class)
+                ->authorize('import', Task::class),
             CreateAction::make(),
         ];
     }

@@ -67,7 +67,6 @@ class CreateEngagement extends CreateRecord
                     ->label('Recipient')
                     ->translateLabel()
                     ->searchable()
-                    ->preload()
                     ->required()
                     ->types([
                         MorphToSelect\Type::make(Student::class)

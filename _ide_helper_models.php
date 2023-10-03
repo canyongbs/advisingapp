@@ -180,7 +180,8 @@ namespace App\Models{
  * @property-read int|null $service_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
- * @property-read \Assist\Team\Models\Team|null $team
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Team\Models\Team> $teams
+ * @property-read int|null $teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
  * @property-read int|null $trait_role_groups_count
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
@@ -226,6 +227,7 @@ namespace Assist\Alert\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Assist\Alert\Enums\AlertStatus $status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $concern
@@ -234,6 +236,7 @@ namespace Assist\Alert\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Alert status(\Assist\Alert\Enums\AlertStatus $status)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereConcernId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereConcernType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereCreatedAt($value)
@@ -892,6 +895,54 @@ namespace Assist\Engagement\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperEngagementResponse {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\Form
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @method static \Assist\Form\Database\Factories\FormFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Form newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Form newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Form query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperForm {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\FormField
+ *
+ * @property-read \Assist\Form\Models\Form|null $form
+ * @method static \Assist\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormField {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\FormSubmission
+ *
+ * @property-read \Assist\Form\Models\Form|null $form
+ * @method static \Assist\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormSubmission {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1747,6 +1798,21 @@ namespace Assist\Team\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperTeam {}
+}
+
+namespace Assist\Team\Models{
+/**
+ * Assist\Team\Models\TeamUser
+ *
+ * @property-read \Assist\Team\Models\Team|null $team
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TeamUser query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperTeamUser {}
 }
 
 namespace Assist\Webhook\Models{

@@ -5,7 +5,7 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
-use Assist\Prospect\Models\Prospect;
+use Assist\Alert\Enums\AlertStatus;
 use Assist\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
@@ -43,14 +43,13 @@ class ManageStudentAlerts extends ManageRelatedRecords
 
         $ownerRecord = $urlParameters['record'];
 
-        /** @var Student|Prospect $ownerRecord */
+        /** @var Student $ownerRecord */
         $alertsCount = Cache::tags('alert-count')
             ->remember(
                 "alert-count-{$ownerRecord->getKey()}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
-                    // TODO: When it is decided how alerts are "resolved" this will need to take that into account to only display unresolved alerts
-                    return $ownerRecord->alerts()->count();
+                    return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
                 },
             );
 
@@ -64,9 +63,9 @@ class ManageStudentAlerts extends ManageRelatedRecords
         return $infolist
             ->schema([
                 TextEntry::make('description'),
-                TextEntry::make('severity')
-                    ->formatStateUsing(fn (AlertSeverity $state): string => ucfirst($state->value)),
+                TextEntry::make('severity'),
                 TextEntry::make('suggested_intervention'),
+                TextEntry::make('status'),
             ]);
     }
 
@@ -75,12 +74,23 @@ class ManageStudentAlerts extends ManageRelatedRecords
         return $form
             ->schema([
                 Textarea::make('description')
-                    ->required(),
+                    ->required()
+                    ->string(),
                 Select::make('severity')
                     ->options(AlertSeverity::class)
+                    ->selectablePlaceholder(false)
+                    ->default(AlertSeverity::default())
+                    ->required()
                     ->enum(AlertSeverity::class),
                 Textarea::make('suggested_intervention')
-                    ->required(),
+                    ->required()
+                    ->string(),
+                Select::make('status')
+                    ->options(AlertStatus::class)
+                    ->selectablePlaceholder(false)
+                    ->default(AlertStatus::default())
+                    ->required()
+                    ->enum(AlertStatus::class),
             ]);
     }
 
@@ -92,14 +102,17 @@ class ManageStudentAlerts extends ManageRelatedRecords
                 TextColumn::make('description')
                     ->limit(),
                 TextColumn::make('severity')
-                    ->sortable()
-                    ->formatStateUsing(fn (AlertSeverity $state): string => ucfirst($state->value)),
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
+                SelectFilter::make('status')
+                    ->options(AlertStatus::class),
             ])
             ->headerActions([
                 CreateAction::make(),

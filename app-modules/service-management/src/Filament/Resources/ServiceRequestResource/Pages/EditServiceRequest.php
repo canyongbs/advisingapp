@@ -64,7 +64,6 @@ class EditServiceRequest extends EditRecord
             MorphToSelect::make('respondent')
                 ->label('Respondent')
                 ->searchable()
-                ->preload()
                 ->types([
                     MorphToSelect\Type::make(Student::class)
                         ->titleAttribute(Student::displayNameKey()),
