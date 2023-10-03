@@ -174,12 +174,17 @@ class PersonalAssistant extends Page
     {
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
-        ray($chat->messages);
-
         $this->chat = new Chat(
             id: $chat->id ?? null,
             messages: ChatMessage::collection($chat->messages ?? []),
         );
+    }
+
+    public function newChat(): void
+    {
+        $this->reset(['message', 'prompt', 'renderError', 'error']);
+
+        $this->chat = new Chat(id: null, messages: ChatMessage::collection([]));
     }
 
     protected function setMessage(string $message, AIChatMessageFrom $from): void

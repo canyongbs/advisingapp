@@ -20,7 +20,10 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                         <li
                             class="fi-sidebar-group flex flex-col gap-y-1"
                         >
-                            <x-filament::button icon="heroicon-m-plus">
+                            <x-filament::button
+                                icon="heroicon-m-plus"
+                                wire:click="newChat"
+                            >
                                 {{ __('New Chat') }}
                             </x-filament::button>
                             <ul
@@ -58,7 +61,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                 </div>
 
                 <div class="flex flex-col h-full col-span-1 md:col-span-3 overflow-hidden">
-                    <div class="max-h-[calc(100vh-22rem)] flex overflow-y-scroll flex-1 flex-col-reverse text-sm dark:bg-gray-800">
+                    <div class="max-h-[calc(100vh-23rem)] flex overflow-y-scroll flex-1 flex-col-reverse text-sm dark:bg-gray-800">
                         <div>
                             @foreach ($chat->messages as $message)
                                 @switch($message->from)
