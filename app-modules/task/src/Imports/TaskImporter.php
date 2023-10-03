@@ -39,7 +39,7 @@ class TaskImporter extends Importer
                 ->example('pending'),
             ImportColumn::make('due')
                 ->rules(['date'])
-                ->example(fake()->dateTimeBetween('+1 day', '+1 week')->format('Y-m-d H:i:s')),
+                ->example('1990-01-01 00:00:00'),
             ImportColumn::make('assignedTo')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => User::query()
@@ -82,7 +82,7 @@ class TaskImporter extends Importer
                         'starts_with:prospect:,student:',
                     ]
                 )
-                ->example(fn (): string => 'student:' . Student::query()->value('email') ?? fake()->safeEmail()),
+                ->example('student:johnsmith@gmail.com'),
         ];
     }
 
