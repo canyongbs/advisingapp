@@ -142,10 +142,10 @@ class InteractionsImporter extends Importer
                 ->requiredMapping()
                 ->example(fn (): ?string => InteractionInstitution::query()->value('name')),
             ImportColumn::make('start_datetime')
-                ->rules(['date_format:Y-m-d H:i:s'])
+                ->rules(['date'])
                 ->example('2023-09-28 16:52:50'),
             ImportColumn::make('end_datetime')
-                ->rules(['date_format:Y-m-d H:i:s'])
+                ->rules(['date'])
                 ->example('2023-09-28 17:00:00'),
             ImportColumn::make('subject')
                 ->example('Subject of the interaction.'),
