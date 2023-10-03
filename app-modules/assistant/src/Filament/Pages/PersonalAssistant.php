@@ -9,6 +9,7 @@ use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
+use Illuminate\Database\Eloquent\Collection;
 use Assist\Consent\Enums\ConsentAgreementType;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
@@ -26,6 +27,8 @@ class PersonalAssistant extends Page
     protected static ?string $navigationGroup = 'Productivity Tools';
 
     protected static ?int $navigationSort = 1;
+
+    public Collection $chats;
 
     public Chat $chat;
 
@@ -67,8 +70,10 @@ class PersonalAssistant extends Page
             ->where('type', ConsentAgreementType::AzureOpenAI)
             ->first();
 
+        $this->chats = $user->assistantChats()->latest()->get();
+
         /** @var AssistantChat $chat */
-        $chat = $user->assistantChats()->latest()->first();
+        $chat = $this->chats->first();
 
         $this->chat = new Chat(
             id: $chat?->id ?? null,
@@ -163,6 +168,18 @@ class PersonalAssistant extends Page
         });
 
         $this->chat->id = $assistantChat->id;
+    }
+
+    public function selectChat(AssistantChat $chat): void
+    {
+        $this->reset(['message', 'prompt', 'renderError', 'error']);
+
+        ray($chat->messages);
+
+        $this->chat = new Chat(
+            id: $chat->id ?? null,
+            messages: ChatMessage::collection($chat->messages ?? []),
+        );
     }
 
     protected function setMessage(string $message, AIChatMessageFrom $from): void
