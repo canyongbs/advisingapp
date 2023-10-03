@@ -7,11 +7,11 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 <x-filament-panels::page>
     <div
-        class="h-full max-w-full"
+        class="flex flex-col h-full"
         wire:init="determineIfConsentWasGiven"
     >
         @if ($consentedToTerms === true && $loading === false)
-            <div class="flex flex-col text-sm dark:bg-gray-800">
+            <div class="flex flex-col flex-1 h-full text-sm dark:bg-gray-800">
                 @foreach ($chat->messages as $message)
                     @switch($message->from)
                         @case(AIChatMessageFrom::Assistant)
