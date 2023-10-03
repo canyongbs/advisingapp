@@ -153,27 +153,6 @@ class PersonalAssistant extends Page
         $this->reset('currentResponse');
     }
 
-    public function save(): void
-    {
-        if (filled($this->chat->id)) {
-            return;
-        }
-
-        /** @var User $user */
-        $user = auth()->user();
-
-        /** @var AssistantChat $assistantChat */
-        $assistantChat = $user->assistantChats()->create();
-
-        $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
-            $assistantChat->messages()->create($message->toArray());
-        });
-
-        $this->chat->id = $assistantChat->id;
-
-        $this->chats->prepend($assistantChat);
-    }
-
     public function saveChatAction(): Action
     {
         return Action::make('saveChat')
@@ -186,8 +165,6 @@ class PersonalAssistant extends Page
                 ]
             )
             ->action(function (array $data) {
-                ray($data);
-
                 if (filled($this->chat->id)) {
                     return;
                 }
@@ -205,7 +182,9 @@ class PersonalAssistant extends Page
                 $this->chat->id = $assistantChat->id;
 
                 $this->chats->prepend($assistantChat);
-            });
+            })
+            ->icon('heroicon-s-bookmark')
+            ->iconButton();
     }
 
     public function selectChat(AssistantChat $chat): void

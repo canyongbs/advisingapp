@@ -43,7 +43,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                 'text-gray-700 dark:text-gray-200' => !$chat->id === $chatItem->id,
                                                 'text-primary-600 dark:text-primary-400' => $chat->id === $chatItem->id,
                                             ])>
-                                                {{ $chatItem->id }}
+                                                {{ $chatItem->name }}
                                             </span>
                                         </a>
                                     </li>
@@ -88,13 +88,13 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                             </div>
                                                         </div>
                                                         <div class="flex justify-between empty:hidden lg:block">
-                                                            <div
-                                                                class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2">
-                                                                <x-filament::icon
-                                                                    class="ml-auto flex h-6 w-6 cursor-pointer items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
-                                                                    icon="heroicon-o-clipboard"
-                                                                />
-                                                            </div>
+{{--                                                            <div--}}
+{{--                                                                class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2">--}}
+{{--                                                                <x-filament::icon--}}
+{{--                                                                    class="ml-auto flex h-6 w-6 cursor-pointer items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"--}}
+{{--                                                                    icon="heroicon-o-clipboard"--}}
+{{--                                                                />--}}
+{{--                                                            </div>--}}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -224,6 +224,8 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                         required
                                         wire:model.debounce="message"
                                         wire:loading.attr="disabled"
+                                        {{-- TODO: For some reason this causes issues with the response streaming }}
+                                        {{-- @keydown.cmd.enter='$wire.sendMessage' --}}
                                     >
                                     </textarea>
                                 </div>
@@ -263,87 +265,13 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                         @enderror
                                     </div>
                                     <div class="flex pl-0 space-x-1 sm:pl-2">
-                                        @if (!$chat->id)
-{{--                                            <button--}}
-{{--                                                    class="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"--}}
-{{--                                                    type="button"--}}
-{{--                                                    wire:loading.attr="disabled"--}}
-{{--                                                    wire:click="save"--}}
-{{--                                            >--}}
-{{--                                                <x-heroicon-s-bookmark class="h-6 w-6" />--}}
-{{--                                                <span class="sr-only">Save</span>--}}
-{{--                                            </button>--}}
+                                        @if (!$chat->id && $chat->messages->count() > 0)
                                             {{ $this->saveChatAction }}
                                         @endif
                                     </div>
                                 </div>
                             </div>
                         </form>
-
-{{--                        <form wire:submit.prevent="sendMessage">--}}
-{{--                            <label--}}
-{{--                                class="sr-only"--}}
-{{--                                for="chat"--}}
-{{--                            >Your message</label>--}}
-{{--                            <div class="flex items-center rounded-lg bg-gray-50 px-3 py-2 dark:bg-gray-700">--}}
-{{--                                @if (!$chat->id)--}}
-{{--                                    <button--}}
-{{--                                        class="inline-flex cursor-pointer justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"--}}
-{{--                                        type="button"--}}
-{{--                                        wire:loading.attr="disabled"--}}
-{{--                                        wire:click="save"--}}
-{{--                                    >--}}
-{{--                                        <x-heroicon-s-bookmark class="h-6 w-6" />--}}
-{{--                                        <span class="sr-only">Save</span>--}}
-{{--                                    </button>--}}
-{{--                                @endif--}}
-{{--                                <div class="mx-4 block w-full p-2.5">--}}
-{{--                                    <textarea--}}
-{{--                                        class="mx-4 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"--}}
-{{--                                        id="chat"--}}
-{{--                                        wire:model.debounce="message"--}}
-{{--                                        wire:loading.attr="disabled"--}}
-{{--                                        rows="5"--}}
-{{--                                        placeholder="Your message..."--}}
-{{--                                    ></textarea>--}}
-{{--                                    <div class="text-red-600">--}}
-{{--                                        @error('message')--}}
-{{--                                            {{ $message }}--}}
-{{--                                        @enderror--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                                <button--}}
-{{--                                    class="inline-flex cursor-pointer justify-center rounded-full p-2 text-primary-600 hover:bg-primary-100 dark:text-primary-500 dark:hover:bg-gray-600"--}}
-{{--                                    type="submit"--}}
-{{--                                    wire:loading.remove--}}
-{{--                                    x-on:click="$wire.showCurrentResponse = true"--}}
-{{--                                >--}}
-{{--                                    <x-heroicon-s-paper-airplane class="h-6 w-6" />--}}
-{{--                                    <span class="sr-only">Send message</span>--}}
-{{--                                </button>--}}
-{{--                                <svg--}}
-{{--                                    class="-ml-1 mr-3 h-5 w-5 animate-spin text-primary-600"--}}
-{{--                                    wire:loading--}}
-{{--                                    xmlns="http://www.w3.org/2000/svg"--}}
-{{--                                    fill="none"--}}
-{{--                                    viewBox="0 0 24 24"--}}
-{{--                                >--}}
-{{--                                    <circle--}}
-{{--                                        class="opacity-25"--}}
-{{--                                        cx="12"--}}
-{{--                                        cy="12"--}}
-{{--                                        r="10"--}}
-{{--                                        stroke="currentColor"--}}
-{{--                                        stroke-width="4"--}}
-{{--                                    ></circle>--}}
-{{--                                    <path--}}
-{{--                                        class="opacity-75"--}}
-{{--                                        fill="currentColor"--}}
-{{--                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"--}}
-{{--                                    ></path>--}}
-{{--                                </svg>--}}
-{{--                            </div>--}}
-{{--                        </form>--}}
                     </div>
                 </div>
             @elseif($consentedToTerms === false && $loading === false)
