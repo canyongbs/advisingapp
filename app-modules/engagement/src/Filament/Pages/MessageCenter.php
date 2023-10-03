@@ -5,7 +5,6 @@ namespace Assist\Engagement\Filament\Pages;
 use Exception;
 use App\Models\User;
 use Filament\Pages\Page;
-use Livewire\Attributes\Locked;
 use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -38,10 +37,8 @@ class MessageCenter extends Page
 
     public bool $loadingTimeline = false;
 
-    #[Locked]
     public Collection $educatables;
 
-    #[Locked]
     public Collection $subscribedStudentsWithEngagements;
 
     public ?Educatable $selectedEducatable;
@@ -52,8 +49,6 @@ class MessageCenter extends Page
 
     public function mount(): void
     {
-        ray('mount()');
-
         /** @var User $user */
         $this->user = auth()->user();
 
@@ -127,6 +122,13 @@ class MessageCenter extends Page
         $this->loadingTimeline = false;
     }
 
+    public function selectChanged($value)
+    {
+        [$educatableId, $morphClass] = explode(',', $value);
+
+        $this->selectEducatable($educatableId, $morphClass);
+    }
+
     // TODO Extract this away... This is used in multiple places
     public function getRecordFromMorphAndKey($morphReference, $key)
     {
@@ -139,8 +141,6 @@ class MessageCenter extends Page
         return $className::whereKey($key)->firstOrFail();
     }
 
-    // TODO This currently won't work as we aren't actually in the context
-    // Of the timeline and we don't have access to the view actions that we need
     public function viewRecord($record, $morphReference)
     {
         $this->currentRecordToView = $this->getRecordFromMorphAndKey($morphReference, $record);

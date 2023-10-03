@@ -3,7 +3,7 @@
 @endphp
 
 <div
-    class="border-b-1 max-h-content w-full overflow-y-scroll rounded-l-lg border-l-2 border-r-2 border-t-2 border-gray-200 border-r-gray-50 bg-white dark:border-gray-700 dark:bg-gray-800 lg:w-1/3">
+    class="border-b-1 max-h-content w-full overflow-y-scroll rounded-l-lg rounded-r-lg border-l-2 border-r-2 border-t-2 border-gray-200 border-r-gray-50 bg-white dark:border-gray-700 dark:bg-gray-800 md:rounded-r-none lg:w-1/3">
     <div
         class="block items-center rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 sm:flex">
         <div class="flex items-center">
@@ -12,7 +12,7 @@
             </span>
         </div>
     </div>
-    <div class="flex flex-col">
+    <div class="hidden flex-col md:flex">
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
                 <div class="overflow-hidden shadow">
@@ -44,5 +44,17 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="flex w-full md:hidden">
+        <x-filament::input.wrapper class="w-full">
+            <x-filament::input.select wire:change="selectChanged($event.target.value)">
+                <option value="">Select an engagement</option>
+                @foreach ($educatables as $educatable)
+                    <option value="{{ $educatable->identifier() }},{{ $educatable->getMorphClass() }}">
+                        {{ $educatable->display_name }}
+                    </option>
+                @endforeach
+            </x-filament::input.select>
+        </x-filament::input.wrapper>
     </div>
 </div>

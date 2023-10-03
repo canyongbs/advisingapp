@@ -3,7 +3,8 @@
 @else
     <ol class="relative">
         @foreach ($aggregateRecords as $record)
-            <li class="relative -left-6 mb-10 ml-6 rounded-lg p-4 hover:bg-gray-200 hover:dark:bg-gray-800">
+            <li
+                class="relative -left-6 mb-10 ml-10 w-full rounded-lg p-4 hover:bg-gray-200 hover:dark:bg-gray-800 md:ml-6">
                 @if (!$loop->last)
                     <div class="absolute -bottom-12 -left-3 top-3 flex w-6 justify-center">
                         <div class="w-px bg-gray-200 dark:bg-gray-700"></div>

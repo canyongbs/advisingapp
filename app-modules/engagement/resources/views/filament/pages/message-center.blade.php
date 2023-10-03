@@ -1,4 +1,4 @@
-<div class="flex max-h-full w-full flex-row p-4">
+<div class="flex max-h-full w-full flex-col p-4 md:flex-row">
 
     @if ($loadingInbox)
         <x-filament::loading-indicator class="h-12 w-12" />
