@@ -45,7 +45,6 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->deleteUploadedFileUsing(fn (Set $set) => $set('is_logo_active', false))
                             ->hiddenLabel(),
                         SpatieMediaLibraryFileUpload::make('dark_logo')
-                            ->label('Dark logo')
                             ->disk('s3')
                             ->collection('dark_logo')
                             ->visibility('private')
