@@ -2,6 +2,7 @@
 
 use Filament\Support\Facades\FilamentAsset;
 use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use Illuminate\Support\Facades\Vite;
 
 ?>
 
@@ -29,7 +30,8 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                 @foreach ($chats as $chatItem)
                                     <li @class([
                                         'fi-sidebar-item group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                        'fi-active fi-sidebar-item-active bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
+                                        'fi-active fi-sidebar-item-active bg-gray-100 dark:bg-white/5' =>
+                                            $chat->id === $chatItem->id,
                                     ])>
                                         <a
                                             @class([
@@ -63,10 +65,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                 @switch($message->from)
                                     @case(AIChatMessageFrom::Assistant)
                                         <div
-                                            class="text-token-text-primary group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]"
-                                            data-testid="conversation-turn-3"
-                                            style="--avatar-color: #19c37d;"
-                                        >
+                                            class="group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]">
                                             <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                                 <div
                                                     class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
@@ -74,7 +73,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                         <div>
                                                             <img
                                                                 class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
-                                                                src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
+                                                                src="{{ Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
                                                                 alt="AI Assistant avatar"
                                                             >
                                                         </div>
@@ -108,7 +107,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
                                         @default
                                             <div
-                                                class="text-token-text-primary group w-full border-b border-black/10 dark:border-gray-900/50 dark:bg-gray-800">
+                                                class="group w-full border-b border-black/10 dark:border-gray-900/50 dark:bg-gray-800">
                                                 <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                                     <div
                                                         class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
@@ -116,7 +115,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                             <div>
                                                                 <img
                                                                     class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
-                                                                    src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/neutral-profile.jpg') }}"
+                                                                    src="{{ Vite::asset('resources/images/neutral-profile.jpg') }}"
                                                                     alt="User avatar"
                                                                 >
                                                             </div>
@@ -139,8 +138,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
                                 @if ($showCurrentResponse)
                                     <div
-                                        class="text-token-text-primary group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]"
-                                        style="--avatar-color: #19c37d;"
+                                        class="group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]"
                                         x-data="currentResponseData"
                                     >
                                         <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
@@ -150,7 +148,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                     <div>
                                                         <img
                                                             class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
-                                                            src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
+                                                            src="{{ Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
                                                             alt="Small avatar"
                                                         >
                                                     </div>
@@ -184,10 +182,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                     </div>
 
                                     <div
-                                        class="text-token-text-primary group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]"
-                                        data-testid="conversation-turn-3"
-                                        style="--avatar-color: #19c37d;"
-                                    >
+                                        class="group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]">
                                         <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                             <div
                                                 class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
@@ -195,7 +190,7 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                                     <div>
                                                         <img
                                                             class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
-                                                            src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
+                                                            src="{{ Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
                                                             alt="AI Assistant avatar"
                                                         >
                                                     </div>
@@ -368,6 +363,6 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                     </x-slot>
                 </x-filament::modal>
             @endif
-        <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
-    </div>
-</x-filament-panels::page>
+            <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
+        </div>
+    </x-filament-panels::page>
