@@ -37,9 +37,9 @@ class MessageCenter extends Page
 
     public bool $loadingTimeline = false;
 
-    public Collection $educatables;
+    public $educatables;
 
-    public Collection $subscribedStudentsWithEngagements;
+    public $subscribedStudentsWithEngagements;
 
     public ?Educatable $selectedEducatable;
 
@@ -47,23 +47,25 @@ class MessageCenter extends Page
 
     public Model $currentRecordToView;
 
+    public string $search = '';
+
     public function mount(): void
     {
         /** @var User $user */
         $this->user = auth()->user();
 
-        $this->resolveData();
+        $this->getData();
     }
 
     public function hydrate(): void
     {
-        $this->resolveData();
+        $this->getData();
     }
 
     // TODO I don't think this is the best way to accomplish this
     // But for some reason, the latest_activity is not being persisted
-    // Across the updated lifecycle hook, so we need to re-resolve the data
-    public function resolveData(): void
+    // Across the updated lifecycle hook, so we need to re-hydrate the data
+    public function getData(): void
     {
         $subscribedEducatableIds =
             $this->user->subscriptions()
@@ -98,6 +100,11 @@ class MessageCenter extends Page
             ->mergeBindings($combinedEngagements);
 
         $this->subscribedStudentsWithEngagements = Student::query()
+            ->when($this->search, function ($query, $search) {
+                $query->where('first', 'like', "%{$search}%")
+                    ->orWhere('last', 'like', "%{$search}%")
+                    ->orWhere('full_name', 'like', "%{$search}%");
+            })
             ->whereIn('students.sisid', $engagedAndSubscribedEducatablesIds)
             ->leftJoinSub($latestActivityForStudents, 'latest_activity', function ($join) {
                 $join->on('students.sisid', '=', 'latest_activity.educatable_id');
