@@ -38,7 +38,7 @@ class TaskImporter extends Importer
                 ->rules([new Enum(TaskStatus::class)])
                 ->example('pending'),
             ImportColumn::make('due')
-                ->rules(['date_format:Y-m-d H:i:s'])
+                ->rules(['date'])
                 ->example(fake()->dateTimeBetween('+1 day', '+1 week')->format('Y-m-d H:i:s')),
             ImportColumn::make('assignedTo')
                 ->relationship(
