@@ -168,6 +168,8 @@ class PersonalAssistant extends Page
         });
 
         $this->chat->id = $assistantChat->id;
+
+        $this->chats->prepend($assistantChat);
     }
 
     public function selectChat(AssistantChat $chat): void
