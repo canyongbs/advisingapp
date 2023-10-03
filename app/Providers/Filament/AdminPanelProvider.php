@@ -81,6 +81,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Mass Engagement'),
                 NavigationGroup::make()
+                    ->label('Forms'),
+                NavigationGroup::make()
                     ->label('Users and Permissions'),
                 NavigationGroup::make()
                     ->label('Product Administration'),
