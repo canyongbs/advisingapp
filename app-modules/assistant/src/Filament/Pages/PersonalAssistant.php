@@ -214,6 +214,10 @@ class PersonalAssistant extends Page
                 $chat?->delete();
 
                 $this->chats = $this->chats->filter(fn (AssistantChat $chat) => $chat->id !== $arguments['chat']);
+
+                if ($this->chat->id === $arguments['chat']) {
+                    $this->newChat();
+                }
             })
             ->icon('heroicon-o-trash')
             ->color('danger')
