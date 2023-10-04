@@ -13,16 +13,18 @@ class TiptapMediaEncoder
 
             $bucket = isset($diskConfig['bucket']) ? "\/{$diskConfig['bucket']}" : null;
 
-            $regex = "/<img.*src=\"?'?(https?:\/\/[^\/]*{$bucket}(\/[^?]*)\??[^\"']*(?=\"?'?))/";
+            $regex = "/<img.*?src=\"?'?(https?:\/\/[^\/]*{$bucket}(\/[^?]*)\??[^\"']*(?=\"?'?))/";
 
-            preg_match($regex, $state, $matches, PREG_OFFSET_CAPTURE);
+            preg_match_all($regex, $state, $matches, PREG_SET_ORDER);
 
             if (! empty($matches)) {
-                $path = $matches[2][0];
+                foreach ($matches as $match) {
+                    $path = $match[2];
 
-                $urlString = $matches[1][0];
+                    $urlString = $match[1];
 
-                $state = str_replace($urlString, "{{media|path:{$path};disk:{$disk};}}", $state);
+                    $state = str_replace($urlString, "{{media|path:{$path};disk:{$disk};}}", $state);
+                }
             }
         }
 
@@ -34,17 +36,19 @@ class TiptapMediaEncoder
         if (gettype($state) === 'string') {
             $regex = '/{{media\|path:([^}]*);disk:([^}]*);}}/';
 
-            preg_match($regex, $state, $matches, PREG_OFFSET_CAPTURE);
+            preg_match_all($regex, $state, $matches, PREG_SET_ORDER);
 
             if (! empty($matches)) {
-                $path = $matches[1][0];
-                $disk = $matches[2][0];
+                foreach ($matches as $match) {
+                    $path = $match[1];
+                    $disk = $match[2];
 
-                $temporaryUrl = Storage::disk($disk)->temporaryUrl($path, now()->addMinutes(5));
+                    $temporaryUrl = Storage::disk($disk)->temporaryUrl($path, now()->addMinutes(5));
 
-                $urlString = $matches[0][0];
+                    $urlString = $match[0];
 
-                $state = str_replace($urlString, $temporaryUrl, $state);
+                    $state = str_replace($urlString, $temporaryUrl, $state);
+                }
             }
         }
 
