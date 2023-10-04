@@ -12,8 +12,14 @@ class KnowledgeBaseItemObserver
 
         preg_match_all($regex, $knowledgeBaseItem->solution, $matches, PREG_SET_ORDER);
 
-        foreach ($matches as $match) {
-            $knowledgeBaseItem->addMediaFromDisk($match[1], $match[2])->toMediaCollection('media');
+        if (! empty($matches)) {
+            foreach ($matches as $match) {
+                $storedMedia = $knowledgeBaseItem->addMediaFromDisk($match[1], $match[2])->toMediaCollection('media');
+
+                $knowledgeBaseItem->solution = str_replace($match[0], "{{media|id:{$storedMedia->getKey()}}}", $knowledgeBaseItem->solution);
+            }
+
+            $knowledgeBaseItem->save();
         }
     }
 }

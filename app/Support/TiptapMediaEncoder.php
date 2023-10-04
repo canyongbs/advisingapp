@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class TiptapMediaEncoder
 {
@@ -34,21 +35,55 @@ class TiptapMediaEncoder
     public static function decode(string | array | null $state): array|string|null
     {
         if (gettype($state) === 'string') {
-            $regex = '/{{media\|path:([^}]*);disk:([^}]*);}}/';
+            $state = self::decodeMediaIds($state);
 
-            preg_match_all($regex, $state, $matches, PREG_SET_ORDER);
+            $state = self::decodePaths($state);
+        }
 
-            if (! empty($matches)) {
-                foreach ($matches as $match) {
-                    $path = $match[1];
-                    $disk = $match[2];
+        return $state;
+    }
 
-                    $temporaryUrl = Storage::disk($disk)->temporaryUrl($path, now()->addMinutes(5));
+    public static function decodeMediaIds(string $state): string
+    {
+        $regex = '/{{media\|id:([^}]*);?}}/';
 
-                    $urlString = $match[0];
+        preg_match_all($regex, $state, $matches, PREG_SET_ORDER);
 
-                    $state = str_replace($urlString, $temporaryUrl, $state);
+        if (! empty($matches)) {
+            foreach ($matches as $match) {
+                $shortcode = $match[0];
+                $mediaId = $match[1];
+
+                /** @var Media $media */
+                $media = Media::query()->find($mediaId);
+
+                if (! $media) {
+                    continue;
                 }
+
+                $state = str_replace($shortcode, $media->getTemporaryUrl(now()->addMinutes(5)), $state);
+            }
+        }
+
+        return $state;
+    }
+
+    public static function decodePaths(string $state): string
+    {
+        $regex = '/{{media\|path:([^}]*);disk:([^}]*);}}/';
+
+        preg_match_all($regex, $state, $matches, PREG_SET_ORDER);
+
+        if (! empty($matches)) {
+            foreach ($matches as $match) {
+                $path = $match[1];
+                $disk = $match[2];
+
+                $temporaryUrl = Storage::disk($disk)->temporaryUrl($path, now()->addMinutes(5));
+
+                $urlString = $match[0];
+
+                $state = str_replace($urlString, $temporaryUrl, $state);
             }
         }
 
