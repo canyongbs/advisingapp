@@ -142,8 +142,10 @@ class TiptapMediaEncoder
 
                 $storedMedia = $model->addMediaFromDisk($path, $disk)->toMediaCollection('media');
 
-                $model->{$attribute} = str_replace($shortcode, "{{media|id:{$storedMedia->id};}}", $content);
+                $content = str_replace($shortcode, "{{media|id:{$storedMedia->id};}}", $content);
             }
+
+            $model->{$attribute} = $content;
 
             return true;
         }
