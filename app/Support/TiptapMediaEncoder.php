@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -88,5 +89,30 @@ class TiptapMediaEncoder
         }
 
         return $state;
+    }
+
+    public static function convertPathShortcodeToIdShortcode(Model $model, string $attribute): bool
+    {
+        $content = $model->{$attribute};
+
+        $regex = '/{{media\|path:([^}]*);disk:([^}]*);}}/';
+
+        preg_match_all($regex, $content, $matches, PREG_SET_ORDER);
+
+        if (! empty($matches)) {
+            foreach ($matches as $match) {
+                $shortcode = $match[0];
+                $path = $match[1];
+                $disk = $match[2];
+
+                $storedMedia = $model->addMediaFromDisk($path, $disk)->toMediaCollection('media');
+
+                $model->{$attribute} = str_replace($shortcode, "{{media|id:{$storedMedia->id}}}", $content);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
