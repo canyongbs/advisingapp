@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Assist\Engagement\Models\EngagementFileEntities;
@@ -147,5 +148,12 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
+        );
     }
 }

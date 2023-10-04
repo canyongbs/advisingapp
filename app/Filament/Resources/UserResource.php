@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Actions\EditAction;
@@ -46,6 +47,12 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Toggle::make('is_external')
                     ->label('User can only log in via a social provider.'),
+                TextInput::make('created_at')
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                    ->disabled(),
+                TextInput::make('updated_at')
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                    ->disabled(),
             ]);
     }
 
@@ -56,6 +63,14 @@ class UserResource extends Resource
                 TextColumn::make('name'),
                 TextColumn::make('email')
                     ->label('Email address'),
+                TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->sortable(),
+                TextColumn::make('updated_at')
+                    ->label('Updated At')
+                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->sortable(),
             ])
             ->filters([
             ])

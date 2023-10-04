@@ -1,5 +1,8 @@
 <?php
+
+use Filament\Support\Facades\FilamentAsset;
 use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+
 ?>
 
 <x-filament-panels::page>
@@ -21,15 +24,25 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
                                 <h1 class="mb-1 text-2xl">
                                     {{ $message->from === AIChatMessageFrom::User ? 'You' : 'AI Assistant' }}
                                 </h1>
-                                <p>{{ $message->message }}</p>
+                                <div class="prose dark:prose-invert">{!! str($message->message)->markdown()->sanitizeHtml() !!}</div>
                             </div>
                         </div>
                     @endforeach
                     @if ($showCurrentResponse)
-                        <div class="my-4 w-3/4 rounded-lg bg-gray-500 p-4 sm:p-6 lg:px-8">
+                        <div
+                            class="my-4 w-3/4 rounded-lg bg-gray-500 p-4 sm:p-6 lg:px-8"
+                            x-data="currentResponseData"
+                        >
                             <h1 class="mb-1 text-2xl">AI Assistant</h1>
-                            <p wire:stream="currentResponse">{{ $currentResponse }}</p>
-
+                            <p
+                                class="hidden"
+                                id="hidden_current_response"
+                                wire:stream="currentResponse"
+                            >{{ $currentResponse }}</p>
+                            <p
+                                class="prose dark:prose-invert"
+                                id="current_response"
+                            ></p>
                         </div>
                     @endif
                     @if ($renderError)
@@ -191,4 +204,5 @@ use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
         @endif
 
     </div>
+    <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
 </x-filament-panels::page>

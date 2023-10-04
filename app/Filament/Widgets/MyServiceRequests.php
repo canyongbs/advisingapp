@@ -37,7 +37,7 @@ class MyServiceRequests extends BaseWidget
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('respondent.display_name')
-                    ->label('Respondent')
+                    ->label('Related To')
                     ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->{$record->respondent::displayNameKey()})
                     ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'respondent', search: $search))
                     // TODO: Find a way to get IDE to recognize educatableSort() method

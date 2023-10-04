@@ -39,6 +39,7 @@
         "canyon-gbs/theme": "*",
         "canyon-gbs/timeline": "*",
         "canyon-gbs/webhook": "*",
+        "composer/composer": "^2.6.4",
         "filament/filament": "^3.0",
         "filament/spatie-laravel-media-library-plugin": "^3.0",
         "filament/spatie-laravel-settings-plugin": "^3.0",

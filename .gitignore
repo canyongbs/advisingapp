@@ -25,3 +25,4 @@ public/js/
 /phpstan.neon
 /.phpunit.result.cache
 app-modules/**/vendor
+app-modules/**/resources/js/dist/*

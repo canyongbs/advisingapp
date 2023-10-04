@@ -5,7 +5,7 @@
 
 <div>
     <div class="flex flex-row justify-between">
-        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
             <a
                 class="font-medium underline"
                 href="{{ UserResource::getUrl('view', ['record' => $record->createdBy]) }}"
@@ -16,13 +16,13 @@
                 @foreach ($record->deliverables as $deliverable)
                     @if ($deliverable->channel === EngagementDeliveryMethod::EMAIL)
                         <x-filament::icon
-                            class="h-5 w-5 text-white"
+                            class="h-5 w-5 text-gray-400 dark:text-gray-100"
                             icon="heroicon-o-envelope"
                         />
                     @endif
                     @if ($deliverable->channel === EngagementDeliveryMethod::SMS)
                         <x-filament::icon
-                            class="h-5 w-5 text-white"
+                            class="h-5 w-5 text-gray-400 dark:text-gray-100"
                             icon="heroicon-o-chat-bubble-left"
                         />
                     @endif
@@ -40,7 +40,7 @@
     </time>
 
     <div
-        class="my-4 rounded-lg border-2 border-gray-300 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
         @if (!blank($record->subject))
             <div class="mb-2 flex flex-col">
                 <p class="text-xs text-gray-400 dark:text-gray-500">Subject:</p>

@@ -44,18 +44,18 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->afterStateUpdated(fn (Set $set) => $set('is_logo_active', true))
                             ->deleteUploadedFileUsing(fn (Set $set) => $set('is_logo_active', false))
                             ->hiddenLabel(),
+                        SpatieMediaLibraryFileUpload::make('dark_logo')
+                            ->disk('s3')
+                            ->collection('dark_logo')
+                            ->visibility('private')
+                            ->image()
+                            ->model(
+                                SettingsProperty::getInstance('theme.is_logo_active'),
+                            )
+                            ->hidden(fn (Get $get): bool => blank($get('logo'))),
                         Toggle::make('is_logo_active')
                             ->label('Active')
-                            ->disabled(fn (Get $get): bool => blank($get('logo')))
-                            ->hint(fn (Get $get): ?string => blank($get('logo')) ? 'Please upload a logo to activate it.' : null)
-                            ->dehydrated()
-                            ->dehydrateStateUsing(function (Get $get, $state) {
-                                if (! filled($get('logo'))) {
-                                    return false;
-                                }
-
-                                return $state;
-                            }),
+                            ->hidden(fn (Get $get): bool => blank($get('logo'))),
                     ]),
             ]);
     }

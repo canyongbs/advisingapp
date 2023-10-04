@@ -51,7 +51,7 @@ class ViewServiceRequest extends ViewRecord
                             ->translateLabel()
                             ->columnSpanFull(),
                         TextEntry::make('respondent')
-                            ->label('Respondent')
+                            ->label('Related To')
                             ->translateLabel()
                             ->color('primary')
                             ->state(function (ServiceRequest $record): string {

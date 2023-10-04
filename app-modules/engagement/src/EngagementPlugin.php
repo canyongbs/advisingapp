@@ -14,10 +14,15 @@ class EngagementPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Engagement\\Filament\\Resources'
-        );
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'Assist\\Engagement\\Filament\\Resources'
+            )
+            ->discoverPages(
+                in: __DIR__ . '/Filament/Pages',
+                for: 'Assist\\Engagement\\Filament\\Pages'
+            );
     }
 
     public function boot(Panel $panel): void {}
