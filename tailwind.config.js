@@ -21,7 +21,7 @@ export default {
                 gray: require('tailwindcss/colors').zinc,
             }
         },
-        //If you change colors here also change in AdminPanelProvider
+        // Changes to colors also need to be reflected in FilamentServiceProvider
         colors: {
             'trout': {
                 50: '#f6f7f9',
