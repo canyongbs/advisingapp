@@ -5,8 +5,10 @@ namespace Assist\Engagement\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
+use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\AssistDataModel\Models\Student;
 use Assist\Timeline\Timelines\EngagementTimeline;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -48,7 +50,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        return $forModel->engagements()->with(['deliverables', 'batch'])->get();
+        return $forModel->orderedEngagements()->with(['deliverables', 'batch'])->get();
     }
 
     public function user(): BelongsTo
@@ -100,6 +102,16 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function scopeIsNotPartOfABatch(Builder $query): void
     {
         $query->whereNull('engagement_batch_id');
+    }
+
+    public function scopeSentToStudent(Builder $query): void
+    {
+        $query->where('recipient_type', resolve(Student::class)->getMorphClass());
+    }
+
+    public function scopeSentToProspect(Builder $query): void
+    {
+        $query->where('recipient_type', resolve(Prospect::class)->getMorphClass());
     }
 
     public function hasBeenDelivered(): bool

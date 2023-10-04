@@ -14,4 +14,10 @@ trait HasManyMorphedEngagements
             name: 'recipient',
         );
     }
+
+    public function orderedEngagements(): MorphMany
+    {
+        return $this->engagements()
+            ->orderBy('deliver_at', 'desc');
+    }
 }

@@ -66,7 +66,7 @@ class ServiceRequestUpdateResource extends Resource
                     ->label('ID')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('serviceRequest.respondent.full')
-                    ->label('Respondent')
+                    ->label('Related To')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {
                         // TODO: Update this to work with other respondent types
                         return $query->join('service_requests', 'service_request_updates.service_request_id', '=', 'service_requests.id')

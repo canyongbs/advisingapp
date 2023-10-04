@@ -63,7 +63,7 @@ class ListProspects extends ListRecords
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->translateLabel()
-                    ->dateTime('g:ia - M j, Y ')
+                    ->dateTime('g:ia - M j, Y')
                     ->sortable(),
             ])
             ->filters([

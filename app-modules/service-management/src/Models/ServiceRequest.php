@@ -10,6 +10,7 @@ use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -143,6 +144,13 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    // TODO We need a way to correspond custom statuses to some normalized data set
+    // So that we can determine what an "open" status is in the context of a client's data
+    public function scopeOpen(Builder $query): void
+    {
+        $query->where('status_id', ServiceRequestStatus::where('name', 'Open')->first()->id);
     }
 
     protected function serializeDate(DateTimeInterface $date): string

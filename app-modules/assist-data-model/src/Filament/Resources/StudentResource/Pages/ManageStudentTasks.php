@@ -44,6 +44,10 @@ class ManageStudentTasks extends ManageRelatedRecords
     {
         return $form
             ->schema([
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(100)
+                    ->string(),
                 TextInput::make('description')
                     ->label('Description')
                     ->required()
@@ -80,7 +84,7 @@ class ManageStudentTasks extends ManageRelatedRecords
                     ->label('Assigned To')
                     ->url(fn (Task $record) => $record->assignedTo ? UserResource::getUrl('view', ['record' => $record->assignedTo]) : null),
                 TextColumn::make('concern.full')
-                    ->label('Concern')
+                    ->label('Related To')
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),

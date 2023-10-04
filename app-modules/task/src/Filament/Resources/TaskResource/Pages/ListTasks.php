@@ -58,7 +58,7 @@ class ListTasks extends ListRecords
                         return $table->getFilter('my_tasks')->getState()['isActive'];
                     }),
                 TextColumn::make('concern.display_name')
-                    ->label('Concern')
+                    ->label('Related To')
                     ->getStateUsing(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
                     ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'concern', search: $search))
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {

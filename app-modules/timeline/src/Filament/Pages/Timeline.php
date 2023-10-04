@@ -19,7 +19,7 @@ abstract class Timeline extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
 
-    protected static string $view = 'timeline::timeline';
+    protected static string $view = 'timeline::page';
 
     public string $emptyStateMessage = 'There are no records to show on this timeline.';
 
@@ -55,6 +55,7 @@ abstract class Timeline extends Page
         $this->mountAction('view');
     }
 
+    // TODO Extract this as it's shared between multiple resources at this point
     public function getRecordFromMorphAndKey($morphReference, $key)
     {
         $className = Relation::getMorphedModel($morphReference);

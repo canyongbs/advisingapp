@@ -31,7 +31,7 @@ class CreateInteraction extends CreateRecord
         return parent::form($form)
             ->schema([
                 MorphToSelect::make('interactable')
-                    ->label('Interacted With')
+                    ->label('Related To')
                     ->translateLabel()
                     ->searchable()
                     ->required()

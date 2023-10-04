@@ -48,6 +48,7 @@ class DemoDatabaseSeeder extends Seeder
             TaskSeeder::class,
             ConsentAgreementSeeder::class,
             DemoEducatableEngagementSeeder::class,
+            SuperAdminSeeder::class,
         ]);
     }
 }

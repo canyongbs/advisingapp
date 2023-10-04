@@ -130,7 +130,7 @@ class PersonalAssistant extends Page
     {
         try {
             $this->currentResponse = $ai->ask($this->chat, function (string $partial) {
-                $this->stream('currentResponse', $partial);
+                $this->stream('currentResponse', nl2br($partial));
             });
         } catch (ContentFilterException|TokensExceededException $e) {
             $this->renderError = true;
