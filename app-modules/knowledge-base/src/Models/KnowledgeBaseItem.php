@@ -8,7 +8,6 @@ use Assist\Division\Models\Division;
 use Spatie\MediaLibrary\HasMedia;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,7 +18,6 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  */
 class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
 {
-    use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
     use InteractsWithMedia;
