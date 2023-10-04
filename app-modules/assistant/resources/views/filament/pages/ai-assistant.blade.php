@@ -290,27 +290,25 @@ use Illuminate\Support\Facades\Vite;
                         </x-slot>
                     @endif
 
-                    <x-slot name="heading">
-                        <h1 class="text-center text-xl">
+                    <x-slot name="header">
+                        <h2 class="text-xl font-semibold text-center text-gray-950 dark:text-white">
                             {{ $consentAgreement->title }}
-                        </h1>
+                        </h2>
                     </x-slot>
 
-                    <x-slot name="description">
-                        <div class="my-4 border-gray-100 text-center">
-                            <p class="prose mx-auto text-gray-100">{{ $consentAgreement->description }}</p>
+                    <div class="prose text-center max-w-none dark:prose-invert">
+                        {{ str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    </div>
+
+                    <x-filament::section>
+                        <div class="prose text-center max-w-none dark:prose-invert">
+                            {{ str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
                         </div>
-
-                        <x-filament::section>
-                            <div class="text-center">
-                                <p class="prose mx-auto text-gray-100">{{ $consentAgreement->body }}</p>
-                            </div>
-                        </x-filament::section>
-                    </x-slot>
+                    </x-filament::section>
 
                     <x-slot name="footer">
                         <form
-                            class="flex w-full flex-col"
+                            class="flex w-full flex-col gap-6"
                             wire:submit="confirmConsent"
                         >
                             <label class="mx-auto">
@@ -318,14 +316,14 @@ use Illuminate\Support\Facades\Vite;
                                     wire:model="consentedToTerms"
                                     required="true"
                                 />
-                                <span class="ml-2">
+
+                                <span class="ml-2 font-medium text-sm">
                                     I agree to the terms and conditions
                                 </span>
                             </label>
 
-                            <div class="mt-4 flex justify-center space-x-4">
+                            <div class="flex justify-center gap-3">
                                 <x-filament::button
-                                    class="mt-4 md:mt-0"
                                     wire:click="denyConsent"
                                     outlined
                                     color="warning"
@@ -333,14 +331,12 @@ use Illuminate\Support\Facades\Vite;
                                     Cancel
                                 </x-filament::button>
                                 <x-filament::button
-                                    class="mt-4 md:mt-0"
                                     type="submit"
                                     color="success"
                                 >
                                     I understand
                                 </x-filament::button>
                             </div>
-
                         </form>
                     </x-slot>
                 </x-filament::modal>
