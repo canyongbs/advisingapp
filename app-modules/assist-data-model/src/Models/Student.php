@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Engagement\Models\EngagementFileEntities;
@@ -114,5 +115,12 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public static function filamentResource(): string
     {
         return StudentResource::class;
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
+        );
     }
 }

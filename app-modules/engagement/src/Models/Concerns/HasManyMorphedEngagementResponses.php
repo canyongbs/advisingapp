@@ -14,4 +14,10 @@ trait HasManyMorphedEngagementResponses
             name: 'sender',
         );
     }
+
+    public function orderedEngagementResponses(): MorphMany
+    {
+        return $this->engagementResponses()
+            ->orderBy('sent_at', 'desc');
+    }
 }

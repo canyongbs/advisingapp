@@ -44,6 +44,10 @@ class ManageStudentTasks extends ManageRelatedRecords
     {
         return $form
             ->schema([
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(100)
+                    ->string(),
                 TextInput::make('description')
                     ->label('Description')
                     ->required()
