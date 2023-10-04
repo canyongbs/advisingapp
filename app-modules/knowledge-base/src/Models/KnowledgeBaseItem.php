@@ -5,7 +5,9 @@ namespace Assist\KnowledgeBase\Models;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Division\Models\Division;
+use Spatie\MediaLibrary\HasMedia;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,11 +17,12 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 /**
  * @mixin IdeHelperKnowledgeBaseItem
  */
-class KnowledgeBaseItem extends BaseModel implements Auditable
+class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
 {
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
+    use InteractsWithMedia;
 
     protected $casts = [
         'public' => 'boolean',
@@ -53,6 +56,11 @@ class KnowledgeBaseItem extends BaseModel implements Auditable
     public function division(): BelongsToMany
     {
         return $this->belongsToMany(Division::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('media');
     }
 
     protected function serializeDate(DateTimeInterface $date): string
