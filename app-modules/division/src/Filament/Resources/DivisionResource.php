@@ -15,9 +15,9 @@ class DivisionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationGroup = 'Users and Permissions';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function getRelations(): array
     {

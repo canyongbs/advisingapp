@@ -5,6 +5,7 @@ namespace Assist\Task\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Task\Enums\TaskStatus;
+use Illuminate\Support\Collection;
 use Assist\Prospect\Models\Prospect;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
@@ -45,6 +46,11 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
         'status' => TaskStatus::class,
         'due' => 'datetime',
     ];
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['import', ...$this->webPermissions()]);
+    }
 
     public function getStateMachineFields(): array
     {

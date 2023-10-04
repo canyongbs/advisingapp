@@ -5,7 +5,9 @@ namespace Assist\Team\Providers;
 use Filament\Panel;
 use Assist\Team\TeamPlugin;
 use Assist\Team\Models\Team;
+use Assist\Team\Models\TeamUser;
 use Illuminate\Support\ServiceProvider;
+use Assist\Team\Observers\TeamUserObserver;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
@@ -24,6 +26,8 @@ class TeamServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+
+        $this->registerObservers();
     }
 
     protected function registerRolesAndPermissions(): void
@@ -51,5 +55,10 @@ class TeamServiceProvider extends ServiceProvider
             module: 'team',
             path: 'roles/web'
         );
+    }
+
+    protected function registerObservers(): void
+    {
+        TeamUser::observe(TeamUserObserver::class);
     }
 }

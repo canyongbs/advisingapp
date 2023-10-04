@@ -4,8 +4,11 @@ namespace Assist\Team\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @mixin IdeHelperTeam
+ */
 class Team extends BaseModel
 {
     protected $fillable = [
@@ -13,9 +16,11 @@ class Team extends BaseModel
         'description',
     ];
 
-    public function users(): HasMany
+    public function users(): BelongsToMany
     {
         return $this
-            ->hasMany(User::class);
+            ->belongsToMany(User::class)
+            ->using(TeamUser::class)
+            ->withTimestamps();
     }
 }
