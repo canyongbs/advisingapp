@@ -6,6 +6,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
@@ -47,6 +48,7 @@ class ServiceRequestUpdatesRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('update')
                     ->label('Update')
                     ->translateLabel()

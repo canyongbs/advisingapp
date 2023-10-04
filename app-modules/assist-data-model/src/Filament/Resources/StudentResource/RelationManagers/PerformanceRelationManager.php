@@ -4,6 +4,7 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationMana
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -46,6 +47,7 @@ class PerformanceRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('acad_career')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('acad_career')
                     ->label('Academic Career'),
                 TextColumn::make('division')

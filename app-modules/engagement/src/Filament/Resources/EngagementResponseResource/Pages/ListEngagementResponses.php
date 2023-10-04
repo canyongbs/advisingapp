@@ -3,6 +3,7 @@
 namespace Assist\Engagement\Filament\Resources\EngagementResponseResource\Pages;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -16,8 +17,7 @@ class ListEngagementResponses extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id')
-                    ->translateLabel(),
+                IdColumn::make(),
                 TextColumn::make('content')
                     ->translateLabel(),
             ])

@@ -5,6 +5,7 @@ namespace Assist\Audit\Filament\Resources\AuditResource\Pages;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -21,9 +22,7 @@ class ListAudits extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->sortable(),
+                IdColumn::make(),
                 TextColumn::make('auditable_type')
                     ->label('Auditable')
                     ->sortable(),

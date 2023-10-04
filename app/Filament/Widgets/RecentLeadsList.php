@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -34,8 +35,7 @@ class RecentLeadsList extends BaseWidget
                 Prospect::latest()->limit(10)
             )
             ->columns([
-                TextColumn::make('id')
-                    ->hidden(),
+                IdColumn::make(),
                 TextColumn::make(Prospect::displayNameKey())
                     ->label('Name'),
                 TextColumn::make('email')

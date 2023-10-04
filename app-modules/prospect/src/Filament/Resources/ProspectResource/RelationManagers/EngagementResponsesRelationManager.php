@@ -4,6 +4,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\TextEntry;
@@ -29,7 +30,7 @@ class EngagementResponsesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('id'),
+                IdColumn::make(),
                 TextColumn::make('content'),
                 TextColumn::make('sent_at')
                     ->dateTime('Y-m-d H:i:s'),

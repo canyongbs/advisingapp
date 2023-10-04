@@ -7,6 +7,7 @@ use Filament\Forms\Set;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
+use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
@@ -40,6 +41,7 @@ class ListTasks extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('title')
                     ->searchable()
                     ->wrap()

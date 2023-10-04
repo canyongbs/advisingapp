@@ -19,8 +19,6 @@ class ViewAudit extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID'),
                         TextEntry::make('auditable_type')
                             ->label('Auditable'),
                         TextEntry::make('user.name')

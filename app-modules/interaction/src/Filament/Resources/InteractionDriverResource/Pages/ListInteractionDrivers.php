@@ -4,6 +4,7 @@ namespace Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -20,6 +21,7 @@ class ListInteractionDrivers extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name')
                     ->searchable(),
             ])

@@ -3,6 +3,7 @@
 namespace Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
@@ -16,6 +17,7 @@ class ListConsentAgreements extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('type'),
                 TextColumn::make('title'),
             ])

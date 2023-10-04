@@ -21,8 +21,6 @@ class ViewDivision extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID'),
                         TextEntry::make('name'),
                         TextEntry::make('code'),
                         Section::make()

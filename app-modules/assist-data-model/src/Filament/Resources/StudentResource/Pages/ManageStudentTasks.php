@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
@@ -65,6 +66,7 @@ class ManageStudentTasks extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('description')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('description')
                     ->searchable()
                     ->wrap()

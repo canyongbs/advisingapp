@@ -5,6 +5,7 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationMana
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -84,7 +85,7 @@ class EngagementsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('id'),
+                IdColumn::make(),
                 TextColumn::make('subject'),
                 TextColumn::make('body'),
                 TextColumn::make('channels')

@@ -4,6 +4,7 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pag
 
 use Filament\Actions;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -24,6 +25,7 @@ class ListServiceRequests extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('service_request_number')
                     ->label('Service Request #')
                     ->searchable()

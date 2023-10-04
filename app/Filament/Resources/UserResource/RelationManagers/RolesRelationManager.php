@@ -4,6 +4,7 @@ namespace App\Filament\Resources\UserResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\RelationManagers\RelationManager;
@@ -31,6 +32,7 @@ class RolesRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('guard_name'),
                 TextColumn::make('pivot.via')->label('Via'),
