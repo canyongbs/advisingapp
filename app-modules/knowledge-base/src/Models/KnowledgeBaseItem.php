@@ -58,7 +58,8 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('media');
+        $this->addMediaCollection('solution');
+        $this->addMediaCollection('notes');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

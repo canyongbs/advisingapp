@@ -140,7 +140,7 @@ class TiptapMediaEncoder
                 $path = $match[1];
                 $disk = $match[2];
 
-                $storedMedia = $model->addMediaFromDisk($path, $disk)->toMediaCollection('media');
+                $storedMedia = $model->addMediaFromDisk($path, $disk)->toMediaCollection($attribute);
 
                 $content = str_replace($shortcode, "{{media|id:{$storedMedia->id};}}", $content);
             }
