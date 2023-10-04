@@ -54,7 +54,7 @@ class MessageCenter extends Page
     public string $search = '';
 
     // TODO students, prospects, all
-    public string $peopleScope = 'all';
+    public string $filterPeopleType = 'all';
 
     public bool $filterSubscribed = true;
 
@@ -207,45 +207,57 @@ class MessageCenter extends Page
     {
         $this->loadingInbox = true;
 
-        $studentIds = $this->getStudentIds();
-        $prospectIds = $this->getProspectIds();
+        ray('filterPeople', $this->filterPeopleType);
 
-        $studentLatestActivity = $this->getLatestActivityForEducatables($studentIds);
-        $prospectLatestActivity = $this->getLatestActivityForEducatables($prospectIds);
+        $studentPopulationQuery = null;
+        $prospectPopulationQuery = null;
 
-        // ray()->showQueries();
-        $studentPopulationQuery = Student::query()
-            ->when($this->search, function ($query, $search) {
-                $query->where('full_name', 'like', "%{$search}%")
-                    ->orWhere('sisid', 'like', "%{$search}%")
-                    ->orWhere('otherid', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('mobile', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
-            })
-            ->joinSub($studentLatestActivity, 'latest_activity', function ($join) {
-                $join->on('students.sisid', '=', 'latest_activity.educatable_id');
-            })
-            ->select('students.sisid', 'students.full_name', 'latest_activity.latest_activity', DB::raw("'student' as type"));
+        if ($this->filterPeopleType === 'students' || $this->filterPeopleType === 'all') {
+            $studentIds = $this->getStudentIds();
+            $studentLatestActivity = $this->getLatestActivityForEducatables($studentIds);
 
-        $prospectPopulationQuery = Prospect::query()
-            ->when($this->search, function ($query, $search) {
-                $query->where('full_name', 'like', "%{$search}%");
-            })
-            ->joinSub($prospectLatestActivity, 'latest_activity', function ($join) {
-                $join->on(DB::raw('prospects.id::VARCHAR'), '=', 'latest_activity.educatable_id');
-            })
-            ->select(DB::raw('prospects.id::VARCHAR'), 'prospects.full_name', 'latest_activity.latest_activity', DB::raw("'prospect' as type"));
-
-        $educatables = $studentPopulationQuery->union($prospectPopulationQuery)
-            ->orderBy('latest_activity', 'desc')
-            ->paginate($this->pagination);
-
-        foreach ($educatables as $educatable) {
-            ray('educatable', $educatable);
+            $studentPopulationQuery = Student::query()
+                ->when($this->search, function ($query, $search) {
+                    $query->where('full_name', 'like', "%{$search}%")
+                        ->orWhere('sisid', 'like', "%{$search}%")
+                        ->orWhere('otherid', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('mobile', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                })
+                ->joinSub($studentLatestActivity, 'latest_activity', function ($join) {
+                    $join->on('students.sisid', '=', 'latest_activity.educatable_id');
+                })
+                ->select('students.sisid', 'students.full_name', 'latest_activity.latest_activity', DB::raw("'student' as type"));
         }
 
-        // ray()->stopShowingQueries();
+        if ($this->filterPeopleType === 'prospects' || $this->filterPeopleType === 'all') {
+            $prospectIds = $this->getProspectIds();
+            $prospectLatestActivity = $this->getLatestActivityForEducatables($prospectIds);
+
+            $prospectPopulationQuery = Prospect::query()
+                ->when($this->search, function ($query, $search) {
+                    $query->where('full_name', 'like', "%{$search}%");
+                })
+                ->joinSub($prospectLatestActivity, 'latest_activity', function ($join) {
+                    $join->on(DB::raw('prospects.id::VARCHAR'), '=', 'latest_activity.educatable_id');
+                })
+                ->select(DB::raw('prospects.id::VARCHAR'), 'prospects.full_name', 'latest_activity.latest_activity', DB::raw("'prospect' as type"));
+        }
+
+        if ($this->filterPeopleType === 'students') {
+            $educatables = $studentPopulationQuery
+                ->orderBy('latest_activity', 'desc')
+                ->paginate($this->pagination);
+        } elseif ($this->filterPeopleType === 'prospects') {
+            $educatables = $prospectPopulationQuery
+                ->orderBy('latest_activity', 'desc')
+                ->paginate($this->pagination);
+        } else {
+            $educatables = $studentPopulationQuery->union($prospectPopulationQuery)
+                ->orderBy('latest_activity', 'desc')
+                ->paginate($this->pagination);
+        }
 
         $this->loadingInbox = false;
 

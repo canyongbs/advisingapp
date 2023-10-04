@@ -2,8 +2,10 @@
     class="flex flex-col items-start justify-start space-y-2 rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
     x-show="showFilters"
 >
+    <span>Filter Engagements by:</span>
     <x-filament::input.wrapper>
-        <x-filament::input.select wire:model.live="peopleScope">
+
+        <x-filament::input.select wire:model.live="filterPeopleType">
             <option value="all">All</option>
             <option value="students">Students</option>
             <option value="prospects">Prospects</option>

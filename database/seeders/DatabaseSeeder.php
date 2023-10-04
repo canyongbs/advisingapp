@@ -60,6 +60,7 @@ class DatabaseSeeder extends Seeder
             EngagementSeeder::class,
             EngagementResponseSeeder::class,
             DemoEducatableEngagementSeeder::class,
+            SuperAdminSeeder::class,
         ]);
     }
 }
