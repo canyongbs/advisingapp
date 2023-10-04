@@ -53,7 +53,7 @@ class MessageCenter extends Page
 
     public string $search = '';
 
-    // TODO students, prospects, all
+    // TODO Utilize an enum here
     public string $filterPeopleType = 'all';
 
     public bool $filterSubscribed = true;
@@ -246,23 +246,17 @@ class MessageCenter extends Page
         }
 
         if ($this->filterPeopleType === 'students') {
-            $educatables = $studentPopulationQuery
-                ->orderBy('latest_activity', 'desc')
-                ->paginate($this->pagination);
+            $educatables = $studentPopulationQuery;
         } elseif ($this->filterPeopleType === 'prospects') {
-            $educatables = $prospectPopulationQuery
-                ->orderBy('latest_activity', 'desc')
-                ->paginate($this->pagination);
+            $educatables = $prospectPopulationQuery;
         } else {
-            $educatables = $studentPopulationQuery->union($prospectPopulationQuery)
-                ->orderBy('latest_activity', 'desc')
-                ->paginate($this->pagination);
+            $educatables = $studentPopulationQuery->union($prospectPopulationQuery);
         }
 
         $this->loadingInbox = false;
 
         return [
-            'educatables' => $educatables,
+            'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->pagination),
         ];
     }
 }
