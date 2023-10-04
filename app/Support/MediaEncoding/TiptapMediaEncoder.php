@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support;
+namespace App\Support\MediaEncoding;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
