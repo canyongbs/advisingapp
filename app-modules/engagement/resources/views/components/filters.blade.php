@@ -11,13 +11,11 @@
             <option value="prospects">Prospects</option>
         </x-filament::input.select>
     </x-filament::input.wrapper>
+
     <div class="flex w-full flex-col space-y-2">
         <span>Date Range</span>
 
-        <div
-            class="flex w-full flex-col items-center"
-            date-rangepicker
-        >
+        <div class="flex w-full flex-col items-center">
             <div class="relative w-full">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <x-engagement::svg.calendar />
@@ -44,8 +42,8 @@
                 >
             </div>
         </div>
-
     </div>
+
     <label class="flex items-center">
         <x-filament::input.checkbox wire:model.live="filterSubscribed" />
 
@@ -53,6 +51,7 @@
             My Subscriptions
         </span>
     </label>
+
     <label class="flex items-center">
         <x-filament::input.checkbox wire:model.live="filterOpenTasks" />
         <span class="ml-2">
@@ -66,5 +65,4 @@
             Open Service Requests
         </span>
     </label>
-
 </div>

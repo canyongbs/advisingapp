@@ -71,6 +71,7 @@ class MessageCenter extends Page
     #[Url(as: 'endDate')]
     public ?string $filterEndDate = null;
 
+    // This is not yet used on the frontend, but will be
     public array $paginationOptions = [
         10,
         25,
@@ -127,6 +128,37 @@ class MessageCenter extends Page
         return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
     }
 
+    public function getStudentIds(): Collection
+    {
+        return $this->getEducatableIds('sentToStudent', 'sentByStudent');
+    }
+
+    public function getProspectIds(): Collection
+    {
+        return $this->getEducatableIds('sentToProspect', 'sentByProspect');
+    }
+
+    public function getEducatableIds($engagementScope, $engagementResponseScope): Collection
+    {
+        $engagementEducatableIds = Engagement::query()
+            ->$engagementScope()
+            ->tap(function (Builder $query) {
+                $this->applyFilters($query, 'deliver_at', 'recipient_id');
+            })
+            ->pluck('recipient_id')
+            ->unique();
+
+        $engagementResponseEducatableIds = EngagementResponse::query()
+            ->$engagementResponseScope()
+            ->tap(function (Builder $query) {
+                $this->applyFilters($query, 'sent_at', 'sender_id');
+            })
+            ->pluck('sender_id')
+            ->unique();
+
+        return $engagementEducatableIds->concat($engagementResponseEducatableIds)->unique();
+    }
+
     public function getLatestActivityForEducatables($ids)
     {
         $latestEngagementsForEducatables = DB::table('engagements')
@@ -175,37 +207,6 @@ class MessageCenter extends Page
                         ->pluck('respondent_id')
                 );
             });
-    }
-
-    public function getEducatableIds($engagementScope, $engagementResponseScope): Collection
-    {
-        $engagementEducatableIds = Engagement::query()
-            ->$engagementScope()
-            ->tap(function (Builder $query) {
-                $this->applyFilters($query, 'deliver_at', 'recipient_id');
-            })
-            ->pluck('recipient_id')
-            ->unique();
-
-        $engagementResponseEducatableIds = EngagementResponse::query()
-            ->$engagementResponseScope()
-            ->tap(function (Builder $query) {
-                $this->applyFilters($query, 'sent_at', 'sender_id');
-            })
-            ->pluck('sender_id')
-            ->unique();
-
-        return $engagementEducatableIds->concat($engagementResponseEducatableIds)->unique();
-    }
-
-    public function getStudentIds(): Collection
-    {
-        return $this->getEducatableIds('sentToStudent', 'sentByStudent');
-    }
-
-    public function getProspectIds(): Collection
-    {
-        return $this->getEducatableIds('sentToProspect', 'sentByProspect');
     }
 
     protected function getViewData(): array

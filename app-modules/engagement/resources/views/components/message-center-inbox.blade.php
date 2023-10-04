@@ -73,5 +73,4 @@
         </x-filament::input.wrapper>
     </div>
     <x-engagement::pagination :educatables="$educatables" />
-    {{-- {{ $educatables->links() }} --}}
 </div>

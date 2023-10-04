@@ -5,10 +5,7 @@ namespace Assist\Notifications\Models;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -33,16 +30,6 @@ class Subscription extends BaseModel
     public function subscribable(): MorphTo
     {
         return $this->morphTo();
-    }
-
-    public function scopeToStudents(Builder $query): void
-    {
-        $query->where('subscribable_type', resolve(Student::class)->getMorphClass());
-    }
-
-    public function scopeToProspects(Builder $query): void
-    {
-        $query->where('subscribable_type', resolve(Prospect::class)->getMorphClass());
     }
 
     protected function serializeDate(DateTimeInterface $date): string
