@@ -19,6 +19,7 @@ use Assist\Engagement\Models\EngagementResponse;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
@@ -82,7 +83,6 @@ class MessageCenter extends Page
 
     public function mount(): void
     {
-        /** @var User $user */
         $this->user = auth()->user();
     }
 
@@ -104,7 +104,7 @@ class MessageCenter extends Page
         $this->selectEducatable($educatableId, $morphClass);
     }
 
-    // TODO Extract this away... This is used in multiple places
+    // TODO Extract this away... This is also used in the timeline
     public function getRecordFromMorphAndKey($morphReference, $key)
     {
         $className = Relation::getMorphedModel($morphReference);
@@ -130,12 +130,12 @@ class MessageCenter extends Page
 
     public function getStudentIds(): Collection
     {
-        return $this->getEducatableIds('sentToStudent', 'sentByStudent');
+        return $this->getEducatableIds(engagementScope: 'sentToStudent', engagementResponseScope: 'sentByStudent');
     }
 
     public function getProspectIds(): Collection
     {
-        return $this->getEducatableIds('sentToProspect', 'sentByProspect');
+        return $this->getEducatableIds(engagementScope: 'sentToProspect', engagementResponseScope: 'sentByProspect');
     }
 
     public function getEducatableIds($engagementScope, $engagementResponseScope): Collection
@@ -143,7 +143,7 @@ class MessageCenter extends Page
         $engagementEducatableIds = Engagement::query()
             ->$engagementScope()
             ->tap(function (Builder $query) {
-                $this->applyFilters($query, 'deliver_at', 'recipient_id');
+                $this->applyFilters(query: $query, dateColumn: 'deliver_at', idColumn: 'recipient_id');
             })
             ->pluck('recipient_id')
             ->unique();
@@ -151,7 +151,7 @@ class MessageCenter extends Page
         $engagementResponseEducatableIds = EngagementResponse::query()
             ->$engagementResponseScope()
             ->tap(function (Builder $query) {
-                $this->applyFilters($query, 'sent_at', 'sender_id');
+                $this->applyFilters(query: $query, dateColumn: 'sent_at', idColumn: 'sender_id');
             })
             ->pluck('sender_id')
             ->unique();
@@ -159,7 +159,7 @@ class MessageCenter extends Page
         return $engagementEducatableIds->concat($engagementResponseEducatableIds)->unique();
     }
 
-    public function getLatestActivityForEducatables($ids)
+    public function getLatestActivityForEducatables($ids): QueryBuilder
     {
         $latestEngagementsForEducatables = DB::table('engagements')
             ->whereIn('recipient_id', $ids)
@@ -179,7 +179,7 @@ class MessageCenter extends Page
             ->mergeBindings($combinedLatestActivity);
     }
 
-    public function applyFilters(Builder $query, string $dateColumn, string $idColumn)
+    public function applyFilters(Builder $query, string $dateColumn, string $idColumn): void
     {
         $query
             ->when($this->filterStartDate, function (Builder $query) use ($dateColumn) {
