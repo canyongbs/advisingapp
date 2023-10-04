@@ -153,7 +153,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes['full_name'],
+            get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
         );
     }
 }

@@ -120,7 +120,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn (?string $value, array $attributes) => $attributes['full_name'],
+            get: fn (?string $value, array $attributes) => $attributes[$this->displayNameKey()],
         );
     }
 }

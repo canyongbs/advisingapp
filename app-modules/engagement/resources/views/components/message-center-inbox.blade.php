@@ -40,7 +40,7 @@
                                         'bg-gray-100 dark:bg-gray-700' =>
                                             $selectedEducatable?->identifier() === $educatable->identifier(),
                                     ])
-                                    wire:click="selectEducatable('{{ $educatable->identifier() }}', '{{ $educatable->getMorphClass() }}')"
+                                    wire:click="selectEducatable('{{ $educatable->identifier() }}', '{{ $educatable->type }}')"
                                 >
                                     <div class="justify-left flex flex-col items-center whitespace-nowrap p-4">
                                         <div class="w-full text-base font-normal text-gray-700 dark:text-gray-400">
