@@ -4,6 +4,7 @@ namespace Assist\Authorization\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -44,6 +45,12 @@ class RoleGroupResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(125),
+                TextInput::make('created_at')
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                    ->disabled(),
+                TextInput::make('updated_at')
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
+                    ->disabled(),
             ]);
     }
 
@@ -54,15 +61,16 @@ class RoleGroupResource extends Resource
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->label('Created At')
+                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->sortable(),
                 TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Updated At')
+                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->sortable(),
                 TextColumn::make('deleted_at')
-                    ->dateTime()
+                    ->label('Deleted At')
+                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
                     ->sortable(),
             ])
             ->filters([
