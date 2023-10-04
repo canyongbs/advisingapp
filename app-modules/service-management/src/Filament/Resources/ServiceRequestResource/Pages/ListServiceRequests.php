@@ -54,8 +54,8 @@ class ListServiceRequests extends ListRecords
                                 ->where('service_requests.respondent_type', '=', 'student');
                         })->orderBy('otherid', $direction);
                     }),
-                TextColumn::make('institution.name')
-                    ->label('Institution')
+                TextColumn::make('division.name')
+                    ->label('Division')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('assignedTo.name')

@@ -46,9 +46,9 @@ test('CreateKnowledgeBaseItem is gated with proper access control', function () 
 
     assertCount(1, KnowledgeBaseItem::all());
 
-    assertDatabaseHas(KnowledgeBaseItem::class, $request->except('institution')->toArray());
+    assertDatabaseHas(KnowledgeBaseItem::class, $request->except('division')->toArray());
 
     $knowledgeBaseItem = KnowledgeBaseItem::first();
 
-    expect($knowledgeBaseItem->institution->pluck('id')->toArray())->toEqual($request['institution']);
+    expect($knowledgeBaseItem->division->pluck('id')->toArray())->toEqual($request['division']);
 });

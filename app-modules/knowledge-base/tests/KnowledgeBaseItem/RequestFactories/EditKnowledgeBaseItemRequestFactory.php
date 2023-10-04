@@ -2,7 +2,7 @@
 
 namespace Assist\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
 
-use App\Models\Institution;
+use Assist\Division\Models\Division;
 use Worksome\RequestFactories\RequestFactory;
 use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
 use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
@@ -20,7 +20,7 @@ class EditKnowledgeBaseItemRequestFactory extends RequestFactory
             'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first()?->id ?? KnowledgeBaseQuality::factory()->create()->id,
             'status_id' => KnowledgeBaseStatus::inRandomOrder()->first()?->id ?? KnowledgeBaseStatus::factory()->create()->id,
             'category_id' => KnowledgeBaseCategory::inRandomOrder()->first()?->id ?? KnowledgeBaseCategory::factory()->create()->id,
-            'institution' => [Institution::inRandomOrder()->first()?->id ?? Institution::factory()->create()->id],
+            'division' => [Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id],
         ];
     }
 }

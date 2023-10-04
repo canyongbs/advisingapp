@@ -19,6 +19,7 @@ class DivisionFactory extends Factory
         return [
             'name' => fake()->unique()->company(),
             'code' => fake()->unique()->word(),
+            'description' => fake()->optional()->sentences(asText: true),
             'header' => fake()->words(asText: true),
             'footer' => fake()->words(asText: true),
         ];

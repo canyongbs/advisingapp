@@ -5,8 +5,8 @@ namespace Assist\ServiceManagement\Models;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Models\Institution;
 use Illuminate\Support\Facades\DB;
+use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -44,7 +44,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     protected $fillable = [
         'respondent_type',
         'respondent_id',
-        'institution_id',
+        'division_id',
         'status_id',
         'type_id',
         'priority_id',
@@ -110,9 +110,9 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         );
     }
 
-    public function institution(): BelongsTo
+    public function division(): BelongsTo
     {
-        return $this->belongsTo(Institution::class, 'institution_id');
+        return $this->belongsTo(Division::class, 'division_id');
     }
 
     public function serviceRequestUpdates(): HasMany

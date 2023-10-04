@@ -20,6 +20,7 @@ class Division extends BaseModel implements Auditable
     protected $fillable = [
         'name',
         'code',
+        'description',
         'header',
         'footer',
     ];

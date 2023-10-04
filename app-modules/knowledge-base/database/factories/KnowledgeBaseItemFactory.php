@@ -2,7 +2,7 @@
 
 namespace Assist\KnowledgeBase\Database\Factories;
 
-use App\Models\Institution;
+use Assist\Division\Models\Division;
 use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
@@ -32,8 +32,8 @@ class KnowledgeBaseItemFactory extends Factory
         return $this->afterMaking(function (KnowledgeBaseItem $knowledgeBaseItem) {
             // ...
         })->afterCreating(function (KnowledgeBaseItem $knowledgeBaseItem) {
-            if ($knowledgeBaseItem->institution->isEmpty()) {
-                $knowledgeBaseItem->institution()->attach(Institution::first()?->id ?? Institution::factory()->create()->id);
+            if ($knowledgeBaseItem->division->isEmpty()) {
+                $knowledgeBaseItem->division()->attach(Division::first()?->id ?? Division::factory()->create()->id);
                 $knowledgeBaseItem->save();
             }
         });

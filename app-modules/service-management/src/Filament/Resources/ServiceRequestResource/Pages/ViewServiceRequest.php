@@ -30,8 +30,8 @@ class ViewServiceRequest extends ViewRecord
                         TextEntry::make('service_request_number')
                             ->label('Service Request Number')
                             ->translateLabel(),
-                        TextEntry::make('institution.name')
-                            ->label('Institution')
+                        TextEntry::make('division.name')
+                            ->label('Division')
                             ->translateLabel(),
                         TextEntry::make('status.name')
                             ->label('Status')
