@@ -3,13 +3,13 @@
 namespace Assist\Assistant\Filament\Pages;
 
 use App\Models\User;
-use Filament\Actions\StaticAction;
 use Filament\Pages\Page;
-use Filament\Support\Enums\ActionSize;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
+use Filament\Actions\StaticAction;
+use Filament\Support\Enums\ActionSize;
 use Filament\Forms\Components\TextInput;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
