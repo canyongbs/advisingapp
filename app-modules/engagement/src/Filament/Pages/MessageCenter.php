@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Filament\Pages\Page;
 use Assist\Task\Models\Task;
-use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -24,8 +24,6 @@ use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
 class MessageCenter extends Page
 {
-    use WithPagination;
-
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
     protected static string $view = 'engagement::filament.pages.message-center';
@@ -51,19 +49,26 @@ class MessageCenter extends Page
 
     public Model $currentRecordToView;
 
+    #[Url]
     public string $search = '';
 
     // TODO Utilize an enum here
+    #[Url(as: 'type')]
     public string $filterPeopleType = 'all';
 
+    #[Url(as: 'subscribed')]
     public bool $filterSubscribed = true;
 
+    #[Url(as: 'hasOpenTasks')]
     public bool $filterOpenTasks = false;
 
+    #[Url(as: 'hasOpenServiceRequests')]
     public bool $filterOpenServiceRequests = false;
 
+    #[Url(as: 'startDate')]
     public ?string $filterStartDate = null;
 
+    #[Url(as: 'endDate')]
     public ?string $filterEndDate = null;
 
     public array $paginationOptions = [
@@ -207,8 +212,6 @@ class MessageCenter extends Page
     {
         $this->loadingInbox = true;
 
-        ray('filterPeople', $this->filterPeopleType);
-
         $studentPopulationQuery = null;
         $prospectPopulationQuery = null;
 
@@ -250,7 +253,7 @@ class MessageCenter extends Page
         } elseif ($this->filterPeopleType === 'prospects') {
             $educatables = $prospectPopulationQuery;
         } else {
-            $educatables = $studentPopulationQuery->union($prospectPopulationQuery);
+            $educatables = $studentPopulationQuery->unionAll($prospectPopulationQuery);
         }
 
         $this->loadingInbox = false;
