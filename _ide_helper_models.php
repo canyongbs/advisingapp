@@ -284,6 +284,10 @@ namespace Assist\AssistDataModel\Models{
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $orderedEngagementResponses
+ * @property-read int|null $ordered_engagement_responses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $orderedEngagements
+ * @property-read int|null $ordered_engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Performance> $performances
  * @property-read int|null $performances_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Program> $programs
@@ -731,6 +735,8 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement sentToProspect()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement sentToStudent()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDeliverAt($value)
@@ -884,6 +890,8 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse sentByProspect()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse sentByStudent()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereId($value)
@@ -1447,6 +1455,10 @@ namespace Assist\Prospect\Models{
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $orderedEngagementResponses
+ * @property-read int|null $ordered_engagement_responses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $orderedEngagements
+ * @property-read int|null $ordered_engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
  * @property-read \Assist\Prospect\Models\ProspectSource $source
@@ -1593,6 +1605,7 @@ namespace Assist\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest open()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest query()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereAssignedToId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereCloseDetails($value)
@@ -1776,6 +1789,7 @@ namespace Assist\Task\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Task open()
  * @method static \Illuminate\Database\Eloquent\Builder|Task query()
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereAssignedTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereConcernId($value)
