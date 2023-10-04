@@ -17,25 +17,25 @@ use Illuminate\Support\Facades\Vite;
         @if ($consentedToTerms === true && $loading === false)
             <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
                 <div class="col-span-1">
-                    <div
-                        class="rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:block">
-                        <li class="fi-sidebar-group flex flex-col gap-y-1">
+                    <div class="rounded-xl bg-white p-2 shadow-sm border border-gray-950/5 dark:bg-gray-900 dark:border-white/10 md:block">
+                        <div class="fi-sidebar-group flex flex-col gap-y-2">
                             <x-filament::button
                                 icon="heroicon-m-plus"
                                 wire:click="newChat"
                             >
                                 {{ __('New Chat') }}
                             </x-filament::button>
+
                             <ul class="fi-sidebar-group-items flex flex-col gap-y-1">
                                 @foreach ($chats as $chatItem)
                                     <li @class([
-                                        'fi-sidebar-item group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                        'fi-sidebar-item px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                         'fi-active fi-sidebar-item-active bg-gray-100 dark:bg-white/5' =>
                                             $chat->id === $chatItem->id,
                                     ])>
                                         <a
                                             @class([
-                                                'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm',
+                                                'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm',
                                             ])
                                             wire:click="selectChat('{{ $chatItem->id }}')"
                                         >
@@ -48,35 +48,34 @@ use Illuminate\Support\Facades\Vite;
                                             </span>
                                         </a>
 
-                                        {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}
-                                        {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}
+                                        <div>
+                                            {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}
+                                            {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}
+                                        </div>
                                     </li>
                                 @endforeach
                             </ul>
-                        </li>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-span-1 flex h-full flex-col overflow-hidden md:col-span-3">
+                <div class="col-span-1 flex h-full gap-2 flex-col overflow-hidden md:col-span-3">
                     <div
-                        class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll text-sm dark:bg-gray-800">
-                        <div>
+                        class="flex rounded-xl shadow-sm border border-gray-950/5 dark:border-white/10 max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll text-sm dark:bg-gray-800">
+                        <div class="divide-y dark:divide-none">
                             @foreach ($chat->messages as $message)
                                 @switch($message->from)
                                     @case(AIChatMessageFrom::Assistant)
                                         <div
-                                            class="group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]">
+                                            class="group w-full bg-white dark:bg-gray-900">
                                             <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                                 <div
                                                     class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
                                                     <div class="relative flex flex-shrink-0 flex-col items-end">
-                                                        <div>
-                                                            <img
-                                                                class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
-                                                                src="{{ Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
-                                                                alt="AI Assistant avatar"
-                                                            >
-                                                        </div>
+                                                        <x-filament::avatar
+                                                            :src="Vite::asset('resources/images/canyon-ai-headshot.jpg')"
+                                                            class="rounded-full"
+                                                        />
                                                     </div>
                                                     <div
                                                         class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
@@ -107,17 +106,13 @@ use Illuminate\Support\Facades\Vite;
 
                                         @default
                                             <div
-                                                class="group w-full border-b border-black/10 dark:border-gray-900/50 dark:bg-gray-800">
+                                                class="group w-full dark:bg-gray-800">
                                                 <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                                     <div
                                                         class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
                                                         <div class="relative flex flex-shrink-0 flex-col items-end">
                                                             <div>
-                                                                <img
-                                                                    class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
-                                                                    src="{{ Vite::asset('resources/images/neutral-profile.jpg') }}"
-                                                                    alt="User avatar"
-                                                                >
+                                                                <x-filament-panels::avatar.user :user="auth()->user()" />
                                                             </div>
                                                         </div>
                                                         <div
@@ -138,7 +133,7 @@ use Illuminate\Support\Facades\Vite;
 
                                 @if ($showCurrentResponse)
                                     <div
-                                        class="group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]"
+                                        class="group w-full bg-white dark:bg-gray-900"
                                         x-data="currentResponseData"
                                     >
                                         <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
@@ -182,7 +177,7 @@ use Illuminate\Support\Facades\Vite;
                                     </div>
 
                                     <div
-                                        class="group w-full border-b border-black/10 bg-gray-50 dark:border-gray-900/50 dark:bg-[#444654]">
+                                        class="group w-full border-b border-black/10 bg-white dark:border-gray-900/50 dark:bg-gray-900">
                                         <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                             <div
                                                 class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
@@ -214,15 +209,14 @@ use Illuminate\Support\Facades\Vite;
                         </div>
 
                         <form wire:submit.prevent="sendMessage">
-                            <div
-                                class="w-full rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700">
-                                <div class="rounded-t-lg bg-white px-4 py-2 dark:bg-gray-800">
+                            <div class="w-full rounded-xl overflow-hidden shadow-sm border border-gray-950/5 dark:border-white/10 bg-gray-50 dark:bg-gray-700">
+                                <div class="bg-white dark:bg-gray-800">
                                     <label
                                         class="sr-only"
                                         for="message_input"
                                     >Type here</label>
                                     <textarea
-                                        class="w-full border-0 bg-white px-0 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                        class="w-full border-0 bg-white resize-none p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
                                         id="message_input"
                                         rows="4"
                                         placeholder="Type here..."
@@ -235,45 +229,33 @@ use Illuminate\Support\Facades\Vite;
                                     </textarea>
                                 </div>
                                 <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                                    <div class="flex items-center space-x-2">
-                                        <button
-                                            class="inline-flex items-center rounded-lg bg-primary-500 px-4 py-2.5 text-center text-xs font-medium text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900"
-                                            type="submit"
-                                            wire:loading.remove
-                                            x-on:click="$wire.showCurrentResponse = true"
-                                        >
-                                            Post
-                                        </button>
-                                        <svg
-                                            class="-ml-1 mr-3 h-5 w-5 animate-spin text-primary-600"
-                                            wire:loading
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <circle
-                                                class="opacity-25"
-                                                cx="12"
-                                                cy="12"
-                                                r="10"
-                                                stroke="currentColor"
-                                                stroke-width="4"
-                                            ></circle>
-                                            <path
-                                                class="opacity-75"
-                                                fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                            ></path>
-                                        </svg>
+                                    <div class="flex items-center gap-3">
+                                        @if (! $showCurrentResponse)
+                                            <x-filament::button
+                                                wire:loading.remove
+                                                form="sendMessage,ask"
+                                                type="submit"
+                                            >
+                                                Post
+                                            </x-filament::button>
+                                        @endif
+
+                                        <div wire:loading class="py-2">
+                                            <x-filament::loading-indicator
+                                                class="h-5 w-5 text-primary-500"
+                                            />
+                                        </div>
+
                                         @error('message')
                                             <p class="ml-auto text-xs text-red-500">{{ $message }}</p>
                                         @enderror
                                     </div>
-                                    <div class="flex space-x-1 pl-0 sm:pl-2">
-                                        @if (!$chat->id && $chat->messages->count() > 0)
+
+                                    @if ((! $showCurrentResponse) && (! $chat->id) && $chat->messages->count() > 0)
+                                        <div wire:loading.remove class="flex space-x-1 pl-0 sm:pl-2">
                                             {{ $this->saveChatAction }}
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </form>

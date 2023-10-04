@@ -3,7 +3,9 @@
 namespace Assist\Assistant\Filament\Pages;
 
 use App\Models\User;
+use Filament\Actions\StaticAction;
 use Filament\Pages\Page;
+use Filament\Support\Enums\ActionSize;
 use Livewire\Attributes\On;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
@@ -118,6 +120,8 @@ class PersonalAssistant extends Page
 
     public function sendMessage(): void
     {
+        $this->showCurrentResponse = true;
+
         $this->reset('renderError');
         $this->reset('error');
 
@@ -156,6 +160,12 @@ class PersonalAssistant extends Page
     public function saveChatAction(): Action
     {
         return Action::make('saveChat')
+            ->label('Save')
+            ->modalHeading('Save chat')
+            ->modalSubmitActionLabel('Save')
+            ->icon('heroicon-s-bookmark')
+            ->link()
+            ->size(ActionSize::Small)
             ->form(
                 [
                     TextInput::make('name')
@@ -164,6 +174,7 @@ class PersonalAssistant extends Page
                         ->required(),
                 ]
             )
+            ->modalWidth('md')
             ->action(function (array $data) {
                 if (filled($this->chat->id)) {
                     return;
@@ -182,9 +193,7 @@ class PersonalAssistant extends Page
                 $this->chat->id = $assistantChat->id;
 
                 $this->chats->prepend($assistantChat);
-            })
-            ->icon('heroicon-s-bookmark')
-            ->iconButton();
+            });
     }
 
     public function selectChat(AssistantChat $chat): void
@@ -207,6 +216,7 @@ class PersonalAssistant extends Page
     public function deleteChatAction(): Action
     {
         return Action::make('deleteChat')
+            ->size(ActionSize::ExtraSmall)
             ->requiresConfirmation()
             ->action(function (array $arguments) {
                 $chat = AssistantChat::find($arguments['chat']);
@@ -230,6 +240,9 @@ class PersonalAssistant extends Page
     public function editChatAction(): Action
     {
         return Action::make('editChat')
+            ->modalSubmitActionLabel('Save')
+            ->modalWidth('md')
+            ->size(ActionSize::ExtraSmall)
             ->form(
                 [
                     TextInput::make('name')
@@ -253,6 +266,7 @@ class PersonalAssistant extends Page
             })
             ->icon('heroicon-o-pencil')
             ->color('warning')
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
             ->extraAttributes([
                 'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
