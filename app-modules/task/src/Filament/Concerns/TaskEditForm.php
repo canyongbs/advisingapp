@@ -34,7 +34,6 @@ trait TaskEditForm
                 ->default(auth()->id()),
             MorphToSelect::make('concern')
                 ->searchable()
-                ->preload()
                 ->types([
                     Type::make(Student::class)
                         ->titleAttribute(Student::displayNameKey()),

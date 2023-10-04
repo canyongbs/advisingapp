@@ -24,7 +24,7 @@ class RoleResource extends Resource
 
     protected static ?string $navigationGroup = 'Users and Permissions';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {

@@ -2,8 +2,9 @@
 
 namespace Assist\AssistDataModel\Filament\Resources;
 
-use Filament\Pages\Page;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
+use Illuminate\Database\Eloquent\Model;
 use Assist\AssistDataModel\Models\Student;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
@@ -27,6 +28,8 @@ class StudentResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $recordTitleAttribute = 'full_name';
+
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
@@ -40,6 +43,22 @@ class StudentResource extends Resource
             ManageStudentInteractions::class,
             StudentEngagementTimeline::class,
         ]);
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['sisid', 'otherid', 'full_name', 'email', 'email_2', 'mobile', 'phone'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return array_filter([
+            'Student ID' => $record->sisid,
+            'Other ID' => $record->otherid,
+            'Email Address' => collect([$record->email, $record->email_id])->filter()->implode(', '),
+            'Mobile' => $record->mobile,
+            'Phone' => collect([$record->mobile, $record->phone])->filter()->implode(', '),
+        ], fn (mixed $value): bool => filled($value));
     }
 
     public static function getPages(): array

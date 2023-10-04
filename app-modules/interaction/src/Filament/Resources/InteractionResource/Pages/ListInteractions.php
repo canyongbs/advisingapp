@@ -5,12 +5,15 @@ namespace Assist\Interaction\Filament\Resources\InteractionResource\Pages;
 use Filament\Actions;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
+use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\CreateAction;
+use Assist\Interaction\Models\Interaction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\Interaction\Imports\InteractionsImporter;
 use Assist\Interaction\Filament\Resources\InteractionResource;
 
 class ListInteractions extends ListRecords
@@ -68,6 +71,9 @@ class ListInteractions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            ImportAction::make()
+                ->importer(InteractionsImporter::class)
+                ->authorize('import', Interaction::class),
             Actions\CreateAction::make(),
         ];
     }

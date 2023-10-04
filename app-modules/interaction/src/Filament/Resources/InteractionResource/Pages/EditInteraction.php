@@ -35,7 +35,6 @@ class EditInteraction extends EditRecord
                     ->label('Interacted With')
                     ->translateLabel()
                     ->searchable()
-                    ->preload()
                     ->required()
                     ->types([
                         MorphToSelect\Type::make(Student::class)

@@ -61,7 +61,6 @@ class CreateServiceRequest extends CreateRecord
                 MorphToSelect::make('respondent')
                     ->label('Respondent')
                     ->searchable()
-                    ->preload()
                     ->types([
                         MorphToSelect\Type::make(Student::class)
                             ->titleAttribute(Student::displayNameKey()),

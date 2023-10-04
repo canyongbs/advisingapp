@@ -19,9 +19,9 @@ class ManageMicrosoftClaritySettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Microsoft Clarity';
 
-    protected static ?string $navigationGroup = 'Usage Analytics Integrations';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 7;
 
     public function form(Form $form): Form
     {
