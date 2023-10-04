@@ -44,23 +44,23 @@
         </div>
 
     </div>
-    <label>
+    <label class="flex items-center">
         <x-filament::input.checkbox wire:model.live="filterSubscribed" />
 
-        <span>
+        <span class="ml-2">
             My Subscriptions
         </span>
     </label>
-    <label>
+    <label class="flex items-center">
         <x-filament::input.checkbox wire:model.live="filterOpenTasks" />
-        <span>
+        <span class="ml-2">
             Open Tasks
         </span>
     </label>
 
-    <label>
+    <label class="flex items-center">
         <x-filament::input.checkbox wire:model.live="filterOpenServiceRequests" />
-        <span>
+        <span class="ml-2">
             Open Service Requests
         </span>
     </label>

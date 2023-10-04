@@ -11,6 +11,7 @@ use Livewire\WithPagination;
 use Filament\Actions\ViewAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
 use Assist\AssistDataModel\Models\Student;
@@ -53,7 +54,7 @@ class MessageCenter extends Page
     public string $search = '';
 
     // TODO students, prospects, all
-    public string $peopleScope = 'students';
+    public string $peopleScope = 'all';
 
     public bool $filterSubscribed = true;
 
@@ -121,131 +122,99 @@ class MessageCenter extends Page
         return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
     }
 
-    // TODO Remove this if we don't make Filters extractable similar to Filament...
-    public function getFilters(): array
+    public function getLatestActivityForEducatables($ids)
     {
-        return [
-        ];
+        $latestEngagementsForEducatables = DB::table('engagements')
+            ->whereIn('recipient_id', $ids)
+            ->select('recipient_id as educatable_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
+            ->groupBy('educatable_id');
+
+        $latestEngagementResponsesForEducatables = DB::table('engagement_responses')
+            ->whereIn('sender_id', $ids)
+            ->select('sender_id as educatable_id', DB::raw('MAX(sent_at) as latest_deliver_at'))
+            ->groupBy('educatable_id');
+
+        $combinedLatestActivity = $latestEngagementsForEducatables->unionAll($latestEngagementResponsesForEducatables);
+
+        return DB::table(DB::raw("({$combinedLatestActivity->toSql()}) as combined"))
+            ->select('educatable_id', DB::raw('MAX(latest_deliver_at) as latest_activity'))
+            ->groupBy('educatable_id')
+            ->mergeBindings($combinedLatestActivity);
     }
 
-    public function filtersAreApplied(): bool
+    public function applyFilters(Builder $query, string $dateColumn, string $idColumn)
     {
-        return $this->filterSubscribed === true || $this->filterOpenTasks === true || $this->filterOpenServiceRequests === true;
-    }
-
-    public function getEducatableIds(): Collection
-    {
-        // Filters we need to support
-        // Person Type (select - student or prospect) :check:
-        // Date range (start and end date) :check:
-        // Subscribed (checkbox - defaulted to true) :check:
-        // Open Tasks (checkbox - defaulted to false) :check:
-        // Open Service Requests (checkbox - defaulted to false) :check:
-
-        $engagementEducatableIds = Engagement::query()
-            ->when($this->peopleScope, function (Builder $query) {
-                match ($this->peopleScope) {
-                    'students' => $query->sentToStudent(),
-                    'prospects' => $query->sentToProspect(),
-                    'all' => $query->sentToStudent()->sentToProspect(),
-                };
+        $query
+            ->when($this->filterStartDate, function (Builder $query) use ($dateColumn) {
+                $query->where($dateColumn, '>=', Carbon::parse($this->filterStartDate));
             })
-            ->when($this->filterStartDate, function (Builder $query) {
-                $query->where('deliver_at', '>=', Carbon::parse($this->filterStartDate));
+            ->when($this->filterEndDate, function (Builder $query) use ($dateColumn) {
+                $query->where($dateColumn, '<=', Carbon::parse($this->filterEndDate));
             })
-            ->when($this->filterEndDate, function (Builder $query) {
-                $query->where('deliver_at', '<=', Carbon::parse($this->filterEndDate));
+            ->when($this->filterSubscribed === true, function (Builder $query) use ($idColumn) {
+                $query->whereIn($idColumn, $this->user->subscriptions()->pluck('subscribable_id'));
             })
-            ->when($this->filterSubscribed === true, function (Builder $query) {
-                $query->whereIn('recipient_id', $this->user->subscriptions()->pluck('subscribable_id'));
-            })
-            ->when($this->filterOpenTasks === true, function (Builder $query) {
+            ->when($this->filterOpenTasks === true, function (Builder $query) use ($idColumn) {
                 $query->whereIn(
-                    'recipient_id',
+                    $idColumn,
                     Task::query()
                         ->open()
                         ->pluck('concern_id')
                 );
             })
-            ->when($this->filterOpenServiceRequests === true, function (Builder $query) {
+            ->when($this->filterOpenServiceRequests === true, function (Builder $query) use ($idColumn) {
                 $query->whereIn(
-                    'recipient_id',
+                    $idColumn,
                     ServiceRequest::query()
                         ->open()
                         ->pluck('respondent_id')
                 );
+            });
+    }
+
+    public function getEducatableIds($engagementScope, $engagementResponseScope): Collection
+    {
+        $engagementEducatableIds = Engagement::query()
+            ->$engagementScope()
+            ->tap(function (Builder $query) {
+                $this->applyFilters($query, 'deliver_at', 'recipient_id');
             })
             ->pluck('recipient_id')
             ->unique();
 
         $engagementResponseEducatableIds = EngagementResponse::query()
-            ->when($this->peopleScope, function (Builder $query) {
-                match ($this->peopleScope) {
-                    'students' => $query->sentByStudent(),
-                    'prospects' => $query->sentByProspect(),
-                    'all' => $query->sentByStudent()->orWhere(function (Builder $query) {
-                        $query->sentByProspect();
-                    }),
-                };
-            })
-            ->when($this->filterStartDate, function (Builder $query) {
-                $query->where('sent_at', '>=', Carbon::parse($this->filterStartDate));
-            })
-            ->when($this->filterEndDate, function (Builder $query) {
-                $query->where('sent_at', '<=', Carbon::parse($this->filterEndDate));
-            })
-            ->when($this->filterSubscribed === true, function (Builder $query) {
-                $query->whereIn('sender_id', $this->user->subscriptions()->pluck('subscribable_id'));
-            })
-            ->when($this->filterOpenTasks === true, function (Builder $query) {
-                $query->whereIn(
-                    'sender_id',
-                    Task::query()
-                        ->open()
-                        ->pluck('concern_id')
-                );
-            })
-            ->when($this->filterOpenServiceRequests === true, function (Builder $query) {
-                $query->whereIn(
-                    'sender_id',
-                    ServiceRequest::query()
-                        ->open()
-                        ->pluck('respondent_id')
-                );
+            ->$engagementResponseScope()
+            ->tap(function (Builder $query) {
+                $this->applyFilters($query, 'sent_at', 'sender_id');
             })
             ->pluck('sender_id')
             ->unique();
 
-        $educatableIds = $engagementEducatableIds->concat($engagementResponseEducatableIds)->unique();
+        return $engagementEducatableIds->concat($engagementResponseEducatableIds)->unique();
+    }
 
-        return $educatableIds;
+    public function getStudentIds(): Collection
+    {
+        return $this->getEducatableIds('sentToStudent', 'sentByStudent');
+    }
+
+    public function getProspectIds(): Collection
+    {
+        return $this->getEducatableIds('sentToProspect', 'sentByProspect');
     }
 
     protected function getViewData(): array
     {
         $this->loadingInbox = true;
 
-        $educatableIds = $this->getEducatableIds();
+        $studentIds = $this->getStudentIds();
+        $prospectIds = $this->getProspectIds();
 
-        $latestEngagementsForEducatables = DB::table('engagements')
-            ->select('recipient_id as educatable_id', DB::raw('MAX(deliver_at) as latest_deliver_at'))
-            ->whereIn('recipient_id', $educatableIds)
-            ->groupBy('recipient_id');
+        $studentLatestActivity = $this->getLatestActivityForEducatables($studentIds);
+        $prospectLatestActivity = $this->getLatestActivityForEducatables($prospectIds);
 
-        $latestEngagementResponsesForEducatables = DB::table('engagement_responses')
-            ->select('sender_id as educatable_id', DB::raw('MAX(sent_at) as latest_deliver_at'))
-            ->whereIn('sender_id', $educatableIds)
-            ->groupBy('sender_id');
-
-        $combinedEngagements = $latestEngagementsForEducatables->unionAll($latestEngagementResponsesForEducatables);
-
-        $latestActivityForStudents = DB::table(DB::raw("({$combinedEngagements->toSql()}) as combined"))
-            ->select('educatable_id', DB::raw('MAX(latest_deliver_at) as latest_activity'))
-            ->groupBy('educatable_id')
-            ->mergeBindings($combinedEngagements);
-
-        // TODO We also need to be pulling from the Prospect population here...
-        $studentPopulation = Student::query()
+        // ray()->showQueries();
+        $studentPopulationQuery = Student::query()
             ->when($this->search, function ($query, $search) {
                 $query->where('full_name', 'like', "%{$search}%")
                     ->orWhere('sisid', 'like', "%{$search}%")
@@ -254,15 +223,29 @@ class MessageCenter extends Page
                     ->orWhere('mobile', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%");
             })
-            ->whereIn('students.sisid', $educatableIds)
-            ->joinSub($latestActivityForStudents, 'latest_activity', function ($join) {
+            ->joinSub($studentLatestActivity, 'latest_activity', function ($join) {
                 $join->on('students.sisid', '=', 'latest_activity.educatable_id');
             })
-            ->select('students.*', 'latest_activity.latest_activity')
-            ->orderBy('latest_activity.latest_activity', 'desc')
+            ->select('students.sisid', 'students.full_name', 'latest_activity.latest_activity', DB::raw("'student' as type"));
+
+        $prospectPopulationQuery = Prospect::query()
+            ->when($this->search, function ($query, $search) {
+                $query->where('full_name', 'like', "%{$search}%");
+            })
+            ->joinSub($prospectLatestActivity, 'latest_activity', function ($join) {
+                $join->on(DB::raw('prospects.id::VARCHAR'), '=', 'latest_activity.educatable_id');
+            })
+            ->select(DB::raw('prospects.id::VARCHAR'), 'prospects.full_name', 'latest_activity.latest_activity', DB::raw("'prospect' as type"));
+
+        $educatables = $studentPopulationQuery->union($prospectPopulationQuery)
+            ->orderBy('latest_activity', 'desc')
             ->paginate($this->pagination);
 
-        $educatables = $studentPopulation;
+        foreach ($educatables as $educatable) {
+            ray('educatable', $educatable);
+        }
+
+        // ray()->stopShowingQueries();
 
         $this->loadingInbox = false;
 

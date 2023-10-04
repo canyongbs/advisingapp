@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Assist\Prospect\Models\Prospect;
 use Illuminate\Support\Facades\Hash;
 use Assist\Authorization\Models\Role;
 use Assist\Engagement\Models\Engagement;
@@ -50,6 +51,18 @@ class UsersTableSeeder extends Seeder
                     'subscribable_type' => resolve(Student::class)->getMorphClass(),
                 ]);
             });
+
+        // Prospect subscriptions
+        Prospect::query()
+            ->orderBy('id')
+            ->limit(25)
+            ->get()
+            ->each(function (Prospect $prospect) use ($user) {
+                $user->subscriptions()->create([
+                    'subscribable_id' => $prospect->id,
+                    'subscribable_type' => resolve(Prospect::class)->getMorphClass(),
+                ]);
+            });
     }
 
     protected function seedEngagementsFor(User $user): void
@@ -71,6 +84,26 @@ class UsersTableSeeder extends Seeder
                 EngagementResponse::factory()
                     ->count(rand(1, 10))
                     ->for($student, 'sender')
+                    ->create();
+            });
+
+        // Prospect Engagements
+        Prospect::query()
+            ->orderBy('id')
+            ->limit(25)
+            ->get()
+            ->each(function (Prospect $prospect) use ($user) {
+                Engagement::factory()
+                    ->count(rand(1, 10))
+                    ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
+                    ->for($prospect, 'recipient')
+                    ->create([
+                        'user_id' => $user->id,
+                    ]);
+
+                EngagementResponse::factory()
+                    ->count(rand(1, 10))
+                    ->for($prospect, 'sender')
                     ->create();
             });
     }

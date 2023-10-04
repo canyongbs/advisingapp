@@ -24,7 +24,9 @@
     </div>
 
     <x-engagement::filters />
+
     <x-engagement::search />
+
     <div class="hidden flex-col md:flex">
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
