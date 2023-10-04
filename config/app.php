@@ -196,6 +196,7 @@ return [
         App\Providers\MorphServiceProvider::class,
 
         App\Providers\HealthServiceProvider::class,
+        App\Providers\FilamentServiceProvider::class,
     ],
 
     /*
