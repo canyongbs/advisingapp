@@ -29,7 +29,7 @@ class SettingsProperty extends BaseSettingsProperty implements HasMedia
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('logo-height-250px')
-            ->performOnCollections('logo')
+            ->performOnCollections('logo', 'dark_logo')
             ->height(250);
     }
 }
