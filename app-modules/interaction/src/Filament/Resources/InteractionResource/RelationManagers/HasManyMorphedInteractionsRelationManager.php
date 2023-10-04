@@ -25,7 +25,7 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                     ->schema([
                         TextEntry::make('campaign.name'),
                         TextEntry::make('driver.name'),
-                        TextEntry::make('institution.name'),
+                        TextEntry::make('division.name'),
                         TextEntry::make('outcome.name'),
                         TextEntry::make('relation.name'),
                         TextEntry::make('status.name'),
@@ -59,7 +59,7 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                 TextColumn::make('id'),
                 TextColumn::make('campaign.name'),
                 TextColumn::make('driver.name'),
-                TextColumn::make('institution.name'),
+                TextColumn::make('division.name'),
                 TextColumn::make('outcome.name'),
                 TextColumn::make('relation.name'),
                 TextColumn::make('status.name'),

@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Interaction\Models\Concerns\HasManyInteractions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -14,8 +15,9 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
  */
 class Division extends BaseModel implements Auditable
 {
-    use SoftDeletes;
     use AuditableTrait;
+    use HasManyInteractions;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
