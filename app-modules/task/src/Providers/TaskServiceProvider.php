@@ -69,6 +69,6 @@ class TaskServiceProvider extends ServiceProvider
 
     protected function registerAssets(): void
     {
-        FilamentAsset::register([Js::make('kanban', __DIR__ . '/../../resources/js/kanban.js')], 'canyon-gbs/task');
+        FilamentAsset::register([Js::make('kanban', __DIR__ . '/../../resources/js/kanban.js')->loadedOnRequest()], 'canyon-gbs/task');
     }
 }
