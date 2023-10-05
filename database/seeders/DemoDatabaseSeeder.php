@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Assist\Division\Database\Seeders\DivisionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
+use Assist\Interaction\Database\Seeders\InteractionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
 use Assist\Consent\Database\Seeders\ConsentAgreementSeeder;
@@ -43,6 +45,8 @@ class DemoDatabaseSeeder extends Seeder
             KnowledgeBaseQualitySeeder::class,
             KnowledgeBaseStatusSeeder::class,
             KnowledgeBaseItemSeeder::class,
+            DivisionSeeder::class,
+            ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
         ]);
     }
