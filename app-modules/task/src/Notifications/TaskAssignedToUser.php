@@ -5,10 +5,13 @@ namespace Assist\Task\Notifications;
 use App\Models\User;
 use Assist\Task\Models\Task;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\HtmlString;
 use Illuminate\Queue\SerializesModels;
+use Filament\Notifications\Actions\Action;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Assist\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use Filament\Notifications\Notification as FilamentNotification;
 
 class TaskAssignedToUser extends Notification implements ShouldQueue
@@ -37,10 +40,21 @@ class TaskAssignedToUser extends Notification implements ShouldQueue
 
     public function toDatabase(User $notifiable): array
     {
+        $url = EditTask::getUrl(['record' => $this->task]);
+
+        $title = str($this->task->title)->limit();
+
+        $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>{$title}</a>");
+
         return FilamentNotification::make()
-            ->status('success')
-            ->title('You have been assigned a new Task: ' . str($this->task->description)->limit(50))
-            ->toDatabase()
-            ->data;
+            ->success()
+            ->title("You have been assigned a new Task: {$link}")
+            ->actions([
+                Action::make('view_task')
+                    ->label('View Task')
+                    ->button()
+                    ->url($url, shouldOpenInNewTab: true),
+            ])
+            ->getDatabaseMessage();
     }
 }
