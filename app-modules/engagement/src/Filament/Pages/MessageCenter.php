@@ -8,7 +8,9 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Assist\Task\Models\Task;
 use Livewire\Attributes\Url;
+use Livewire\WithPagination;
 use Filament\Actions\ViewAction;
+use Filament\Actions\CreateAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Assist\Prospect\Models\Prospect;
@@ -21,10 +23,13 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
+use Assist\Engagement\Filament\Actions\EngagementCreateAction;
 use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
 class MessageCenter extends Page
 {
+    use WithPagination;
+
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
     protected static string $view = 'engagement::filament.pages.message-center';
@@ -86,6 +91,36 @@ class MessageCenter extends Page
         $this->user = auth()->user();
     }
 
+    public function updated($property): void
+    {
+        $filters = [
+            'filterPeopleType',
+            'filterSubscribed',
+            'filterOpenTasks',
+            'filterOpenServiceRequests',
+            'filterStartDate',
+            'filterEndDate',
+        ];
+
+        if (in_array($property, $filters)) {
+            $this->resetPage();
+        }
+    }
+
+    public function paginationView()
+    {
+        return 'engagement::components.pagination';
+    }
+
+    public function refreshSelectedEducatable(): void
+    {
+        $this->loadingTimeline = true;
+
+        $this->aggregateRecordsForEducatable = resolve(AggregatesTimelineRecordsForModel::class)->handle($this->selectedEducatable, $this->modelsToTimeline);
+
+        $this->loadingTimeline = false;
+    }
+
     public function selectEducatable(string $educatable, string $morphClass): void
     {
         $this->loadingTimeline = true;
@@ -142,6 +177,7 @@ class MessageCenter extends Page
     {
         $engagementEducatableIds = Engagement::query()
             ->$engagementScope()
+            ->hasBeenDelivered()
             ->tap(function (Builder $query) {
                 $this->applyFilters(query: $query, dateColumn: 'deliver_at', idColumn: 'recipient_id');
             })
@@ -209,6 +245,18 @@ class MessageCenter extends Page
             });
     }
 
+    public function engage(): void
+    {
+        $this->mountAction('create');
+    }
+
+    public function createAction(): CreateAction
+    {
+        return EngagementCreateAction::make($this->selectedEducatable)->after(function () {
+            $this->refreshSelectedEducatable();
+        });
+    }
+
     protected function getViewData(): array
     {
         $this->loadingInbox = true;
@@ -259,6 +307,8 @@ class MessageCenter extends Page
 
         $this->loadingInbox = false;
 
+        // TODO Depending on the number of records, we may want to utilize cursorPaginate here
+        // But, we do lose "total" result context, which actually might be pretty important for UX
         return [
             'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->pagination),
         ];

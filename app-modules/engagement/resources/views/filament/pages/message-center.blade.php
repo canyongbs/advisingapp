@@ -1,5 +1,6 @@
 <x-filament::page>
-    <div class="flex max-h-full w-full flex-col p-4 md:flex-row md:p-0">
+    <div
+        class="flex max-h-full w-full flex-col rounded-lg border-0 border-gray-200 dark:border-gray-700 md:flex-row md:border">
         @if ($loadingInbox)
             <x-filament::loading-indicator class="h-12 w-12" />
         @else

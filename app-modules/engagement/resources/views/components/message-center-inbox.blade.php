@@ -3,11 +3,10 @@
 @endphp
 
 <div
-    class="border-b-1 max-h-content w-full overflow-y-scroll rounded-l-lg rounded-r-lg border-l-2 border-r-2 border-t-2 border-gray-200 border-r-gray-50 bg-white dark:border-gray-700 dark:bg-gray-800 md:rounded-r-none lg:w-1/3"
+    class="max-h-content w-full overflow-y-scroll rounded-bl-lg rounded-br-lg rounded-tl-lg rounded-tr-lg bg-white dark:bg-gray-800 sm:rounded-br-none sm:rounded-tr-none lg:w-1/3"
     x-data="{ showFilters: false }"
 >
-    <div
-        class="flex items-center justify-between rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+    <div class="flex items-center justify-between rounded-tl-lg bg-white p-4 dark:bg-gray-800">
         <div class="flex flex-col">
             <span class="font-bold text-gray-500 dark:text-gray-400 sm:text-xs md:text-sm">
                 Engagements
@@ -31,7 +30,7 @@
         <div class="overflow-x-auto">
             <div class="inline-block min-w-full align-middle">
                 <div class="overflow-hidden shadow">
-                    <div class="min-w-full divide-y divide-gray-200">
+                    <div class="min-w-full">
                         <ul class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
                             @foreach ($educatables as $educatable)
                                 <li
@@ -60,17 +59,19 @@
             </div>
         </div>
     </div>
-    <div class="flex w-full md:hidden">
+
+    <div class="flex w-full px-4 py-4 md:hidden">
         <x-filament::input.wrapper class="w-full">
             <x-filament::input.select wire:change="selectChanged($event.target.value)">
                 <option value="">Select an engagement</option>
                 @foreach ($educatables as $educatable)
-                    <option value="{{ $educatable->identifier() }},{{ $educatable->getMorphClass() }}">
+                    <option value="{{ $educatable->identifier() }},{{ $educatable->type }}">
                         {{ $educatable->display_name }}
                     </option>
                 @endforeach
             </x-filament::input.select>
         </x-filament::input.wrapper>
     </div>
-    <x-engagement::pagination :educatables="$educatables" />
+
+    {{ $educatables->links() }}
 </div>

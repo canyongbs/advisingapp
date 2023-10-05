@@ -17,7 +17,7 @@ class EngagementDeliverableFactory extends Factory
         return [
             'engagement_id' => Engagement::factory(),
             'channel' => fake()->randomElement(EngagementDeliveryMethod::cases()),
-            'delivery_status' => EngagementDeliveryStatus::AWAITING,
+            'delivery_status' => EngagementDeliveryStatus::Awaiting,
             'delivered_at' => null,
             'delivery_response' => null,
         ];
@@ -37,10 +37,19 @@ class EngagementDeliverableFactory extends Factory
         ]);
     }
 
+    public function deliveryAwaiting(): self
+    {
+        return $this->state([
+            'delivery_status' => EngagementDeliveryStatus::Awaiting,
+            'delivered_at' => null,
+            'delivery_response' => null,
+        ]);
+    }
+
     public function deliverySuccessful(): self
     {
         return $this->state([
-            'delivery_status' => EngagementDeliveryStatus::SUCCESSFUL,
+            'delivery_status' => EngagementDeliveryStatus::Successful,
             'delivered_at' => now(),
         ]);
     }
@@ -48,9 +57,17 @@ class EngagementDeliverableFactory extends Factory
     public function deliveryFailed(): self
     {
         return $this->state([
-            'delivery_status' => EngagementDeliveryStatus::FAILED,
+            'delivery_status' => EngagementDeliveryStatus::Failed,
             'delivered_at' => null,
             'delivery_response' => 'The deliverable was not successfully delivered.',
         ]);
+    }
+
+    public function randomizeState(): self
+    {
+        $states = ['deliveryAwaiting', 'deliverySuccessful', 'deliveryFailed'];
+        $randomState = $states[array_rand($states)];
+
+        return call_user_func([$this, $randomState]);
     }
 }

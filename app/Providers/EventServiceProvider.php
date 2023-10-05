@@ -53,10 +53,11 @@ class EventServiceProvider extends ServiceProvider
         Auditing::class => [
             AuditingListener::class,
         ],
-        // Move this to the appropriate module - currently being used with Engagement
+        // TODO Introduce generic handler here that only then dispatches the appropriate listener per the notification
         NotificationSent::class => [
             HandleEngagementNotificationSent::class,
         ],
+        // TODO Introduce generic handler here that only then dispatches the appropriate listener per the notification
         NotificationFailed::class => [
             HandleEngagementNotificationFailed::class,
         ],

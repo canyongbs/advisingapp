@@ -4,7 +4,7 @@ namespace Assist\Engagement\Enums;
 
 enum EngagementDeliveryStatus: string
 {
-    case AWAITING = 'awaiting';
-    case SUCCESSFUL = 'successful';
-    case FAILED = 'failed';
+    case Awaiting = 'awaiting';
+    case Successful = 'successful';
+    case Failed = 'failed';
 }
