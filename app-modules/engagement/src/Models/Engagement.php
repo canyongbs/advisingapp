@@ -22,7 +22,6 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @property-read Educatable $recipient
- *
  * @mixin IdeHelperEngagement
  */
 class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline

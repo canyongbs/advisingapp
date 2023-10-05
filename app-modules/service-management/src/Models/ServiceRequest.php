@@ -30,7 +30,6 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
 
 /**
  * @property-read Student|Prospect $respondent
- *
  * @mixin IdeHelperServiceRequest
  */
 class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
