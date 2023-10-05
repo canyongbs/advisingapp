@@ -49,12 +49,6 @@ class TaskAssignedToUser extends Notification implements ShouldQueue
         return FilamentNotification::make()
             ->success()
             ->title("You have been assigned a new Task: {$link}")
-            ->actions([
-                Action::make('view_task')
-                    ->label('View Task')
-                    ->button()
-                    ->url($url, shouldOpenInNewTab: true),
-            ])
             ->getDatabaseMessage();
     }
 }

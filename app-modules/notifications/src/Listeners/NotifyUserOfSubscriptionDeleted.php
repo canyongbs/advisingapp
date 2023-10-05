@@ -5,7 +5,6 @@ namespace Assist\Notifications\Listeners;
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Notifications\Events\SubscriptionDeleted;
 
@@ -28,12 +27,6 @@ class NotifyUserOfSubscriptionDeleted implements ShouldQueue
         Notification::make()
             ->warning()
             ->title("You have been unsubscribed to {$morph} {$link}")
-            ->actions([
-                Action::make('view_morph')
-                    ->label("View {$morph->ucfirst()}")
-                    ->button()
-                    ->url($url, shouldOpenInNewTab: true),
-            ])
             ->sendToDatabase($event->subscription->user);
     }
 }

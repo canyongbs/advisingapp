@@ -28,12 +28,6 @@ class NotifyUserOfSubscriptionCreated implements ShouldQueue
         Notification::make()
             ->success()
             ->title("You have been subscribed to {$morph} {$link}")
-            ->actions([
-                Action::make('view_morph')
-                    ->label("View {$morph->ucfirst()}")
-                    ->button()
-                    ->url($url, shouldOpenInNewTab: true),
-            ])
             ->sendToDatabase($event->subscription->user);
     }
 }

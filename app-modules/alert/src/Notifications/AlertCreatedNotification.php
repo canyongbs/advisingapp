@@ -44,17 +44,6 @@ class AlertCreatedNotification extends Notification implements ShouldQueue
         return FilamentNotification::make()
             ->warning()
             ->title("A {$this->alert->severity->value} severity {$alertLink} has been created for {$morph} {$morphLink}")
-            ->actions([
-                Action::make('view_alert')
-                    ->label('View Alert')
-                    ->button()
-                    ->url($alertUrl, shouldOpenInNewTab: true),
-                Action::make('view_morph')
-                    ->label("View {$morph->ucfirst()}")
-                    ->button()
-                    ->color('gray')
-                    ->url($morphUrl, shouldOpenInNewTab: true),
-            ])
             ->getDatabaseMessage();
     }
 }
