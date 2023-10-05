@@ -19,13 +19,13 @@ class ServiceRequestFactory extends Factory
     public function definition(): array
     {
         return [
-            'respondent_id' => Student::factory(),
+            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
             'respondent_type' => function (array $attributes) {
                 return Student::find($attributes['respondent_id'])->getMorphClass();
             },
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
-            'division_id' => Division::factory(),
+            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
             'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
             'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
             'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),

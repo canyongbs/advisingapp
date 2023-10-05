@@ -29,7 +29,7 @@ class ListServiceRequestPriorities extends ListRecords
                 TextColumn::make('order')
                     ->label('Priority Order')
                     ->sortable(),
-                TextColumn::make('service_request_count')
+                TextColumn::make('service_requests_count')
                     ->label('# of Service Requests')
                     ->counts('serviceRequests')
                     ->sortable(),

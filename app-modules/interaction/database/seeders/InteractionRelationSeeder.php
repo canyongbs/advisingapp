@@ -10,7 +10,14 @@ class InteractionRelationSeeder extends Seeder
     public function run(): void
     {
         InteractionRelation::factory()
-            ->count(10)
-            ->create();
+            ->createMany(
+                [
+                    ['name' => 'Self'],
+                    ['name' => 'Parent'],
+                    ['name' => 'Spouse'],
+                    ['name' => 'Sibling'],
+                    ['name' => 'Other'],
+                ]
+            );
     }
 }

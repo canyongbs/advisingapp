@@ -10,18 +10,11 @@ class KnowledgeBaseQualitySeeder extends Seeder
     public function run(): void
     {
         KnowledgeBaseQuality::factory()
-            ->count(3)
-            ->sequence(
+            ->createMany(
                 [
-                    'name' => 'Low',
-                ],
-                [
-                    'name' => 'Medium',
-                ],
-                [
-                    'name' => 'High',
-                ],
-            )
-            ->create();
+                    ['name' => 'Good'],
+                    ['name' => 'Review Needed'],
+                ]
+            );
     }
 }

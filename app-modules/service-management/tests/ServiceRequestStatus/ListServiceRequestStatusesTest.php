@@ -24,7 +24,7 @@ test('The correct details are displayed on the ListServiceRequestStatuses page',
         ->assertSuccessful()
         ->assertCanSeeTableRecords($serviceRequestStatuses)
         ->assertCountTableRecords(10)
-        ->assertTableColumnExists('service_request_count');
+        ->assertTableColumnExists('service_requests_count');
 
     $serviceRequestStatuses->each(
         fn (ServiceRequestStatus $serviceRequestType) => $component

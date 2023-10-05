@@ -10,7 +10,14 @@ class InteractionOutcomeSeeder extends Seeder
     public function run(): void
     {
         InteractionOutcome::factory()
-            ->count(10)
-            ->create();
+            ->createMany(
+                [
+                    ['name' => 'Does Not Apply'],
+                    ['name' => 'Live Contact'],
+                    ['name' => 'Voicemail'],
+                    ['name' => 'No Voicemail'],
+                    ['name' => 'Dropped Call'],
+                ]
+            );
     }
 }
