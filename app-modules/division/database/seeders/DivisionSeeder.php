@@ -10,7 +10,10 @@ class DivisionSeeder extends Seeder
     public function run(): void
     {
         Division::factory()
-            ->count(10)
-            ->create();
+            ->createMany(
+                [
+                    'name' => 'Home',
+                ]
+            );
     }
 }
