@@ -5,10 +5,15 @@ namespace Assist\Assistant\Filament\Pages;
 use App\Models\User;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
+use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
+use Filament\Actions\StaticAction;
+use Filament\Support\Enums\ActionSize;
+use Filament\Forms\Components\TextInput;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
+use Illuminate\Database\Eloquent\Collection;
 use Assist\Consent\Enums\ConsentAgreementType;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
@@ -26,6 +31,8 @@ class PersonalAssistant extends Page
     protected static ?string $navigationGroup = 'Productivity Tools';
 
     protected static ?int $navigationSort = 1;
+
+    public Collection $chats;
 
     public Chat $chat;
 
@@ -67,8 +74,10 @@ class PersonalAssistant extends Page
             ->where('type', ConsentAgreementType::AzureOpenAI)
             ->first();
 
+        $this->chats = $user->assistantChats()->latest()->get();
+
         /** @var AssistantChat $chat */
-        $chat = $user->assistantChats()->latest()->first();
+        $chat = $this->chats->first();
 
         $this->chat = new Chat(
             id: $chat?->id ?? null,
@@ -111,6 +120,8 @@ class PersonalAssistant extends Page
 
     public function sendMessage(): void
     {
+        $this->showCurrentResponse = true;
+
         $this->reset('renderError');
         $this->reset('error');
 
@@ -146,23 +157,120 @@ class PersonalAssistant extends Page
         $this->reset('currentResponse');
     }
 
-    public function save(): void
+    public function saveChatAction(): Action
     {
-        if (filled($this->chat->id)) {
-            return;
-        }
+        return Action::make('saveChat')
+            ->label('Save')
+            ->modalHeading('Save chat')
+            ->modalSubmitActionLabel('Save')
+            ->icon('heroicon-s-bookmark')
+            ->link()
+            ->size(ActionSize::Small)
+            ->form(
+                [
+                    TextInput::make('name')
+                        ->label('Name')
+                        ->placeholder('Name this chat')
+                        ->required(),
+                ]
+            )
+            ->modalWidth('md')
+            ->action(function (array $data) {
+                if (filled($this->chat->id)) {
+                    return;
+                }
 
-        /** @var User $user */
-        $user = auth()->user();
+                /** @var User $user */
+                $user = auth()->user();
 
-        /** @var AssistantChat $assistantChat */
-        $assistantChat = $user->assistantChats()->create();
+                /** @var AssistantChat $assistantChat */
+                $assistantChat = $user->assistantChats()->create(['name' => $data['name']]);
 
-        $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
-            $assistantChat->messages()->create($message->toArray());
-        });
+                $this->chat->messages->each(function (ChatMessage $message) use ($assistantChat) {
+                    $assistantChat->messages()->create($message->toArray());
+                });
 
-        $this->chat->id = $assistantChat->id;
+                $this->chat->id = $assistantChat->id;
+
+                $this->chats->prepend($assistantChat);
+            });
+    }
+
+    public function selectChat(AssistantChat $chat): void
+    {
+        $this->reset(['message', 'prompt', 'renderError', 'error']);
+
+        $this->chat = new Chat(
+            id: $chat->id ?? null,
+            messages: ChatMessage::collection($chat->messages ?? []),
+        );
+    }
+
+    public function newChat(): void
+    {
+        $this->reset(['message', 'prompt', 'renderError', 'error']);
+
+        $this->chat = new Chat(id: null, messages: ChatMessage::collection([]));
+    }
+
+    public function deleteChatAction(): Action
+    {
+        return Action::make('deleteChat')
+            ->size(ActionSize::ExtraSmall)
+            ->requiresConfirmation()
+            ->action(function (array $arguments) {
+                $chat = AssistantChat::find($arguments['chat']);
+
+                $chat?->delete();
+
+                $this->chats = $this->chats->filter(fn (AssistantChat $chat) => $chat->id !== $arguments['chat']);
+
+                if ($this->chat->id === $arguments['chat']) {
+                    $this->newChat();
+                }
+            })
+            ->icon('heroicon-o-trash')
+            ->color('danger')
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
+    }
+
+    public function editChatAction(): Action
+    {
+        return Action::make('editChat')
+            ->modalSubmitActionLabel('Save')
+            ->modalWidth('md')
+            ->size(ActionSize::ExtraSmall)
+            ->form(
+                [
+                    TextInput::make('name')
+                        ->label('Name')
+                        ->placeholder('Rename this chat')
+                        ->required(),
+                ]
+            )
+            ->action(function (array $arguments, array $data) {
+                $chat = AssistantChat::find($arguments['chat']);
+
+                $chat?->update($data);
+
+                $this->chats = $this->chats->map(function (AssistantChat $chat) use ($arguments, $data) {
+                    if ($chat->id === $arguments['chat']) {
+                        $chat->name = $data['name'];
+                    }
+
+                    return $chat;
+                });
+            })
+            ->icon('heroicon-o-pencil')
+            ->color('warning')
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
     }
 
     protected function setMessage(string $message, AIChatMessageFrom $from): void
