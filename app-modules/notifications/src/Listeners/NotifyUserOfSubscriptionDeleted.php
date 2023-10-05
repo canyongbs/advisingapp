@@ -26,7 +26,7 @@ class NotifyUserOfSubscriptionDeleted implements ShouldQueue
 
         Notification::make()
             ->warning()
-            ->title("You have been unsubscribed to {$morph} {$link}")
+            ->title("You have been unsubscribed from {$morph} {$link}")
             ->sendToDatabase($event->subscription->user);
     }
 }
