@@ -7,7 +7,6 @@ use Assist\Task\Models\Task;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\HtmlString;
 use Illuminate\Queue\SerializesModels;
-use Filament\Notifications\Actions\Action;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

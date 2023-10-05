@@ -5,7 +5,6 @@ namespace Assist\Notifications\Listeners;
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Notifications\Events\SubscriptionCreated;
 

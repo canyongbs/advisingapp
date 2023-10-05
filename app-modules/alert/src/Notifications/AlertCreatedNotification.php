@@ -7,7 +7,6 @@ use Illuminate\Bus\Queueable;
 use Assist\Alert\Models\Alert;
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
-use Filament\Notifications\Actions\Action;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Filament\Notifications\Notification as FilamentNotification;
