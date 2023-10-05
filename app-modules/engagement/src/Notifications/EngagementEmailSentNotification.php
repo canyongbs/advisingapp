@@ -27,8 +27,7 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
     {
         return (new MailMessage())
             ->subject('Your Engagement Email has successfully been delivered.')
-            // TODO Remove reliance on "preferred" as a field - extract to attribute
-            ->line("Your engagement was successfully delivered to {$this->engagement->recipient->preferred}.");
+            ->line("Your engagement was successfully delivered to {$this->engagement->recipient->display_name}.");
     }
 
     public function toDatabase(User $notifiable): array
