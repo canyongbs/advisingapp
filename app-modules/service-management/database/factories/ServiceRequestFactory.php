@@ -19,7 +19,7 @@ class ServiceRequestFactory extends Factory
     public function definition(): array
     {
         return [
-            'respondent_id' => Student::factory(),
+            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
             'respondent_type' => function (array $attributes) {
                 return Student::find($attributes['respondent_id'])->getMorphClass();
             },
