@@ -9,8 +9,12 @@
             </div>
         @else
             <div>
-                <div class="sticky top-0 z-[5] flex h-12 w-full items-center bg-gray-100 dark:bg-gray-700">
+                <div
+                    class="sticky top-0 z-[5] flex h-12 w-full items-center justify-between bg-gray-100 px-4 dark:bg-gray-700">
                     <h1 class="ml-2">{{ $educatable->display_name }}</h1>
+                    <x-filament::button wire:click="engage('{{ $educatable }}')">
+                        Engage
+                    </x-filament::button>
                 </div>
                 <div class="p-6">
                     <x-timeline::timeline :aggregateRecords="$aggregateRecords" />

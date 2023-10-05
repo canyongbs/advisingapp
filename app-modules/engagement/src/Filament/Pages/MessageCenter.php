@@ -9,6 +9,7 @@ use Filament\Pages\Page;
 use Assist\Task\Models\Task;
 use Livewire\Attributes\Url;
 use Filament\Actions\ViewAction;
+use Filament\Actions\CreateAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Assist\Prospect\Models\Prospect;
@@ -21,6 +22,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
+use Assist\Engagement\Filament\Actions\EngagementAction;
 use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
 class MessageCenter extends Page
@@ -86,6 +88,15 @@ class MessageCenter extends Page
         $this->user = auth()->user();
     }
 
+    public function refreshSelectedEducatable(): void
+    {
+        $this->loadingTimeline = true;
+
+        $this->aggregateRecordsForEducatable = resolve(AggregatesTimelineRecordsForModel::class)->handle($this->selectedEducatable, $this->modelsToTimeline);
+
+        $this->loadingTimeline = false;
+    }
+
     public function selectEducatable(string $educatable, string $morphClass): void
     {
         $this->loadingTimeline = true;
@@ -142,6 +153,8 @@ class MessageCenter extends Page
     {
         $engagementEducatableIds = Engagement::query()
             ->$engagementScope()
+            // TODO Test that this scope is correct...
+            ->hasBeenDelivered()
             ->tap(function (Builder $query) {
                 $this->applyFilters(query: $query, dateColumn: 'deliver_at', idColumn: 'recipient_id');
             })
@@ -207,6 +220,18 @@ class MessageCenter extends Page
                         ->pluck('respondent_id')
                 );
             });
+    }
+
+    public function engage(): void
+    {
+        $this->mountAction('create');
+    }
+
+    public function createAction(): CreateAction
+    {
+        return EngagementAction::make($this->selectedEducatable)->after(function () {
+            $this->refreshSelectedEducatable();
+        });
     }
 
     protected function getViewData(): array
