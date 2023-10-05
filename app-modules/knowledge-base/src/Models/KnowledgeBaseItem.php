@@ -4,8 +4,8 @@ namespace Assist\KnowledgeBase\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use Assist\Division\Models\Division;
 use Spatie\MediaLibrary\HasMedia;
+use Assist\Division\Models\Division;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;

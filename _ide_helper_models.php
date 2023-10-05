@@ -1288,22 +1288,21 @@ namespace Assist\KnowledgeBase\Models{
  * @property string|null $category_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Division\Models\Division> $division
  * @property-read int|null $division_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
  * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
  * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem query()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem wherePublic($value)
@@ -1312,8 +1311,6 @@ namespace Assist\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereSolution($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereStatusId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
