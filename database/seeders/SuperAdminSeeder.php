@@ -59,7 +59,7 @@ class SuperAdminSeeder extends Seeder
             ->each(function (Student $student) use ($user) {
                 Engagement::factory()
                     ->count(rand(1, 10))
-                    ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
+                    ->has(EngagementDeliverable::factory()->randomizeState()->count(1), 'engagementDeliverables')
                     ->for($student, 'recipient')
                     ->create([
                         'user_id' => $user->id,
@@ -79,7 +79,7 @@ class SuperAdminSeeder extends Seeder
             ->each(function (Prospect $prospect) use ($user) {
                 Engagement::factory()
                     ->count(rand(1, 10))
-                    ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
+                    ->has(EngagementDeliverable::factory()->randomizeState()->count(1), 'engagementDeliverables')
                     ->for($prospect, 'recipient')
                     ->create([
                         'user_id' => $user->id,

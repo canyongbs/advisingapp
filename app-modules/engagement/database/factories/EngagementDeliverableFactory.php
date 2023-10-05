@@ -37,6 +37,15 @@ class EngagementDeliverableFactory extends Factory
         ]);
     }
 
+    public function deliveryAwaiting(): self
+    {
+        return $this->state([
+            'delivery_status' => EngagementDeliveryStatus::Awaiting,
+            'delivered_at' => null,
+            'delivery_response' => null,
+        ]);
+    }
+
     public function deliverySuccessful(): self
     {
         return $this->state([
@@ -52,5 +61,13 @@ class EngagementDeliverableFactory extends Factory
             'delivered_at' => null,
             'delivery_response' => 'The deliverable was not successfully delivered.',
         ]);
+    }
+
+    public function randomizeState(): self
+    {
+        $states = ['deliveryAwaiting', 'deliverySuccessful', 'deliveryFailed'];
+        $randomState = $states[array_rand($states)];
+
+        return call_user_func([$this, $randomState]);
     }
 }
