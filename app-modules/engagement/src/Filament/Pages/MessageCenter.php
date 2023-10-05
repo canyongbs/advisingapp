@@ -93,9 +93,6 @@ class MessageCenter extends Page
 
     public function updated($property): void
     {
-        ray('updated', $property);
-
-        // FIXME Rudimentary for now
         $filters = [
             'filterPeopleType',
             'filterSubscribed',
@@ -106,7 +103,6 @@ class MessageCenter extends Page
         ];
 
         if (in_array($property, $filters)) {
-            ray('resetting page');
             $this->resetPage();
         }
     }
