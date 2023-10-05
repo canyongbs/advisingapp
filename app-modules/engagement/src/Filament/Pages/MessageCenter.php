@@ -23,7 +23,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
-use Assist\Engagement\Filament\Actions\EngagementAction;
+use Assist\Engagement\Filament\Actions\EngagementCreateAction;
 use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
 class MessageCenter extends Page
@@ -252,7 +252,7 @@ class MessageCenter extends Page
 
     public function createAction(): CreateAction
     {
-        return EngagementAction::make($this->selectedEducatable)->after(function () {
+        return EngagementCreateAction::make($this->selectedEducatable)->after(function () {
             $this->refreshSelectedEducatable();
         });
     }

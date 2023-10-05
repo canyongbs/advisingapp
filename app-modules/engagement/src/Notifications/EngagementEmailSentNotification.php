@@ -36,8 +36,7 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
         return FilamentNotification::make()
             ->success()
             ->title('Engagement Email Successfully Delivered')
-            // TODO Remove reliance on "preferred" as a field - extract to attribute
-            ->body("Your engagement email was successfully delivered to {$this->engagement->recipient->preferred}.")
+            ->body("Your engagement email was successfully delivered to {$this->engagement->recipient->display_name}.")
             ->getDatabaseMessage();
     }
 }
