@@ -177,7 +177,6 @@ class MessageCenter extends Page
     {
         $engagementEducatableIds = Engagement::query()
             ->$engagementScope()
-            // TODO Test that this scope is correct...
             ->hasBeenDelivered()
             ->tap(function (Builder $query) {
                 $this->applyFilters(query: $query, dateColumn: 'deliver_at', idColumn: 'recipient_id');

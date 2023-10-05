@@ -57,13 +57,16 @@ class SuperAdminSeeder extends Seeder
             ->limit(25)
             ->get()
             ->each(function (Student $student) use ($user) {
-                Engagement::factory()
-                    ->count(rand(1, 10))
-                    ->has(EngagementDeliverable::factory()->randomizeState()->count(1), 'engagementDeliverables')
-                    ->for($student, 'recipient')
-                    ->create([
-                        'user_id' => $user->id,
-                    ]);
+                $numberOfEngagements = rand(1, 10);
+
+                for ($i = 0; $i < $numberOfEngagements; $i++) {
+                    Engagement::factory()
+                        ->has(EngagementDeliverable::factory()->count(1)->randomizeState(), 'engagementDeliverables')
+                        ->for($student, 'recipient')
+                        ->create([
+                            'user_id' => $user->id,
+                        ]);
+                }
 
                 EngagementResponse::factory()
                     ->count(rand(1, 10))
@@ -77,13 +80,16 @@ class SuperAdminSeeder extends Seeder
             ->limit(25)
             ->get()
             ->each(function (Prospect $prospect) use ($user) {
-                Engagement::factory()
-                    ->count(rand(1, 10))
-                    ->has(EngagementDeliverable::factory()->randomizeState()->count(1), 'engagementDeliverables')
-                    ->for($prospect, 'recipient')
-                    ->create([
-                        'user_id' => $user->id,
-                    ]);
+                $numberOfEngagements = rand(1, 10);
+
+                for ($i = 0; $i < $numberOfEngagements; $i++) {
+                    Engagement::factory()
+                        ->has(EngagementDeliverable::factory()->count(1)->randomizeState(), 'engagementDeliverables')
+                        ->for($prospect, 'recipient')
+                        ->create([
+                            'user_id' => $user->id,
+                        ]);
+                }
 
                 EngagementResponse::factory()
                     ->count(rand(1, 10))
