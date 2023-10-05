@@ -3,7 +3,7 @@
 @endphp
 
 <div
-    class="max-h-content w-full overflow-y-scroll rounded-bl-lg rounded-tl-lg bg-white dark:bg-gray-800 lg:w-1/3"
+    class="max-h-content w-full overflow-y-scroll rounded-bl-lg rounded-br-lg rounded-tl-lg rounded-tr-lg bg-white dark:bg-gray-800 sm:rounded-br-none sm:rounded-tr-none lg:w-1/3"
     x-data="{ showFilters: false }"
 >
     <div class="flex items-center justify-between rounded-tl-lg bg-white p-4 dark:bg-gray-800">
@@ -60,7 +60,7 @@
         </div>
     </div>
 
-    <div class="flex w-full px-4 md:hidden">
+    <div class="flex w-full px-4 py-4 md:hidden">
         <x-filament::input.wrapper class="w-full">
             <x-filament::input.select wire:change="selectChanged($event.target.value)">
                 <option value="">Select an engagement</option>
