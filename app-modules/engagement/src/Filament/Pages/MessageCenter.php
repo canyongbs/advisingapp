@@ -8,6 +8,7 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Assist\Task\Models\Task;
 use Livewire\Attributes\Url;
+use Livewire\WithPagination;
 use Filament\Actions\ViewAction;
 use Filament\Actions\CreateAction;
 use Illuminate\Support\Collection;
@@ -27,6 +28,8 @@ use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
 class MessageCenter extends Page
 {
+    use WithPagination;
+
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
     protected static string $view = 'engagement::filament.pages.message-center';
@@ -86,6 +89,31 @@ class MessageCenter extends Page
     public function mount(): void
     {
         $this->user = auth()->user();
+    }
+
+    public function updated($property): void
+    {
+        ray('updated', $property);
+
+        // FIXME Rudimentary for now
+        $filters = [
+            'filterPeopleType',
+            'filterSubscribed',
+            'filterOpenTasks',
+            'filterOpenServiceRequests',
+            'filterStartDate',
+            'filterEndDate',
+        ];
+
+        if (in_array($property, $filters)) {
+            ray('resetting page');
+            $this->resetPage();
+        }
+    }
+
+    public function paginationView()
+    {
+        return 'engagement::components.pagination';
     }
 
     public function refreshSelectedEducatable(): void
@@ -284,6 +312,8 @@ class MessageCenter extends Page
 
         $this->loadingInbox = false;
 
+        // TODO Depending on the number of records, we may want to utilize cursorPaginate here
+        // But, we do lose "total" result context, which actually might be pretty important for UX
         return [
             'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->pagination),
         ];
