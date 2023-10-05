@@ -3,8 +3,8 @@
 namespace Assist\Authorization\Filament\Resources\RoleResource\Pages;
 
 use Filament\Actions\CreateAction;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Pages\ListRecords\Tab;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Assist\Authorization\Filament\Resources\RoleResource;
 

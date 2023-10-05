@@ -5,6 +5,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\ViewAction;
@@ -84,7 +85,7 @@ class EngagementsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('id'),
+                IdColumn::make(),
                 TextColumn::make('subject'),
                 TextColumn::make('body'),
                 TextColumn::make('channels')

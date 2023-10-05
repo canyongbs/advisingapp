@@ -3,6 +3,7 @@
 namespace Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -22,6 +23,7 @@ class ListKnowledgeBaseItems extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('question')
                     ->label('Question/Issue/Feature')
                     ->translateLabel()

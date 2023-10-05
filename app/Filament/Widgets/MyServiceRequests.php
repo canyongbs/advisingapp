@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -32,6 +33,7 @@ class MyServiceRequests extends BaseWidget
                     ->limit(5)
             )
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('service_request_number')
                     ->label('Service Request #')
                     ->searchable()

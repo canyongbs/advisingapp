@@ -8,7 +8,6 @@ use App\Models\Institution;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
@@ -25,8 +24,6 @@ class EditServiceRequest extends EditRecord
     public function form(Form $form): Form
     {
         return parent::form($form)->schema([
-            TextInput::make('id')
-                ->disabled(),
             Select::make('institution_id')
                 ->relationship('institution', 'name')
                 ->label('Institution')

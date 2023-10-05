@@ -4,6 +4,7 @@ namespace Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\
 
 use Filament\Actions;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -20,9 +21,7 @@ class ListKnowledgeBaseCategories extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
-                    ->sortable(),
+                IdColumn::make(),
                 TextColumn::make('name')
                     ->label('Name')
                     ->searchable()

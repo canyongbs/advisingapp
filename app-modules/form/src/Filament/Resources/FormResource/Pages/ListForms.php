@@ -4,6 +4,7 @@ namespace Assist\Form\Filament\Resources\FormResource\Pages;
 
 use Filament\Tables\Table;
 use Assist\Form\Models\Form;
+use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
@@ -21,6 +22,7 @@ class ListForms extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name'),
             ])
             ->filters([

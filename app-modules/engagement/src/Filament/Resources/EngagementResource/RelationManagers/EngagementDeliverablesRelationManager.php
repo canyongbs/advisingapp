@@ -4,6 +4,7 @@ namespace Assist\Engagement\Filament\Resources\EngagementResource\RelationManage
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -40,6 +41,7 @@ class EngagementDeliverablesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('channel')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('channel'),
                 IconColumn::make('delivery_status')
                     ->icon(fn (EngagementDeliveryStatus $state): string => match ($state) {

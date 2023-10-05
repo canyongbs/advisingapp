@@ -4,6 +4,7 @@ namespace Assist\Engagement\Filament\Resources\EngagementResource\RelationManage
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\RelationManagers\RelationManager;
@@ -27,6 +28,7 @@ class UserRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name'),
             ])
             ->filters([

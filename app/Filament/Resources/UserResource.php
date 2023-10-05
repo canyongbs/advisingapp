@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
+use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Toggle;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -60,6 +61,7 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('email')
                     ->label('Email address'),

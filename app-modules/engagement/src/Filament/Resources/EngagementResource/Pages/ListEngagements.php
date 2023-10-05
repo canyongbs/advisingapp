@@ -3,6 +3,7 @@
 namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -21,6 +22,7 @@ class ListEngagements extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('user.name')
                     ->label('Created By'),
                 TextColumn::make('subject'),

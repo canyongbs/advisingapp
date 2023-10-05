@@ -29,7 +29,8 @@ class ManageMicrosoftClaritySettings extends SettingsPage
             ->columns(1)
             ->schema([
                 Toggle::make('is_enabled')
-                    ->label('Enabled'),
+                    ->label('Enabled')
+                    ->live(),
                 TextInput::make('id')
                     ->visible(fn (Get $get) => $get('is_enabled')),
             ]);

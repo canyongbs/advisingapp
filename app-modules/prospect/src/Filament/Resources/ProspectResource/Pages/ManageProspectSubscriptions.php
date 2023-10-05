@@ -4,6 +4,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
@@ -44,6 +45,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('user.name')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('user.name')
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->user]))
                     ->color('primary'),

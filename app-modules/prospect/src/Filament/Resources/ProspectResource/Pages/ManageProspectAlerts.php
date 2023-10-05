@@ -5,6 +5,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Assist\Alert\Enums\AlertStatus;
 use Assist\Prospect\Models\Prospect;
 use Assist\Alert\Enums\AlertSeverity;
@@ -99,6 +100,7 @@ class ManageProspectAlerts extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('description')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('description')
                     ->limit(),
                 TextColumn::make('severity')
