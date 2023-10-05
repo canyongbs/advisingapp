@@ -317,6 +317,10 @@ namespace Assist\AssistDataModel\Models{
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $orderedEngagementResponses
+ * @property-read int|null $ordered_engagement_responses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $orderedEngagements
+ * @property-read int|null $ordered_engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Performance> $performances
  * @property-read int|null $performances_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Program> $programs
@@ -755,11 +759,14 @@ namespace Assist\Engagement\Models{
  * @property-read int|null $engagement_deliverables_count
  * @property-read \App\Models\User|null $user
  * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement sentToProspect()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement sentToStudent()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDeliverAt($value)
@@ -913,6 +920,8 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse sentByProspect()
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse sentByStudent()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse whereId($value)
@@ -924,6 +933,96 @@ namespace Assist\Engagement\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperEngagementResponse {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\Form
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @method static \Assist\Form\Database\Factories\FormFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Form newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Form newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Form query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperForm {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\FormField
+ *
+ * @property string $id
+ * @property string $label
+ * @property string $key
+ * @property string $type
+ * @property bool $required
+ * @property array $config
+ * @property string $form_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\Form\Models\Form $form
+ * @method static \Assist\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereConfig($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereRequired($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormField {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\FormSubmission
+ *
+ * @property string $id
+ * @property array $content
+ * @property string $form_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Assist\Form\Models\Form $form
+ * @method static \Assist\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormSubmission {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1417,6 +1516,10 @@ namespace Assist\Prospect\Models{
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $orderedEngagementResponses
+ * @property-read int|null $ordered_engagement_responses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $orderedEngagements
+ * @property-read int|null $ordered_engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
  * @property-read \Assist\Prospect\Models\ProspectSource $source
@@ -1563,6 +1666,7 @@ namespace Assist\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest open()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest query()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereAssignedToId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereCloseDetails($value)
@@ -1746,6 +1850,7 @@ namespace Assist\Task\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Task open()
  * @method static \Illuminate\Database\Eloquent\Builder|Task query()
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereAssignedTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Task whereConcernId($value)

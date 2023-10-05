@@ -22,7 +22,7 @@ class DeliverEngagements implements ShouldQueue
     public function handle(): void
     {
         Engagement::query()
-            ->where('deliver_at', '<=', now()->subMinutes(5))
+            ->where('deliver_at', '<=', now())
             ->hasNotBeenDelivered()
             ->isNotPartOfABatch()
             ->cursor()
