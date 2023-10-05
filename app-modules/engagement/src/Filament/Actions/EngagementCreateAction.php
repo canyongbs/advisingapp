@@ -77,7 +77,6 @@ class EngagementCreateAction
                 $createDeliverablesForEngagement($engagement, $data['delivery_methods']);
 
                 $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
-                    ray('delivering notifications');
                     $deliverable->deliver();
                 });
             })
