@@ -48,7 +48,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
     public function markDeliverySuccessful(): void
     {
         $this->update([
-            'delivery_status' => EngagementDeliveryStatus::SUCCESSFUL,
+            'delivery_status' => EngagementDeliveryStatus::Successful,
             'delivered_at' => now(),
             'last_delivery_attempt' => now(),
         ]);
@@ -57,7 +57,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
     public function markDeliveryFailed(string $reason): void
     {
         $this->update([
-            'delivery_status' => EngagementDeliveryStatus::FAILED,
+            'delivery_status' => EngagementDeliveryStatus::Failed,
             'last_delivery_attempt' => now(),
             'delivery_response' => $reason,
         ]);
