@@ -25,7 +25,7 @@ class ServiceRequestFactory extends Factory
             },
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
-            'division_id' => Division::factory(),
+            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
             'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
             'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
             'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),

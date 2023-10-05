@@ -33,6 +33,7 @@ class DemoDatabaseSeeder extends Seeder
         $this->call([
             InternalUsersSeeder::class,
             UsersTableSeeder::class,
+            DivisionSeeder::class,
             ServiceRequestPrioritySeeder::class,
             ServiceRequestStatusSeeder::class,
             ServiceRequestTypeSeeder::class,
@@ -45,7 +46,6 @@ class DemoDatabaseSeeder extends Seeder
             KnowledgeBaseQualitySeeder::class,
             KnowledgeBaseStatusSeeder::class,
             KnowledgeBaseItemSeeder::class,
-            DivisionSeeder::class,
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
         ]);
