@@ -2,8 +2,8 @@
 
 namespace App\Filament\Fields;
 
-use App\Support\TiptapMediaEncoder;
 use App\Filament\Actions\MediaAction;
+use App\Support\MediaEncoding\TiptapMediaEncoder;
 use FilamentTiptapEditor\TiptapEditor as BaseTiptapEditor;
 use FilamentTiptapEditor\Actions\MediaAction as FilamentTiptapEditorMediaAction;
 

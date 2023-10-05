@@ -10,6 +10,7 @@ use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
 use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
+use Assist\KnowledgeBase\Observers\KnowledgeBaseItemObserver;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
@@ -26,5 +27,12 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
             'knowledge_base_quality' => KnowledgeBaseQuality::class,
             'knowledge_base_status' => KnowledgeBaseStatus::class,
         ]);
+
+        $this->registerObservers();
+    }
+
+    public function registerObservers(): void
+    {
+        KnowledgeBaseItem::observe(KnowledgeBaseItemObserver::class);
     }
 }

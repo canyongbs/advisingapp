@@ -76,6 +76,13 @@ class EditKnowledgeBaseItem extends EditRecord
             ]);
     }
 
+    public function afterSave(): void
+    {
+        $this->record = $this->getRecord()->fresh();
+
+        $this->fillForm();
+    }
+
     protected function getHeaderActions(): array
     {
         return [

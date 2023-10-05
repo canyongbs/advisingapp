@@ -18,7 +18,6 @@ class CreateKnowledgeBaseItemsTable extends Migration
             $table->uuid('status_id')->nullable();
             $table->uuid('category_id')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 }
