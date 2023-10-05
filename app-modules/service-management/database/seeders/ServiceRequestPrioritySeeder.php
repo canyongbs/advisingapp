@@ -10,12 +10,12 @@ class ServiceRequestPrioritySeeder extends Seeder
     public function run(): void
     {
         ServiceRequestPriority::factory()
-            ->count(3)
-            ->sequence(
-                ['name' => 'High', 'order' => 1],
-                ['name' => 'Medium', 'order' => 2],
-                ['name' => 'Low', 'order' => 3],
-            )
-            ->create();
+            ->createMany(
+                [
+                    ['name' => 'High', 'order' => 1],
+                    ['name' => 'Medium', 'order' => 2],
+                    ['name' => 'Low', 'order' => 3],
+                ]
+            );
     }
 }
