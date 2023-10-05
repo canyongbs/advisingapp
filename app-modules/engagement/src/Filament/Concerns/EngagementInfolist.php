@@ -33,7 +33,7 @@ trait EngagementInfolist
                         })
                         ->color(fn (EngagementDeliveryStatus $state): string => match ($state) {
                             EngagementDeliveryStatus::Successful => 'success',
-                            EngagementDeliveryStatus::Awaiting => 'info',
+                            EngagementDeliveryStatus::Awaiting => 'warning',
                             EngagementDeliveryStatus::Failed => 'danger',
                         }),
                     TextEntry::make('delivered_at'),
