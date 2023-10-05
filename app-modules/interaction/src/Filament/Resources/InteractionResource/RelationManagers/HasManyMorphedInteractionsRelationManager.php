@@ -5,6 +5,7 @@ namespace Assist\Interaction\Filament\Resources\InteractionResource\RelationMana
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -56,7 +57,7 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('id'),
+                IdColumn::make(),
                 TextColumn::make('campaign.name'),
                 TextColumn::make('driver.name'),
                 TextColumn::make('division.name'),

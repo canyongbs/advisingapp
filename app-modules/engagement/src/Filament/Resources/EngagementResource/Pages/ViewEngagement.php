@@ -26,9 +26,6 @@ class ViewEngagement extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID')
-                            ->translateLabel(),
                         TextEntry::make('user.name')
                             ->label('Created By')
                             ->translateLabel()

@@ -20,8 +20,6 @@ test('The correct details are displayed on the ViewServiceRequestType page', fun
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
-                'ID',
-                $serviceRequestType->id,
                 'Name',
                 $serviceRequestType->name,
             ]

@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
@@ -30,6 +31,7 @@ class CreatedByRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name'),
             ])

@@ -18,9 +18,6 @@ class ViewInboundWebhook extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID')
-                            ->translateLabel(),
                         TextEntry::make('source')
                             ->translateLabel(),
                         TextEntry::make('event')

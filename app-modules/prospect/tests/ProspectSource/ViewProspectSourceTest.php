@@ -20,8 +20,6 @@ test('The correct details are displayed on the ViewProspectSource page', functio
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
-                'ID',
-                $prospectSource->id,
                 'Name',
                 $prospectSource->name,
             ]

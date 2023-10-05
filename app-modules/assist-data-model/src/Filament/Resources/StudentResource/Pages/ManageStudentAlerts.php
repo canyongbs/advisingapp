@@ -5,6 +5,7 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Assist\Alert\Enums\AlertStatus;
 use Assist\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\Select;
@@ -99,6 +100,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('description')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('description')
                     ->limit(),
                 TextColumn::make('severity')

@@ -2,9 +2,9 @@
 
 namespace Assist\Authorization\Filament\Resources\PermissionResource\Pages;
 
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Resources\Pages\ListRecords\Tab;
 use Assist\Authorization\Filament\Resources\PermissionResource;
 
 class ListPermissions extends ListRecords

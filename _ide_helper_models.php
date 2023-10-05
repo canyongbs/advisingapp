@@ -314,6 +314,7 @@ namespace Assist\Assistant\Models{
  *
  * @property string $id
  * @property string $user_id
+ * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChatMessage> $messages
@@ -324,6 +325,7 @@ namespace Assist\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat query()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereUserId($value)
  * @mixin \Eloquent

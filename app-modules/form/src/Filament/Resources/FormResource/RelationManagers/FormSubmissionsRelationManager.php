@@ -4,6 +4,7 @@ namespace Assist\Form\Filament\Resources\FormResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\KeyValue;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -30,7 +31,7 @@ class FormSubmissionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('id'),
+                IdColumn::make(),
                 TextColumn::make('created_at')
                     ->sortable(),
             ])

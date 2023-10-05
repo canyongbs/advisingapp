@@ -19,9 +19,6 @@ class ViewKnowledgeBaseQuality extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID')
-                            ->translateLabel(),
                         TextEntry::make('name')
                             ->label('Name')
                             ->translateLabel(),

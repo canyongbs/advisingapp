@@ -20,9 +20,6 @@ class ViewKnowledgeBaseItem extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID')
-                            ->translateLabel(),
                         TextEntry::make('question')
                             ->label('Question/Issue/Feature')
                             ->translateLabel(),

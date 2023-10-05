@@ -3,6 +3,7 @@
 namespace Assist\Division\Filament\Resources\DivisionResource\Pages;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
@@ -21,6 +22,7 @@ class ListDivisions extends ListRecords
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name')
                     ->sortable()
                     ->searchable(),

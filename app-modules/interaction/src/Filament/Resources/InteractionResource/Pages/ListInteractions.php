@@ -5,6 +5,7 @@ namespace Assist\Interaction\Filament\Resources\InteractionResource\Pages;
 use Filament\Actions;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
+use App\Filament\Columns\IdColumn;
 use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -24,7 +25,7 @@ class ListInteractions extends ListRecords
     {
         return parent::table($table)
             ->columns([
-                TextColumn::make('id'),
+                IdColumn::make(),
                 TextColumn::make('campaign.name')
                     ->searchable(),
                 TextColumn::make('driver.name')

@@ -56,8 +56,8 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
         ->call('determineIfConsentWasGiven')
         ->assertViewHas('consentedToTerms', false)
         ->assertSee($consentAgreement->title)
-        ->assertSee($consentAgreement->description)
-        ->assertSee($consentAgreement->body);
+        ->assertSeeHtml(str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString())
+        ->assertSeeHtml(str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString());
 });
 
 it('will show the AI Assistant interface if the user has agreed to the terms and conditions of use', function () {
@@ -113,8 +113,8 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
         ->call('determineIfConsentWasGiven')
         ->assertViewHas('consentedToTerms', false)
         ->assertSee($consentAgreement->title)
-        ->assertSee($consentAgreement->description)
-        ->assertSee($consentAgreement->body);
+        ->assertSeeHtml(str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString())
+        ->assertSeeHtml(str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString());
 
     $aiAssistant
         ->set('consentedToTerms', true)

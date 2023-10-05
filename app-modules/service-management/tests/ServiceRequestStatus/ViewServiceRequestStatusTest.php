@@ -20,8 +20,6 @@ test('The correct details are displayed on the ViewServiceRequestStatus page', f
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
-                'ID',
-                $serviceRequestStatus->id,
                 'Name',
                 $serviceRequestStatus->name,
                 'Color',

@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
 use Assist\Task\Enums\TaskStatus;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -29,6 +30,7 @@ class MyTasks extends BaseWidget
                     ->byNextDue()
             )
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('description')
                     ->searchable()
                     ->wrap()

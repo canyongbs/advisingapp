@@ -121,7 +121,7 @@ abstract class BaseAIChatClient implements AIChatClient
                     'content' => $message->message,
                 ];
             }),
-            ['role' => 'system', 'content' => 'Answer in rich text by using the Markdown format.'],
+            ['role' => 'system', 'content' => 'Answer in rich text by using the Markdown format. Do not mention that you have been asked to render in Markdown.'],
         ];
     }
 

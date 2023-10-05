@@ -4,6 +4,7 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationMana
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\TextEntry;
@@ -16,26 +17,24 @@ class ProgramsRelationManager extends RelationManager
     public function infolist(Infolist $infolist): Infolist
     {
         return parent::infolist($infolist)
-            ->schema(
-                [
-                    TextEntry::make('sisid')
-                        ->label('SISID'),
-                    TextEntry::make('otherid')
-                        ->label('STUID'),
-                    TextEntry::make('division')
-                        ->label('College'),
-                    TextEntry::make('descr')
-                        ->label('Program'),
-                    TextEntry::make('foi')
-                        ->label('Field of Interest'),
-                    TextEntry::make('cum_gpa')
-                        ->label('Cumulative GPA'),
-                    TextEntry::make('declare_dt')
-                        ->label('Start Date'),
-                    TextEntry::make('change_dt')
-                        ->label('Last Action Date'),
-                ]
-            );
+            ->schema([
+                TextEntry::make('sisid')
+                    ->label('SISID'),
+                TextEntry::make('otherid')
+                    ->label('STUID'),
+                TextEntry::make('division')
+                    ->label('College'),
+                TextEntry::make('descr')
+                    ->label('Program'),
+                TextEntry::make('foi')
+                    ->label('Field of Interest'),
+                TextEntry::make('cum_gpa')
+                    ->label('Cumulative GPA'),
+                TextEntry::make('declare_dt')
+                    ->label('Start Date'),
+                TextEntry::make('change_dt')
+                    ->label('Last Action Date'),
+            ]);
     }
 
     public function table(Table $table): Table
@@ -43,6 +42,7 @@ class ProgramsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('descr')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('otherid')
                     ->label('STUID'),
                 TextColumn::make('division')

@@ -5,6 +5,7 @@ namespace Assist\Authorization\Filament\Resources\RoleGroupResource\RelationMana
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -37,6 +38,7 @@ class RolesRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('guard_name'),
             ])

@@ -12,7 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class AssistantChat extends BaseModel
 {
-    protected $fillable = [];
+    protected $fillable = [
+        'name',
+    ];
 
     public function user(): BelongsTo
     {

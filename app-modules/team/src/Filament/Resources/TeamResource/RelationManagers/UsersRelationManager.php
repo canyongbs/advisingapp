@@ -6,6 +6,7 @@ use Closure;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\AttachAction;
@@ -32,6 +33,7 @@ class UsersRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('email'),
             ])

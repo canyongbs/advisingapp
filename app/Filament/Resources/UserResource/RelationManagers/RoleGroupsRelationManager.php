@@ -5,6 +5,7 @@ namespace App\Filament\Resources\UserResource\RelationManagers;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\AttachAction;
@@ -35,6 +36,7 @@ class RoleGroupsRelationManager extends RelationManager implements HasActions
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name'),
             ])
             ->filters([
