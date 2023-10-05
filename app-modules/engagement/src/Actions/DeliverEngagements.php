@@ -17,10 +17,12 @@ class DeliverEngagements implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    // TODO Add another indicator to the engagements table to represent an engagement being scheduled
+    // This will allow us to scope this query down further, and prevent any overlap with sync dispatches
     public function handle(): void
     {
         Engagement::query()
-            ->where('deliver_at', '<=', now())
+            ->where('deliver_at', '<=', now()->subMinutes(5))
             ->hasNotBeenDelivered()
             ->isNotPartOfABatch()
             ->cursor()

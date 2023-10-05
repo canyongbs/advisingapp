@@ -9,10 +9,11 @@ use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
+use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
 
-class EngagementAction
+class EngagementCreateAction
 {
     public static function make(Model $educatable)
     {
@@ -65,7 +66,7 @@ class EngagementAction
                     ]),
             ])
             ->action(function (array $data) use ($educatable) {
-                // TODO Probably extract this to an action
+                // TODO Probably extract all of this to an action
                 $engagement = $educatable->engagements()->create([
                     'subject' => $data['subject'],
                     'body' => $data['body'],
@@ -74,6 +75,11 @@ class EngagementAction
                 $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
 
                 $createDeliverablesForEngagement($engagement, $data['delivery_methods']);
+
+                $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
+                    ray('delivering notifications');
+                    $deliverable->deliver();
+                });
             })
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)

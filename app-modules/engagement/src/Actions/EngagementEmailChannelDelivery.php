@@ -8,6 +8,9 @@ class EngagementEmailChannelDelivery extends QueuedEngagementDelivery
 {
     public function deliver(): void
     {
+        // TODO Remove this... It's simply for testing
+        sleep(10);
+
         $this
             ->deliverable
             ->engagement
