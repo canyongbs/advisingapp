@@ -3,6 +3,7 @@
 namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
@@ -19,6 +20,7 @@ class ListCaseloads extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name')
                     ->sortable(),
                 TextColumn::make('model')

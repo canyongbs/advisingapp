@@ -4,8 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
-use Assist\Task\Database\Seeders\TaskSeeder;
+use Assist\Division\Database\Seeders\DivisionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSeeder;
+use Assist\Interaction\Database\Seeders\InteractionSeeder;
 use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
 use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
 use Assist\Consent\Database\Seeders\ConsentAgreementSeeder;
@@ -14,7 +15,6 @@ use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
-use Assist\Engagement\Database\Seeders\DemoEducatableEngagementSeeder;
 use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use Assist\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
@@ -33,6 +33,7 @@ class DemoDatabaseSeeder extends Seeder
         $this->call([
             InternalUsersSeeder::class,
             UsersTableSeeder::class,
+            DivisionSeeder::class,
             ServiceRequestPrioritySeeder::class,
             ServiceRequestStatusSeeder::class,
             ServiceRequestTypeSeeder::class,
@@ -45,10 +46,8 @@ class DemoDatabaseSeeder extends Seeder
             KnowledgeBaseQualitySeeder::class,
             KnowledgeBaseStatusSeeder::class,
             KnowledgeBaseItemSeeder::class,
-            TaskSeeder::class,
+            ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
-            DemoEducatableEngagementSeeder::class,
-            SuperAdminSeeder::class,
         ]);
     }
 }

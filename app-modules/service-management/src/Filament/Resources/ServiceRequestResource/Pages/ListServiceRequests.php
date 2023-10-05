@@ -4,6 +4,7 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pag
 
 use Filament\Actions;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -24,6 +25,7 @@ class ListServiceRequests extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('service_request_number')
                     ->label('Service Request #')
                     ->searchable()
@@ -54,8 +56,8 @@ class ListServiceRequests extends ListRecords
                                 ->where('service_requests.respondent_type', '=', 'student');
                         })->orderBy('otherid', $direction);
                     }),
-                TextColumn::make('institution.name')
-                    ->label('Institution')
+                TextColumn::make('division.name')
+                    ->label('Division')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('assignedTo.name')

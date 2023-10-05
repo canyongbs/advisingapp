@@ -5,6 +5,7 @@ namespace Assist\Authorization\Filament\Resources;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use App\Filament\Columns\IdColumn;
 use Assist\Authorization\Models\Role;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -43,6 +44,7 @@ class RoleResource extends Resource
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('guard_name')

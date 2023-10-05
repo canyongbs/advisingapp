@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -58,6 +59,7 @@ class RoleGroupResource extends Resource
     {
         return $table
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('created_at')

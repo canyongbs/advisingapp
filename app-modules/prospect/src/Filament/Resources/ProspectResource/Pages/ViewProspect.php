@@ -24,9 +24,6 @@ class ViewProspect extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID')
-                            ->translateLabel(),
                         TextEntry::make('status.name')
                             ->label('Status')
                             ->translateLabel(),

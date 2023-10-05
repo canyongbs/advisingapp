@@ -4,11 +4,10 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pag
 
 use Filament\Actions;
 use Filament\Forms\Form;
-use App\Models\Institution;
+use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
@@ -25,13 +24,11 @@ class EditServiceRequest extends EditRecord
     public function form(Form $form): Form
     {
         return parent::form($form)->schema([
-            TextInput::make('id')
-                ->disabled(),
-            Select::make('institution_id')
-                ->relationship('institution', 'name')
-                ->label('Institution')
+            Select::make('division_id')
+                ->relationship('division', 'name')
+                ->label('Division')
                 ->required()
-                ->exists((new Institution())->getTable(), 'id'),
+                ->exists((new Division())->getTable(), 'id'),
             Select::make('status_id')
                 ->relationship('status', 'name')
                 ->preload()

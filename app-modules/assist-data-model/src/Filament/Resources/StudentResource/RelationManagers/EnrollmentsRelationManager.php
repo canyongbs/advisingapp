@@ -4,6 +4,7 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationMana
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\TextEntry;
@@ -39,6 +40,7 @@ class EnrollmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('division')
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('division')
                     ->label('College'),
                 TextColumn::make('class_nbr')

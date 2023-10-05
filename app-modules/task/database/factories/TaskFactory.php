@@ -31,7 +31,7 @@ class TaskFactory extends Factory
     public function concerningStudent(Student $student = null): self
     {
         return $this->state([
-            'concern_id' => $student?->id ?? Student::factory(),
+            'concern_id' => $student?->id ?? fn () => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
             'concern_type' => (new Student())->getMorphClass(),
         ]);
     }

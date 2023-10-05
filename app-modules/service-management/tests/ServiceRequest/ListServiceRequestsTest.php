@@ -45,8 +45,8 @@ test('The correct details are displayed on the ListServiceRequests page', functi
                 $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'institution.name',
-                $serviceRequest->institution->name,
+                'division.name',
+                $serviceRequest->division->name,
                 $serviceRequest
             )
             ->assertTableColumnStateSet(

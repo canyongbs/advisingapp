@@ -3,6 +3,7 @@
 namespace Assist\Interaction\Filament\Resources\InteractionResource\Pages;
 
 use Filament\Forms\Form;
+use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
@@ -19,7 +20,6 @@ use Assist\Interaction\Models\InteractionOutcome;
 use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Interaction\Models\InteractionRelation;
 use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Interaction\Models\InteractionInstitution;
 use Assist\Interaction\Filament\Resources\InteractionResource;
 
 class CreateInteraction extends CreateRecord
@@ -58,12 +58,12 @@ class CreateInteraction extends CreateRecord
                             ->label('Driver')
                             ->required()
                             ->exists((new InteractionDriver())->getTable(), 'id'),
-                        Select::make('interaction_institution_id')
-                            ->relationship('institution', 'name')
+                        Select::make('division_id')
+                            ->relationship('division', 'name')
                             ->preload()
-                            ->label('Institution')
+                            ->label('Division')
                             ->required()
-                            ->exists((new InteractionInstitution())->getTable(), 'id'),
+                            ->exists((new Division())->getTable(), 'id'),
                         Select::make('interaction_outcome_id')
                             ->relationship('outcome', 'name')
                             ->preload()

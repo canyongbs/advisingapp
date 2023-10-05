@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
+use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
@@ -62,9 +63,7 @@ class ServiceRequestUpdateResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
-                    ->sortable(),
+                IdColumn::make(),
                 Tables\Columns\TextColumn::make('serviceRequest.respondent.full')
                     ->label('Related To')
                     ->sortable(query: function (Builder $query, string $direction, $record): Builder {

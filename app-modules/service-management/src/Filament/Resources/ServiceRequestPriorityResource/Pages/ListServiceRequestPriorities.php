@@ -4,6 +4,7 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityReso
 
 use Filament\Actions;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -20,6 +21,7 @@ class ListServiceRequestPriorities extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
@@ -27,7 +29,7 @@ class ListServiceRequestPriorities extends ListRecords
                 TextColumn::make('order')
                     ->label('Priority Order')
                     ->sortable(),
-                TextColumn::make('service_request_count')
+                TextColumn::make('service_requests_count')
                     ->label('# of Service Requests')
                     ->counts('serviceRequests')
                     ->sortable(),

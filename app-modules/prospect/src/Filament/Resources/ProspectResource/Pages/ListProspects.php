@@ -3,6 +3,7 @@
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Assist\Prospect\Models\Prospect;
 use App\Filament\Actions\ImportAction;
@@ -28,6 +29,7 @@ class ListProspects extends ListRecords
     {
         return parent::table($table)
             ->columns([
+                IdColumn::make(),
                 TextColumn::make(Prospect::displayNameKey())
                     ->label('Name')
                     ->searchable()

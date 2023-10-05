@@ -29,7 +29,7 @@ test('The correct details are displayed on the ListServiceRequestPriorities page
         ->assertSuccessful()
         ->assertCanSeeTableRecords($serviceRequestPriorities)
         ->assertCountTableRecords(3)
-        ->assertTableColumnExists('service_request_count');
+        ->assertTableColumnExists('service_requests_count');
 
     $serviceRequestPriorities->each(
         fn (ServiceRequestPriority $serviceRequestPriority) => $component

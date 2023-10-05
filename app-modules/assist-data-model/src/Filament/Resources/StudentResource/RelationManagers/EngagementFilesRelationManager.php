@@ -6,6 +6,7 @@ use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\RelationManagers\RelationManager;
@@ -34,6 +35,7 @@ class EngagementFilesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('description')
             ->columns([
+                IdColumn::make(),
                 Tables\Columns\TextColumn::make('description'),
                 SpatieMediaLibraryImageColumn::make('file')
                     ->collection('file')

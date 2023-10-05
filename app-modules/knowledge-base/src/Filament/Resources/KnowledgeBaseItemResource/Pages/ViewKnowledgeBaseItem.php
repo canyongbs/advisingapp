@@ -20,9 +20,6 @@ class ViewKnowledgeBaseItem extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID')
-                            ->translateLabel(),
                         TextEntry::make('question')
                             ->label('Question/Issue/Feature')
                             ->translateLabel(),
@@ -39,8 +36,8 @@ class ViewKnowledgeBaseItem extends ViewRecord
                             ->label('Public')
                             ->translateLabel()
                             ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
-                        TextEntry::make('institution.name')
-                            ->label('Institution')
+                        TextEntry::make('division.name')
+                            ->label('Division')
                             ->translateLabel(),
                         ViewEntry::make('solution')
                             ->label('Solution')
@@ -61,6 +58,7 @@ class ViewKnowledgeBaseItem extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\DeleteAction::make(),
         ];
     }
 }

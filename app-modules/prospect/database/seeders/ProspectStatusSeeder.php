@@ -8,40 +8,35 @@ use Assist\Prospect\Enums\ProspectStatusColorOptions;
 
 class ProspectStatusSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         ProspectStatus::factory()
-            ->create(
+            ->createMany(
                 [
-                    'name' => 'New',
-                    'color' => ProspectStatusColorOptions::INFO->value,
-                ]
-            );
-
-        ProspectStatus::factory()
-            ->create(
-                [
-                    'name' => 'Contacted',
-                    'color' => ProspectStatusColorOptions::SUCCESS->value,
-                ]
-            );
-
-        ProspectStatus::factory()
-            ->create(
-                [
-                    'name' => 'Not Interested',
-                    'color' => ProspectStatusColorOptions::DANGER->value,
-                ]
-            );
-
-        ProspectStatus::factory()
-            ->create(
-                [
-                    'name' => 'Interested',
-                    'color' => ProspectStatusColorOptions::WARNING->value,
+                    [
+                        'name' => 'New',
+                        'color' => ProspectStatusColorOptions::INFO->value,
+                    ],
+                    [
+                        'name' => 'Assigned',
+                        'color' => ProspectStatusColorOptions::WARNING->value,
+                    ],
+                    [
+                        'name' => 'In-Progress',
+                        'color' => ProspectStatusColorOptions::PRIMARY->value,
+                    ],
+                    [
+                        'name' => 'Converted',
+                        'color' => ProspectStatusColorOptions::SUCCESS->value,
+                    ],
+                    [
+                        'name' => 'Recycled',
+                        'color' => ProspectStatusColorOptions::GRAY->value,
+                    ],
+                    [
+                        'name' => 'Dead',
+                        'color' => ProspectStatusColorOptions::DANGER->value,
+                    ],
                 ]
             );
     }

@@ -20,12 +20,10 @@ test('The correct details are displayed on the ViewServiceRequest page', functio
         ->assertSuccessful()
         ->assertSeeTextInOrder(
             [
-                'ID',
-                $serviceRequest->id,
                 'Service Request Number',
                 $serviceRequest->service_request_number,
-                'Institution',
-                $serviceRequest->institution->name,
+                'Division',
+                $serviceRequest->division->name,
                 'Status',
                 $serviceRequest->status->name,
                 'Priority',

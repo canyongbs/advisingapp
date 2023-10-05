@@ -21,8 +21,6 @@ class ViewEngagementFile extends ViewRecord
             ->schema([
                 Section::make()
                     ->schema([
-                        TextEntry::make('id')
-                            ->label('ID'),
                         TextEntry::make('description')
                             ->label('Description'),
                         SpatieMediaLibraryImageEntry::make('file')

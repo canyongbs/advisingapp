@@ -21,10 +21,12 @@ class CreateDivision extends CreateRecord
                     ->required()
                     ->string()
                     ->unique(),
-                Textarea::make('code')
+                TextInput::make('code')
                     ->required()
                     ->string()
                     ->unique(),
+                Textarea::make('description')
+                    ->string(),
                 TiptapEditor::make('header')
                     ->string()
                     ->columnSpanFull(),
