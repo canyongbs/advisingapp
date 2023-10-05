@@ -10,18 +10,20 @@ class KnowledgeBaseCategorySeeder extends Seeder
     public function run(): void
     {
         KnowledgeBaseCategory::factory()
-            ->count(3)
-            ->sequence(
+            ->createMany(
                 [
-                    'name' => 'Category 1',
-                ],
-                [
-                    'name' => 'Category 2',
-                ],
-                [
-                    'name' => 'Category 3',
-                ],
-            )
-            ->create();
+                    ['name' => 'Admissions, Records, and Registration (AR&R)'],
+                    ['name' => 'Advising'],
+                    ['name' => 'Clock Hour Programs'],
+                    ['name' => 'Enrollment Services'],
+                    ['name' => 'Financial Aid'],
+                    ['name' => 'International Education'],
+                    ['name' => 'IT Help Desk'],
+                    ['name' => 'Recruitment'],
+                    ['name' => 'Special Populations'],
+                    ['name' => 'Student Business Services'],
+                    ['name' => 'Veterans Services'],
+                ]
+            );
     }
 }
