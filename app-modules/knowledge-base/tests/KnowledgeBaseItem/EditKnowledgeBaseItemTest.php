@@ -52,8 +52,7 @@ test('EditKnowledgeBaseItem is gated with proper access control', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($knowledgeBaseItem->fresh()->only($request->except('institution')->keys()->toArray()))->toEqual(
-        $request->except('institution')->toArray()
-    )
-        ->and($knowledgeBaseItem->fresh()->institution->pluck('id')->toArray())->toEqual($request['institution']);
+    expect($knowledgeBaseItem->fresh()->only($request->except('division')->keys()->toArray()))
+        ->toEqual($request->except('division')->toArray())
+        ->and($knowledgeBaseItem->fresh()->division->pluck('id')->toArray())->toEqual($request['division']);
 });

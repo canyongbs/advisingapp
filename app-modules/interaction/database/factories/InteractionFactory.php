@@ -3,8 +3,10 @@
 namespace Assist\Interaction\Database\Factories;
 
 use App\Models\User;
+use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Interaction\Models\Interaction;
 use Assist\Interaction\Models\InteractionType;
 use Assist\Interaction\Models\InteractionDriver;
 use Assist\Interaction\Models\InteractionStatus;
@@ -13,10 +15,9 @@ use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Interaction\Models\InteractionRelation;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Interaction\Models\InteractionInstitution;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Interaction\Models\Interaction>
+ * @extends Factory<Interaction>
  */
 class InteractionFactory extends Factory
 {
@@ -40,7 +41,7 @@ class InteractionFactory extends Factory
             'interaction_driver_id' => InteractionDriver::factory(),
             'interaction_status_id' => InteractionStatus::factory(),
             'interaction_outcome_id' => InteractionOutcome::factory(),
-            'interaction_institution_id' => InteractionInstitution::factory(),
+            'division_id' => Division::factory(),
             'start_datetime' => now(),
             'end_datetime' => now()->addMinutes(5),
             'subject' => fake()->sentence(),

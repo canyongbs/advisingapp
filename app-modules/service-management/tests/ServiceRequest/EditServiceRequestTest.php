@@ -35,7 +35,7 @@ test('A successful action on the EditServiceRequest page', function () {
         ServiceRequest::class,
         $request->except(
             [
-                'institution_id',
+                'division_id',
                 'status_id',
                 'priority_id',
                 'type_id',
@@ -45,8 +45,8 @@ test('A successful action on the EditServiceRequest page', function () {
 
     $serviceRequest->refresh();
 
-    expect($serviceRequest->institution->id)
-        ->toEqual($request->get('institution_id'))
+    expect($serviceRequest->division->id)
+        ->toEqual($request->get('division_id'))
         ->and($serviceRequest->status->id)
         ->toEqual($request->get('status_id'))
         ->and($serviceRequest->priority->id)
@@ -71,8 +71,8 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
 
     assertDatabaseHas(ServiceRequest::class, $serviceRequest->toArray());
 
-    expect($serviceRequest->fresh()->institution->id)
-        ->toEqual($serviceRequest->institution->id)
+    expect($serviceRequest->fresh()->division->id)
+        ->toEqual($serviceRequest->division->id)
         ->and($serviceRequest->fresh()->status->id)
         ->toEqual($serviceRequest->status->id)
         ->and($serviceRequest->fresh()->priority->id)
@@ -81,10 +81,10 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
         ->toEqual($serviceRequest->type->id);
 })->with(
     [
-        'institution_id missing' => [EditServiceRequestRequestFactory::new()->state(['institution_id' => null]), ['institution_id' => 'required']],
-        'institution_id does not exist' => [
-            EditServiceRequestRequestFactory::new()->state(['institution_id' => fake()->uuid()]),
-            ['institution_id' => 'exists'],
+        'division_id missing' => [EditServiceRequestRequestFactory::new()->state(['division_id' => null]), ['division_id' => 'required']],
+        'division_id does not exist' => [
+            EditServiceRequestRequestFactory::new()->state(['division_id' => fake()->uuid()]),
+            ['division_id' => 'exists'],
         ],
         'status_id missing' => [EditServiceRequestRequestFactory::new()->state(['status_id' => null]), ['status_id' => 'required']],
         'status_id does not exist' => [
@@ -148,7 +148,7 @@ test('EditServiceRequest is gated with proper access control', function () {
         ServiceRequest::class,
         $request->except(
             [
-                'institution',
+                'division_id',
                 'status',
                 'priority',
                 'type',
@@ -158,8 +158,8 @@ test('EditServiceRequest is gated with proper access control', function () {
 
     $serviceRequest->refresh();
 
-    expect($serviceRequest->institution->id)
-        ->toEqual($request->get('institution_id'))
+    expect($serviceRequest->division->id)
+        ->toEqual($request->get('division_id'))
         ->and($serviceRequest->status->id)
         ->toEqual($request->get('status_id'))
         ->and($serviceRequest->priority->id)

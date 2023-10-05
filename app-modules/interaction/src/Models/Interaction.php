@@ -4,6 +4,7 @@ namespace Assist\Interaction\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
+use Assist\Division\Models\Division;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,7 +25,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'interactable_type',
         'interaction_campaign_id',
         'interaction_driver_id',
-        'interaction_institution_id',
+        'division_id',
         'interaction_outcome_id',
         'interaction_relation_id',
         'interaction_status_id',
@@ -69,9 +70,9 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         return $this->belongsTo(InteractionDriver::class, 'interaction_driver_id');
     }
 
-    public function institution(): BelongsTo
+    public function division(): BelongsTo
     {
-        return $this->belongsTo(InteractionInstitution::class, 'interaction_institution_id');
+        return $this->belongsTo(Division::class, 'division_id');
     }
 
     public function outcome(): BelongsTo

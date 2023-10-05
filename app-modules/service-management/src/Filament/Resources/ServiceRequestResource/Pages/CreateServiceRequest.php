@@ -3,7 +3,7 @@
 namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
 use Filament\Forms\Form;
-use App\Models\Institution;
+use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -24,11 +24,11 @@ class CreateServiceRequest extends CreateRecord
     {
         return parent::form($form)
             ->schema([
-                Select::make('institution_id')
-                    ->relationship('institution', 'name')
-                    ->label('Institution')
+                Select::make('division_id')
+                    ->relationship('division', 'name')
+                    ->label('Division')
                     ->required()
-                    ->exists((new Institution())->getTable(), 'id'),
+                    ->exists((new Division())->getTable(), 'id'),
                 Select::make('status_id')
                     ->relationship('status', 'name')
                     ->preload()

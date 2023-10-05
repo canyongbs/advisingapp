@@ -30,7 +30,7 @@ class ListInteractions extends ListRecords
                     ->searchable(),
                 TextColumn::make('driver.name')
                     ->searchable(),
-                TextColumn::make('institution.name')
+                TextColumn::make('division.name')
                     ->searchable(),
                 TextColumn::make('outcome.name')
                     ->searchable(),

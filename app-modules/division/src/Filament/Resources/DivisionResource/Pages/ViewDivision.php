@@ -23,6 +23,8 @@ class ViewDivision extends ViewRecord
                     ->schema([
                         TextEntry::make('name'),
                         TextEntry::make('code'),
+                        TextEntry::make('description')
+                            ->columnSpanFull(),
                         Section::make()
                             ->schema([
                                 TextEntry::make('createdBy.name')

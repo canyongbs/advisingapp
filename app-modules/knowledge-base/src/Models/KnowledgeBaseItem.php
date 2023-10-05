@@ -4,7 +4,7 @@ namespace Assist\KnowledgeBase\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use App\Models\Institution;
+use Assist\Division\Models\Division;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -50,9 +50,9 @@ class KnowledgeBaseItem extends BaseModel implements Auditable
         return $this->belongsTo(KnowledgeBaseCategory::class);
     }
 
-    public function institution(): BelongsToMany
+    public function division(): BelongsToMany
     {
-        return $this->belongsToMany(Institution::class);
+        return $this->belongsToMany(Division::class);
     }
 
     protected function serializeDate(DateTimeInterface $date): string

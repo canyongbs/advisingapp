@@ -5,6 +5,7 @@ namespace Assist\Interaction\Imports;
 use App\Models\Import;
 use App\Imports\Importer;
 use Illuminate\Support\Str;
+use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
@@ -16,7 +17,6 @@ use Assist\Interaction\Models\InteractionOutcome;
 use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Interaction\Models\InteractionRelation;
 use App\Filament\Actions\ImportAction\ImportColumn;
-use Assist\Interaction\Models\InteractionInstitution;
 
 class InteractionsImporter extends Importer
 {
@@ -129,9 +129,9 @@ class InteractionsImporter extends Importer
                 )
                 ->requiredMapping()
                 ->example(fn (): ?string => InteractionOutcome::query()->value('name')),
-            ImportColumn::make('institution')
+            ImportColumn::make('division')
                 ->relationship(
-                    resolveUsing: fn (mixed $state) => InteractionInstitution::query()
+                    resolveUsing: fn (mixed $state) => Division::query()
                         ->when(
                             str($state)->isUuid(),
                             fn (Builder $query) => $query->whereKey($state),
@@ -140,7 +140,7 @@ class InteractionsImporter extends Importer
                         ->first(),
                 )
                 ->requiredMapping()
-                ->example(fn (): ?string => InteractionInstitution::query()->value('name')),
+                ->example(fn (): ?string => Division::query()->value('name')),
             ImportColumn::make('start_datetime')
                 ->rules(['date'])
                 ->example('2023-09-28 16:52:50'),

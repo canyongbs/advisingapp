@@ -3,7 +3,7 @@
 namespace Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
 use Filament\Forms\Form;
-use App\Models\Institution;
+use Assist\Division\Models\Division;
 use Filament\Forms\Components\Radio;
 use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
@@ -53,13 +53,13 @@ class CreateKnowledgeBaseItem extends CreateRecord
                     ->boolean()
                     ->default(false)
                     ->rules(['boolean']),
-                Select::make('institution')
-                    ->label('Institution')
+                Select::make('division')
+                    ->label('Division')
                     ->translateLabel()
-                    ->relationship('institution', 'name')
+                    ->relationship('division', 'name')
                     ->searchable(['name', 'code'])
                     ->preload()
-                    ->exists((new Institution())->getTable(), (new Institution())->getKeyName()),
+                    ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                 TiptapEditor::make('solution')
                     ->label('Solution')
                     ->translateLabel()

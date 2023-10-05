@@ -22,10 +22,13 @@ class EditDivision extends EditRecord
                     ->required()
                     ->string()
                     ->unique(ignoreRecord: true),
-                Textarea::make('code')
+                TextInput::make('code')
                     ->required()
                     ->string()
                     ->unique(ignoreRecord: true),
+                Textarea::make('description')
+                    ->string()
+                    ->columnSpanFull(),
                 TiptapEditor::make('header')
                     ->string()
                     ->columnSpanFull(),

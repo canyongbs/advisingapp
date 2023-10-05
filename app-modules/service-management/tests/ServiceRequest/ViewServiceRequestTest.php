@@ -22,8 +22,8 @@ test('The correct details are displayed on the ViewServiceRequest page', functio
             [
                 'Service Request Number',
                 $serviceRequest->service_request_number,
-                'Institution',
-                $serviceRequest->institution->name,
+                'Division',
+                $serviceRequest->division->name,
                 'Status',
                 $serviceRequest->status->name,
                 'Priority',

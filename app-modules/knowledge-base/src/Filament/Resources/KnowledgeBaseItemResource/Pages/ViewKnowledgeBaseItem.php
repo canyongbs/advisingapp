@@ -36,8 +36,8 @@ class ViewKnowledgeBaseItem extends ViewRecord
                             ->label('Public')
                             ->translateLabel()
                             ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
-                        TextEntry::make('institution.name')
-                            ->label('Institution')
+                        TextEntry::make('division.name')
+                            ->label('Division')
                             ->translateLabel(),
                         ViewEntry::make('solution')
                             ->label('Solution')

@@ -33,7 +33,7 @@ test('A successful action on the CreateServiceRequest page', function () {
         ServiceRequest::class,
         $request->except(
             [
-                'institution_id',
+                'division_id',
                 'status_id',
                 'priority_id',
                 'type_id',
@@ -43,8 +43,8 @@ test('A successful action on the CreateServiceRequest page', function () {
 
     $serviceRequest = ServiceRequest::first();
 
-    expect($serviceRequest->institution->id)
-        ->toEqual($request->get('institution_id'))
+    expect($serviceRequest->division->id)
+        ->toEqual($request->get('division_id'))
         ->and($serviceRequest->status->id)
         ->toEqual($request->get('status_id'))
         ->and($serviceRequest->priority->id)
@@ -67,13 +67,13 @@ test('CreateServiceRequest requires valid data', function ($data, $errors, $setu
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseMissing(ServiceRequest::class, $request->except(['institution', 'status', 'priority', 'type'])->toArray());
+    assertDatabaseMissing(ServiceRequest::class, $request->except(['division', 'status', 'priority', 'type'])->toArray());
 })->with(
     [
-        'institution_id missing' => [CreateServiceRequestRequestFactory::new()->without('institution_id'), ['institution_id' => 'required']],
-        'institution_id does not exist' => [
-            CreateServiceRequestRequestFactory::new()->state(['institution_id' => fake()->uuid()]),
-            ['institution_id' => 'exists'],
+        'division_id missing' => [CreateServiceRequestRequestFactory::new()->without('division_id'), ['division_id' => 'required']],
+        'division_id does not exist' => [
+            CreateServiceRequestRequestFactory::new()->state(['division_id' => fake()->uuid()]),
+            ['division_id' => 'exists'],
         ],
         'status_id missing' => [CreateServiceRequestRequestFactory::new()->without('status_id'), ['status_id' => 'required']],
         'status_id does not exist' => [
@@ -129,7 +129,7 @@ test('CreateServiceRequest is gated with proper access control', function () {
         ServiceRequest::class,
         $request->except(
             [
-                'institution_id',
+                'division_id',
                 'status_id',
                 'priority_id',
                 'type_id',
@@ -139,8 +139,8 @@ test('CreateServiceRequest is gated with proper access control', function () {
 
     $serviceRequest = ServiceRequest::first();
 
-    expect($serviceRequest->institution->id)
-        ->toEqual($request->get('institution_id'))
+    expect($serviceRequest->division->id)
+        ->toEqual($request->get('division_id'))
         ->and($serviceRequest->status->id)
         ->toEqual($request->get('status_id'))
         ->and($serviceRequest->priority->id)
