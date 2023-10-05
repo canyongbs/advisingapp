@@ -2,10 +2,10 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\Task\Filament\RelationManagers\BaseTaskRelationManager;
 
-class ManageProspectTasks extends ManageRelatedRecords
+class ManageProspectTasks extends BaseTaskRelationManager
 {
     protected static string $resource = ProspectResource::class;
 
