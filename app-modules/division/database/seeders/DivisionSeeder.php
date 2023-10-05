@@ -12,7 +12,7 @@ class DivisionSeeder extends Seeder
         Division::factory()
             ->createMany(
                 [
-                    'name' => 'Home',
+                    ['name' => 'Home'],
                 ]
             );
     }
