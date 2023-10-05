@@ -10,7 +10,12 @@ class InteractionStatusSeeder extends Seeder
     public function run(): void
     {
         InteractionStatus::factory()
-            ->count(10)
-            ->create();
+            ->createMany(
+                [
+                    ['name' => 'Planned'],
+                    ['name' => 'Held'],
+                    ['name' => 'Not Held'],
+                ]
+            );
     }
 }
