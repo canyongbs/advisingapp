@@ -10,18 +10,13 @@ class KnowledgeBaseStatusSeeder extends Seeder
     public function run(): void
     {
         KnowledgeBaseStatus::factory()
-            ->count(3)
-            ->sequence(
+            ->createMany(
                 [
-                    'name' => 'Draft',
-                ],
-                [
-                    'name' => 'Published',
-                ],
-                [
-                    'name' => 'Archived',
-                ],
-            )
-            ->create();
+                    ['name' => 'Draft'],
+                    ['name' => 'In-Review'],
+                    ['name' => 'Published'],
+                    ['name' => 'Archived'],
+                ]
+            );
     }
 }
