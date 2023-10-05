@@ -19,12 +19,12 @@ class EngagementSeeder extends Seeder
             ->create();
 
         // For Student - deliver later
-        Engagement::factory()
-            ->count(7)
-            ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
-            ->forStudent()
-            ->deliverLater()
-            ->create();
+        // Engagement::factory()
+        //     ->count(7)
+        //     ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
+        //     ->forStudent()
+        //     ->deliverLater()
+        //     ->create();
 
         // For Prospect - deliver now
         Engagement::factory()
@@ -35,11 +35,11 @@ class EngagementSeeder extends Seeder
             ->create();
 
         // For Prospect - deliver later
-        Engagement::factory()
-            ->count(7)
-            ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
-            ->forProspect()
-            ->deliverLater()
-            ->create();
+        // Engagement::factory()
+        //     ->count(7)
+        //     ->has(EngagementDeliverable::factory()->count(1), 'engagementDeliverables')
+        //     ->forProspect()
+        //     ->deliverLater()
+        //     ->create();
     }
 }
