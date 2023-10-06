@@ -45,6 +45,8 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     use HasManyMorphedInteractions;
     use HasSubscriptions;
 
+    protected $table = 'students_local';
+
     protected $primaryKey = 'sisid';
 
     public $incrementing = false;

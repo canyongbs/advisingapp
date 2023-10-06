@@ -15,6 +15,8 @@ class Program extends Model
     use HasFactory;
     use DefinesPermissions;
 
+    protected $table = 'programs_local';
+
     // TODO: Need to revisit whether or not this should be the primary key, just using it for now since there is nothing else
     protected $primaryKey = 'sisid';
 
