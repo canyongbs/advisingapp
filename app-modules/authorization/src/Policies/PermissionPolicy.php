@@ -3,8 +3,8 @@
 namespace Assist\Authorization\Policies;
 
 use App\Models\User;
-use Assist\Authorization\Models\Permission;
 use Illuminate\Auth\Access\Response;
+use Assist\Authorization\Models\Permission;
 
 class PermissionPolicy
 {
@@ -19,7 +19,7 @@ class PermissionPolicy
     public function view(User $user, Permission $permission): Response
     {
         return $user->canOrElse(
-            abilities: 'permission.*.view',
+            abilities: ['permission.*.view', "permission.{$permission->id}.view"],
             denyResponse: 'You do not have permission to view this permission.'
         );
     }
