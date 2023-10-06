@@ -3,28 +3,30 @@
 @endphp
 
 <div
-    class="max-h-content w-full overflow-y-scroll rounded-bl-lg rounded-br-lg rounded-tl-lg rounded-tr-lg bg-white dark:bg-gray-800 sm:rounded-br-none sm:rounded-tr-none lg:w-1/3"
+    class="col-span-full h-full overflow-y-auto rounded-bl-lg rounded-br-lg rounded-tl-lg rounded-tr-lg bg-white dark:bg-gray-800 sm:rounded-br-none sm:rounded-tr-none md:col-span-1"
     x-data="{ showFilters: false }"
 >
-    <div class="flex items-center justify-between rounded-tl-lg bg-white p-4 dark:bg-gray-800">
-        <div class="flex flex-col">
-            <span class="font-bold text-gray-500 dark:text-gray-400 sm:text-xs md:text-sm">
-                Engagements
-            </span>
-            <span class="text-xs text-gray-400 dark:text-gray-500">
-                {{ $educatables->total() }} Total Results
-            </span>
+    <div class="sticky top-0 z-[5] flex flex-col rounded-tl-lg bg-white dark:bg-gray-800">
+        <div class="flex flex-row items-center justify-between p-4">
+            <div class="flex flex-col">
+                <span class="font-bold text-gray-500 dark:text-gray-400 sm:text-xs md:text-sm">
+                    Engagements
+                </span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">
+                    {{ $educatables->total() }} Total Results
+                </span>
+            </div>
+            <x-filament::icon-button
+                icon="heroicon-m-funnel"
+                x-on:click="showFilters = !showFilters"
+                label="Show Filters and Search"
+            />
         </div>
-        <x-filament::icon-button
-            icon="heroicon-m-funnel"
-            x-on:click="showFilters = !showFilters"
-            label="Show Filters and Search"
-        />
+
+        <x-engagement::filters />
+
+        <x-engagement::search />
     </div>
-
-    <x-engagement::filters />
-
-    <x-engagement::search />
 
     <div class="hidden flex-col md:flex">
         <div class="overflow-x-auto">

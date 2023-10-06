@@ -63,6 +63,8 @@ class EngagementDeliverableFactory extends Factory
         ]);
     }
 
+    // TODO Potentially think about extracting this concept as a trait
+    // And adding the ability to "weight" certain states more than others
     public function randomizeState(): self
     {
         $states = ['deliveryAwaiting', 'deliverySuccessful', 'deliveryFailed'];
