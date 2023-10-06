@@ -92,6 +92,13 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->engagementBatch();
     }
 
+    public function scopeHasBeenDelivered(Builder $query): void
+    {
+        $query->whereDoesntHave('engagementDeliverables', function (Builder $query) {
+            $query->whereNull('delivered_at');
+        });
+    }
+
     public function scopeHasNotBeenDelivered(Builder $query): void
     {
         $query->whereDoesntHave('engagementDeliverables', function (Builder $query) {

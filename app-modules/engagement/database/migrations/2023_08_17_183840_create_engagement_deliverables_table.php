@@ -12,7 +12,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('engagement_id')->constrained('engagements');
             $table->string('channel');
-            $table->string('delivery_status')->default(EngagementDeliveryStatus::AWAITING->value);
+            $table->string('delivery_status')->default(EngagementDeliveryStatus::Awaiting->value);
             $table->timestamp('delivered_at')->nullable();
             $table->timestamp('last_delivery_attempt')->nullable();
             $table->longText('delivery_response')->nullable();

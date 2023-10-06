@@ -732,6 +732,7 @@ namespace Assist\Engagement\Models{
  * @property-read int|null $engagement_deliverables_count
  * @property-read \App\Models\User|null $user
  * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()

@@ -27,14 +27,14 @@ trait EngagementInfolist
                     TextEntry::make('channel'),
                     IconEntry::make('delivery_status')
                         ->icon(fn (EngagementDeliveryStatus $state): string => match ($state) {
-                            EngagementDeliveryStatus::SUCCESSFUL => 'heroicon-o-check-circle',
-                            EngagementDeliveryStatus::AWAITING => 'heroicon-o-clock',
-                            EngagementDeliveryStatus::FAILED => 'heroicon-o-x-circle',
+                            EngagementDeliveryStatus::Successful => 'heroicon-o-check-circle',
+                            EngagementDeliveryStatus::Awaiting => 'heroicon-o-clock',
+                            EngagementDeliveryStatus::Failed => 'heroicon-o-x-circle',
                         })
                         ->color(fn (EngagementDeliveryStatus $state): string => match ($state) {
-                            EngagementDeliveryStatus::SUCCESSFUL => 'success',
-                            EngagementDeliveryStatus::AWAITING => 'info',
-                            EngagementDeliveryStatus::FAILED => 'danger',
+                            EngagementDeliveryStatus::Successful => 'success',
+                            EngagementDeliveryStatus::Awaiting => 'warning',
+                            EngagementDeliveryStatus::Failed => 'danger',
                         }),
                     TextEntry::make('delivered_at'),
                     TextEntry::make('delivery_response'),

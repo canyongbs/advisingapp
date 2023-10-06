@@ -1,5 +1,5 @@
 <div
-    class="flex flex-col items-start justify-start space-y-2 rounded-tl-lg border-b-2 border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+    class="flex flex-col items-start justify-start space-y-4 bg-white p-4 text-sm font-normal text-gray-700 dark:bg-gray-800 dark:text-gray-400"
     x-show="showFilters"
 >
     <span>Filter Engagements by:</span>
@@ -15,16 +15,10 @@
     <div class="flex w-full flex-col space-y-2">
         <span>Date Range</span>
 
-        <div class="flex w-full flex-col items-center">
-            <div class="relative w-full">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <x-filament::icon
-                        class="h-4 w-4 text-gray-500 dark:text-gray-400"
-                        icon="heroicon-o-calendar-days"
-                    />
-                </div>
+        <div class="flex w-full flex-col items-center space-y-2">
+            <div class="w-full">
                 <input
-                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                     name="filterStartDate"
                     type="date"
                     wire:model.live="filterStartDate"
@@ -32,15 +26,9 @@
                 >
             </div>
             <span class="mx-4 text-gray-500">to</span>
-            <div class="relative w-full">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <x-filament::icon
-                        class="h-4 w-4 text-gray-500 dark:text-gray-400"
-                        icon="heroicon-o-calendar-days"
-                    />
-                </div>
+            <div class="w-full">
                 <input
-                    class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    class="block w-full rounded-lg border border-gray-300 bg-transparent p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:text-white"
                     name="filterEndDate"
                     type="date"
                     wire:model.live="filterEndDate"
@@ -72,11 +60,3 @@
         </span>
     </label>
 </div>
-
-<style>
-    input[type="date"]::-webkit-inner-spin-button,
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        display: none;
-        -webkit-appearance: none;
-    }
-</style>

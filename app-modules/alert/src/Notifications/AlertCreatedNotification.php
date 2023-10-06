@@ -5,6 +5,8 @@ namespace Assist\Alert\Notifications;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Assist\Alert\Models\Alert;
+use Filament\Facades\Filament;
+use Illuminate\Support\HtmlString;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Filament\Notifications\Notification as FilamentNotification;
@@ -22,12 +24,25 @@ class AlertCreatedNotification extends Notification implements ShouldQueue
 
     public function toDatabase(User $notifiable): array
     {
-        $name = $this->alert->concern->{$this->alert->concern->displayNameKey()};
+        $concern = $this->alert->concern;
+
+        $name = $concern->{$concern->displayNameKey()};
+
+        $target = resolve(Filament::getModelResource($concern));
+
+        $alertUrl = $target::getUrl('manage-alerts', ['record' => $concern]);
+
+        $alertLink = new HtmlString("<a href='{$alertUrl}' target='_blank' class='underline'>alert</a>");
+
+        $morph = str($concern->getMorphClass());
+
+        $morphUrl = $target::getUrl('view', ['record' => $concern]);
+
+        $morphLink = new HtmlString("<a href='{$morphUrl}' target='_blank' class='underline'>{$name}</a>");
 
         return FilamentNotification::make()
-            ->status('warning')
-            ->title("A {$this->alert->severity->value} severity alert has been created for {$name}")
-            ->toDatabase()
-            ->data;
+            ->warning()
+            ->title("A {$this->alert->severity->value} severity {$alertLink} has been created for {$morph} {$morphLink}")
+            ->getDatabaseMessage();
     }
 }
