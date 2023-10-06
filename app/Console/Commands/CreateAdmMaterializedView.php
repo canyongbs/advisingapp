@@ -34,7 +34,7 @@ class CreateAdmMaterializedView extends Command
 
         $database->statement('CREATE MATERIALIZED VIEW students_local AS SELECT * FROM students;');
 
-        $database->statement('CREATE INDEX idx_sisid ON students_local (sisid);');
+        $database->statement('CREATE INDEX idx_students_sisid ON students_local (sisid);');
 
         $database->statement('VACUUM ANALYZE students_local;');
 
@@ -46,7 +46,7 @@ class CreateAdmMaterializedView extends Command
 
         $database->statement('CREATE MATERIALIZED VIEW programs_local AS SELECT * FROM programs;');
 
-        $database->statement('CREATE INDEX idx_sisid ON programs_local (sisid);');
+        $database->statement('CREATE INDEX idx_programs_sisid ON programs_local (sisid);');
 
         $database->statement('VACUUM ANALYZE programs_local;');
 
@@ -58,7 +58,7 @@ class CreateAdmMaterializedView extends Command
 
         $database->statement('CREATE MATERIALIZED VIEW enrollments_local AS SELECT * FROM enrollments;');
 
-        $database->statement('CREATE INDEX idx_sisid ON enrollments_local (sisid);');
+        $database->statement('CREATE INDEX idx_enrollments_sisid ON enrollments_local (sisid);');
 
         $database->statement('VACUUM ANALYZE enrollments_local;');
 
@@ -70,7 +70,7 @@ class CreateAdmMaterializedView extends Command
 
         $database->statement('CREATE MATERIALIZED VIEW performance_local AS SELECT * FROM performance;');
 
-        $database->statement('CREATE INDEX idx_sisid ON performance_local (sisid);');
+        $database->statement('CREATE INDEX idx_performance_sisid ON performance_local (sisid);');
 
         $database->statement('VACUUM ANALYZE performance_local;');
 
