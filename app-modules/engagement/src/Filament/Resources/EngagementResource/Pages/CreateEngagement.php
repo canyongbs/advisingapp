@@ -23,7 +23,7 @@ class CreateEngagement extends CreateRecord
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 // TODO Better validation error messages here, "You must select at least 1 delivery method"
                 Select::make('delivery_methods')

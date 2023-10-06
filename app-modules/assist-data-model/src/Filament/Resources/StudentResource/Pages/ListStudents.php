@@ -26,7 +26,7 @@ class ListStudents extends ListRecords
 
     public function table(Table $table): Table
     {
-        return parent::table($table)
+        return $table
             ->columns([
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')

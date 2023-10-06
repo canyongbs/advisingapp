@@ -24,7 +24,7 @@ class CreateCaseload extends CreateRecord implements HasTable
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 TextInput::make('name')
                     ->autocomplete(false)

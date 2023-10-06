@@ -21,7 +21,7 @@ class EditForm extends EditRecord
 
     public function form(FilamentForm $form): FilamentForm
     {
-        return parent::form($form)
+        return $form
             ->schema($this->fields());
     }
 

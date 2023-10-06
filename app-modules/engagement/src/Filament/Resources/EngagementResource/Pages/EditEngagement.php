@@ -22,7 +22,7 @@ class EditEngagement extends EditRecord
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 Hidden::make('user_id')
                     ->default(auth()->user()->id),

@@ -15,7 +15,7 @@ class EditConsentAgreement extends EditRecord
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 TextInput::make('type')
                     ->disabled()

@@ -23,7 +23,7 @@ class EditServiceRequest extends EditRecord
 
     public function form(Form $form): Form
     {
-        return parent::form($form)->schema([
+        return $form->schema([
             Select::make('division_id')
                 ->relationship('division', 'name')
                 ->label('Division')

@@ -21,7 +21,7 @@ class CreateProspect extends CreateRecord
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 Select::make('status_id')
                     ->label('Status')
