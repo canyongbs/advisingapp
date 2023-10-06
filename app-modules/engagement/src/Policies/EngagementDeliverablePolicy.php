@@ -12,7 +12,7 @@ class EngagementDeliverablePolicy
     {
         return $user->canOrElse(
             abilities: 'engagement_deliverable.view-any',
-            denyResponse: 'You do not have permission to view engagements.'
+            denyResponse: 'You do not have permission to view engagement deliverables.'
         );
     }
 

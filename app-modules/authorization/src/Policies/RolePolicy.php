@@ -31,21 +31,21 @@ class RolePolicy
 
     public function update(User $user, Role $role): Response
     {
-        return Response::deny('Permissions cannot be updated.');
+        return Response::deny('Roles cannot be updated.');
     }
 
     public function delete(User $user, Role $role): Response
     {
-        return Response::deny('Permissions cannot be deleted.');
+        return Response::deny('Roles cannot be deleted.');
     }
 
     public function restore(User $user, Role $role): Response
     {
-        return Response::deny('Permissions cannot be restore.');
+        return Response::deny('Roles cannot be restore.');
     }
 
     public function forceDelete(User $user, Role $role): Response
     {
-        return Response::deny('Permissions cannot be force deleted.');
+        return Response::deny('Roles cannot be force deleted.');
     }
 }

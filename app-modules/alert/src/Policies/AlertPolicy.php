@@ -16,10 +16,10 @@ class AlertPolicy
         );
     }
 
-    public function view(User $user, Alert $alerts): Response
+    public function view(User $user, Alert $alert): Response
     {
         return $user->canOrElse(
-            abilities: ['alert.*.view', "alert.{$alerts->id}.view"],
+            abilities: ['alert.*.view', "alert.{$alert->id}.view"],
             denyResponse: 'You do not have permission to view this alert.'
         );
     }
@@ -32,34 +32,34 @@ class AlertPolicy
         );
     }
 
-    public function update(User $user, Alert $alerts): Response
+    public function update(User $user, Alert $alert): Response
     {
         return $user->canOrElse(
-            abilities: ['alert.*.update', "alert.{$alerts->id}.update"],
+            abilities: ['alert.*.update', "alert.{$alert->id}.update"],
             denyResponse: 'You do not have permission to update this alert.'
         );
     }
 
-    public function delete(User $user, Alert $alerts): Response
+    public function delete(User $user, Alert $alert): Response
     {
         return $user->canOrElse(
-            abilities: ['alert.*.delete', "alert.{$alerts->id}.delete"],
+            abilities: ['alert.*.delete', "alert.{$alert->id}.delete"],
             denyResponse: 'You do not have permission to delete this alert.'
         );
     }
 
-    public function restore(User $user, Alert $alerts): Response
+    public function restore(User $user, Alert $alert): Response
     {
         return $user->canOrElse(
-            abilities: ['alert.*.restore', "alert.{$alerts->id}.restore"],
+            abilities: ['alert.*.restore', "alert.{$alert->id}.restore"],
             denyResponse: 'You do not have permission to restore this alert.'
         );
     }
 
-    public function forceDelete(User $user, Alert $alerts): Response
+    public function forceDelete(User $user, Alert $alert): Response
     {
         return $user->canOrElse(
-            abilities: ['alert.*.force-delete', "alert.{$alerts->id}.force-delete"],
+            abilities: ['alert.*.force-delete', "alert.{$alert->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this alert.'
         );
     }
