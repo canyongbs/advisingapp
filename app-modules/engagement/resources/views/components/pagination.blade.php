@@ -67,6 +67,7 @@
 
                             {{-- Array Of Links --}}
                             @if (is_array($element))
+                                {{-- TODO Don't show all links --}}
                                 @foreach ($element as $page => $url)
                                     <span wire:key="paginator-{{ $paginator->getPageName() }}-page{{ $page }}">
                                         @if ($page == $paginator->currentPage())
