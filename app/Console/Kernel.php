@@ -7,6 +7,7 @@ use App\Models\FailedImportRow;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
 use Spatie\Health\Commands\RunHealthChecksCommand;
+use App\Console\Commands\RefreshAdmMaterializedView;
 use Assist\Assistant\Models\AssistantChatMessageLog;
 use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
@@ -28,6 +29,34 @@ class Kernel extends ConsoleKernel
         $schedule->command(PruneCommand::class, [
             '--model' => [Audit::class, AssistantChatMessageLog::class, FailedImportRow::class],
         ])->daily()->evenInMaintenanceMode()->onOneServer();
+
+        $schedule->command(RefreshAdmMaterializedView::class, ['students'])
+            ->everyMinute()
+            ->evenInMaintenanceMode()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
+
+        $schedule->command(RefreshAdmMaterializedView::class, ['enrollments'])
+            ->everyMinute()
+            ->evenInMaintenanceMode()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
+
+        $schedule->command(RefreshAdmMaterializedView::class, ['performance'])
+            ->everyMinute()
+            ->evenInMaintenanceMode()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
+
+        $schedule->command(RefreshAdmMaterializedView::class, ['programs'])
+            ->everyMinute()
+            ->evenInMaintenanceMode()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
 
         // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
         $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
