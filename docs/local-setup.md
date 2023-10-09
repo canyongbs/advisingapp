@@ -64,8 +64,8 @@ sail up -d
 Finally, we will set up the application by running the following commands:
 ```bash
 sail artisan key:generate
-sail artisan migrate
-sail artisan migrate --database=sis --path=database/migrations/sis
+sail artisan migrate:fresh
+sail artisan migrate:fresh --database=sis --path=app-modules/assist-data-model/database/migrations/sis
 sail artisan db:seed
 sail npm install
 sail npm run dev
@@ -105,6 +105,18 @@ Within the containers, MySQL lives on port 3306. And by default it can be access
 If port 3306 is already in use on your system or you prefer to use another port,
 you can set the `FORWARD_DB_PORT` in your `.env` file to whatever available
 port you want.
+
+### Seed Mass ADM Data
+In order to seed the ADM data, you will need to first create a shell within sail by running the following command:
+```bash
+sail shell
+```
+
+Then you can run the following command within the sail container to seed the data:
+
+```bash
+source .env ; gunzip < resources/sql/assist-adm-data.gz | PGPASSWORD=$SIS_DB_PASSWORD psql -h $SIS_DB_HOST -p $SIS_DB_PORT -U $SIS_DB_USERNAME -d $SIS_DB_DATABASE -q
+```
 
 ### Minio (S3 Compatible Storage)
 Minio is a S3 compatible storage solution that is used for storing files locally.
