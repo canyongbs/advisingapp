@@ -2,6 +2,9 @@
 
 namespace Assist\AssistDataModel\Database\Factories;
 
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -44,5 +47,20 @@ class StudentFactory extends Factory
             'f_e_term' => $this->faker->randomNumber(4),
             'mr_e_term' => $this->faker->randomNumber(4),
         ];
+    }
+
+    protected function store(Collection $results)
+    {
+        // Because Students points to a Materialized View, we need to set the table to the actual table name before storing and then refresh the view after storing.
+
+        $results = $results->map(fn (Model $result) => $result->setTable('students'));
+
+        parent::store($results);
+
+        $results->each(function (Model $result) {
+            $result->setTable('students_local');
+        });
+
+        DB::connection('pgsql')->statement('REFRESH MATERIALIZED VIEW students_local');
     }
 }
