@@ -10,23 +10,26 @@ class ProspectPolicy
 {
     public function viewAny(User $user): Response
     {
-        return $user->can('prospect.view-any')
-            ? Response::allow()
-            : Response::deny('You do not have permission to view prospects.');
+        return $user->canOrElse(
+            abilities: 'prospect.view-any',
+            denyResponse: 'You do not have permission to view prospects.'
+        );
     }
 
     public function view(User $user, Prospect $prospect): Response
     {
-        return $user->can('prospect.*.view') || $user->can("prospect.{$prospect->id}.view")
-            ? Response::allow()
-            : Response::deny('You do not have permission to view this prospect.');
+        return $user->canOrElse(
+            abilities: ['prospect.*.view', "prospect.{$prospect->id}.view"],
+            denyResponse: 'You do not have permission to view this prospect.'
+        );
     }
 
     public function create(User $user): Response
     {
-        return $user->can('prospect.create')
-            ? Response::allow()
-            : Response::deny('You do not have permission to create prospects.');
+        return $user->canOrElse(
+            abilities: 'prospect.create',
+            denyResponse: 'You do not have permission to create prospects.'
+        );
     }
 
     public function import(User $user): Response
@@ -39,29 +42,33 @@ class ProspectPolicy
 
     public function update(User $user, Prospect $prospect): Response
     {
-        return $user->can('prospect.*.update') || $user->can("prospect.{$prospect->id}.update")
-            ? Response::allow()
-            : Response::deny('You do not have permission to update this prospect.');
+        return $user->canOrElse(
+            abilities: ['prospect.*.update', "prospect.{$prospect->id}.update"],
+            denyResponse: 'You do not have permission to update this prospect.'
+        );
     }
 
     public function delete(User $user, Prospect $prospect): Response
     {
-        return $user->can('prospect.*.delete') || $user->can("prospect.{$prospect->id}.delete")
-            ? Response::allow()
-            : Response::deny('You do not have permission to delete this prospect.');
+        return $user->canOrElse(
+            abilities: ['prospect.*.delete', "prospect.{$prospect->id}.delete"],
+            denyResponse: 'You do not have permission to delete this prospect.'
+        );
     }
 
     public function restore(User $user, Prospect $prospect): Response
     {
-        return $user->can('prospect.*.restore') || $user->can("prospect.{$prospect->id}.restore")
-            ? Response::allow()
-            : Response::deny('You do not have permission to restore this prospect.');
+        return $user->canOrElse(
+            abilities: ['prospect.*.restore', "prospect.{$prospect->id}.restore"],
+            denyResponse: 'You do not have permission to restore this prospect.'
+        );
     }
 
     public function forceDelete(User $user, Prospect $prospect): Response
     {
-        return $user->can('prospect.*.force-delete') || $user->can("prospect.{$prospect->id}.force-delete")
-            ? Response::allow()
-            : Response::deny('You do not have permission to force delete this prospect.');
+        return $user->canOrElse(
+            abilities: ['prospect.*.force-delete', "prospect.{$prospect->id}.force-delete"],
+            denyResponse: 'You do not have permission to force delete this prospect.'
+        );
     }
 }
