@@ -2,6 +2,8 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
+use App\Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
@@ -44,25 +46,26 @@ class ListStudents extends ListRecords
                     ->searchable(),
             ])
             ->filters([
-                Filter::make('subscribed')
-                    ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
-                TernaryFilter::make('sap')
-                    ->label('SAP'),
-                TernaryFilter::make('dual'),
-                TernaryFilter::make('ferpa')
-                    ->label('FERPA'),
-                Filter::make('holds')
-                    ->form([
-                        TextInput::make('hold'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['hold'],
-                                fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
-                            );
-                    }),
-            ])
+                QueryBuilder::make('query'),
+//                TernaryFilter::make('sap')
+//                    ->label('SAP'),
+//                TernaryFilter::make('dual'),
+//                TernaryFilter::make('ferpa')
+//                    ->label('FERPA'),
+//                Filter::make('holds')
+//                    ->form([
+//                        TextInput::make('hold'),
+//                    ])
+//                    ->query(function (Builder $query, array $data): Builder {
+//                        return $query
+//                            ->when(
+//                                $data['hold'],
+//                                fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
+//                            );
+//                    }),
+//                Filter::make('subscribed')
+//                    ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
+            ], layout: FiltersLayout::AboveContent)
             ->actions([
                 ViewAction::make(),
                 SubscribeTableAction::make(),
