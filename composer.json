@@ -128,6 +128,9 @@
             "@php artisan app:create-adm-materialized-views",
             "@php artisan db:seed"
         ],
+        "refresh-sis": [
+            "./refresh-and-seed-sis.sh"
+        ],
         "php-cs-format": [
             "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
         ],
