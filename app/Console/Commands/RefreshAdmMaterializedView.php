@@ -12,13 +12,8 @@ class RefreshAdmMaterializedView extends Command
      *
      * @var string
      */
-    protected $signature = 'app:refresh-adm-materialized-view';
+    protected $signature = 'app:refresh-adm-materialized-view {remoteTable} {--indexColumn=sisid} {--connection=pgsql}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Command description';
 
     /**
@@ -26,14 +21,18 @@ class RefreshAdmMaterializedView extends Command
      */
     public function handle()
     {
-        $database = DB::connection('pgsql');
+        $database = DB::connection($this->option('connection'));
 
-        $database->statement('REFRESH MATERIALIZED VIEW CONCURRENTLY students_local;');
+        $remoteTable = $this->argument('remoteTable');
 
-        $database->statement('REFRESH MATERIALIZED VIEW programs_local;');
+        $localTable = $remoteTable . '_local';
 
-        $database->statement('REFRESH MATERIALIZED VIEW enrollments_local;');
+        $temporaryTable = $localTable . '_tmp';
 
-        $database->statement('REFRESH MATERIALIZED VIEW performance_local;');
+        $database->unprepared("CREATE MATERIALIZED VIEW {$temporaryTable} AS SELECT * FROM {$remoteTable};");
+
+        $indexColumn = $this->option('indexColumn');
+
+        $database->unprepared("BEGIN TRANSACTION; DROP MATERIALIZED VIEW IF EXISTS {$localTable}; ALTER MATERIALIZED VIEW {$temporaryTable} RENAME TO {$localTable}; CREATE INDEX idx_{$remoteTable}_{$indexColumn} ON {$localTable} ({$indexColumn}); COMMIT;");
     }
 }
