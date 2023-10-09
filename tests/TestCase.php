@@ -18,6 +18,8 @@ abstract class TestCase extends BaseTestCase
     use CanConfigureMigrationCommands;
     use LoadsFixtures;
 
+    protected array $connectionsToTransact = ['pgsql', 'sis'];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -38,6 +40,8 @@ abstract class TestCase extends BaseTestCase
         $this->artisan('app:remove-foreign-data-wrapper');
 
         $this->artisan('app:setup-foreign-data-wrapper');
+
+        $this->artisan('app:create-adm-materialized-views');
 
         $this->artisan(SyncRolesAndPermissions::class);
 

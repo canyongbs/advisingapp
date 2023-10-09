@@ -24,7 +24,7 @@ class EngagementFactory extends Factory
                 (new Prospect())->getMorphClass(),
             ]),
             'recipient_id' => function (array $attributes) {
-                $senderClass = Relation::getMorphedModel($attributes['sender_type']);
+                $senderClass = Relation::getMorphedModel($attributes['recipient_type']);
 
                 /** @var Student|Prospect $senderModel */
                 $senderModel = new $senderClass();
