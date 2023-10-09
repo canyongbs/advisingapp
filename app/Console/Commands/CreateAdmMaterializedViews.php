@@ -13,6 +13,12 @@ class CreateAdmMaterializedViews extends Command
 
     public function handle(): void
     {
+        if (! config('database.adm_materialized_views_enabled')) {
+            $this->warn('ADM materialized views are not enabled, skipping...');
+
+            return;
+        }
+
         resolve(SetupAdmMaterializedViews::class)->handle(
             connection: 'pgsql',
             remoteTable: 'students',

@@ -51,16 +51,18 @@ class StudentFactory extends Factory
 
     protected function store(Collection $results)
     {
-        // Because Students points to a Materialized View, we need to set the table to the actual table name before storing and then refresh the view after storing.
+        if (config('database.adm_materialized_views_enabled')) {
+            // Because Students points to a Materialized View, we need to set the table to the actual table name before storing and then refresh the view after storing.
 
-        $results = $results->map(fn (Model $result) => $result->setTable('students'));
+            $results = $results->map(fn (Model $result) => $result->setTable('students'));
 
-        parent::store($results);
+            parent::store($results);
 
-        $results->each(function (Model $result) {
-            $result->setTable('students_local');
-        });
+            $results->each(function (Model $result) {
+                $result->setTable('students_local');
+            });
 
-        DB::connection('pgsql')->statement('REFRESH MATERIALIZED VIEW students_local');
+            DB::connection('pgsql')->statement('REFRESH MATERIALIZED VIEW students_local');
+        }
     }
 }

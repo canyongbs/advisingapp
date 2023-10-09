@@ -30,6 +30,16 @@ class Kernel extends ConsoleKernel
             '--model' => [Audit::class, AssistantChatMessageLog::class, FailedImportRow::class],
         ])->daily()->evenInMaintenanceMode()->onOneServer();
 
+        if (config('database.adm_materialized_views_enabled')) {
+            $this->refreshAdmMaterializedViews($schedule);
+        }
+
+        // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
+        $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+    }
+
+    protected function refreshAdmMaterializedViews(Schedule $schedule): void
+    {
         $schedule->command(RefreshAdmMaterializedView::class, ['students'])
             ->everyMinute()
             ->evenInMaintenanceMode()
@@ -57,9 +67,6 @@ class Kernel extends ConsoleKernel
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
-
-        // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
-        $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
     }
 
     /**

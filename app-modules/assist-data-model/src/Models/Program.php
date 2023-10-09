@@ -15,8 +15,6 @@ class Program extends Model
     use HasFactory;
     use DefinesPermissions;
 
-    protected $table = 'programs_local';
-
     // TODO: Need to revisit whether or not this should be the primary key, just using it for now since there is nothing else
     protected $primaryKey = 'sisid';
 
@@ -34,5 +32,16 @@ class Program extends Model
     public function getApiPermissions(): Collection
     {
         return collect([]);
+    }
+
+    public function getTable()
+    {
+        if ($this->table) {
+            return $this->table;
+        }
+
+        return config('database.adm_materialized_views_enabled')
+            ? 'programs_local'
+            : parent::getTable();
     }
 }
