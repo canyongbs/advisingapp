@@ -41,7 +41,7 @@ class RolePolicy
 
     public function restore(User $user, Role $role): Response
     {
-        return Response::deny('Roles cannot be restore.');
+        return Response::deny('Roles cannot be restored.');
     }
 
     public function forceDelete(User $user, Role $role): Response
