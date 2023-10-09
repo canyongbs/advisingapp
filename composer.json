@@ -123,6 +123,7 @@
             "@php artisan migrate:fresh --database=sis --path=app-modules/assist-data-model/database/migrations/sis",
             "@php artisan app:remove-foreign-data-wrapper",
             "@php artisan app:setup-foreign-data-wrapper",
+            "@php artisan app:create-adm-materialized-views",
             "@php artisan db:seed"
         ],
         "php-cs-format": [
