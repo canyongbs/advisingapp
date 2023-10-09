@@ -4,14 +4,18 @@ namespace Assist\Consent\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Audit\Overrides\BelongsToMany;
 use Assist\Consent\Enums\ConsentAgreementType;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperConsentAgreement
  */
-class ConsentAgreement extends BaseModel
+class ConsentAgreement extends BaseModel implements Auditable
 {
+    use AuditableTrait;
+
     protected $casts = [
         'type' => ConsentAgreementType::class,
     ];
@@ -22,7 +26,7 @@ class ConsentAgreement extends BaseModel
         'body',
     ];
 
-    public function user(): BelongsToMany
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
             ->withPivot('ip_address')
