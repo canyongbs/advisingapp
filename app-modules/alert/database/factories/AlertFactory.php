@@ -19,7 +19,7 @@ class AlertFactory extends Factory
         $concern = fake()->randomElement([new Student(), new Prospect()]);
 
         return [
-            'concern_id' => $concern::factory(),
+            'concern_id' => $concern::class === Student::class ? $concern::inRandomOrder()->first()->sisid ?? $concern::factory() : $concern::factory(),
             'concern_type' => $concern->getMorphClass(),
             'description' => fake()->sentence(),
             'severity' => fake()->randomElement(AlertSeverity::cases()),

@@ -4,28 +4,37 @@ namespace Assist\Engagement\Database\Factories;
 
 use App\Models\User;
 use Assist\Prospect\Models\Prospect;
+use Assist\Engagement\Models\Engagement;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Engagement\Models\Engagement>
+ * @extends Factory<Engagement>
  */
 class EngagementFactory extends Factory
 {
     public function definition(): array
     {
-        $recipient = fake()->randomElement([
-            Student::class,
-            Prospect::class,
-        ]);
-
-        $recipient = $recipient::factory()->create();
-
         return [
             'user_id' => User::factory(),
-            'recipient_id' => $recipient->id,
-            'recipient_type' => $recipient->getMorphClass(),
+            'recipient_type' => fake()->randomElement([
+                (new Student())->getMorphClass(),
+                (new Prospect())->getMorphClass(),
+            ]),
+            'recipient_id' => function (array $attributes) {
+                $senderClass = Relation::getMorphedModel($attributes['sender_type']);
+
+                /** @var Student|Prospect $senderModel */
+                $senderModel = new $senderClass();
+
+                $sender = $senderClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $senderModel::factory()->create();
+
+                return $sender->getKey();
+            },
             'subject' => fake()->sentence,
             'body' => fake()->paragraph,
             'deliver_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
@@ -35,7 +44,7 @@ class EngagementFactory extends Factory
     public function forStudent(): self
     {
         return $this->state([
-            'recipient_id' => Student::factory(),
+            'recipient_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
     }
