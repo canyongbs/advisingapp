@@ -2,13 +2,16 @@
 
 use App\Models\User;
 use Assist\Task\Models\Task;
-use Assist\Task\Enums\TaskStatus;
-use Assist\Task\Filament\Resources\TaskResource;
-use Assist\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 
 use function Tests\asSuperAdmin;
+
+use Assist\Task\Enums\TaskStatus;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use Assist\Task\Filament\Resources\TaskResource;
+use Assist\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 
 test('ListTasks page displays the correct details for available my tasks', function () {
     asSuperAdmin();

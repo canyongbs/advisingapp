@@ -3,8 +3,8 @@
 namespace Assist\Engagement\Database\Factories;
 
 use Assist\Engagement\Models\Engagement;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Assist\Engagement\Models\EngagementDeliverable;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 
