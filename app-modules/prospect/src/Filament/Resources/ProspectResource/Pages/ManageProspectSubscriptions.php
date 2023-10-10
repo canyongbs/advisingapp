@@ -12,7 +12,7 @@ use App\Filament\Resources\UserResource;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 
@@ -85,7 +85,21 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DetachBulkAction::make()
+                        ->label('Unsubscribe selected')
+                        ->modalHeading(function () {
+                            /** @var Prospect $prospect */
+                            $prospect = $this->getOwnerRecord();
+
+                            return "Unsubscribe selected from {$prospect->display_name}";
+                        })
+                        ->modalSubmitActionLabel('Unsubscribe')
+                        ->successNotificationTitle(function () {
+                            /** @var Prospect $prospect */
+                            $prospect = $this->getOwnerRecord();
+
+                            return "All selected were unsubscribed from {$prospect->display_name}";
+                        }),
                 ]),
             ])
             ->emptyStateHeading('No Subscriptions')

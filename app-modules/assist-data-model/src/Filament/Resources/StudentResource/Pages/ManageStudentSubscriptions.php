@@ -12,7 +12,7 @@ use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 
@@ -85,7 +85,21 @@ class ManageStudentSubscriptions extends ManageRelatedRecords
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DetachBulkAction::make()
+                        ->label('Unsubscribe selected')
+                        ->modalHeading(function () {
+                            /** @var Student $student */
+                            $student = $this->getOwnerRecord();
+
+                            return "Unsubscribe selected from {$student->display_name}";
+                        })
+                        ->modalSubmitActionLabel('Unsubscribe')
+                        ->successNotificationTitle(function () {
+                            /** @var Student $student */
+                            $student = $this->getOwnerRecord();
+
+                            return "All selected were unsubscribed from {$student->display_name}";
+                        }),
                 ]),
             ])
             ->emptyStateHeading('No Subscriptions')
