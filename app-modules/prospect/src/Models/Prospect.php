@@ -32,6 +32,8 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
  * @mixin IdeHelperProspect
+ *
+ * @property string $display_name
  */
 class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, HasFilamentResource
 {
