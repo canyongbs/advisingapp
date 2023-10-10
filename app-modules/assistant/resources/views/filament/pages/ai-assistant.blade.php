@@ -17,21 +17,20 @@ use Illuminate\Support\Facades\Vite;
         @if ($consentedToTerms === true && $loading === false)
             <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
                 <div class="col-span-1">
-                    <div class="rounded-xl bg-white p-2 shadow-sm border border-gray-950/5 dark:bg-gray-900 dark:border-white/10 md:block">
-                        <div class="fi-sidebar-group flex flex-col gap-y-2">
-                            <x-filament::button
-                                icon="heroicon-m-plus"
-                                wire:click="newChat"
-                            >
-                                {{ __('New Chat') }}
-                            </x-filament::button>
+                    <div class="flex flex-col gap-y-2">
+                        <x-filament::button
+                            icon="heroicon-m-plus"
+                            wire:click="newChat"
+                        >
+                            {{ __('New Chat') }}
+                        </x-filament::button>
 
-                            <ul class="fi-sidebar-group-items flex flex-col gap-y-1">
+                        @if (count($chats))
+                            <ul class="shadow-sm rounded-xl bg-white p-2 flex flex-col gap-y-1 border border-gray-950/5 dark:bg-gray-900 dark:border-white/10">
                                 @foreach ($chats as $chatItem)
                                     <li @class([
-                                        'fi-sidebar-item px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                        'fi-active fi-sidebar-item-active bg-gray-100 dark:bg-white/5' =>
-                                            $chat->id === $chatItem->id,
+                                        'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                        'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
                                     ])>
                                         <a
                                             @class([
@@ -55,7 +54,7 @@ use Illuminate\Support\Facades\Vite;
                                     </li>
                                 @endforeach
                             </ul>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
