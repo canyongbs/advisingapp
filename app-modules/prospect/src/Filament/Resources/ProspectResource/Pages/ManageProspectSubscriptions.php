@@ -2,8 +2,10 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
@@ -57,21 +59,41 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                 // TODO: Change labels and headings
                 AttachAction::make()
                     ->label('Create Subscription')
-                    ->modalHeading('Subscribe a User to this Prospect')
+                    ->modalHeading(function () {
+                        /** @var Prospect $prospect */
+                        $prospect = $this->getOwnerRecord();
+
+                        return 'Subscribe a User to ' . $prospect->display_name;
+                    })
                     ->modalSubmitActionLabel('Subscribe')
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
                         fn (Select $select) => $select->placeholder('Select a User'),
                     )
-                    ->successNotificationTitle('User subscribed'),
+                    ->successNotificationTitle(function (User $record) {
+                        /** @var Prospect $prospect */
+                        $prospect = $this->getOwnerRecord();
+
+                        return "{$record->name} was subscribed to {$prospect->display_name}";
+                    }),
             ])
             ->actions([
                 DetachAction::make()
                     ->label('Unsubscribe')
-                    ->modalHeading('Unsubscribe User from this Prospect')
+                    ->modalHeading(function (User $record) {
+                        /** @var Prospect $prospect */
+                        $prospect = $this->getOwnerRecord();
+
+                        return "Unsubscribe {$record->name} from {$prospect->display_name}";
+                    })
                     ->modalSubmitActionLabel('Unsubscribe')
-                    ->successNotificationTitle('User unsubscribed'),
+                    ->successNotificationTitle(function (User $record) {
+                        /** @var Prospect $prospect */
+                        $prospect = $this->getOwnerRecord();
+
+                        return "{$record->name} was unsubscribed from {$prospect->display_name}";
+                    }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
