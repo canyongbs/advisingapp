@@ -66,8 +66,8 @@ class EngagementDeliverable extends BaseModel implements Auditable
     public function jobForDelivery(): QueuedEngagementDelivery
     {
         return match ($this->channel) {
-            EngagementDeliveryMethod::EMAIL => new EngagementEmailChannelDelivery($this),
-            EngagementDeliveryMethod::SMS => new EngagementSmsChannelDelivery($this),
+            EngagementDeliveryMethod::Email => new EngagementEmailChannelDelivery($this),
+            EngagementDeliveryMethod::Sms => new EngagementSmsChannelDelivery($this),
             default => throw new UnknownDeliveryMethodException("Delivery channel '{$this->channel}' is not supported."),
         };
     }
@@ -75,8 +75,8 @@ class EngagementDeliverable extends BaseModel implements Auditable
     public function deliver(): void
     {
         match ($this->channel) {
-            EngagementDeliveryMethod::EMAIL => EngagementEmailChannelDelivery::dispatch($this),
-            EngagementDeliveryMethod::SMS => EngagementSmsChannelDelivery::dispatch($this),
+            EngagementDeliveryMethod::Email => EngagementEmailChannelDelivery::dispatch($this),
+            EngagementDeliveryMethod::Sms => EngagementSmsChannelDelivery::dispatch($this),
             default => throw new UnknownDeliveryMethodException("Delivery channel '{$this->channel}' is not supported."),
         };
     }
