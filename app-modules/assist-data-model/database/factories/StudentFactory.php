@@ -63,6 +63,8 @@ class StudentFactory extends Factory
             });
 
             DB::connection('pgsql')->statement('REFRESH MATERIALIZED VIEW students_local');
+        } else {
+            parent::store($results);
         }
     }
 }
