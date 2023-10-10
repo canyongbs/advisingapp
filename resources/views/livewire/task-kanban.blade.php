@@ -32,6 +32,7 @@
                                                     {{ str($task->title)->limit(50) }}
                                                 </div>
                                                 <x-filament::icon-button
+                                                    class="fi-primary-color"
                                                     wire:click="viewTask('{{ $task->id }}')"
                                                     icon="heroicon-m-arrow-top-right-on-square"
                                                 />

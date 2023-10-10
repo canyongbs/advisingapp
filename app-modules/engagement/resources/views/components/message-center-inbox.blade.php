@@ -17,6 +17,7 @@
                 </span>
             </div>
             <x-filament::icon-button
+                class="fi-primary-color"
                 icon="heroicon-m-funnel"
                 x-on:click="showFilters = !showFilters"
                 label="Show Filters and Search"

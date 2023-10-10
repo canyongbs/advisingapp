@@ -27,7 +27,7 @@
                         >
                             <x-slot:view-record-icon>
                                 <x-filament::icon-button
-                                    class="absolute right-2 top-2"
+                                    class="fi-primary-color absolute right-2 top-2"
                                     wire:click="viewRecord('{{ $record->id }}', '{{ $record->getMorphClass() }}')"
                                     icon="heroicon-o-eye"
                                 />
