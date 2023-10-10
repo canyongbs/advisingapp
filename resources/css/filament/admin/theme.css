@@ -8,6 +8,7 @@
     min-width: 20rem;
 }
 
+/* Bright Sun */
 .dark {
     --primary-50: 255, 251, 235;
     --primary-100: 255, 244, 198;
@@ -22,6 +23,7 @@
     --primary-950: 70, 27, 2;
 }
 
+/* Style Overrides */
 /* .fi-sidebar-item {
     @apply text-assist-black-950 dark:text-assist-white-50  !important;
 }
