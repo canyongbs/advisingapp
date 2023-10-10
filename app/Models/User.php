@@ -14,6 +14,7 @@ use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Assistant\Models\AssistantChat;
+use Assist\AssistDataModel\Models\Student;
 use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Assist\Notifications\Models\Subscription;
@@ -108,6 +109,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     {
         return $this->morphedByMany(
             related: Prospect::class,
+            name: 'subscribable',
+            table: 'subscriptions'
+        )
+            ->using(Subscription::class);
+    }
+
+    public function studentSubscriptions(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Student::class,
             name: 'subscribable',
             table: 'subscriptions'
         )

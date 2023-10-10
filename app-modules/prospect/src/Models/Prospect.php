@@ -148,7 +148,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
         return ProspectResource::class;
     }
 
-    public function subscribedUsers()
+    public function subscribedUsers(): MorphToMany
     {
         return $this->morphToMany(
             related: User::class,

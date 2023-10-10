@@ -10,7 +10,6 @@ use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -31,16 +30,6 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
-    //public function form(Form $form): Form
-    //{
-    //    return $form
-    //        ->schema([
-    //            TextInput::make('user.name')
-    //                ->required()
-    //                ->maxLength(255),
-    //        ]);
-    //}
-
     public function table(Table $table): Table
     {
         return $table
@@ -56,7 +45,6 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ->filters([
             ])
             ->headerActions([
-                // TODO: Change labels and headings
                 AttachAction::make()
                     ->label('Create Subscription')
                     ->modalHeading(function () {
@@ -100,9 +88,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateActions([
-                CreateAction::make(),
-            ])
+            ->emptyStateHeading('No Subscriptions')
             ->inverseRelationship('prospectSubscriptions');
     }
 }
