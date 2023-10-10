@@ -2,7 +2,7 @@
 
 namespace App\Filament\Tables\Filters;
 
-use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\ConditionRepeater;
+use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleRepeater;
 use Filament\Tables\Filters\BaseFilter;
 
 class QueryBuilder extends BaseFilter
@@ -12,7 +12,7 @@ class QueryBuilder extends BaseFilter
         parent::setUp();
 
         $this->form([
-            ConditionRepeater::make('conditions'),
+            RuleRepeater::make('rules'),
         ]);
 
         $this->columnSpanFull();

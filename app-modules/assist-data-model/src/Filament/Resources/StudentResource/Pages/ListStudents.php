@@ -46,7 +46,10 @@ class ListStudents extends ListRecords
                     ->searchable(),
             ])
             ->filters([
-                QueryBuilder::make('query'),
+                QueryBuilder::make('query')
+                    ->columns([
+
+                    ]),
 //                TernaryFilter::make('sap')
 //                    ->label('SAP'),
 //                TernaryFilter::make('dual'),
