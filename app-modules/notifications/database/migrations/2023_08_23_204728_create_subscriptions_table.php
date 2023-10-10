@@ -17,7 +17,6 @@ return new class () extends Migration {
             $table->string('subscribable_id');
             $table->string('subscribable_type');
             $table->timestamps();
-            $table->softDeletes();
 
             $table->uniqueIndex(['user_id', 'subscribable_id', 'subscribable_type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
         });

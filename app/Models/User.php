@@ -9,6 +9,7 @@ use Assist\Team\Models\Team;
 use Assist\Team\Models\TeamUser;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
+use Assist\Prospect\Models\Prospect;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -26,6 +27,7 @@ use Assist\Assistant\Models\AssistantChatMessageLog;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Assist\Engagement\Models\Concerns\HasManyEngagements;
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -100,6 +102,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function prospectSubscriptions(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Prospect::class,
+            name: 'subscribable',
+            table: 'subscriptions'
+        )
+            ->using(Subscription::class);
     }
 
     public function roleGroups(): BelongsToMany
