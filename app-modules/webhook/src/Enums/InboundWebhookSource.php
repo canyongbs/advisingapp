@@ -4,5 +4,5 @@ namespace Assist\Webhook\Enums;
 
 enum InboundWebhookSource: string
 {
-    case TWILIO = 'twilio';
+    case Twilio = 'twilio';
 }
