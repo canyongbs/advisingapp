@@ -5,10 +5,10 @@ namespace Assist\Assistant\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Audit\Settings\AuditSettings;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * @mixin IdeHelperAssistantChatMessageLog

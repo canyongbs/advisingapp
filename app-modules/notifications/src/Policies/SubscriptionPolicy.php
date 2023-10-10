@@ -3,8 +3,8 @@
 namespace Assist\Notifications\Policies;
 
 use App\Models\User;
-use Assist\Notifications\Models\Subscription;
 use Illuminate\Auth\Access\Response;
+use Assist\Notifications\Models\Subscription;
 
 class SubscriptionPolicy
 {

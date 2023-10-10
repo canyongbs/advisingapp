@@ -2,16 +2,16 @@
 
 namespace Assist\KnowledgeBase\Providers;
 
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Authorization\AuthorizationRoleRegistry;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Assist\KnowledgeBase\KnowledgeBasePlugin;
 use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
+use Assist\Authorization\AuthorizationRoleRegistry;
 use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
 use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
+use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\KnowledgeBase\Observers\KnowledgeBaseItemObserver;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider

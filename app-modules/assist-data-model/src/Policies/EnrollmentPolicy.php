@@ -3,8 +3,8 @@
 namespace Assist\AssistDataModel\Policies;
 
 use App\Models\User;
-use Assist\AssistDataModel\Models\Enrollment;
 use Illuminate\Auth\Access\Response;
+use Assist\AssistDataModel\Models\Enrollment;
 
 class EnrollmentPolicy
 {
