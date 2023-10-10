@@ -2,16 +2,13 @@
 
 use App\Models\User;
 use Assist\Task\Models\Task;
-
-use function Tests\asSuperAdmin;
-
 use Assist\Task\Enums\TaskStatus;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
 use Assist\Task\Filament\Resources\TaskResource;
 use Assist\Task\Filament\Resources\TaskResource\Pages\ListTasks;
+
+use function Tests\asSuperAdmin;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 test('ListTasks page displays the correct details for available my tasks', function () {
     asSuperAdmin();
@@ -22,7 +19,7 @@ test('ListTasks page displays the correct details for available my tasks', funct
         ->concerningStudent()
         ->create(
             [
-                'status' => TaskStatus::IN_PROGRESS->value,
+                'status' => TaskStatus::InProgress->value,
             ]
         );
 

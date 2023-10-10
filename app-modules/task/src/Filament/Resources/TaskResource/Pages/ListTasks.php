@@ -25,8 +25,8 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Task\Filament\Resources\TaskResource;
 use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
+use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 class ListTasks extends ListRecords
@@ -110,8 +110,8 @@ class ListTasks extends ListRecords
                     ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
                     ->multiple()
                     ->default([
-                        TaskStatus::PENDING->value,
-                        TaskStatus::IN_PROGRESS->value,
+                        TaskStatus::Pending->value,
+                        TaskStatus::InProgress->value,
                     ]),
             ])
             ->actions([

@@ -8,35 +8,35 @@ use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
 enum TaskStatus: string
 {
     #[InitialState]
-    #[AllowTransitionTo(self::IN_PROGRESS)]
-    #[AllowTransitionTo(self::CANCELLED)]
-    case PENDING = 'pending';
+    #[AllowTransitionTo(self::InProgress)]
+    #[AllowTransitionTo(self::Cancelled)]
+    case Pending = 'pending';
 
-    #[AllowTransitionTo(self::COMPLETED)]
-    #[AllowTransitionTo(self::CANCELLED)]
-    case IN_PROGRESS = 'in_progress';
+    #[AllowTransitionTo(self::Completed)]
+    #[AllowTransitionTo(self::Cancelled)]
+    case InProgress = 'in_progress';
 
-    case COMPLETED = 'completed';
+    case Completed = 'completed';
 
-    case CANCELLED = 'canceled';
+    case Cancelled = 'canceled';
 
     public function getTableColor(): string
     {
         return match ($this) {
-            self::PENDING => 'gray',
-            self::IN_PROGRESS => 'primary',
-            self::COMPLETED => 'success',
-            self::CANCELLED => 'danger',
+            self::Pending => 'gray',
+            self::InProgress => 'primary',
+            self::Completed => 'success',
+            self::Cancelled => 'danger',
         };
     }
 
     public function displayName(): string
     {
         return match ($this) {
-            self::PENDING => 'Pending',
-            self::IN_PROGRESS => 'In Progress',
-            self::COMPLETED => 'Completed',
-            self::CANCELLED => 'Cancelled',
+            self::Pending => 'Pending',
+            self::InProgress => 'In Progress',
+            self::Completed => 'Completed',
+            self::Cancelled => 'Cancelled',
         };
     }
 }
