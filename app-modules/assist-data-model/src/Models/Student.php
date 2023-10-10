@@ -29,9 +29,9 @@ use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
- * @mixin IdeHelperStudent
- *
  * @property string $display_name
+ *
+ * @mixin IdeHelperStudent
  */
 class Student extends Model implements Auditable, Subscribable, Educatable, HasFilamentResource
 {
