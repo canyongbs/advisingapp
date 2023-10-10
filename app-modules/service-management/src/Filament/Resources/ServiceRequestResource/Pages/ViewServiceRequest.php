@@ -20,7 +20,7 @@ class ViewServiceRequest extends ViewRecord
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return parent::infolist($infolist)
+        return $infolist
             ->schema([
                 Section::make()
                     ->schema([
