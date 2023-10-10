@@ -8,6 +8,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Timeline\Exceptions\ModelMustHaveATimeline;
 use Assist\Timeline\Models\Contracts\ProvidesATimeline;
@@ -89,6 +90,10 @@ abstract class Timeline extends Page
 
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
+        if (auth()->user()->cannot('engagement.view-any')) {
+            return false;
+        }
+
         return parent::shouldRegisterNavigation($parameters) && static::getResource()::canEdit($parameters['record']);
     }
 
@@ -96,8 +101,10 @@ abstract class Timeline extends Page
     {
         static::authorizeResourceAccess();
 
+        abort_unless(auth()->user()->can('engagement.view-any'), Response::HTTP_FORBIDDEN);
+
         // TODO We also need to check access for the other entities that are going to be included in the timeline
         // We probably just need to establish that the user can view any of a model, but might need to be more specific
-        abort_unless(static::getResource()::canView($this->getRecord()), 403);
+        abort_unless(static::getResource()::canView($this->getRecord()), Response::HTTP_FORBIDDEN);
     }
 }

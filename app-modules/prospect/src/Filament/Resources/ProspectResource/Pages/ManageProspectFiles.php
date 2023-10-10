@@ -2,6 +2,8 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementResponsesRelationManager;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
@@ -22,23 +24,20 @@ class ManageProspectFiles extends ManageRelatedRecords
 
     public static function canAccess(?Model $record = null): bool
     {
-        foreach ([
-            EngagementFilesRelationManager::class,
-        ] as $relationManager) {
-            if (! $relationManager::canViewForRecord($record, static::class)) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
+        return (bool) count(static::managers($record));
     }
 
     public function getRelationManagers(): array
     {
-        return [
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(Model $record): array
+    {
+        return collect([
             EngagementFilesRelationManager::class,
-        ];
+        ])
+            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
+            ->toArray();
     }
 }

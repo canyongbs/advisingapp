@@ -5,6 +5,7 @@ namespace Assist\Assistant\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Audit\Settings\AuditSettings;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AssistantChatMessageLog extends BaseModel
 {
     use MassPrunable;
+    use DefinesPermissions;
 
     protected $fillable = [
         'message',

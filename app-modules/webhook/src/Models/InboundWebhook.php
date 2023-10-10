@@ -3,6 +3,7 @@
 namespace Assist\Webhook\Models;
 
 use App\Models\BaseModel;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Webhook\Enums\InboundWebhookSource;
 
 /**
@@ -10,6 +11,8 @@ use Assist\Webhook\Enums\InboundWebhookSource;
  */
 class InboundWebhook extends BaseModel
 {
+    use DefinesPermissions;
+
     protected $fillable = [
         'source',
         'event',
