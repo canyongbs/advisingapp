@@ -42,6 +42,6 @@ class Performance extends Model
 
         return config('database.adm_materialized_views_enabled')
             ? 'performance_local'
-            : parent::getTable();
+            : 'performance';
     }
 }

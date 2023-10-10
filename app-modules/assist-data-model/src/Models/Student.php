@@ -65,7 +65,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
 
         return config('database.adm_materialized_views_enabled')
             ? 'students_local'
-            : parent::getTable();
+            : 'students';
     }
 
     public function identifier(): string

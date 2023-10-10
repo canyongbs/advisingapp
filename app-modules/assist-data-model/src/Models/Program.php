@@ -42,6 +42,6 @@ class Program extends Model
 
         return config('database.adm_materialized_views_enabled')
             ? 'programs_local'
-            : parent::getTable();
+            : 'programs';
     }
 }

@@ -42,6 +42,6 @@ class Enrollment extends Model
 
         return config('database.adm_materialized_views_enabled')
             ? 'enrollments_local'
-            : parent::getTable();
+            : 'enrollments';
     }
 }
