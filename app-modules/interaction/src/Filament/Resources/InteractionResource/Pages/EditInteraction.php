@@ -29,7 +29,7 @@ class EditInteraction extends EditRecord
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 MorphToSelect::make('interactable')
                     ->label('Related To')

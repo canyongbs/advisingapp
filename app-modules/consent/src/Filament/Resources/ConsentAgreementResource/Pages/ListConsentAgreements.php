@@ -15,7 +15,7 @@ class ListConsentAgreements extends ListRecords
 
     public function table(Table $table): Table
     {
-        return parent::table($table)
+        return $table
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('type'),

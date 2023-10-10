@@ -37,7 +37,7 @@ class EngagementsRelationManager extends RelationManager
             }
         })->toArray();
 
-        return parent::form($createEngagementForm)
+        return $createEngagementForm
             ->schema([
                 Hidden::make('recipient_id')
                     ->default($this->getOwnerRecord()->identifier()),
