@@ -41,7 +41,9 @@ abstract class TestCase extends BaseTestCase
 
         $this->artisan('app:setup-foreign-data-wrapper');
 
-        $this->artisan('app:create-adm-materialized-views');
+        if (config('database.adm_materialized_views_enabled')) {
+            $this->artisan('app:create-adm-materialized-views');
+        }
 
         $this->artisan(SyncRolesAndPermissions::class);
 
