@@ -14,9 +14,11 @@ use Filament\Actions\Contracts\HasActions;
 use Assist\Task\Filament\Concerns\TaskEditForm;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Assist\Task\Filament\Pages\Components\TaskKanbanViewAction;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Assist\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class TaskKanban extends Component implements HasForms, HasActions
@@ -24,6 +26,7 @@ class TaskKanban extends Component implements HasForms, HasActions
     use InteractsWithActions;
     use InteractsWithForms;
     use TaskEditForm;
+    use InteractsWithPageTable;
 
     protected static string $view = 'livewire.task-kanban';
 
@@ -37,10 +40,10 @@ class TaskKanban extends Component implements HasForms, HasActions
     {
         $this->statuses = TaskStatus::cases();
 
-        $this->tasks = collect($this->statuses)
-            ->mapWithKeys(fn ($status) => [$status->value => collect()]);
+        $pageTasks = $this->getPageTableQuery()->get()->groupBy('status');
 
-        Task::all()->groupBy('status')->each(fn ($tasks, $status) => $this->tasks[$status] = $tasks);
+        $this->tasks = collect($this->statuses)
+            ->mapWithKeys(fn ($status) => [$status->value => $pageTasks[$status->value] ?? collect()]);
     }
 
     public function movedTask(string $taskId, string $fromStatusString, string $toStatusString): JsonResponse
@@ -92,5 +95,10 @@ class TaskKanban extends Component implements HasForms, HasActions
                         ->form($this->editFormFields()),
                 ]
             );
+    }
+
+    protected function getTablePage(): string
+    {
+        return ListTasks::class;
     }
 }

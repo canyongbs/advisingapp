@@ -79,7 +79,7 @@
             {{ FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
         </div>
     @elseif($viewType === 'kanban')
-        <livewire:task-kanban />
+        @livewire('task-kanban', $this->getWidgetData())
     @endif
     <script src="{{ FilamentAsset::getScriptSrc('kanban', 'canyon-gbs/task') }}"></script>
 </x-filament-panels::page>
