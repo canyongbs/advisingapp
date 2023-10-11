@@ -80,6 +80,7 @@
         </div>
     @elseif($viewType === 'kanban')
         @livewire('task-kanban', $this->getWidgetData())
+        <x-filament-actions::modals />
     @endif
     <script src="{{ FilamentAsset::getScriptSrc('kanban', 'canyon-gbs/task') }}"></script>
 </x-filament-panels::page>
