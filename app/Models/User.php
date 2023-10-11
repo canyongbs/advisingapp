@@ -112,7 +112,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             name: 'subscribable',
             table: 'subscriptions'
         )
-            ->using(Subscription::class);
+            ->using(Subscription::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     public function studentSubscriptions(): MorphToMany
@@ -122,7 +124,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             name: 'subscribable',
             table: 'subscriptions'
         )
-            ->using(Subscription::class);
+            ->using(Subscription::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     public function roleGroups(): BelongsToMany
