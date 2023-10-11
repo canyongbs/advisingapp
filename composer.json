@@ -125,48 +125,48 @@
             "@php artisan app:setup-foreign-data-wrapper",
             "@php artisan db:seed"
         ],
-        "php-cs-lint": [
+        "php-cs-format": [
             "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
         ],
-        "php-cs-lint-dryrun": [
-            "@php-cs-lint --dry-run --stop-on-violation"
+        "php-cs-format-dryrun": [
+            "@php-cs-format --dry-run --stop-on-violation"
         ],
         "php-cs-clear-cache": [
             "rm -f ./.php-cs-fixer.cache"
         ],
         "prettier": [
-            "./node_modules/.bin/prettier \"resources/**/*.css\" \"resources/**/*.blade.php\" \"resources/**/*.js\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
         ],
-        "prettier-lint": [
+        "prettier-format": [
             "@prettier --write"
         ],
-        "prettier-lint-dryrun": [
+        "prettier-format-dryrun": [
             "@prettier --check"
         ],
         "clear-prettier-cache": [
             "rm -f ./node_modules/.cache/prettier/.prettier-cache"
         ],
-        "lint-dryrun": [
-            "@php-cs-lint-dryrun",
-            "@prettier-lint-dryrun"
+        "format-dryrun": [
+            "@php-cs-format-dryrun",
+            "@prettier-format-dryrun"
         ],
-        "lint": [
-            "@php-cs-lint",
-            "@prettier-lint"
+        "format": [
+            "@php-cs-format",
+            "@prettier-format"
         ],
-        "helper-regen": [
+        "generate-helper-files": [
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:models -M",
             "@php artisan ide-helper:meta",
             "./vendor/bin/rector",
-            "@lint"
+            "@php-cs-format"
         ],
-        "larastan": [
+        "lint": [
             "./vendor/bin/phpstan analyse --memory-limit=2G"
         ],
         "checks": [
-            "@lint-dryrun",
-            "@larastan"
+            "@format-dryrun",
+            "@lint"
         ],
         "ci": [
             "rm -rf ./vendor",

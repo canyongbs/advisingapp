@@ -52,6 +52,11 @@ class KnowledgeBaseItemResource extends Resource
         ], fn (mixed $value): bool => filled($value));
     }
 
+    public static function getGlobalSearchResultUrl(Model $record): ?string
+    {
+        return static::getUrl('view', ['record' => $record]);
+    }
+
     public static function getPages(): array
     {
         return [

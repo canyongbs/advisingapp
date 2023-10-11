@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
+use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Assist\ServiceManagement\Models\ServiceRequest;
@@ -30,6 +31,8 @@ use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
+ * @property string $display_name
+ *
  * @mixin IdeHelperProspect
  */
 class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, HasFilamentResource
@@ -143,6 +146,18 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     public static function filamentResource(): string
     {
         return ProspectResource::class;
+    }
+
+    public function subscribedUsers(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: User::class,
+            name: 'subscribable',
+            table: 'subscriptions',
+        )
+            ->using(Subscription::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     protected function serializeDate(DateTimeInterface $date): string

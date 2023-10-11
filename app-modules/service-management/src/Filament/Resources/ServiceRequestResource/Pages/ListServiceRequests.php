@@ -23,7 +23,7 @@ class ListServiceRequests extends ListRecords
 
     public function table(Table $table): Table
     {
-        return parent::table($table)
+        return $table
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('service_request_number')

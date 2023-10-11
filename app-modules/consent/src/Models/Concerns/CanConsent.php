@@ -4,20 +4,23 @@ namespace Assist\Consent\Models\Concerns;
 
 use Assist\Audit\Overrides\BelongsToMany;
 use Assist\Consent\Models\ConsentAgreement;
+use Assist\Consent\Models\UserConsentAgreement;
 
 trait CanConsent
 {
     public function consentAgreements(): BelongsToMany
     {
-        return $this->belongsToMany(ConsentAgreement::class)
-            ->withPivot('ip_address')
+        return $this->belongsToMany(ConsentAgreement::class, 'user_consent_agreements')
+            ->using(UserConsentAgreement::class)
+            ->withPivot('ip_address', 'deleted_at')
             ->withTimestamps();
     }
 
     public function hasConsentedTo(ConsentAgreement $agreement): bool
     {
-        return $this->belongsToMany(ConsentAgreement::class)
-            ->where('id', $agreement->id)
+        return $this->consentAgreements()
+            ->where('consent_agreements.id', $agreement->id)
+            ->whereNull('user_consent_agreements.deleted_at')
             ->exists();
     }
 

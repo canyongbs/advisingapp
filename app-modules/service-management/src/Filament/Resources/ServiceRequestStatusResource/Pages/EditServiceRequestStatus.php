@@ -16,7 +16,7 @@ class EditServiceRequestStatus extends EditRecord
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
