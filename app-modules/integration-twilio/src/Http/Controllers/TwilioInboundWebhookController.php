@@ -17,7 +17,7 @@ class TwilioInboundWebhookController extends Controller
         $data = $request->all();
 
         $storeInboundWebhook->handle(
-            InboundWebhookSource::TWILIO,
+            InboundWebhookSource::Twilio,
             $event,
             $request->url(),
             json_encode($data)

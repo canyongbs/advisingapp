@@ -2,39 +2,50 @@
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\Facades\FilamentAsset;
 @endphp
-<x-filament-panels::page
-        @class([
-            'fi-resource-list-records-page',
-            'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
-        ])
->
-    <div class="w-full flex justify-start">
-        <div class="grid max-w-xs grid-cols-2 gap-1 p-1 bg-gray-100 rounded-lg dark:bg-gray-800" role="group">
+<x-filament-panels::page @class([
+    'fi-resource-list-records-page',
+    'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
+])>
+    <div class="flex w-full justify-start">
+        <div
+            class="grid max-w-xs grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800"
+            role="group"
+        >
             <button
-                    type="button"
-                    @class([
-                        'px-5 py-1.5 text-xs font-medium rounded-lg',
-                        'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' => $viewType === 'table',
-                        'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' => $viewType !== 'table',
-                    ])
-                    wire:click="setViewType('table')"
+                type="button"
+                @class([
+                    'px-5 py-1.5 text-xs font-medium rounded-lg',
+                    'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' =>
+                        $viewType === 'table',
+                    'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' =>
+                        $viewType !== 'table',
+                ])
+                wire:click="setViewType('table')"
             >
-                <x-filament::icon class="w-6 h-6" icon="heroicon-m-table-cells"/>
+                <x-filament::icon
+                    class="h-6 w-6"
+                    icon="heroicon-m-table-cells"
+                />
             </button>
             <button
-                    type="button"
-                    @class([
-                        'px-5 py-1.5 text-xs font-medium rounded-lg',
-                        'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' => $viewType === 'kanban',
-                        'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' => $viewType !== 'kanban',
-                    ])
-                    wire:click="setViewType('kanban')"
+                type="button"
+                @class([
+                    'px-5 py-1.5 text-xs font-medium rounded-lg',
+                    'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' =>
+                        $viewType === 'kanban',
+                    'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' =>
+                        $viewType !== 'kanban',
+                ])
+                wire:click="setViewType('kanban')"
             >
-                <x-filament::icon class="w-6 h-6" icon="heroicon-m-view-columns"/>
+                <x-filament::icon
+                    class="h-6 w-6"
+                    icon="heroicon-m-view-columns"
+                />
             </button>
         </div>
     </div>
-    @if($viewType === 'table')
+    @if ($viewType === 'table')
         <div class="flex flex-col gap-y-6">
             @if (count($tabs = $this->getTabs()))
                 <x-filament::tabs>
@@ -68,7 +79,7 @@
             {{ FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
         </div>
     @elseif($viewType === 'kanban')
-        <livewire:task-kanban/>
+        <livewire:task-kanban />
     @endif
     <script src="{{ FilamentAsset::getScriptSrc('kanban', 'canyon-gbs/task') }}"></script>
 </x-filament-panels::page>

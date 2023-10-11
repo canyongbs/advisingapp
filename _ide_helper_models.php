@@ -139,12 +139,16 @@ namespace App\Models{
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Permission> $permissions
  * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospectSubscriptions
+ * @property-read int|null $prospect_subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
  * @property-read int|null $role_groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Student> $studentSubscriptions
+ * @property-read int|null $student_subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Team\Models\Team> $teams
@@ -268,6 +272,7 @@ namespace Assist\AssistDataModel\Models{
 /**
  * Assist\AssistDataModel\Models\Student
  *
+ * @property string $display_name
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
@@ -294,6 +299,8 @@ namespace Assist\AssistDataModel\Models{
  * @property-read int|null $programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
+ * @property-read int|null $subscribed_users_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $tasks
@@ -1390,22 +1397,17 @@ namespace Assist\Notifications\Models{
  * @property string $subscribable_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subscribable
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Subscription onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription query()
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Subscription whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription whereSubscribableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription whereSubscribableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Subscription withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Subscription withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1416,6 +1418,7 @@ namespace Assist\Prospect\Models{
 /**
  * Assist\Prospect\Models\Prospect
  *
+ * @property string $display_name
  * @property string $id
  * @property string $status_id
  * @property string $source_id
@@ -1463,6 +1466,8 @@ namespace Assist\Prospect\Models{
  * @property-read int|null $service_requests_count
  * @property-read \Assist\Prospect\Models\ProspectSource $source
  * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
+ * @property-read int|null $subscribed_users_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $tasks

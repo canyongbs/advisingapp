@@ -26,8 +26,8 @@ it('will create a new engagement batch', function () {
         'subject' => 'Test Subject',
         'body' => 'Test Body',
         'deliveryMethods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-            EngagementDeliveryMethod::SMS->value,
+            EngagementDeliveryMethod::Email->value,
+            EngagementDeliveryMethod::Sms->value,
         ],
     ]));
 
@@ -44,8 +44,8 @@ it('will create an engagement for every record provided', function () {
         'subject' => 'Test Subject',
         'body' => 'Test Body',
         'deliveryMethods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-            EngagementDeliveryMethod::SMS->value,
+            EngagementDeliveryMethod::Email->value,
+            EngagementDeliveryMethod::Sms->value,
         ],
     ]));
 
@@ -63,8 +63,8 @@ it('will associate the engagement with the batch', function () {
         'subject' => 'Test Subject',
         'body' => 'Test Body',
         'deliveryMethods' => [
-            EngagementDeliveryMethod::EMAIL->value,
-            EngagementDeliveryMethod::SMS->value,
+            EngagementDeliveryMethod::Email->value,
+            EngagementDeliveryMethod::Sms->value,
         ],
     ]));
 
@@ -81,7 +81,7 @@ it('will create deliverables for the created engagements', function () {
         'subject' => 'Test Subject',
         'body' => 'Test Body',
         'deliveryMethods' => [
-            EngagementDeliveryMethod::EMAIL->value,
+            EngagementDeliveryMethod::Email->value,
         ],
     ]));
 
@@ -99,7 +99,7 @@ it('will dispatch a batch of jobs for each engagement that needs to be delivered
         'subject' => 'Test Subject',
         'body' => 'Test Body',
         'deliveryMethods' => [
-            EngagementDeliveryMethod::EMAIL->value,
+            EngagementDeliveryMethod::Email->value,
         ],
     ]));
 
@@ -127,7 +127,7 @@ it('will dispatch a notification to the user who initiated the batch engagement 
         'subject' => 'Test Subject',
         'body' => 'Test Body',
         'deliveryMethods' => [
-            EngagementDeliveryMethod::EMAIL->value,
+            EngagementDeliveryMethod::Email->value,
         ],
     ]));
 

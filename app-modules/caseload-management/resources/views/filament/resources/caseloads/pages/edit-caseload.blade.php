@@ -1,10 +1,8 @@
-<x-filament-panels::page
-    @class([
-        'fi-resource-edit-record-page',
-        'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
-        'fi-resource-record-' . $record->getKey(),
-    ])
->
+<x-filament-panels::page @class([
+    'fi-resource-edit-record-page',
+    'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
+    'fi-resource-record-' . $record->getKey(),
+])>
     @capture($form)
         <x-filament-panels::form
             :wire:key="$this->getId() . '.forms.' . $this->getFormStatePath()"
@@ -24,14 +22,15 @@
         $hasCombinedRelationManagerTabsWithContent = $this->hasCombinedRelationManagerTabsWithContent();
     @endphp
 
-    @if ((! $hasCombinedRelationManagerTabsWithContent) || (! count($relationManagers)))
+    @if (!$hasCombinedRelationManagerTabsWithContent || !count($relationManagers))
         {{ $form() }}
     @endif
 
     @if (count($relationManagers))
         <x-filament-panels::resources.relation-managers
             :active-locale="isset($activeLocale) ? $activeLocale : null"
-            :active-manager="$activeRelationManager ?? ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))"
+            :active-manager="$activeRelationManager ??
+                ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))"
             :content-tab-label="$this->getContentTabLabel()"
             :managers="$relationManagers"
             :owner-record="$record"
@@ -45,7 +44,7 @@
         </x-filament-panels::resources.relation-managers>
     @endif
 
-    @if($data['model'])
+    @if ($data['model'])
         {{ $this->table }}
     @endif
 </x-filament-panels::page>

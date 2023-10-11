@@ -22,7 +22,7 @@ test('ListTasks page displays the correct details for available my tasks', funct
         ->concerningStudent()
         ->create(
             [
-                'status' => TaskStatus::IN_PROGRESS->value,
+                'status' => TaskStatus::InProgress->value,
             ]
         );
 

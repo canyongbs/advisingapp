@@ -3,12 +3,13 @@
 namespace Assist\Engagement\Database\Factories;
 
 use Assist\Engagement\Models\Engagement;
+use Assist\Engagement\Models\EngagementDeliverable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Engagement\Models\EngagementDeliverable>
+ * @extends Factory<EngagementDeliverable>
  */
 class EngagementDeliverableFactory extends Factory
 {
@@ -26,14 +27,14 @@ class EngagementDeliverableFactory extends Factory
     public function email(): self
     {
         return $this->state([
-            'channel' => EngagementDeliveryMethod::EMAIL,
+            'channel' => EngagementDeliveryMethod::Email,
         ]);
     }
 
     public function sms(): self
     {
         return $this->state([
-            'channel' => EngagementDeliveryMethod::SMS,
+            'channel' => EngagementDeliveryMethod::Sms,
         ]);
     }
 
