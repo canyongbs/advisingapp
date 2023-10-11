@@ -4,15 +4,15 @@ namespace Assist\Interaction\Enums;
 
 enum InteractionStatusColorOptions: string
 {
-    case SUCCESS = 'success';
+    case Success = 'success';
 
-    case DANGER = 'danger';
+    case Danger = 'danger';
 
-    case WARNING = 'warning';
+    case Warning = 'warning';
 
-    case INFO = 'info';
+    case Info = 'info';
 
-    case PRIMARY = 'primary';
+    case Primary = 'primary';
 
-    case GRAY = 'gray';
+    case Gray = 'gray';
 }

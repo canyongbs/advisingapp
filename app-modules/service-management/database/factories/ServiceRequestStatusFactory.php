@@ -24,7 +24,7 @@ class ServiceRequestStatusFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'name' => 'Open',
-                'color' => ColumnColorOptions::SUCCESS->value,
+                'color' => ColumnColorOptions::Success->value,
             ];
         });
     }
@@ -34,7 +34,7 @@ class ServiceRequestStatusFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'name' => 'In Progress',
-                'color' => ColumnColorOptions::INFO->value,
+                'color' => ColumnColorOptions::Info->value,
             ];
         });
     }
@@ -44,7 +44,7 @@ class ServiceRequestStatusFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'name' => 'Closed',
-                'color' => ColumnColorOptions::WARNING->value,
+                'color' => ColumnColorOptions::Warning->value,
             ];
         });
     }
