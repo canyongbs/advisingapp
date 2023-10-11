@@ -17,10 +17,8 @@ class FilamentServiceProvider extends ServiceProvider
             'danger' => Color::Red,
             'gray' => Color::Zinc,
             'info' => Color::Blue,
-            'primary' => Color::hex('#2bb8b3'),
-            'success' => Color::Green,
-            'warning' => Color::Amber,
-            'trout' => [
+            // Trout
+            'primary' => [
                 50 => '#f6f7f9',
                 100 => '#ededf1',
                 200 => '#d7d9e0',
@@ -33,6 +31,8 @@ class FilamentServiceProvider extends ServiceProvider
                 900 => '#363944',
                 950 => '#24252d',
             ],
+            'success' => Color::Green,
+            'warning' => Color::Amber,
             'black' => [
                 50 => '#f6f6f6',
                 100 => '#e7e7e7',
