@@ -9,6 +9,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use Assist\Consent\Models\UserConsentAgreement;
 use Assist\Consent\Filament\Resources\ConsentAgreementResource;
 
 class EditConsentAgreement extends EditRecord
@@ -56,7 +57,8 @@ class EditConsentAgreement extends EditRecord
                     $this->save();
 
                     if ($this->record->users->count() > 0) {
-                        $this->record->users()->detach();
+                        UserConsentAgreement::where('consent_agreement_id', $this->record->id)
+                            ->delete();
                     }
                 }),
             $this->getCancelFormAction(),

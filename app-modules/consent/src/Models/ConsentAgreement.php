@@ -28,8 +28,9 @@ class ConsentAgreement extends BaseModel implements Auditable
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)
-            ->withPivot('ip_address')
+        return $this->belongsToMany(User::class, 'user_consent_agreements')
+            ->using(UserConsentAgreement::class)
+            ->withPivot('ip_address', 'deleted_at')
             ->withTimestamps();
     }
 }
