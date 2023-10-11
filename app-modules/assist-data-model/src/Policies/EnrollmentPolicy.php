@@ -26,41 +26,26 @@ class EnrollmentPolicy
 
     public function create(User $user): Response
     {
-        return $user->canOrElse(
-            abilities: 'enrollment.create',
-            denyResponse: 'You do not have permission to create enrollments.'
-        );
+        return Response::deny('Enrollments cannot be created.');
     }
 
     public function update(User $user, Enrollment $enrollment): Response
     {
-        return $user->canOrElse(
-            abilities: ['enrollment.*.update', "enrollment.{$enrollment->id}.update"],
-            denyResponse: 'You do not have permission to update this enrollment.'
-        );
+        return Response::deny('Enrollments cannot be updated.');
     }
 
     public function delete(User $user, Enrollment $enrollment): Response
     {
-        return $user->canOrElse(
-            abilities: ['enrollment.*.delete', "enrollment.{$enrollment->id}.delete"],
-            denyResponse: 'You do not have permission to delete this enrollment.'
-        );
+        return Response::deny('Enrollments cannot be deleted.');
     }
 
     public function restore(User $user, Enrollment $enrollment): Response
     {
-        return $user->canOrElse(
-            abilities: ['enrollment.*.restore', "enrollment.{$enrollment->id}.restore"],
-            denyResponse: 'You do not have permission to restore this enrollment.'
-        );
+        return Response::deny('Enrollments cannot be restored.');
     }
 
     public function forceDelete(User $user, Enrollment $enrollment): Response
     {
-        return $user->canOrElse(
-            abilities: ['enrollment.*.force-delete', "enrollment.{$enrollment->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this enrollment.'
-        );
+        return Response::deny('Enrollments cannot be force deleted.');
     }
 }

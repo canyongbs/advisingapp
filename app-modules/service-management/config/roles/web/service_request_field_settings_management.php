@@ -2,16 +2,16 @@
 
 return [
     'model' => [
-        'engagement' => [
+        'service_request_priority' => [
             '*',
         ],
-        'engagement_deliverable' => [
+        'service_request_status' => [
             '*',
         ],
-        'engagement_batch' => [
+        'service_request_type' => [
             '*',
         ],
-        'engagement_response' => [
+        'service_request_update' => [
             '*',
         ],
     ],

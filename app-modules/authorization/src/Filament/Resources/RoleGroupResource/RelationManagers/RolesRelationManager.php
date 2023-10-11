@@ -60,7 +60,7 @@ class RolesRelationManager extends RelationManager
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    // DetachBulkAction::make(),
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }

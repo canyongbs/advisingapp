@@ -26,41 +26,26 @@ class StudentPolicy
 
     public function create(User $user): Response
     {
-        return $user->canOrElse(
-            abilities: 'student.create',
-            denyResponse: 'You do not have permission to create students.'
-        );
+        return Response::deny('Students cannot be created.');
     }
 
     public function update(User $user, Student $student): Response
     {
-        return $user->canOrElse(
-            abilities: ['student.*.update', "student.{$student->id}.update"],
-            denyResponse: 'You do not have permission to update this student.'
-        );
+        return Response::deny('Students cannot be updated.');
     }
 
     public function delete(User $user, Student $student): Response
     {
-        return $user->canOrElse(
-            abilities: ['student.*.delete', "student.{$student->id}.delete"],
-            denyResponse: 'You do not have permission to delete this student.'
-        );
+        return Response::deny('Students cannot be deleted.');
     }
 
     public function restore(User $user, Student $student): Response
     {
-        return $user->canOrElse(
-            abilities: ['student.*.restore', "student.{$student->id}.restore"],
-            denyResponse: 'You do not have permission to restore this student.'
-        );
+        return Response::deny('Students cannot be restored.');
     }
 
     public function forceDelete(User $user, Student $student): Response
     {
-        return $user->canOrElse(
-            abilities: ['student.*.force-delete', "student.{$student->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this student.'
-        );
+        return Response::deny('Students cannot be force deleted.');
     }
 }

@@ -26,41 +26,26 @@ class InboundWebhookPolicy
 
     public function create(User $user): Response
     {
-        return $user->canOrElse(
-            abilities: 'inbound_webhook.create',
-            denyResponse: 'You do not have permission to create inbound webhooks.'
-        );
+        return Response::deny('Inbound webhooks cannot be created.');
     }
 
     public function update(User $user, InboundWebhook $inboundWebhook): Response
     {
-        return $user->canOrElse(
-            abilities: ['inbound_webhook.*.update', "inbound_webhook.{$inboundWebhook->id}.update"],
-            denyResponse: 'You do not have permission to update this inbound webhook.'
-        );
+        return Response::deny('Inbound webhooks cannot be updated.');
     }
 
     public function delete(User $user, InboundWebhook $inboundWebhook): Response
     {
-        return $user->canOrElse(
-            abilities: ['inbound_webhook.*.delete', "inbound_webhook.{$inboundWebhook->id}.delete"],
-            denyResponse: 'You do not have permission to delete this inbound webhook.'
-        );
+        return Response::deny('Inbound webhooks cannot be deleted.');
     }
 
     public function restore(User $user, InboundWebhook $inboundWebhook): Response
     {
-        return $user->canOrElse(
-            abilities: ['inbound_webhook.*.restore', "inbound_webhook.{$inboundWebhook->id}.restore"],
-            denyResponse: 'You do not have permission to restore this inbound webhook.'
-        );
+        return Response::deny('Inbound webhooks cannot be restored.');
     }
 
     public function forceDelete(User $user, InboundWebhook $inboundWebhook): Response
     {
-        return $user->canOrElse(
-            abilities: ['inbound_webhook.*.force-delete', "inbound_webhook.{$inboundWebhook->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this inbound webhook.'
-        );
+        return Response::deny('Inbound webhooks cannot be force deleted.');
     }
 }

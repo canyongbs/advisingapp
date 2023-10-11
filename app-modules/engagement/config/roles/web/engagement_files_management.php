@@ -2,7 +2,7 @@
 
 return [
     'model' => [
-        'prospect' => [
+        'engagement_file' => [
             '*',
         ],
     ],

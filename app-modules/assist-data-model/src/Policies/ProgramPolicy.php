@@ -26,41 +26,26 @@ class ProgramPolicy
 
     public function create(User $user): Response
     {
-        return $user->canOrElse(
-            abilities: 'program.create',
-            denyResponse: 'You do not have permission to create programs.'
-        );
+        return Response::deny('Programs cannot be created.');
     }
 
     public function update(User $user, Program $program): Response
     {
-        return $user->canOrElse(
-            abilities: ['program.*.update', "program.{$program->id}.update"],
-            denyResponse: 'You do not have permission to update this program.'
-        );
+        return Response::deny('Programs cannot be updated.');
     }
 
     public function delete(User $user, Program $program): Response
     {
-        return $user->canOrElse(
-            abilities: ['program.*.delete', "program.{$program->id}.delete"],
-            denyResponse: 'You do not have permission to delete this program.'
-        );
+        return Response::deny('Programs cannot be deleted.');
     }
 
     public function restore(User $user, Program $program): Response
     {
-        return $user->canOrElse(
-            abilities: ['program.*.restore', "program.{$program->id}.restore"],
-            denyResponse: 'You do not have permission to restore this program.'
-        );
+        return Response::deny('Programs cannot be restored.');
     }
 
     public function forceDelete(User $user, Program $program): Response
     {
-        return $user->canOrElse(
-            abilities: ['program.*.force-delete', "program.{$program->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this program.'
-        );
+        return Response::deny('Programs cannot be force deleted.');
     }
 }

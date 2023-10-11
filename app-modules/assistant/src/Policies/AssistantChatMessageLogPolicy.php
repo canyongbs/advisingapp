@@ -26,41 +26,26 @@ class AssistantChatMessageLogPolicy
 
     public function create(User $user): Response
     {
-        return $user->canOrElse(
-            abilities: 'assistant_chat_message_log.create',
-            denyResponse: 'You do not have permission to create assistant chat message logs.'
-        );
+        return Response::deny('Assistant chat message logs cannot be created.');
     }
 
     public function update(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
-        return $user->canOrElse(
-            abilities: ['assistant_chat_message_log.*.update', "assistant_chat_message_log.{$assistantChatMessageLog->id}.update"],
-            denyResponse: 'You do not have permission to update this assistant chat message log.'
-        );
+        return Response::deny('Assistant chat message logs cannot be updated.');
     }
 
     public function delete(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
-        return $user->canOrElse(
-            abilities: ['assistant_chat_message_log.*.delete', "assistant_chat_message_log.{$assistantChatMessageLog->id}.delete"],
-            denyResponse: 'You do not have permission to delete this assistant chat message log.'
-        );
+        return Response::deny('Assistant chat message logs cannot be deleted.');
     }
 
     public function restore(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
-        return $user->canOrElse(
-            abilities: ['assistant_chat_message_log.*.restore', "assistant_chat_message_log.{$assistantChatMessageLog->id}.restore"],
-            denyResponse: 'You do not have permission to restore this assistant chat message log.'
-        );
+        return Response::deny('Assistant chat message logs cannot be restored.');
     }
 
     public function forceDelete(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
-        return $user->canOrElse(
-            abilities: ['assistant_chat_message_log.*.force-delete', "assistant_chat_message_log.{$assistantChatMessageLog->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this assistant chat message log.'
-        );
+        return Response::deny('Assistant chat message logs cannot be force deleted.');
     }
 }

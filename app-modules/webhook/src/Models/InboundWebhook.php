@@ -3,16 +3,14 @@
 namespace Assist\Webhook\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
 use Assist\Webhook\Enums\InboundWebhookSource;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * @mixin IdeHelperInboundWebhook
  */
 class InboundWebhook extends BaseModel
 {
-    use DefinesPermissions;
-
     protected $fillable = [
         'source',
         'event',
@@ -23,4 +21,14 @@ class InboundWebhook extends BaseModel
     protected $casts = [
         'source' => InboundWebhookSource::class,
     ];
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['view-any', '*.view']);
+    }
+
+    public function getApiPermissions(): Collection
+    {
+        return collect([]);
+    }
 }

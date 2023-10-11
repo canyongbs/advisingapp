@@ -4,11 +4,11 @@ namespace Assist\Assistant\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
 use Assist\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * @mixin IdeHelperAssistantChatMessageLog
@@ -16,7 +16,6 @@ use Assist\Authorization\Models\Concerns\DefinesPermissions;
 class AssistantChatMessageLog extends BaseModel
 {
     use MassPrunable;
-    use DefinesPermissions;
 
     protected $fillable = [
         'message',
@@ -46,5 +45,15 @@ class AssistantChatMessageLog extends BaseModel
                     ->assistant_chat_message_logs_retention_duration_in_days
             ),
         );
+    }
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['view-any', '*.view']);
+    }
+
+    public function getApiPermissions(): Collection
+    {
+        return collect([]);
     }
 }

@@ -26,41 +26,26 @@ class PerformancePolicy
 
     public function create(User $user): Response
     {
-        return $user->canOrElse(
-            abilities: 'performance.create',
-            denyResponse: 'You do not have permission to create performances.'
-        );
+        return Response::deny('Performances cannot be created.');
     }
 
     public function update(User $user, Performance $performance): Response
     {
-        return $user->canOrElse(
-            abilities: ['performance.*.update', "performance.{$performance->id}.update"],
-            denyResponse: 'You do not have permission to update this performance.'
-        );
+        return Response::deny('Performances cannot be updated.');
     }
 
     public function delete(User $user, Performance $performance): Response
     {
-        return $user->canOrElse(
-            abilities: ['performance.*.delete', "performance.{$performance->id}.delete"],
-            denyResponse: 'You do not have permission to delete this performance.'
-        );
+        return Response::deny('Performances cannot be deleted.');
     }
 
     public function restore(User $user, Performance $performance): Response
     {
-        return $user->canOrElse(
-            abilities: ['performance.*.restore', "performance.{$performance->id}.restore"],
-            denyResponse: 'You do not have permission to restore this performance.'
-        );
+        return Response::deny('Performances cannot be restored.');
     }
 
     public function forceDelete(User $user, Performance $performance): Response
     {
-        return $user->canOrElse(
-            abilities: ['performance.*.force-delete', "performance.{$performance->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this performance.'
-        );
+        return Response::deny('Performances cannot be force deleted.');
     }
 }

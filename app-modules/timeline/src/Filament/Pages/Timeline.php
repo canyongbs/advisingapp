@@ -90,18 +90,18 @@ abstract class Timeline extends Page
 
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
-        if (auth()->user()->cannot('engagement.view-any')) {
+        if (auth()->user()->cannot('timeline.access')) {
             return false;
         }
 
-        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canEdit($parameters['record']);
+        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canView($parameters['record']);
     }
 
     protected function authorizeAccess(): void
     {
         static::authorizeResourceAccess();
 
-        abort_unless(auth()->user()->can('engagement.view-any'), Response::HTTP_FORBIDDEN);
+        abort_unless(auth()->user()->can('timeline.access'), Response::HTTP_FORBIDDEN);
 
         // TODO We also need to check access for the other entities that are going to be included in the timeline
         // We probably just need to establish that the user can view any of a model, but might need to be more specific
