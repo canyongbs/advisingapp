@@ -48,7 +48,6 @@ class DemoDatabaseSeeder extends Seeder
             KnowledgeBaseItemSeeder::class,
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
-            SuperAdminSeeder::class,
         ]);
     }
 }
