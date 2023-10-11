@@ -47,8 +47,11 @@ class ListStudents extends ListRecords
             ])
             ->filters([
                 QueryBuilder::make('query')
-                    ->columns([
-
+                    ->rules([
+                        QueryBuilder\Rules\TextRule::make('name'),
+                        QueryBuilder\Rules\TextRule::make('email')
+                            ->label('Email address')
+                            ->icon('heroicon-m-envelope'),
                     ]),
 //                TernaryFilter::make('sap')
 //                    ->label('SAP'),

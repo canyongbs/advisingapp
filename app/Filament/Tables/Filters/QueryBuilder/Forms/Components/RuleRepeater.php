@@ -2,6 +2,8 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
+use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasRules;
+use App\Filament\Tables\Filters\QueryBuilder\Rules\Rule;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
@@ -17,6 +19,8 @@ use Illuminate\Support\Str;
 
 class RuleRepeater extends Repeater
 {
+    use HasRules;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,54 +33,10 @@ class RuleRepeater extends Repeater
                     $builder = $component;
 
                     return [
-                        Builder\Block::make('name')
-                            ->label(function (?array $state) {
-                                $operator = str_replace('_', ' ', $state['operator'] ?? null);
-                                $substring = $state['substring'] ?? null;
-
-                                if (blank($operator) || blank($substring)) {
-                                    return 'Name';
-                                }
-
-                                return ($state['not'] ? 'NOT ' : '') . "name {$operator} '{$substring}'";
-                            })
-                            ->schema(fn (): array => [
-                                Select::make('operator')
-                                    ->options([
-                                        'contains' => 'Contains',
-                                        'starts_with' => 'Starts with',
-                                        'ends_with' => 'Ends with',
-                                    ]),
-                                TextInput::make('substring'),
-                                Toggle::make('not')
-                                    ->label('NOT')
-                                    ->inline(false),
-                            ])
-                            ->columns(3),
-                        Builder\Block::make('email')
-                            ->label(function (?array $state) {
-                                $operator = str_replace('_', ' ', $state['operator'] ?? null);
-                                $substring = $state['substring'] ?? null;
-
-                                if (blank($operator) || blank($substring)) {
-                                    return 'Email address';
-                                }
-
-                                return ($state['not'] ? 'NOT ' : '') . "email address {$operator} '{$substring}'";
-                            })
-                            ->schema(fn (): array => [
-                                Select::make('operator')
-                                    ->options([
-                                        'contains' => 'Contains',
-                                        'starts_with' => 'Starts with',
-                                        'ends_with' => 'Ends with',
-                                    ]),
-                                TextInput::make('substring'),
-                                Toggle::make('not')
-                                    ->label('NOT')
-                                    ->inline(false),
-                            ])
-                            ->columns(3),
+                        ...array_map(
+                            fn (Rule $rule): Builder\Block => $rule->getBuilderBlock(),
+                            $this->getRules(),
+                        ),
                         Builder\Block::make('orGroup')
                             ->label(function (?array $state, ?string $uuid) use ($builder) {
                                 if (blank($state) || blank($uuid)) {
@@ -95,6 +55,7 @@ class RuleRepeater extends Repeater
 
                                 return ($state['not'] ? 'NOT ' : '') . '(' . $itemLabels->implode(') OR (') . ')';
                             })
+                            ->icon('heroicon-m-bars-4')
                             ->schema(fn (): array => [
                                 Checkbox::make('not')
                                     ->label('NOT'),
@@ -119,7 +80,7 @@ class RuleRepeater extends Repeater
         ]);
 
         $this->addAction(fn (Action $action) => $action
-            ->label('Add group')
+            ->label('Add rule group')
             ->icon('heroicon-s-plus'));
 
         $this->labelBetweenItems('OR');
