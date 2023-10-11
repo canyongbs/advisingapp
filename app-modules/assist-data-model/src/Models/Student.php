@@ -131,7 +131,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     {
         return collect([]);
     }
-  
+
     public function subscribedUsers(): MorphToMany
     {
         return $this->morphToMany(
