@@ -6,6 +6,7 @@ use Filament\Panel;
 use Assist\Consent\ConsentPlugin;
 use Illuminate\Support\ServiceProvider;
 use Assist\Consent\Models\ConsentAgreement;
+use Assist\Consent\Models\UserConsentAgreement;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
@@ -21,6 +22,7 @@ class ConsentServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'consent_agreement' => ConsentAgreement::class,
+            'user_consent_agreement' => UserConsentAgreement::class,
         ]);
 
         $this->registerRolesAndPermissions();
