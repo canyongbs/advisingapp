@@ -12,6 +12,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Assist\Assistant\Models\AssistantChatMessage;
 use Assist\IntegrationAI\Events\AIPromptInitiated;
 use Assist\Authorization\AuthorizationRoleRegistry;
+use Assist\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Assistant\Listeners\LogAssistantChatMessage;
 use Assist\Authorization\AuthorizationPermissionRegistry;
@@ -28,6 +29,7 @@ class AssistantServiceProvider extends ServiceProvider
         Relation::morphMap([
             'assistant_chat' => AssistantChat::class,
             'assistant_chat_message' => AssistantChatMessage::class,
+            'assistant_chat_message_log' => AssistantChatMessageLog::class,
         ]);
 
         $this->registerEvents();

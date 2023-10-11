@@ -2,6 +2,7 @@
 
 namespace Assist\IntegrationGoogleAnalytics\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
@@ -22,6 +23,19 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 5;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('integration-google-analytics.view_google_analytics_settings');
+    }
+
+    public function mount(): void
+    {
+        $this->authorize('integration-google-analytics.view_google_analytics_settings');
+    }
 
     public function form(Form $form): Form
     {

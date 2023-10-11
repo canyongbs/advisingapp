@@ -10,9 +10,9 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class RolesRelationManager extends RelationManager
@@ -51,11 +51,16 @@ class RolesRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make(),
-                DeleteAction::make(),
+                // TODO We'll want to modify the messages of the detach to make it more clear
+                // To the end user they are also removing all of the roles from the user
+                // That have been assigned to them through the RoleGroup
+                DetachAction::make()->label(function () {
+                    return 'Remove from ' . $this->ownerRecord->name . ' Role Group';
+                }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }
