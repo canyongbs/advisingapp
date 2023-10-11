@@ -2,17 +2,17 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Filament\Forms\Form;
+use App\Models\User;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
-use Filament\Tables\Actions\EditAction;
+use Assist\Prospect\Models\Prospect;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 
@@ -20,7 +20,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
 {
     protected static string $resource = ProspectResource::class;
 
-    protected static string $relationship = 'subscriptions';
+    protected static string $relationship = 'subscribedUsers';
 
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $navigationLabel = 'Subscriptions';
@@ -30,43 +30,79 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('user.name')
-                    ->required()
-                    ->maxLength(255),
-            ]);
-    }
-
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('user.name')
+            ->recordTitleAttribute('name')
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('user.name')
-                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->user]))
+                TextColumn::make('name')
+                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
-                TextColumn::make('created_at'),
+                TextColumn::make('pivot.created_at')
+                    ->label('Subscribed At'),
             ])
             ->filters([
             ])
             ->headerActions([
-                CreateAction::make(),
+                AttachAction::make()
+                    ->label('Create Subscription')
+                    ->modalHeading(function () {
+                        /** @var Prospect $prospect */
+                        $prospect = $this->getOwnerRecord();
+
+                        return 'Subscribe a User to ' . $prospect->display_name;
+                    })
+                    ->modalSubmitActionLabel('Subscribe')
+                    ->attachAnother(false)
+                    ->color('primary')
+                    ->recordSelect(
+                        fn (Select $select) => $select->placeholder('Select a User'),
+                    )
+                    ->successNotificationTitle(function (User $record) {
+                        /** @var Prospect $prospect */
+                        $prospect = $this->getOwnerRecord();
+
+                        return "{$record->name} was subscribed to {$prospect->display_name}";
+                    }),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                DetachAction::make()
+                    ->label('Unsubscribe')
+                    ->modalHeading(function (User $record) {
+                        /** @var Prospect $prospect */
+                        $prospect = $this->getOwnerRecord();
+
+                        return "Unsubscribe {$record->name} from {$prospect->display_name}";
+                    })
+                    ->modalSubmitActionLabel('Unsubscribe')
+                    ->successNotificationTitle(function (User $record) {
+                        /** @var Prospect $prospect */
+                        $prospect = $this->getOwnerRecord();
+
+                        return "{$record->name} was unsubscribed from {$prospect->display_name}";
+                    }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DetachBulkAction::make()
+                        ->label('Unsubscribe selected')
+                        ->modalHeading(function () {
+                            /** @var Prospect $prospect */
+                            $prospect = $this->getOwnerRecord();
+
+                            return "Unsubscribe selected from {$prospect->display_name}";
+                        })
+                        ->modalSubmitActionLabel('Unsubscribe')
+                        ->successNotificationTitle(function () {
+                            /** @var Prospect $prospect */
+                            $prospect = $this->getOwnerRecord();
+
+                            return "All selected were unsubscribed from {$prospect->display_name}";
+                        }),
                 ]),
             ])
-            ->emptyStateActions([
-                CreateAction::make(),
-            ]);
+            ->emptyStateHeading('No Subscriptions')
+            ->inverseRelationship('prospectSubscriptions');
     }
 }

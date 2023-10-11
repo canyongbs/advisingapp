@@ -23,7 +23,7 @@ class CreateEngagement extends CreateRecord
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 // TODO Better validation error messages here, "You must select at least 1 delivery method"
                 Select::make('delivery_methods')
@@ -42,21 +42,21 @@ class CreateEngagement extends CreateRecord
                             ->translateLabel()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::EMAIL->value))
+                            ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
                             ->helperText('The subject will only be used for the email delivery method.'),
                         Textarea::make('body')
                             ->translateLabel()
                             ->placeholder(__('Body'))
                             ->required()
                             ->maxLength(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::SMS->value)) {
+                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
                                     return 320;
                                 }
 
                                 return 65535;
                             })
                             ->helperText(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::SMS->value)) {
+                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
                                     return 'The body of your message can be up to 320 characters long.';
                                 }
 

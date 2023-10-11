@@ -13,11 +13,11 @@ class ServiceRequestStatusSeeder extends Seeder
         ServiceRequestStatus::factory()
             ->createMany(
                 [
-                    ['name' => 'New', 'color' => ColumnColorOptions::INFO],
-                    ['name' => 'In-Progress', 'color' => ColumnColorOptions::INFO],
-                    ['name' => 'Pending College', 'color' => ColumnColorOptions::WARNING],
-                    ['name' => 'Pending District', 'color' => ColumnColorOptions::DANGER],
-                    ['name' => 'Pending Student', 'color' => ColumnColorOptions::GRAY],
+                    ['name' => 'New', 'color' => ColumnColorOptions::Info],
+                    ['name' => 'In-Progress', 'color' => ColumnColorOptions::Info],
+                    ['name' => 'Pending College', 'color' => ColumnColorOptions::Warning],
+                    ['name' => 'Pending District', 'color' => ColumnColorOptions::Danger],
+                    ['name' => 'Pending Student', 'color' => ColumnColorOptions::Gray],
                 ]
             );
     }

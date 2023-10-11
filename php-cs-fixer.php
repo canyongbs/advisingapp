@@ -72,7 +72,7 @@ $rules = [
     'blank_line_after_opening_tag' => true,
     'list_syntax' => ['syntax' => 'short'],
     // public function getTimezoneAttribute( ? Banana $value) becomes public function getTimezoneAttribute(?Banana $value)
-    'compact_nullable_typehint' => true,
+    'compact_nullable_type_declaration' => true,
     'explicit_string_variable' => true,
     'no_leading_namespace_whitespace' => true,
     'trailing_comma_in_multiline' => true,

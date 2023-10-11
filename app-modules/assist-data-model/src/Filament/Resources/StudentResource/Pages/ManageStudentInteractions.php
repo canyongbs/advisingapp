@@ -38,7 +38,7 @@ class ManageStudentInteractions extends ManageRelatedRecords
             }
         })->toArray();
 
-        return parent::form($createInteractionForm)
+        return $createInteractionForm
             ->schema([
                 Hidden::make('interactable_id')
                     ->default($this->getOwnerRecord()->identifier()),

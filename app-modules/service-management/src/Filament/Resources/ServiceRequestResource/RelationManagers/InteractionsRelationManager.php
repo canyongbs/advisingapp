@@ -27,7 +27,7 @@ class InteractionsRelationManager extends RelationManager
             }
         })->toArray();
 
-        return parent::form($createInteractionForm)
+        return $createInteractionForm
             ->schema([
                 Hidden::make('interactable_id')
                     ->default($this->ownerRecord->identifier()),

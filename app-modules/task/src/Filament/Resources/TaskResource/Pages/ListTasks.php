@@ -39,7 +39,7 @@ class ListTasks extends ListRecords
 
     public function table(Table $table): Table
     {
-        return parent::table($table)
+        return $table
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('title')
@@ -110,8 +110,8 @@ class ListTasks extends ListRecords
                     ->options(collect(TaskStatus::cases())->mapWithKeys(fn (TaskStatus $direction) => [$direction->value => \Livewire\str($direction->name)->title()->headline()]))
                     ->multiple()
                     ->default([
-                        TaskStatus::PENDING->value,
-                        TaskStatus::IN_PROGRESS->value,
+                        TaskStatus::Pending->value,
+                        TaskStatus::InProgress->value,
                     ]),
             ])
             ->actions([

@@ -3,63 +3,49 @@
 namespace Assist\Authorization\Policies;
 
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 use Assist\Authorization\Models\Role;
 
 class RolePolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user): Response
     {
-        return $user->hasPermissionTo('role.view-any');
+        return $user->canOrElse(
+            abilities: 'role.view-any',
+            denyResponse: 'You do not have permission to view roles.'
+        );
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Role $role): bool
+    public function view(User $user, Role $role): Response
     {
-        return $user->hasPermissionTo('role.*.view');
+        return $user->canOrElse(
+            abilities: ['role.*.view', "role.{$role->id}.view"],
+            denyResponse: 'You do not have permission to view this role.'
+        );
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(User $user): Response
     {
-        return false;
+        return Response::deny('Roles cannot be created.');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Role $role): bool
+    public function update(User $user, Role $role): Response
     {
-        return false;
+        return Response::deny('Roles cannot be updated.');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Role $role): bool
+    public function delete(User $user, Role $role): Response
     {
-        return false;
+        return Response::deny('Roles cannot be deleted.');
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Role $role): bool
+    public function restore(User $user, Role $role): Response
     {
-        return false;
+        return Response::deny('Roles cannot be restored.');
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Role $role): bool
+    public function forceDelete(User $user, Role $role): Response
     {
-        return false;
+        return Response::deny('Roles cannot be force deleted.');
     }
 }
