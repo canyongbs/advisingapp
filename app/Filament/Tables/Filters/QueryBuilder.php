@@ -3,8 +3,10 @@
 namespace App\Filament\Tables\Filters;
 
 use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
-use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleRepeater;
+use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Component;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -17,23 +19,33 @@ class QueryBuilder extends BaseFilter
         parent::setUp();
 
         $this->form(fn (QueryBuilder $filter): array => [
-            RuleRepeater::make('rules')
+            Checkbox::make('not')
+                ->label('NOT'),
+            RuleBuilder::make('rules')
                 ->constraints($filter->getConstraints()),
         ]);
 
         $this->query(function (Builder $query, array $data) {
-            return $this->applyRuleGroupsToQuery($query, $data['rules']);
+            $this->applyRuleGroupsToQuery($query, [
+                [
+                    'not' => $data['not'] ?? false,
+                    'rules' => $data['rules'] ?? [],
+                ],
+            ]);
         });
+
+        $ruleBuilder = $this->getForm()
+            ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         $this->columnSpanFull();
     }
 
-    public function applyRuleGroupsToQuery(Builder $query, array $data): Builder
+    public function applyRuleGroupsToQuery(Builder $query, array $data, RuleBuilder $builder): Builder
     {
         $isFirst = true;
 
         foreach ($data as $orGroup) {
-            $query->{match ([$isFirst, $orGroup['not'] ?? false]) {
+            $query->{match ([$isFirst, ($orGroup['not'] ?? false)]) {
                 [true, false] => 'where',
                 [true, true] => 'whereNot',
                 [false, false] => 'orWhere',
