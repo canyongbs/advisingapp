@@ -24,12 +24,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
 {
     use TestDatabases;
 
-    protected array $parallelConnections = [
-        [
-            'connection' => 'sis',
-            'database' => 'testing',
-        ],
-    ];
+    protected array $parallelConnections = ['sis'];
 
     /**
      * Register any application services.
@@ -46,8 +41,8 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                 $this->whenNotUsingInMemoryDatabase(function ($database) {
                     if (ParallelTesting::option('recreate_databases')) {
                         foreach ($this->parallelConnections as $connection) {
-                            Schema::connection($connection['connection'])
-                                ->dropDatabaseIfExists($connection['database']);
+                            Schema::connection($connection)
+                                ->dropDatabaseIfExists($this->databaseOnConnection($connection));
                         }
                     }
                 });
@@ -69,7 +64,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
 
                         foreach ($this->parallelConnections as $connection) {
                             $this->usingConnection($connection, function ($connection) use (&$allCreated) {
-                                [$testDatabase, $created] = $this->ensureTestDatabaseExists($connection['database']);
+                                [$testDatabase, $created] = $this->ensureTestDatabaseExists($this->databaseOnConnection($connection));
 
                                 $this->switchToDatabase($testDatabase);
 
@@ -98,8 +93,8 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                 $this->whenNotUsingInMemoryDatabase(function ($database) {
                     if (ParallelTesting::option('drop_databases')) {
                         foreach ($this->parallelConnections as $connection) {
-                            Schema::connection($connection['connection'])
-                                ->dropDatabaseIfExists($connection['database']);
+                            Schema::connection($connection)
+                                ->dropDatabaseIfExists($this->databaseOnConnection($connection));
                         }
                     }
                 });
@@ -107,15 +102,20 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
         }
     }
 
-    protected function usingConnection(array $connection, Closure $callable): void
+    protected function usingConnection(string $connection, Closure $callable): void
     {
         $originalConnection = config('database.default');
 
         try {
-            config()->set('database.default', $connection['connection']);
+            config()->set('database.default', $connection);
             $callable($connection);
         } finally {
             config()->set('database.default', $originalConnection);
         }
+    }
+
+    protected function databaseOnConnection(string $connection): string
+    {
+        return config("database.connections.{$connection}.database");
     }
 }
