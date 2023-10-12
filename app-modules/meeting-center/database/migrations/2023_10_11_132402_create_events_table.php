@@ -13,8 +13,8 @@ return new class () extends Migration {
             $table->string('title');
             $table->text('description')->nullable();
 
-            $table->string('provider_type');
-            $table->string('provider_id');
+            $table->string('provider_type')->nullable();
+            $table->string('provider_id')->nullable();
 
             $table->foreignUuid('user_id')->constrained('users');
 

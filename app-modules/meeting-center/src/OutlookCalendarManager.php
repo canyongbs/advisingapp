@@ -2,9 +2,11 @@
 
 namespace Assist\MeetingCenter;
 
+use Assist\MeetingCenter\Contracts\Calendar;
 use Assist\MeetingCenter\Models\Event;
+use DateTime;
 
-class OutlookCalendarProvider extends CalendarProvider
+class OutlookCalendarManager implements Calendar
 {
     // https://github.com/microsoftgraph/msgraph-sample-phpapp/tree/main
     // https://github.com/microsoftgraph/msgraph-sdk-php
@@ -14,7 +16,7 @@ class OutlookCalendarProvider extends CalendarProvider
         return 'outlook';
     }
 
-    public function getEvents(string $calendarId): array
+    public function getEvents(string $calendarId, ?Datetime $start = null, ?Datetime $end = null): array
     {
         // https://learn.microsoft.com/en-us/graph/api/user-list-calendars?view=graph-rest-1.0&tabs=http
         // https://learn.microsoft.com/en-us/graph/api/user-list-events?view=graph-rest-1.0&tabs=http

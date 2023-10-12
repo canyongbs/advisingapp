@@ -1,0 +1,19 @@
+<?php
+
+namespace Assist\MeetingCenter\Contracts;
+
+use Assist\MeetingCenter\Models\Event;
+use DateTime;
+
+interface Calendar
+{
+    public static function type(): string;
+
+    public function getEvents(string $calendarId, ?Datetime $start = null, ?Datetime $end = null): array;
+
+    public function createEvent(string $calendarId, Event $event): Event;
+
+    public function updateEvent(string $calendarId, Event $event): void;
+
+    public function deleteEvent(string $calendarId, Event $event): void;
+}
