@@ -5,6 +5,7 @@ namespace App\Providers;
 use Closure;
 use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Testing\Concerns\TestDatabases;
@@ -63,7 +64,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                 ];
 
                 if (Arr::hasAny($uses, $databaseTraits) && ! ParallelTesting::option('without_databases')) {
-                    $this->whenNotUsingInMemoryDatabase(function ($database) use ($uses) {
+                    $this->whenNotUsingInMemoryDatabase(function ($database) use ($uses, $token) {
                         $allCreated = [];
 
                         foreach ($this->parallelConnections as $connection) {
@@ -87,16 +88,20 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                                 ParallelTesting::callSetUpTestDatabaseCallbacks($testDatabase);
                             });
                         }
+
+                        Config::set('database.fdw.external_database', "testing_test_{$token}");
                     });
                 }
+            });
 
-                ParallelTesting::tearDownProcess(function (int $token) {
-                    $this->whenNotUsingInMemoryDatabase(function ($database) {
+            ParallelTesting::tearDownProcess(function () {
+                $this->whenNotUsingInMemoryDatabase(function ($database) {
+                    if (ParallelTesting::option('drop_databases')) {
                         foreach ($this->parallelConnections as $connection) {
                             Schema::connection($connection['connection'])
                                 ->dropDatabaseIfExists($connection['database']);
                         }
-                    });
+                    }
                 });
             });
         }
