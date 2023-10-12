@@ -4,10 +4,12 @@ namespace Assist\ServiceManagement\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use Assist\Authorization\AuthorizationRoleRegistry;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\ServiceManagement\ServiceManagementPlugin;
 use Assist\ServiceManagement\Models\ServiceRequestType;
+use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\ServiceManagement\Models\ServiceRequestStatus;
 use Assist\ServiceManagement\Models\ServiceRequestUpdate;
 use Assist\ServiceManagement\Models\ServiceRequestPriority;
@@ -35,12 +37,40 @@ class ServiceManagementServiceProvider extends ServiceProvider
             'service_request_update' => ServiceRequestUpdate::class,
         ]);
 
-        $this->observers();
+        $this->registerRolesAndPermissions();
+        $this->registerObservers();
     }
 
-    protected function observers(): void
+    protected function registerObservers(): void
     {
         ServiceRequest::observe(ServiceRequestObserver::class);
         ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
+    }
+
+    protected function registerRolesAndPermissions()
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
+
+        $permissionRegistry->registerApiPermissions(
+            module: 'service-management',
+            path: 'permissions/api/custom'
+        );
+
+        $permissionRegistry->registerWebPermissions(
+            module: 'service-management',
+            path: 'permissions/web/custom'
+        );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
+
+        $roleRegistry->registerApiRoles(
+            module: 'service-management',
+            path: 'roles/api'
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: 'service-management',
+            path: 'roles/web'
+        );
     }
 }

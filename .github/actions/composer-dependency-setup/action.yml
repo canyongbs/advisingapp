@@ -3,7 +3,7 @@ description: 'Sets up composer dependencies for the workflow'
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Get composer cache directory
       id: composer-cache

@@ -5,15 +5,15 @@ namespace Assist\ServiceManagement\Enums;
 // TODO This might belong in a more generalized space so we can re-use this across modules
 enum ColumnColorOptions: string
 {
-    case SUCCESS = 'success';
+    case Success = 'success';
 
-    case DANGER = 'danger';
+    case Danger = 'danger';
 
-    case WARNING = 'warning';
+    case Warning = 'warning';
 
-    case INFO = 'info';
+    case Info = 'info';
 
-    case PRIMARY = 'primary';
+    case Primary = 'primary';
 
-    case GRAY = 'gray';
+    case Gray = 'gray';
 }

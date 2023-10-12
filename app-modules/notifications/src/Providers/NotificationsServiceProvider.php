@@ -5,10 +5,12 @@ namespace Assist\Notifications\Providers;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Assist\Notifications\Models\Subscription;
+use Assist\Authorization\AuthorizationRoleRegistry;
 use Assist\Notifications\Events\SubscriptionCreated;
 use Assist\Notifications\Events\SubscriptionDeleted;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Notifications\Observers\SubscriptionObserver;
+use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 use Assist\Notifications\Listeners\CreateAutoSubscription;
 use Assist\Notifications\Listeners\NotifyUserOfSubscriptionCreated;
@@ -24,17 +26,17 @@ class NotificationsServiceProvider extends ServiceProvider
             'subscription' => Subscription::class,
         ]);
 
-        $this->observers();
-
-        $this->events();
+        $this->registerRolesAndPermissions();
+        $this->registerObservers();
+        $this->registerevents();
     }
 
-    protected function observers(): void
+    protected function registerObservers(): void
     {
         Subscription::observe(SubscriptionObserver::class);
     }
 
-    protected function events(): void
+    protected function registerEvents(): void
     {
         Event::listen(
             SubscriptionCreated::class,
@@ -49,6 +51,33 @@ class NotificationsServiceProvider extends ServiceProvider
         Event::listen(
             TriggeredAutoSubscription::class,
             CreateAutoSubscription::class,
+        );
+    }
+
+    protected function registerRolesAndPermissions(): void
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
+
+        $permissionRegistry->registerApiPermissions(
+            module: 'notifications',
+            path: 'permissions/api/custom'
+        );
+
+        $permissionRegistry->registerWebPermissions(
+            module: 'notifications',
+            path: 'permissions/web/custom'
+        );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
+
+        $roleRegistry->registerApiRoles(
+            module: 'notifications',
+            path: 'roles/api'
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: 'notifications',
+            path: 'roles/web'
         );
     }
 }

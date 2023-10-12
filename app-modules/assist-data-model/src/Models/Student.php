@@ -2,12 +2,15 @@
 
 namespace Assist\AssistDataModel\Models;
 
+use App\Models\User;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
+use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,6 +30,8 @@ use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
+ * @property string $display_name
+ *
  * @mixin IdeHelperStudent
  */
 class Student extends Model implements Auditable, Subscribable, Educatable, HasFilamentResource
@@ -115,6 +120,28 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public static function filamentResource(): string
     {
         return StudentResource::class;
+    }
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['view-any', '*.view']);
+    }
+
+    public function getApiPermissions(): Collection
+    {
+        return collect([]);
+    }
+
+    public function subscribedUsers(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: User::class,
+            name: 'subscribable',
+            table: 'subscriptions',
+        )
+            ->using(Subscription::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     protected function displayName(): Attribute

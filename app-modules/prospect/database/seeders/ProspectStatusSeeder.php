@@ -15,27 +15,27 @@ class ProspectStatusSeeder extends Seeder
                 [
                     [
                         'name' => 'New',
-                        'color' => ProspectStatusColorOptions::INFO->value,
+                        'color' => ProspectStatusColorOptions::Info->value,
                     ],
                     [
                         'name' => 'Assigned',
-                        'color' => ProspectStatusColorOptions::WARNING->value,
+                        'color' => ProspectStatusColorOptions::Warning->value,
                     ],
                     [
                         'name' => 'In-Progress',
-                        'color' => ProspectStatusColorOptions::PRIMARY->value,
+                        'color' => ProspectStatusColorOptions::Primary->value,
                     ],
                     [
                         'name' => 'Converted',
-                        'color' => ProspectStatusColorOptions::SUCCESS->value,
+                        'color' => ProspectStatusColorOptions::Success->value,
                     ],
                     [
                         'name' => 'Recycled',
-                        'color' => ProspectStatusColorOptions::GRAY->value,
+                        'color' => ProspectStatusColorOptions::Gray->value,
                     ],
                     [
                         'name' => 'Dead',
-                        'color' => ProspectStatusColorOptions::DANGER->value,
+                        'color' => ProspectStatusColorOptions::Danger->value,
                     ],
                 ]
             );

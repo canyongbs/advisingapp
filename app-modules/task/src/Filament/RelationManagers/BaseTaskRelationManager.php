@@ -98,8 +98,8 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->multiple()
                     ->default(
                         [
-                            TaskStatus::PENDING->value,
-                            TaskStatus::IN_PROGRESS->value,
+                            TaskStatus::Pending->value,
+                            TaskStatus::InProgress->value,
                         ]
                     ),
             ])

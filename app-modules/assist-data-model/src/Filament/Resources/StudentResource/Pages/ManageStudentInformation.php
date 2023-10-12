@@ -24,27 +24,22 @@ class ManageStudentInformation extends ManageRelatedRecords
 
     public static function canAccess(?Model $record = null): bool
     {
-        foreach ([
-            ProgramsRelationManager::class,
-            EnrollmentsRelationManager::class,
-            PerformanceRelationManager::class,
-        ] as $relationManager) {
-            if (! $relationManager::canViewForRecord($record, static::class)) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
+        return (bool) count(static::managers($record));
     }
 
     public function getRelationManagers(): array
     {
-        return [
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(Model $record): array
+    {
+        return collect([
             ProgramsRelationManager::class,
             EnrollmentsRelationManager::class,
             PerformanceRelationManager::class,
-        ];
+        ])
+            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
+            ->toArray();
     }
 }
