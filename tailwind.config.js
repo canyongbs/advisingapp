@@ -23,6 +23,19 @@ export default {
         },
         // Changes to colors also need to be reflected in FilamentServiceProvider
         colors: {
+            trout: {
+                50: '#f6f7f9',
+                100: '#ededf1',
+                200: '#d7d9e0',
+                300: '#b4b9c5',
+                400: '#8b92a5',
+                500: '#6d758a',
+                600: '#575d72',
+                700: '#4d5264',
+                800: '#3e424e',
+                900: '#363944',
+                950: '#24252d',
+            },
             black: {
                 50: '#f6f6f6',
                 100: '#e7e7e7',
