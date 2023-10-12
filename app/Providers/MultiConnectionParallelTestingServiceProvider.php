@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Testing\Concerns\TestDatabases;
 use Illuminate\Support\Facades\ParallelTesting;
@@ -101,16 +100,6 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                 });
             });
         }
-    }
-
-    protected function ensureSchemaIsUpToDate()
-    {
-        //if (! static::$schemaIsUpToDate) {
-        //    Artisan::call('migrate');
-        //
-        //    static::$schemaIsUpToDate = true;
-        //}
-        Artisan::call('migrate');
     }
 
     protected function usingConnection(array $connection, Closure $callable): void
