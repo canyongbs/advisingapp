@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use OpenSearch\Adapter\Documents\Document;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -42,7 +43,7 @@ class ListProspects extends ListRecords
                 TextColumn::make('email')
                     ->label('Email')
                     ->translateLabel()
-                    ->searchable()
+                    ->searchable('email^4')
                     ->sortable(),
                 TextColumn::make('mobile')
                     ->label('Mobile')
@@ -130,20 +131,45 @@ class ListProspects extends ListRecords
             ->toArray();
 
         if (filled($search = $this->getTableSearch())) {
+            //ray(Prospect::searchQuery(
+            //    Query::bool()
+            //        ->must(
+            //            Query::multiMatch()
+            //                ->fields($fields)
+            //                ->type('bool_prefix')
+            //                ->query($search)
+            //                ->fuzziness('AUTO')
+            //        )
+            //        ->filter(
+            //            Query::term()
+            //                ->field('status_id')
+            //                ->value('9a5a0b30-b5f0-4e17-9f07-7704684d6341')
+            //        )
+            //)
+            //    ->execute()
+            //    ->hits());
+
+            // TODO: Look into getting the table to respect the order of the results from the search
             $query->whereIn(
                 'id',
                 Prospect::searchQuery(
-                    Query::multiMatch()
-                        ->fields($fields)
-                        ->type('bool_prefix')
-                        ->query($search)
-                        ->fuzziness('AUTO')
+                    Query::bool()
+                        ->must(
+                            Query::multiMatch()
+                                ->fields($fields)
+                                ->type('bool_prefix')
+                                ->query($search)
+                                ->fuzziness('AUTO')
+                        )
+                    //->filter(
+                    //    Query::term()
+                    //        ->field('status_id')
+                    //        ->value('9a5a0b30-b5f0-4e17-9f07-7704684d6341')
+                    //)
                 )
                     ->execute()
-                    ->hits()
-                    ->map(function (Hit $hit) {
-                        return $hit->document()->id();
-                    })
+                    ->documents()
+                    ->map(fn (Document $document) => $document->id())
             );
         }
 

@@ -15,9 +15,9 @@ final class CreateProspectsIndex implements MigrationInterface
     public function up(): void
     {
         Index::create('prospects', function (Mapping $mapping, Settings $settings) {
-            $mapping->integer('id');
-            $mapping->text('status_id');
-            $mapping->text('source_id');
+            $mapping->keyword('id');
+            $mapping->keyword('status_id');
+            $mapping->keyword('source_id');
             $mapping->text('first_name');
             $mapping->text('last_name');
             $mapping->text('full_name');
