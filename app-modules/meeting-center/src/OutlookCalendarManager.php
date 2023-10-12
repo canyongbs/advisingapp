@@ -2,14 +2,15 @@
 
 namespace Assist\MeetingCenter;
 
-use Assist\MeetingCenter\Contracts\Calendar;
-use Assist\MeetingCenter\Models\Event;
 use DateTime;
+use Assist\MeetingCenter\Models\Event;
+use Assist\MeetingCenter\Contracts\Calendar;
 
 class OutlookCalendarManager implements Calendar
 {
     // https://github.com/microsoftgraph/msgraph-sample-phpapp/tree/main
     // https://github.com/microsoftgraph/msgraph-sdk-php
+    // https://learn.microsoft.com/en-us/graph/api/resources/webhooks?view=graph-rest-1.0
 
     public static function type(): string
     {
