@@ -76,6 +76,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'password',
         'locale',
         'type',
+        'calendar_type',
+        'calendar_id',
     ];
 
     public $orderable = [

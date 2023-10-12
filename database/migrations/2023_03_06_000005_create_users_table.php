@@ -21,6 +21,9 @@ class CreateUsersTable extends Migration
             $table->string('type')->nullable();
             $table->boolean('is_external')->default(false);
 
+            $table->string('calendar_type')->nullable();
+            $table->string('calendar_id')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

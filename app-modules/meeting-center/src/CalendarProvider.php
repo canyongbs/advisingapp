@@ -6,11 +6,13 @@ use Assist\MeetingCenter\Models\Event;
 
 abstract class CalendarProvider
 {
-    abstract public function getEvents(): array;
+    abstract public static function type(): string;
 
-    abstract public function createEvent(Event $event);
+    abstract public function getEvents(string $calendarId): array;
 
-    abstract public function deleteEvent(Event $event);
+    abstract public function createEvent(string $calendarId, Event $event): Event;
 
-    abstract public function updateEvent(Event $event);
+    abstract public function updateEvent(string $calendarId, Event $event): void;
+
+    abstract public function deleteEvent(string $calendarId, Event $event): void;
 }

@@ -11,17 +11,18 @@ class EventObserver
     public function creating(Event $event): void
     {
         $provider = resolve(GoogleCalendarProvider::class);
-        $provider->createEvent($event);
+        $provider->createEvent($event->user->calendar_id, $event);
     }
 
-    public function created(Event $event): void
+    public function updating(Event $event): void
     {
-        // ray(\Spatie\GoogleCalendar\Event::create([
-        //     'id' => Uuid::fromString($event->id)->getHex()->toString(),
-        //     'summary' => $event->title,
-        //     'description' => $event->description,
-        //     'startDateTime' => $event->starts_at,
-        //     'endDateTime' => $event->ends_at,
-        // ]));
+        $provider = resolve(GoogleCalendarProvider::class);
+        $provider->updateEvent($event->user->calendar_id, $event);
+    }
+
+    public function deleting(Event $event): void
+    {
+        $provider = resolve(GoogleCalendarProvider::class);
+        $provider->deleteEvent($event->user->calendar_id, $event);
     }
 }

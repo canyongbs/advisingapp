@@ -8,27 +8,30 @@ use Spatie\GoogleCalendar\Event as GoogleEvent;
 
 class GoogleCalendarProvider extends CalendarProvider
 {
-    public function type(): string
+    // TODO: watch?
+    // https://developers.google.com/calendar/api/v3/reference/events/watch
+
+    public static function type(): string
     {
         return 'google';
     }
 
-    public function getEvents(): array
+    public function getEvents(string $calendarId): array
     {
-        return GoogleEvent::get(now(), queryParameters: ['maxResults' => 2500])->toArray();
+        return GoogleEvent::get(now(), queryParameters: ['maxResults' => 2500], calendarId: $calendarId)->toArray();
     }
 
-    public function createEvent(Event $event): Event
+    public function createEvent(string $calendarId, Event $event): Event
     {
         $providerId = Uuid::fromString($event->id)->getHex()->toString();
 
-        $google = GoogleEvent::create([
+        GoogleEvent::create([
             'id' => $providerId,
             'summary' => $event->title,
             'description' => $event->description,
             'startDateTime' => $event->starts_at,
             'endDateTime' => $event->ends_at,
-        ]);
+        ], $calendarId);
 
         $event->provider_id = $providerId;
         $event->provider_type = $this->type();
@@ -36,13 +39,18 @@ class GoogleCalendarProvider extends CalendarProvider
         return $event;
     }
 
-    public function deleteEvent(Event $event)
+    public function updateEvent(string $calendarId, Event $event): void
     {
-        // TODO: Implement deleteEvent() method.
+        GoogleEvent::find($event->provider_id, $calendarId)?->update([
+            'summary' => $event->title,
+            'description' => $event->description,
+            'startDateTime' => $event->starts_at,
+            'endDateTime' => $event->ends_at,
+        ]);
     }
 
-    public function updateEvent(Event $event)
+    public function deleteEvent(string $calendarId, Event $event): void
     {
-        // TODO: Implement updateEvent() method.
+        GoogleEvent::find($event->provider_id, $calendarId)?->delete();
     }
 }

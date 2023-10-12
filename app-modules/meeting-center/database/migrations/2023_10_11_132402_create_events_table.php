@@ -13,8 +13,10 @@ return new class () extends Migration {
             $table->string('title');
             $table->text('description')->nullable();
 
-            $table->string('provider_id')->nullable();
-            $table->string('provider_type')->nullable();
+            $table->string('provider_type');
+            $table->string('provider_id');
+
+            $table->foreignUuid('user_id')->constrained('users');
 
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');
