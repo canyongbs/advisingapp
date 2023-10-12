@@ -14,9 +14,11 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
+use Illuminate\Database\Eloquent\Collection;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
+use Illuminate\Contracts\Pagination\Paginator;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
@@ -26,6 +28,10 @@ use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 class ListProspects extends ListRecords
 {
     protected static string $resource = ProspectResource::class;
+
+    public function filterTableQuery(Builder $query): Builder {}
+
+    public function getTableRecords(): Collection | Paginator {}
 
     public function table(Table $table): Table
     {

@@ -6,6 +6,7 @@ use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Assist\Task\Models\Task;
+use Laravel\Scout\Searchable;
 use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
 use Illuminate\Notifications\Notifiable;
@@ -45,6 +46,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
     use HasSubscriptions;
+    use Searchable;
 
     protected $fillable = [
         'first_name',
@@ -72,6 +74,16 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
         'sms_opt_out' => 'boolean',
         'email_bounce' => 'boolean',
     ];
+
+    public function searchableAs(): string
+    {
+        return config('scout.prefix') . 'posts';
+    }
+
+    public function toSearchableArray(): array
+    {
+        return $this->toArray();
+    }
 
     public function identifier(): string
     {
