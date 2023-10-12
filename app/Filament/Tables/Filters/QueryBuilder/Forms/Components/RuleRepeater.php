@@ -2,8 +2,8 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
-use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasRules;
-use App\Filament\Tables\Filters\QueryBuilder\Rules\Rule;
+use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
@@ -14,12 +14,13 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class RuleRepeater extends Repeater
 {
-    use HasRules;
+    use HasConstraints;
 
     protected function setUp(): void
     {
@@ -34,8 +35,8 @@ class RuleRepeater extends Repeater
 
                     return [
                         ...array_map(
-                            fn (Rule $rule): Builder\Block => $rule->getBuilderBlock(),
-                            $this->getRules(),
+                            fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(),
+                            $this->getConstraints(),
                         ),
                         Builder\Block::make('orGroup')
                             ->label(function (?array $state, ?string $uuid) use ($builder) {
@@ -60,6 +61,7 @@ class RuleRepeater extends Repeater
                                 Checkbox::make('not')
                                     ->label('NOT'),
                                 static::make('groups')
+                                    ->constraints($this->getConstraints())
                                     ->hiddenLabel(),
                             ]),
                     ];

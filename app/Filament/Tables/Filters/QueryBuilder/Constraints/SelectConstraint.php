@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Tables\Filters\QueryBuilder\Rules;
+namespace App\Filament\Tables\Filters\QueryBuilder\Constraints;
 
-class SelectRule
+class SelectConstraint extends Constraint
 {
     protected function setUp(): void
     {

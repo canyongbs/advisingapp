@@ -3,6 +3,7 @@
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use App\Filament\Tables\Filters\QueryBuilder;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
@@ -47,11 +48,33 @@ class ListStudents extends ListRecords
             ])
             ->filters([
                 QueryBuilder::make('query')
-                    ->rules([
-                        QueryBuilder\Rules\TextRule::make('name'),
-                        QueryBuilder\Rules\TextRule::make('email')
-                            ->label('Email address')
+                    ->constraints([
+                        QueryBuilder\Constraints\TextConstraint::make('full_name')
+                            ->icon('heroicon-m-user'),
+                        QueryBuilder\Constraints\TextConstraint::make('first')
+                            ->label('First Name')
+                            ->icon('heroicon-m-user'),
+                        QueryBuilder\Constraints\TextConstraint::make('last')
+                            ->label('Last Name')
+                            ->icon('heroicon-m-user'),
+                        QueryBuilder\Constraints\TextConstraint::make('preferred')
+                            ->label('Preferred Name')
+                            ->icon('heroicon-m-user'),
+                        QueryBuilder\Constraints\TextConstraint::make('sisid')
+                            ->label('Student ID')
+                            ->icon('heroicon-m-finger-print'),
+                        QueryBuilder\Constraints\TextConstraint::make('otherid')
+                            ->label('Other ID')
+                            ->icon('heroicon-m-finger-print'),
+                        QueryBuilder\Constraints\TextConstraint::make('email')
+                            ->label('Email Address')
                             ->icon('heroicon-m-envelope'),
+                        QueryBuilder\Constraints\TextConstraint::make('mobile')
+                            ->label('Mobile')
+                            ->icon('heroicon-m-phone'),
+                        QueryBuilder\Constraints\TextConstraint::make('address')
+                            ->label('Address')
+                            ->icon('heroicon-m-map-pin'),
                     ]),
 //                TernaryFilter::make('sap')
 //                    ->label('SAP'),

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Tables\Filters\QueryBuilder\Rules\Concerns;
+namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\Concerns;
 
-use App\Filament\Tables\Filters\QueryBuilder\Rules\Operators\Operator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 trait HasOperators
 {
@@ -22,11 +22,6 @@ trait HasOperators
             $this->operators[$operator->getName()] = $operator;
         }
 
-        $this->operators = array_map(
-            fn (string | Operator $operator): Operator => is_string($operator) ? app($operator) : $operator,
-            $operators,
-        );
-
         return $this;
     }
 
@@ -36,5 +31,10 @@ trait HasOperators
     public function getOperators(): array
     {
         return $this->evaluate($this->operators);
+    }
+
+    public function getOperator(string $name): ?Operator
+    {
+        return $this->getOperators()[$name] ?? null;
     }
 }

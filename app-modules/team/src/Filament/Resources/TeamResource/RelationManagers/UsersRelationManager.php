@@ -45,7 +45,7 @@ class UsersRelationManager extends RelationManager
                     //TODO: remove this if we support multiple teams
                     ->form(fn (AttachAction $action): array => [
                         $action->getRecordSelect()
-                            ->rules([
+                            ->constraints([
                                 fn (): Closure => function (string $attribute, $value, Closure $fail) {
                                     if (User::findOrFail($value)->teams()->count() > 0) {
                                         $fail('This user already belongs to a team.');

@@ -53,7 +53,7 @@ class EditKnowledgeBaseItem extends EditRecord
                     ->translateLabel()
                     ->boolean()
                     ->default(false)
-                    ->rules(['boolean']),
+                    ->constraints(['boolean']),
                 Select::make('division')
                     ->label('Division')
                     ->translateLabel()

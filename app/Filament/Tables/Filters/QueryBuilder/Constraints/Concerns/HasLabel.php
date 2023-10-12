@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Tables\Filters\QueryBuilder\Rules\Concerns;
+namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\Concerns;
 
 use Closure;
 
