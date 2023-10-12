@@ -142,7 +142,7 @@ class ListTasks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('test')
+            Action::make('shared-filters')
                 ->icon('heroicon-m-funnel')
                 ->iconButton()
                 ->badge(fn () => collect($this->table->getFilters())->map(fn (BaseFilter $filter) => $filter->getIndicators())->flatten()->count())
