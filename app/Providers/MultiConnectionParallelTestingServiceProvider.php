@@ -26,7 +26,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
     protected array $parallelConnections = [
         [
             'connection' => 'sis',
-            'database' => 'postgres',
+            'database' => 'testing',
         ],
     ];
 

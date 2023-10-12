@@ -76,12 +76,18 @@ jobs:
     container: ubuntu:22.04
 
     env:
-      DB_PASSWORD: password
-      SIS_DB_PASSWORD: password
+      DB_PORT: 5432
+      DB_HOST: postgres
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_DATABASE: testing
       SCOUT_PREFIX: test_
       MEILISEARCH_KEY: testing
       MEILISEARCH_HOST: http://meilisearch:7700
       MEILISEARCH_PORT: 7700
+      SIS_DB_USERNAME: root
+      SIS_DB_PASSWORD: root
+      SIS_DB_DATABASE: testing
 
     timeout-minutes: 15
 
@@ -93,6 +99,9 @@ jobs:
         image: postgres:15
         # Provide the password for postgres
         env:
+          PGPASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.DB_DATABASE }}
+          POSTGRES_USER: ${{ env.DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
         # Set health checks to wait until postgres has started
         options: >-
@@ -118,6 +127,9 @@ jobs:
         image: postgres:15
         # Provide the password for postgres
         env:
+          PGPASSWORD: ${{ env.SIS_DB_PASSWORD }}
+          POSTGRES_DB: ${{ env.SIS_DB_DATABASE }}
+          POSTGRES_USER: ${{ env.SIS_DB_USERNAME }}
           POSTGRES_PASSWORD: ${{ env.SIS_DB_PASSWORD }}
         # Set health checks to wait until postgres has started
         options: >-
