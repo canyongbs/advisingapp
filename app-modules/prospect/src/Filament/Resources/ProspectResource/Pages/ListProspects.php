@@ -5,6 +5,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Tables\Columns\Column;
 use Assist\Prospect\Models\Prospect;
 use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
@@ -14,11 +15,11 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
-use Illuminate\Database\Eloquent\Collection;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
+use OpenSearch\ScoutDriverPlus\Support\Query;
+use OpenSearch\ScoutDriverPlus\Decorators\Hit;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
-use Illuminate\Contracts\Pagination\Paginator;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
@@ -28,10 +29,6 @@ use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 class ListProspects extends ListRecords
 {
     protected static string $resource = ProspectResource::class;
-
-    public function filterTableQuery(Builder $query): Builder {}
-
-    public function getTableRecords(): Collection | Paginator {}
 
     public function table(Table $table): Table
     {
@@ -115,6 +112,42 @@ class ListProspects extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    //public function filterTableQuery(Builder $query): Builder {}
+
+    //public function getTableRecords(): Collection | Paginator {}
+
+    protected function applySearchToTableQuery(Builder $query): Builder
+    {
+        //$this->applyColumnSearchesToTableQuery($query);
+
+        $fields = collect($this->getTable()->getColumns())->map(function (Column $column) {
+            return ! $column->isHidden() && $column->isGloballySearchable() ? $column->getSearchColumns() : null;
+        })
+            ->whereNotNull()
+            ->flatten()
+            ->toArray();
+
+        if (filled($search = $this->getTableSearch())) {
+            $query->whereIn(
+                'id',
+                Prospect::searchQuery(
+                    Query::multiMatch()
+                        ->fields($fields)
+                        ->type('bool_prefix')
+                        ->query($search)
+                        ->fuzziness('AUTO')
+                )
+                    ->execute()
+                    ->hits()
+                    ->map(function (Hit $hit) {
+                        return $hit->document()->id();
+                    })
+            );
+        }
+
+        return $query;
     }
 
     protected function getHeaderActions(): array
