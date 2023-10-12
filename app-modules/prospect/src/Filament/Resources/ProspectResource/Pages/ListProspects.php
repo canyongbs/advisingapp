@@ -43,7 +43,7 @@ class ListProspects extends ListRecords
                 TextColumn::make('email')
                     ->label('Email')
                     ->translateLabel()
-                    ->searchable('email^4')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('mobile')
                     ->label('Mobile')
@@ -115,62 +115,58 @@ class ListProspects extends ListRecords
             ]);
     }
 
-    //public function filterTableQuery(Builder $query): Builder {}
-
-    //public function getTableRecords(): Collection | Paginator {}
-
-    protected function applySearchToTableQuery(Builder $query): Builder
+    public function filterTableQuery(Builder $query): Builder
     {
-        //$this->applyColumnSearchesToTableQuery($query);
-
         $fields = collect($this->getTable()->getColumns())->map(function (Column $column) {
             return ! $column->isHidden() && $column->isGloballySearchable() ? $column->getSearchColumns() : null;
         })
+            ->merge(
+                collect($this->getTableColumnSearches())->map(function ($search, $column) {
+                    $column = $this->getTable()->getColumn($column);
+
+                    if (blank($search) || ! $column || $column->isHidden() || ! $column->isIndividuallySearchable()) {
+                        return null;
+                    }
+
+                    return $column->getSearchColumns();
+                })
+            )
             ->whereNotNull()
             ->flatten()
             ->toArray();
 
-        if (filled($search = $this->getTableSearch())) {
-            //ray(Prospect::searchQuery(
-            //    Query::bool()
-            //        ->must(
-            //            Query::multiMatch()
-            //                ->fields($fields)
-            //                ->type('bool_prefix')
-            //                ->query($search)
-            //                ->fuzziness('AUTO')
-            //        )
-            //        ->filter(
-            //            Query::term()
-            //                ->field('status_id')
-            //                ->value('9a5a0b30-b5f0-4e17-9f07-7704684d6341')
-            //        )
-            //)
-            //    ->execute()
-            //    ->hits());
+        $openSearchQuery = Query::bool();
 
-            // TODO: Look into getting the table to respect the order of the results from the search
-            $query->whereIn(
-                'id',
-                Prospect::searchQuery(
-                    Query::bool()
-                        ->must(
-                            Query::multiMatch()
-                                ->fields($fields)
-                                ->type('bool_prefix')
-                                ->query($search)
-                                ->fuzziness('AUTO')
-                        )
-                    //->filter(
-                    //    Query::term()
-                    //        ->field('status_id')
-                    //        ->value('9a5a0b30-b5f0-4e17-9f07-7704684d6341')
-                    //)
-                )
-                    ->execute()
-                    ->documents()
-                    ->map(fn (Document $document) => $document->id())
+        if (filled($search = $this->getTableSearch())) {
+            $openSearchQuery->must(
+                Query::multiMatch()
+                    ->fields($fields)
+                    ->type('bool_prefix')
+                    ->query($search)
+                    ->fuzziness('AUTO')
             );
+        }
+
+        $query->whereIn(
+            'id',
+            Prospect::searchQuery($openSearchQuery)
+                ->execute()
+                ->documents()
+                ->map(fn (Document $document) => $document->id())
+        );
+
+        foreach ($this->getTable()->getColumns() as $column) {
+            if ($column->isHidden()) {
+                continue;
+            }
+
+            $column->applyRelationshipAggregates($query);
+
+            if ($this->getTable()->isGroupsOnly()) {
+                continue;
+            }
+
+            $column->applyEagerLoading($query);
         }
 
         return $query;
