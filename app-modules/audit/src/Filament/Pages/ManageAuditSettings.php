@@ -2,6 +2,7 @@
 
 namespace Assist\Audit\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Select;
@@ -22,6 +23,19 @@ class ManageAuditSettings extends SettingsPage
     protected static string $settings = AuditSettings::class;
 
     protected static ?string $title = 'Audit Configuration';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('audit.view_audit_settings');
+    }
+
+    public function mount(): void
+    {
+        $this->authorize('audit.view_audit_settings');
+    }
 
     public function form(Form $form): Form
     {

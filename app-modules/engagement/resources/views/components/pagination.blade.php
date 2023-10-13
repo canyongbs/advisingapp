@@ -56,38 +56,75 @@
 
                         {{-- Pagination Elements --}}
                         @foreach ($elements as $element)
-                            {{-- "Three Dots" Separator --}}
-                            @if (is_string($element))
-                                <span aria-disabled="true">
-                                    <span
-                                        class="relative -ml-px inline-flex cursor-pointer items-center bg-transparent px-2 py-2 text-sm font-medium leading-5 text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:ring-gray-700 hover:dark:bg-gray-700"
-                                    >{{ $element }}</span>
-                                </span>
-                            @endif
-
                             {{-- Array Of Links --}}
                             @if (is_array($element))
-                                {{-- TODO Don't show all links --}}
-                                @foreach ($element as $page => $url)
-                                    <span wire:key="paginator-{{ $paginator->getPageName() }}-page{{ $page }}">
-                                        @if ($page == $paginator->currentPage())
-                                            <span aria-current="page">
-                                                <span
-                                                    class="relative -ml-px inline-flex cursor-default items-center bg-transparent px-4 py-2 text-sm font-medium leading-5 text-primary-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:ring-gray-700 hover:dark:bg-gray-700"
-                                                >{{ $page }}</span>
-                                            </span>
-                                        @else
-                                            <button
-                                                class="relative -ml-px inline-flex cursor-pointer items-center bg-transparent px-4 py-2 text-sm font-medium leading-5 text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:ring-gray-700 hover:dark:bg-gray-700"
-                                                type="button"
-                                                aria-label="{{ __('Go to page :page', ['page' => $page]) }}"
-                                                wire:click="gotoPage({{ $page }}, '{{ $paginator->getPageName() }}')"
-                                            >
-                                                {{ $page }}
-                                            </button>
-                                        @endif
-                                    </span>
-                                @endforeach
+                                @php
+                                    $previousPage = $paginator->currentPage() - 1;
+                                    $nextPage = $paginator->currentPage() + 1;
+                                @endphp
+
+                                @if ($paginator->currentPage() != 1)
+                                    {{-- First Page --}}
+                                    <x-engagement::page-link
+                                        :pageName="$paginator->getPageName()"
+                                        :currentPage="$paginator->currentPage()"
+                                        :page="1"
+                                    />
+
+                                    {{-- Three dots before current page if applicable --}}
+                                    @if ($previousPage > 2)
+                                        <span aria-disabled="true">
+                                            <span
+                                                class="relative -ml-px inline-flex cursor-pointer items-center bg-transparent px-2 py-2 text-sm font-medium leading-5 text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:ring-gray-700 hover:dark:bg-gray-700"
+                                            >...</span>
+                                        </span>
+                                    @endif
+                                @endif
+
+                                {{-- Previous Page --}}
+                                @if ($previousPage >= 1 && $previousPage != 1)
+                                    <x-engagement::page-link
+                                        :pageName="$paginator->getPageName()"
+                                        :currentPage="$paginator->currentPage()"
+                                        :page="$previousPage"
+                                    />
+                                @endif
+
+                                {{-- Current Page --}}
+                                <x-engagement::page-link
+                                    :pageName="$paginator->getPageName()"
+                                    :currentPage="$paginator->currentPage()"
+                                    :page="$paginator->currentPage()"
+                                />
+
+                                {{-- Next Page --}}
+                                @if ($nextPage <= $paginator->lastPage() && $nextPage != $paginator->lastPage())
+                                    <x-engagement::page-link
+                                        :pageName="$paginator->getPageName()"
+                                        :currentPage="$paginator->currentPage()"
+                                        :page="$nextPage"
+                                    />
+                                @endif
+
+                                @if ($paginator->currentPage() != $paginator->lastPage())
+                                    {{-- Three dots after current page if applicable --}}
+                                    @if ($paginator->lastPage() - $nextPage > 1)
+                                        <span aria-disabled="true">
+                                            <span
+                                                class="relative -ml-px inline-flex cursor-pointer items-center bg-transparent px-2 py-2 text-sm font-medium leading-5 text-gray-500 ring-1 ring-inset ring-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:ring-gray-700 hover:dark:bg-gray-700"
+                                            >...</span>
+                                        </span>
+                                    @endif
+
+                                    {{-- Last Page --}}
+                                    @if ($paginator->lastPage() > 1)
+                                        <x-engagement::page-link
+                                            :pageName="$paginator->getPageName()"
+                                            :currentPage="$paginator->currentPage()"
+                                            :page="$paginator->lastPage()"
+                                        />
+                                    @endif
+                                @endif
                             @endif
                         @endforeach
 

@@ -5,6 +5,7 @@ namespace Assist\AssistDataModel\Models;
 use App\Models\User;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -55,6 +56,17 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     ];
 
     public $timestamps = false;
+
+    public function getTable()
+    {
+        if ($this->table) {
+            return $this->table;
+        }
+
+        return config('database.adm_materialized_views_enabled')
+            ? 'students_local'
+            : 'students';
+    }
 
     public function identifier(): string
     {
@@ -119,6 +131,16 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public static function filamentResource(): string
     {
         return StudentResource::class;
+    }
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['view-any', '*.view']);
+    }
+
+    public function getApiPermissions(): Collection
+    {
+        return collect([]);
     }
 
     public function subscribedUsers(): MorphToMany

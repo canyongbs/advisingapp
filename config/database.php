@@ -167,4 +167,6 @@ return [
         'external_password' => env('FDW_EXTERNAL_PASSWORD', 'password'),
         'external_database' => env('FDW_EXTERNAL_DBNAME', 'sis'),
     ],
+
+    'adm_materialized_views_enabled' => env('ADM_MATERIALIZED_VIEWS_ENABLED', false),
 ];

@@ -6,6 +6,7 @@ use App\Models\User;
 use Filament\Forms\Set;
 use Filament\Tables\Table;
 use Assist\Task\Models\Task;
+use Filament\Actions\Action;
 use Assist\Task\Enums\TaskStatus;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
@@ -16,6 +17,7 @@ use App\Filament\Actions\ImportAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\BaseFilter;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
@@ -24,6 +26,7 @@ use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Task\Filament\Resources\TaskResource;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
@@ -31,6 +34,8 @@ use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 class ListTasks extends ListRecords
 {
+    use ExposesTableToWidgets;
+
     protected static string $resource = TaskResource::class;
 
     protected static string $view = 'task::filament.pages.list-tasks';
@@ -137,6 +142,14 @@ class ListTasks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('shared-filters')
+                ->icon('heroicon-m-funnel')
+                ->iconButton()
+                ->badge(fn () => collect($this->table->getFilters())->map(fn (BaseFilter $filter) => $filter->getIndicators())->flatten()->count())
+                ->form(fn () => $this->table->getFiltersForm())
+                ->fillForm($this->tableFilters ?? [])
+                ->modalSubmitAction(false)
+                ->modalCancelAction(false),
             ImportAction::make()
                 ->importer(TaskImporter::class)
                 ->authorize('import', Task::class),

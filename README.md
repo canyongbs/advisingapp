@@ -1,146 +1,114 @@
 <div id="top"></div>
 
 <!-- PROJECT SHIELDS -->
-
+<!--[![Forks][forks-shield]][forks-url]-->
+<!--[![Issues][issues-shield]][issues-url]-->
 [![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![AGPL 3.0 License][license-shield]][license-url]
 
 <!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://canyongbs.com/">
-    <img src="https://s3.us-west-2.amazonaws.com/canyongbs.com/CanyonGBS-Logo-White.png" alt="Logo" height="100">
-  </a>
-
-  <p align="center">
-    Academic & Student Success Integrated Support Technology
-    <br />
-    <br />
-    <a href="#"><strong>Explore the Docs » (Coming Soon)</strong></a>
-    <br />
-    <br />
-    <a href="#">View Demo (Coming Soon)</a>
-    ·
-    <a href="#">Report Bug (Coming Soon)</a>
-    ·
-    <a href="#">Request Feature (Coming Soon)</a>
-  </p>
-</div>
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
+[![Canyon GBS GitHub Header Image!](https://s3.us-west-2.amazonaws.com/canyongbs.com/LinkedIn-CompanyCoverImage.png "Canyyon GBS GitHub Header Image")](https://canyongbs.com)\
+\
+[Click here to visit the Canyon GBS Website](https://canyongbs.com/)
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
 <!-- [![ASSIST Dashboard Screen Shot][product-screenshot]](https://assistforhighered.org/) -->
+👋 Welcome!\
+\
+This repository includes the software required for the AI + CRM components in Canyon GBS LLC's AI + CRM + Data + Analytics ecosystem solution for colleges and universities in North America. This solution is known as __ASSIST by Canyon GBS™__, where ASSIST is an abbrieviation for __Advanced Student Support & Interaction Servicing Technology™__. \
+\
+The software in this repository is offerred as a fully managed and supported, SOC 2 compliant and ISO 27001:2022 certified, SaaS offerring to colleges and universities through Canyon GBS LLC. Additionally, the software is released as open-source under AGPL 3.0 (see the [license file](./LICENSE) for more details.)\
+\
+_Note: This software is developed, under copyright, and trademarked by Canyon GBS LLC ([canyongbs.com](https://canyongbs.com))._
 
-ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offerring.
+## Key AI + CRM Features
 
-Born out of necessity to innovate in the face of financial constraints for market options, ASSIST was created for one of the largest community college districts in the United States, the Maricopa County Community College District. This open-source project is managed and sponsored by Canyon GBS LLC, and offerred in a SaaS configuration for institutions that may not be ready to deploy the technology themselves.
+### Artificial Intelligence
 
-This project aims to make the solution widely available as an open source solution that your college or university can adopt either as a DIY option, or a managed servicing offerring through Canyon GBS LLC.
+Our robust personal assistant is designed to support your student service professionals in their day-to-day roles. Some key capabilities the assistant can help with includes:
 
-Key Features
+* Research Tasks
+* Draft Communication
+* Language Translation
+* Content Creation
+* Student Profile Analysis
+* Project Planning
+* Ideation
+* And Much More...
 
-* 3.5M+ Student Records
-* In Production at 6 Colleges
-* Built Natively for the Cloud
+### Student Service CRM
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+Our student service CRM is designed to support the management of prospective and enrolled students. Some key features include:
 
-### Built With
+* Record Mangement
+* Email and SMS
+* Service Management
+* Caseload Management
+* Task Management
+* Interaction Tracking
+* Files and Documents
+* And Much More...
 
-* [PHP](https://php.net)
+## Technology
+### Proudly Built With
+
+[Filament - Accelerated Laravel Development.](https://filamentphp.com/)
+
+### Stack
+A [PHP](https://php.net) TALL Stack is used to create our software:
+
+* [Tailwind CSS](https://tailwindcss.com/)
+* [Apline.js](https://alpinejs.dev)
 * [Laravel](https://laravel.com/)
 * [Livewire](https://laravel-livewire.com/)
-* [Tailwind CSS](https://https://tailwindcss.com/)
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+### Dependences for AI + CRM (800+)
 
-<!-- GETTING STARTED -->
-## Getting Started
+* [GitHub Insights: Dependencies](https://github.com/canyongbs/assistbycanyongbs/network/dependencies)
 
-Coming soon!
+### Recommended Cloud Infrastructure
 
-### Prerequisites
+Cloudflare DNS<br>
+Amazon Web Services (AWS):
+* AWS WAF
+* AWS ALB
+* AWS EC2 (Multi-AZ)
+* AWS SQS
+* AWS OpenSearch (Serverless)
+* AWS ElastiCache Redis Instance
+* AWS RDS Aurora PostgreSQL w/ FDW Configuration (Serverless)
+* AWS RDS ElastiCache Redis Instance
+* AWS S3
 
-Coming Soon
+Microsoft Azure
+* Azure Cognitive Services
 
-### Installation
+## Additional Project Details
+### Documentation
 
-[Local Development Setup Documentation](./docs/local-setup.md)
+* [Inbound-Webhooks](./docs/inbound-webhooks.md)
+* [Local Setup](./docs/local-setup.md)
+* [Roles and Permissions](./docs/roles-and-permissions.md)
+* [Inbound Webhooks](./docs/inbound-webhooks.md)
+* [Integrations: Twilio](./docs/integrations/twilio.md)
+* [Integrations: Azure OpenAI](./docs/integrations/azure_open_ai.md)
 
-<!-- USAGE EXAMPLES -->
-## Usage
+_Note: More documentation coming soon._
 
-[Roles and Permissions](./docs/roles-and-permissions.md)
-[Inbound Webhooks](./docs/inbound-webhooks.md)
+## Feature Requests & Issues
 
-_For more examples, please refer to the [Documentation](https://assistforhighered.org)_
+For SaaS customers, please channel your feature requests through your customer success associate. For issues, please open a support request so that your issue can be promptly addressed.\
+\
+For DIY customers, please open your feature request or issue using [GitHub Issues](https://github.com/canyongbs/assistbycanyongbs/issues).
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-<!-- ROADMAP -->
-
-## Integrations
-
-[Twilio](./docs/integrations/twilio.md)
-[Azure OpenAI](./docs/integrations/azure_open_ai.md)
-## Roadmap
-
-Coming Soon
-<!--
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
--->
-
-See the [open issues](https://github.com/canyongbs/assistforhighered-2/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-<!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+The software for this project is created and managed by a professional engineering team inside Canyon GBS LLC.\
+\
+All contributions to the project must be pre-approved in order to ensure product integrity. Create an issue with the "enhancement" tag, and include the details of your proposed change. A member of the product team at Canyon GBS will review, and if approved, you may fork the repo and create a pull request. Once complete, engineering at Canyon GBS will review for quality assurance prior to merging the PR. You may be asked to make changes in order to meet our quality standards for the project.\
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -148,53 +116,45 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-### Contribution Guidelines
+_Don't forget to ⭐ the project to show your support! Thanks again!_
 
-[Coding Standards Documentation](./docs/coding-standards.md)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-<!-- LICENSE -->
 ## License
 
-Distributed under the AGPL 3.0 License. See `LICENSE.txt` for more information.
+This software is developed by Canyon GBS LLC who is the copyright and trademark holder for this project. The source code itself is distributed under AGPL 3.0 License. See [License](./LICENSE) for more details.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+## Contact Information
 
-<!-- CONTACT -->
-## Contact
+### Customers & Employees
 
-Canyon GBS on Twitter- [@canyongbs](https://twitter.com/canyongbs)
+* [Become a Canyon GBS Customer](https://canyongbs.com/work-with-us)
+* [Become a Canyon GBS Employee](https://canyongbs.com/our-mission/work-culture/)
 
-Project Link: [https://github.com/canyongbs/assistforhighered-2](https://github.com/canyongbs/assistforhighered-2)
+### Web & Social Media
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+* [Canyon GBS on the Web](https://canyongbs.com)
+* [Canyon GBS on Twitter](https://twitter.com/canyongbs)
+* [Canyon GBS on LinkedIn](https://linkedin.com/company/canyongbs)
 
-<!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Thank you for all of those who contribute to these open source projects and resources:
-
-Coming Soon
-
-We also want to extend a special think you to the Postsecondary Success team at the Bill and Melinda Gates Foundation, who's grant made much of this software possible:
-
-* [Bill & Melinda Gates Foundation](https://www.gatesfoundation.org/our-work/programs/us-program/postsecondary-success)
+We want to extend a special think you to the Postsecondary Success team at the [Bill & Melinda Gates Foundation](https://www.gatesfoundation.org/our-work/programs/us-program/postsecondary-success).
+\
+\
+The creation and successful release of this ambitious project would not have been possible without their support.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[contributors-url]: https://github.com/canyongbs/assistforhighered/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[forks-url]: https://github.com/canyongbs/assistforhighered/network/members
-[stars-shield]: https://img.shields.io/github/stars/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[stars-url]: https://github.com/joelicatajr/assistforhighered/stargazers
-[issues-shield]: https://img.shields.io/github/issues/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[issues-url]: https://github.com/joelicatajr/assistforhighered-2/issues
-[license-shield]: https://img.shields.io/github/license/canyongbs/assistforhighered-2.svg?style=for-the-badge
-[license-url]: https://github.com/canyongbs/assistforhighered-2/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/canyongbs/assistbycanyongbs.svg?style=for-the-badge
+[contributors-url]: https://github.com/canyongbs/assistbycanyongbs/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/canyongbs/assistbycanyongbs.svg?style=for-the-badge
+[forks-url]: https://github.com/canyongbs/assistbycanyongbs/network/members
+[stars-shield]: https://img.shields.io/github/stars/canyongbs/assistbycanyongbs.svg?style=for-the-badge
+[stars-url]: https://github.com/joelicatajr/assistbycanyongbs/stargazers
+[issues-shield]: https://img.shields.io/github/issues/canyongbs/assistbycanyongbs.svg?style=for-the-badge
+[issues-url]: https://github.com/joelicatajr/assistbycanyongbs/issues
+[license-shield]: https://img.shields.io/github/license/canyongbs/assistbycanyongbs.svg?style=for-the-badge
+[license-url]: https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/company/canyongbs
-[product-screenshot]: images/assist-screenshot.png

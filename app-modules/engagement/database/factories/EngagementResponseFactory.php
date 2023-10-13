@@ -4,25 +4,34 @@ namespace Assist\Engagement\Database\Factories;
 
 use Assist\Prospect\Models\Prospect;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Engagement\Models\EngagementResponse;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Engagement\Models\EngagementResponse>
+ * @extends Factory<EngagementResponse>
  */
 class EngagementResponseFactory extends Factory
 {
     public function definition(): array
     {
-        $sender = fake()->randomElement([
-            Student::class,
-            Prospect::class,
-        ]);
-
-        $sender = $sender::factory()->create();
-
         return [
-            'sender_id' => $sender->id ?? $sender->sisid,
-            'sender_type' => $sender->getMorphClass(),
+            'sender_type' => fake()->randomElement([
+                (new Student())->getMorphClass(),
+                (new Prospect())->getMorphClass(),
+            ]),
+            'sender_id' => function (array $attributes) {
+                $senderClass = Relation::getMorphedModel($attributes['sender_type']);
+
+                /** @var Student|Prospect $senderModel */
+                $senderModel = new $senderClass();
+
+                $sender = $senderClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $senderModel::factory()->create();
+
+                return $sender->getKey();
+            },
             'content' => fake()->sentence(),
             'sent_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
         ];

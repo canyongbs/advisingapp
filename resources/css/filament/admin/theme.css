@@ -24,6 +24,10 @@
 }
 
 /* Style Overrides */
+.fi-simple-layout {
+    @apply bg-trout-700 dark:bg-gray-950;
+}
+
 /* .fi-sidebar-item {
     @apply text-assist-black-950 dark:text-assist-white-50  !important;
 }

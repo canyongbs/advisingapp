@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
 use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -25,6 +26,7 @@ class RoleGroup extends Model implements Auditable
     use HasRelationships;
     use HasUuids;
     use AuditableTrait;
+    use DefinesPermissions;
 
     protected $fillable = [
         'name',

@@ -1,3 +1,5 @@
 <?php
 
-return [];
+return [
+    'view_audit_settings',
+];

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Facade;
+use App\Providers\MultiConnectionParallelTestingServiceProvider;
 
 return [
     /*
@@ -197,6 +198,7 @@ return [
 
         App\Providers\HealthServiceProvider::class,
         App\Providers\FilamentServiceProvider::class,
+        MultiConnectionParallelTestingServiceProvider::class,
     ],
 
     /*

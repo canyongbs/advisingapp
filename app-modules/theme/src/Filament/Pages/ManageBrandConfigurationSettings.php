@@ -2,6 +2,7 @@
 
 namespace Assist\Theme\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
@@ -25,6 +26,19 @@ class ManageBrandConfigurationSettings extends SettingsPage
     protected static string $settings = ThemeSettings::class;
 
     protected static ?string $title = 'Brand Configuration';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('theme.view_theme_settings');
+    }
+
+    public function mount(): void
+    {
+        $this->authorize('theme.view_theme_settings');
+    }
 
     public function form(Form $form): Form
     {

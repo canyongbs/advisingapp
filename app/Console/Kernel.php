@@ -7,6 +7,7 @@ use App\Models\FailedImportRow;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
 use Spatie\Health\Commands\RunHealthChecksCommand;
+use App\Console\Commands\RefreshAdmMaterializedView;
 use Assist\Assistant\Models\AssistantChatMessageLog;
 use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
@@ -29,8 +30,43 @@ class Kernel extends ConsoleKernel
             '--model' => [Audit::class, AssistantChatMessageLog::class, FailedImportRow::class],
         ])->daily()->evenInMaintenanceMode()->onOneServer();
 
+        if (config('database.adm_materialized_views_enabled')) {
+            $this->refreshAdmMaterializedViews($schedule);
+        }
+
         // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
         $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+    }
+
+    protected function refreshAdmMaterializedViews(Schedule $schedule): void
+    {
+        $schedule->command(RefreshAdmMaterializedView::class, ['students'])
+            ->everyMinute()
+            ->evenInMaintenanceMode()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
+
+        $schedule->command(RefreshAdmMaterializedView::class, ['enrollments'])
+            ->everyMinute()
+            ->evenInMaintenanceMode()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
+
+        $schedule->command(RefreshAdmMaterializedView::class, ['performance'])
+            ->everyMinute()
+            ->evenInMaintenanceMode()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
+
+        $schedule->command(RefreshAdmMaterializedView::class, ['programs'])
+            ->everyMinute()
+            ->evenInMaintenanceMode()
+            ->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**
