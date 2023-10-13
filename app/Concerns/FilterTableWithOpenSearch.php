@@ -2,11 +2,13 @@
 
 namespace App\Concerns;
 
+use Exception;
 use Filament\Tables\Columns\Column;
 use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Filters\OpenSearchFilter;
 use OpenSearch\Adapter\Documents\Document;
 use OpenSearch\ScoutDriverPlus\Support\Query;
 use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
@@ -52,24 +54,21 @@ trait FilterTableWithOpenSearch
 
         // Filtering
 
-        $filters = collect($this->getTableFiltersForm()->getRawState())
-            ->keys()
-            ->mapWithKeys(function ($filterKey) {
-                return [$filterKey => [
-                    'filter' => $this->getTable()->getFilter($filterKey),
-                    'state' => $this->getTableFiltersForm()->getRawState()[$filterKey],
-                ]];
+        collect($this->getTable()->getFilters())
+            ->each(function (BaseFilter $filter) use (&$openSearchQuery, &$filterWithOpenSearchQuery) {
+                if (! $filter instanceof OpenSearchFilter) {
+                    throw new Exception('Unsupported filter type used on table');
+                }
+
+                /** @var OpenSearchFilter $filter */
+                $filterQuery = $filter->openSearchQuery($this->getTableFiltersForm()->getRawState()[$filter->getName()]);
+
+                if ($filterQuery) {
+                    $filterWithOpenSearchQuery = true;
+
+                    $openSearchQuery->filter($filterQuery);
+                }
             });
-
-        $filters->each(function ($filter) use (&$openSearchQuery, &$filterWithOpenSearchQuery) {
-            $filterQuery = $this->generateFilterOpenSearchQuery($filter['filter'], $filter['state']);
-
-            if ($filterQuery) {
-                $filterWithOpenSearchQuery = true;
-
-                $openSearchQuery->filter($filterQuery);
-            }
-        });
 
         if ($filterWithOpenSearchQuery) {
             $query->whereIn(
@@ -104,7 +103,7 @@ trait FilterTableWithOpenSearch
     {
         return match (true) {
             $filter instanceof SelectFilter => $this->selectFilterOpenSearchQuery($filter, $state),
-            default => null,
+            default => throw new Exception('Unsupported filter type used on table')
         };
     }
 
