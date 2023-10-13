@@ -6,13 +6,11 @@ use Exception;
 use Filament\Tables\Columns\Column;
 use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use OpenSearch\Adapter\Documents\Document;
 use OpenSearch\ScoutDriverPlus\Support\Query;
 use App\Filament\Columns\OpenSearch\OpenSearchColumn;
 use App\Filament\Filters\OpenSearch\OpenSearchFilter;
-use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
 
 trait FilterTableWithOpenSearch
 {
@@ -97,20 +95,5 @@ trait FilterTableWithOpenSearch
         }
 
         return $query;
-    }
-
-    public function generateFilterOpenSearchQuery(mixed $filter, mixed $state): ?QueryBuilderInterface
-    {
-        return match (true) {
-            $filter instanceof SelectFilter => $this->selectFilterOpenSearchQuery($filter, $state),
-            default => throw new Exception('Unsupported filter type used on table')
-        };
-    }
-
-    protected function selectFilterOpenSearchQuery(BaseFilter $filter, $state): ?QueryBuilderInterface
-    {
-        return ! empty($state['values']) ? Query::terms()
-            ->field($filter->getName())
-            ->values($state['values']) : null;
     }
 }
