@@ -5,7 +5,6 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
-use Filament\Tables\Columns\Column;
 use Assist\Prospect\Models\Prospect;
 use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
@@ -14,7 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use OpenSearch\Adapter\Documents\Document;
+use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -29,6 +28,8 @@ use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 
 class ListProspects extends ListRecords
 {
+    use FilterTableWithOpenSearch;
+
     protected static string $resource = ProspectResource::class;
 
     public function table(Table $table): Table
@@ -76,27 +77,27 @@ class ListProspects extends ListRecords
             ])
             ->filters([
                 SelectFilter::make('caseload')
-                    ->options(
-                        auth()->user()->caseloads()
-                            ->where('model', CaseloadModel::Prospect)
-                            ->pluck('name', 'id'),
-                    )
-                    ->query(function (Builder $query, array $data) {
-                        if (blank($data['value'])) {
-                            return;
-                        }
+                  ->options(
+                      auth()->user()->caseloads()
+                          ->where('model', CaseloadModel::Prospect)
+                          ->pluck('name', 'id'),
+                  )
+                  ->query(function (Builder $query, array $data) {
+                      if (blank($data['value'])) {
+                          return;
+                      }
 
-                        $query->whereKey(
-                            app(TranslateCaseloadFilters::class)
-                                ->handle($data['value'])
-                                ->pluck($query->getModel()->getQualifiedKeyName()),
-                        );
-                    }),
-                SelectFilter::make('status')
+                      $query->whereKey(
+                          app(TranslateCaseloadFilters::class)
+                              ->handle($data['value'])
+                              ->pluck($query->getModel()->getQualifiedKeyName()),
+                      );
+                  }),
+                SelectFilter::make('status_id')
                     ->relationship('status', 'name')
                     ->multiple()
                     ->preload(),
-                SelectFilter::make('source')
+                SelectFilter::make('source_id')
                     ->relationship('source', 'name')
                     ->multiple()
                     ->preload(),
@@ -113,63 +114,6 @@ class ListProspects extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public function filterTableQuery(Builder $query): Builder
-    {
-        $fields = collect($this->getTable()->getColumns())->map(function (Column $column) {
-            return ! $column->isHidden() && $column->isGloballySearchable() ? $column->getSearchColumns() : null;
-        })
-            ->merge(
-                collect($this->getTableColumnSearches())->map(function ($search, $column) {
-                    $column = $this->getTable()->getColumn($column);
-
-                    if (blank($search) || ! $column || $column->isHidden() || ! $column->isIndividuallySearchable()) {
-                        return null;
-                    }
-
-                    return $column->getSearchColumns();
-                })
-            )
-            ->whereNotNull()
-            ->flatten()
-            ->toArray();
-
-        $openSearchQuery = Query::bool();
-
-        if (filled($search = $this->getTableSearch())) {
-            $openSearchQuery->must(
-                Query::multiMatch()
-                    ->fields($fields)
-                    ->type('bool_prefix')
-                    ->query($search)
-                    ->fuzziness('AUTO')
-            );
-        }
-
-        $query->whereIn(
-            'id',
-            Prospect::searchQuery($openSearchQuery)
-                ->execute()
-                ->documents()
-                ->map(fn (Document $document) => $document->id())
-        );
-
-        foreach ($this->getTable()->getColumns() as $column) {
-            if ($column->isHidden()) {
-                continue;
-            }
-
-            $column->applyRelationshipAggregates($query);
-
-            if ($this->getTable()->isGroupsOnly()) {
-                continue;
-            }
-
-            $column->applyEagerLoading($query);
-        }
-
-        return $query;
     }
 
     protected function getHeaderActions(): array
