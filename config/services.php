@@ -61,4 +61,20 @@ return [
         'deployment_name' => env('AZURE_OPEN_AI_DEPLOYMENT_NAME'),
         'enable_test_mode' => env('AZURE_OPEN_AI_ENABLE_TEST_MODE', true),
     ],
+
+    'microsoft_graph' => [
+        'client_id' => env('MICROSOFT_GRAPH_CLIENT_ID'),
+        'client_secret' => env('MICROSOFT_GRAPH_CLIENT_SECRET'),
+        'redirect' => env('MICROSOFT_GRAPH_REDIRECT_URI'),
+        'scopes' => env('MICROSOFT_GRAPH_SCOPES', 'user.read calendars.readwrite calendars.read calendars.read.shared calendars.readbasic calendars.readwrite.shared'),
+        'authority' => env('MICROSOFT_GRAPH_AUTHORITY', 'https://login.microsoftonline.com/common'),
+        'authorize_endpoint' => env('MICROSOFT_GRAPH_AUTHORIZE_ENDPOINT', '/oauth2/v2.0/authorize'),
+        'token_endpoint' => env('MICROSOFT_GRAPH_TOKEN_ENDPOINT', '/oauth2/v2.0/token'),
+    ],
+
+    'google_calendar' => [
+        'client_id' => env('GOOGLE_CALENDAR_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CALENDAR_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_CALENDAR_REDIRECT_URI'),
+    ]
 ];
