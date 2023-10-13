@@ -18,6 +18,9 @@ class QueryBuilder extends BaseFilter
 {
     use HasConstraints;
 
+    /**
+     * @var array<string, int | string | null> | null
+     */
     protected ?array $constraintPickerColumns = [];
 
     protected string | Closure | null $constraintPickerWidth = null;
@@ -124,6 +127,9 @@ class QueryBuilder extends BaseFilter
         return $query;
     }
 
+    /**
+     * @param  array<string, int | string | null> | int | string | null  $columns
+     */
     public function constraintPickerColumns(array | int | string | null $columns = 2): static
     {
         if (! is_array($columns)) {
