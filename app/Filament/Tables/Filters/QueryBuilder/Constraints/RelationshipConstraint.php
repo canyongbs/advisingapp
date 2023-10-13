@@ -37,4 +37,11 @@ class RelationshipConstraint extends Constraint
     {
         return (bool) $this->evaluate($this->isMultiple);
     }
+
+    public function getAttributeLabel(): string
+    {
+        return $this->evaluate($this->attributeLabel) ?? str($this->getName())
+            ->kebab()
+            ->replace('-', ' ');
+    }
 }

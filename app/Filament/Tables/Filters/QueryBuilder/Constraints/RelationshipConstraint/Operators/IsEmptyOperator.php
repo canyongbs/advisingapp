@@ -19,10 +19,10 @@ class IsEmptyOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getConstraint()->getLabel()} is not empty" : "{$this->getConstraint()->getLabel()} is empty";
+        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} is not empty" : "{$this->getconstraint()->getAttributeLabel()} is empty";
     }
 
-    public function baseQuery(Builder $query): Builder
+    public function applyToBaseQuery(Builder $query): Builder
     {
         return $query->{$this->isInverse() ? 'has' : 'doesntHave'}($this->getConstraint()->getRelationshipName());
     }

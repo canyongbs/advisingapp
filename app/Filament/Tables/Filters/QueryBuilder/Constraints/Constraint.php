@@ -20,11 +20,19 @@ class Constraint extends Component
 
     public const OPERATOR_SELECT_NAME = 'operator';
 
+    protected string $evaluationIdentifier = 'constraint';
+
     protected string | Closure | null $attribute = null;
+
+    protected string | Closure | null $attributeLabel = null;
 
     protected string | Closure | null $relationship = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
+
+    protected ?array $settings = null;
+
+    protected ?bool $isInverse = null;
 
     final public function __construct(string $name)
     {
@@ -65,6 +73,10 @@ class Constraint extends Component
                     return $this->getLabel();
                 }
 
+                $this
+                    ->settings($state['settings'])
+                    ->inverse($isInverseOperator);
+
                 $operator
                     ->constraint($this)
                     ->settings($state['settings'])
@@ -73,6 +85,10 @@ class Constraint extends Component
                 try {
                     return $operator->getSummary();
                 } finally {
+                    $this
+                        ->settings(null)
+                        ->inverse(null);
+
                     $operator
                         ->constraint(null)
                         ->settings(null)
@@ -147,6 +163,13 @@ class Constraint extends Component
         return $this;
     }
 
+    public function attributeLabel(string | Closure | null $label): static
+    {
+        $this->attributeLabel = $label;
+
+        return $this;
+    }
+
     public function relationship(string $name, string $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
         $this->attribute("{$name}.{$titleAttribute}");
@@ -159,6 +182,11 @@ class Constraint extends Component
     public function getAttribute(): string
     {
         return $this->evaluate($this->attribute) ?? $this->getName();
+    }
+
+    public function getAttributeLabel(): string
+    {
+        return $this->evaluate($this->attributeLabel) ?? $this->getLabel();
     }
 
     public function queriesRelationships(): bool
@@ -179,5 +207,38 @@ class Constraint extends Component
     public function getModifyRelationshipQueryUsing(): ?Closure
     {
         return $this->modifyRelationshipQueryUsing;
+    }
+
+    public function settings(?array $settings): static
+    {
+        $this->settings = $settings;
+
+        return $this;
+    }
+
+    public function inverse(?bool $condition = true): static
+    {
+        $this->isInverse = $condition;
+
+        return $this;
+    }
+
+    public function getSettings(): ?array
+    {
+        return $this->settings;
+    }
+
+    public function isInverse(): ?bool
+    {
+        return $this->isInverse;
+    }
+
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match ($parameterName) {
+            'isInverse' => [$this->isInverse()],
+            'settings' => [$this->getSettings()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 }

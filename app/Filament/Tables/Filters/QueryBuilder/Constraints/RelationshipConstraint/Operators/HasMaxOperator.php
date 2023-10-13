@@ -30,10 +30,10 @@ class HasMaxOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "Has more than {$this->getSettings()['count']} {$this->getConstraint()->getLabel()}" : "Has maximum {$this->getSettings()['count']} {$this->getConstraint()->getLabel()}";
+        return $this->isInverse() ? "Has more than {$this->getSettings()['count']} {$this->getconstraint()->getAttributeLabel()}" : "Has maximum {$this->getSettings()['count']} {$this->getconstraint()->getAttributeLabel()}";
     }
 
-    public function baseQuery(Builder $query): Builder
+    public function applyToBaseQuery(Builder $query): Builder
     {
         return $query->has($this->getConstraint()->getRelationshipName(), $this->isInverse() ? '>' : '<=', intval($this->getSettings()['count']));
     }

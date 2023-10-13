@@ -2,8 +2,10 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
 
+use Illuminate\Support\Str;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class EqualsOperator extends Operator
@@ -29,11 +31,18 @@ class EqualsOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getConstraint()->getLabel()} does not equal {$this->getSettings()['text']}" : "{$this->getConstraint()->getLabel()} equals {$this->getSettings()['text']}";
+        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} does not equal \"{$this->getSettings()['text']}\"" : "{$this->getconstraint()->getAttributeLabel()} equals \"{$this->getSettings()['text']}\"";
     }
 
-    public function query(Builder $query, string $qualifiedColumn): Builder
+    public function apply(Builder $query, string $qualifiedColumn): Builder
     {
-        return $query->{$this->isInverse() ? 'whereNot' : 'where'}($qualifiedColumn, 'ilike', trim($this->getSettings()['text']));
+        $text = trim($this->getSettings()['text']);
+
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            $qualifiedColumn = new Expression("lower({$qualifiedColumn}::text)");
+            $text = Str::lower($text);
+        }
+
+        return $query->{$this->isInverse() ? 'whereNot' : 'where'}($qualifiedColumn, 'like', $text);
     }
 }

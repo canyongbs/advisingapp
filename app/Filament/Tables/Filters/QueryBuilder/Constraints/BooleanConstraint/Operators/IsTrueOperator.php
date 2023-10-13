@@ -19,10 +19,10 @@ class IsTrueOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getConstraint()->getLabel()} is false" : "{$this->getConstraint()->getLabel()} is true";
+        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} is false" : "{$this->getconstraint()->getAttributeLabel()} is true";
     }
 
-    public function query(Builder $query, string $qualifiedColumn): Builder
+    public function apply(Builder $query, string $qualifiedColumn): Builder
     {
         return $query->where($qualifiedColumn, ! $this->isInverse());
     }

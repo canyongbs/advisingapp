@@ -106,12 +106,20 @@ class QueryBuilder extends BaseFilter
                 continue;
             }
 
+            $constraint
+                ->settings($rule['data']['settings'])
+                ->inverse($isInverseOperator);
+
             $operator
                 ->constraint($constraint)
                 ->settings($rule['data']['settings'])
                 ->inverse($isInverseOperator);
 
-            $operator->baseQuery($query);
+            $operator->applyToBaseQuery($query);
+
+            $constraint
+                ->settings(null)
+                ->inverse(null);
 
             $operator
                 ->constraint(null)

@@ -2,14 +2,17 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Components\Component;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Concerns\CanBeHidden;
 
-abstract class Operator extends Component
+class Operator extends Component
 {
     use CanBeHidden;
+
+    protected string $evaluationIdentifier = 'operator';
 
     protected ?Constraint $constraint = null;
 
@@ -17,24 +20,108 @@ abstract class Operator extends Component
 
     protected ?bool $isInverse = null;
 
-    public static function make(): static
+    protected ?string $name = null;
+
+    protected string | Closure | null $label = null;
+
+    protected string | Closure | null $summary = null;
+
+    protected ?Closure $modifyQueryUsing = null;
+
+    protected ?Closure $modifyBaseQueryUsing = null;
+
+    final public function __construct(?string $name = null)
     {
-        return app(static::class);
+        $this->name($name);
     }
 
-    abstract public function getName(): string;
+    public static function make(?string $name = null): static
+    {
+        $static = app(static::class, ['name' => $name]);
+        $static->configure();
 
-    abstract public function getLabel(): string;
+        return $static;
+    }
 
-    abstract public function getSummary(): string;
+    public function name(?string $name): static
+    {
+        $this->name = $name;
 
-    public function query(Builder $query, string $qualifiedColumn): Builder
+        return $this;
+    }
+
+    public function label(string | Closure | null $label): static
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function summary(string | Closure | null $summary): static
+    {
+        $this->summary = $summary;
+
+        return $this;
+    }
+
+    public function query(?Closure $callback): static
+    {
+        $this->modifyQueryUsing($callback);
+
+        return $this;
+    }
+
+    public function baseQuery(?Closure $callback): static
+    {
+        $this->modifyBaseQueryUsing($callback);
+
+        return $this;
+    }
+
+    public function modifyQueryUsing(?Closure $callback): static
+    {
+        $this->modifyQueryUsing = $callback;
+
+        return $this;
+    }
+
+    public function modifyBaseQueryUsing(?Closure $callback): static
+    {
+        $this->modifyBaseQueryUsing = $callback;
+
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->evaluate($this->label);
+    }
+
+    public function getSummary(): string
+    {
+        return $this->evaluate($this->summary);
+    }
+
+    public function apply(Builder $query, string $qualifiedColumn): Builder
     {
         return $query;
     }
 
-    public function baseQuery(Builder $query): Builder
+    public function applyToBaseQuery(Builder $query): Builder
     {
+        if ($this->hasBaseQueryModificationCallback()) {
+            return $this->evaluate($this->modifyQueryUsing, [
+                'column' => $qualifiedColumn,
+                'qualifiedColumn' => $qualifiedColumn,
+                'query' => $query,
+            ]) ?? $query;
+        }
+
         $qualifiedColumn = $query->qualifyColumn($this->getConstraint()->getAttributeForQuery());
 
         if ($this->getConstraint()->queriesRelationships()) {
@@ -49,12 +136,28 @@ abstract class Operator extends Component
                         ]) ?? $query;
                     }
 
-                    return $this->query($query, $qualifiedColumn);
+                    if ($this->hasQueryModificationCallback()) {
+                        return $this->evaluate($this->modifyQueryUsing, [
+                            'column' => $qualifiedColumn,
+                            'qualifiedColumn' => $qualifiedColumn,
+                            'query' => $query,
+                        ]) ?? $query;
+                    }
+
+                    return $this->apply($query, $qualifiedColumn);
                 },
             );
         }
 
-        return $this->query($query, $qualifiedColumn);
+        if ($this->hasQueryModificationCallback()) {
+            return $this->evaluate($this->modifyQueryUsing, [
+                'column' => $qualifiedColumn,
+                'qualifiedColumn' => $qualifiedColumn,
+                'query' => $query,
+            ]) ?? $query;
+        }
+
+        return $this->apply($query, $qualifiedColumn);
     }
 
     public function getFormSchema(): array
@@ -96,5 +199,25 @@ abstract class Operator extends Component
     public function isInverse(): ?bool
     {
         return $this->isInverse;
+    }
+
+    protected function hasQueryModificationCallback(): bool
+    {
+        return $this->modifyQueryUsing instanceof Closure;
+    }
+
+    protected function hasBaseQueryModificationCallback(): bool
+    {
+        return $this->modifyBaseQueryUsing instanceof Closure;
+    }
+
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match ($parameterName) {
+            'constraint' => [$this->getConstraint()],
+            'isInverse' => [$this->isInverse()],
+            'settings' => [$this->getSettings()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 }

@@ -3,6 +3,7 @@
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\ViewAction;
@@ -47,6 +48,7 @@ class ListStudents extends ListRecords
                 QueryBuilder::make()
                     ->constraints([
                         QueryBuilder\Constraints\TextConstraint::make('full_name')
+                            ->label('Full Name')
                             ->icon('heroicon-m-user'),
                         QueryBuilder\Constraints\TextConstraint::make('first')
                             ->label('First Name')
@@ -81,12 +83,15 @@ class ListStudents extends ListRecords
                             ->icon('heroicon-m-lock-open'),
                         QueryBuilder\Constraints\RelationshipConstraint::make('programs')
                             ->multiple()
+                            ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
                             ->icon('heroicon-m-academic-cap'),
                         QueryBuilder\Constraints\RelationshipConstraint::make('performances')
                             ->multiple()
+                            ->attributeLabel(fn (array $settings): string => Str::plural('performance', $settings['count']))
                             ->icon('heroicon-m-presentation-chart-line'),
                         QueryBuilder\Constraints\RelationshipConstraint::make('enrollments')
                             ->multiple()
+                            ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']))
                             ->icon('heroicon-m-folder-open'),
                     ]),
                 Filter::make('subscribed')
