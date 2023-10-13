@@ -16,7 +16,7 @@ class OpenSearchList extends Command
         if (config('scout.driver') !== 'opensearch') {
             $this->error('Scout driver must be set to opensearch.');
 
-            return 1;
+            return self::FAILURE;
         }
 
         $client = $clientBuilder->default();
@@ -29,6 +29,6 @@ class OpenSearchList extends Command
 
         $this->info(json_encode($indices, JSON_PRETTY_PRINT));
 
-        return 0;
+        return self::SUCCESS;
     }
 }
