@@ -4,8 +4,8 @@ namespace Assist\ServiceManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
+use OpenSearch\ScoutDriverPlus\Searchable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;

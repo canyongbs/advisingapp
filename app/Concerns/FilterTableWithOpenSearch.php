@@ -44,11 +44,13 @@ trait FilterTableWithOpenSearch
             $filterWithOpenSearchQuery = true;
 
             $openSearchQuery->must(
+                // TODO: We may want to consider breaking up the matches per search just in case we want different fuzziness or analyzers
                 Query::multiMatch()
                     ->fields($fields)
                     ->type('bool_prefix')
                     ->query($search)
                     ->fuzziness('AUTO')
+                    ->analyzer('standard')
             );
         }
 
