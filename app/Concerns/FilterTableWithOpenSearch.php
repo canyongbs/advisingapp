@@ -10,6 +10,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use OpenSearch\Adapter\Documents\Document;
 use OpenSearch\ScoutDriverPlus\Support\Query;
+use App\Filament\Columns\OpenSearch\OpenSearchColumn;
 use App\Filament\Filters\OpenSearch\OpenSearchFilter;
 use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
 
@@ -17,41 +18,40 @@ trait FilterTableWithOpenSearch
 {
     public function filterTableQuery(Builder $query): Builder
     {
-        // Search
-
-        $fields = collect($this->getTable()->getColumns())->map(function (Column $column) {
-            return ! $column->isHidden() && $column->isGloballySearchable() ? $column->getSearchColumns() : null;
-        })
-            ->merge(
-                collect($this->getTableColumnSearches())->map(function ($search, $column) {
-                    $column = $this->getTable()->getColumn($column);
-
-                    if (blank($search) || ! $column || $column->isHidden() || ! $column->isIndividuallySearchable()) {
-                        return null;
-                    }
-
-                    return $column->getSearchColumns();
-                })
-            )
-            ->whereNotNull()
-            ->flatten()
-            ->toArray();
-
         $openSearchQuery = Query::bool();
         $filterWithOpenSearchQuery = false;
 
-        if (filled($search = $this->getTableSearch())) {
-            $filterWithOpenSearchQuery = true;
+        // Search
 
-            $openSearchQuery->must(
-                // TODO: We may want to consider breaking up the matches per search just in case we want different fuzziness or analyzers
-                Query::multiMatch()
-                    ->fields($fields)
-                    ->type('bool_prefix')
-                    ->query($search)
-                    ->fuzziness('AUTO')
-                    ->analyzer('standard')
-            );
+        if (filled($search = $this->getTableSearch())) {
+            collect($this->getTable()->getColumns())->mapWithKeys(function (Column $column) {
+                return ! $column->isHidden() && $column->isGloballySearchable() ? [$column->getName() => $column] : [];
+            })
+                ->merge(
+                    collect($this->getTableColumnSearches())->mapWithKeys(function ($search, $column) {
+                        $column = $this->getTable()->getColumn($column);
+
+                        if (blank($search) || ! $column || $column->isHidden() || ! $column->isIndividuallySearchable()) {
+                            return [];
+                        }
+
+                        return [$column->getName() => $column];
+                    })
+                )
+                ->each(function (Column $column, string $columnName) use (&$openSearchQuery, &$filterWithOpenSearchQuery, $search) {
+                    if (! $column instanceof OpenSearchColumn) {
+                        throw new Exception('Unsupported column type used on table');
+                    }
+
+                    /** @var OpenSearchColumn $column */
+                    $query = $column->openSearchQuery($search);
+
+                    $openSearchQuery->should($query);
+
+                    $filterWithOpenSearchQuery = true;
+
+                    $openSearchQuery->minimumShouldMatch(1);
+                });
         }
 
         // Filtering

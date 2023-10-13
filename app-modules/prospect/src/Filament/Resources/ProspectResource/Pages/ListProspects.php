@@ -25,6 +25,7 @@ use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
+use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 
 class ListProspects extends ListRecords
 {
@@ -37,16 +38,16 @@ class ListProspects extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make(Prospect::displayNameKey())
+                OpenSearchTextColumn::make(Prospect::displayNameKey())
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('email')
+                OpenSearchTextColumn::make('email')
                     ->label('Email')
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('mobile')
+                OpenSearchTextColumn::make('mobile')
                     ->label('Mobile')
                     ->translateLabel()
                     ->searchable()
