@@ -7,84 +7,112 @@ use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\ValidationException;
 
 class QueryBuilder extends BaseFilter
 {
     use HasConstraints;
+
+    public static function getDefaultName(): ?string
+    {
+        return 'queryBuilder';
+    }
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->form(fn (QueryBuilder $filter): array => [
-            Checkbox::make('not')
-                ->label('NOT'),
-            RuleBuilder::make('rules')
-                ->constraints($filter->getConstraints()),
+            Fieldset::make($filter->getLabel())
+                ->schema([
+                    RuleBuilder::make('rules')
+                        ->constraints($filter->getConstraints()),
+                    Checkbox::make('not')
+                        ->label('Exclude these filters (NOT)'),
+                ])
+                ->columns(1),
         ]);
 
         $this->query(function (Builder $query, array $data) {
-            $this->applyRuleGroupsToQuery($query, [
-                [
-                    'not' => $data['not'] ?? false,
-                    'rules' => $data['rules'] ?? [],
-                ],
-            ]);
-        });
+            $ruleBuilder = $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
-        $ruleBuilder = $this->getForm()
-            ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+            $query->{($data['not'] ?? false) ? 'whereNot' : 'where'}(function (Builder $query) use ($data, $ruleBuilder) {
+                $this->applyRulesToQuery($query, $data['rules'], $ruleBuilder);
+            });
+        });
 
         $this->columnSpanFull();
     }
 
-    public function applyRuleGroupsToQuery(Builder $query, array $data, RuleBuilder $builder): Builder
+    public function applyRulesToQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
-        $isFirst = true;
+        foreach ($rules as $ruleIndex => $rule) {
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
 
-        foreach ($data as $orGroup) {
-            $query->{match ([$isFirst, ($orGroup['not'] ?? false)]) {
-                [true, false] => 'where',
-                [true, true] => 'whereNot',
-                [false, false] => 'orWhere',
-                [false, true] => 'orWhereNot',
-            }}(function (Builder $query) use ($orGroup) {
-                foreach ($orGroup['rules'] as $rule) {
-                    if ($rule['type'] === 'orGroup') {
-                        $query->{$rule['data']['not'] ?? false ? 'whereNot' : 'where'}(function (Builder $query) use ($rule) {
-                            $this->applyRuleGroupsToQuery($query, $rule['data']['groups']);
+            if ($rule['type'] === 'or') {
+                $query->{$rule['data']['not'] ?? false ? 'whereNot' : 'where'}(function (Builder $query) use ($rule, $ruleBuilderBlockContainer) {
+                    $isFirst = true;
+
+                    foreach ($rule['data']['groups'] as $orGroupIndex => $orGroup) {
+                        $query->{match ([$isFirst, ($orGroup['not'] ?? false)]) {
+                            [true, false] => 'where',
+                            [true, true] => 'whereNot',
+                            [false, false] => 'orWhere',
+                            [false, true] => 'orWhereNot',
+                        }}(function (Builder $query) use ($orGroup, $orGroupIndex, $ruleBuilderBlockContainer) {
+                            $this->applyRulesToQuery(
+                                $query,
+                                $orGroup['rules'],
+                                $ruleBuilderBlockContainer
+                                    ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
+                                    ->getChildComponentContainer($orGroupIndex)
+                                    ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder),
+                            );
                         });
 
-                        continue;
+                        $isFirst = false;
                     }
+                });
 
-                    $constraint = $this->getConstraint($rule['type']);
+                continue;
+            }
 
-                    if (! $constraint) {
-                        continue;
-                    }
+            $constraint = $this->getConstraint($rule['type']);
 
-                    $operator = $rule['data'][$constraint::OPERATOR_SELECT_NAME];
+            if (! $constraint) {
+                continue;
+            }
 
-                    if (blank($operator)) {
-                        continue;
-                    }
+            $operator = $rule['data'][$constraint::OPERATOR_SELECT_NAME];
 
-                    [$operatorName, $isInverseOperator] = $constraint->parseOperatorString($operator);
+            if (blank($operator)) {
+                continue;
+            }
 
-                    $operator = $constraint->getOperator($operatorName);
+            [$operatorName, $isInverseOperator] = $constraint->parseOperatorString($operator);
 
-                    if (! $operator) {
-                        continue;
-                    }
+            $operator = $constraint->getOperator($operatorName);
 
-                    $operator->query($query, $rule['type'], $rule['data']['settings'], $isInverseOperator);
-                }
-            });
+            if (! $operator) {
+                continue;
+            }
 
-            $isFirst = false;
+            try {
+                $ruleBuilderBlockContainer->validate();
+            } catch (ValidationException) {
+                continue;
+            }
+
+            $operator->applyToQueryForConstraint(
+                $query,
+                $constraint,
+                $rule['data']['settings'] ?? [],
+                $isInverseOperator,
+            );
         }
 
         return $query;

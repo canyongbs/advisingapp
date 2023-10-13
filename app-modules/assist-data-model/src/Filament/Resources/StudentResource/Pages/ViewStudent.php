@@ -35,10 +35,8 @@ class ViewStudent extends ViewRecord
                             ->label('Email Address'),
                         TextEntry::make('sisid')
                             ->label('Student ID'),
-                        TextEntry::make('mobile')
-                            ->label('Mobile'),
-                        TextEntry::make('address')
-                            ->label('Address'),
+                        TextEntry::make('mobile'),
+                        TextEntry::make('address'),
                     ])
                     ->columns(),
             ]);

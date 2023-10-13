@@ -7,36 +7,29 @@ use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 
-class ContainsOperator extends Operator
+class IsFilledOperator extends Operator
 {
     public function getName(): string
     {
-        return 'contains';
+        return 'isFilled';
     }
 
     public function getLabel(bool $isInverse): string
     {
-        return $isInverse ? 'Does not contain' : 'Contains';
-    }
-
-    public function getFormSchema(): array
-    {
-        return [
-            TextInput::make('text')
-                ->required()
-                ->columnSpanFull(),
-        ];
+        return $isInverse ? 'Is blank' : 'Is filled';
     }
 
     public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
     {
-        return $isInverse ? "{$constraint->getLabel()} does not contain {$settings['text']}" : "{$constraint->getLabel()} contains {$settings['text']}";
+        return $isInverse ? "{$constraint->getLabel()} is blank" : "{$constraint->getLabel()} is filled";
     }
 
     public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
     {
-        $text = trim($settings['text']);
-
-        return $query->{$isInverse ? 'whereNot' : 'where'}($attribute, 'ilike', "%{$text}%");
+        return $query->where(
+            fn (Builder $query) => $query
+                ->{$isInverse ? 'whereNull' : 'whereNotNull'}($attribute)
+                ->{$isInverse ? 'where' : 'whereNot'}($attribute, ''),
+        );
     }
 }

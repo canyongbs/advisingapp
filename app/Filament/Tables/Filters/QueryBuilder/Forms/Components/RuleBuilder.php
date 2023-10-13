@@ -33,10 +33,10 @@ class RuleBuilder extends Builder
                         fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(),
                         $this->getConstraints(),
                     ),
-                    Builder\Block::make('orGroup')
+                    Builder\Block::make('or')
                         ->label(function (?array $state, ?string $uuid) use ($component) {
                             if (blank($state) || blank($uuid)) {
-                                return 'OR';
+                                return 'Disjunction (OR)';
                             }
 
                             if (! count($state['groups'] ?? [])) {
@@ -53,8 +53,6 @@ class RuleBuilder extends Builder
                         })
                         ->icon('heroicon-m-bars-4')
                         ->schema(fn (): array => [
-                            Checkbox::make('not')
-                                ->label('NOT'),
                             Repeater::make('groups')
                                 ->schema(fn (): array => [
                                     static::make('rules')
@@ -82,7 +80,10 @@ class RuleBuilder extends Builder
                                 ->truncateItemLabel(false)
                                 ->cloneable()
                                 ->reorderable(false)
-                                ->hiddenLabel(),
+                                ->hiddenLabel()
+                                ->generateUuidUsing(fn (): string => Str::random(4)),
+                            Checkbox::make('not')
+                                ->label('NOT'),
                         ]),
                 ];
             })
@@ -98,6 +99,7 @@ class RuleBuilder extends Builder
             ->reorderable(false)
             ->expandAllAction(fn (Action $action) => $action->hidden())
             ->collapseAllAction(fn (Action $action) => $action->hidden())
-            ->truncateBlockLabel(false);
+            ->truncateBlockLabel(false)
+            ->generateUuidUsing(fn (): string => Str::random(4));
     }
 }

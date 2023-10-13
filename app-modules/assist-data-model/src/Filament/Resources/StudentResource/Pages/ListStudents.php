@@ -47,7 +47,7 @@ class ListStudents extends ListRecords
                     ->searchable(),
             ])
             ->filters([
-                QueryBuilder::make('query')
+                QueryBuilder::make()
                     ->constraints([
                         QueryBuilder\Constraints\TextConstraint::make('full_name')
                             ->icon('heroicon-m-user'),
@@ -70,30 +70,30 @@ class ListStudents extends ListRecords
                             ->label('Email Address')
                             ->icon('heroicon-m-envelope'),
                         QueryBuilder\Constraints\TextConstraint::make('mobile')
-                            ->label('Mobile')
                             ->icon('heroicon-m-phone'),
                         QueryBuilder\Constraints\TextConstraint::make('address')
-                            ->label('Address')
                             ->icon('heroicon-m-map-pin'),
+                        QueryBuilder\Constraints\TextConstraint::make('holds')
+                            ->icon('heroicon-m-exclamation-triangle'),
+                        QueryBuilder\Constraints\BooleanConstraint::make('sap')
+                            ->label('SAP')
+                            ->icon('heroicon-m-academic-cap'),
+                        QueryBuilder\Constraints\BooleanConstraint::make('dual'),
+                        QueryBuilder\Constraints\BooleanConstraint::make('ferpa')
+                            ->label('FERPA')
+                            ->icon('heroicon-m-lock-open'),
+                        QueryBuilder\Constraints\RelationshipConstraint::make('programs')
+                            ->multiple()
+                            ->icon('heroicon-m-academic-cap'),
+                        QueryBuilder\Constraints\RelationshipConstraint::make('performances')
+                            ->multiple()
+                            ->icon('heroicon-m-presentation-chart-line'),
+                        QueryBuilder\Constraints\RelationshipConstraint::make('enrollments')
+                            ->multiple()
+                            ->icon('heroicon-m-folder-open'),
                     ]),
-//                TernaryFilter::make('sap')
-//                    ->label('SAP'),
-//                TernaryFilter::make('dual'),
-//                TernaryFilter::make('ferpa')
-//                    ->label('FERPA'),
-//                Filter::make('holds')
-//                    ->form([
-//                        TextInput::make('hold'),
-//                    ])
-//                    ->query(function (Builder $query, array $data): Builder {
-//                        return $query
-//                            ->when(
-//                                $data['hold'],
-//                                fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
-//                            );
-//                    }),
-//                Filter::make('subscribed')
-//                    ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
+                Filter::make('subscribed')
+                    ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 ViewAction::make(),

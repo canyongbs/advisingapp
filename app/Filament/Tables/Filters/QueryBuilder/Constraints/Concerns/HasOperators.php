@@ -16,7 +16,7 @@ trait HasOperators
     {
         foreach ($operators as $operator) {
             if (is_string($operator)) {
-                $operator = app($operator);
+                $operator = $operator::make();
             }
 
             $this->operators[$operator->getName()] = $operator;
@@ -30,7 +30,10 @@ trait HasOperators
      */
     public function getOperators(): array
     {
-        return $this->evaluate($this->operators);
+        return array_filter(
+            $this->operators,
+            fn (Operator $operator): bool => $operator->isVisible(),
+        );
     }
 
     public function getOperator(string $name): ?Operator

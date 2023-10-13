@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints;
 
+use Closure;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Concerns\HasLabel;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
@@ -12,6 +13,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasIcon;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Validation\ValidationException;
 
 class Constraint extends Component
@@ -22,6 +25,12 @@ class Constraint extends Component
     use HasIcon;
 
     const OPERATOR_SELECT_NAME = 'operator';
+
+    protected string | Closure | null $attribute = null;
+
+    protected string | Closure | null $relationship = null;
+
+    protected ?Closure $modifyRelationshipQueryUsing = null;
 
     final public function __construct(string $name)
     {
@@ -62,38 +71,45 @@ class Constraint extends Component
                     return $this->getLabel();
                 }
 
-                return $operator->getSummary($this->getLabel(), $state['settings'], $isInverseOperator);
+                return $operator->getSummary($this, $state['settings'] ?? [], $isInverseOperator);
             })
             ->icon($this->getIcon())
-            ->schema(fn (): array => [
-                Select::make(static::OPERATOR_SELECT_NAME)
-                    ->options($this->getOperatorSelectOptions())
-                    ->live()
-                    ->afterStateUpdated(fn (Select $component, Get $get) => $component
-                        ->getContainer()
-                        ->getComponent('settings')
-                        ->getChildComponentContainer()
-                        ->fill($get('settings'))),
-                Group::make(function ($component, Get $get): array {
-                    $operator = $get(static::OPERATOR_SELECT_NAME);
+            ->schema(function (): array {
+                $operatorSelectOptions = $this->getOperatorSelectOptions();
 
-                    if (blank($operator)) {
-                        return [];
-                    }
+                return [
+                    Select::make(static::OPERATOR_SELECT_NAME)
+                        ->options($operatorSelectOptions)
+                        ->default(array_key_first($operatorSelectOptions))
+                        ->live()
+                        ->afterStateUpdated(fn (Select $component, Get $get) => $component
+                            ->getContainer()
+                            ->getComponent('settings')
+                            ->getChildComponentContainer()
+                            ->fill($get('settings'))),
+                    Group::make(function ($component, Get $get): array {
+                        $operator = $get(static::OPERATOR_SELECT_NAME);
 
-                    [$operatorName] = $this->parseOperatorString($operator);
+                        if (blank($operator)) {
+                            return [];
+                        }
 
-                    $operator = $this->getOperator($operatorName);
+                        [$operatorName] = $this->parseOperatorString($operator);
 
-                    if (! $operator) {
-                        return [];
-                    }
+                        $operator = $this->getOperator($operatorName);
 
-                    return $operator->getFormSchema();
-                })
-                    ->statePath('settings')
-                    ->key('settings'),
-            ])
+                        if (! $operator) {
+                            return [];
+                        }
+
+                        return $operator->getFormSchema();
+                    })
+                        ->statePath('settings')
+                        ->key('settings')
+                        ->columnSpan(2)
+                        ->columns(2),
+                ];
+            })
             ->columns(3);
     }
 
@@ -114,5 +130,46 @@ class Constraint extends Component
         }
 
         return [$operator, false];
+    }
+
+    public function attribute(string | Closure | null $name): static
+    {
+        $this->attribute = $name;
+
+        return $this;
+    }
+
+    public function relationship(string $name, string $titleAttribute, ?Closure $modifyQueryUsing = null): static
+    {
+        $this->attribute("{$name}.{$titleAttribute}");
+
+        $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
+
+        return $this;
+    }
+
+    public function getAttribute(): string
+    {
+        return $this->evaluate($this->attribute) ?? $this->getName();
+    }
+
+    public function queriesRelationships(): bool
+    {
+        return str($this->getAttribute())->contains('.');
+    }
+
+    public function getRelationshipName(): string
+    {
+        return (string) str($this->getAttribute())->beforeLast('.');
+    }
+
+    public function getAttributeForQuery(): string
+    {
+        return (string) str($this->getAttribute())->afterLast('.');
+    }
+
+    public function getModifyRelationshipQueryUsing(): ?Closure
+    {
+        return $this->modifyRelationshipQueryUsing;
     }
 }

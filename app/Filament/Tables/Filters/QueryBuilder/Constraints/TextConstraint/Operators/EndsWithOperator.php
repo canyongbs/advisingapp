@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextRule\Operators;
+namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
 
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,18 +22,21 @@ class EndsWithOperator extends Operator
     public function getFormSchema(): array
     {
         return [
-            TextInput::make('substring')
-                ->required(),
+            TextInput::make('text')
+                ->required()
+                ->columnSpanFull(),
         ];
     }
 
-    public function getSummary(string $attributeLabel, array $settings, bool $isInverse): string
+    public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
     {
-        return $isInverse ? "{$attributeLabel} does not end with {$settings['substring']}" : "{$attributeLabel} ends with {$settings['substring']}";
+        return $isInverse ? "{$constraint->getLabel()} does not end with {$settings['text']}" : "{$constraint->getLabel()} ends with {$settings['text']}";
     }
 
     public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
     {
-        return $query->{$isInverse ? 'whereNot' : 'where'}($attribute, 'ilike', "%{$settings['substring']}");
+        $text = trim($settings['text']);
+
+        return $query->{$isInverse ? 'whereNot' : 'where'}($attribute, 'ilike', "%{$text}");
     }
 }

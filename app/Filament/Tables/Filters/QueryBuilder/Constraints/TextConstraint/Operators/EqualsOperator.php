@@ -7,16 +7,16 @@ use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 
-class ContainsOperator extends Operator
+class EqualsOperator extends Operator
 {
     public function getName(): string
     {
-        return 'contains';
+        return 'equals';
     }
 
     public function getLabel(bool $isInverse): string
     {
-        return $isInverse ? 'Does not contain' : 'Contains';
+        return $isInverse ? 'Does not equal' : 'Equals';
     }
 
     public function getFormSchema(): array
@@ -30,13 +30,11 @@ class ContainsOperator extends Operator
 
     public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
     {
-        return $isInverse ? "{$constraint->getLabel()} does not contain {$settings['text']}" : "{$constraint->getLabel()} contains {$settings['text']}";
+        return $isInverse ? "{$constraint->getLabel()} does not equal {$settings['text']}" : "{$constraint->getLabel()} equals {$settings['text']}";
     }
 
     public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
     {
-        $text = trim($settings['text']);
-
-        return $query->{$isInverse ? 'whereNot' : 'where'}($attribute, 'ilike', "%{$text}%");
+        return $query->{$isInverse ? 'whereNot' : 'where'}($attribute, 'ilike', trim($settings['text']));
     }
 }
