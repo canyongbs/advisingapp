@@ -14,33 +14,41 @@ use Filament\Actions\Contracts\HasActions;
 use Assist\Task\Filament\Concerns\TaskEditForm;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
 use Assist\Task\Filament\Pages\Components\TaskKanbanViewAction;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Assist\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 
 class TaskKanban extends Component implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
     use TaskEditForm;
-
-    protected static string $view = 'livewire.task-kanban';
+    use InteractsWithPageTable;
 
     public array $statuses = [];
 
-    public EloquentCollection|Collection $tasks;
-
     public ?Task $currentTask = null;
+
+    public function render()
+    {
+        return view('livewire.task-kanban', [
+            'tasks' => $this->getTasks(),
+        ]);
+    }
 
     public function mount(): void
     {
         $this->statuses = TaskStatus::cases();
+    }
 
-        $this->tasks = collect($this->statuses)
-            ->mapWithKeys(fn ($status) => [$status->value => collect()]);
+    public function getTasks(): Collection
+    {
+        $pageTasks = $this->getPageTableQuery()->get()->groupBy('status');
 
-        Task::all()->groupBy('status')->each(fn ($tasks, $status) => $this->tasks[$status] = $tasks);
+        return collect($this->statuses)
+            ->mapWithKeys(fn ($status) => [$status->value => $pageTasks[$status->value] ?? collect()]);
     }
 
     public function movedTask(string $taskId, string $fromStatusString, string $toStatusString): JsonResponse
@@ -48,7 +56,7 @@ class TaskKanban extends Component implements HasForms, HasActions
         $fromStatus = TaskStatus::from($fromStatusString);
         $toStatus = TaskStatus::from($toStatusString);
 
-        $task = $this->tasks[$fromStatusString]->firstWhere('id', $taskId);
+        $task = $this->getPageTableQuery()->firstWhere('id', $taskId);
 
         try {
             $task->getStateMachine('status')->transitionTo($toStatus);
@@ -65,9 +73,6 @@ class TaskKanban extends Component implements HasForms, HasActions
                 'message' => 'Task could not be moved. Something went wrong, if this continues please contact support.',
             ], ResponseAlias::HTTP_BAD_REQUEST);
         }
-
-        $this->tasks[$fromStatusString] = $this->tasks[$fromStatusString]->filter(fn ($task) => $task->id !== $taskId);
-        $this->tasks[$toStatusString]->push($task);
 
         return response()->json([
             'success' => true,
@@ -92,5 +97,10 @@ class TaskKanban extends Component implements HasForms, HasActions
                         ->form($this->editFormFields()),
                 ]
             );
+    }
+
+    protected function getTablePage(): string
+    {
+        return ListTasks::class;
     }
 }
