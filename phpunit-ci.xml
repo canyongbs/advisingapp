@@ -46,5 +46,6 @@
     <env name="SIS_DB_USERNAME" value="root"/>
     <env name="SIS_DB_PASSWORD" value="root"/>
     <env name="AZURE_OPEN_AI_ENABLE_TEST_MODE" value="true"/>
+    <env name="SCOUT_DRIVER" value="database"/>
   </php>
 </phpunit>
