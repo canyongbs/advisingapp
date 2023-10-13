@@ -4,7 +4,6 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Op
 
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class EqualsOperator extends Operator
@@ -14,9 +13,9 @@ class EqualsOperator extends Operator
         return 'equals';
     }
 
-    public function getLabel(bool $isInverse): string
+    public function getLabel(): string
     {
-        return $isInverse ? 'Does not equal' : 'Equals';
+        return $this->isInverse() ? 'Does not equal' : 'Equals';
     }
 
     public function getFormSchema(): array
@@ -28,13 +27,13 @@ class EqualsOperator extends Operator
         ];
     }
 
-    public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
+    public function getSummary(): string
     {
-        return $isInverse ? "{$constraint->getLabel()} does not equal {$settings['text']}" : "{$constraint->getLabel()} equals {$settings['text']}";
+        return $this->isInverse() ? "{$this->getConstraint()->getLabel()} does not equal {$this->getSettings()['text']}" : "{$this->getConstraint()->getLabel()} equals {$this->getSettings()['text']}";
     }
 
-    public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
+    public function query(Builder $query, string $qualifiedColumn): Builder
     {
-        return $query->{$isInverse ? 'whereNot' : 'where'}($attribute, 'ilike', trim($settings['text']));
+        return $query->{$this->isInverse() ? 'whereNot' : 'where'}($qualifiedColumn, 'ilike', trim($this->getSettings()['text']));
     }
 }

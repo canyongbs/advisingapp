@@ -4,7 +4,6 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Op
 
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class StartsWithOperator extends Operator
@@ -14,9 +13,9 @@ class StartsWithOperator extends Operator
         return 'startsWith';
     }
 
-    public function getLabel(bool $isInverse): string
+    public function getLabel(): string
     {
-        return $isInverse ? 'Does not start with' : 'Starts with';
+        return $this->isInverse() ? 'Does not start with' : 'Starts with';
     }
 
     public function getFormSchema(): array
@@ -28,15 +27,15 @@ class StartsWithOperator extends Operator
         ];
     }
 
-    public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
+    public function getSummary(): string
     {
-        return $isInverse ? "{$constraint->getLabel()} does not start with {$settings['text']}" : "{$constraint->getLabel()} starts with {$settings['text']}";
+        return $this->isInverse() ? "{$this->getConstraint()->getLabel()} does not start with {$this->getSettings()['text']}" : "{$this->getConstraint()->getLabel()} starts with {$this->getSettings()['text']}";
     }
 
-    public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
+    public function query(Builder $query, string $qualifiedColumn): Builder
     {
-        $text = trim($settings['text']);
+        $text = trim($this->getSettings()['text']);
 
-        return $query->{$isInverse ? 'whereNot' : 'where'}($attribute, 'ilike', "{$text}%");
+        return $query->{$this->isInverse() ? 'whereNot' : 'where'}($qualifiedColumn, 'ilike', "{$text}%");
     }
 }

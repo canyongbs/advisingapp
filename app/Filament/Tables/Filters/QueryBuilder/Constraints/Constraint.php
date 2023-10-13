@@ -65,7 +65,19 @@ class Constraint extends Component
                     return $this->getLabel();
                 }
 
-                return $operator->getSummary($this, $state['settings'] ?? [], $isInverseOperator);
+                $operator
+                    ->constraint($this)
+                    ->settings($state['settings'])
+                    ->inverse($isInverseOperator);
+
+                try {
+                    return $operator->getSummary();
+                } finally {
+                    $operator
+                        ->constraint(null)
+                        ->settings(null)
+                        ->inverse(null);
+                }
             })
             ->icon($this->getIcon())
             ->schema(function (): array {
@@ -110,8 +122,10 @@ class Constraint extends Component
     public function getOperatorSelectOptions(): array
     {
         foreach ($this->getOperators() as $operatorName => $operator) {
-            $options[$operatorName] = $operator->getLabel(isInverse: false);
-            $options["{$operatorName}.inverse"] = $operator->getLabel(isInverse: true);
+            $options[$operatorName] = $operator->inverse(false)->getLabel();
+            $options["{$operatorName}.inverse"] = $operator->inverse()->getLabel();
+
+            $operator->inverse(null);
         }
 
         return $options;

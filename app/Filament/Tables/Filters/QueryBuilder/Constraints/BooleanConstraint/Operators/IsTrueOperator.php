@@ -3,7 +3,6 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators;
 
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class IsTrueOperator extends Operator
@@ -13,18 +12,18 @@ class IsTrueOperator extends Operator
         return 'isTrue';
     }
 
-    public function getLabel(bool $isInverse): string
+    public function getLabel(): string
     {
-        return $isInverse ? 'Is false' : 'Is true';
+        return $this->isInverse() ? 'Is false' : 'Is true';
     }
 
-    public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
+    public function getSummary(): string
     {
-        return $isInverse ? "{$constraint->getLabel()} is false" : "{$constraint->getLabel()} is true";
+        return $this->isInverse() ? "{$this->getConstraint()->getLabel()} is false" : "{$this->getConstraint()->getLabel()} is true";
     }
 
-    public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
+    public function query(Builder $query, string $qualifiedColumn): Builder
     {
-        return $query->where($attribute, ! $isInverse);
+        return $query->where($qualifiedColumn, ! $this->isInverse());
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators;
 
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class IsFilledOperator extends Operator
@@ -13,22 +12,22 @@ class IsFilledOperator extends Operator
         return 'isFilled';
     }
 
-    public function getLabel(bool $isInverse): string
+    public function getLabel(): string
     {
-        return $isInverse ? 'Is blank' : 'Is filled';
+        return $this->isInverse() ? 'Is blank' : 'Is filled';
     }
 
-    public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
+    public function getSummary(): string
     {
-        return $isInverse ? "{$constraint->getLabel()} is blank" : "{$constraint->getLabel()} is filled";
+        return $this->isInverse() ? "{$this->getConstraint()->getLabel()} is blank" : "{$this->getConstraint()->getLabel()} is filled";
     }
 
-    public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
+    public function query(Builder $query, string $qualifiedColumn): Builder
     {
         return $query->where(
             fn (Builder $query) => $query
-                ->{$isInverse ? 'whereNull' : 'whereNotNull'}($attribute)
-                ->{$isInverse ? 'where' : 'whereNot'}($attribute, ''),
+                ->{$this->isInverse() ? 'whereNull' : 'whereNotNull'}($qualifiedColumn)
+                ->{$this->isInverse() ? 'where' : 'whereNot'}($qualifiedColumn, ''),
         );
     }
 }

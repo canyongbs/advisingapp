@@ -4,7 +4,6 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConst
 
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class EqualsOperator extends Operator
@@ -14,9 +13,9 @@ class EqualsOperator extends Operator
         return 'equals';
     }
 
-    public function getLabel(bool $isInverse): string
+    public function getLabel(): string
     {
-        return $isInverse ? 'Does not have' : 'Has';
+        return $this->isInverse() ? 'Does not have' : 'Has';
     }
 
     public function getFormSchema(): array
@@ -29,13 +28,13 @@ class EqualsOperator extends Operator
         ];
     }
 
-    public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
+    public function getSummary(): string
     {
-        return $isInverse ? "Does not have {$settings['count']} {$constraint->getLabel()}" : "Has {$settings['count']} {$constraint->getLabel()}";
+        return $this->isInverse() ? "Does not have {$this->getSettings()['count']} {$this->getConstraint()->getLabel()}" : "Has {$this->getSettings()['count']} {$this->getConstraint()->getLabel()}";
     }
 
-    public function applyToQueryForConstraint(Builder $query, Constraint $constraint, array $settings, bool $isInverse): Builder
+    public function baseQuery(Builder $query): Builder
     {
-        return $query->has($constraint->getRelationshipName(), $isInverse ? '!=' : '=', intval($settings['count']));
+        return $query->has($this->getConstraint()->getRelationshipName(), $this->isInverse() ? '!=' : '=', intval($this->getSettings()['count']));
     }
 }

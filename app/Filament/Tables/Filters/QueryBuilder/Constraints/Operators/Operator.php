@@ -11,6 +11,12 @@ abstract class Operator extends Component
 {
     use CanBeHidden;
 
+    protected ?Constraint $constraint = null;
+
+    protected ?array $settings = null;
+
+    protected ?bool $isInverse = null;
+
     public static function make(): static
     {
         return app(static::class);
@@ -18,24 +24,24 @@ abstract class Operator extends Component
 
     abstract public function getName(): string;
 
-    abstract public function getLabel(bool $isInverse): string;
+    abstract public function getLabel(): string;
 
-    abstract public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string;
+    abstract public function getSummary(): string;
 
-    public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
+    public function query(Builder $query, string $qualifiedColumn): Builder
     {
         return $query;
     }
 
-    public function applyToQueryForConstraint(Builder $query, Constraint $constraint, array $settings, bool $isInverse): Builder
+    public function baseQuery(Builder $query): Builder
     {
-        $attribute = $query->qualifyColumn($constraint->getAttributeForQuery());
+        $qualifiedColumn = $query->qualifyColumn($this->getConstraint()->getAttributeForQuery());
 
-        if ($constraint->queriesRelationships()) {
+        if ($this->getConstraint()->queriesRelationships()) {
             return $query->whereHas(
-                $constraint->getRelationshipName(),
-                function (Builder $query) use ($attribute, $constraint, $isInverse, $settings): Builder {
-                    $modifyRelationshipQueryUsing = $constraint->getModifyRelationshipQueryUsing();
+                $this->getConstraint()->getRelationshipName(),
+                function (Builder $query) use ($qualifiedColumn): Builder {
+                    $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
 
                     if ($modifyRelationshipQueryUsing) {
                         $query = $this->evaluate($modifyRelationshipQueryUsing, [
@@ -43,16 +49,52 @@ abstract class Operator extends Component
                         ]) ?? $query;
                     }
 
-                    return $this->query($query, $attribute, $settings, $isInverse);
+                    return $this->query($query, $qualifiedColumn);
                 },
             );
         }
 
-        return $this->query($query, $attribute, $settings, $isInverse);
+        return $this->query($query, $qualifiedColumn);
     }
 
     public function getFormSchema(): array
     {
         return [];
+    }
+
+    public function constraint(?Constraint $constraint): static
+    {
+        $this->constraint = $constraint;
+
+        return $this;
+    }
+
+    public function settings(?array $settings): static
+    {
+        $this->settings = $settings;
+
+        return $this;
+    }
+
+    public function inverse(?bool $condition = true): static
+    {
+        $this->isInverse = $condition;
+
+        return $this;
+    }
+
+    public function getConstraint(): ?Constraint
+    {
+        return $this->constraint;
+    }
+
+    public function getSettings(): ?array
+    {
+        return $this->settings;
+    }
+
+    public function isInverse(): ?bool
+    {
+        return $this->isInverse;
     }
 }

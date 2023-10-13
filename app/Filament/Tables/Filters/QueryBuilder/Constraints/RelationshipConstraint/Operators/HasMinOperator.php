@@ -4,7 +4,6 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConst
 
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class HasMinOperator extends Operator
@@ -14,9 +13,9 @@ class HasMinOperator extends Operator
         return 'hasMin';
     }
 
-    public function getLabel(bool $isInverse): string
+    public function getLabel(): string
     {
-        return $isInverse ? 'Has less than' : 'Has minimum';
+        return $this->isInverse() ? 'Has less than' : 'Has minimum';
     }
 
     public function getFormSchema(): array
@@ -29,13 +28,13 @@ class HasMinOperator extends Operator
         ];
     }
 
-    public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
+    public function getSummary(): string
     {
-        return $isInverse ? "Has less than {$settings['count']} {$constraint->getLabel()}" : "Has minimum {$settings['count']} {$constraint->getLabel()}";
+        return $this->isInverse() ? "Has less than {$this->getSettings()['count']} {$this->getConstraint()->getLabel()}" : "Has minimum {$this->getSettings()['count']} {$this->getConstraint()->getLabel()}";
     }
 
-    public function applyToQueryForConstraint(Builder $query, Constraint $constraint, array $settings, bool $isInverse): Builder
+    public function baseQuery(Builder $query): Builder
     {
-        return $query->has($constraint->getRelationshipName(), $isInverse ? '<' : '>=', intval($settings['count']));
+        return $query->has($this->getConstraint()->getRelationshipName(), $this->isInverse() ? '<' : '>=', intval($this->getSettings()['count']));
     }
 }

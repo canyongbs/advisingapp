@@ -4,7 +4,6 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Op
 
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class ContainsOperator extends Operator
@@ -14,9 +13,9 @@ class ContainsOperator extends Operator
         return 'contains';
     }
 
-    public function getLabel(bool $isInverse): string
+    public function getLabel(): string
     {
-        return $isInverse ? 'Does not contain' : 'Contains';
+        return $this->isInverse() ? 'Does not contain' : 'Contains';
     }
 
     public function getFormSchema(): array
@@ -28,15 +27,15 @@ class ContainsOperator extends Operator
         ];
     }
 
-    public function getSummary(Constraint $constraint, array $settings, bool $isInverse): string
+    public function getSummary(): string
     {
-        return $isInverse ? "{$constraint->getLabel()} does not contain {$settings['text']}" : "{$constraint->getLabel()} contains {$settings['text']}";
+        return $this->isInverse() ? "{$this->getConstraint()->getLabel()} does not contain {$this->getSettings()['text']}" : "{$this->getConstraint()->getLabel()} contains {$this->getSettings()['text']}";
     }
 
-    public function query(Builder $query, string $attribute, array $settings, bool $isInverse): Builder
+    public function query(Builder $query, string $qualifiedColumn): Builder
     {
-        $text = trim($settings['text']);
+        $text = trim($this->getSettings()['text']);
 
-        return $query->{$isInverse ? 'whereNot' : 'where'}($attribute, 'ilike', "%{$text}%");
+        return $query->{$this->isInverse() ? 'whereNot' : 'where'}($qualifiedColumn, 'ilike', "%{$text}%");
     }
 }
