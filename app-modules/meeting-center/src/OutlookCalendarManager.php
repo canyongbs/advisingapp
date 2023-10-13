@@ -3,6 +3,7 @@
 namespace Assist\MeetingCenter;
 
 use DateTime;
+use App\Models\User;
 use Assist\MeetingCenter\Models\Event;
 use Assist\MeetingCenter\Contracts\Calendar;
 
@@ -32,7 +33,7 @@ class OutlookCalendarManager implements Calendar
         // TODO: Implement createEvent() method.
     }
 
-    public function updateEvent(string $calendarId, Event $event): void
+    public function updateEvent(string $calendarId, Event $event): Event
     {
         // https://learn.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
 
@@ -44,5 +45,10 @@ class OutlookCalendarManager implements Calendar
         // https://learn.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
 
         // TODO: Implement deleteEvent() method.
+    }
+
+    public function syncEvents(string $calendarId, User $user): void
+    {
+        // TODO: Implement syncEvents() method.
     }
 }

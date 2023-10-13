@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Assist\MeetingCenter\Models\Event;
 use Filament\Panel;
 use DateTimeInterface;
 use Assist\Task\Models\Task;
@@ -173,6 +174,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assistantChats(): HasMany
     {
         return $this->hasMany(AssistantChat::class);
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
     }
 
     public function teams(): BelongsToMany

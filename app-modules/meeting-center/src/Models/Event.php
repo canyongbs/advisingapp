@@ -13,6 +13,8 @@ class Event extends BaseModel
         'description',
         'starts_at',
         'ends_at',
+        'provider_id',
+        'provider_type',
     ];
 
     protected $casts = [

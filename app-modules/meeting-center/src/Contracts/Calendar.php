@@ -2,8 +2,9 @@
 
 namespace Assist\MeetingCenter\Contracts;
 
-use Assist\MeetingCenter\Models\Event;
 use DateTime;
+use App\Models\User;
+use Assist\MeetingCenter\Models\Event;
 
 interface Calendar
 {
@@ -13,7 +14,9 @@ interface Calendar
 
     public function createEvent(string $calendarId, Event $event): Event;
 
-    public function updateEvent(string $calendarId, Event $event): void;
+    public function updateEvent(string $calendarId, Event $event): Event;
 
     public function deleteEvent(string $calendarId, Event $event): void;
+
+    public function syncEvents(string $calendarId, User $user): void;
 }
