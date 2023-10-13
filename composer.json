@@ -44,6 +44,7 @@
         "filament/filament": "^3.0",
         "filament/spatie-laravel-media-library-plugin": "^3.0",
         "filament/spatie-laravel-settings-plugin": "^3.0",
+        "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^3.0",
@@ -56,6 +57,7 @@
         "league/csv": "^9.10",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/oauth2-client": "^2.7",
+        "league/oauth2-google": "^4.0",
         "livewire/livewire": "^3.0",
         "microsoft/microsoft-graph": "^1.108",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
@@ -63,7 +65,6 @@
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.1",
         "spatie/laravel-data": "^3.7",
-        "spatie/laravel-google-calendar": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-settings": "^3.2",
         "sqids/sqids": "^0.3.1",
@@ -106,6 +107,9 @@
         }
     },
     "scripts": {
+        "pre-autoload-dump": [
+            "Google\\Task\\Composer::cleanup"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
@@ -189,7 +193,10 @@
         },
         "laravel": {
             "dont-discover": []
-        }
+        },
+        "google/apiclient-services": [
+            "Calendar"
+        ]
     },
     "config": {
         "optimize-autoloader": true,

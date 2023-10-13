@@ -3,6 +3,7 @@
 namespace Assist\MeetingCenter;
 
 use DateTime;
+use Google\Client;
 use App\Models\User;
 use Assist\MeetingCenter\Models\Event;
 use Assist\MeetingCenter\Contracts\Calendar;
@@ -28,8 +29,15 @@ class GoogleCalendarManager implements Calendar
          * @todo create without sync?
          * @todo sync uncreated events?
          * */
+        $client = new Client([
+            'clientId' => config('services.google_calendar.client_id'),
+            'clientSecret' => config('services.google_calendar.client_secret'),
+            'scopes' => [\Google\Service\Calendar::CALENDAR, \Google\Service\Calendar::CALENDAR_EVENTS],
+        ]);
 
-        return GoogleEvent::get($start ?? now(), $end, ['maxResults' => 2500], $calendarId)->toArray();
+        //TODO: access token
+
+        // return GoogleEvent::get($start ?? now(), $end, ['maxResults' => 2500], $calendarId)->toArray();
     }
 
     public function createEvent(string $calendarId, Event $event): Event
@@ -47,15 +55,15 @@ class GoogleCalendarManager implements Calendar
          * @todo auto accept?
          * @todo create later?
          * */
-        $google = GoogleEvent::create([
-            'summary' => $event->title,
-            'description' => $event->description,
-            'startDateTime' => $event->starts_at,
-            'endDateTime' => $event->ends_at,
-        ], $calendarId);
-
-        $event->provider_id = $google->id;
-        $event->provider_type = static::type();
+        // $google = GoogleEvent::create([
+        //     'summary' => $event->title,
+        //     'description' => $event->description,
+        //     'startDateTime' => $event->starts_at,
+        //     'endDateTime' => $event->ends_at,
+        // ], $calendarId);
+        //
+        // $event->provider_id = $google->id;
+        // $event->provider_type = static::type();
 
         return $event;
     }
@@ -63,12 +71,12 @@ class GoogleCalendarManager implements Calendar
     public function updateEvent(string $calendarId, Event $event): Event
     {
         if ($event->provider_id) {
-            GoogleEvent::find($event->provider_id, $calendarId)->update([
-                'summary' => $event->title,
-                'description' => $event->description,
-                'startDateTime' => $event->starts_at,
-                'endDateTime' => $event->ends_at,
-            ]);
+            // GoogleEvent::find($event->provider_id, $calendarId)->update([
+            //     'summary' => $event->title,
+            //     'description' => $event->description,
+            //     'startDateTime' => $event->starts_at,
+            //     'endDateTime' => $event->ends_at,
+            // ]);
         } else {
             $event = $this->createEvent($calendarId, $event);
         }
@@ -78,44 +86,44 @@ class GoogleCalendarManager implements Calendar
 
     public function deleteEvent(string $calendarId, Event $event): void
     {
-        GoogleEvent::find($event->provider_id, $calendarId)?->delete();
+        // GoogleEvent::find($event->provider_id, $calendarId)?->delete();
     }
 
     public function syncEvents(string $calendarId, User $user): void
     {
-        $events = collect($this->getEvents($calendarId));
-
-        $events
-            ->each(
-                function (GoogleEvent $event) use ($user) {
-                    $userEvent = $user->events()->where('provider_id', $event->id)->first();
-
-                    if ($userEvent) {
-                        $userEvent
-                            ->updateQuietly([
-                                'title' => $event->summary,
-                                'description' => $event->description,
-                                'starts_at' => $event->start->dateTime,
-                                'ends_at' => $event->end->dateTime,
-                            ]);
-                    } else {
-                        ray($event, $event->id);
-                        $user
-                            ->events()
-                            ->createQuietly([
-                                'provider_id' => $event->id,
-                                'provider_type' => static::type(),
-                                'title' => $event->summary,
-                                'description' => $event->description,
-                                'starts_at' => $event->start->dateTime,
-                                'ends_at' => $event->end->dateTime,
-                            ]);
-                    }
-                }
-            );
-
-        $user->events()
-            ->whereNull('provider_id')
-            ->each(fn ($event) => $this->createEvent($calendarId, $event)->saveQuietly());
+        // $events = collect($this->getEvents($calendarId));
+        //
+        // $events
+        //     ->each(
+        //         function (GoogleEvent $event) use ($user) {
+        //             $userEvent = $user->events()->where('provider_id', $event->id)->first();
+        //
+        //             if ($userEvent) {
+        //                 $userEvent
+        //                     ->updateQuietly([
+        //                         'title' => $event->summary,
+        //                         'description' => $event->description,
+        //                         'starts_at' => $event->start->dateTime,
+        //                         'ends_at' => $event->end->dateTime,
+        //                     ]);
+        //             } else {
+        //                 ray($event, $event->id);
+        //                 $user
+        //                     ->events()
+        //                     ->createQuietly([
+        //                         'provider_id' => $event->id,
+        //                         'provider_type' => static::type(),
+        //                         'title' => $event->summary,
+        //                         'description' => $event->description,
+        //                         'starts_at' => $event->start->dateTime,
+        //                         'ends_at' => $event->end->dateTime,
+        //                     ]);
+        //             }
+        //         }
+        //     );
+        //
+        // $user->events()
+        //     ->whereNull('provider_id')
+        //     ->each(fn ($event) => $this->createEvent($calendarId, $event)->saveQuietly());
     }
 }

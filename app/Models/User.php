@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Assist\MeetingCenter\Models\Event;
 use Filament\Panel;
 use DateTimeInterface;
 use Assist\Task\Models\Task;
@@ -12,6 +11,7 @@ use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
 use Assist\Prospect\Models\Prospect;
 use Assist\Authorization\Models\Role;
+use Assist\MeetingCenter\Models\Event;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Assistant\Models\AssistantChat;
@@ -66,11 +66,17 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     protected $hidden = [
         'remember_token',
         'password',
+        'calendar_token',
+        'calendar_refresh_token',
     ];
 
     protected $casts = [
         'is_external' => 'boolean',
         'email_verified_at' => 'datetime',
+        'calendar_id' => 'encrypted',
+        'calendar_token' => 'encrypted',
+        'calendar_refresh_token' => 'encrypted',
+        'calendar_expires_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -80,8 +86,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'password',
         'locale',
         'type',
-        'calendar_type',
-        'calendar_id',
     ];
 
     public $orderable = [

@@ -1,76 +1,80 @@
 <?php
 
-use Microsoft\Graph\Graph;
-use Microsoft\Graph\Model\User;
-use Illuminate\Support\Facades\Http;
-use League\OAuth2\Client\Provider\GenericProvider;
+use App\Models\User;
+use Google\Service\Calendar;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use League\OAuth2\Client\Provider\Google;
+use League\OAuth2\Client\Grant\RefreshToken;
+use Symfony\Component\HttpFoundation\Response;
+use League\OAuth2\Client\Grant\AuthorizationCode;
 
-Route::middleware('web')
+Route::middleware(['web', 'auth'])
     ->prefix('google/calendar')
     ->name('google.calendar.')
     ->group(function () {
         Route::get('/login', function () {
-            $client = new \Google\Client();
-
-            $client->setScopes([
-                \Google\Service\Calendar::CALENDAR,
+            $provider = new Google([
+                'clientId' => config('services.google_calendar.client_id'),
+                'clientSecret' => config('services.google_calendar.client_secret'),
+                'redirectUri' => route('google.calendar.callback'),
+                'scopes' => [Calendar::CALENDAR, Calendar::CALENDAR_EVENTS],
+                'prompt' => 'consent',
+                'accessType' => 'offline',
             ]);
 
-            $client->setAuthConfig(config()->get('google-calendar.auth_profiles.oauth.credentials_json'));
-
-            return redirect()->away($client->createAuthUrl());
+            return redirect()->away($provider->getAuthorizationUrl());
         })->name('login');
 
         Route::get('/callback', function (Request $request) {
-            dd($request);
-        });
-    });
-
-Route::middleware('web')
-    ->prefix('microsoft/graph')
-    ->name('microsoft.graph.')
-    ->group(function () {
-        Route::get('/login', function () {
-            // Initialize the OAuth client
-            $oauthClient = new GenericProvider([
-                'clientId' => config('services.microsoft_graph.client_id'),
-                'clientSecret' => config('services.microsoft_graph.client_secret'),
-                'redirectUri' => config('services.microsoft_graph.redirect'),
-                'urlAuthorize' => config('services.microsoft_graph.authority') . config('services.microsoft_graph.authorize_endpoint'),
-                'urlAccessToken' => config('services.microsoft_graph.authority') . config('services.microsoft_graph.token_endpoint'),
-                'urlResourceOwnerDetails' => '',
-                'scopes' => config('services.microsoft_graph.scopes'),
+            $provider = new Google([
+                'clientId' => config('services.google_calendar.client_id'),
+                'clientSecret' => config('services.google_calendar.client_secret'),
+                'redirectUri' => route('google.calendar.callback'),
+                'scopes' => [Calendar::CALENDAR, Calendar::CALENDAR_EVENTS],
+                'prompt' => 'consent',
+                'accessType' => 'offline',
             ]);
 
-            $authUrl = $oauthClient->getAuthorizationUrl();
+            $token = $provider->getAccessToken(new AuthorizationCode(), [
+                'code' => $request->input('code'),
+            ]);
 
-            // Save client state so we can validate in callback
-            session(['oauthState' => $oauthClient->getState()]);
+            /** @var User $user */
+            $user = auth()->user();
+            $user->calendar_type = 'google';
+            $user->calendar_id = env('GOOGLE_CALENDAR_ID'); //TODO: needs UI to select calendar
+            $user->calendar_token = $token->getToken();
+            $user->calendar_refresh_token = $token->getRefreshToken();
+            $user->calendar_token_expires_at = Carbon::parse($token->getExpires());
+            $user->save();
+        })->name('callback');
 
-            // Redirect to AAD signin page
-            return redirect()->away($authUrl);
-            // $response = Http::asForm()->post('https://login.microsoftonline.com/af905c0d-24ca-4c1b-86e8-e6ac7d45c7f1/oauth2/v2.0/token', [
-            //     'client_id' => config('services.microsoft_graph.client_id'),
-            //     'client_secret' => config('services.microsoft_graph.client_secret'),
-            //     'scope' => 'https://graph.microsoft.com/.default',
-            //     'grant_type' => 'client_credentials',
-            // ]);
-            //
-            // dd($response->json());
+        Route::get('/refresh', function (Request $request) {
+            /** @var User $user */
+            $user = auth()->user();
 
-            // $token = '';
+            // abort_unless($user->calendar_type === 'google', Response::HTTP_BAD_REQUEST);
             //
-            // $graph = new Graph();
-            // $graph->setAccessToken($token);
-            //
-            // $user = $graph->createRequest('GET', '/me')
-            //     ->setReturnType(User::class)
-            //     ->execute();
-            //
-            // echo "Hello, I am {$user->getGivenName()}.";
-        })->name('login');
+            // if (blank($user->calendar_id)) {
+            //     redirect()->route('google.calendar.login');
+            // }
 
-        Route::get('/callback', function (Request $request) {
-            dd($request);
-        });
+            $provider = new Google([
+                'clientId' => config('services.google_calendar.client_id'),
+                'clientSecret' => config('services.google_calendar.client_secret'),
+                'redirectUri' => route('google.calendar.callback'),
+                'scopes' => [Calendar::CALENDAR, Calendar::CALENDAR_EVENTS],
+                'prompt' => 'consent',
+                'accessType' => 'offline',
+            ]);
+
+            $token = $provider->getAccessToken(new RefreshToken(), [
+                'refresh_token' => $user->calendar_refresh_token,
+            ]);
+
+            $user->calendar_token = $token->getToken();
+            $user->calendar_token_expires_at = Carbon::parse($token->getExpires());
+            $user->save();
+        })->name('refresh');
     });
