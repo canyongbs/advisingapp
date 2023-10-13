@@ -33,4 +33,15 @@ class Enrollment extends Model
     {
         return collect([]);
     }
+
+    public function getTable()
+    {
+        if ($this->table) {
+            return $this->table;
+        }
+
+        return config('database.adm_materialized_views_enabled')
+            ? 'enrollments_local'
+            : 'enrollments';
+    }
 }

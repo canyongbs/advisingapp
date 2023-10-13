@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
         Artisan::call(SyncRolesAndPermissions::class);
 
         $this->call([
+            StudentSeeder::class,
             UsersTableSeeder::class,
             ServiceRequestPrioritySeeder::class,
             ServiceRequestStatusSeeder::class,
@@ -53,7 +54,6 @@ class DatabaseSeeder extends Seeder
             KnowledgeBaseStatusSeeder::class,
             KnowledgeBaseItemSeeder::class,
             TaskSeeder::class,
-            StudentSeeder::class,
             DivisionSeeder::class,
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,

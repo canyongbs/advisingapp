@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
+use Assist\AssistDataModel\Models\Traits\EducatableScopes;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
@@ -33,6 +34,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
     use AuditableTrait;
     use SoftDeletes;
     use HasStateMachine;
+    use EducatableScopes;
 
     protected $fillable = [
         'title',

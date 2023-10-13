@@ -120,12 +120,18 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
+        "clear-sis-database": [
+            "@php artisan migrate:fresh --database=sis --path=app-modules/assist-data-model/database/migrations/sis"
+        ],
         "refresh-database": [
             "@php artisan migrate:fresh",
-            "@php artisan migrate:fresh --database=sis --path=app-modules/assist-data-model/database/migrations/sis",
             "@php artisan app:remove-foreign-data-wrapper",
             "@php artisan app:setup-foreign-data-wrapper",
+            "@php artisan app:create-adm-materialized-views",
             "@php artisan db:seed"
+        ],
+        "refresh-sis": [
+            "./refresh-and-seed-sis.sh"
         ],
         "php-cs-format": [
             "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
