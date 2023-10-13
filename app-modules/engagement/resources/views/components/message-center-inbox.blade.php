@@ -3,7 +3,7 @@
 @endphp
 
 <div
-    class="col-span-full h-full overflow-y-auto rounded-bl-lg rounded-br-lg rounded-tl-lg rounded-tr-lg bg-white dark:bg-gray-800 sm:rounded-br-none sm:rounded-tr-none md:col-span-1"
+    class="col-span-full h-full overflow-y-auto rounded-bl-lg rounded-br-lg rounded-tl-lg rounded-tr-lg bg-white dark:bg-gray-800 sm:rounded-br-none sm:rounded-tr-none md:col-span-3"
     x-data="{ showFilters: false }"
 >
     <div class="sticky top-0 z-[5] flex flex-col rounded-tl-lg bg-white dark:bg-gray-800">
