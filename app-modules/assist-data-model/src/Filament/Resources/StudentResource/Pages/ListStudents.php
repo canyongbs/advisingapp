@@ -81,6 +81,17 @@ class ListStudents extends ListRecords
                         QueryBuilder\Constraints\BooleanConstraint::make('ferpa')
                             ->label('FERPA')
                             ->icon('heroicon-m-lock-open'),
+                        QueryBuilder\Constraints\Constraint::make('subscribed')
+                            ->icon('heroicon-m-bell')
+                            ->operators([
+                                QueryBuilder\Constraints\Operators\Operator::make('subscribed')
+                                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')
+                                    ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not subscribed' : 'You are subscribed')
+                                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
+                                        'subscriptions.user',
+                                        fn (Builder $query) => $query->whereKey(auth()->user()),
+                                    )),
+                            ]),
                         QueryBuilder\Constraints\RelationshipConstraint::make('programs')
                             ->multiple()
                             ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
@@ -94,8 +105,6 @@ class ListStudents extends ListRecords
                             ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']))
                             ->icon('heroicon-m-folder-open'),
                     ]),
-                Filter::make('subscribed')
-                    ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 ViewAction::make(),

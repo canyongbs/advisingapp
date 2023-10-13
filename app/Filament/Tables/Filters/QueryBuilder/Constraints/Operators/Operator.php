@@ -99,7 +99,11 @@ class Operator extends Component
 
     public function getLabel(): string
     {
-        return $this->evaluate($this->label);
+        return $this->evaluate($this->label) ?? (string) str($this->getName())
+            ->before('.')
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst();
     }
 
     public function getSummary(): string
@@ -115,9 +119,7 @@ class Operator extends Component
     public function applyToBaseQuery(Builder $query): Builder
     {
         if ($this->hasBaseQueryModificationCallback()) {
-            return $this->evaluate($this->modifyQueryUsing, [
-                'column' => $qualifiedColumn,
-                'qualifiedColumn' => $qualifiedColumn,
+            return $this->evaluate($this->modifyBaseQueryUsing, [
                 'query' => $query,
             ]) ?? $query;
         }
