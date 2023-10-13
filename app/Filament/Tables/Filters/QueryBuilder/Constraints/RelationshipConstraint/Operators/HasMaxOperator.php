@@ -2,10 +2,10 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators;
 
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class HasMaxOperator extends Operator
 {

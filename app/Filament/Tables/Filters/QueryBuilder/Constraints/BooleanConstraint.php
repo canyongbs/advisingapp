@@ -2,18 +2,9 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints;
 
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators\IsTrueOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\IsFilledOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\StartsWithOperator;
 use Closure;
-use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\IsFilledOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators\IsTrueOperator;
 
 class BooleanConstraint extends Constraint
 {

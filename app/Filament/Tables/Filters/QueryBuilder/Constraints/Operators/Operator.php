@@ -2,11 +2,10 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators;
 
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Components\Component;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Concerns\CanBeHidden;
-use Closure;
-use Filament\Support\Components\Component;
-use Illuminate\Database\Eloquent\Builder;
 
 abstract class Operator extends Component
 {

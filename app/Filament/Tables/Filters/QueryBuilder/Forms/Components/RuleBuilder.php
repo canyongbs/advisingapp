@@ -2,21 +2,15 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
-use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
-use Assist\Prospect\Filament\Resources\ProspectResource;
+use Illuminate\Support\Str;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
 
 class RuleBuilder extends Builder
 {
@@ -75,7 +69,7 @@ class RuleBuilder extends Builder
                                         return '(No rules)';
                                     }
 
-                                    return (($state['not'] ?? false) ? 'NOT ' : '') . '(' .  $blockLabels->implode(') AND (') . ')';
+                                    return (($state['not'] ?? false) ? 'NOT ' : '') . '(' . $blockLabels->implode(') AND (') . ')';
                                 })
                                 ->truncateItemLabel(false)
                                 ->cloneable()

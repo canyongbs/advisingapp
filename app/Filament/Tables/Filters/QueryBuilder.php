@@ -2,25 +2,19 @@
 
 namespace App\Filament\Tables\Filters;
 
-use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
-use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
+use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
+use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 
 class QueryBuilder extends BaseFilter
 {
     use HasConstraints;
-
-    public static function getDefaultName(): ?string
-    {
-        return 'queryBuilder';
-    }
 
     protected function setUp(): void
     {
@@ -46,6 +40,11 @@ class QueryBuilder extends BaseFilter
         });
 
         $this->columnSpanFull();
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'queryBuilder';
     }
 
     public function applyRulesToQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder

@@ -3,18 +3,12 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Concerns\HasLabel;
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\Component as FormComponent;
+use Filament\Forms\Get;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasIcon;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Support\Components\Component;
+use Filament\Forms\Components\Builder\Block;
 use Illuminate\Validation\ValidationException;
 
 class Constraint extends Component
@@ -24,7 +18,7 @@ class Constraint extends Component
     use Concerns\HasOperators;
     use HasIcon;
 
-    const OPERATOR_SELECT_NAME = 'operator';
+    public const OPERATOR_SELECT_NAME = 'operator';
 
     protected string | Closure | null $attribute = null;
 
