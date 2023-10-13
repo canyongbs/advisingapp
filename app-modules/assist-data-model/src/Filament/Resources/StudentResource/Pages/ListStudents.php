@@ -113,9 +113,6 @@ class ListStudents extends ListRecords
                         QueryBuilder\Constraints\NumberConstraint::make('programCumGpa')
                             ->label('Program Cumulative GPA')
                             ->relationship('programs', 'cum_gpa'),
-                        QueryBuilder\Constraints\TextConstraint::make('programDeclareDt')
-                            ->label('Program Start Date')
-                            ->relationship('programs', 'declare_dt'),
                         QueryBuilder\Constraints\RelationshipConstraint::make('enrollments')
                             ->multiple()
                             ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']))
@@ -166,7 +163,13 @@ class ListStudents extends ListRecords
                         QueryBuilder\Constraints\NumberConstraint::make('performanceCumGpa')
                             ->label('Performance Cumulative GPA')
                             ->relationship('performances', 'cum_gpa'),
-                    ]),
+                    ])
+                    ->constraintPickerColumns([
+                        'md' => 2,
+                        'lg' => 3,
+                        'xl' => 4,
+                    ])
+                    ->constraintPickerWidth('7xl'),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 ViewAction::make(),

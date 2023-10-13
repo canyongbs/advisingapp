@@ -54,7 +54,9 @@ class RuleBuilder extends Builder
                             Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
                                 ->schema(fn (): array => [
                                     static::make('rules')
-                                        ->constraints($this->getConstraints()),
+                                        ->constraints($this->getConstraints())
+                                        ->blockPickerColumns($this->getBlockPickerColumns())
+                                        ->blockPickerWidth($this->getBlockPickerWidth()),
                                 ])
                                 ->addAction(fn (Action $action) => $action
                                     ->label('Add rule group')

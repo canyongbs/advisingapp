@@ -18,6 +18,10 @@ class QueryBuilder extends BaseFilter
 {
     use HasConstraints;
 
+    protected ?array $constraintPickerColumns = [];
+
+    protected string | Closure | null $constraintPickerWidth = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,7 +30,9 @@ class QueryBuilder extends BaseFilter
             Fieldset::make($filter->getLabel())
                 ->schema([
                     RuleBuilder::make('rules')
-                        ->constraints($filter->getConstraints()),
+                        ->constraints($filter->getConstraints())
+                        ->blockPickerColumns($filter->getConstraintPickerColumns())
+                        ->blockPickerWidth($filter->getConstraintPickerWidth()),
                     Checkbox::make('not')
                         ->label('Exclude these filters (NOT)'),
                 ])
@@ -116,6 +122,55 @@ class QueryBuilder extends BaseFilter
         }
 
         return $query;
+    }
+
+    public function constraintPickerColumns(array | int | string | null $columns = 2): static
+    {
+        if (! is_array($columns)) {
+            $columns = [
+                'lg' => $columns,
+            ];
+        }
+
+        $this->constraintPickerColumns = [
+            ...($this->constraintPickerColumns ?? []),
+            ...$columns,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, int | string | null> | int | string | null
+     */
+    public function getConstraintPickerColumns(?string $breakpoint = null): array | int | string | null
+    {
+        $columns = $this->constraintPickerColumns ?? [
+            'default' => 1,
+            'sm' => null,
+            'md' => null,
+            'lg' => null,
+            'xl' => null,
+            '2xl' => null,
+        ];
+
+        if ($breakpoint !== null) {
+            return $columns[$breakpoint] ?? null;
+        }
+
+        return $columns;
+    }
+
+    public function constraintPickerWidth(string | Closure | null $width): static
+    {
+        $this->constraintPickerWidth = $width;
+
+        return $this;
+    }
+
+    public function getConstraintPickerWidth(): ?string
+    {
+        return $this->evaluate($this->constraintPickerWidth);
     }
 
     protected function getRuleBuilder(): RuleBuilder
