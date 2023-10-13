@@ -80,8 +80,6 @@ trait FilterTableWithOpenSearch
             );
         }
 
-        //$this->applyFiltersToTableQuery($query);
-
         foreach ($this->getTable()->getColumns() as $column) {
             if ($column->isHidden()) {
                 continue;
