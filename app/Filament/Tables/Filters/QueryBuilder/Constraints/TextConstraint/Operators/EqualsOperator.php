@@ -31,7 +31,7 @@ class EqualsOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} does not equal \"{$this->getSettings()['text']}\"" : "{$this->getconstraint()->getAttributeLabel()} equals \"{$this->getSettings()['text']}\"";
+        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} does not equal \"{$this->getSettings()['text']}\"" : "{$this->getConstraint()->getAttributeLabel()} equals \"{$this->getSettings()['text']}\"";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

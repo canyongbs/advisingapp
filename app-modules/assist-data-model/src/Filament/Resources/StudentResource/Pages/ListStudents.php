@@ -5,7 +5,6 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Actions\CreateAction;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -96,14 +95,77 @@ class ListStudents extends ListRecords
                             ->multiple()
                             ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
                             ->icon('heroicon-m-academic-cap'),
-                        QueryBuilder\Constraints\RelationshipConstraint::make('performances')
-                            ->multiple()
-                            ->attributeLabel(fn (array $settings): string => Str::plural('performance', $settings['count']))
-                            ->icon('heroicon-m-presentation-chart-line'),
+                        QueryBuilder\Constraints\TextConstraint::make('programSisid')
+                            ->label('Program SISID')
+                            ->relationship('programs', 'sisid'),
+                        QueryBuilder\Constraints\TextConstraint::make('programOtherid')
+                            ->label('Program STUID')
+                            ->relationship('programs', 'otherid'),
+                        QueryBuilder\Constraints\TextConstraint::make('programDivision')
+                            ->label('Program College')
+                            ->relationship('programs', 'division'),
+                        QueryBuilder\Constraints\TextConstraint::make('programDescr')
+                            ->label('Program Description')
+                            ->relationship('programs', 'descr'),
+                        QueryBuilder\Constraints\TextConstraint::make('programFoi')
+                            ->label('Program Field of Interest')
+                            ->relationship('programs', 'foi'),
+                        QueryBuilder\Constraints\NumberConstraint::make('programCumGpa')
+                            ->label('Program Cumulative GPA')
+                            ->relationship('programs', 'cum_gpa'),
+                        QueryBuilder\Constraints\TextConstraint::make('programDeclareDt')
+                            ->label('Program Start Date')
+                            ->relationship('programs', 'declare_dt'),
                         QueryBuilder\Constraints\RelationshipConstraint::make('enrollments')
                             ->multiple()
                             ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']))
                             ->icon('heroicon-m-folder-open'),
+                        QueryBuilder\Constraints\TextConstraint::make('enrollmentSisid')
+                            ->label('Enrollment SISID')
+                            ->relationship('enrollments', 'sisid'),
+                        QueryBuilder\Constraints\TextConstraint::make('enrollmentDivision')
+                            ->label('Enrollment College')
+                            ->relationship('enrollments', 'division'),
+                        QueryBuilder\Constraints\TextConstraint::make('enrollmentClassNbr')
+                            ->label('Enrollment Course')
+                            ->relationship('enrollments', 'class_nbr'),
+                        QueryBuilder\Constraints\TextConstraint::make('enrollmentCrseGradeOff')
+                            ->label('Enrollment Grade')
+                            ->relationship('enrollments', 'crse_grade_off'),
+                        QueryBuilder\Constraints\NumberConstraint::make('enrollmentUntTaken')
+                            ->label('Enrollment Attempted')
+                            ->relationship('enrollments', 'unt_taken'),
+                        QueryBuilder\Constraints\NumberConstraint::make('enrollmentUntEarned')
+                            ->label('Enrollment Earned')
+                            ->relationship('enrollments', 'unt_earned'),
+                        QueryBuilder\Constraints\RelationshipConstraint::make('performances')
+                            ->multiple()
+                            ->attributeLabel(fn (array $settings): string => Str::plural('performance', $settings['count']))
+                            ->icon('heroicon-m-presentation-chart-line'),
+                        QueryBuilder\Constraints\TextConstraint::make('performanceSisid')
+                            ->label('Performance SISID')
+                            ->relationship('performances', 'sisid'),
+                        QueryBuilder\Constraints\TextConstraint::make('performanceAcadCareer')
+                            ->label('Performance Academic Career')
+                            ->relationship('performances', 'acad_career'),
+                        QueryBuilder\Constraints\TextConstraint::make('performanceDivision')
+                            ->label('Performance College')
+                            ->relationship('performances', 'division'),
+                        QueryBuilder\Constraints\BooleanConstraint::make('performanceFirstGen')
+                            ->label('Performance First Gen')
+                            ->relationship('performances', 'first_gen'),
+                        QueryBuilder\Constraints\NumberConstraint::make('performanceCumAtt')
+                            ->label('Performance Cumulative Attempted')
+                            ->relationship('performances', 'cum_att'),
+                        QueryBuilder\Constraints\NumberConstraint::make('performanceCumErn')
+                            ->label('Performance Cumulative Earned')
+                            ->relationship('performances', 'cum_ern'),
+                        QueryBuilder\Constraints\NumberConstraint::make('performancePctErn')
+                            ->label('Performance Percent Earned')
+                            ->relationship('performances', 'pct_ern'),
+                        QueryBuilder\Constraints\NumberConstraint::make('performanceCumGpa')
+                            ->label('Performance Cumulative GPA')
+                            ->relationship('performances', 'cum_gpa'),
                     ]),
             ], layout: FiltersLayout::AboveContent)
             ->actions([

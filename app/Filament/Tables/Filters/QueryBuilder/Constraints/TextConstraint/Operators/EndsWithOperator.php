@@ -31,7 +31,7 @@ class EndsWithOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} does not end with \"{$this->getSettings()['text']}\"" : "{$this->getconstraint()->getAttributeLabel()} ends with \"{$this->getSettings()['text']}\"";
+        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} does not end with \"{$this->getSettings()['text']}\"" : "{$this->getConstraint()->getAttributeLabel()} ends with \"{$this->getSettings()['text']}\"";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

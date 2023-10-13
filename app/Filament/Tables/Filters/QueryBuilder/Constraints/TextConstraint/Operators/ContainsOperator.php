@@ -31,7 +31,7 @@ class ContainsOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} does not contain \"{$this->getSettings()['text']}\"" : "{$this->getconstraint()->getAttributeLabel()} contains \"{$this->getSettings()['text']}\"";
+        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} does not contain \"{$this->getSettings()['text']}\"" : "{$this->getConstraint()->getAttributeLabel()} contains \"{$this->getSettings()['text']}\"";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

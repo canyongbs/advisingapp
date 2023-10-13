@@ -30,7 +30,7 @@ class EqualsOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "Does not have {$this->getSettings()['count']} {$this->getconstraint()->getAttributeLabel()}" : "Has {$this->getSettings()['count']} {$this->getconstraint()->getAttributeLabel()}";
+        return $this->isInverse() ? "Does not have {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}" : "Has {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}";
     }
 
     public function applyToBaseQuery(Builder $query): Builder

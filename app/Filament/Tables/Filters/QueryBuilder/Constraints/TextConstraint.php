@@ -2,10 +2,10 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints;
 
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\IsFilledOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\StartsWithOperator;
 
 class TextConstraint extends Constraint

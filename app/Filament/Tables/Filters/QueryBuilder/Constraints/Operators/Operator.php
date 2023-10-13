@@ -124,12 +124,10 @@ class Operator extends Component
             ]) ?? $query;
         }
 
-        $qualifiedColumn = $query->qualifyColumn($this->getConstraint()->getAttributeForQuery());
-
-        if ($this->getConstraint()->queriesRelationships()) {
+        if ($this->queriesRelationshipsUsingSubSelect()) {
             return $query->whereHas(
                 $this->getConstraint()->getRelationshipName(),
-                function (Builder $query) use ($qualifiedColumn): Builder {
+                function (Builder $query): Builder {
                     $modifyRelationshipQueryUsing = $this->getConstraint()->getModifyRelationshipQueryUsing();
 
                     if ($modifyRelationshipQueryUsing) {
@@ -137,6 +135,8 @@ class Operator extends Component
                             'query' => $query,
                         ]) ?? $query;
                     }
+
+                    $qualifiedColumn = $query->qualifyColumn($this->getConstraint()->getAttributeForQuery());
 
                     if ($this->hasQueryModificationCallback()) {
                         return $this->evaluate($this->modifyQueryUsing, [
@@ -151,6 +151,8 @@ class Operator extends Component
             );
         }
 
+        $qualifiedColumn = $query->qualifyColumn($this->getConstraint()->getAttributeForQuery());
+
         if ($this->hasQueryModificationCallback()) {
             return $this->evaluate($this->modifyQueryUsing, [
                 'column' => $qualifiedColumn,
@@ -160,6 +162,11 @@ class Operator extends Component
         }
 
         return $this->apply($query, $qualifiedColumn);
+    }
+
+    public function applyToBaseFilterQuery(Builder $query): Builder
+    {
+        return $query;
     }
 
     public function getFormSchema(): array
@@ -201,6 +208,11 @@ class Operator extends Component
     public function isInverse(): ?bool
     {
         return $this->isInverse;
+    }
+
+    public function queriesRelationshipsUsingSubSelect(): bool
+    {
+        return $this->getConstraint()->queriesRelationships();
     }
 
     protected function hasQueryModificationCallback(): bool

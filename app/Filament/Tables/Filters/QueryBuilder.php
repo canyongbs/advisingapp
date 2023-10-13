@@ -2,6 +2,8 @@
 
 namespace App\Filament\Tables\Filters;
 
+use Closure;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
@@ -32,11 +34,13 @@ class QueryBuilder extends BaseFilter
         ]);
 
         $this->query(function (Builder $query, array $data) {
-            $ruleBuilder = $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
-
-            $query->{($data['not'] ?? false) ? 'whereNot' : 'where'}(function (Builder $query) use ($data, $ruleBuilder) {
-                $this->applyRulesToQuery($query, $data['rules'], $ruleBuilder);
+            $query->{($data['not'] ?? false) ? 'whereNot' : 'where'}(function (Builder $query) use ($data) {
+                $this->applyRulesToQuery($query, $data['rules'], $this->getRuleBuilder());
             });
+        });
+
+        $this->baseQuery(function (Builder $query, array $data) {
+            $this->applyRulesToBaseQuery($query, $data['rules'], $this->getRuleBuilder());
         });
 
         $this->columnSpanFull();
@@ -52,11 +56,11 @@ class QueryBuilder extends BaseFilter
         foreach ($rules as $ruleIndex => $rule) {
             $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
 
-            if ($rule['type'] === 'or') {
+            if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 $query->{$rule['data']['not'] ?? false ? 'whereNot' : 'where'}(function (Builder $query) use ($rule, $ruleBuilderBlockContainer) {
                     $isFirst = true;
 
-                    foreach ($rule['data']['groups'] as $orGroupIndex => $orGroup) {
+                    foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
                         $query->{match ([$isFirst, ($orGroup['not'] ?? false)]) {
                             [true, false] => 'where',
                             [true, true] => 'whereNot',
@@ -66,10 +70,7 @@ class QueryBuilder extends BaseFilter
                             $this->applyRulesToQuery(
                                 $query,
                                 $orGroup['rules'],
-                                $ruleBuilderBlockContainer
-                                    ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
-                                    ->getChildComponentContainer($orGroupIndex)
-                                    ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder),
+                                $this->getNestedRuleBuilder($ruleBuilderBlockContainer, $orGroupIndex),
                             );
                         });
 
@@ -80,53 +81,102 @@ class QueryBuilder extends BaseFilter
                 continue;
             }
 
-            $constraint = $this->getConstraint($rule['type']);
-
-            if (! $constraint) {
-                continue;
-            }
-
-            $operator = $rule['data'][$constraint::OPERATOR_SELECT_NAME];
-
-            if (blank($operator)) {
-                continue;
-            }
-
-            [$operatorName, $isInverseOperator] = $constraint->parseOperatorString($operator);
-
-            $operator = $constraint->getOperator($operatorName);
-
-            if (! $operator) {
-                continue;
-            }
-
-            try {
-                $ruleBuilderBlockContainer->validate();
-            } catch (ValidationException) {
-                continue;
-            }
-
-            $constraint
-                ->settings($rule['data']['settings'])
-                ->inverse($isInverseOperator);
-
-            $operator
-                ->constraint($constraint)
-                ->settings($rule['data']['settings'])
-                ->inverse($isInverseOperator);
-
-            $operator->applyToBaseQuery($query);
-
-            $constraint
-                ->settings(null)
-                ->inverse(null);
-
-            $operator
-                ->constraint(null)
-                ->settings(null)
-                ->inverse(null);
+            $this->tapOperatorFromRule(
+                $rule,
+                $ruleBuilderBlockContainer,
+                fn ($operator) => $operator->applyToBaseQuery($query),
+            );
         }
 
         return $query;
+    }
+
+    public function applyRulesToBaseQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
+    {
+        foreach ($rules as $ruleIndex => $rule) {
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
+
+            if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
+                foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
+                    $this->applyRulesToBaseQuery(
+                        $query,
+                        $orGroup['rules'],
+                        $this->getNestedRuleBuilder($ruleBuilderBlockContainer, $orGroupIndex),
+                    );
+                }
+
+                continue;
+            }
+
+            $this->tapOperatorFromRule(
+                $rule,
+                $ruleBuilderBlockContainer,
+                fn ($operator) => $operator->applyToBaseFilterQuery($query),
+            );
+        }
+
+        return $query;
+    }
+
+    protected function getRuleBuilder(): RuleBuilder
+    {
+        return $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+    }
+
+    protected function getNestedRuleBuilder(ComponentContainer $ruleBuilderBlockContainer, string $orGroupIndex): RuleBuilder
+    {
+        return $ruleBuilderBlockContainer
+            ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
+            ->getChildComponentContainer($orGroupIndex)
+            ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+    }
+
+    protected function tapOperatorFromRule(array $rule, ComponentContainer $ruleBuilderBlockContainer, Closure $callback): void
+    {
+        $constraint = $this->getConstraint($rule['type']);
+
+        if (! $constraint) {
+            return;
+        }
+
+        $operator = $rule['data'][$constraint::OPERATOR_SELECT_NAME];
+
+        if (blank($operator)) {
+            return;
+        }
+
+        [$operatorName, $isInverseOperator] = $constraint->parseOperatorString($operator);
+
+        $operator = $constraint->getOperator($operatorName);
+
+        if (! $operator) {
+            return;
+        }
+
+        try {
+            $ruleBuilderBlockContainer->validate();
+        } catch (ValidationException) {
+            return;
+        }
+
+        $constraint
+            ->settings($rule['data']['settings'])
+            ->inverse($isInverseOperator);
+
+        $operator
+            ->constraint($constraint)
+            ->settings($rule['data']['settings'])
+            ->inverse($isInverseOperator);
+
+        $callback($operator);
+
+        $constraint
+            ->settings(null)
+            ->inverse(null);
+
+        $operator
+            ->constraint(null)
+            ->settings(null)
+            ->inverse(null);
     }
 }

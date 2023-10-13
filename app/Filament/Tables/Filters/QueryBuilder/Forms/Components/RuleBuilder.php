@@ -16,6 +16,10 @@ class RuleBuilder extends Builder
 {
     use HasConstraints;
 
+    public const OR_BLOCK_NAME = 'or';
+
+    public const OR_BLOCK_GROUPS_REPEATER_NAME = 'groups';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,13 +31,13 @@ class RuleBuilder extends Builder
                         fn (Constraint $constraint): Builder\Block => $constraint->getBuilderBlock(),
                         $this->getConstraints(),
                     ),
-                    Builder\Block::make('or')
+                    Builder\Block::make(static::OR_BLOCK_NAME)
                         ->label(function (?array $state, ?string $uuid) use ($component) {
                             if (blank($state) || blank($uuid)) {
                                 return 'Disjunction (OR)';
                             }
 
-                            if (! count($state['groups'] ?? [])) {
+                            if (! count($state[static::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [])) {
                                 return '(No rules)';
                             }
 
@@ -47,7 +51,7 @@ class RuleBuilder extends Builder
                         })
                         ->icon('heroicon-m-bars-4')
                         ->schema(fn (): array => [
-                            Repeater::make('groups')
+                            Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
                                 ->schema(fn (): array => [
                                     static::make('rules')
                                         ->constraints($this->getConstraints()),

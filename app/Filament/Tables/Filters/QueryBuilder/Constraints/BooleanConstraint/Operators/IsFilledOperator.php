@@ -19,7 +19,7 @@ class IsFilledOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} is blank" : "{$this->getconstraint()->getAttributeLabel()} is filled";
+        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} is blank" : "{$this->getConstraint()->getAttributeLabel()} is filled";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

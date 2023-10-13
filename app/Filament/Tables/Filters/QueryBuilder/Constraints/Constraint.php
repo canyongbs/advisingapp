@@ -124,7 +124,13 @@ class Constraint extends Component
                             return [];
                         }
 
-                        return $operator->getFormSchema();
+                        $operator->constraint($this);
+
+                        try {
+                            return $operator->getFormSchema();
+                        } finally {
+                            $operator->constraint(null);
+                        }
                     })
                         ->statePath('settings')
                         ->key('settings')
@@ -137,6 +143,8 @@ class Constraint extends Component
 
     public function getOperatorSelectOptions(): array
     {
+        $options = [];
+
         foreach ($this->getOperators() as $operatorName => $operator) {
             $options[$operatorName] = $operator->inverse(false)->getLabel();
             $options["{$operatorName}.inverse"] = $operator->inverse()->getLabel();

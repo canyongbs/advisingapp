@@ -31,7 +31,7 @@ class StartsWithOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} does not start with \"{$this->getSettings()['text']}\"" : "{$this->getconstraint()->getAttributeLabel()} starts with \"{$this->getSettings()['text']}\"";
+        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} does not start with \"{$this->getSettings()['text']}\"" : "{$this->getConstraint()->getAttributeLabel()} starts with \"{$this->getSettings()['text']}\"";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

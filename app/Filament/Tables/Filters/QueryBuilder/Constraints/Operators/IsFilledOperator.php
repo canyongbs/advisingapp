@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
+namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators;
 
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Database\Query\Expression;
 
 class IsFilledOperator extends Operator
 {
@@ -19,15 +19,21 @@ class IsFilledOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getconstraint()->getAttributeLabel()} is blank" : "{$this->getconstraint()->getAttributeLabel()} is filled";
+        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} is blank" : "{$this->getConstraint()->getAttributeLabel()} is filled";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
+        $qualifiedStringColumn = $qualifiedColumn;
+
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            $qualifiedStringColumn = new Expression("{$qualifiedColumn}::text");
+        }
+
         return $query->where(
             fn (Builder $query) => $query
                 ->{$this->isInverse() ? 'whereNull' : 'whereNotNull'}($qualifiedColumn)
-                ->{$this->isInverse() ? 'where' : 'whereNot'}($qualifiedColumn, ''),
+                ->{$this->isInverse() ? 'where' : 'whereNot'}($qualifiedStringColumn, ''),
         );
     }
 }

@@ -30,7 +30,7 @@ class HasMinOperator extends Operator
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "Has less than {$this->getSettings()['count']} {$this->getconstraint()->getAttributeLabel()}" : "Has minimum {$this->getSettings()['count']} {$this->getconstraint()->getAttributeLabel()}";
+        return $this->isInverse() ? "Has less than {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}" : "Has minimum {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}";
     }
 
     public function applyToBaseQuery(Builder $query): Builder
