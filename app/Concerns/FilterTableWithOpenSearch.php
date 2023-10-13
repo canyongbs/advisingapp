@@ -16,6 +16,10 @@ trait FilterTableWithOpenSearch
 {
     public function filterTableQuery(Builder $query): Builder
     {
+        if (config('scout.driver') !== 'opensearch') {
+            return parent::filterTableQuery($query);
+        }
+
         $openSearchQuery = Query::bool();
         $filterWithOpenSearchQuery = false;
 
