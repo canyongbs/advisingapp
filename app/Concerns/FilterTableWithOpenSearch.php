@@ -8,9 +8,9 @@ use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Filters\OpenSearchFilter;
 use OpenSearch\Adapter\Documents\Document;
 use OpenSearch\ScoutDriverPlus\Support\Query;
+use App\Filament\Filters\OpenSearch\OpenSearchFilter;
 use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
 
 trait FilterTableWithOpenSearch

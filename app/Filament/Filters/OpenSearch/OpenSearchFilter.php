@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Filters;
+namespace App\Filament\Filters\OpenSearch;
 
 use OpenSearch\ScoutDriverPlus\Builders\QueryBuilderInterface;
 
