@@ -5,11 +5,11 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use OpenSearch\Laravel\Client\ClientBuilderInterface;
 
-class OpenSearchList extends Command
+class OpenSearchDeleteAllIndices extends Command
 {
-    protected $signature = 'opensearch:list-indices';
+    protected $signature = 'opensearch:clear-indices';
 
-    protected $description = 'List all indexes in OpenSearch.';
+    protected $description = 'Clear all indices in OpenSearch.';
 
     public function handle(ClientBuilderInterface $clientBuilder): int
     {
@@ -21,13 +21,13 @@ class OpenSearchList extends Command
 
         $client = $clientBuilder->default();
 
-        $indices = $client->indices()->get(
+        $response = $client->indices()->delete(
             [
                 'index' => '*',
             ]
         );
 
-        $this->info(json_encode($indices, JSON_PRETTY_PRINT));
+        $this->info(json_encode($response, JSON_PRETTY_PRINT));
 
         return self::SUCCESS;
     }
