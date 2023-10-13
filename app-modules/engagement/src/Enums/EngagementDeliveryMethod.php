@@ -4,6 +4,6 @@ namespace Assist\Engagement\Enums;
 
 enum EngagementDeliveryMethod: string
 {
-    case EMAIL = 'email';
-    case SMS = 'sms';
+    case Email = 'email';
+    case Sms = 'sms';
 }

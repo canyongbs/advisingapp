@@ -19,11 +19,11 @@ export default {
         extend: {
             colors: {
                 gray: require('tailwindcss/colors').zinc,
-            }
+            },
         },
         // Changes to colors also need to be reflected in FilamentServiceProvider
         colors: {
-            'trout': {
+            trout: {
                 50: '#f6f7f9',
                 100: '#ededf1',
                 200: '#d7d9e0',
@@ -36,7 +36,7 @@ export default {
                 900: '#363944',
                 950: '#24252d',
             },
-            'black': {
+            black: {
                 50: '#f6f6f6',
                 100: '#e7e7e7',
                 200: '#d1d1d1',
@@ -49,7 +49,7 @@ export default {
                 900: '#3d3d3d',
                 950: '#000000',
             },
-            'white': {
+            white: {
                 50: '#ffffff',
                 100: '#efefef',
                 200: '#dcdcdc',
@@ -75,7 +75,7 @@ export default {
                 900: '#19258f',
                 950: '#141957',
             },
-            'java': {
+            java: {
                 50: '#f1fcfa',
                 100: '#d1f6f1',
                 200: '#a4ebe3',
@@ -126,9 +126,6 @@ export default {
                 800: '#942061',
                 900: '#7c1f53',
                 950: '#4b0c2f',
-            },
-            maxHeight: {
-                content: 'calc(100vh - 6rem)',
             },
         },
     },

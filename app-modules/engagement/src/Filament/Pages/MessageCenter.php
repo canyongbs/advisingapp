@@ -86,9 +86,22 @@ class MessageCenter extends Page
 
     public int $pagination = 10;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('engagement.view_message_center');
+    }
+
     public function mount(): void
     {
-        $this->user = auth()->user();
+        /** @var User $user */
+        $user = auth()->user();
+
+        $this->user = $user;
+
+        $this->authorize('engagement.view_message_center');
     }
 
     public function updated($property): void

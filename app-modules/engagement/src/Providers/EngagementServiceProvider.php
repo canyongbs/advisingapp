@@ -11,11 +11,13 @@ use Assist\Engagement\Models\EngagementFile;
 use Assist\Engagement\Models\EngagementBatch;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\Engagement\Actions\DeliverEngagements;
+use Assist\Authorization\AuthorizationRoleRegistry;
 use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Observers\EngagementObserver;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Engagement\Observers\EngagementBatchObserver;
+use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\Engagement\Observers\EngagementFileEntitiesObserver;
 
 class EngagementServiceProvider extends ServiceProvider
@@ -39,6 +41,8 @@ class EngagementServiceProvider extends ServiceProvider
             $schedule->job(DeliverEngagements::class)->everyMinute();
         });
 
+        $this->registerRolesAndPermissions();
+
         $this->registerObservers();
     }
 
@@ -47,5 +51,32 @@ class EngagementServiceProvider extends ServiceProvider
         EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
         Engagement::observe(EngagementObserver::class);
         EngagementBatch::observe(EngagementBatchObserver::class);
+    }
+
+    protected function registerRolesAndPermissions()
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
+
+        $permissionRegistry->registerApiPermissions(
+            module: 'engagement',
+            path: 'permissions/api/custom'
+        );
+
+        $permissionRegistry->registerWebPermissions(
+            module: 'engagement',
+            path: 'permissions/web/custom'
+        );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
+
+        $roleRegistry->registerApiRoles(
+            module: 'engagement',
+            path: 'roles/api'
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: 'engagement',
+            path: 'roles/web'
+        );
     }
 }

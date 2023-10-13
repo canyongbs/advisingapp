@@ -3,63 +3,64 @@
 namespace Assist\Authorization\Policies;
 
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 use Assist\Authorization\Models\RoleGroup;
 
 class RoleGroupPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user): Response
     {
-        return true;
+        return $user->canOrElse(
+            abilities: 'role_group.view-any',
+            denyResponse: 'You do not have permission to view role groups.'
+        );
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, RoleGroup $roleGroup): bool
+    public function view(User $user, RoleGroup $roleGroup): Response
     {
-        return true;
+        return $user->canOrElse(
+            abilities: ['role_group.*.view', "role_group.{$roleGroup->id}.view"],
+            denyResponse: 'You do not have permission to view this role group.'
+        );
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(User $user): Response
     {
-        return true;
+        return $user->canOrElse(
+            abilities: 'role_group.create',
+            denyResponse: 'You do not have permission to create role groups.'
+        );
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, RoleGroup $roleGroup): bool
+    public function update(User $user, RoleGroup $roleGroup): Response
     {
-        return true;
+        return $user->canOrElse(
+            abilities: ['role_group.*.update', "role_group.{$roleGroup->id}.update"],
+            denyResponse: 'You do not have permission to update this role group.'
+        );
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, RoleGroup $roleGroup): bool
+    public function delete(User $user, RoleGroup $roleGroup): Response
     {
-        return true;
+        return $user->canOrElse(
+            abilities: ['role_group.*.delete', "role_group.{$roleGroup->id}.delete"],
+            denyResponse: 'You do not have permission to delete this role group.'
+        );
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, RoleGroup $roleGroup): bool
+    public function restore(User $user, RoleGroup $roleGroup): Response
     {
-        return true;
+        return $user->canOrElse(
+            abilities: ['role_group.*.restore', "role_group.{$roleGroup->id}.restore"],
+            denyResponse: 'You do not have permission to restore this role group.'
+        );
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, RoleGroup $roleGroup): bool
+    public function forceDelete(User $user, RoleGroup $roleGroup): Response
     {
-        return true;
+        return $user->canOrElse(
+            abilities: ['role_group.*.force-delete', "role_group.{$roleGroup->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this role group.'
+        );
     }
 }

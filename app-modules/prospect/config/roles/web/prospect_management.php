@@ -5,11 +5,5 @@ return [
         'prospect' => [
             '*',
         ],
-        'prospect_source' => [
-            '*',
-        ],
-        'prospect_status' => [
-            '*',
-        ],
     ],
 ];

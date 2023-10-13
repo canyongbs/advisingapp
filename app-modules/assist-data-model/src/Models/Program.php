@@ -2,6 +2,7 @@
 
 namespace Assist\AssistDataModel\Models;
 
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
@@ -22,4 +23,25 @@ class Program extends Model
     protected $keyType = 'string';
 
     public $timestamps = false;
+
+    public function getWebPermissions(): Collection
+    {
+        return collect(['view-any', '*.view']);
+    }
+
+    public function getApiPermissions(): Collection
+    {
+        return collect([]);
+    }
+
+    public function getTable()
+    {
+        if ($this->table) {
+            return $this->table;
+        }
+
+        return config('database.adm_materialized_views_enabled')
+            ? 'programs_local'
+            : 'programs';
+    }
 }

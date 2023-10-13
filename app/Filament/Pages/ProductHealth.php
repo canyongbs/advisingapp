@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\User;
 use Spatie\Health\Enums\Status;
 use Illuminate\Contracts\Support\Htmlable;
 use Spatie\Health\ResultStores\ResultStore;
@@ -43,5 +44,18 @@ class ProductHealth extends HealthCheckResults
     public static function getNavigationBadgeColor(): string | array | null
     {
         return 'danger';
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('authorization.view_product_health_dashboard');
+    }
+
+    public function mount(): void
+    {
+        $this->authorize('authorization.view_product_health_dashboard');
     }
 }

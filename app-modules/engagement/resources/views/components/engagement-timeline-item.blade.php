@@ -15,7 +15,7 @@
             </a>
             <span class="ml-2 flex space-x-2">
                 @foreach ($record->deliverables as $deliverable)
-                    @if ($deliverable->channel === EngagementDeliveryMethod::EMAIL)
+                    @if ($deliverable->channel === EngagementDeliveryMethod::Email)
                         <div class="relative">
                             <x-filament::icon
                                 class="h-5 w-5 text-gray-400 dark:text-gray-100"
@@ -40,7 +40,7 @@
                             />
                         </div>
                     @endif
-                    @if ($deliverable->channel === EngagementDeliveryMethod::SMS)
+                    @if ($deliverable->channel === EngagementDeliveryMethod::Sms)
                         <div class="relative">
                             <x-filament::icon
                                 class="h-5 w-5 text-gray-400 dark:text-gray-100"

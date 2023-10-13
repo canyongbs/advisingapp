@@ -16,7 +16,7 @@ class ProgramsRelationManager extends RelationManager
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return parent::infolist($infolist)
+        return $infolist
             ->schema([
                 TextEntry::make('sisid')
                     ->label('SISID'),

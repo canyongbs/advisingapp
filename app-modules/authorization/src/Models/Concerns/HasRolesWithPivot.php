@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 trait HasRolesWithPivot
 {
     use HasRoles {
-        assignRole as protected originalAssignRole;
+        HasRoles::assignRole as protected originalAssignRole;
     }
 
     public function roles(): BelongsToMany

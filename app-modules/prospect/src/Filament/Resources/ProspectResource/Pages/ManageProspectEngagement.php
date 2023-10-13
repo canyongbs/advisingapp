@@ -23,25 +23,21 @@ class ManageProspectEngagement extends ManageRelatedRecords
 
     public static function canAccess(?Model $record = null): bool
     {
-        foreach ([
-            EngagementsRelationManager::class,
-            EngagementResponsesRelationManager::class,
-        ] as $relationManager) {
-            if (! $relationManager::canViewForRecord($record, static::class)) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
+        return (bool) count(static::managers($record));
     }
 
     public function getRelationManagers(): array
     {
-        return [
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(Model $record): array
+    {
+        return collect([
             EngagementsRelationManager::class,
             EngagementResponsesRelationManager::class,
-        ];
+        ])
+            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
+            ->toArray();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\User;
 use App\Filament\Widgets\MyTasks;
 use App\Filament\Widgets\MyStudents;
 use App\Filament\Widgets\MyProspects;
@@ -20,7 +21,10 @@ class Dashboard extends BasePage
 
     public function getWidgets(): array
     {
-        return [
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('authorization.view_dashboard') ? [
             WelcomeWidget::class,
             TotalStudents::class,
             TotalProspects::class,
@@ -29,6 +33,8 @@ class Dashboard extends BasePage
             MyServiceRequests::class,
             MyTasks::class,
             RecentLeadsList::class,
+        ] : [
+            WelcomeWidget::class,
         ];
     }
 

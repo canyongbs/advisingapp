@@ -19,7 +19,7 @@ class FormSubmissionsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return parent::form($form)
+        return $form
             ->schema([
                 KeyValue::make('content')
                     ->columnSpanFull(),

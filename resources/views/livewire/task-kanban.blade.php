@@ -32,6 +32,7 @@
                                                     {{ str($task->title)->limit(50) }}
                                                 </div>
                                                 <x-filament::icon-button
+                                                    class="fi-primary-color"
                                                     wire:click="viewTask('{{ $task->id }}')"
                                                     icon="heroicon-m-arrow-top-right-on-square"
                                                 />
@@ -44,7 +45,7 @@
                                                 </div>
 
                                                 <div class="flex justify-end">
-                                                    @if ($task->status === TaskStatus::COMPLETED)
+                                                    @if ($task->status === TaskStatus::Completed)
                                                         <div
                                                             class="flex items-center justify-center rounded-lg bg-green-100 px-3 text-sm font-medium text-green-800 dark:bg-green-200">
                                                             <svg
