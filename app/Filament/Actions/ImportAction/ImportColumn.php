@@ -297,6 +297,10 @@ class ImportColumn extends Component
             return $this->resolvedRelatedRecords[$state] = $resolveUsing;
         }
 
+        if (! (is_array($resolveUsing) || is_string($resolveUsing))) {
+            return null;
+        }
+
         $resolveUsing = Arr::wrap($resolveUsing);
 
         $isFirst = true;
