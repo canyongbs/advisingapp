@@ -4,6 +4,7 @@ namespace Assist\AssistDataModel\Models;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
@@ -14,8 +15,6 @@ class Performance extends Model
 {
     use HasFactory;
     use DefinesPermissions;
-
-    protected $table = 'performance';
 
     // TODO: Need to revisit whether or not this should be the primary key, just using it for now since there is nothing else
     protected $primaryKey = 'sisid';
@@ -34,5 +33,21 @@ class Performance extends Model
     public function getApiPermissions(): Collection
     {
         return collect([]);
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+    }
+
+    public function getTable()
+    {
+        if ($this->table) {
+            return $this->table;
+        }
+
+        return config('database.adm_materialized_views_enabled')
+            ? 'performance_local'
+            : 'performance';
     }
 }

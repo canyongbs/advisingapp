@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Assist\CaseloadManagement\Enums\CaseloadType;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
@@ -62,7 +63,7 @@ class EditCaseload extends EditRecord implements HasTable
     {
         return $table
             ->columns(CaseloadResource::columns($this->data['model']))
-            ->filters(CaseloadResource::filters($this->data['model']))
+            ->filters(CaseloadResource::filters($this->data['model']), layout: FiltersLayout::AboveContent)
             // ->actions(CaseloadResource::actions($this->data['model']))
             ->query(function () {
                 $model = $this->data['model'];

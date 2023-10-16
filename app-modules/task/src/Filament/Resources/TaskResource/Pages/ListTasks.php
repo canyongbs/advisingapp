@@ -29,7 +29,6 @@ use Assist\Task\Filament\Resources\TaskResource;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 class ListTasks extends ListRecords
@@ -128,9 +127,6 @@ class ListTasks extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                TableCreateAction::make(),
             ]);
     }
 

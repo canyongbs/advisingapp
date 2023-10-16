@@ -33,4 +33,15 @@ class Program extends Model
     {
         return collect([]);
     }
+
+    public function getTable()
+    {
+        if ($this->table) {
+            return $this->table;
+        }
+
+        return config('database.adm_materialized_views_enabled')
+            ? 'programs_local'
+            : 'programs';
+    }
 }

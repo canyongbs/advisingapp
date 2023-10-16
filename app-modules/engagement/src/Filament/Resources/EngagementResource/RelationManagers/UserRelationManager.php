@@ -38,8 +38,6 @@ class UserRelationManager extends RelationManager
             ->actions([
             ])
             ->bulkActions([
-            ])
-            ->emptyStateActions([
             ]);
     }
 }

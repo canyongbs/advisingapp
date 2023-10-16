@@ -57,6 +57,17 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
 
     public $timestamps = false;
 
+    public function getTable()
+    {
+        if ($this->table) {
+            return $this->table;
+        }
+
+        return config('database.adm_materialized_views_enabled')
+            ? 'students_local'
+            : 'students';
+    }
+
     public function identifier(): string
     {
         return $this->sisid;
