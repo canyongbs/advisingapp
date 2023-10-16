@@ -7,6 +7,7 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Assist\CaseloadManagement\Enums\CaseloadType;
@@ -56,7 +57,7 @@ class CreateCaseload extends CreateRecord implements HasTable
     {
         return $table
             ->columns(CaseloadResource::columns($this->data['model']))
-            ->filters(CaseloadResource::filters($this->data['model']))
+            ->filters(CaseloadResource::filters($this->data['model']), layout: FiltersLayout::AboveContent)
             // ->actions(CaseloadResource::actions($this->data['model']))
             ->query(fn () => $this->data['model']->query());
     }

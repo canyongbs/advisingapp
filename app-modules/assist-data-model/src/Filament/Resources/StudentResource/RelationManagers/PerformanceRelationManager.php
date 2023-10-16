@@ -8,6 +8,7 @@ use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
@@ -26,8 +27,9 @@ class PerformanceRelationManager extends RelationManager
                         ->label('Academic Career'),
                     TextEntry::make('division')
                         ->label('College'),
-                    TextEntry::make('first_gen')
-                        ->label('First Gen'),
+                    IconEntry::make('first_gen')
+                        ->label('First Gen')
+                        ->boolean(),
                     TextEntry::make('cum_att')
                         ->label('Cumulative Attempted'),
                     TextEntry::make('cum_ern')
