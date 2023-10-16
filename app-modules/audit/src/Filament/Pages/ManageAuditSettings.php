@@ -35,6 +35,8 @@ class ManageAuditSettings extends SettingsPage
     public function mount(): void
     {
         $this->authorize('audit.view_audit_settings');
+
+        parent::mount();
     }
 
     public function form(Form $form): Form
