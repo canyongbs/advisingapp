@@ -11,14 +11,12 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Filters\OpenSearch\SelectFilter;
-use OpenSearch\ScoutDriverPlus\Support\Query;
-use OpenSearch\ScoutDriverPlus\Decorators\Hit;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
@@ -26,6 +24,7 @@ use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
+use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
 
 class ListProspects extends ListRecords
 {
@@ -78,27 +77,27 @@ class ListProspects extends ListRecords
             ])
             ->filters([
                 SelectFilter::make('caseload')
-                  ->options(
-                      auth()->user()->caseloads()
-                          ->where('model', CaseloadModel::Prospect)
-                          ->pluck('name', 'id'),
-                  )
-                  ->query(function (Builder $query, array $data) {
-                      if (blank($data['value'])) {
-                          return;
-                      }
+                    ->options(
+                        auth()->user()->caseloads()
+                            ->where('model', CaseloadModel::Prospect)
+                            ->pluck('name', 'id'),
+                    )
+                    ->query(function (Builder $query, array $data) {
+                        if (blank($data['value'])) {
+                            return;
+                        }
 
-                      $query->whereKey(
-                          app(TranslateCaseloadFilters::class)
-                              ->handle($data['value'])
-                              ->pluck($query->getModel()->getQualifiedKeyName()),
-                      );
-                  }),
-                SelectFilter::make('status_id')
+                        $query->whereKey(
+                            app(TranslateCaseloadFilters::class)
+                                ->handle($data['value'])
+                                ->pluck($query->getModel()->getQualifiedKeyName()),
+                        );
+                    }),
+                OpenSearchSelectFilter::make('status_id')
                     ->relationship('status', 'name')
                     ->multiple()
                     ->preload(),
-                SelectFilter::make('source_id')
+                OpenSearchSelectFilter::make('source_id')
                     ->relationship('source', 'name')
                     ->multiple()
                     ->preload(),
