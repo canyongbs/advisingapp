@@ -47,8 +47,6 @@ class FormSubmissionsRelationManager extends RelationManager
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
             ]);
     }
 }

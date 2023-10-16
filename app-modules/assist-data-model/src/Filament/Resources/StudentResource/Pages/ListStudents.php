@@ -17,7 +17,6 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
-use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 
 class ListStudents extends ListRecords
@@ -73,9 +72,6 @@ class ListStudents extends ListRecords
                     BulkEngagementAction::make(context: 'students'),
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                TableCreateAction::make(),
             ]);
     }
 

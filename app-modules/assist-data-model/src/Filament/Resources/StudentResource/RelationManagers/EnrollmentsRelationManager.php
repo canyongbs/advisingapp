@@ -58,7 +58,6 @@ class EnrollmentsRelationManager extends RelationManager
             ->actions([
                 ViewAction::make(),
             ])
-            ->bulkActions([])
-            ->emptyStateActions([]);
+            ->bulkActions([]);
     }
 }

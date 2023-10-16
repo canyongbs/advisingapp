@@ -43,8 +43,6 @@ class EngagementResponsesRelationManager extends RelationManager
                 ViewAction::make(),
             ])
             ->bulkActions([
-            ])
-            ->emptyStateActions([
             ]);
     }
 }

@@ -70,7 +70,6 @@ class PerformanceRelationManager extends RelationManager
             ->actions([
                 ViewAction::make(),
             ])
-            ->bulkActions([])
-            ->emptyStateActions([]);
+            ->bulkActions([]);
     }
 }
