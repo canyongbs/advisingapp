@@ -58,10 +58,13 @@ trait FilterTableWithOpenSearch
 
         // Filtering
 
-        collect($this->getTable()->getFilters())
+        [$openSearchFilters, $regularFilters] = collect($this->getTable()->getFilters())->partition(fn (BaseFilter $filter) => $filter instanceof OpenSearchFilter);
+
+        $openSearchFilters
             ->each(function (BaseFilter $filter) use (&$openSearchQuery, &$filterWithOpenSearchQuery) {
                 if (! $filter instanceof OpenSearchFilter) {
-                    throw new Exception('Unsupported filter type used on table');
+                    // Skip filters that don't support OpenSearch
+                    return;
                 }
 
                 /** @var OpenSearchFilter $filter */
@@ -83,6 +86,24 @@ trait FilterTableWithOpenSearch
                     ->map(fn (Document $document) => $document->id())
             );
         }
+
+        $data = $this->getTableFiltersForm()->getRawState();
+
+        $regularFilters->each(function (BaseFilter $filter) use ($query, $data) {
+            $filter->applyToBaseQuery(
+                $query,
+                $data[$filter->getName()] ?? [],
+            );
+        });
+
+        $query->where(function (Builder $query) use ($regularFilters, $data) {
+            $regularFilters->each(function (BaseFilter $filter) use ($query, $data) {
+                $filter->apply(
+                    $query,
+                    $data[$filter->getName()] ?? [],
+                );
+            });
+        });
 
         foreach ($this->getTable()->getColumns() as $column) {
             if ($column->isHidden()) {
