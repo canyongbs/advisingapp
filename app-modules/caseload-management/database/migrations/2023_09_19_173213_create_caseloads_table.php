@@ -11,6 +11,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->string('name');
+            $table->text('description')->nullable();
             $table->json('filters')->nullable();
             $table->string('model');
             $table->string('type');
