@@ -18,6 +18,10 @@ class RoleGroupsRelationManager extends RelationManager implements HasActions
 {
     use InteractsWithActions;
 
+    protected static ?string $label = 'Profile';
+
+    protected static ?string $title = 'Profiles';
+
     protected static string $relationship = 'roleGroups';
 
     protected static ?string $recordTitleAttribute = 'name';
