@@ -16,9 +16,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
+use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 
 class ListProspects extends ListRecords
@@ -69,6 +71,23 @@ class ListProspects extends ListRecords
                     ->sortable(),
             ])
             ->filters([
+                SelectFilter::make('caseload')
+                    ->options(
+                        auth()->user()->caseloads()
+                            ->where('model', CaseloadModel::Prospect)
+                            ->pluck('name', 'id'),
+                    )
+                    ->query(function (Builder $query, array $data) {
+                        if (blank($data['value'])) {
+                            return;
+                        }
+
+                        $query->whereKey(
+                            app(TranslateCaseloadFilters::class)
+                                ->handle($data['value'])
+                                ->pluck($query->getModel()->getQualifiedKeyName()),
+                        );
+                    }),
                 SelectFilter::make('status')
                     ->relationship('status', 'name')
                     ->multiple()

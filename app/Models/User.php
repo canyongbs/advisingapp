@@ -19,6 +19,7 @@ use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\CaseloadManagement\Models\Caseload;
 use Assist\Consent\Models\Concerns\CanConsent;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Assist\ServiceManagement\Models\ServiceRequest;
@@ -99,6 +100,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'roles.title',
         'locale',
     ];
+
+    public function caseloads(): HasMany
+    {
+        return $this->hasMany(Caseload::class);
+    }
 
     public function subscriptions(): HasMany
     {
