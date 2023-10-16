@@ -30,6 +30,7 @@ class SettingsProperty extends BaseSettingsProperty implements HasMedia
     {
         $this->addMediaConversion('logo-height-250px')
             ->performOnCollections('logo', 'dark_logo')
-            ->height(250);
+            ->height(250)
+            ->keepOriginalImageFormat();
     }
 }
