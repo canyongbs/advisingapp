@@ -19,7 +19,7 @@ class TranslateCaseload extends Command
     {
         Caseload::all()
             ->each(function (Caseload $caseload) {
-                ray(resolve(TranslateCaseloadFilters::class)->handle($caseload));
+                ray(resolve(TranslateCaseloadFilters::class)->handle($caseload)->get());
             });
     }
 }
