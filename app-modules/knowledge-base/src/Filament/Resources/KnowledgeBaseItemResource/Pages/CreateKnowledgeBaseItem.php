@@ -52,7 +52,7 @@ class CreateKnowledgeBaseItem extends CreateRecord
                     ->translateLabel()
                     ->boolean()
                     ->default(false)
-                    ->constraints(['boolean']),
+                    ->rules(['boolean']),
                 Select::make('division')
                     ->label('Division')
                     ->translateLabel()
