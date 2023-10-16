@@ -7,16 +7,14 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('calendar_events', function (Blueprint $table) {
             $table->uuid('id');
 
             $table->string('title');
             $table->text('description')->nullable();
 
-            $table->string('provider_type')->nullable();
             $table->string('provider_id')->nullable();
-
-            $table->foreignUuid('user_id')->constrained('users');
+            $table->foreignUuid('calendar_id')->constrained('calendars');
 
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');

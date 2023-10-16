@@ -3,7 +3,7 @@
 namespace Assist\MeetingCenter\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\MeetingCenter\Models\Event;
+use Assist\MeetingCenter\Models\CalendarEvent;
 
 class UpdateEvent extends Command
 {
@@ -17,12 +17,9 @@ class UpdateEvent extends Command
      */
     protected $description = 'Update a calendar event for testing.';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        Event::first()->update(['title' => fake()->words(asText: true)]);
+        CalendarEvent::first()->update(['title' => fake()->words(asText: true)]);
 
         return self::SUCCESS;
     }

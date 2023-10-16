@@ -3,7 +3,7 @@
 namespace Assist\MeetingCenter\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\MeetingCenter\Models\Event;
+use Assist\MeetingCenter\Models\CalendarEvent;
 
 class DeleteEvent extends Command
 {
@@ -17,12 +17,9 @@ class DeleteEvent extends Command
      */
     protected $description = 'Delete a calendar event for testing.';
 
-    /**
-     * Execute the console command.
-     */
     public function handle(): int
     {
-        Event::first()->delete();
+        CalendarEvent::first()->delete();
 
         return self::SUCCESS;
     }

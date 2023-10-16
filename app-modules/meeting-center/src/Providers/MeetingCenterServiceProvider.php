@@ -2,8 +2,8 @@
 
 namespace Assist\MeetingCenter\Providers;
 
-use Assist\MeetingCenter\Models\Event;
-use Assist\MeetingCenter\Observers\EventObserver;
+use Assist\MeetingCenter\Models\CalendarEvent;
+use Assist\MeetingCenter\Observers\CalendarEventObserver;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
@@ -56,6 +56,6 @@ class MeetingCenterServiceProvider extends ServiceProvider
 
     protected function registerObservers()
     {
-        Event::observe(EventObserver::class);
+        CalendarEvent::observe(CalendarEventObserver::class);
     }
 }

@@ -4,12 +4,15 @@ namespace Assist\MeetingCenter;
 
 use DateTime;
 use Google\Client;
-use App\Models\User;
-use Assist\MeetingCenter\Models\Event;
-use Assist\MeetingCenter\Contracts\Calendar;
-use Spatie\GoogleCalendar\Event as GoogleEvent;
+use DateTimeInterface;
+use Google\Service\Calendar\Event;
+use Assist\MeetingCenter\Models\Calendar;
+use Google\Service\Calendar\EventDateTime;
+use Assist\MeetingCenter\Models\CalendarEvent;
+use Google\Service\Calendar as GoogleCalendar;
+use Assist\MeetingCenter\Contracts\CalendarInterface;
 
-class GoogleCalendarManager implements Calendar
+class GoogleCalendarManager implements CalendarInterface
 {
     /**
      * @see https://developers.google.com/calendar/api/v3/reference/events/watch
@@ -23,24 +26,44 @@ class GoogleCalendarManager implements Calendar
         return 'google';
     }
 
-    public function getEvents(string $calendarId, ?Datetime $start = null, ?Datetime $end = null): array
+    public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null): array
     {
         /**
          * @todo create without sync?
          * @todo sync uncreated events?
          * */
-        $client = new Client([
-            'clientId' => config('services.google_calendar.client_id'),
-            'clientSecret' => config('services.google_calendar.client_secret'),
-            'scopes' => [\Google\Service\Calendar::CALENDAR, \Google\Service\Calendar::CALENDAR_EVENTS],
-        ]);
+        $service = (new GoogleCalendar($this->client($calendar)));
 
-        //TODO: access token
+        $parameters = [
+            'singleEvents' => true,
+            'orderBy' => 'startTime',
+            'maxResults' => 2500,
+            'pageToken' => null,
+        ];
 
-        // return GoogleEvent::get($start ?? now(), $end, ['maxResults' => 2500], $calendarId)->toArray();
+        if (is_null($start)) {
+            $start = now()->startOfDay();
+        }
+        $parameters['timeMin'] = $start->format(DateTimeInterface::RFC3339);
+
+        // if (is_null($end)) {
+        //     $end = now()->addYear()->endOfDay();
+        // }
+        // $parameters['timeMax'] = $end->format(DateTimeInterface::RFC3339);
+
+        $events = collect();
+
+        do {
+            $googleEvents = $service->events->listEvents($calendar->provider_id, $parameters);
+            $parameters['pageToken'] = $googleEvents->nextPageToken;
+
+            $events = $events->merge($service->events->listEvents($calendar->provider_id, $parameters)->getItems());
+        } while ($googleEvents->nextPageToken);
+
+        return $events->toArray();
     }
 
-    public function createEvent(string $calendarId, Event $event): Event
+    public function createEvent(CalendarEvent $event): CalendarEvent
     {
         /**
          * Warning: If you add an event using the values declined, tentative, or accepted, attendees
@@ -55,75 +78,98 @@ class GoogleCalendarManager implements Calendar
          * @todo auto accept?
          * @todo create later?
          * */
-        // $google = GoogleEvent::create([
-        //     'summary' => $event->title,
-        //     'description' => $event->description,
-        //     'startDateTime' => $event->starts_at,
-        //     'endDateTime' => $event->ends_at,
-        // ], $calendarId);
-        //
-        // $event->provider_id = $google->id;
-        // $event->provider_type = static::type();
+        $service = (new GoogleCalendar(static::client($event->calendar)));
+
+        $googleEvent = $this->toGoogleEvent($event);
+        $googleEvent = $service->events->insert($event->calendar->provider_id, $googleEvent);
+        $event->provider_id = $googleEvent->getId();
 
         return $event;
     }
 
-    public function updateEvent(string $calendarId, Event $event): Event
+    public function updateEvent(CalendarEvent $event): CalendarEvent
     {
         if ($event->provider_id) {
-            // GoogleEvent::find($event->provider_id, $calendarId)->update([
-            //     'summary' => $event->title,
-            //     'description' => $event->description,
-            //     'startDateTime' => $event->starts_at,
-            //     'endDateTime' => $event->ends_at,
-            // ]);
+            $googleEvent = $this->toGoogleEvent($event);
+            $service = (new GoogleCalendar(static::client($event->calendar)));
+            $service->events->update($event->calendar->provider_id, $event->provider_id, $googleEvent);
         } else {
-            $event = $this->createEvent($calendarId, $event);
+            $event = $this->createEvent($event);
         }
 
         return $event;
     }
 
-    public function deleteEvent(string $calendarId, Event $event): void
+    public function deleteEvent(CalendarEvent $event): void
     {
-        // GoogleEvent::find($event->provider_id, $calendarId)?->delete();
+        $service = (new GoogleCalendar(static::client($event->calendar)));
+        $service->events->delete($event->calendar->provider_id, $event->provider_id);
     }
 
-    public function syncEvents(string $calendarId, User $user): void
+    public function syncEvents(Calendar $calendar): void
     {
-        // $events = collect($this->getEvents($calendarId));
-        //
-        // $events
-        //     ->each(
-        //         function (GoogleEvent $event) use ($user) {
-        //             $userEvent = $user->events()->where('provider_id', $event->id)->first();
-        //
-        //             if ($userEvent) {
-        //                 $userEvent
-        //                     ->updateQuietly([
-        //                         'title' => $event->summary,
-        //                         'description' => $event->description,
-        //                         'starts_at' => $event->start->dateTime,
-        //                         'ends_at' => $event->end->dateTime,
-        //                     ]);
-        //             } else {
-        //                 ray($event, $event->id);
-        //                 $user
-        //                     ->events()
-        //                     ->createQuietly([
-        //                         'provider_id' => $event->id,
-        //                         'provider_type' => static::type(),
-        //                         'title' => $event->summary,
-        //                         'description' => $event->description,
-        //                         'starts_at' => $event->start->dateTime,
-        //                         'ends_at' => $event->end->dateTime,
-        //                     ]);
-        //             }
-        //         }
-        //     );
-        //
-        // $user->events()
-        //     ->whereNull('provider_id')
-        //     ->each(fn ($event) => $this->createEvent($calendarId, $event)->saveQuietly());
+        $events = collect($this->getEvents($calendar));
+
+        $events
+            ->each(
+                function (Event $event) use ($calendar) {
+                    $userEvent = $calendar->events()->where('provider_id', $event->id)->first();
+
+                    if ($userEvent) {
+                        $userEvent
+                            ->updateQuietly([
+                                'title' => $event->summary,
+                                'description' => $event->description,
+                                'starts_at' => $event->start->dateTime,
+                                'ends_at' => $event->end->dateTime,
+                            ]);
+                    } else {
+                        $calendar
+                            ->events()
+                            ->createQuietly([
+                                'provider_id' => $event->id,
+                                'title' => $event->summary,
+                                'description' => $event->description,
+                                'starts_at' => $event->start->dateTime,
+                                'ends_at' => $event->end->dateTime,
+                            ]);
+                    }
+                }
+            );
+
+        $calendar
+            ->events()
+            ->whereNull('provider_id')
+            ->each(fn ($event) => $this->createEvent($event)->saveQuietly());
+    }
+
+    public static function client(Calendar $calendar): Client
+    {
+        $client = new Client([
+            'client_d' => config('services.google_calendar.client_id'),
+            'client_secret' => config('services.google_calendar.client_secret'),
+            'scopes' => [GoogleCalendar::CALENDAR, GoogleCalendar::CALENDAR_EVENTS],
+        ]);
+
+        $client->setAccessToken($calendar->oauth_token);
+
+        return $client;
+    }
+
+    private function toGoogleEvent(CalendarEvent $event): Event
+    {
+        $googleEvent = new Event();
+        $googleEvent->setSummary($event->title);
+        $googleEvent->setDescription($event->description);
+
+        $start = new EventDateTime();
+        $start->setDateTime($event->starts_at);
+        $googleEvent->setStart($start);
+
+        $end = new EventDateTime();
+        $end->setDateTime($event->ends_at);
+        $googleEvent->setEnd($end);
+
+        return $googleEvent;
     }
 }

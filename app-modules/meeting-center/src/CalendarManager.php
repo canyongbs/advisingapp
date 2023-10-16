@@ -5,8 +5,8 @@ namespace Assist\MeetingCenter;
 use Exception;
 use App\Models\User;
 use Illuminate\Support\Manager;
-use Assist\MeetingCenter\Contracts\Calendar;
 use Illuminate\Contracts\Container\Container;
+use Assist\MeetingCenter\Contracts\CalendarInterface;
 
 class CalendarManager extends Manager
 {
@@ -15,12 +15,12 @@ class CalendarManager extends Manager
     //     parent::__construct($container);
     // }
 
-    public function createGoogleDriver(): Calendar
+    public function createGoogleDriver(): CalendarInterface
     {
         return new GoogleCalendarManager();
     }
 
-    public function createOutlookDriver(): Calendar
+    public function createOutlookDriver(): CalendarInterface
     {
         return new OutlookCalendarManager();
     }

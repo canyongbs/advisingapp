@@ -178,7 +178,7 @@ return [
     'create_new_report' => 'Create new report',
     'created_at' => 'Created at',
     'crud_date_field' => 'Crud date field',
-    'crud_event_field' => 'Event label field',
+    'crud_event_field' => 'CalendarEvent label field',
     'crud_title' => 'Crud title',
     'csv_file_to_import' => 'CSV file to import',
     'csvImport' => 'CSV Import',

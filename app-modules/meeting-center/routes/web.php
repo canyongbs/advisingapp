@@ -1,11 +1,12 @@
 <?php
 
 use App\Models\User;
-use Google\Service\Calendar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Assist\MeetingCenter\Models\Calendar;
 use League\OAuth2\Client\Provider\Google;
 use League\OAuth2\Client\Grant\RefreshToken;
+use Google\Service\Calendar as GoogleCalendar;
 use Symfony\Component\HttpFoundation\Response;
 use League\OAuth2\Client\Grant\AuthorizationCode;
 
@@ -18,7 +19,7 @@ Route::middleware(['web', 'auth'])
                 'clientId' => config('services.google_calendar.client_id'),
                 'clientSecret' => config('services.google_calendar.client_secret'),
                 'redirectUri' => route('google.calendar.callback'),
-                'scopes' => [Calendar::CALENDAR, Calendar::CALENDAR_EVENTS],
+                'scopes' => [GoogleCalendar::CALENDAR, GoogleCalendar::CALENDAR_EVENTS],
                 'prompt' => 'consent',
                 'accessType' => 'offline',
             ]);
@@ -31,7 +32,7 @@ Route::middleware(['web', 'auth'])
                 'clientId' => config('services.google_calendar.client_id'),
                 'clientSecret' => config('services.google_calendar.client_secret'),
                 'redirectUri' => route('google.calendar.callback'),
-                'scopes' => [Calendar::CALENDAR, Calendar::CALENDAR_EVENTS],
+                'scopes' => [GoogleCalendar::CALENDAR, GoogleCalendar::CALENDAR_EVENTS],
                 'prompt' => 'consent',
                 'accessType' => 'offline',
             ]);
@@ -42,12 +43,15 @@ Route::middleware(['web', 'auth'])
 
             /** @var User $user */
             $user = auth()->user();
-            $user->calendar_type = 'google';
-            $user->calendar_id = env('GOOGLE_CALENDAR_ID'); //TODO: needs UI to select calendar
-            $user->calendar_token = $token->getToken();
-            $user->calendar_refresh_token = $token->getRefreshToken();
-            $user->calendar_token_expires_at = Carbon::parse($token->getExpires());
-            $user->save();
+
+            $calendar = new Calendar();
+            $calendar->type = 'google';
+            $calendar->provider_id = env('GOOGLE_CALENDAR_ID'); //TODO: needs UI to select calendar
+            $calendar->oauth_token = $token->getToken();
+            $calendar->oauth_refresh_token = $token->getRefreshToken();
+            $calendar->oauth_token_expires_at = Carbon::parse($token->getExpires());
+
+            $user->calendar()->save($calendar);
         })->name('callback');
 
         Route::get('/refresh', function (Request $request) {
@@ -60,21 +64,23 @@ Route::middleware(['web', 'auth'])
             //     redirect()->route('google.calendar.login');
             // }
 
+            $calendar = $user->calendar;
+
             $provider = new Google([
                 'clientId' => config('services.google_calendar.client_id'),
                 'clientSecret' => config('services.google_calendar.client_secret'),
                 'redirectUri' => route('google.calendar.callback'),
-                'scopes' => [Calendar::CALENDAR, Calendar::CALENDAR_EVENTS],
+                'scopes' => [GoogleCalendar::CALENDAR, GoogleCalendar::CALENDAR_EVENTS],
                 'prompt' => 'consent',
                 'accessType' => 'offline',
             ]);
 
             $token = $provider->getAccessToken(new RefreshToken(), [
-                'refresh_token' => $user->calendar_refresh_token,
+                'refresh_token' => $calendar->oauth_refresh_token,
             ]);
 
-            $user->calendar_token = $token->getToken();
-            $user->calendar_token_expires_at = Carbon::parse($token->getExpires());
-            $user->save();
+            $calendar->oauth_token = $token->getToken();
+            $calendar->oauth_token_expires_at = Carbon::parse($token->getExpires());
+            $calendar->save();
         })->name('refresh');
     });

@@ -77,7 +77,7 @@ return [
         'fields' => [
             'id' => 'ID',
             'id_helper' => ' ',
-            'description' => 'Event',
+            'description' => 'CalendarEvent',
             'description_helper' => ' ',
             'subject_id' => 'Subject ID',
             'subject_id_helper' => ' ',
@@ -89,7 +89,7 @@ return [
             'properties_helper' => ' ',
             'host' => 'IP',
             'host_helper' => ' ',
-            'created_at' => 'Event time',
+            'created_at' => 'CalendarEvent time',
             'created_at_helper' => ' ',
             'updated_at' => 'Updated at',
             'updated_at_helper' => ' ',

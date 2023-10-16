@@ -5,7 +5,6 @@ namespace Assist\MeetingCenter\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Assist\MeetingCenter\CalendarManager;
-use Assist\MeetingCenter\GoogleCalendarManager;
 
 class SyncEvents extends Command
 {
@@ -23,14 +22,9 @@ class SyncEvents extends Command
     {
         $user = User::where('email', 'superadmin@assist.com')->first();
 
-        $user->update([
-            'calendar_type' => GoogleCalendarManager::type(),
-            'calendar_id' => env('GOOGLE_CALENDAR_ID'),
-        ]);
-
         resolve(CalendarManager::class)
-            ->driver($user->calendar_type)
-            ->syncEvents($user->calendar_id, $user);
+            ->driver($user->calendar->type)
+            ->syncEvents($user->calendar);
 
         return self::SUCCESS;
     }

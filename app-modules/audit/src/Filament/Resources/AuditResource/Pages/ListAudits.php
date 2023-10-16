@@ -29,7 +29,7 @@ class ListAudits extends ListRecords
                     ->label('Change Agent (User)')
                     ->sortable(),
                 TextColumn::make('event')
-                    ->label('Event')
+                    ->label('CalendarEvent')
                     ->sortable(),
             ])
             ->filters([

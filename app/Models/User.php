@@ -11,9 +11,11 @@ use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
 use Assist\Prospect\Models\Prospect;
 use Assist\Authorization\Models\Role;
-use Assist\MeetingCenter\Models\Event;
+use Assist\MeetingCenter\Models\CalendarEvent;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\MeetingCenter\Models\Calendar;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\AssistDataModel\Models\Student;
 use Lab404\Impersonate\Models\Impersonate;
@@ -22,6 +24,7 @@ use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\Consent\Models\Concerns\CanConsent;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -66,17 +69,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     protected $hidden = [
         'remember_token',
         'password',
-        'calendar_token',
-        'calendar_refresh_token',
     ];
 
     protected $casts = [
         'is_external' => 'boolean',
         'email_verified_at' => 'datetime',
-        'calendar_id' => 'encrypted',
-        'calendar_token' => 'encrypted',
-        'calendar_refresh_token' => 'encrypted',
-        'calendar_expires_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -182,7 +179,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function events(): HasMany
     {
-        return $this->hasMany(Event::class);
+        return $this->hasMany(CalendarEvent::class);
     }
 
     public function teams(): BelongsToMany
@@ -193,6 +190,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             //TODO: remove this if we support multiple teams
             ->limit(1)
             ->withTimestamps();
+    }
+
+    public function calendar(): HasOne
+    {
+        return $this->hasOne(Calendar::class);
     }
 
     public function assistantChatMessageLogs(): HasMany

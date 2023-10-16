@@ -6,15 +6,13 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Event extends BaseModel
+class CalendarEvent extends BaseModel
 {
     protected $fillable = [
         'title',
         'description',
         'starts_at',
         'ends_at',
-        'provider_id',
-        'provider_type',
     ];
 
     protected $casts = [
@@ -22,8 +20,8 @@ class Event extends BaseModel
         'ends_at' => 'datetime',
     ];
 
-    public function user(): BelongsTo
+    public function calendar(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Calendar::class);
     }
 }

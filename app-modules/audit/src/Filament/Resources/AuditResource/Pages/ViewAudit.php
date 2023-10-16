@@ -25,7 +25,7 @@ class ViewAudit extends ViewRecord
                             ->label('Change Agent (User)')
                             ->placeholder('N/A'),
                         TextEntry::make('event')
-                            ->label('Event'),
+                            ->label('CalendarEvent'),
                         TextEntry::make('url')
                             ->label('URL'),
                         TextEntry::make('ip_address')

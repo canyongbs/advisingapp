@@ -2,16 +2,14 @@
 
 namespace Assist\MeetingCenter\Database\Factories;
 
-use App\Models\User;
 use Illuminate\Support\Carbon;
-use Assist\MeetingCenter\Models\Event;
+use Assist\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Division\Database\Factories\DivisionFactory;
 
 /**
- * @extends Factory<Event>
+ * @extends Factory<CalendarEvent>
  */
-class EventFactory extends Factory
+class CalendarEventFactory extends Factory
 {
     /**
      * @return array<string, mixed>
@@ -26,14 +24,5 @@ class EventFactory extends Factory
             'starts_at' => $starts,
             'ends_at' => Carbon::parse($starts)->add('1 hour'),
         ];
-    }
-
-    public function configure(): DivisionFactory|Factory
-    {
-        return $this->afterMaking(function (Event $event) {
-            if (! $event->user()->exists()) {
-                $event->user()->associate(User::inRandomOrder()->first());
-            }
-        });
     }
 }

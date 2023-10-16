@@ -4,7 +4,7 @@ namespace Assist\MeetingCenter\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Assist\MeetingCenter\Models\Event;
+use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\MeetingCenter\GoogleCalendarManager;
 
 class CreateEvent extends Command
@@ -23,12 +23,11 @@ class CreateEvent extends Command
     {
         $user = User::where('email', 'superadmin@assist.com')->first();
 
-        $user->update([
-            'calendar_type' => GoogleCalendarManager::type(),
-            'calendar_id' => env('GOOGLE_CALENDAR_ID'),
-        ]);
+        // dd((new GoogleCalendarManager())->getEvents($user->calendar));
 
-        Event::factory()->for($user)->create();
+        $user->calendar
+            ->events()
+            ->create(CalendarEvent::factory()->for($user->calendar)->make()->toArray());
 
         return self::SUCCESS;
     }
