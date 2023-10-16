@@ -47,10 +47,8 @@ class CreateCaseload extends CreateRecord implements HasTable
                     TextInput::make('name')
                         ->autocomplete(false)
                         ->string()
-                        ->required()
-                        ->columnSpanFull(),
-                    Textarea::make('description')
-                        ->columnSpanFull(),
+                        ->required(),
+                    Textarea::make('description'),
                 ]),
             Step::make('Model')
                 ->schema([
@@ -61,9 +59,12 @@ class CreateCaseload extends CreateRecord implements HasTable
                         ->default(CaseloadModel::default())
                         ->selectablePlaceholder(false)
                         ->afterStateUpdated(function () {
+                            $this->cacheForms();
+                            $this->bootedInteractsWithTable();
                             $this->resetTableFiltersForm();
                         }),
-                ]),
+                ])
+                ->columns(2),
             Step::make('Type')
                 ->schema([
                     Select::make('type')
@@ -71,7 +72,8 @@ class CreateCaseload extends CreateRecord implements HasTable
                         ->default(CaseloadType::default())
                         ->selectablePlaceholder(false)
                         ->required(),
-                ]),
+                ])
+                ->columns(2),
             Step::make('Population')
                 ->schema([
                     Placeholder::make('table')
