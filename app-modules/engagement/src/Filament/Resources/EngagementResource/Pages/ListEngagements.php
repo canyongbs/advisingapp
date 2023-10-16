@@ -12,7 +12,6 @@ use Assist\Engagement\Models\Engagement;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
 use Assist\Engagement\Filament\Resources\EngagementResource;
-use Filament\Tables\Actions\CreateAction as TableCreateAction;
 
 class ListEngagements extends ListRecords
 {
@@ -41,9 +40,6 @@ class ListEngagements extends ListRecords
                     ->hidden(fn (Engagement $record) => $record->hasBeenDelivered() === true),
             ])
             ->bulkActions([
-            ])
-            ->emptyStateActions([
-                TableCreateAction::make(),
             ]);
     }
 

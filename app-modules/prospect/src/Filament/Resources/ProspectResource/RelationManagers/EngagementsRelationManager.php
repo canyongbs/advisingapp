@@ -108,12 +108,6 @@ class EngagementsRelationManager extends RelationManager
                 ViewAction::make(),
             ])
             ->bulkActions([
-            ])
-            ->emptyStateActions([
-                CreateAction::make()
-                    ->after(function (Engagement $engagement, array $data) {
-                        $this->afterCreate($engagement, $data['delivery_methods']);
-                    }),
             ]);
     }
 

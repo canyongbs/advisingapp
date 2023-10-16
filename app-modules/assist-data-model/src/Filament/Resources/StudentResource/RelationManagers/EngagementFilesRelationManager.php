@@ -59,12 +59,6 @@ class EngagementFilesRelationManager extends RelationManager
                     Tables\Actions\DetachBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make()
-                    ->preloadRecordSelect()
-                    ->forceSearchCaseInsensitive(),
             ]);
     }
 }

@@ -26,8 +26,7 @@ class ListConsentAgreements extends ListRecords
             ->actions([
                 EditAction::make(),
             ])
-            ->bulkActions([])
-            ->emptyStateActions([]);
+            ->bulkActions([]);
     }
 
     protected function getHeaderActions(): array

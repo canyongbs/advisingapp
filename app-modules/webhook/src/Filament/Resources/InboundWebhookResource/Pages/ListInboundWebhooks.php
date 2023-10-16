@@ -30,8 +30,6 @@ class ListInboundWebhooks extends ListRecords
                 ViewAction::make(),
             ])
             ->bulkActions([
-            ])
-            ->emptyStateActions([
             ]);
     }
 }

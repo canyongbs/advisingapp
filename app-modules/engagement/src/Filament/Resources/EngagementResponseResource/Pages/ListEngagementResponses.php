@@ -27,8 +27,6 @@ class ListEngagementResponses extends ListRecords
                 ViewAction::make(),
             ])
             ->bulkActions([
-            ])
-            ->emptyStateActions([
             ]);
     }
 }
