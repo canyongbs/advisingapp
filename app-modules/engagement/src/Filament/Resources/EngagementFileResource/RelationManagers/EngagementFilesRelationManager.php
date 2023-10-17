@@ -21,6 +21,12 @@ class EngagementFilesRelationManager extends RelationManager
 {
     protected static string $relationship = 'engagementFiles';
 
+    protected static ?string $label = 'Files and Documents';
+
+    protected static ?string $title = 'Files and Documents';
+
+    protected static ?string $modelLabel = 'File';
+
     public function form(Form $form): Form
     {
         return $form
@@ -30,12 +36,11 @@ class EngagementFilesRelationManager extends RelationManager
                     ->maxLength(255),
                 DatePicker::make('retention_date')
                     ->label('Retention Date')
+                    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'The file will be deleted automatically after this date. If left blank, the file will be kept indefinitely.')
                     ->native(false)
                     ->closeOnDateSelection()
                     ->format('Y-m-d')
-                    ->displayFormat('Y-m-d')
-                    ->minDate(now()->addDay())
-                    ->required(),
+                    ->minDate(now()->addDay()),
                 SpatieMediaLibraryFileUpload::make('file')
                     ->label('File')
                     ->disk('s3')
