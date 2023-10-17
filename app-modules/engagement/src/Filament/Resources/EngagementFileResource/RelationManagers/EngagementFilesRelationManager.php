@@ -1,12 +1,18 @@
 <?php
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers;
+namespace Assist\Engagement\Filament\Resources\EngagementFileResource\RelationManagers;
 
-use Filament\Forms;
-use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Filament\Resources\RelationManagers\RelationManager;
@@ -19,9 +25,17 @@ class EngagementFilesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('description')
+                TextInput::make('description')
                     ->required()
                     ->maxLength(255),
+                DatePicker::make('retention_date')
+                    ->label('Retention Date')
+                    ->native(false)
+                    ->closeOnDateSelection()
+                    ->format('Y-m-d')
+                    ->displayFormat('Y-m-d')
+                    ->minDate(now()->addDay())
+                    ->required(),
                 SpatieMediaLibraryFileUpload::make('file')
                     ->label('File')
                     ->disk('s3')
@@ -36,7 +50,7 @@ class EngagementFilesRelationManager extends RelationManager
             ->recordTitleAttribute('description')
             ->columns([
                 IdColumn::make(),
-                Tables\Columns\TextColumn::make('description'),
+                TextColumn::make('description'),
                 SpatieMediaLibraryImageColumn::make('file')
                     ->collection('file')
                     ->visibility('private'),
@@ -44,20 +58,15 @@ class EngagementFilesRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make()
-                    ->preloadRecordSelect()
-                    ->forceSearchCaseInsensitive(),
+                CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make(),
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
