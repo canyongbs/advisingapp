@@ -2,7 +2,6 @@
 
 namespace Assist\MeetingCenter\Models;
 
-use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,6 +12,7 @@ class CalendarEvent extends BaseModel
         'description',
         'starts_at',
         'ends_at',
+        'provider_id',
     ];
 
     protected $casts = [

@@ -2,12 +2,10 @@
 
 namespace Assist\MeetingCenter\Models;
 
-use App\Models\BaseModel;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Calendar extends BaseModel
 {

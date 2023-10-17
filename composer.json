@@ -57,7 +57,6 @@
         "league/csv": "^9.10",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/oauth2-client": "^2.7",
-        "league/oauth2-google": "^4.0",
         "livewire/livewire": "^3.0",
         "microsoft/microsoft-graph": "^1.108",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
@@ -195,6 +194,7 @@
             "dont-discover": []
         },
         "google/apiclient-services": [
+            "Oauth2",
             "Calendar"
         ]
     },

@@ -5,6 +5,8 @@ namespace Assist\MeetingCenter;
 use DateTime;
 use Google\Client;
 use DateTimeInterface;
+use Google\Service\Oauth2;
+use Illuminate\Support\Carbon;
 use Google\Service\Calendar\Event;
 use Assist\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar\EventDateTime;
@@ -137,21 +139,52 @@ class GoogleCalendarManager implements CalendarInterface
                 }
             );
 
-        $calendar
-            ->events()
+        $calendar->events()
             ->whereNull('provider_id')
             ->each(fn ($event) => $this->createEvent($event)->saveQuietly());
+
+        $calendar->events()
+            ->pluck('provider_id')
+            ->diff($events->pluck('id'))
+            ->each(fn ($id) => $calendar->events()->where('provider_id', $id)->delete());
     }
 
-    public static function client(Calendar $calendar): Client
+    public static function client(?Calendar $calendar = null): Client
     {
-        $client = new Client([
-            'client_d' => config('services.google_calendar.client_id'),
-            'client_secret' => config('services.google_calendar.client_secret'),
-            'scopes' => [GoogleCalendar::CALENDAR, GoogleCalendar::CALENDAR_EVENTS],
-        ]);
+        if ($calendar?->oauth_token) {
+            $client = new Client([
+                'client_id' => config('services.google_calendar.client_id'),
+                'client_secret' => config('services.google_calendar.client_secret'),
+                'scopes' => [
+                    GoogleCalendar::CALENDAR,
+                    GoogleCalendar::CALENDAR_EVENTS,
+                ],
+            ]);
 
-        $client->setAccessToken($calendar->oauth_token);
+            if ($calendar->oauth_token_expiress_at < now()) {
+                $token = $client->fetchAccessTokenWithRefreshToken($calendar->oauth_refresh_token);
+                $calendar->oauth_token = $token['access_token'];
+                $calendar->oauth_token_expires_at = Carbon::parse($token['created'] + $token['expires_in']);
+                $calendar->save();
+            } else {
+                $client->setAccessToken($calendar->oauth_token);
+            }
+        } else {
+            $client = new Client([
+                'client_id' => config('services.google_calendar.client_id'),
+                'client_secret' => config('services.google_calendar.client_secret'),
+                'scopes' => [
+                    Oauth2::OPENID,
+                    Oauth2::USERINFO_EMAIL,
+                    Oauth2::USERINFO_PROFILE,
+                    GoogleCalendar::CALENDAR,
+                    GoogleCalendar::CALENDAR_EVENTS,
+                ],
+                'redirect_uri' => route('google.calendar.callback'),
+                'prompt' => 'consent',
+                'access_type' => 'offline',
+            ]);
+        }
 
         return $client;
     }
