@@ -11,10 +11,12 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('engagement_file_entities', function (Blueprint $table) {
-            $table->uuid('engagement_file_id');
+            $table->foreignUuid('engagement_file_id')->constrained('engagement_files')->cascadeOnDelete();
             $table->string('entity_id');
             $table->string('entity_type');
             $table->timestamps();
+
+            $table->index(['entity_id', 'entity_type']);
         });
     }
 };
