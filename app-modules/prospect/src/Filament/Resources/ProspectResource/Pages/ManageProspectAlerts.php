@@ -128,9 +128,6 @@ class ManageProspectAlerts extends ManageRelatedRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                CreateAction::make(),
             ]);
     }
 }

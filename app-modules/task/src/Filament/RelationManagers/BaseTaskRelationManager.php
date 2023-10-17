@@ -104,7 +104,21 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ),
             ])
             ->headerActions([
-                $this->createAction(),
+                CreateAction::make()
+                    ->using(function (array $data, string $model): Model {
+                        $data = collect($data);
+
+                        /** @var Task $task */
+                        $task = new ($model)($data->except('assigned_to')->toArray());
+
+                        $task->assigned_to = $data->get('assigned_to');
+
+                        $task->concern()->associate($this->getOwnerRecord());
+
+                        $task->save();
+
+                        return $task;
+                    }),
             ])
             ->actions([
                 TaskViewAction::make(),
@@ -116,28 +130,6 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                 BulkActionGroup::make([
                     DetachBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                $this->createAction(),
             ]);
-    }
-
-    protected function createAction()
-    {
-        return CreateAction::make()
-            ->using(function (array $data, string $model): Model {
-                $data = collect($data);
-
-                /** @var Task $task */
-                $task = new ($model)($data->except('assigned_to')->toArray());
-
-                $task->assigned_to = $data->get('assigned_to');
-
-                $task->concern()->associate($this->getOwnerRecord());
-
-                $task->save();
-
-                return $task;
-            });
     }
 }

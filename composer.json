@@ -44,6 +44,9 @@
         "filament/filament": "^3.0",
         "filament/spatie-laravel-media-library-plugin": "^3.0",
         "filament/spatie-laravel-settings-plugin": "^3.0",
+        "friendsofcat/opensearch-migrations": "^2.0",
+        "friendsofcat/opensearch-scout-driver": "^2.1",
+        "friendsofcat/opensearch-scout-driver-plus": "^2.1",
         "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
@@ -70,8 +73,7 @@
         "staudenmeir/eloquent-has-many-deep": "^1.18",
         "stechstudio/filament-impersonate": "^3.5",
         "tpetry/laravel-postgresql-enhanced": "^0.31.0",
-        "twilio/sdk": "^7.7",
-        "zing/laravel-scout-opensearch": "^3.2"
+        "twilio/sdk": "^7.7"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",

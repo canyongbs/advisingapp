@@ -13,16 +13,23 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
+use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
+use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
+use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
 
 class ListProspects extends ListRecords
 {
+    use FilterTableWithOpenSearch;
+
     protected static string $resource = ProspectResource::class;
 
     public function table(Table $table): Table
@@ -30,16 +37,16 @@ class ListProspects extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make(Prospect::displayNameKey())
+                OpenSearchTextColumn::make(Prospect::displayNameKey())
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('email')
+                OpenSearchTextColumn::make('email')
                     ->label('Email')
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('mobile')
+                OpenSearchTextColumn::make('mobile')
                     ->label('Mobile')
                     ->translateLabel()
                     ->searchable()
@@ -69,11 +76,28 @@ class ListProspects extends ListRecords
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('status')
+                SelectFilter::make('caseload')
+                    ->options(
+                        auth()->user()->caseloads()
+                            ->where('model', CaseloadModel::Prospect)
+                            ->pluck('name', 'id'),
+                    )
+                    ->query(function (Builder $query, array $data) {
+                        if (blank($data['value'])) {
+                            return;
+                        }
+
+                        $query->whereKey(
+                            app(TranslateCaseloadFilters::class)
+                                ->handle($data['value'])
+                                ->pluck($query->getModel()->getQualifiedKeyName()),
+                        );
+                    }),
+                OpenSearchSelectFilter::make('status_id')
                     ->relationship('status', 'name')
                     ->multiple()
                     ->preload(),
-                SelectFilter::make('source')
+                OpenSearchSelectFilter::make('source_id')
                     ->relationship('source', 'name')
                     ->multiple()
                     ->preload(),

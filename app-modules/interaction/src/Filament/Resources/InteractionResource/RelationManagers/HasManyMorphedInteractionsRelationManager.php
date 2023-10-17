@@ -87,9 +87,6 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                 EditAction::make(),
             ])
             ->bulkActions([
-            ])
-            ->emptyStateActions([
-                CreateAction::make(),
             ]);
     }
 }
