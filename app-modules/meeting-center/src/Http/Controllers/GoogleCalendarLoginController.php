@@ -2,10 +2,10 @@
 
 namespace Assist\MeetingCenter\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Assist\MeetingCenter\GoogleCalendarManager;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use Assist\MeetingCenter\GoogleCalendarManager;
 
 class GoogleCalendarLoginController extends Controller
 {

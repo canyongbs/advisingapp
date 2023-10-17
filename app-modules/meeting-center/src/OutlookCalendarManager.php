@@ -4,8 +4,8 @@ namespace Assist\MeetingCenter;
 
 use DateTime;
 use App\Models\User;
-use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\MeetingCenter\Models\Calendar;
+use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\MeetingCenter\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface

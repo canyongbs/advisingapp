@@ -3,8 +3,8 @@
 namespace Assist\MeetingCenter\Contracts;
 
 use DateTime;
-use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\MeetingCenter\Models\Calendar;
+use Assist\MeetingCenter\Models\CalendarEvent;
 
 interface CalendarInterface
 {

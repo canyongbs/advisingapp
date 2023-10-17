@@ -2,14 +2,14 @@
 
 namespace Assist\MeetingCenter\Providers;
 
-use Assist\MeetingCenter\Models\CalendarEvent;
-use Assist\MeetingCenter\Observers\CalendarEventObserver;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use Assist\MeetingCenter\MeetingCenterPlugin;
+use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\MeetingCenter\MeetingCenterPlugin;
+use Assist\MeetingCenter\Observers\CalendarEventObserver;
 
 class MeetingCenterServiceProvider extends ServiceProvider
 {

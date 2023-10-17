@@ -1,16 +1,7 @@
 <?php
 
-use App\Models\User;
-use Assist\MeetingCenter\Http\Controllers\GoogleCalendarRedirectController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Assist\MeetingCenter\Models\Calendar;
-use League\OAuth2\Client\Provider\Google;
-use League\OAuth2\Client\Grant\RefreshToken;
-use Google\Service\Calendar as GoogleCalendar;
-use Symfony\Component\HttpFoundation\Response;
-use Assist\MeetingCenter\GoogleCalendarManager;
 use Assist\MeetingCenter\Http\Controllers\GoogleCalendarLoginController;
+use Assist\MeetingCenter\Http\Controllers\GoogleCalendarRedirectController;
 
 Route::middleware(['web', 'auth'])
     ->name('google.calendar.')
