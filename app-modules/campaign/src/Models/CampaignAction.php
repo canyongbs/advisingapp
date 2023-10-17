@@ -3,7 +3,6 @@
 namespace Assist\Campaign\Models;
 
 use App\Models\BaseModel;
-use Filament\Forms\Components\TextInput;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Campaign\Enums\CampaignActionType;
 use Assist\Engagement\Models\EngagementBatch;
@@ -46,19 +45,11 @@ class CampaignAction extends BaseModel implements Auditable
         return (bool) ! is_null($this->executed_at);
     }
 
-    // TODO Make this dynamic based on the type
     public function getEditFields(): array
     {
-        return [
-            TextInput::make('data.subject')
-                ->required()
-                ->maxLength(255),
-            TextInput::make('data.body')
-                ->required()
-                ->maxLength(255),
-            TextInput::make('data.delivery_methods')
-                ->required()
-                ->maxLength(255),
-        ];
+        return match ($this->type) {
+            CampaignActionType::BulkEngagement => EngagementBatch::getEditFormFields(),
+            default => []
+        };
     }
 }
