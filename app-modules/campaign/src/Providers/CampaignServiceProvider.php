@@ -7,6 +7,7 @@ use Assist\Campaign\CampaignPlugin;
 use Assist\Campaign\Models\Campaign;
 use Illuminate\Support\ServiceProvider;
 use Assist\Campaign\Models\CampaignAction;
+use Assist\Campaign\Observers\CampaignObserver;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
@@ -26,6 +27,13 @@ class CampaignServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+
+        $this->registerObservers();
+    }
+
+    public function registerObservers(): void
+    {
+        Campaign::observe(CampaignObserver::class);
     }
 
     protected function registerRolesAndPermissions()

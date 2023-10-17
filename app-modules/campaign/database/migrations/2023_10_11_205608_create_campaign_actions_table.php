@@ -11,6 +11,8 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('campaign_id')->constrained('campaigns');
             $table->string('type');
+            $table->json('data');
+            $table->timestamp('executed_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
