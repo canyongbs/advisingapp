@@ -21,6 +21,7 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
 
     protected $fillable = [
         'description',
+        'retention_date',
     ];
 
     public function registerMediaCollections(): void
