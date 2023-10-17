@@ -6,7 +6,9 @@ use App\Models\BaseModel;
 use Spatie\MediaLibrary\HasMedia;
 use Assist\Prospect\Models\Prospect;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Prunable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -18,6 +20,7 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
 {
     use InteractsWithMedia;
     use AuditableTrait;
+    use Prunable;
 
     protected $fillable = [
         'description',
@@ -58,5 +61,14 @@ class EngagementFile extends BaseModel implements HasMedia, Auditable
         )
             ->using(EngagementFileEntities::class)
             ->withTimestamps();
+    }
+
+    public function prunable(): Builder
+    {
+        return static::where(
+            'retention_date',
+            '<',
+            now()->startOfDay(),
+        );
     }
 }
