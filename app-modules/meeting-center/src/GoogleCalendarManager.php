@@ -143,10 +143,7 @@ class GoogleCalendarManager implements CalendarInterface
             ->whereNull('provider_id')
             ->each(fn ($event) => $this->createEvent($event)->saveQuietly());
 
-        $calendar->events()
-            ->pluck('provider_id')
-            ->diff($events->pluck('id'))
-            ->each(fn ($id) => $calendar->events()->where('provider_id', $id)->delete());
+        $calendar->events()->whereNotIn('provider_id', $events->pluck('id'))->delete();
     }
 
     public static function client(?Calendar $calendar = null): Client
