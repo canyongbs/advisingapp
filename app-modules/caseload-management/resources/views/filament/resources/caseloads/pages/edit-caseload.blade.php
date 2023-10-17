@@ -1,3 +1,7 @@
+@php
+    use Assist\CaseloadManagement\Enums\CaseloadType;
+@endphp
+
 <x-filament-panels::page @class([
     'fi-resource-edit-record-page',
     'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),

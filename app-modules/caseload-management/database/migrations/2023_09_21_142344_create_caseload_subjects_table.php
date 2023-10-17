@@ -13,7 +13,7 @@ return new class () extends Migration {
             $table->string('subject_id');
             $table->string('subject_type');
 
-            $table->foreignUuid('caseload_id')->constrained('caseloads');
+            $table->foreignUuid('caseload_id')->constrained('caseloads')->cascadeOnDelete();
 
             $table->index(['subject_type', 'subject_id']);
 

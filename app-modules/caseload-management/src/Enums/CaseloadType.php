@@ -13,21 +13,22 @@ enum CaseloadType: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            CaseloadType::Static => 'Static (Coming Soon!)',
+            CaseloadType::Static => 'Static',
             default => $this->name,
-        };
-    }
-
-    public function disabled(): bool
-    {
-        return match ($this) {
-            CaseloadType::Static => true,
-            default => false
         };
     }
 
     public static function default(): CaseloadType
     {
         return CaseloadType::Dynamic;
+    }
+
+    public static function tryFromCaseOrValue(CaseloadType | string $value): ?CaseloadType
+    {
+        if ($value instanceof CaseloadType) {
+            return $value;
+        }
+
+        return static::tryFrom($value);
     }
 }
