@@ -45,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
-            // ->maxContentWidth('full') //TODO: evaluate use
+            ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
