@@ -10,6 +10,7 @@ return new class () extends Migration {
         Schema::create('engagement_files', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('description')->nullable();
+            $table->date('retention_date')->nullable();
             $table->timestamps();
         });
     }
