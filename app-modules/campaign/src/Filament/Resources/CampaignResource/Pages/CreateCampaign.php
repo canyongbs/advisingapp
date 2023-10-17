@@ -31,7 +31,6 @@ class CreateCampaign extends CreateRecord
 
         return [
             Step::make('Setup your campaign')
-                ->description('Select a caseload to carry out the campaign against.')
                 ->schema([
                     TextInput::make('name')
                         ->required(),
@@ -43,7 +42,6 @@ class CreateCampaign extends CreateRecord
                         ->required(),
                 ]),
             Step::make('Create your actions')
-                ->description('Define the actions you want to be carried out.')
                 ->schema([
                     Select::make('actions')
                         ->options(CampaignActionType::class)
@@ -52,15 +50,13 @@ class CreateCampaign extends CreateRecord
                         ->required(),
                 ]),
             Step::make('Define your campaign data')
-                ->description('For each of the actions you selected, fill out the appropriate data.')
                 ->schema([
                     ...$this->actionSections(),
                 ]),
             Step::make('Schedule your campaign')
-                ->description('Tell the system when to carry out your campaign.')
                 ->schema([
                     DateTimePicker::make('execute_at')
-                        ->label('When should the campaign actions be performed?')
+                        ->label('When should the campaign actions be executed?')
                         ->required(),
                 ]),
         ];

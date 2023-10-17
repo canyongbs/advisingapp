@@ -6,11 +6,14 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Assist\Campaign\Models\Campaign;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
+use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class CampaignActionsRelationManager extends RelationManager
@@ -21,11 +24,10 @@ class CampaignActionsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                // TODO This should not be changeable
-                // This was created through an enum, and defines the fields that will be rendered below
                 TextInput::make('type')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabled(),
                 ...$this->getEditFields(),
             ]);
     }
@@ -63,15 +65,24 @@ class CampaignActionsRelationManager extends RelationManager
     public function getEditFields(): array
     {
         return [
-            TextInput::make('data.subject')
-                ->required()
-                ->maxLength(255),
-            TextInput::make('data.body')
-                ->required()
-                ->maxLength(255),
-            TextInput::make('data.delivery_methods')
-                ->required()
-                ->maxLength(255),
+            Fieldset::make('Bulk Engagement Details')
+                ->schema([
+                    TextInput::make('data.subject')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('data.body')
+                        ->required()
+                        ->maxLength(255),
+                    Select::make('data.delivery_methods')
+                        ->label('How would you like to send this engagement?')
+                        ->translateLabel()
+                        ->options(EngagementDeliveryMethod::class)
+                        ->multiple()
+                        ->minItems(1)
+                        ->validationAttribute('Delivery Methods')
+                        ->helperText('You can select multiple delivery methods.')
+                        ->reactive(),
+                ]),
         ];
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Assist\Campaign\Models\Campaign;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -30,6 +32,8 @@ class ViewCampaign extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            EditAction::make()
+                ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
         ];
     }
 }
