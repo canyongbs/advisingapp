@@ -43,8 +43,6 @@ class Caseload extends BaseModel
 
     public function retrieveRecords(): Collection
     {
-        ray('retrieveRecords()');
-
         if (count($this->subjects) > 0) {
             return $this->subjects;
         }
@@ -52,17 +50,14 @@ class Caseload extends BaseModel
         /** @var Builder $modelQueryBuilder */
         $modelQueryBuilder = $this->model->query();
 
-        ray('modelQueryBuilder', $modelQueryBuilder);
+        $class = $this->model->class();
 
-        $records = $modelQueryBuilder
+        return $modelQueryBuilder
             ->whereKey(
-                app(TranslateCaseloadFilters::class)
+                resolve(TranslateCaseloadFilters::class)
                     ->handle($this)
-                    // TODO Make this flexible enough to handle the various cases
-                    ->pluck('sisid'),
+                    ->pluck(resolve($class)->getKeyName()),
             )
             ->get();
-
-        ray('records', $records);
     }
 }

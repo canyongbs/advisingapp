@@ -27,6 +27,21 @@ class EditCaseload extends EditRecord implements HasTable
 
     protected static string $view = 'caseload-management::filament.resources.caseloads.pages.edit-caseload';
 
+    public function mount(int | string $record): void
+    {
+        $this->record = $this->resolveRecord($record);
+
+        // TODO Consult with Dan and see if there is another, better way to do this...
+        if (! app()->runningInConsole()) {
+            ray('autorizeAccess()');
+            $this->authorizeAccess();
+        }
+
+        $this->fillForm();
+
+        $this->previousUrl = url()->previous();
+    }
+
     public function afterFill(): void
     {
         $this->data['model'] = CaseloadModel::from($this->data['model']);

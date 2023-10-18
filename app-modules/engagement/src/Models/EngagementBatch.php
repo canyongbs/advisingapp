@@ -33,10 +33,8 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
 
     public static function executeFromCampaignAction(CampaignAction $action): void
     {
-        ray('executeFromCampaignAction()', $action->campaign->caseload->retrieveRecords());
-
         CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
-            'user' => $action->campaign->user_id,
+            'user' => $action->campaign->user,
             'records' => $action->campaign->caseload->retrieveRecords(),
             'subject' => $action->data['subject'],
             'body' => $action->data['body'],
