@@ -31,7 +31,9 @@ class SelectFormFieldBlock extends FormFieldBlock
     public function fields(): array
     {
         return [
-            KeyValue::make('options'),
+            KeyValue::make('options')
+                ->keyLabel('Value')
+                ->valueLabel('Label'),
         ];
     }
 }
