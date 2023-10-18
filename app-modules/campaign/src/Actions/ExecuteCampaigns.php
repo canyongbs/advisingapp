@@ -15,9 +15,7 @@ class ExecuteCampaigns implements ShouldQueue
             ->hasNotBeenExecuted()
             ->cursor()
             ->each(function (Campaign $campaign) {
-                ray('here...', $campaign);
                 $campaign->actions()->each(function (CampaignAction $action) {
-                    ray('action', $action);
                     $action->execute();
                 });
             });

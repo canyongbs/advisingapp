@@ -2,6 +2,8 @@
 
 namespace Assist\Campaign\Database\Factories;
 
+use Assist\Campaign\Models\Campaign;
+use Assist\Campaign\Enums\CampaignActionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,15 +11,15 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CampaignActionFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'campaign_id' => Campaign::factory(),
+            'type' => fake()->randomElement([
+                CampaignActionType::BulkEngagement,
+            ]),
+            'data' => [],
+            'executed_at' => fake()->dateTimeBetween('-1 week', '+1 year'),
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Assist\Campaign\Database\Factories;
 
+use App\Models\User;
+use Assist\CaseloadManagement\Models\Caseload;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,15 +11,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CampaignFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(),
+            'caseload_id' => Caseload::factory(),
+            'name' => fake()->catchPhrase(),
+            'execute_at' => fake()->dateTimeBetween('-1 week', '+1 year'),
         ];
     }
 }

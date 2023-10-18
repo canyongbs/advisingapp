@@ -31,9 +31,8 @@ class EditCaseload extends EditRecord implements HasTable
     {
         $this->record = $this->resolveRecord($record);
 
-        // TODO Consult with Dan and see if there is another, better way to do this...
+        // TODO Consult with Dan and see if there is a different way we want to handle this
         if (! app()->runningInConsole()) {
-            ray('autorizeAccess()');
             $this->authorizeAccess();
         }
 
