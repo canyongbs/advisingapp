@@ -5,15 +5,14 @@ namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\DateTimePicker;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Campaign\Filament\Resources\CampaignResource;
+use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 use Assist\Campaign\DataTransferObjects\CampaignActionCreationData;
 use Assist\Campaign\DataTransferObjects\CampaignActionsCreationData;
@@ -44,41 +43,10 @@ class CreateCampaign extends CreateRecord
             Step::make('Create your actions')
                 ->schema([
                     Builder::make('actions')
+                        ->addActionLabel('Add a new Campaign Action')
+                        ->minItems(1)
                         ->blocks([
-                            Builder\Block::make('bulk_engagement')
-                                ->label('Bulk Engagement')
-                                ->schema([
-                                    Select::make('delivery_methods')
-                                        ->reactive()
-                                        ->label('How would you like to send this engagement?')
-                                        ->options(EngagementDeliveryMethod::class)
-                                        ->multiple()
-                                        ->minItems(1)
-                                        ->validationAttribute('Delivery Method')
-                                        ->required(),
-                                    TextInput::make('subject')
-                                        ->required()
-                                        ->placeholder(__('Subject'))
-                                        ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
-                                        ->helperText('The subject will only be used for the email delivery method.'),
-                                    Textarea::make('body')
-                                        ->placeholder(__('Body'))
-                                        ->required()
-                                        ->maxLength(function (callable $get) {
-                                            if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                                return 320;
-                                            }
-
-                                            return 65535;
-                                        })
-                                        ->helperText(function (callable $get) {
-                                            if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                                return 'The body of your message can be up to 320 characters long.';
-                                            }
-
-                                            return 'The body of your message can be up to 65,535 characters long.';
-                                        }),
-                                ]),
+                            EngagementBatchBlock::make(),
                         ]),
                 ]),
             Step::make('Schedule your campaign')
