@@ -39,9 +39,14 @@ test('The correct details are displayed on the ListProspectStatuses page', funct
                 $prospectStatus->name,
                 $prospectStatus
             )
-            ->assertTableColumnStateSet(
+            ->assertTableColumnFormattedStateSet(
+                'classification',
+                $prospectStatus->classification->getLabel(),
+                $prospectStatus
+            )
+            ->assertTableColumnFormattedStateSet(
                 'color',
-                $prospectStatus->color,
+                $prospectStatus->color->getLabel(),
                 $prospectStatus
             )
         // Currently setting not test for service_requests_count as there is no easy way to check now, relying on underlying package tests

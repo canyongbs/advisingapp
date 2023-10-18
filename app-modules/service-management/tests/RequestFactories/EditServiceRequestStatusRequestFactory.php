@@ -4,14 +4,16 @@ namespace Assist\ServiceManagement\Tests\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 use Assist\ServiceManagement\Enums\ColumnColorOptions;
+use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
 
 class EditServiceRequestStatusRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'color' => $this->faker->randomElement(ColumnColorOptions::cases())->value,
+            'classification' => fake()->randomElement(SystemServiceRequestClassification::cases()),
+            'name' => fake()->name(),
+            'color' => fake()->randomElement(ColumnColorOptions::cases()),
         ];
     }
 }
