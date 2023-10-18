@@ -7,6 +7,7 @@ use Filament\Infolists\Infolist;
 use Assist\Campaign\Models\Campaign;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Campaign\Filament\Resources\CampaignResource;
 
@@ -25,6 +26,10 @@ class ViewCampaign extends ViewRecord
                             ->label('Caseload'),
                         TextEntry::make('execute_at')
                             ->dateTime(),
+                        IconEntry::make('execute_at')
+                            ->label('Has Been Executed?')
+                            ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
+                            ->boolean(),
                     ]),
             ]);
     }
