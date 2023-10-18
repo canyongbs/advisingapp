@@ -11,6 +11,7 @@ class FormWidgetController extends Controller
 {
     public function view(Request $request, Form $form): JsonResponse
     {
+        // TODO: Move this out of the controller once we go beyond these simple fields and configurations.
         return response()->json(
             $form->fields->map(function ($field) {
                 return match ($field['type']) {
