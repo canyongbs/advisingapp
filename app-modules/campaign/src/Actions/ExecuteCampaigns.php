@@ -16,7 +16,7 @@ class ExecuteCampaigns implements ShouldQueue
             ->cursor()
             ->each(function (Campaign $campaign) {
                 $campaign->actions()->each(function (CampaignAction $action) {
-                    $action->execute();
+                    ExecuteCampaignAction::dispatch($action);
                 });
             });
     }
