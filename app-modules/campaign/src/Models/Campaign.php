@@ -47,6 +47,6 @@ class Campaign extends BaseModel implements Auditable
 
     public function hasBeenExecuted(): bool
     {
-        return (bool) $this->actions->filter(fn (CampaignAction $action) => $action->hasBeenExecuted())->count() > 0;
+        return $this->actions->contains(fn (CampaignAction $action) => $action->hasBeenExecuted());
     }
 }

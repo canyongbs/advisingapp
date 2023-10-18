@@ -50,15 +50,15 @@ class CampaignActionsRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make()
-                    ->hidden(fn (Campaign $ownerRecord) => $ownerRecord->hasBeenExecuted() === true),
+                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
                 DeleteAction::make()
-                    ->hidden(fn (Campaign $ownerRecord) => $ownerRecord->hasBeenExecuted() === true),
+                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ])
-                    ->hidden(fn (Campaign $ownerRecord) => $ownerRecord->hasBeenExecuted() === true),
+                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ]);
     }
 }

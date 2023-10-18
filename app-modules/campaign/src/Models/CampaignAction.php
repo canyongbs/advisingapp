@@ -18,6 +18,7 @@ class CampaignAction extends BaseModel implements Auditable
     protected $fillable = [
         'type',
         'data',
+        'executed_at',
     ];
 
     protected $casts = [
@@ -30,14 +31,21 @@ class CampaignAction extends BaseModel implements Auditable
         return $this->belongsTo(Campaign::class);
     }
 
-    // TODO After successful execution, we need to update the executed_at
     public function execute(): void
     {
-        ray('execute()', $this->type);
         match ($this->type) {
             CampaignActionType::BulkEngagement => EngagementBatch::executeFromCampaignAction($this),
             default => null
         };
+
+        $this->markAsExecuted();
+    }
+
+    public function markAsExecuted(): void
+    {
+        $this->update([
+            'executed_at' => now(),
+        ]);
     }
 
     public function hasBeenExecuted(): bool
