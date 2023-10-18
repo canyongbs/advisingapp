@@ -13,9 +13,8 @@
 
 <body class="antialiased">
     <div>
-        <div id="form-embed"></div>
-
-        <script src="/js/widgets/form/assist-form-widget.js"></script>
+        <form-embed/>
+        <script src="{{ url('js/widgets/form/assist-form-widget.js?') . \Illuminate\Support\Arr::query(['form' => '9a646ffa-407b-4d49-83b3-8a393955b666']) }}"></script>
     </div>
 </body>
 
