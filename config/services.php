@@ -75,6 +75,5 @@ return [
     'google_calendar' => [
         'client_id' => env('GOOGLE_CALENDAR_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CALENDAR_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_CALENDAR_REDIRECT_URI'),
     ],
 ];

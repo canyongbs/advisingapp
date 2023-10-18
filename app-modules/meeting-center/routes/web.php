@@ -1,12 +1,26 @@
 <?php
 
-use Assist\MeetingCenter\Http\Controllers\GoogleCalendarLoginController;
-use Assist\MeetingCenter\Http\Controllers\GoogleCalendarRedirectController;
+use Assist\MeetingCenter\Enums\CalendarProvider;
+use Assist\MeetingCenter\Http\Controllers\GoogleCalendarController;
+use Assist\MeetingCenter\Http\Controllers\OutlookCalendarController;
 
 Route::middleware(['web', 'auth'])
-    ->name('google.calendar.')
+    ->name('calendar.')
+    ->prefix('/calendar')
     ->group(function () {
-        Route::get('/google/calendar/login', GoogleCalendarLoginController::class)->name('login');
+        Route::name(CalendarProvider::Google->value . '.')
+            ->prefix('/' . CalendarProvider::Google->value)
+            ->controller(GoogleCalendarController::class)
+            ->group(function () {
+                Route::get('/login', 'login')->name('login');
+                Route::get('/callback', 'callback')->name('callback');
+            });
 
-        Route::get(config('services.google_calendar.redirect'), GoogleCalendarRedirectController::class)->name('callback');
+        Route::name(CalendarProvider::Outlook->value . '.')
+            ->prefix('/' . CalendarProvider::Outlook->value)
+            ->controller(OutlookCalendarController::class)
+            ->group(function () {
+                Route::get('/login', 'login')->name('login');
+                Route::get('/callback', 'callback')->name('callback');
+            });
     });

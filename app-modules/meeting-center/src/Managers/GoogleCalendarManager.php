@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\MeetingCenter;
+namespace Assist\MeetingCenter\Managers;
 
 use DateTime;
 use Google\Client;
@@ -12,7 +12,7 @@ use Assist\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar\EventDateTime;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Google\Service\Calendar as GoogleCalendar;
-use Assist\MeetingCenter\Contracts\CalendarInterface;
+use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class GoogleCalendarManager implements CalendarInterface
 {
@@ -23,11 +23,6 @@ class GoogleCalendarManager implements CalendarInterface
      * @todo multiple calendars?
      * @todo multiple users? one event? multiple events?
      * */
-    public static function type(): string
-    {
-        return 'google';
-    }
-
     public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null): array
     {
         /**
@@ -48,10 +43,10 @@ class GoogleCalendarManager implements CalendarInterface
         }
         $parameters['timeMin'] = $start->format(DateTimeInterface::RFC3339);
 
-        // if (is_null($end)) {
-        //     $end = now()->addYear()->endOfDay();
-        // }
-        // $parameters['timeMax'] = $end->format(DateTimeInterface::RFC3339);
+        if (is_null($end)) {
+            $end = now()->addYears(2)->endOfDay();
+        }
+        $parameters['timeMax'] = $end->format(DateTimeInterface::RFC3339);
 
         $events = collect();
 
@@ -65,7 +60,7 @@ class GoogleCalendarManager implements CalendarInterface
         return $events->toArray();
     }
 
-    public function createEvent(CalendarEvent $event): CalendarEvent
+    public function createEvent(CalendarEvent $event): void
     {
         /**
          * Warning: If you add an event using the values declined, tentative, or accepted, attendees
@@ -84,22 +79,21 @@ class GoogleCalendarManager implements CalendarInterface
 
         $googleEvent = $this->toGoogleEvent($event);
         $googleEvent = $service->events->insert($event->calendar->provider_id, $googleEvent);
-        $event->provider_id = $googleEvent->getId();
 
-        return $event;
+        $event->updateQuietly([
+            'provider_id' => $googleEvent->id,
+        ]);
     }
 
-    public function updateEvent(CalendarEvent $event): CalendarEvent
+    public function updateEvent(CalendarEvent $event): void
     {
         if ($event->provider_id) {
             $googleEvent = $this->toGoogleEvent($event);
             $service = (new GoogleCalendar(static::client($event->calendar)));
             $service->events->update($event->calendar->provider_id, $event->provider_id, $googleEvent);
         } else {
-            $event = $this->createEvent($event);
+            $this->createEvent($event);
         }
-
-        return $event;
     }
 
     public function deleteEvent(CalendarEvent $event): void
@@ -118,16 +112,18 @@ class GoogleCalendarManager implements CalendarInterface
                     $userEvent = $calendar->events()->where('provider_id', $event->id)->first();
 
                     if ($userEvent) {
-                        $userEvent
-                            ->updateQuietly([
-                                'title' => $event->summary,
-                                'description' => $event->description,
-                                'starts_at' => $event->start->dateTime,
-                                'ends_at' => $event->end->dateTime,
-                            ]);
+                        $userEvent->fill([
+                            'title' => $event->summary,
+                            'description' => $event->description,
+                            'starts_at' => $event->start->dateTime,
+                            'ends_at' => $event->end->dateTime,
+                        ]);
+
+                        if ($userEvent->isDirty()) {
+                            $userEvent->updateQuietly();
+                        }
                     } else {
-                        $calendar
-                            ->events()
+                        $calendar->events()
                             ->createQuietly([
                                 'provider_id' => $event->id,
                                 'title' => $event->summary,
@@ -141,9 +137,10 @@ class GoogleCalendarManager implements CalendarInterface
 
         $calendar->events()
             ->whereNull('provider_id')
-            ->each(fn ($event) => $this->createEvent($event)->saveQuietly());
+            ->each(fn ($event) => $this->createEvent($event));
 
-        $calendar->events()->whereNotIn('provider_id', $events->pluck('id'))->delete();
+        // TODO: needs to only delete orphaned events and not previous events
+        // $calendar->events()->whereNotIn('provider_id', $events->pluck('id'))->delete();
     }
 
     public static function client(?Calendar $calendar = null): Client
@@ -177,7 +174,7 @@ class GoogleCalendarManager implements CalendarInterface
                     GoogleCalendar::CALENDAR,
                     GoogleCalendar::CALENDAR_EVENTS,
                 ],
-                'redirect_uri' => route('google.calendar.callback'),
+                'redirect_uri' => route('calendar.google.callback'),
                 'prompt' => 'consent',
                 'access_type' => 'offline',
             ]);

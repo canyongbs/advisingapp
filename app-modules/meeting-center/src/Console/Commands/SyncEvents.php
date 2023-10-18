@@ -4,7 +4,7 @@ namespace Assist\MeetingCenter\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Assist\MeetingCenter\CalendarManager;
+use Assist\MeetingCenter\Managers\CalendarManager;
 
 class SyncEvents extends Command
 {

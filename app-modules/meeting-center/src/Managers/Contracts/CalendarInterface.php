@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\MeetingCenter\Contracts;
+namespace Assist\MeetingCenter\Managers\Contracts;
 
 use DateTime;
 use Assist\MeetingCenter\Models\Calendar;
@@ -8,13 +8,11 @@ use Assist\MeetingCenter\Models\CalendarEvent;
 
 interface CalendarInterface
 {
-    public static function type(): string;
-
     public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null): array;
 
-    public function createEvent(CalendarEvent $event): CalendarEvent;
+    public function createEvent(CalendarEvent $event): void;
 
-    public function updateEvent(CalendarEvent $event): CalendarEvent;
+    public function updateEvent(CalendarEvent $event): void;
 
     public function deleteEvent(CalendarEvent $event): void;
 

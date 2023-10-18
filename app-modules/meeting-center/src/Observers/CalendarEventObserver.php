@@ -2,12 +2,12 @@
 
 namespace Assist\MeetingCenter\Observers;
 
-use Assist\MeetingCenter\CalendarManager;
 use Assist\MeetingCenter\Models\CalendarEvent;
+use Assist\MeetingCenter\Managers\CalendarManager;
 
 class CalendarEventObserver
 {
-    public function creating(CalendarEvent $event): void
+    public function created(CalendarEvent $event): void
     {
         if ($event->calendar) {
             resolve(CalendarManager::class)
@@ -16,7 +16,7 @@ class CalendarEventObserver
         }
     }
 
-    public function updating(CalendarEvent $event): void
+    public function updated(CalendarEvent $event): void
     {
         if ($event->calendar) {
             resolve(CalendarManager::class)
@@ -25,7 +25,7 @@ class CalendarEventObserver
         }
     }
 
-    public function deleting(CalendarEvent $event): void
+    public function deleted(CalendarEvent $event): void
     {
         if ($event->calendar) {
             resolve(CalendarManager::class)

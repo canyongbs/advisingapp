@@ -1,23 +1,17 @@
 <?php
 
-namespace Assist\MeetingCenter;
+namespace Assist\MeetingCenter\Managers;
 
 use DateTime;
-use App\Models\User;
 use Assist\MeetingCenter\Models\Calendar;
 use Assist\MeetingCenter\Models\CalendarEvent;
-use Assist\MeetingCenter\Contracts\CalendarInterface;
+use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
 {
     // https://github.com/microsoftgraph/msgraph-sample-phpapp/tree/main
     // https://github.com/microsoftgraph/msgraph-sdk-php
     // https://learn.microsoft.com/en-us/graph/api/resources/webhooks?view=graph-rest-1.0
-
-    public static function type(): string
-    {
-        return 'outlook';
-    }
 
     public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null): array
     {
@@ -29,22 +23,18 @@ class OutlookCalendarManager implements CalendarInterface
         return [];
     }
 
-    public function createEvent(CalendarEvent $event): CalendarEvent
+    public function createEvent(CalendarEvent $event): void
     {
         // https://learn.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http
 
         // TODO: Implement createEvent() method.
-
-        return $event;
     }
 
-    public function updateEvent(CalendarEvent $event): CalendarEvent
+    public function updateEvent(CalendarEvent $event): void
     {
         // https://learn.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
 
         // TODO: Implement updateEvent() method.
-
-        return $event;
     }
 
     public function deleteEvent(CalendarEvent $event): void

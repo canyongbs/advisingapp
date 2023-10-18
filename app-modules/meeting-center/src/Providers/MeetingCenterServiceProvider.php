@@ -4,6 +4,7 @@ namespace Assist\MeetingCenter\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use Assist\MeetingCenter\Models\Calendar;
 use Assist\MeetingCenter\MeetingCenterPlugin;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\Authorization\AuthorizationRoleRegistry;
@@ -13,21 +14,24 @@ use Assist\MeetingCenter\Observers\CalendarEventObserver;
 
 class MeetingCenterServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new MeetingCenterPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+            'calendar' => Calendar::class,
+            'calendar_event' => CalendarEvent::class,
+        ]);
 
         $this->registerRolesAndPermissions();
 
         $this->registerObservers();
     }
 
-    protected function registerRolesAndPermissions()
+    protected function registerRolesAndPermissions(): void
     {
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 
@@ -54,7 +58,7 @@ class MeetingCenterServiceProvider extends ServiceProvider
         );
     }
 
-    protected function registerObservers()
+    protected function registerObservers(): void
     {
         CalendarEvent::observe(CalendarEventObserver::class);
     }

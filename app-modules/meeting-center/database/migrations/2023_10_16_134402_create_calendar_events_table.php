@@ -8,13 +8,13 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('calendar_events', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->uuid('id')->primary();
 
             $table->string('title');
             $table->text('description')->nullable();
 
             $table->string('provider_id')->nullable();
-            $table->foreignUuid('calendar_id')->constrained('calendars');
+            $table->foreignUuid('calendar_id')->constrained('calendars')->cascadeOnDelete();
 
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');

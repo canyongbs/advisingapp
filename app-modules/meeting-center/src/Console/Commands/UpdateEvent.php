@@ -17,7 +17,7 @@ class UpdateEvent extends Command
      */
     protected $description = 'Update a calendar event for testing.';
 
-    public function handle()
+    public function handle(): int
     {
         CalendarEvent::first()->update(['title' => fake()->words(asText: true)]);
 

@@ -16,13 +16,11 @@ class CalendarEventFactory extends Factory
      */
     public function definition(): array
     {
-        $starts = fake()->dateTimeBetween('+1 hour', '+1 day');
-
         return [
             'title' => fake()->words(asText: true),
             'description' => fake()->optional()->sentence(),
-            'starts_at' => $starts,
-            'ends_at' => Carbon::parse($starts)->add('1 hour'),
+            'starts_at' => fake()->dateTimeBetween('+1 hour', '+1 day'),
+            'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->add('1 hour'),
         ];
     }
 }
