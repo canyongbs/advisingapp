@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Assist\ServiceManagement\Enums\ColumnColorOptions;
+use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 
 class EditServiceRequestStatus extends EditRecord
@@ -23,6 +24,13 @@ class EditServiceRequestStatus extends EditRecord
                     ->translateLabel()
                     ->required()
                     ->string(),
+                Select::make('classification')
+                    ->label('classification')
+                    ->translateLabel()
+                    ->searchable()
+                    ->options(SystemServiceRequestClassification::class)
+                    ->required()
+                    ->enum(SystemServiceRequestClassification::class),
                 Select::make('color')
                     ->label('Color')
                     ->translateLabel()

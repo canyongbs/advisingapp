@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Prospect\Enums\ProspectStatusColorOptions;
+use Assist\Prospect\Enums\SystemProspectClassification;
 use Assist\Prospect\Filament\Resources\ProspectStatusResource;
 
 class CreateProspectStatus extends CreateRecord
@@ -22,6 +23,13 @@ class CreateProspectStatus extends CreateRecord
                     ->translateLabel()
                     ->required()
                     ->string(),
+                Select::make('classification')
+                    ->label('Classification')
+                    ->translateLabel()
+                    ->searchable()
+                    ->options(SystemProspectClassification::class)
+                    ->required()
+                    ->enum(SystemProspectClassification::class),
                 Select::make('color')
                     ->label('Color')
                     ->translateLabel()

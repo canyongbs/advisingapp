@@ -23,6 +23,9 @@ class ViewServiceRequestStatus extends ViewRecord
                         TextEntry::make('name')
                             ->label('Name')
                             ->translateLabel(),
+                        TextEntry::make('classification')
+                            ->label('Classification')
+                            ->translateLabel(),
                         TextEntry::make('color')
                             ->label('Color')
                             ->translateLabel()

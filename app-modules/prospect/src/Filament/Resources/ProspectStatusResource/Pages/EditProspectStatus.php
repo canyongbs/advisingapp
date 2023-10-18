@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Assist\Prospect\Enums\ProspectStatusColorOptions;
+use Assist\Prospect\Enums\SystemProspectClassification;
 use Assist\Prospect\Filament\Resources\ProspectStatusResource;
 
 class EditProspectStatus extends EditRecord
@@ -23,6 +24,13 @@ class EditProspectStatus extends EditRecord
                     ->translateLabel()
                     ->required()
                     ->string(),
+                Select::make('classification')
+                    ->label('Classification')
+                    ->translateLabel()
+                    ->searchable()
+                    ->options(SystemProspectClassification::class)
+                    ->required()
+                    ->enum(SystemProspectClassification::class),
                 Select::make('color')
                     ->label('Color')
                     ->translateLabel()

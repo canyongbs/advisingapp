@@ -27,6 +27,8 @@ class ListServiceRequestStatuses extends ListRecords
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('classification')
+                    ->label('Classification'),
                 TextColumn::make('color')
                     ->label('Color')
                     ->badge()

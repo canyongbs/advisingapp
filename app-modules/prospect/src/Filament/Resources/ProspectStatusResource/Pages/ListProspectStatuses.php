@@ -27,6 +27,10 @@ class ListProspectStatuses extends ListRecords
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('classification')
+                    ->label('Classification')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('color')
                     ->label('Color')
                     ->badge()
