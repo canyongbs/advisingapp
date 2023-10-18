@@ -7,13 +7,14 @@ use function Livewire\trigger;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
+use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\GetCaseloadQuery;
 
 class TranslateCaseloadFilters
 {
     public function handle(Caseload | string $caseload): Builder
     {
         // Create a fake Livewire component to replicate the table on the EditCaseload page.
-        $page = app('livewire')->new(EditCaseload::class);
+        $page = app('livewire')->new(GetCaseloadQuery::class);
 
         if ($caseload instanceof Caseload) {
             $caseload = $caseload->getKey();
