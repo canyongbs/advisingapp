@@ -5,14 +5,16 @@ import vue from '@vitejs/plugin-vue';
 export default defineConfig({
     plugins: [vue()],
     build: {
+        manifest: true,
         lib: {
-            // Could also be a dictionary or array of multiple entry points
             entry: resolve(__dirname, 'src/widget.js'),
-            name: 'FormWidget',
-            // the proper extensions will be added
-            fileName: 'form-widget',
+            name: 'AssistFormWidget',
+            fileName: 'assist-form-widget',
+            formats: ['es'],
         },
         outDir: resolve(__dirname, '../../public/js/widgets/form'),
+        emptyOutDir: true,
+        sourcemap: true,
     },
     resolve: {
         alias: {

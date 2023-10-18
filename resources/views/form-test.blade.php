@@ -15,7 +15,7 @@
 <div>
     <div id="form-embed"></div>
 
-    <script src="/js/widgets/form/form-widget.js"></script>
+    <script src="/js/widgets/form/assist-form-widget.js"></script>
 </div>
 </body>
 
