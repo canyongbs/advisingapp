@@ -11,6 +11,17 @@ class FormWidgetController extends Controller
 {
     public function view(Request $request, Form $form): JsonResponse
     {
-        return response()->json($form->toArray());
+        return response()->json(
+            $form->fields->map(function ($field) {
+                return match ($field['type']) {
+                    'text_input' => (object) [
+                        '$formkit' => 'text',
+                        'label' => $field['label'],
+                        'name' => $field['key'],
+                        'required' => $field['required'],
+                    ]
+                };
+            })->toArray()
+        );
     }
 }
