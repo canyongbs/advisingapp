@@ -2,7 +2,9 @@
 
 namespace Assist\ServiceManagement\Enums;
 
-enum SystemServiceRequestClassification: string
+use Filament\Support\Contracts\HasLabel;
+
+enum SystemServiceRequestClassification: string implements HasLabel
 {
     case Open = 'open';
 
@@ -11,4 +13,12 @@ enum SystemServiceRequestClassification: string
     case Closed = 'closed';
 
     case Custom = 'custom';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            SystemServiceRequestClassification::InProgress => 'In Progress',
+            default => $this->name,
+        };
+    }
 }

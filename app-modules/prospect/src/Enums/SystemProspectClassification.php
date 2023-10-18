@@ -2,7 +2,9 @@
 
 namespace Assist\Prospect\Enums;
 
-enum SystemProspectClassification: string
+use Filament\Support\Contracts\HasLabel;
+
+enum SystemProspectClassification: string implements HasLabel
 {
     case New = 'new';
 
@@ -17,4 +19,12 @@ enum SystemProspectClassification: string
     case Dead = 'dead';
 
     case Custom = 'custom';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            SystemProspectClassification::InProgress => 'In Progress',
+            default => $this->name,
+        };
+    }
 }

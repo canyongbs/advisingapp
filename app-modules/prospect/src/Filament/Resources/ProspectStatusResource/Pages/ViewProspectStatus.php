@@ -30,7 +30,7 @@ class ViewProspectStatus extends ViewRecord
                             ->label('Color')
                             ->translateLabel()
                             ->badge()
-                            ->color(fn (ProspectStatus $prospectStatus) => $prospectStatus->color),
+                            ->color(fn (ProspectStatus $prospectStatus) => $prospectStatus->color->value),
                     ])
                     ->columns(),
             ]);

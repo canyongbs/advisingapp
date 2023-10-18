@@ -32,7 +32,7 @@ class ListServiceRequestStatuses extends ListRecords
                 TextColumn::make('color')
                     ->label('Color')
                     ->badge()
-                    ->color(fn (ServiceRequestStatus $serviceRequestStatus) => $serviceRequestStatus->color),
+                    ->color(fn (ServiceRequestStatus $serviceRequestStatus) => $serviceRequestStatus->color->value),
                 TextColumn::make('service_requests_count')
                     ->label('# of Service Requests')
                     ->counts('serviceRequests')
