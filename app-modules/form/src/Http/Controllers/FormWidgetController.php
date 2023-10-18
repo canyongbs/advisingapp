@@ -19,7 +19,20 @@ class FormWidgetController extends Controller
                         'label' => $field['label'],
                         'name' => $field['key'],
                         'required' => $field['required'],
-                    ]
+                    ],
+                    'text_area' => (object) [
+                        '$formkit' => 'textarea',
+                        'label' => $field['label'],
+                        'name' => $field['key'],
+                        'required' => $field['required'],
+                    ],
+                    'select' => (object) [
+                        '$formkit' => 'select',
+                        'label' => $field['label'],
+                        'name' => $field['key'],
+                        'required' => $field['required'],
+                        'options' => $field['config']['options'],
+                    ],
                 };
             })->toArray()
         );
