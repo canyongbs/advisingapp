@@ -21,6 +21,7 @@ class Caseload extends BaseModel
         'query',
         'filters',
         'name',
+        'description',
         'model',
         'type',
     ];
