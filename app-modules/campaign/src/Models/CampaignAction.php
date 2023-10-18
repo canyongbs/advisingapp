@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperCampaignAction
+ */
 class CampaignAction extends BaseModel implements Auditable
 {
     use AuditableTrait;
