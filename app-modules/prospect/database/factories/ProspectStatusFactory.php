@@ -2,10 +2,10 @@
 
 namespace Assist\Prospect\Database\Factories;
 
-use Assist\Prospect\Enums\ProspectStatusColorOptions;
-use Assist\Prospect\Enums\SystemProspectClassification;
 use Assist\Prospect\Models\ProspectStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Assist\Prospect\Enums\ProspectStatusColorOptions;
+use Assist\Prospect\Enums\SystemProspectClassification;
 
 /**
  * @extends Factory<ProspectStatus>

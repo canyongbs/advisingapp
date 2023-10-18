@@ -2,10 +2,10 @@
 
 namespace Assist\Prospect\Database\Seeders;
 
+use Illuminate\Database\Seeder;
+use Assist\Prospect\Models\ProspectStatus;
 use Assist\Prospect\Enums\ProspectStatusColorOptions;
 use Assist\Prospect\Enums\SystemProspectClassification;
-use Assist\Prospect\Models\ProspectStatus;
-use Illuminate\Database\Seeder;
 
 class ProspectStatusSeeder extends Seeder
 {
