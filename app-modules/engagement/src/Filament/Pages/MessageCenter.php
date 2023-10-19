@@ -311,7 +311,7 @@ class MessageCenter extends Page
                     'timelineable_type',
                     collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
                 )
-                ->orderBy('record_creation', 'desc')
+                ->orderBy('record_sortable_date', 'desc')
                 ->simplePaginate($this->recordsPerPage, pageName: 'record-pagination');
         }
 

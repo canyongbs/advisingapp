@@ -2,6 +2,7 @@
 
 namespace Assist\Engagement\Observers;
 
+use Assist\Timeline\Models\Timeline;
 use Assist\Engagement\Models\Engagement;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 
@@ -24,5 +25,19 @@ class EngagementObserver
         if ($user = auth()->user()) {
             TriggeredAutoSubscription::dispatch($user, $engagement);
         }
+
+        /** @var Student|Prospect $educatable */
+        $educatable = $engagement->recipient;
+
+        cache()->forget("timeline.synced.{$educatable->getMorphClass()}.{$educatable->getKey()}");
+
+        // TODO Extract the creation action
+        Timeline::firstOrCreate([
+            'educatable_type' => $educatable->getMorphClass(),
+            'educatable_id' => $educatable->getKey(),
+            'timelineable_type' => $engagement->getMorphClass(),
+            'timelineable_id' => $engagement->getKey(),
+            'record_sortable_date' => $engagement->timeline()->sortableBy(),
+        ]);
     }
 }

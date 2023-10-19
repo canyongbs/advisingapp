@@ -13,7 +13,7 @@ return new class () extends Migration {
             $table->string('educatable_id');
             $table->string('timelineable_type');
             $table->foreignUuid('timelineable_id');
-            $table->timestamp('record_creation');
+            $table->timestamp('record_sortable_date');
             $table->timestamps();
         });
     }

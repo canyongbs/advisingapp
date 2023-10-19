@@ -45,6 +45,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'deliver_at' => 'datetime',
     ];
 
+    // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
     public function timelineRecord(): MorphOne
     {
         return $this->morphOne(Timeline::class, 'timelineable');

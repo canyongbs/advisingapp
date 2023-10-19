@@ -12,6 +12,10 @@ class SyncTimelineData
 {
     public function now(Model $recordModel, $modelsToTimeline): void
     {
+        if (cache()->has("timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}")) {
+            return;
+        }
+
         $aggregateRecords = collect();
 
         foreach ($modelsToTimeline as $model) {
@@ -27,13 +31,23 @@ class SyncTimelineData
         });
 
         $aggregateRecords->each(function ($record) use ($recordModel) {
-            Timeline::firstOrCreate([
+            $timelineRecord = Timeline::firstOrCreate([
                 'educatable_type' => $recordModel->getMorphClass(),
                 'educatable_id' => $recordModel->getKey(),
                 'timelineable_type' => $record->getMorphClass(),
                 'timelineable_id' => $record->getKey(),
-                'record_creation' => $record->timeline()->sortableBy(),
+                'record_sortable_date' => $record->timeline()->sortableBy(),
             ]);
+
+            if (! $timelineRecord->wasRecentlyCreated) {
+                $timelineRecord->touch();
+            }
         });
+
+        cache()->put(
+            "timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}",
+            now(),
+            now()->addMinutes(60)
+        );
     }
 }

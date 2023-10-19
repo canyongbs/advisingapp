@@ -15,7 +15,7 @@ class Timeline extends BaseModel
         'educatable_id',
         'timelineable_type',
         'timelineable_id',
-        'record_creation',
+        'record_sortable_date',
     ];
 
     public function timelineable(): MorphTo
