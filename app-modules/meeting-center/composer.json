@@ -1,26 +1,29 @@
 {
-  "name": "canyon-gbs/meeting-center",
-  "description": "",
-  "type": "library",
-  "version": "1.0",
-  "license": "proprietary",
-  "require": {
-    "filament/filament": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Assist\\MeetingCenter\\": "src/",
-      "Assist\\MeetingCenter\\Tests\\": "tests/",
-      "Assist\\MeetingCenter\\Database\\Factories\\": "database/factories/",
-      "Assist\\MeetingCenter\\Database\\Seeders\\": "database/seeders/"
+    "name": "canyon-gbs/meeting-center",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0.0"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Assist\\MeetingCenter\\": "src/",
+            "Assist\\MeetingCenter\\Tests\\": "tests/",
+            "Assist\\MeetingCenter\\Database\\Factories\\": "database/factories/",
+            "Assist\\MeetingCenter\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Assist\\MeetingCenter\\Providers\\MeetingCenterServiceProvider"
+            ]
+        }
     }
-  },
-  "minimum-stability": "dev",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Assist\\MeetingCenter\\Providers\\MeetingCenterServiceProvider"
-      ]
-    }
-  }
 }
