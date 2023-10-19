@@ -20,19 +20,16 @@ class CreateProspectStatus extends CreateRecord
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
                 Select::make('classification')
                     ->label('Classification')
-                    ->translateLabel()
                     ->searchable()
                     ->options(SystemProspectClassification::class)
                     ->required()
                     ->enum(SystemProspectClassification::class),
                 Select::make('color')
                     ->label('Color')
-                    ->translateLabel()
                     ->searchable()
                     ->options(ProspectStatusColorOptions::class)
                     ->required()

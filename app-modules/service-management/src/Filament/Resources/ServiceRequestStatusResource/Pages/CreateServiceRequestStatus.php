@@ -20,19 +20,16 @@ class CreateServiceRequestStatus extends CreateRecord
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
                 Select::make('classification')
                     ->label('classification')
-                    ->translateLabel()
                     ->searchable()
                     ->options(SystemServiceRequestClassification::class)
                     ->required()
                     ->enum(SystemServiceRequestClassification::class),
                 Select::make('color')
                     ->label('Color')
-                    ->translateLabel()
                     ->searchable()
                     ->options(ColumnColorOptions::class)
                     ->required()
