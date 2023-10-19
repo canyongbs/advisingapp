@@ -13,6 +13,7 @@ class Calendar extends BaseModel
     protected $hidden = [
         'oauth_token',
         'oauth_refresh_token',
+        'oauth_expires_at',
     ];
 
     protected $casts = [
