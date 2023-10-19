@@ -2,7 +2,6 @@
 
 namespace Assist\Form\Filament\Resources\FormResource\Pages;
 
-use Illuminate\Support\Arr;
 use Assist\Form\Models\Form;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -10,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
+use Assist\Form\Actions\GenerateFormEmbedCode;
 use Assist\Form\Filament\Resources\FormResource;
 use Assist\Form\Filament\Resources\FormResource\Pages\Concerns\HasSharedFormConfiguration;
 
@@ -67,7 +67,7 @@ class EditForm extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('Respond')
+            Action::make('view')
                 ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
@@ -78,25 +78,17 @@ class EditForm extends EditRecord
                         TextEntry::make('snippet')
                             ->label('Click to Copy')
                             ->state(function (Form $form) {
-                                $scriptUrl = url('js/widgets/form/assist-form-widget.js?') . Arr::query(['form' => $form->id]);
+                                $code = resolve(GenerateFormEmbedCode::class)->handle($form);
 
                                 return <<<EOD
                                 ```
-                                <form-embed></form-embed>
-                                <script src='{$scriptUrl}'></script>
+                                {$code}
                                 ```
                                 EOD;
                             })
                             ->markdown()
                             ->copyable()
-                            ->copyableState(function (Form $form) {
-                                $scriptUrl = url('js/widgets/form/assist-form-widget.js?') . Arr::query(['form' => $form->id]);
-
-                                return <<<EOD
-                                <form-embed></form-embed>
-                                <script src='{$scriptUrl}'></script>
-                                EOD;
-                            })
+                            ->copyableState(fn (Form $form) => resolve(GenerateFormEmbedCode::class)->handle($form))
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500),
                     ]
