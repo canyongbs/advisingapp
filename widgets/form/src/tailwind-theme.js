@@ -9,13 +9,13 @@ export default {
     inner:
       'formkit-disabled:bg-gray-200 formkit-disabled:cursor-not-allowed formkit-disabled:pointer-events-none',
     input:
-      'appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none',
-    label: 'block mb-1 font-bold text-sm',
+      'appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none font-sans',
+    label: 'block mb-1 font-bold text-sm font-sans',
     legend: 'font-bold text-sm',
     loaderIcon: 'inline-flex items-center w-4 text-gray-600 animate-spin',
     message: 'text-red-500 mb-1 text-xs',
     messages: 'list-none p-0 mt-1 mb-0',
-    outer: 'mb-4 formkit-disabled:opacity-50',
+    outer: 'mb-4 formkit-disabled:opacity-50 font-sans',
     prefixIcon:
       'w-10 flex self-stretch grow-0 shrink-0 rounded-tl rounded-bl border-r border-gray-400 bg-white bg-gradient-to-b from-transparent to-gray-200 [&>svg]:w-full [&>svg]:max-w-[1em] [&>svg]:max-h-[1em] [&>svg]:m-auto',
     suffixIcon:
@@ -119,9 +119,9 @@ export default {
     inner:
       'flex relative max-w-md items-center rounded mb-1 ring-1 ring-gray-400 focus-within:ring-blue-500 focus-within:ring-2 [&>span:first-child]:focus-within:text-blue-500',
     input:
-      'w-full pl-3 pr-8 py-2 border-none text-base text-gray-700 placeholder-gray-400 formkit-multiple:p-0 data-[placeholder="true"]:text-gray-400 formkit-multiple:data-[placeholder="true"]:text-inherit',
+      'w-full appearance-none pl-3 pr-8 py-2 border-none text-base text-gray-700 placeholder-gray-400 formkit-multiple:p-0 data-[placeholder="true"]:text-gray-400 formkit-multiple:data-[placeholder="true"]:text-inherit',
     selectIcon:
-      'flex p-[3px] shrink-0 w-5 mr-2 -ml-[1.5em] h-full pointer-events-none [&>svg]:w-[1em]',
+      'hidden p-[3px] shrink-0 w-5 mr-2 -ml-[1.5em] h-full pointer-events-none [&>svg]:w-[1em]',
     option: 'formkit-multiple:p-3 formkit-multiple:text-sm text-gray-700',
   },
   textarea: {
