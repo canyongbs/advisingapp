@@ -32,14 +32,16 @@ test('A successful action on the EditServiceRequestStatus page', function () {
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertFormSet([
+            'classification' => $serviceRequestStatus->classification->value,
             'name' => $serviceRequestStatus->name,
-            'color' => $serviceRequestStatus->color,
+            'color' => $serviceRequestStatus->color->value,
         ])
         ->fillForm($editRequest)
         ->call('save')
         ->assertHasNoFormErrors();
 
     assertEquals($editRequest['name'], $serviceRequestStatus->fresh()->name);
+    assertEquals($editRequest['classification'], $serviceRequestStatus->fresh()->classification);
     assertEquals($editRequest['color'], $serviceRequestStatus->fresh()->color);
 });
 
@@ -52,8 +54,9 @@ test('EditServiceRequestStatus requires valid data', function ($data, $errors) {
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertFormSet([
+            'classification' => $serviceRequestStatus->classification->value,
             'name' => $serviceRequestStatus->name,
-            'color' => $serviceRequestStatus->color,
+            'color' => $serviceRequestStatus->color->value,
         ])
         ->fillForm(EditServiceRequestStatusRequestFactory::new($data)->create())
         ->call('save')
