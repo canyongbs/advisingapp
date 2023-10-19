@@ -25,12 +25,14 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
+use Assist\Timeline\Filament\Pages\Concerns\LoadsRecords;
 use Assist\Engagement\Filament\Actions\EngagementCreateAction;
 use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
 class MessageCenter extends Page
 {
     use WithPagination;
+    use LoadsRecords;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
@@ -88,13 +90,6 @@ class MessageCenter extends Page
 
     public int $educatablesPerPage = 10;
 
-    public int $educatableRecordsPerPage = 5;
-
-    public function loadMoreRecords()
-    {
-        $this->educatableRecordsPerPage += 5;
-    }
-
     public static function shouldRegisterNavigation(): bool
     {
         /** @var User $user */
@@ -146,7 +141,7 @@ class MessageCenter extends Page
     public function selectEducatable(string $educatable, string $morphClass): void
     {
         $this->dispatch('scroll-to-top');
-        $this->reset('educatableRecordsPerPage');
+        $this->reset('recordsPerPage');
 
         $this->loadingTimeline = true;
 
@@ -338,7 +333,7 @@ class MessageCenter extends Page
                     collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
                 )
                 ->orderBy('record_creation', 'desc')
-                ->simplePaginate($this->educatableRecordsPerPage);
+                ->simplePaginate($this->recordsPerPage);
         }
 
         $this->loadingInbox = false;

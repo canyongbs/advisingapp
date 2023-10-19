@@ -8,11 +8,14 @@ use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Timeline\Models\Timeline as TimelineModel;
+use Assist\Timeline\Filament\Pages\Concerns\LoadsRecords;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
 abstract class Timeline extends Page
 {
     use InteractsWithRecord;
+    use LoadsRecords;
 
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
 
@@ -25,13 +28,6 @@ abstract class Timeline extends Page
     public Model $currentRecordToView;
 
     public Model $recordModel;
-
-    public int $recordsPerPage = 3;
-
-    public function loadMoreRecords()
-    {
-        $this->recordsPerPage += 3;
-    }
 
     public function viewRecord($record, $morphReference)
     {
@@ -90,5 +86,21 @@ abstract class Timeline extends Page
         // TODO We also need to check access for the other entities that are going to be included in the timeline
         // We probably just need to establish that the user can view any of a model, but might need to be more specific
         abort_unless(static::getResource()::canView($this->getRecord()), Response::HTTP_FORBIDDEN);
+    }
+
+    protected function getViewData(): array
+    {
+        $timelineRecords = TimelineModel::query()
+            ->forEducatable($this->recordModel)
+            ->whereIn(
+                'timelineable_type',
+                collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
+            )
+            ->orderBy('record_creation', 'desc')
+            ->simplePaginate($this->recordsPerPage);
+
+        return [
+            'timelineRecords' => $timelineRecords,
+        ];
     }
 }
