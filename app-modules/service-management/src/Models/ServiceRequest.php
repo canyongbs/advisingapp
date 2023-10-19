@@ -25,6 +25,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
 use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
@@ -146,11 +147,12 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return $this->belongsTo(User::class);
     }
 
-    // TODO We need a way to correspond custom statuses to some normalized data set
-    // So that we can determine what an "open" status is in the context of a client's data
     public function scopeOpen(Builder $query): void
     {
-        $query->where('status_id', ServiceRequestStatus::where('name', 'Open')->first()->id);
+        $query->whereIn(
+            'status_id',
+            ServiceRequestStatus::where('classification', SystemServiceRequestClassification::Open)->pluck('id')
+        );
     }
 
     protected function serializeDate(DateTimeInterface $date): string

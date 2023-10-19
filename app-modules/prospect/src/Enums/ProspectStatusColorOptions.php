@@ -2,7 +2,9 @@
 
 namespace Assist\Prospect\Enums;
 
-enum ProspectStatusColorOptions: string
+use Filament\Support\Contracts\HasLabel;
+
+enum ProspectStatusColorOptions: string implements HasLabel
 {
     case Success = 'success';
 
@@ -15,4 +17,9 @@ enum ProspectStatusColorOptions: string
     case Primary = 'primary';
 
     case Gray = 'gray';
+
+    public function getLabel(): string
+    {
+        return $this->value;
+    }
 }

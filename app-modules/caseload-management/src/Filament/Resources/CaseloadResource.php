@@ -249,7 +249,7 @@ class CaseloadResource extends Resource
                     return $record->status->name;
                 })
                 ->color(function (Prospect $record) {
-                    return $record->status->color;
+                    return $record->status->color->value;
                 })
                 ->sortable(query: function (Builder $query, string $direction): Builder {
                     return $query

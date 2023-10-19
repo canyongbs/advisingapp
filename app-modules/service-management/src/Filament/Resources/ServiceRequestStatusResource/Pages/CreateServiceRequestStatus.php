@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\ServiceManagement\Enums\ColumnColorOptions;
+use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 
 class CreateServiceRequestStatus extends CreateRecord
@@ -19,12 +20,16 @@ class CreateServiceRequestStatus extends CreateRecord
             ->schema([
                 TextInput::make('name')
                     ->label('Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
+                Select::make('classification')
+                    ->label('classification')
+                    ->searchable()
+                    ->options(SystemServiceRequestClassification::class)
+                    ->required()
+                    ->enum(SystemServiceRequestClassification::class),
                 Select::make('color')
                     ->label('Color')
-                    ->translateLabel()
                     ->searchable()
                     ->options(ColumnColorOptions::class)
                     ->required()

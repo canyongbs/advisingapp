@@ -95,6 +95,7 @@ Microsoft Azure
 * [Inbound Webhooks](./docs/inbound-webhooks.md)
 * [Integrations: Twilio](./docs/integrations/twilio.md)
 * [Integrations: Azure OpenAI](./docs/integrations/azure_open_ai.md)
+* [Custom Metadata](./docs/custom-metadata.md)
 
 _Note: More documentation coming soon._
 

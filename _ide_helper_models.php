@@ -949,7 +949,8 @@ namespace Assist\Engagement\Models{
  * Assist\Engagement\Models\EngagementFile
  *
  * @property string $id
- * @property string|null $description
+ * @property string $description
+ * @property string|null $retention_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
@@ -967,6 +968,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereRetentionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -983,7 +985,7 @@ namespace Assist\Engagement\Models{
  * @property string $entity_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Engagement\Models\EngagementFile|null $engagementFile
+ * @property-read \Assist\Engagement\Models\EngagementFile $engagementFile
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $entity
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities newQuery()

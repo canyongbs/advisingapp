@@ -32,14 +32,16 @@ test('A successful action on the EditProspectStatus page', function () {
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertFormSet([
+            'classification' => $prospectStatus->classification->value,
             'name' => $prospectStatus->name,
-            'color' => $prospectStatus->color,
+            'color' => $prospectStatus->color->value,
         ])
         ->fillForm($editRequest)
         ->call('save')
         ->assertHasNoFormErrors();
 
     assertEquals($editRequest['name'], $prospectStatus->fresh()->name);
+    assertEquals($editRequest['classification'], $prospectStatus->fresh()->classification);
     assertEquals($editRequest['color'], $prospectStatus->fresh()->color);
 });
 
@@ -52,8 +54,9 @@ test('EditProspectStatus requires valid data', function ($data, $errors) {
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertFormSet([
+            'classification' => $prospectStatus->classification->value,
             'name' => $prospectStatus->name,
-            'color' => $prospectStatus->color,
+            'color' => $prospectStatus->color->value,
         ])
         ->fillForm(EditProspectStatusRequestFactory::new($data)->create())
         ->call('save')

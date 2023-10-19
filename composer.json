@@ -32,6 +32,7 @@
         "canyon-gbs/integration-twilio": "*",
         "canyon-gbs/interaction": "*",
         "canyon-gbs/knowledge-base": "*",
+        "canyon-gbs/meeting-center": "*",
         "canyon-gbs/notifications": "*",
         "canyon-gbs/prospect": "*",
         "canyon-gbs/service-management": "^1.0",
@@ -47,6 +48,7 @@
         "friendsofcat/opensearch-migrations": "^2.0",
         "friendsofcat/opensearch-scout-driver": "^2.1",
         "friendsofcat/opensearch-scout-driver-plus": "^2.1",
+        "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^3.0",
@@ -58,7 +60,9 @@
         "laravel/ui": "^4.2",
         "league/csv": "^9.10",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "league/oauth2-client": "^2.7",
         "livewire/livewire": "^3.0",
+        "microsoft/microsoft-graph": "^1.108",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
         "socialiteproviders/google": "^4.1",
@@ -105,6 +109,9 @@
         }
     },
     "scripts": {
+        "pre-autoload-dump": [
+            "Google\\Task\\Composer::cleanup"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
@@ -188,7 +195,11 @@
         },
         "laravel": {
             "dont-discover": []
-        }
+        },
+        "google/apiclient-services": [
+            "Oauth2",
+            "Calendar"
+        ]
     },
     "config": {
         "optimize-autoloader": true,
