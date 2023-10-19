@@ -42,8 +42,6 @@ class CreateEngagementBatch implements ShouldQueue
                 'recipient_type' => $record->getMorphClass(),
                 'subject' => $this->data->subject,
                 'body' => $this->data->body,
-                // TODO Determine if we want to support future delivery for batches
-                // 'deliver_at' => $data['deliver_at'],
             ]);
 
             $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
