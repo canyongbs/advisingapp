@@ -5,7 +5,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementFilesRelationManager;
+use Assist\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
 
 class ManageProspectFiles extends ManageRelatedRecords
 {
