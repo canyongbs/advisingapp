@@ -16,29 +16,33 @@ class FormWidgetController extends Controller
 
         // TODO: Move this out of the controller once we go beyond these simple fields and configurations.
         return response()->json(
-            $form->fields->map(function ($field) {
-                return match ($field['type']) {
-                    'text_input' => (object) [
-                        '$formkit' => 'text',
-                        'label' => $field['label'],
-                        'name' => $field['key'],
-                        'required' => $field['required'],
-                    ],
-                    'text_area' => (object) [
-                        '$formkit' => 'textarea',
-                        'label' => $field['label'],
-                        'name' => $field['key'],
-                        'required' => $field['required'],
-                    ],
-                    'select' => (object) [
-                        '$formkit' => 'select',
-                        'label' => $field['label'],
-                        'name' => $field['key'],
-                        'required' => $field['required'],
-                        'options' => $field['config']['options'],
-                    ],
-                };
-            })->toArray()
+            [
+                'name' => $form->name,
+                'description' => $form->description,
+                'schema' => $form->fields->map(function ($field) {
+                    return match ($field['type']) {
+                        'text_input' => (object) [
+                            '$formkit' => 'text',
+                            'label' => $field['label'],
+                            'name' => $field['key'],
+                            'required' => $field['required'],
+                        ],
+                        'text_area' => (object) [
+                            '$formkit' => 'textarea',
+                            'label' => $field['label'],
+                            'name' => $field['key'],
+                            'required' => $field['required'],
+                        ],
+                        'select' => (object) [
+                            '$formkit' => 'select',
+                            'label' => $field['label'],
+                            'name' => $field['key'],
+                            'required' => $field['required'],
+                            'options' => $field['config']['options'],
+                        ],
+                    };
+                })->toArray(),
+            ]
         );
     }
 }
