@@ -5,7 +5,7 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementFilesRelationManager;
+use Assist\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
 
 class ManageStudentFiles extends ManageRelatedRecords
 {

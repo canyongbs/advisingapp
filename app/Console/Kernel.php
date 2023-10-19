@@ -5,6 +5,7 @@ namespace App\Console;
 use Assist\Audit\Models\Audit;
 use App\Models\FailedImportRow;
 use Illuminate\Console\Scheduling\Schedule;
+use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Console\PruneCommand;
 use Spatie\Health\Commands\RunHealthChecksCommand;
 use App\Console\Commands\RefreshAdmMaterializedView;
@@ -20,19 +21,30 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        if (config('database.adm_materialized_views_enabled')) {
+            $this->refreshAdmMaterializedViews($schedule);
+        }
+
         $schedule->command('cache:prune-stale-tags')->hourly();
 
         $schedule->command(RunHealthChecksCommand::class)->everyMinute();
 
         $schedule->command(DispatchQueueCheckJobsCommand::class)->everyMinute();
 
-        $schedule->command(PruneCommand::class, [
-            '--model' => [Audit::class, AssistantChatMessageLog::class, FailedImportRow::class],
-        ])->daily()->evenInMaintenanceMode()->onOneServer();
-
-        if (config('database.adm_materialized_views_enabled')) {
-            $this->refreshAdmMaterializedViews($schedule);
-        }
+        collect([
+            Audit::class,
+            AssistantChatMessageLog::class,
+            FailedImportRow::class,
+            EngagementFile::class,
+        ])
+            ->each(
+                fn ($model) => $schedule->command(PruneCommand::class, [
+                    '--model' => [$model],
+                ])
+                    ->daily()
+                    ->onOneServer()
+                    ->runInBackground()
+            );
 
         // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
         $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
@@ -42,32 +54,30 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command(RefreshAdmMaterializedView::class, ['students'])
             ->everyMinute()
-            ->evenInMaintenanceMode()
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
 
         $schedule->command(RefreshAdmMaterializedView::class, ['enrollments'])
             ->everyMinute()
-            ->evenInMaintenanceMode()
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
 
         $schedule->command(RefreshAdmMaterializedView::class, ['performance'])
             ->everyMinute()
-            ->evenInMaintenanceMode()
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
 
         $schedule->command(RefreshAdmMaterializedView::class, ['programs'])
             ->everyMinute()
-            ->evenInMaintenanceMode()
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
     }
+
+    protected function pruning(Schedule $schedule) {}
 
     /**
      * Register the commands for the application.
