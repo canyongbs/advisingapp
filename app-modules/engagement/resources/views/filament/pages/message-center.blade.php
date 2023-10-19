@@ -18,6 +18,7 @@
                     :loadingTimeline="$loadingTimeline"
                     :educatable="$selectedEducatable"
                     :timelineRecords="$timelineRecords"
+                    :emptyStateMessage="$emptyStateMessage"
                 />
             @endif
         </div>

@@ -26,7 +26,6 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Timeline\Filament\Pages\Concerns\LoadsRecords;
 use Assist\Engagement\Filament\Actions\EngagementCreateAction;
-use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
 
 class MessageCenter extends Page
 {
@@ -54,9 +53,9 @@ class MessageCenter extends Page
 
     public ?Educatable $selectedEducatable = null;
 
-    public Collection $aggregateRecordsForEducatable;
-
     public Model $currentRecordToView;
+
+    public string $emptyStateMessage = 'There are currently no timeline items to show.';
 
     #[Url]
     public string $search = '';
@@ -80,14 +79,7 @@ class MessageCenter extends Page
     #[Url(as: 'endDate')]
     public ?string $filterEndDate = null;
 
-    // This is not yet used on the frontend, but will be
-    public array $paginationOptions = [
-        10,
-        25,
-        50,
-    ];
-
-    public int $educatablesPerPage = 10;
+    public int $inboxPerPage = 10;
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -119,7 +111,7 @@ class MessageCenter extends Page
         ];
 
         if (in_array($property, $filters)) {
-            $this->resetPage();
+            $this->resetPage('inbox-page');
         }
     }
 
@@ -132,7 +124,7 @@ class MessageCenter extends Page
     {
         $this->loadingTimeline = true;
 
-        $this->aggregateRecordsForEducatable = resolve(AggregatesTimelineRecordsForModel::class)->handle($this->selectedEducatable, $this->modelsToTimeline);
+        resolve(SyncTimelineData::class)->now($this->selectedEducatable, $this->modelsToTimeline);
 
         $this->loadingTimeline = false;
     }
@@ -320,13 +312,13 @@ class MessageCenter extends Page
                     collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
                 )
                 ->orderBy('record_creation', 'desc')
-                ->simplePaginate($this->recordsPerPage);
+                ->simplePaginate($this->recordsPerPage, pageName: 'record-pagination');
         }
 
         $this->loadingInbox = false;
 
         return [
-            'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->educatablesPerPage),
+            'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->inboxPerPage, pageName: 'inbox-page'),
             'timelineRecords' => $timelineRecords ?? null,
         ];
     }

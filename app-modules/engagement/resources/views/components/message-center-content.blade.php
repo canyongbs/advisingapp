@@ -20,7 +20,10 @@
                     </x-filament::button>
                 </div>
                 <div class="p-6">
-                    <x-timeline::timeline :timelineRecords="$timelineRecords" />
+                    <x-timeline::timeline
+                        :timelineRecords="$timelineRecords"
+                        :emptyStateMessage="$emptyStateMessage"
+                    />
                 </div>
             </div>
         @endif
