@@ -7,14 +7,15 @@ use Filament\Resources\Pages\Page;
 use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use App\Actions\GetRecordFromMorphAndKey;
+use Assist\Timeline\Actions\SyncTimelineData;
 use Symfony\Component\HttpFoundation\Response;
-use Assist\Timeline\Filament\Pages\Concerns\LoadsRecords;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Assist\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
 
 abstract class TimelinePage extends Page
 {
     use InteractsWithRecord;
-    use LoadsRecords;
+    use LoadsTimelineRecords;
 
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
 
@@ -22,11 +23,26 @@ abstract class TimelinePage extends Page
 
     public string $emptyStateMessage = 'There are no records to show on this timeline.';
 
+    public string $noMoreRecordsMessage = 'You have reached the end of this timeline.';
+
     public array $modelsToTimeline = [];
 
     public Model $currentRecordToView;
 
     public Model $recordModel;
+
+    public function mount($record): void
+    {
+        $this->recordModel = $this->record = $this->resolveRecord($record);
+
+        $this->timelineRecords = collect();
+
+        resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
+
+        $this->authorizeAccess();
+
+        $this->loadTimelineRecords();
+    }
 
     public function viewRecord($key, $morphReference)
     {
@@ -75,21 +91,5 @@ abstract class TimelinePage extends Page
         // TODO We also need to check access for the other entities that are going to be included in the timeline
         // We probably just need to establish that the user can view any of a model, but might need to be more specific
         abort_unless(static::getResource()::canView($this->getRecord()), Response::HTTP_FORBIDDEN);
-    }
-
-    protected function getViewData(): array
-    {
-        $timelineRecords = Timeline::query()
-            ->forEducatable($this->recordModel)
-            ->whereIn(
-                'timelineable_type',
-                collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
-            )
-            ->orderBy('record_sortable_date', 'desc')
-            ->simplePaginate($this->recordsPerPage);
-
-        return [
-            'timelineRecords' => $timelineRecords,
-        ];
     }
 }

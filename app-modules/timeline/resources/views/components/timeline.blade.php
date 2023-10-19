@@ -48,23 +48,32 @@
 
             </li>
         @endforeach
-        <div
-            x-data="{
-                observe() {
-                    let observer = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                @this.call('loadMoreRecords')
-                            }
+        @if ($hasMorePages === true)
+            <div
+                x-data="{
+                    observe() {
+                        let observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    @this.call('loadTimelineRecords')
+                                }
+                            })
+                        }, {
+                            root: null
                         })
-                    }, {
-                        root: null
-                    })
-            
-                    observer.observe(this.$el)
-                }
-            }"
-            x-init="observe"
-        ></div>
+                
+                        observer.observe(this.$el)
+                    }
+                }"
+                x-init="observe"
+            ></div>
+        @else
+            {{-- TODO Make this block pretty --}}
+            <div class="my-4 flex flex-row items-center gap-x-4">
+                <hr class="flex-grow border-t border-dashed border-gray-200 dark:border-gray-700">
+                <span class="mt-1 text-sm text-gray-900 dark:text-white">{{ $noMoreRecordsMessage }}</span>
+                <hr class="flex-grow border-t border-dashed border-gray-200 dark:border-gray-700">
+            </div>
+        @endif
     </ol>
 @endif

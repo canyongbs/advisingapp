@@ -22,7 +22,9 @@
                 <div class="p-6">
                     <x-timeline::timeline
                         :timelineRecords="$timelineRecords"
+                        :hasMorePages="$hasMorePages"
                         :emptyStateMessage="$emptyStateMessage"
+                        :noMoreRecordsMessage="$noMoreRecordsMessage"
                     />
                 </div>
             </div>

@@ -10,15 +10,17 @@
                 <x-filament::loading-indicator class="col-span-full h-12 w-12" />
             @else
                 <x-engagement::message-center-inbox
-                    :selectedEducatable="$selectedEducatable"
+                    :selectedEducatable="$recordModel"
                     :educatables="$educatables"
                 />
 
                 <x-engagement::message-center-content
                     :loadingTimeline="$loadingTimeline"
-                    :educatable="$selectedEducatable"
+                    :educatable="$recordModel"
+                    :hasMorePages="$hasMorePages"
                     :timelineRecords="$timelineRecords"
                     :emptyStateMessage="$emptyStateMessage"
+                    :noMoreRecordsMessage="$noMoreRecordsMessage"
                 />
             @endif
         </div>

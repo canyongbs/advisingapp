@@ -13,7 +13,6 @@ use Filament\Actions\CreateAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Assist\Prospect\Models\Prospect;
-use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
 use App\Actions\GetRecordFromMorphAndKey;
@@ -24,13 +23,13 @@ use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
-use Assist\Timeline\Filament\Pages\Concerns\LoadsRecords;
 use Assist\Engagement\Filament\Actions\EngagementCreateAction;
+use Assist\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
 
 class MessageCenter extends Page
 {
     use WithPagination;
-    use LoadsRecords;
+    use LoadsTimelineRecords;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
@@ -51,11 +50,13 @@ class MessageCenter extends Page
 
     public bool $loadingTimeline = false;
 
-    public ?Educatable $selectedEducatable = null;
+    public ?Educatable $recordModel = null;
 
     public Model $currentRecordToView;
 
     public string $emptyStateMessage = 'There are currently no timeline items to show.';
+
+    public string $noMoreRecordsMessage = 'You have reached the end of this timeline.';
 
     #[Url]
     public string $search = '';
@@ -96,6 +97,8 @@ class MessageCenter extends Page
 
         $this->user = $user;
 
+        $this->timelineRecords = collect();
+
         $this->authorize('engagement.view_message_center');
     }
 
@@ -124,21 +127,27 @@ class MessageCenter extends Page
     {
         $this->loadingTimeline = true;
 
-        resolve(SyncTimelineData::class)->now($this->selectedEducatable, $this->modelsToTimeline);
+        resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
 
         $this->loadingTimeline = false;
     }
 
     public function selectEducatable(string $educatable, string $morphClass): void
     {
-        $this->dispatch('scroll-to-top');
-        $this->reset('recordsPerPage');
-
         $this->loadingTimeline = true;
 
-        $this->selectedEducatable = resolve(GetRecordFromMorphAndKey::class)->via($morphClass, $educatable);
+        $this->dispatch('scroll-to-top');
 
-        resolve(SyncTimelineData::class)->now($this->selectedEducatable, $this->modelsToTimeline);
+        $this->reset('initialLoad');
+        $this->reset('nextCursor');
+
+        $this->timelineRecords = collect();
+
+        $this->recordModel = resolve(GetRecordFromMorphAndKey::class)->via($morphClass, $educatable);
+
+        resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
+
+        $this->loadTimelineRecords();
 
         $this->loadingTimeline = false;
     }
@@ -251,7 +260,7 @@ class MessageCenter extends Page
 
     public function createAction(): CreateAction
     {
-        return EngagementCreateAction::make($this->selectedEducatable)->after(function () {
+        return EngagementCreateAction::make($this->recordModel)->after(function () {
             $this->refreshSelectedEducatable();
         });
     }
@@ -304,22 +313,10 @@ class MessageCenter extends Page
             $educatables = $studentPopulationQuery->unionAll($prospectPopulationQuery);
         }
 
-        if ($this->selectedEducatable) {
-            $timelineRecords = Timeline::query()
-                ->forEducatable($this->selectedEducatable)
-                ->whereIn(
-                    'timelineable_type',
-                    collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
-                )
-                ->orderBy('record_sortable_date', 'desc')
-                ->simplePaginate($this->recordsPerPage, pageName: 'record-pagination');
-        }
-
         $this->loadingInbox = false;
 
         return [
             'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->inboxPerPage, pageName: 'inbox-page'),
-            'timelineRecords' => $timelineRecords ?? null,
         ];
     }
 }

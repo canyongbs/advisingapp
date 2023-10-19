@@ -12,9 +12,9 @@ class EngagementResponseObserver
         /** @var Student|Prospect $educatable */
         $educatable = $response->sender;
 
+        // TODO Extract the timeline related actions
         cache()->forget("timeline.synced.{$educatable->getMorphClass()}.{$educatable->getKey()}");
 
-        // TODO Extract the creation action
         Timeline::firstOrCreate([
             'educatable_type' => $educatable->getMorphClass(),
             'educatable_id' => $educatable->getKey(),
