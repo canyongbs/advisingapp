@@ -38,7 +38,10 @@ class EngagementServiceProvider extends ServiceProvider
         ]);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            $schedule->job(DeliverEngagements::class)->everyMinute();
+            // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
+            $schedule->job(DeliverEngagements::class)
+                ->everyMinute()
+                ->withoutOverlapping();
         });
 
         $this->registerRolesAndPermissions();

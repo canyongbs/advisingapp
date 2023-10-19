@@ -579,6 +579,82 @@ namespace Assist\Authorization\Models{
  class IdeHelperRoleGroup {}
 }
 
+namespace Assist\Campaign\Models{
+/**
+ * Assist\Campaign\Models\Campaign
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property string $caseload_id
+ * @property string $name
+ * @property string $execute_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Campaign\Models\CampaignAction> $actions
+ * @property-read int|null $actions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Assist\CaseloadManagement\Models\Caseload $caseload
+ * @property-read \App\Models\User $user
+ * @method static \Assist\Campaign\Database\Factories\CampaignFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign hasNotBeenExecuted()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCaseloadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereExecuteAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCampaign {}
+}
+
+namespace Assist\Campaign\Models{
+/**
+ * Assist\Campaign\Models\CampaignAction
+ *
+ * @property string $id
+ * @property string $campaign_id
+ * @property \Assist\Campaign\Enums\CampaignActionType $type
+ * @property array $data
+ * @property string|null $executed_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Assist\Campaign\Models\Campaign $campaign
+ * @method static \Assist\Campaign\Database\Factories\CampaignActionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereCampaignId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereExecutedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCampaignAction {}
+}
+
 namespace Assist\CaseloadManagement\Models{
 /**
  * Assist\CaseloadManagement\Models\Caseload
