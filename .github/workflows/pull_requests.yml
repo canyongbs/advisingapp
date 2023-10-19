@@ -12,5 +12,5 @@ jobs:
     name: Code Checks
 
     uses: ./.github/workflows/ci.yml
-    with:
+    secrets:
       pat-token: ${{ secrets.PAT }}
