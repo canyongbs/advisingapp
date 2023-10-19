@@ -8,7 +8,10 @@
                 <x-engagement::empty-state />
             </div>
         @else
-            <div class="max-h-full overflow-y-auto">
+            <div
+                class="max-h-full overflow-y-auto"
+                id="message-center-content"
+            >
                 <div
                     class="sticky top-0 z-[5] flex h-12 w-full items-center justify-between bg-gray-100 px-4 dark:bg-gray-700">
                     <h1 class="ml-2">{{ $educatable->display_name }}</h1>
@@ -17,9 +20,21 @@
                     </x-filament::button>
                 </div>
                 <div class="p-6">
-                    <x-timeline::timeline :aggregateRecords="$aggregateRecords" />
+                    <x-timeline::timeline :timelineRecords="$timelineRecords" />
                 </div>
             </div>
         @endif
     @endif
 </div>
+
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        @this.on('scroll-to-top', (event) => {
+            var el = document.getElementById('message-center-content');
+
+            if (el) {
+                el.scrollTop = 0;
+            }
+        });
+    });
+</script>

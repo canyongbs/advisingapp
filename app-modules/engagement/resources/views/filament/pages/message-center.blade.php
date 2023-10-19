@@ -17,7 +17,7 @@
                 <x-engagement::message-center-content
                     :loadingTimeline="$loadingTimeline"
                     :educatable="$selectedEducatable"
-                    :aggregateRecords="$aggregateRecordsForEducatable"
+                    :timelineRecords="$timelineRecords"
                 />
             @endif
         </div>

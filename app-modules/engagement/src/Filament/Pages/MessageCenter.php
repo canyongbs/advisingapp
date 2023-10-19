@@ -14,9 +14,11 @@ use Filament\Actions\CreateAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Assist\Prospect\Models\Prospect;
+use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Timeline\Actions\SyncTimelineData;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -49,7 +51,7 @@ class MessageCenter extends Page
 
     public bool $loadingTimeline = false;
 
-    public ?Educatable $selectedEducatable;
+    public ?Educatable $selectedEducatable = null;
 
     public Collection $aggregateRecordsForEducatable;
 
@@ -84,7 +86,14 @@ class MessageCenter extends Page
         50,
     ];
 
-    public int $pagination = 10;
+    public int $educatablesPerPage = 10;
+
+    public int $educatableRecordsPerPage = 5;
+
+    public function loadMoreRecords()
+    {
+        $this->educatableRecordsPerPage += 5;
+    }
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -136,11 +145,14 @@ class MessageCenter extends Page
 
     public function selectEducatable(string $educatable, string $morphClass): void
     {
+        $this->dispatch('scroll-to-top');
+        $this->reset('educatableRecordsPerPage');
+
         $this->loadingTimeline = true;
 
         $this->selectedEducatable = $this->getRecordFromMorphAndKey($morphClass, $educatable);
 
-        $this->aggregateRecordsForEducatable = resolve(AggregatesTimelineRecordsForModel::class)->handle($this->selectedEducatable, $this->modelsToTimeline);
+        resolve(SyncTimelineData::class)->now($this->selectedEducatable, $this->modelsToTimeline);
 
         $this->loadingTimeline = false;
     }
@@ -318,12 +330,22 @@ class MessageCenter extends Page
             $educatables = $studentPopulationQuery->unionAll($prospectPopulationQuery);
         }
 
+        if ($this->selectedEducatable) {
+            $timelineRecords = Timeline::query()
+                ->forEducatable($this->selectedEducatable)
+                ->whereIn(
+                    'timelineable_type',
+                    collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
+                )
+                ->orderBy('record_creation', 'desc')
+                ->simplePaginate($this->educatableRecordsPerPage);
+        }
+
         $this->loadingInbox = false;
 
-        // TODO Depending on the number of records, we may want to utilize cursorPaginate here
-        // But, we do lose "total" result context, which actually might be pretty important for UX
         return [
-            'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->pagination),
+            'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->educatablesPerPage),
+            'timelineRecords' => $timelineRecords ?? null,
         ];
     }
 }
