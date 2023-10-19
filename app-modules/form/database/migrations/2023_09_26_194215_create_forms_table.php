@@ -12,6 +12,8 @@ return new class () extends Migration {
 
             $table->string('name')->unique();
             $table->text('description')->nullable();
+            $table->boolean('embed_enabled')->default(false);
+            $table->json('allowed_domains')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
