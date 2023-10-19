@@ -2,17 +2,16 @@
 
 namespace Assist\Timeline\Filament\Pages;
 
-use Exception;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
+use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
+use App\Actions\GetRecordFromMorphAndKey;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Timeline\Models\Timeline as TimelineModel;
 use Assist\Timeline\Filament\Pages\Concerns\LoadsRecords;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
-abstract class Timeline extends Page
+abstract class TimelinePage extends Page
 {
     use InteractsWithRecord;
     use LoadsRecords;
@@ -29,28 +28,18 @@ abstract class Timeline extends Page
 
     public Model $recordModel;
 
-    public function viewRecord($record, $morphReference)
+    public function viewRecord($key, $morphReference)
     {
-        $this->currentRecordToView = $this->getRecordFromMorphAndKey($morphReference, $record);
+        $this->currentRecordToView = resolve(GetRecordFromMorphAndKey::class)->via($morphReference, $key);
 
         $this->mountAction('view');
     }
 
-    // TODO Extract this as it's shared between multiple resources at this point
-    public function getRecordFromMorphAndKey($morphReference, $key)
-    {
-        $className = Relation::getMorphedModel($morphReference);
-
-        if (is_null($className)) {
-            throw new Exception("Model not found for reference: {$morphReference}");
-        }
-
-        return $className::whereKey($key)->firstOrFail();
-    }
-
     public function viewAction(): ViewAction
     {
-        return $this->currentRecordToView->timeline()->modalViewAction($this->currentRecordToView);
+        return $this->currentRecordToView
+            ->timeline()
+            ->modalViewAction($this->currentRecordToView);
     }
 
     /**
@@ -90,7 +79,7 @@ abstract class Timeline extends Page
 
     protected function getViewData(): array
     {
-        $timelineRecords = TimelineModel::query()
+        $timelineRecords = Timeline::query()
             ->forEducatable($this->recordModel)
             ->whereIn(
                 'timelineable_type',

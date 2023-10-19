@@ -3,12 +3,12 @@
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Assist\Engagement\Models\Engagement;
-use Assist\Timeline\Filament\Pages\Timeline;
 use Assist\Timeline\Actions\SyncTimelineData;
 use Assist\Engagement\Models\EngagementResponse;
+use Assist\Timeline\Filament\Pages\TimelinePage;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 
-class ProspectEngagementTimeline extends Timeline
+class ProspectEngagementTimeline extends TimelinePage
 {
     protected static string $resource = ProspectResource::class;
 

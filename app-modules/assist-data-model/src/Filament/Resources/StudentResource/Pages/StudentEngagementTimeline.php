@@ -6,9 +6,10 @@ use Assist\Engagement\Models\Engagement;
 use Assist\Timeline\Filament\Pages\Timeline;
 use Assist\Timeline\Actions\SyncTimelineData;
 use Assist\Engagement\Models\EngagementResponse;
+use Assist\Timeline\Filament\Pages\TimelinePage;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 
-class StudentEngagementTimeline extends Timeline
+class StudentEngagementTimeline extends TimelinePage
 {
     protected static string $resource = StudentResource::class;
 

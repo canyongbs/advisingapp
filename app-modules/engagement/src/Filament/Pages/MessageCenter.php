@@ -2,7 +2,6 @@
 
 namespace Assist\Engagement\Filament\Pages;
 
-use Exception;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Pages\Page;
@@ -17,12 +16,12 @@ use Assist\Prospect\Models\Prospect;
 use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
+use App\Actions\GetRecordFromMorphAndKey;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Timeline\Actions\SyncTimelineData;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Timeline\Filament\Pages\Concerns\LoadsRecords;
@@ -145,7 +144,7 @@ class MessageCenter extends Page
 
         $this->loadingTimeline = true;
 
-        $this->selectedEducatable = $this->getRecordFromMorphAndKey($morphClass, $educatable);
+        $this->selectedEducatable = resolve(GetRecordFromMorphAndKey::class)->via($morphClass, $educatable);
 
         resolve(SyncTimelineData::class)->now($this->selectedEducatable, $this->modelsToTimeline);
 
@@ -159,21 +158,9 @@ class MessageCenter extends Page
         $this->selectEducatable($educatableId, $morphClass);
     }
 
-    // TODO Extract this away... This is also used in the timeline
-    public function getRecordFromMorphAndKey($morphReference, $key)
+    public function viewRecord($key, $morphReference)
     {
-        $className = Relation::getMorphedModel($morphReference);
-
-        if (is_null($className)) {
-            throw new Exception("Model not found for reference: {$morphReference}");
-        }
-
-        return $className::whereKey($key)->firstOrFail();
-    }
-
-    public function viewRecord($record, $morphReference)
-    {
-        $this->currentRecordToView = $this->getRecordFromMorphAndKey($morphReference, $record);
+        $this->currentRecordToView = resolve(GetRecordFromMorphAndKey::class)->via($morphReference, $key);
 
         $this->mountAction('view');
     }
