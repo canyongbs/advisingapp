@@ -2,12 +2,14 @@
 
 namespace Assist\Form\Filament\Resources\FormResource\Pages;
 
+use Illuminate\Support\Arr;
 use Assist\Form\Models\Form;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Infolists\Components\TextEntry;
 use Assist\Form\Filament\Resources\FormResource;
 use Assist\Form\Filament\Resources\FormResource\Pages\Concerns\HasSharedFormConfiguration;
 
@@ -69,6 +71,39 @@ class EditForm extends EditRecord
                 ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
+            Action::make('embed_snippet')
+                ->label('Embed Snippet')
+                ->infolist(
+                    [
+                        TextEntry::make('snippet')
+                            ->label('Click to Copy')
+                            ->state(function (Form $form) {
+                                $scriptUrl = url('js/widgets/form/assist-form-widget.js?') . Arr::query(['form' => $form->id]);
+
+                                return <<<EOD
+                                ```
+                                <form-embed></form-embed>
+                                <script src='{$scriptUrl}'></script>
+                                ```
+                                EOD;
+                            })
+                            ->markdown()
+                            ->copyable()
+                            ->copyableState(function (Form $form) {
+                                $scriptUrl = url('js/widgets/form/assist-form-widget.js?') . Arr::query(['form' => $form->id]);
+
+                                return <<<EOD
+                                <form-embed></form-embed>
+                                <script src='{$scriptUrl}'></script>
+                                EOD;
+                            })
+                            ->copyMessage('Copied!')
+                            ->copyMessageDuration(1500),
+                    ]
+                )
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close')
+                ->hidden(fn (Form $form) => ! $form->embed_enabled),
             DeleteAction::make(),
         ];
     }
