@@ -5,12 +5,14 @@
         "build:js-compile": "node ./bin/build.js",
         "build:filament": "php artisan filament:assets",
         "build:vite": "vite build",
-        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament"
+        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament",
+        "build:form": "(cd widgets/form && vite build)"
     },
     "devDependencies": {
         "@shufo/prettier-plugin-blade": "^1.9.2",
         "@tailwindcss/forms": "^0.5.4",
         "@tailwindcss/typography": "^0.5.9",
+        "@vitejs/plugin-vue": "^4.4.0",
         "autoprefixer": "^10.4.14",
         "browser-sync": "^2.26.14",
         "browser-sync-webpack-plugin": "^2.3.0",
@@ -34,6 +36,7 @@
         "dompurify": "^3.0.6",
         "flowbite": "^1.8.1",
         "showdown": "^2.1.0",
-        "sortablejs": "^1.15.0"
+        "sortablejs": "^1.15.0",
+        "vue": "^3.3.4"
     }
 }

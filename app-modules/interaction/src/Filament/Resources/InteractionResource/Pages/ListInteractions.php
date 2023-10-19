@@ -10,7 +10,6 @@ use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\CreateAction;
 use Assist\Interaction\Models\Interaction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -63,9 +62,6 @@ class ListInteractions extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                CreateAction::make(),
             ]);
     }
 

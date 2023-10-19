@@ -4,6 +4,7 @@ namespace Assist\AssistDataModel\Models;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
@@ -32,6 +33,11 @@ class Performance extends Model
     public function getApiPermissions(): Collection
     {
         return collect([]);
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 
     public function getTable()

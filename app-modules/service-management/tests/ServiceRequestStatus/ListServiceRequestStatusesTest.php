@@ -38,9 +38,14 @@ test('The correct details are displayed on the ListServiceRequestStatuses page',
                 $serviceRequestType->name,
                 $serviceRequestType
             )
-            ->assertTableColumnStateSet(
+            ->assertTableColumnFormattedStateSet(
+                'classification',
+                $serviceRequestType->classification->getLabel(),
+                $serviceRequestType
+            )
+            ->assertTableColumnFormattedStateSet(
                 'color',
-                $serviceRequestType->color,
+                $serviceRequestType->color->getLabel(),
                 $serviceRequestType
             )
         // Currently setting not test for service_request_count as there is no easy way to check now, relying on underlying package tests

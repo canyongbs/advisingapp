@@ -20,6 +20,12 @@ class CreateUsersTable extends Migration
             $table->string('locale')->nullable();
             $table->string('type')->nullable();
             $table->boolean('is_external')->default(false);
+            $table->text('bio')->nullable();
+            $table->boolean('is_bio_visible_on_profile')->default(false);
+            $table->foreignUuid('pronouns_id')->nullable()->constrained('pronouns')->nullOnDelete();
+            $table->boolean('are_pronouns_visible_on_profile')->default(false);
+            $table->string('avatar_url')->nullable();
+            $table->boolean('are_teams_visible_on_profile')->default(false);
 
             $table->timestamps();
             $table->softDeletes();

@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use Filament\PanelProvider;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\EditProfile;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
 use App\Filament\Pages\ProductHealth;
@@ -43,9 +44,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('/')
             ->login(Login::class)
+            ->profile(EditProfile::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
-            // ->maxContentWidth('full') //TODO: evaluate use
+            ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

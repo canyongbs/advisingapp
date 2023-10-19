@@ -9,15 +9,17 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
-use Filament\Tables\Actions\CreateAction as TableCreateAction;
+use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 
 class ListStudents extends ListRecords
@@ -44,6 +46,23 @@ class ListStudents extends ListRecords
                     ->searchable(),
             ])
             ->filters([
+                SelectFilter::make('caseload')
+                    ->options(
+                        auth()->user()->caseloads()
+                            ->where('model', CaseloadModel::Student)
+                            ->pluck('name', 'id'),
+                    )
+                    ->query(function (Builder $query, array $data) {
+                        if (blank($data['value'])) {
+                            return;
+                        }
+
+                        $query->whereKey(
+                            app(TranslateCaseloadFilters::class)
+                                ->handle($data['value'])
+                                ->pluck($query->getModel()->getQualifiedKeyName()),
+                        );
+                    }),
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 TernaryFilter::make('sap')
@@ -73,9 +92,6 @@ class ListStudents extends ListRecords
                     BulkEngagementAction::make(context: 'students'),
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                TableCreateAction::make(),
             ]);
     }
 

@@ -128,6 +128,8 @@ namespace App\Models{
  * @property-read int|null $assistant_chats_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\Caseload> $caseloads
+ * @property-read int|null $caseloads_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\ConsentAgreement> $consentAgreements
  * @property-read int|null $consent_agreements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementBatch> $engagementBatches
@@ -244,6 +246,7 @@ namespace Assist\AssistDataModel\Models{
 /**
  * Assist\AssistDataModel\Models\Performance
  *
+ * @property-read \Assist\AssistDataModel\Models\Student|null $student
  * @method static \Assist\AssistDataModel\Database\Factories\PerformanceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newQuery()
@@ -576,12 +579,89 @@ namespace Assist\Authorization\Models{
  class IdeHelperRoleGroup {}
 }
 
+namespace Assist\Campaign\Models{
+/**
+ * Assist\Campaign\Models\Campaign
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property string $caseload_id
+ * @property string $name
+ * @property string $execute_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Campaign\Models\CampaignAction> $actions
+ * @property-read int|null $actions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Assist\CaseloadManagement\Models\Caseload $caseload
+ * @property-read \App\Models\User $user
+ * @method static \Assist\Campaign\Database\Factories\CampaignFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign hasNotBeenExecuted()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCaseloadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereExecuteAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCampaign {}
+}
+
+namespace Assist\Campaign\Models{
+/**
+ * Assist\Campaign\Models\CampaignAction
+ *
+ * @property string $id
+ * @property string $campaign_id
+ * @property \Assist\Campaign\Enums\CampaignActionType $type
+ * @property array $data
+ * @property string|null $executed_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Assist\Campaign\Models\Campaign $campaign
+ * @method static \Assist\Campaign\Database\Factories\CampaignActionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereCampaignId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereExecutedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCampaignAction {}
+}
+
 namespace Assist\CaseloadManagement\Models{
 /**
  * Assist\CaseloadManagement\Models\Caseload
  *
  * @property string $id
  * @property string $name
+ * @property string|null $description
  * @property array|null $filters
  * @property \Assist\CaseloadManagement\Enums\CaseloadModel $model
  * @property \Assist\CaseloadManagement\Enums\CaseloadType $type
@@ -598,6 +678,7 @@ namespace Assist\CaseloadManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload query()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereFilters($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereModel($value)
@@ -650,6 +731,10 @@ namespace Assist\Consent\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
  * @method static \Assist\Consent\Database\Factories\ConsentAgreementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newQuery()
@@ -666,6 +751,38 @@ namespace Assist\Consent\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperConsentAgreement {}
+}
+
+namespace Assist\Consent\Models{
+/**
+ * Assist\Consent\Models\UserConsentAgreement
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property string $consent_agreement_id
+ * @property string $ip_address
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereConsentAgreementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereIpAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperUserConsentAgreement {}
 }
 
 namespace Assist\Division\Models{
@@ -832,7 +949,8 @@ namespace Assist\Engagement\Models{
  * Assist\Engagement\Models\EngagementFile
  *
  * @property string $id
- * @property string|null $description
+ * @property string $description
+ * @property string|null $retention_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
@@ -850,6 +968,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereRetentionDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -866,7 +985,7 @@ namespace Assist\Engagement\Models{
  * @property string $entity_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Engagement\Models\EngagementFile|null $engagementFile
+ * @property-read \Assist\Engagement\Models\EngagementFile $engagementFile
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $entity
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities newQuery()
@@ -1790,6 +1909,8 @@ namespace Assist\Task\Models{
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
  * @method static \Illuminate\Database\Eloquent\Builder|Task byNextDue()
+ * @method static \Illuminate\Database\Eloquent\Builder|Task educatableSearch(string $relationship, string $search)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task educatableSort(string $direction)
  * @method static \Assist\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()

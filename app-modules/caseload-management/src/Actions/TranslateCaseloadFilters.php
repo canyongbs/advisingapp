@@ -2,30 +2,29 @@
 
 namespace Assist\CaseloadManagement\Actions;
 
-use Illuminate\Database\Eloquent\Collection;
+use function Livewire\trigger;
+
+use Illuminate\Database\Eloquent\Builder;
 use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Enums\CaseloadType;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
+use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
+use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\GetCaseloadQuery;
 
 class TranslateCaseloadFilters
 {
-    public function handle(Caseload $caseload): Collection|array
+    public function handle(Caseload | string $caseload): Builder
     {
-        if ($caseload->type === CaseloadType::Dynamic) {
-            $filters = CaseloadResource::filters($caseload->model);
+        // Create a fake Livewire component to replicate the table on the EditCaseload page.
+        $page = app('livewire')->new(GetCaseloadQuery::class);
 
-            $query = $caseload->model->query();
-
-            foreach ($filters as $filter) {
-                $filter->apply(
-                    $query,
-                    $caseload->filters[$filter->getName()] ?? [],
-                );
-            }
-        } elseif ($caseload->type === CaseloadType::Static) {
-            $query = $caseload->subjects();
+        if ($caseload instanceof Caseload) {
+            $caseload = $caseload->getKey();
         }
 
-        return $query->get();
+        // Mount the fake Livewire component with the desired caseload.
+        trigger('mount', $page, [$caseload], null, null);
+
+        // Extract the filtered table query from the fake Livewire component,
+        // which already respects both dynamic and static populations.
+        return $page->getFilteredTableQuery();
     }
 }

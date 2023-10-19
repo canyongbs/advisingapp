@@ -5,6 +5,7 @@ namespace Assist\ServiceManagement\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Assist\ServiceManagement\Enums\ColumnColorOptions;
 use Assist\ServiceManagement\Models\ServiceRequestStatus;
+use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
 
 /**
  * @extends Factory<ServiceRequestStatus>
@@ -14,8 +15,9 @@ class ServiceRequestStatusFactory extends Factory
     public function definition(): array
     {
         return [
+            'classification' => $this->faker->randomElement(SystemServiceRequestClassification::cases()),
             'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(ColumnColorOptions::cases())->value,
+            'color' => $this->faker->randomElement(ColumnColorOptions::cases()),
         ];
     }
 
@@ -23,8 +25,9 @@ class ServiceRequestStatusFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
+                'classification' => SystemServiceRequestClassification::Open,
                 'name' => 'Open',
-                'color' => ColumnColorOptions::Success->value,
+                'color' => ColumnColorOptions::Success,
             ];
         });
     }
@@ -33,6 +36,7 @@ class ServiceRequestStatusFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
+                'classification' => SystemServiceRequestClassification::InProgress,
                 'name' => 'In Progress',
                 'color' => ColumnColorOptions::Info->value,
             ];
@@ -43,6 +47,7 @@ class ServiceRequestStatusFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
+                'classification' => SystemServiceRequestClassification::Closed,
                 'name' => 'Closed',
                 'color' => ColumnColorOptions::Warning->value,
             ];

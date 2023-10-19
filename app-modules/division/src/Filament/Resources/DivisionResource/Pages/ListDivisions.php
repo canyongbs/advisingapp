@@ -12,7 +12,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Division\Filament\Resources\DivisionResource;
-use Filament\Tables\Actions\CreateAction as TableCreateAction;
 
 class ListDivisions extends ListRecords
 {
@@ -48,9 +47,6 @@ class ListDivisions extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                TableCreateAction::make(),
             ]);
     }
 
