@@ -4,7 +4,7 @@ namespace Assist\Campaign\Filament\Blocks;
 
 use Filament\Forms\Components\Builder\Block;
 
-class CampaignActionBlock extends Block
+abstract class CampaignActionBlock extends Block
 {
     protected function setUp(): void
     {
@@ -15,4 +15,6 @@ class CampaignActionBlock extends Block
     {
         return parent::make($name ?? static::type());
     }
+
+    abstract public static function type(): string;
 }
