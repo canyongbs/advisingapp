@@ -42,6 +42,7 @@ class SocialiteController extends Controller
 
         $user->update([
             'name' => $socialiteUser->getName(),
+            'avatar_url' => $socialiteUser->getAvatar(),
         ]);
 
         Auth::login($user);
