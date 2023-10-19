@@ -32,9 +32,9 @@ class EditProfile extends BaseEditProfile
                     ->hidden($user->is_external)
                     ->avatar(),
                 $this->getNameFormComponent()
-                    ->hidden($user->is_external),
+                    ->disabled($user->is_external),
                 $this->getEmailFormComponent()
-                    ->hidden($user->is_external),
+                    ->disabled($user->is_external),
                 $this->getPasswordFormComponent()
                     ->hidden($user->is_external),
                 $this->getPasswordConfirmationFormComponent()
