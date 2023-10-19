@@ -19,6 +19,7 @@ class CampaignAction extends BaseModel implements Auditable
     use SoftDeletes;
 
     protected $fillable = [
+        'campaign_id',
         'type',
         'data',
         'executed_at',

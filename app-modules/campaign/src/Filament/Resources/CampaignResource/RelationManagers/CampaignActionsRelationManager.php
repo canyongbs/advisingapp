@@ -2,16 +2,18 @@
 
 namespace Assist\Campaign\Filament\Resources\CampaignResource\RelationManagers;
 
-use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Assist\Campaign\Models\Campaign;
+use Filament\Forms\Components\Builder;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Assist\Campaign\Models\CampaignAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class CampaignActionsRelationManager extends RelationManager
@@ -43,10 +45,23 @@ class CampaignActionsRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
-                // Disabled for now. We'll need to determine the rules we want to establish
-                // with product, but theoretically this should only show if there are other
-                // "types" of actions that this Campaign has not already defined available
-                // CreateAction::make(),
+                CreateAction::make()
+                    ->form([
+                        Builder::make('data')
+                            ->addActionLabel('Add a new Campaign Action')
+                            ->maxItems(1)
+                            ->blocks([
+                                EngagementBatchBlock::make(),
+                            ]),
+                    ])
+                    ->using(function (array $data, string $model): CampaignAction {
+                        return $model::create([
+                            'campaign_id' => $this->getOwnerRecord()->id,
+                            'type' => $data['data'][0]['type'],
+                            'data' => $data['data'][0]['data'],
+                        ]);
+                    })
+                    ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
             ->actions([
                 EditAction::make()
@@ -55,8 +70,8 @@ class CampaignActionsRelationManager extends RelationManager
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ])
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ]);
