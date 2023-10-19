@@ -28,7 +28,7 @@
                             <x-slot:view-record-icon>
                                 <x-filament::icon-button
                                     class="absolute right-2 top-2"
-                                    wire:click="viewRecord('{{ $record->timelineable->id }}', '{{ $record->timelineable->getMorphClass() }}')"
+                                    wire:click="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
                                     icon="heroicon-o-eye"
                                 />
                             </x-slot:view-record-icon>
@@ -38,7 +38,7 @@
                             <x-slot:view-record-icon>
                                 <x-filament::icon-button
                                     class="absolute right-2 top-2"
-                                    wire:click="viewRecord('{{ $record->timelineable->id }}', '{{ $record->timelineable->getMorphClass() }}')"
+                                    wire:click="viewRecord('{{ $record->timelineable->getKey() }}', '{{ $record->timelineable->getMorphClass() }}')"
                                     icon="heroicon-o-eye"
                                 />
                             </x-slot:view-record-icon>
