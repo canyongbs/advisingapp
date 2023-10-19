@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Filament\Facades\Filament;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
 use Assist\Authorization\Enums\SocialiteProvider;
 
 class SocialiteController extends Controller
@@ -37,7 +38,12 @@ class SocialiteController extends Controller
             ->first();
 
         if (! $user?->is_external) {
-            abort(403);
+            Notification::make()
+                ->title('A user with that email address not found. Please contact your administrator.')
+                ->danger()
+                ->send();
+
+            return redirect()->to(Filament::getLoginUrl());
         }
 
         $user->update([
