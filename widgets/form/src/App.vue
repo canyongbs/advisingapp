@@ -16,10 +16,17 @@ const schema = ref([]);
 fetch(`${hostUrl}/api/forms/${scriptQuery.form}`)
     .then((response) => response.json())
     .then((json) => {
+        if (json.error) {
+            throw new Error(json.error);
+        }
+
         formName.value = json.name;
         formDescription.value = json.description;
         schema.value = json.schema;
         display.value = true;
+    })
+    .catch((error) => {
+        console.error(`ASSIST Embed Form ${error}`);
     });
 
 const submit = async (fields) => {
