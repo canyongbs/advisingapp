@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Engagement\Models\EngagementFileEntities;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
@@ -130,9 +129,16 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');
     }
 
-    public function careTeam(): MorphOne
+    public function careTeam(): MorphToMany
     {
-        return $this->morphOne(CareTeam::class, 'educatable');
+        return $this->morphToMany(
+            related: User::class,
+            name: 'educatable',
+            table: 'care_teams',
+        )
+            ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     public static function filamentResource(): string

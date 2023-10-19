@@ -9,6 +9,7 @@ use Assist\Team\Models\Team;
 use Assist\Team\Models\TeamUser;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
+use Assist\CareTeam\Models\CareTeam;
 use Assist\Prospect\Models\Prospect;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
@@ -131,6 +132,30 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             table: 'subscriptions'
         )
             ->using(Subscription::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    public function prospectCareTeams(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Prospect::class,
+            name: 'educatable',
+            table: 'care_teams'
+        )
+            ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    public function studentCareTeams(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Student::class,
+            name: 'educatable',
+            table: 'care_teams'
+        )
+            ->using(CareTeam::class)
             ->withPivot('id')
             ->withTimestamps();
     }

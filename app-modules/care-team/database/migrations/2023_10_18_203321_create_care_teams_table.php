@@ -1,14 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class () extends Migration {
     public function up(): void
     {
         Schema::create('care_teams', function (Blueprint $table) {
@@ -17,18 +13,11 @@ return new class extends Migration
             $table->string('educatable_id');
             $table->string('educatable_type');
 
-            $table->unique(['educatable_id', 'educatable_type']);
+            $table->foreignUuid('user_id')->constrained('users');
+
+            $table->unique(['educatable_id', 'educatable_type', 'user_id']);
 
             $table->timestamps();
-            $table->softDeletes();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('care_teams');
     }
 };
