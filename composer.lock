@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "676dbfbe4c9586919d8dbc2ec49510d7",
+    "content-hash": "62cecb792da47953614e4f0e1e6fdecb",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -765,6 +765,41 @@
                     "Assist\\Authorization\\Tests\\": "tests/",
                     "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
                     "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/care-team",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/care-team",
+                "reference": "e6a5aee66b3bb94c9c9240ee97976f93d4126f26"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\CareTeam\\Providers\\CareTeamServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\CareTeam\\": "src/",
+                    "Assist\\CareTeam\\Tests\\": "tests/",
+                    "Assist\\CareTeam\\Database\\Factories\\": "database/factories/",
+                    "Assist\\CareTeam\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
