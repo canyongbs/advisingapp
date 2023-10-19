@@ -17,8 +17,8 @@
                 <x-engagement::message-center-content
                     :loadingTimeline="$loadingTimeline"
                     :educatable="$recordModel"
-                    :hasMorePages="$hasMorePages"
                     :timelineRecords="$timelineRecords"
+                    :hasMorePages="$hasMorePages"
                     :emptyStateMessage="$emptyStateMessage"
                     :noMoreRecordsMessage="$noMoreRecordsMessage"
                 />

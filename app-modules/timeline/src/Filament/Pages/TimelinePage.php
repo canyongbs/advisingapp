@@ -35,11 +35,11 @@ abstract class TimelinePage extends Page
     {
         $this->recordModel = $this->record = $this->resolveRecord($record);
 
+        $this->authorizeAccess();
+
         $this->timelineRecords = collect();
 
         resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
-
-        $this->authorizeAccess();
 
         $this->loadTimelineRecords();
     }
