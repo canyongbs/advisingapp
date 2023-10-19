@@ -56,7 +56,7 @@ class MessageCenter extends Page
 
     public string $emptyStateMessage = 'There are currently no timeline items to show.';
 
-    public string $noMoreRecordsMessage = 'You have reached the end of this timeline.';
+    public string $noMoreRecordsMessage = 'No more timeline items to show.';
 
     #[Url]
     public string $search = '';
@@ -127,7 +127,14 @@ class MessageCenter extends Page
     {
         $this->loadingTimeline = true;
 
+        $this->reset('initialLoad');
+        $this->reset('nextCursor');
+
+        $this->timelineRecords = collect();
+
         resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
+
+        $this->loadTimelineRecords();
 
         $this->loadingTimeline = false;
     }

@@ -20,9 +20,6 @@ trait LoadsTimelineRecords
 
     public function loadTimelineRecords(): void
     {
-        ray('loadTimelineRecords()');
-        ray($this->recordModel);
-
         // For some reason, the intersection observer still seems to be present
         // Even though it's in a conditional block that should not be rendered
         // This is an additional protection to prevent loading more records
@@ -47,8 +44,6 @@ trait LoadsTimelineRecords
                 'cursor',
                 Cursor::fromEncoded($this->nextCursor)
             );
-
-        ray('records', $records);
 
         $this->timelineRecords->push(...$records->items());
 

@@ -32,7 +32,6 @@ class EngagementObserver
         // TODO Extract the timeline related actions
         cache()->forget("timeline.synced.{$educatable->getMorphClass()}.{$educatable->getKey()}");
 
-
         Timeline::firstOrCreate([
             'educatable_type' => $educatable->getMorphClass(),
             'educatable_id' => $educatable->getKey(),
