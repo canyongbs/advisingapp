@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Assist\Prospect\Models\Prospect;
+use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\AssistDataModel\Models\Student;
@@ -13,6 +14,7 @@ use Assist\Timeline\Timelines\EngagementTimeline;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
@@ -42,6 +44,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     protected $casts = [
         'deliver_at' => 'datetime',
     ];
+
+    public function timelineRecord(): MorphOne
+    {
+        return $this->morphOne(Timeline::class, 'timelineable');
+    }
 
     public function timeline(): EngagementTimeline
     {

@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     <x-timeline::timeline
-        :aggregateRecords="$aggregateRecords"
+        :timelineRecords="$timelineRecords"
         :emptyStateMessage="$emptyStateMessage"
     />
 </x-filament-panels::page>

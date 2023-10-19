@@ -4,6 +4,7 @@ namespace Assist\Timeline\Providers;
 
 use Filament\Panel;
 use Assist\Timeline\TimelinePlugin;
+use Assist\Timeline\Models\Timeline;
 use Illuminate\Support\ServiceProvider;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -18,7 +19,9 @@ class TimelineServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+            'timeline' => Timeline::class,
+        ]);
 
         $this->registerRolesAndPermissions();
     }

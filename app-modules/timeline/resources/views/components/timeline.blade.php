@@ -1,8 +1,8 @@
-@if ($aggregateRecords->count() < 1)
+@if ($timelineRecords->count() < 1)
     <x-timeline::empty-state :message="$emptyStateMessage" />
 @else
     <ol class="relative">
-        @foreach ($aggregateRecords as $record)
+        @foreach ($timelineRecords as $record)
             <li
                 class="relative -left-6 mb-10 ml-10 w-full rounded-lg p-4 hover:bg-gray-200 hover:dark:bg-gray-800 md:ml-6">
                 @if (!$loop->last)
@@ -15,30 +15,30 @@
                 >
                     <x-filament::icon
                         class="h-4 w-4 text-gray-800 dark:text-gray-100"
-                        icon="{{ $record->timeline()->icon() }}"
+                        icon="{{ $record->timelineable->timeline()->icon() }}"
                     />
                 </span>
 
                 <div class="ml-2">
-                    @if ($record->timeline()->providesCustomView())
+                    @if ($record->timelineable()->timeline()->providesCustomView())
                         <x-dynamic-component
-                            :component="$record->timeline()->renderCustomView()"
-                            :record="$record"
+                            :component="$record->timelineable->timeline()->renderCustomView()"
+                            :record="$record->timelineable"
                         >
                             <x-slot:view-record-icon>
                                 <x-filament::icon-button
                                     class="absolute right-2 top-2"
-                                    wire:click="viewRecord('{{ $record->id }}', '{{ $record->getMorphClass() }}')"
+                                    wire:click="viewRecord('{{ $record->timelineable->id }}', '{{ $record->timelineable->getMorphClass() }}')"
                                     icon="heroicon-o-eye"
                                 />
                             </x-slot:view-record-icon>
                         </x-dynamic-component>
                     @else
-                        <x-timeline::timeline-record :record="$record">
+                        <x-timeline::timeline-record :record="$record->timelineable">
                             <x-slot:view-record-icon>
                                 <x-filament::icon-button
                                     class="absolute right-2 top-2"
-                                    wire:click="viewRecord('{{ $record->id }}', '{{ $record->getMorphClass() }}')"
+                                    wire:click="viewRecord('{{ $record->timelineable->id }}', '{{ $record->timelineable->getMorphClass() }}')"
                                     icon="heroicon-o-eye"
                                 />
                             </x-slot:view-record-icon>
@@ -48,5 +48,23 @@
 
             </li>
         @endforeach
+        <div
+            x-data="{
+                observe() {
+                    let observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                @this.call('loadMoreRecords')
+                            }
+                        })
+                    }, {
+                        root: null
+                    })
+            
+                    observer.observe(this.$el)
+                }
+            }"
+            x-init="observe"
+        ></div>
     </ol>
 @endif

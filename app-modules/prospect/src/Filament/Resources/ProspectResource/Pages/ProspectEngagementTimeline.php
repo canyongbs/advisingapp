@@ -4,7 +4,9 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Assist\Engagement\Models\Engagement;
 use Assist\Timeline\Filament\Pages\Timeline;
+use Assist\Timeline\Actions\SyncTimelineData;
 use Assist\Engagement\Models\EngagementResponse;
+use Assist\Timeline\Models\Timeline as TimelineModel;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 
 class ProspectEngagementTimeline extends Timeline
@@ -26,6 +28,22 @@ class ProspectEngagementTimeline extends Timeline
 
         $this->authorizeAccess();
 
-        $this->aggregateRecords();
+        resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
+    }
+
+    protected function getViewData(): array
+    {
+        $timelineRecords = TimelineModel::query()
+            ->forEducatable($this->recordModel)
+            ->whereIn(
+                'timelineable_type',
+                collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()
+            )
+            ->orderBy('record_creation', 'desc')
+            ->simplePaginate($this->recordsPerPage);
+
+        return [
+            'timelineRecords' => $timelineRecords,
+        ];
     }
 }

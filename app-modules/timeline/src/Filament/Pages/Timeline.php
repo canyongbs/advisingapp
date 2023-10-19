@@ -3,15 +3,11 @@
 namespace Assist\Timeline\Filament\Pages;
 
 use Exception;
-use Carbon\Carbon;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Timeline\Exceptions\ModelMustHaveATimeline;
-use Assist\Timeline\Models\Contracts\ProvidesATimeline;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
 abstract class Timeline extends Page
@@ -24,29 +20,17 @@ abstract class Timeline extends Page
 
     public string $emptyStateMessage = 'There are no records to show on this timeline.';
 
-    public $aggregateRecords;
-
     public array $modelsToTimeline = [];
 
     public Model $currentRecordToView;
 
     public Model $recordModel;
 
-    public function aggregateRecords(): Collection
+    public int $recordsPerPage = 3;
+
+    public function loadMoreRecords()
     {
-        $this->aggregateRecords = collect();
-
-        foreach ($this->modelsToTimeline as $model) {
-            if (! in_array(ProvidesATimeline::class, class_implements($model))) {
-                throw new ModelMustHaveATimeline("Model {$model} must have a timeline available");
-            }
-
-            $this->aggregateRecords = $this->aggregateRecords->concat($model::getTimelineData($this->recordModel));
-        }
-
-        return $this->aggregateRecords = $this->aggregateRecords->sortByDesc(function ($record) {
-            return Carbon::parse($record->timeline()->sortableBy())->timestamp;
-        });
+        $this->recordsPerPage += 3;
     }
 
     public function viewRecord($record, $morphReference)
