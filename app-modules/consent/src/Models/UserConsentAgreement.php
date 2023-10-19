@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperUserConsentAgreement
+ */
 class UserConsentAgreement extends BaseModel implements Auditable
 {
     use AsPivot;

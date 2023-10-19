@@ -14,6 +14,7 @@ class EngagementFileFactory extends Factory
     {
         return [
             'description' => $this->faker->sentence(3),
+            'retention_date' => $this->faker->dateTimeBetween('-1 year', '+1 year')->format('Y-m-d'),
         ];
     }
 }

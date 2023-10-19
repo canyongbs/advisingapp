@@ -12,6 +12,7 @@ use App\Filament\Widgets\TotalProspects;
 use App\Filament\Widgets\RecentLeadsList;
 use Filament\Pages\Dashboard as BasePage;
 use App\Filament\Widgets\MyServiceRequests;
+use App\Filament\Widgets\ProspectGrowthChart;
 
 class Dashboard extends BasePage
 {
@@ -30,6 +31,7 @@ class Dashboard extends BasePage
             TotalProspects::class,
             MyStudents::class,
             MyProspects::class,
+            ProspectGrowthChart::class,
             MyServiceRequests::class,
             MyTasks::class,
             RecentLeadsList::class,

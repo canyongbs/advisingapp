@@ -49,7 +49,7 @@ class RecentLeadsList extends BaseWidget
                         return $record->status->name;
                     })
                     ->color(function (Prospect $record) {
-                        return $record->status->color;
+                        return $record->status->color->value;
                     }),
                 TextColumn::make('source.name')
                     ->label('Source')

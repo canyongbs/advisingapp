@@ -14,6 +14,7 @@ use Assist\Prospect\Models\Prospect;
 use Assist\Authorization\Models\Role;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\MeetingCenter\Models\Calendar;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\AssistDataModel\Models\Student;
 use Lab404\Impersonate\Models\Impersonate;
@@ -22,7 +23,9 @@ use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\Consent\Models\Concerns\CanConsent;
+use Assist\MeetingCenter\Models\CalendarEvent;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -204,6 +207,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasMany(AssistantChat::class);
     }
 
+    public function events(): HasMany
+    {
+        return $this->hasMany(CalendarEvent::class);
+    }
+
     public function teams(): BelongsToMany
     {
         return $this
@@ -212,6 +220,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             //TODO: remove this if we support multiple teams
             ->limit(1)
             ->withTimestamps();
+    }
+
+    public function calendar(): HasOne
+    {
+        return $this->hasOne(Calendar::class);
     }
 
     public function assistantChatMessageLogs(): HasMany

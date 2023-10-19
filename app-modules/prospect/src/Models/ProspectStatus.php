@@ -7,6 +7,8 @@ use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Prospect\Enums\ProspectStatusColorOptions;
+use Assist\Prospect\Enums\SystemProspectClassification;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -18,8 +20,14 @@ class ProspectStatus extends BaseModel implements Auditable
     use AuditableTrait;
 
     protected $fillable = [
+        'classification',
         'name',
         'color',
+    ];
+
+    protected $casts = [
+        'classification' => SystemProspectClassification::class,
+        'color' => ProspectStatusColorOptions::class,
     ];
 
     public function prospects(): HasMany

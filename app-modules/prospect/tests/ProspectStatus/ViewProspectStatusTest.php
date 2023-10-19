@@ -22,6 +22,8 @@ test('The correct details are displayed on the ViewProspectStatus page', functio
             [
                 'Name',
                 $prospectStatus->name,
+                'Classification',
+                $prospectStatus->classification->getLabel(),
                 'Color',
                 $prospectStatus->color,
             ]
