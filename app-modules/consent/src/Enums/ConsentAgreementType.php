@@ -10,7 +10,7 @@ enum ConsentAgreementType: string
     public function getModalDescription(): string
     {
         return match ($this) {
-            self::AzureOpenAI => "Warning: Changing the AI Consent Configuration will reset everyone's consents, making them agree to your new terms all over again. There's no undoing this, so please make sure this is your intention.",
+            self::AzureOpenAI => "Warning: Changing the AI Usage Agreement will reset everyone's consents, making them agree to your new terms all over again. There's no undoing this, so please make sure this is your intention.",
         };
     }
 }
