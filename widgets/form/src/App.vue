@@ -43,8 +43,9 @@ const submit = async (data, node) => {
     })
         .then((response) => response.json())
         .then((json) => {
-            if (json.error) {
-                throw new Error(json.error);
+            if (json.errors) {
+                node.setErrors([], json.errors);
+                return;
             }
 
             submittedSuccess.value = true;

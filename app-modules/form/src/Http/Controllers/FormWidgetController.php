@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Assist\Form\Models\FormField;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 use Assist\Form\Actions\GenerateFormValidation;
 use Assist\Form\Actions\GenerateFormFieldFormKitSchema;
 
@@ -14,7 +16,6 @@ class FormWidgetController extends Controller
 {
     public function view(Request $request, Form $form): JsonResponse
     {
-        // TODO: Move this out of the controller once we go beyond these simple fields and configurations.
         return response()->json(
             [
                 'name' => $form->name,
@@ -26,10 +27,22 @@ class FormWidgetController extends Controller
 
     public function store(Request $request, Form $form): JsonResponse
     {
-        $validated = $request->validate(resolve(GenerateFormValidation::class)->handle($form));
+        $validator = Validator::make(
+            $request->all(),
+            resolve(GenerateFormValidation::class)->handle($form)
+        );
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'errors' => (object) $validator->errors(),
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
 
         $form->submissions()->create([
-            'content' => $validated,
+            'content' => $request->all(),
         ]);
 
         return response()->json(
