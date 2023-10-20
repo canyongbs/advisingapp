@@ -26,10 +26,10 @@ class FormWidgetController extends Controller
 
     public function store(Request $request, Form $form): JsonResponse
     {
-        $request->validate(resolve(GenerateFormValidation::class)->handle($form));
+        $validated = $request->validate(resolve(GenerateFormValidation::class)->handle($form));
 
         $form->submissions()->create([
-            'data' => $request->all(),
+            'content' => $validated,
         ]);
 
         return response()->json(
