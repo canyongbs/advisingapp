@@ -46,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->profile(EditProfile::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
+            ->favicon('/default_favicon.png')
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
