@@ -11,5 +11,7 @@ Route::prefix('api')
             ->group(function () {
                 Route::get('/{form}', [FormWidgetController::class, 'view'])
                     ->name('show');
+                Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
+                    ->name('submit');
             });
     });

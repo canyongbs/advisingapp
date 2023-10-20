@@ -30,8 +30,25 @@ fetch(`${hostUrl}/api/forms/${scriptQuery.form}`)
     });
 
 const submit = async (fields) => {
-    await new Promise((r) => setTimeout(r, 1000));
-    alert(JSON.stringify(fields));
+    console.log(JSON.stringify(fields));
+    fetch(`${hostUrl}/api/forms/${scriptQuery.form}/submit`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(fields),
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            if (json.error) {
+                throw new Error(json.error);
+            }
+
+            console.log(json);
+        })
+        .catch((error) => {
+            console.error(`ASSIST Embed Form ${error}`);
+        });
 };
 </script>
 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Assist\Form\Models\FormField;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Assist\Form\Actions\GenerateFormValidation;
 use Assist\Form\Actions\GenerateFormFieldFormKitSchema;
 
 class FormWidgetController extends Controller
@@ -25,11 +26,7 @@ class FormWidgetController extends Controller
 
     public function store(Request $request, Form $form): JsonResponse
     {
-        $request->validate(
-            $form->fields->mapWithKeys(function ($field) {
-                return [$field['key'] => $field['required'] ? 'required' : 'nullable'];
-            })->toArray()
-        );
+        $request->validate(resolve(GenerateFormValidation::class)->handle($form));
 
         $form->submissions()->create([
             'data' => $request->all(),
