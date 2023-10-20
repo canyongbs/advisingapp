@@ -5,6 +5,7 @@ namespace Assist\Form\Filament\Resources\FormResource\RelationManagers;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Assist\Form\Models\FormSubmission;
 use Filament\Forms\Components\KeyValue;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -29,7 +30,6 @@ class FormSubmissionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('id')
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('created_at')
@@ -40,7 +40,8 @@ class FormSubmissionsRelationManager extends RelationManager
             ->headerActions([
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading(fn (FormSubmission $record) => "Submission Details: {$record->created_at}"),
                 DeleteAction::make(),
             ])
             ->bulkActions([
