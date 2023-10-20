@@ -2,6 +2,7 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
@@ -16,7 +17,9 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
+use Assist\CareTeam\Filament\Actions\JoinCareTeamBulkAction;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
+use Assist\CareTeam\Filament\Actions\LeaveCareTeamBulkAction;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
@@ -81,6 +84,17 @@ class ListStudents extends ListRecords
                                 fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
                             );
                     }),
+                Filter::make('care_team')
+                    ->label('Care Team')
+                    ->query(
+                        function (Builder $query) {
+                            /** @var User $user */
+                            $user = auth()->user();
+                            $studentIds = $user->studentCareTeams()->pluck('sisid');
+
+                            return $query->whereIn('sisid', $studentIds)->get();
+                        }
+                    ),
             ])
             ->actions([
                 ViewAction::make(),
@@ -91,6 +105,8 @@ class ListStudents extends ListRecords
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
                     DeleteBulkAction::make(),
+                    JoinCareTeamBulkAction::make(),
+                    LeaveCareTeamBulkAction::make(),
                 ]),
             ]);
     }

@@ -2,9 +2,11 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
@@ -19,7 +21,9 @@ use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\CareTeam\Filament\Actions\JoinCareTeamBulkAction;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
+use Assist\CareTeam\Filament\Actions\LeaveCareTeamBulkAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
@@ -101,6 +105,19 @@ class ListProspects extends ListRecords
                     ->relationship('source', 'name')
                     ->multiple()
                     ->preload(),
+                Filter::make('care_team')
+                    ->label('Care Team')
+                    ->query(
+                        function (Builder $query) {
+                            /** @var User $user */
+                            $user = auth()->user();
+                            $prospectIds = $user
+                                ->prospectCareTeams()
+                                ->pluck(app(Prospect::class)->getQualifiedKeyName());
+
+                            return $query->whereKey($prospectIds)->get();
+                        }
+                    ),
             ])
             ->actions([
                 ViewAction::make(),
@@ -112,6 +129,8 @@ class ListProspects extends ListRecords
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
+                    JoinCareTeamBulkAction::make(),
+                    LeaveCareTeamBulkAction::make(),
                 ]),
             ]);
     }
