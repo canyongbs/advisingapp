@@ -4,8 +4,10 @@ namespace Assist\Form\Http\Controllers;
 
 use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
+use Assist\Form\Models\FormField;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Assist\Form\Actions\GenerateFormFieldFormKitSchema;
 
 class FormWidgetController extends Controller
 {
@@ -16,29 +18,26 @@ class FormWidgetController extends Controller
             [
                 'name' => $form->name,
                 'description' => $form->description,
-                'schema' => $form->fields->map(function ($field) {
-                    return match ($field['type']) {
-                        'text_input' => (object) [
-                            '$formkit' => 'text',
-                            'label' => $field['label'],
-                            'name' => $field['key'],
-                            'required' => $field['required'],
-                        ],
-                        'text_area' => (object) [
-                            '$formkit' => 'textarea',
-                            'label' => $field['label'],
-                            'name' => $field['key'],
-                            'required' => $field['required'],
-                        ],
-                        'select' => (object) [
-                            '$formkit' => 'select',
-                            'label' => $field['label'],
-                            'name' => $field['key'],
-                            'required' => $field['required'],
-                            'options' => $field['config']['options'],
-                        ],
-                    };
-                })->toArray(),
+                'schema' => $form->fields->map(fn (FormField $field) => resolve(GenerateFormFieldFormKitSchema::class)->handle($field)),
+            ]
+        );
+    }
+
+    public function store(Request $request, Form $form): JsonResponse
+    {
+        $request->validate(
+            $form->fields->mapWithKeys(function ($field) {
+                return [$field['key'] => $field['required'] ? 'required' : 'nullable'];
+            })->toArray()
+        );
+
+        $form->submissions()->create([
+            'data' => $request->all(),
+        ]);
+
+        return response()->json(
+            [
+                'message' => 'Form submitted successfully.',
             ]
         );
     }
