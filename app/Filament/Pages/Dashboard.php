@@ -9,10 +9,10 @@ use App\Filament\Widgets\MyProspects;
 use App\Filament\Widgets\TotalStudents;
 use App\Filament\Widgets\WelcomeWidget;
 use App\Filament\Widgets\TotalProspects;
-use App\Filament\Widgets\RecentProspectsList;
 use Filament\Pages\Dashboard as BasePage;
 use App\Filament\Widgets\MyServiceRequests;
 use App\Filament\Widgets\ProspectGrowthChart;
+use App\Filament\Widgets\RecentProspectsList;
 use App\Filament\Widgets\RecentKnowledgeBaseArticlesList;
 
 class Dashboard extends BasePage
