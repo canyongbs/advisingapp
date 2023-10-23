@@ -13,6 +13,7 @@ use App\Filament\Widgets\RecentLeadsList;
 use Filament\Pages\Dashboard as BasePage;
 use App\Filament\Widgets\MyServiceRequests;
 use App\Filament\Widgets\ProspectGrowthChart;
+use App\Filament\Widgets\RecentKnowledgeBaseArticlesList;
 
 class Dashboard extends BasePage
 {
@@ -26,15 +27,21 @@ class Dashboard extends BasePage
         $user = auth()->user();
 
         return $user->can('authorization.view_dashboard') ? [
+            //1
             WelcomeWidget::class,
+            //2
             TotalStudents::class,
             TotalProspects::class,
             MyStudents::class,
             MyProspects::class,
+            //3
             ProspectGrowthChart::class,
+            //4
+            RecentLeadsList::class,
+            RecentKnowledgeBaseArticlesList::class,
+            //5
             MyServiceRequests::class,
             MyTasks::class,
-            RecentLeadsList::class,
         ] : [
             WelcomeWidget::class,
         ];
