@@ -95,7 +95,7 @@ jobs:
 
     timeout-minutes: 15
 
-    needs: [build-deps,fix-code-style]
+    needs: [build-deps]
 
     services:
       postgres:
@@ -197,7 +197,7 @@ jobs:
 
     timeout-minutes: 10
 
-    needs: [build-deps,fix-code-style]
+    needs: [build-deps]
 
     steps:
       - uses: shivammathur/setup-php@v2
