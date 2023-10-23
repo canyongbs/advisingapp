@@ -14,7 +14,6 @@ use Assist\IntegrationAI\Events\AIPromptInitiated;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Assist\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Assistant\Observers\AssistantChatObserver;
 use Assist\Assistant\Listeners\LogAssistantChatMessage;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 
