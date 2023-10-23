@@ -2,19 +2,19 @@
 
 namespace Assist\Form\Filament\Resources\FormResource\RelationManagers;
 
+use Excel;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Maatwebsite\Excel\Excel;
 use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\KeyValue;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use pxlrbt\FilamentExcel\Columns\Column;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Assist\Form\Exports\FormSubmissionExport;
 use Filament\Tables\Actions\DeleteBulkAction;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class FormSubmissionsRelationManager extends RelationManager
@@ -42,30 +42,16 @@ class FormSubmissionsRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
-                ExportAction::make()
-                    ->exports([
-                        ExcelExport::make()
-                            ->modifyQueryUsing(function ($query) {
-                                return $query->where('form_id', $this->getOwnerRecord()->id);
-                            })
-                            ->withFilename(function () {
-                                return str("form-submissions-{$this->getOwnerRecord()->name}-")
-                                    ->append(now()->format('Y-m-d-Hisv'))
-                                    ->slug();
-                            })
-                            ->withWriterType(Excel::CSV)
-                            ->withColumns([
-                                Column::make('id'),
-                                Column::make('form_id'),
-                                Column::make('content')
-                                    ->formatStateUsing(function ($state, $record) {
-                                        return json_encode($record->content);
-                                    }),
-                                Column::make('created_at'),
-                                Column::make('updated_at'),
-                            ])
-                            ->withNamesAsHeadings(),
-                    ]),
+                Action::make('export')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(function () {
+                        $filename = str("form-submissions-{$this->getOwnerRecord()->name}-")
+                            ->append(now()->format('Y-m-d-Hisv'))
+                            ->slug()
+                            ->append('.csv');
+
+                        return Excel::download(new FormSubmissionExport($this->getOwnerRecord()->submissions), $filename);
+                    }),
             ])
             ->actions([
                 ViewAction::make(),
@@ -73,6 +59,16 @@ class FormSubmissionsRelationManager extends RelationManager
             ])
             ->bulkActions([
                 BulkActionGroup::make([
+                    BulkAction::make('Export')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->action(function ($records) {
+                            $filename = str("selected-form-submissions-{$this->getOwnerRecord()->name}-")
+                                ->append(now()->format('Y-m-d-Hisv'))
+                                ->slug()
+                                ->append('.csv');
+
+                            return Excel::download(new FormSubmissionExport($records), $filename);
+                        }),
                     DeleteBulkAction::make(),
                 ]),
             ]);
