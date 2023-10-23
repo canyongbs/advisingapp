@@ -3,18 +3,22 @@
 namespace Assist\Assistant\Filament\Pages;
 
 use App\Models\User;
+use Filament\Forms\Get;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
+use Assist\Team\Models\Team;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
 use Filament\Actions\StaticAction;
+use Illuminate\Support\Collection;
+use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
 use Filament\Forms\Components\TextInput;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
-use Illuminate\Database\Eloquent\Collection;
 use Assist\Consent\Enums\ConsentAgreementType;
+use Assist\Assistant\Models\AssistantChatMessage;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
@@ -265,6 +269,74 @@ class PersonalAssistant extends Page
                 });
             })
             ->icon('heroicon-o-pencil')
+            ->color('warning')
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
+    }
+
+    public function shareChatAction(): Action
+    {
+        return Action::make('shareChat')
+            ->modalSubmitActionLabel('Share')
+            ->modalWidth('md')
+            ->size(ActionSize::ExtraSmall)
+            ->form([
+                Select::make('target_type')
+                    ->label('Type')
+                    ->options([
+                        'team' => 'Team',
+                        'user' => 'User',
+                    ])
+                    ->default('user')
+                    ->required()
+                    ->selectablePlaceholder(false)
+                    ->live(),
+                Select::make('target_ids')
+                    ->label('Targets')
+                    ->options(fn (Get $get): Collection => match ($get('target_type')) {
+                        'team' => Team::orderBy('name')->pluck('name', 'id'),
+                        'user' => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                        default => collect(),
+                    })
+                    ->searchable()
+                    ->multiple()
+                    ->required(),
+            ])
+            ->action(function (array $arguments, array $data) {
+                $chat = AssistantChat::find($arguments['chat']);
+
+                $users = match ($data['target_type']) {
+                    'team' => collect($data['target_ids'])
+                        ->map(fn ($id) => Team::find($id)->users()->whereKeyNot(auth()->id())->get())
+                        ->flatten()
+                        ->unique(),
+                    'user' => User::whereIn('id', $data['target_ids'])->get(),
+                };
+
+                $users
+                    ->each(
+                        function (User $user) use ($chat) {
+                            $replica = $chat
+                                ->replicate(['id', 'user_id'])
+                                ->user()->associate($user);
+
+                            $replica->save();
+
+                            $chat
+                                ->messages()
+                                ->each(
+                                    fn (AssistantChatMessage $message) => $message
+                                        ->replicate(['id', 'assistant_chat_id'])
+                                        ->chat()->associate($replica)
+                                        ->save()
+                                );
+                        }
+                    );
+            })
+            ->icon('heroicon-o-share')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
