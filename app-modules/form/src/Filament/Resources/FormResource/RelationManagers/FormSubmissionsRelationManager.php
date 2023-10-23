@@ -6,6 +6,7 @@ use Excel;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Assist\Form\Models\FormSubmission;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\KeyValue;
 use Filament\Tables\Actions\BulkAction;
@@ -33,7 +34,6 @@ class FormSubmissionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('id')
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('created_at')
@@ -54,7 +54,8 @@ class FormSubmissionsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading(fn (FormSubmission $record) => "Submission Details: {$record->created_at}"),
                 DeleteAction::make(),
             ])
             ->bulkActions([
