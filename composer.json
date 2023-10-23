@@ -11,6 +11,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-gd": "*",
         "ext-pdo": "*",
         "awcodes/filament-tiptap-editor": "^3.0@beta",
         "barryvdh/laravel-debugbar": "^3.9",
