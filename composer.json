@@ -64,6 +64,7 @@
         "livewire/livewire": "^3.0",
         "microsoft/microsoft-graph": "^1.108",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
+        "pxlrbt/filament-excel": "^2.1",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.1",
