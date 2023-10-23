@@ -10,7 +10,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 
-class RecentLeadsList extends BaseWidget
+class RecentProspectsList extends BaseWidget
 {
     protected int | string | array $columnSpan = [
         'sm' => 1,

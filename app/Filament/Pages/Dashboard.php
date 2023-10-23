@@ -9,7 +9,7 @@ use App\Filament\Widgets\MyProspects;
 use App\Filament\Widgets\TotalStudents;
 use App\Filament\Widgets\WelcomeWidget;
 use App\Filament\Widgets\TotalProspects;
-use App\Filament\Widgets\RecentLeadsList;
+use App\Filament\Widgets\RecentProspectsList;
 use Filament\Pages\Dashboard as BasePage;
 use App\Filament\Widgets\MyServiceRequests;
 use App\Filament\Widgets\ProspectGrowthChart;
@@ -37,7 +37,7 @@ class Dashboard extends BasePage
             //3
             ProspectGrowthChart::class,
             //4
-            RecentLeadsList::class,
+            RecentProspectsList::class,
             RecentKnowledgeBaseArticlesList::class,
             //5
             MyServiceRequests::class,
