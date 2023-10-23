@@ -325,6 +325,9 @@ class PersonalAssistant extends Page
 
                             $replica->save();
 
+                            //TODO: notification?
+                            //TODO: save chat id in url to allow linking to specific chat?
+
                             $chat
                                 ->messages()
                                 ->each(
