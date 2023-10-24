@@ -65,6 +65,7 @@ class DatabaseSeeder extends Seeder
             EngagementResponseSeeder::class,
             DemoEducatableEngagementSeeder::class,
             SuperAdminSeeder::class,
+            PronounsSeeder::class,
         ]);
     }
 }

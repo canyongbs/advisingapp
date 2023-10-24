@@ -29,7 +29,7 @@ class CreateCampaign extends CreateRecord
         $user = auth()->user();
 
         return [
-            Step::make('Setup your campaign')
+            Step::make('Campaign Details')
                 ->schema([
                     TextInput::make('name')
                         ->required(),
@@ -40,16 +40,17 @@ class CreateCampaign extends CreateRecord
                         ->searchable()
                         ->required(),
                 ]),
-            Step::make('Create your actions')
+            Step::make('Define Journey')
                 ->schema([
                     Builder::make('actions')
+                        ->label('Journey')
                         ->addActionLabel('Add a new Campaign Action')
                         ->minItems(1)
                         ->blocks([
                             EngagementBatchBlock::make(),
                         ]),
                 ]),
-            Step::make('Schedule your campaign')
+            Step::make('Review Campaign')
                 ->schema([
                     DateTimePicker::make('execute_at')
                         ->label('When should the campaign actions be executed?')
