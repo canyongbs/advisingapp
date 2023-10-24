@@ -11,7 +11,7 @@ class MyStudents extends StatsOverviewWidget
     {
         return [
             Stat::make(
-                'My Students',
+                'Students (Subscribed)',
                 $this->formatCount(
                     auth()->user()->subscriptions()->where('subscribable_type', (new Student())->getMorphClass())->count()
                 )

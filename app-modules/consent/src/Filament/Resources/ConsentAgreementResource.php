@@ -12,15 +12,15 @@ class ConsentAgreementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
 
-    protected static ?string $navigationLabel = 'AI Consent Configuration';
+    protected static ?string $navigationLabel = 'AI Usage Agreement';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $modelLabel = 'AI Consent Configuration';
+    protected static ?string $modelLabel = 'AI Usage Agreement';
 
-    protected static ?string $pluralLabel = 'AI Consent Configuration';
+    protected static ?string $pluralModelLabel = 'AI Usage Agreement';
 
     public static function getRelations(): array
     {
