@@ -10,6 +10,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Placeholder;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class EditProfile extends BaseEditProfile
 {
@@ -39,6 +40,9 @@ class EditProfile extends BaseEditProfile
                     ->hidden($user->is_external),
                 $this->getPasswordConfirmationFormComponent()
                     ->hidden($user->is_external),
+                TimezoneSelect::make('timezone')
+                    ->required()
+                    ->selectablePlaceholder(false),
                 RichEditor::make('bio')
                     ->label('Personal Bio')
                     ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'blockquote', 'bulletList', 'orderedList'])
