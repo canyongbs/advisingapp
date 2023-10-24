@@ -30,6 +30,8 @@ class ManageStudentCareTeam extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
+    //TODO: manually override check canAccess for policy
+
     public function table(Table $table): Table
     {
         return $table
