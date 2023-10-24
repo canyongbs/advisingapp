@@ -47,7 +47,7 @@ class AssistantServiceProvider extends ServiceProvider
         Event::listen(AIPromptInitiated::class, LogAssistantChatMessage::class);
     }
 
-    protected function registerRolesAndPermissions()
+    protected function registerRolesAndPermissions(): void
     {
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 
