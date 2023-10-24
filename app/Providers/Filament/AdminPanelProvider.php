@@ -4,12 +4,14 @@ namespace App\Providers\Filament;
 
 use Filament\Panel;
 use Filament\PanelProvider;
+use App\Models\SettingsProperty;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\EditProfile;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
 use App\Filament\Pages\ProductHealth;
 use App\Filament\Actions\ImportAction;
+use Assist\Theme\Settings\ThemeSettings;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
@@ -39,14 +41,13 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel = $panel
             ->default()
             ->id('admin')
             ->path('/')
             ->login(Login::class)
             ->profile(EditProfile::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->favicon('/default_favicon.png')
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -94,6 +95,16 @@ class AdminPanelProvider extends PanelProvider
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(ProductHealth::class),
             ]);
+
+        $themeSettings = app(ThemeSettings::class);
+        $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
+        $favicon = $settingsProperty->getFirstMedia('favicon');
+
+        if ($themeSettings->is_favicon_active && $favicon) {
+            $panel->favicon($favicon->getTemporaryUrl(now()->addMinutes(5)));
+        }
+
+        return $panel;
     }
 
     public function boot(): void {}
