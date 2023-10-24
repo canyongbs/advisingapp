@@ -16,19 +16,19 @@ use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 
-class ManageProspectSubscriptions extends ManageRelatedRecords
+class ManageProspectCareTeam extends ManageRelatedRecords
 {
     protected static string $resource = ProspectResource::class;
 
-    protected static string $relationship = 'subscribedUsers';
+    protected static string $relationship = 'careTeam';
 
     // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Subscriptions';
+    protected static ?string $navigationLabel = 'Care Team';
 
     // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Subscriptions';
+    protected static ?string $breadcrumb = 'Care Team';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     //TODO: manually override check canAccess for policy
 
@@ -41,21 +41,19 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                 TextColumn::make('name')
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
-                TextColumn::make('pivot.created_at')
-                    ->label('Subscribed At'),
             ])
             ->filters([
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Create Subscription')
+                    ->label('Add to Care Team')
                     ->modalHeading(function () {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        return 'Subscribe a User to ' . $prospect->display_name;
+                        return "Add a User to {$prospect->display_name}'s Care Team";
                     })
-                    ->modalSubmitActionLabel('Subscribe')
+                    ->modalSubmitActionLabel('Add')
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
@@ -65,46 +63,46 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        return "{$record->name} was subscribed to {$prospect->display_name}";
+                        return "{$record->name} was added to {$prospect->display_name}'s Care Team";
                     }),
             ])
             ->actions([
                 DetachAction::make()
-                    ->label('Unsubscribe')
+                    ->label('Remove')
                     ->modalHeading(function (User $record) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        return "Unsubscribe {$record->name} from {$prospect->display_name}";
+                        return "Remove {$record->name} from {$prospect->display_name}'s Care Team";
                     })
-                    ->modalSubmitActionLabel('Unsubscribe')
+                    ->modalSubmitActionLabel('Remove')
                     ->successNotificationTitle(function (User $record) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        return "{$record->name} was unsubscribed from {$prospect->display_name}";
+                        return "{$record->name} was removed from {$prospect->display_name}'s Care Team";
                     }),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
-                        ->label('Unsubscribe selected')
+                        ->label('Remove selected')
                         ->modalHeading(function () {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
-                            return "Unsubscribe selected from {$prospect->display_name}";
+                            return "Remove selected users from {$prospect->display_name}'s Care Team";
                         })
-                        ->modalSubmitActionLabel('Unsubscribe')
+                        ->modalSubmitActionLabel('Remove')
                         ->successNotificationTitle(function () {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
-                            return "All selected were unsubscribed from {$prospect->display_name}";
+                            return "All selected users were removed from {$prospect->display_name}'s Care Team";
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No Subscriptions')
-            ->inverseRelationship('prospectSubscriptions');
+            ->emptyStateHeading('No Users')
+            ->inverseRelationship('prospectCareTeams');
     }
 }

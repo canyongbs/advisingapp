@@ -10,6 +10,7 @@ use Assist\Team\Models\TeamUser;
 use Spatie\MediaLibrary\HasMedia;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
+use Assist\CareTeam\Models\CareTeam;
 use Assist\Prospect\Models\Prospect;
 use Assist\Authorization\Models\Role;
 use Filament\Models\Contracts\HasAvatar;
@@ -152,6 +153,35 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->using(Subscription::class)
             ->withPivot('id')
             ->withTimestamps();
+    }
+
+    public function prospectCareTeams(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Prospect::class,
+            name: 'educatable',
+            table: 'care_teams'
+        )
+            ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    public function studentCareTeams(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Student::class,
+            name: 'educatable',
+            table: 'care_teams'
+        )
+            ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    public function careTeams(): HasMany
+    {
+        return $this->hasMany(CareTeam::class);
     }
 
     public function roleGroups(): BelongsToMany

@@ -13,6 +13,7 @@ use Assist\Prospect\Filament\Resources\ProspectResource\Pages\CreateProspect;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFiles;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
+use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
@@ -42,6 +43,7 @@ class ProspectResource extends Resource
             ManageProspectSubscriptions::class,
             ManageProspectInteractions::class,
             ProspectEngagementTimeline::class,
+            ManageProspectCareTeam::class,
         ]);
     }
 
@@ -74,6 +76,7 @@ class ProspectResource extends Resource
             'manage-tasks' => ManageProspectTasks::route('/{record}/tasks'),
             'view' => ViewProspect::route('/{record}'),
             'engagement-timeline' => ProspectEngagementTimeline::route('/{record}/engagement-timeline'),
+            'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
         ];
     }
 }

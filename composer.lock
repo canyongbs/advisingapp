@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b94607acee4c1967fcc2c02cb93cc784",
+    "content-hash": "5f24863575da2bb55b5c3969afd741b1",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -804,6 +804,41 @@
                     "Assist\\Campaign\\Tests\\": "tests/",
                     "Assist\\Campaign\\Database\\Factories\\": "database/factories/",
                     "Assist\\Campaign\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/care-team",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/care-team",
+                "reference": "e6a5aee66b3bb94c9c9240ee97976f93d4126f26"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\CareTeam\\Providers\\CareTeamServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\CareTeam\\": "src/",
+                    "Assist\\CareTeam\\Tests\\": "tests/",
+                    "Assist\\CareTeam\\Database\\Factories\\": "database/factories/",
+                    "Assist\\CareTeam\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -16736,16 +16771,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.18.5",
+            "version": "0.18.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "2a3b82f317e431fc142d21f3303891a4e64c96eb"
+                "reference": "02041b220704b9cbe075f0310d0954b2fda5c40c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/2a3b82f317e431fc142d21f3303891a4e64c96eb",
-                "reference": "2a3b82f317e431fc142d21f3303891a4e64c96eb",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/02041b220704b9cbe075f0310d0954b2fda5c40c",
+                "reference": "02041b220704b9cbe075f0310d0954b2fda5c40c",
                 "shasum": ""
             },
             "require": {
@@ -16780,7 +16815,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.18.5"
+                "source": "https://github.com/rectorphp/rector/tree/0.18.6"
             },
             "funding": [
                 {
@@ -16788,7 +16823,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-10-05T11:25:40+00:00"
+            "time": "2023-10-24T15:00:59+00:00"
         },
         {
             "name": "sebastian/cli-parser",

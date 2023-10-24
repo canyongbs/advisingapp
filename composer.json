@@ -22,6 +22,7 @@
         "canyon-gbs/audit": "*@dev",
         "canyon-gbs/authorization": "*",
         "canyon-gbs/campaign": "*",
+        "canyon-gbs/care-team": "*",
         "canyon-gbs/caseload-management": "*",
         "canyon-gbs/consent": "*",
         "canyon-gbs/division": "*",
