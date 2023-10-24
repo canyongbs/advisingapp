@@ -128,6 +128,8 @@ namespace App\Models{
  * @property-read int|null $assistant_chats_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\Caseload> $caseloads
+ * @property-read int|null $caseloads_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\ConsentAgreement> $consentAgreements
  * @property-read int|null $consent_agreements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementBatch> $engagementBatches
@@ -244,6 +246,7 @@ namespace Assist\AssistDataModel\Models{
 /**
  * Assist\AssistDataModel\Models\Performance
  *
+ * @property-read \Assist\AssistDataModel\Models\Student|null $student
  * @method static \Assist\AssistDataModel\Database\Factories\PerformanceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newQuery()
@@ -582,6 +585,7 @@ namespace Assist\CaseloadManagement\Models{
  *
  * @property string $id
  * @property string $name
+ * @property string|null $description
  * @property array|null $filters
  * @property \Assist\CaseloadManagement\Enums\CaseloadModel $model
  * @property \Assist\CaseloadManagement\Enums\CaseloadType $type
@@ -598,6 +602,7 @@ namespace Assist\CaseloadManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload query()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereFilters($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload whereModel($value)
@@ -650,6 +655,10 @@ namespace Assist\Consent\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
  * @method static \Assist\Consent\Database\Factories\ConsentAgreementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newQuery()
@@ -666,6 +675,38 @@ namespace Assist\Consent\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperConsentAgreement {}
+}
+
+namespace Assist\Consent\Models{
+/**
+ * Assist\Consent\Models\UserConsentAgreement
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property string $consent_agreement_id
+ * @property string $ip_address
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement query()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereConsentAgreementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereIpAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperUserConsentAgreement {}
 }
 
 namespace Assist\Division\Models{
@@ -922,6 +963,8 @@ namespace Assist\Form\Models{
  * @property string $id
  * @property string $name
  * @property string|null $description
+ * @property bool $embed_enabled
+ * @property array|null $allowed_domains
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -933,9 +976,11 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereAllowedDomains($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereEmbedEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)
@@ -1790,6 +1835,8 @@ namespace Assist\Task\Models{
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
  * @method static \Illuminate\Database\Eloquent\Builder|Task byNextDue()
+ * @method static \Illuminate\Database\Eloquent\Builder|Task educatableSearch(string $relationship, string $search)
+ * @method static \Illuminate\Database\Eloquent\Builder|Task educatableSort(string $direction)
  * @method static \Assist\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()

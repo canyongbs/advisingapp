@@ -4,41 +4,50 @@ namespace Assist\Form\Http\Controllers;
 
 use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
+use Assist\Form\Models\FormField;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
+use Assist\Form\Actions\GenerateFormValidation;
+use Assist\Form\Actions\GenerateFormFieldFormKitSchema;
 
 class FormWidgetController extends Controller
 {
     public function view(Request $request, Form $form): JsonResponse
     {
-        // TODO: Move this out of the controller once we go beyond these simple fields and configurations.
         return response()->json(
             [
                 'name' => $form->name,
                 'description' => $form->description,
-                'schema' => $form->fields->map(function ($field) {
-                    return match ($field['type']) {
-                        'text_input' => (object) [
-                            '$formkit' => 'text',
-                            'label' => $field['label'],
-                            'name' => $field['key'],
-                            'required' => $field['required'],
-                        ],
-                        'text_area' => (object) [
-                            '$formkit' => 'textarea',
-                            'label' => $field['label'],
-                            'name' => $field['key'],
-                            'required' => $field['required'],
-                        ],
-                        'select' => (object) [
-                            '$formkit' => 'select',
-                            'label' => $field['label'],
-                            'name' => $field['key'],
-                            'required' => $field['required'],
-                            'options' => $field['config']['options'],
-                        ],
-                    };
-                })->toArray(),
+                'schema' => $form->fields->map(fn (FormField $field) => resolve(GenerateFormFieldFormKitSchema::class)->handle($field)),
+            ]
+        );
+    }
+
+    public function store(Request $request, Form $form): JsonResponse
+    {
+        $validator = Validator::make(
+            $request->all(),
+            resolve(GenerateFormValidation::class)->handle($form)
+        );
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'errors' => (object) $validator->errors(),
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $form->submissions()->create([
+            'content' => $request->all(),
+        ]);
+
+        return response()->json(
+            [
+                'message' => 'Form submitted successfully.',
             ]
         );
     }
