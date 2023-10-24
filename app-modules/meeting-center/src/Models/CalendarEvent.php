@@ -5,6 +5,9 @@ namespace Assist\MeetingCenter\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperCalendarEvent
+ */
 class CalendarEvent extends BaseModel
 {
     protected $fillable = [

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @mixin IdeHelperTimeline
+ */
 class Timeline extends BaseModel
 {
     protected $fillable = [
