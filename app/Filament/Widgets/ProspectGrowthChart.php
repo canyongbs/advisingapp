@@ -8,7 +8,7 @@ use Assist\Prospect\Models\Prospect;
 
 class ProspectGrowthChart extends ChartWidget
 {
-    protected static ?string $heading = 'Cumulative Prospect Growth';
+    protected static ?string $heading = 'Prospects (Cumulative)';
 
     protected static ?string $maxHeight = '200px';
 
