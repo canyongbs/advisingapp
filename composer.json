@@ -11,6 +11,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-gd": "*",
         "ext-pdo": "*",
         "awcodes/filament-tiptap-editor": "^3.0@beta",
         "barryvdh/laravel-debugbar": "^3.9",
@@ -62,6 +63,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/oauth2-client": "^2.7",
         "livewire/livewire": "^3.0",
+        "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.108",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
