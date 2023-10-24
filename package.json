@@ -33,6 +33,9 @@
     },
     "type": "module",
     "dependencies": {
+        "@formkit/icons": "^1.2.2",
+        "@formkit/themes": "^1.2.2",
+        "@formkit/vue": "^1.2.2",
         "dompurify": "^3.0.6",
         "flowbite": "^1.8.1",
         "showdown": "^2.1.0",

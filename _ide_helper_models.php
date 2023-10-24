@@ -1041,6 +1041,8 @@ namespace Assist\Form\Models{
  * @property string $id
  * @property string $name
  * @property string|null $description
+ * @property bool $embed_enabled
+ * @property array|null $allowed_domains
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -1052,9 +1054,11 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereAllowedDomains($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereEmbedEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)

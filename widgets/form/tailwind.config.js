@@ -1,11 +1,9 @@
-import preset from '../../vendor/filament/support/tailwind.config.preset';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import theme from '../../tailwind.config.js';
+import FormKitVariants from '@formkit/themes/tailwindcss';
 
 export default {
-    presets: [preset],
-    content: ['./widget/src/**/*.vue'],
-    theme: theme,
-    plugins: [forms, typography, require('flowbite/plugin')],
+    content: ['./src/**/*.vue', './src/tailwind-theme.js'],
+    // theme: theme,
+    plugins: [forms, typography, FormKitVariants],
 };

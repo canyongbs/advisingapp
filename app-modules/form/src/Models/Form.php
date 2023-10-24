@@ -13,6 +13,13 @@ class Form extends BaseModel
     protected $fillable = [
         'name',
         'description',
+        'embed_enabled',
+        'allowed_domains',
+    ];
+
+    protected $casts = [
+        'embed_enabled' => 'boolean',
+        'allowed_domains' => 'array',
     ];
 
     public function fields(): HasMany
