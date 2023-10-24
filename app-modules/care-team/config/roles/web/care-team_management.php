@@ -1,3 +1,9 @@
 <?php
 
-return [];
+return [
+    'model' => [
+        'care_team' => [
+            '*',
+        ],
+    ],
+];

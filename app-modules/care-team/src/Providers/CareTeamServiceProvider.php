@@ -20,7 +20,7 @@ class CareTeamServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'create_team' => CareTeam::class,
+            'care_team' => CareTeam::class,
         ]);
 
         $this->registerRolesAndPermissions();

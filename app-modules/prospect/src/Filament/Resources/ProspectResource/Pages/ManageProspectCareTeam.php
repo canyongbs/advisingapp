@@ -28,7 +28,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Care Team';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public function table(Table $table): Table
     {
@@ -89,14 +89,14 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
-                            return "Remove selected from {$prospect->display_name}'s Care Team";
+                            return "Remove selected users from {$prospect->display_name}'s Care Team";
                         })
                         ->modalSubmitActionLabel('Remove')
                         ->successNotificationTitle(function () {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
-                            return "All selected were removed from {$prospect->display_name}'s Care Team";
+                            return "All selected users were removed from {$prospect->display_name}'s Care Team";
                         }),
                 ]),
             ])

@@ -2,7 +2,6 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Models\User;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
@@ -109,13 +108,9 @@ class ListProspects extends ListRecords
                     ->label('Care Team')
                     ->query(
                         function (Builder $query) {
-                            /** @var User $user */
-                            $user = auth()->user();
-                            $prospectIds = $user
-                                ->prospectCareTeams()
-                                ->pluck(app(Prospect::class)->getQualifiedKeyName());
-
-                            return $query->whereKey($prospectIds)->get();
+                            return $query
+                                ->whereRelation('careTeam', 'user_id', '=', auth()->id())
+                                ->get();
                         }
                     ),
             ])

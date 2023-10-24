@@ -17,6 +17,10 @@ class CareTeam extends MorphPivot
     use DefinesPermissions;
     use HasUuids;
 
+    public $timestamps = true;
+
+    protected $table = 'care_teams';
+
     /** @return MorphTo<Educatable> */
     public function educatable(): MorphTo
     {

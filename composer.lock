@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a51de8073e8f851c2e31e3455821e34c",
+    "content-hash": "5f24863575da2bb55b5c3969afd741b1",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -146,16 +146,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.283.8",
+            "version": "3.283.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0f73ec85852312a6e971cfe2eebfd7c8091cca34"
+                "reference": "ae611a2d1d32bb2d14c1653e3d2c309cfed42883"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0f73ec85852312a6e971cfe2eebfd7c8091cca34",
-                "reference": "0f73ec85852312a6e971cfe2eebfd7c8091cca34",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ae611a2d1d32bb2d14c1653e3d2c309cfed42883",
+                "reference": "ae611a2d1d32bb2d14c1653e3d2c309cfed42883",
                 "shasum": ""
             },
             "require": {
@@ -235,9 +235,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.283.8"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.283.10"
             },
-            "time": "2023-10-19T19:26:52+00:00"
+            "time": "2023-10-23T18:08:46+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -16771,16 +16771,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.18.5",
+            "version": "0.18.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "2a3b82f317e431fc142d21f3303891a4e64c96eb"
+                "reference": "02041b220704b9cbe075f0310d0954b2fda5c40c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/2a3b82f317e431fc142d21f3303891a4e64c96eb",
-                "reference": "2a3b82f317e431fc142d21f3303891a4e64c96eb",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/02041b220704b9cbe075f0310d0954b2fda5c40c",
+                "reference": "02041b220704b9cbe075f0310d0954b2fda5c40c",
                 "shasum": ""
             },
             "require": {
@@ -16815,7 +16815,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.18.5"
+                "source": "https://github.com/rectorphp/rector/tree/0.18.6"
             },
             "funding": [
                 {
@@ -16823,7 +16823,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-10-05T11:25:40+00:00"
+            "time": "2023-10-24T15:00:59+00:00"
         },
         {
             "name": "sebastian/cli-parser",

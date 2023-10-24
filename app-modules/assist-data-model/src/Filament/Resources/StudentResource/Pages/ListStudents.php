@@ -2,7 +2,6 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
@@ -88,11 +87,9 @@ class ListStudents extends ListRecords
                     ->label('Care Team')
                     ->query(
                         function (Builder $query) {
-                            /** @var User $user */
-                            $user = auth()->user();
-                            $studentIds = $user->studentCareTeams()->pluck('sisid');
-
-                            return $query->whereIn('sisid', $studentIds)->get();
+                            return $query
+                                ->whereRelation('careTeam', 'user_id', '=', auth()->id())
+                                ->get();
                         }
                     ),
             ])
