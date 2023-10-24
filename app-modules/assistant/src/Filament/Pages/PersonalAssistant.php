@@ -8,12 +8,10 @@ use Filament\Pages\Page;
 use Livewire\Attributes\On;
 use Assist\Team\Models\Team;
 use Filament\Actions\Action;
-use Livewire\Attributes\Url;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
 use Filament\Forms\Components\TextInput;
@@ -42,9 +40,6 @@ class PersonalAssistant extends Page
     public Collection $chats;
 
     public Chat $chat;
-
-    #[Url(as: 'chat')]
-    public string $chatId = '';
 
     #[Rule(['required', 'string'])]
     public string $message = '';
@@ -87,7 +82,7 @@ class PersonalAssistant extends Page
         $this->chats = $user->assistantChats()->latest()->get();
 
         /** @var AssistantChat $chat */
-        $chat = $this->chats->find($this->chatId);
+        $chat = $this->chats->first();
 
         $this->chat = new Chat(
             id: $chat?->id ?? null,
@@ -202,8 +197,6 @@ class PersonalAssistant extends Page
 
                 $this->chat->id = $assistantChat->id;
 
-                $this->chatId = $assistantChat->id;
-
                 $this->chats->prepend($assistantChat);
             });
     }
@@ -216,8 +209,6 @@ class PersonalAssistant extends Page
             id: $chat->id ?? null,
             messages: ChatMessage::collection($chat->messages ?? []),
         );
-
-        $this->chatId = $chat->id;
     }
 
     public function newChat(): void
@@ -225,8 +216,6 @@ class PersonalAssistant extends Page
         $this->reset(['message', 'prompt', 'renderError', 'error']);
 
         $this->chat = new Chat(id: null, messages: ChatMessage::collection([]));
-
-        $this->chatId = '';
     }
 
     public function deleteChatAction(): Action
@@ -348,14 +337,10 @@ class PersonalAssistant extends Page
                                         ->save()
                                 );
 
-                            $url = PersonalAssistant::getUrl(['chat' => $replica->id]);
-
-                            $link = new HtmlString("<a href='{$url}' target='_blank' class='underline'>assistant chat</a>");
-
                             Notification::make()
                                 ->success()
-                                ->title(auth()->user()->name . " shared an {$link} with you.")
-                                ->sendToDatabase($user);
+                                ->title("You shared an assistant chat with {$user->name}.")
+                                ->sendToDatabase(auth()->user());
                         }
                     );
             })
