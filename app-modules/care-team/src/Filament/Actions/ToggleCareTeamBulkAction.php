@@ -7,7 +7,7 @@ use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 
-class LeaveCareTeamBulkAction extends BulkAction
+class ToggleCareTeamBulkAction extends BulkAction
 {
     protected function setUp(): void
     {
@@ -21,7 +21,11 @@ class LeaveCareTeamBulkAction extends BulkAction
                     /** @var User $user */
                     $user = auth()->user();
 
-                    $record->careTeam()->detach($user);
+                    if ($record->careTeam()->where('user_id', $user->id)->exists()) {
+                        $record->careTeam()->detach($user);
+                    } else {
+                        $record->careTeam()->attach($user);
+                    }
                 });
         });
 
@@ -30,6 +34,6 @@ class LeaveCareTeamBulkAction extends BulkAction
 
     public static function getDefaultName(): ?string
     {
-        return 'leaveCareTeam';
+        return 'toggleCareTeam';
     }
 }

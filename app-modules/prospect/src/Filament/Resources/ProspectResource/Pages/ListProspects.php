@@ -20,9 +20,8 @@ use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\CareTeam\Filament\Actions\JoinCareTeamBulkAction;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
-use Assist\CareTeam\Filament\Actions\LeaveCareTeamBulkAction;
+use Assist\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
@@ -124,8 +123,7 @@ class ListProspects extends ListRecords
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
-                    JoinCareTeamBulkAction::make(),
-                    LeaveCareTeamBulkAction::make(),
+                    ToggleCareTeamBulkAction::make(),
                 ]),
             ]);
     }
