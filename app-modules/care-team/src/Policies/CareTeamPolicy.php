@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Notifications\Policies;
+namespace Assist\CareTeam\Policies;
 
 use App\Models\User;
 use Assist\CareTeam\Models\CareTeam;
