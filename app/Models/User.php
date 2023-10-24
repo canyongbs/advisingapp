@@ -163,6 +163,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    public function careTeams(): HasMany
+    {
+        return $this->hasMany(CareTeam::class);
+    }
+
     public function roleGroups(): BelongsToMany
     {
         return $this->traitRoleGroups()

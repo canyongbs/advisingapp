@@ -10,10 +10,10 @@ return new class () extends Migration {
         Schema::create('care_teams', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->foreignUuid('user_id')->constrained('users');
+
             $table->string('educatable_id');
             $table->string('educatable_type');
-
-            $table->foreignUuid('user_id')->constrained('users');
 
             $table->unique(['educatable_id', 'educatable_type', 'user_id']);
 
