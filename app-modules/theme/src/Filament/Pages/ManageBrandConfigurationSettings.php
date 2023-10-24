@@ -38,6 +38,8 @@ class ManageBrandConfigurationSettings extends SettingsPage
     public function mount(): void
     {
         $this->authorize('theme.view_theme_settings');
+
+        parent::mount();
     }
 
     public function form(Form $form): Form

@@ -35,6 +35,8 @@ class ManageMicrosoftClaritySettings extends SettingsPage
     public function mount(): void
     {
         $this->authorize('integration-microsoft-clarity.view_microsoft_clarity_settings');
+
+        parent::mount();
     }
 
     public function form(Form $form): Form

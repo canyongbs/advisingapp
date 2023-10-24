@@ -35,6 +35,8 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
     public function mount(): void
     {
         $this->authorize('integration-google-analytics.view_google_analytics_settings');
+
+        parent::mount();
     }
 
     public function form(Form $form): Form

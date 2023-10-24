@@ -14,12 +14,21 @@ class CreateUsersTable extends Migration
             $table->string('emplid')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable()->unique();
-            $table->datetime('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('remember_token')->nullable();
             $table->string('locale')->nullable();
             $table->string('type')->nullable();
             $table->boolean('is_external')->default(false);
+            $table->text('bio')->nullable();
+            $table->boolean('is_bio_visible_on_profile')->default(false);
+            $table->string('avatar_url')->nullable();
+            $table->boolean('are_teams_visible_on_profile')->default(false);
+            $table->string('timezone')->default('UTC');
+
+            $table->foreignUuid('pronouns_id')->nullable()->constrained('pronouns')->nullOnDelete();
+            $table->boolean('are_pronouns_visible_on_profile')->default(false);
+
+            $table->datetime('email_verified_at')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

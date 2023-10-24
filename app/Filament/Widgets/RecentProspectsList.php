@@ -10,12 +10,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 
-class RecentLeadsList extends BaseWidget
+class RecentProspectsList extends BaseWidget
 {
     protected int | string | array $columnSpan = [
         'sm' => 1,
-        'md' => 2,
-        'lg' => 4,
+        'md' => 1,
+        'lg' => 2,
     ];
 
     public function getColumns(): int | string | array
@@ -30,9 +30,9 @@ class RecentLeadsList extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Recent Prospects')
+            ->heading('Latest Prospects (5)')
             ->query(
-                Prospect::latest()->limit(10)
+                Prospect::latest()->limit(5)
             )
             ->columns([
                 IdColumn::make(),
