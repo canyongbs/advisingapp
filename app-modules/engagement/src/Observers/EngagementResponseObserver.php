@@ -2,25 +2,26 @@
 
 namespace Assist\Engagement\Observers;
 
-use Assist\Timeline\Models\Timeline;
 use Assist\Engagement\Models\EngagementResponse;
+use Assist\Timeline\Events\TimelineableRecordCreated;
+use Assist\Timeline\Events\TimelineableRecordDeleted;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 
 class EngagementResponseObserver
 {
     public function created(EngagementResponse $response): void
     {
-        /** @var Student|Prospect $educatable */
+        /** @var Educatable $educatable */
         $educatable = $response->sender;
 
-        // TODO Extract the timeline related actions
-        cache()->forget("timeline.synced.{$educatable->getMorphClass()}.{$educatable->getKey()}");
+        TimelineableRecordCreated::dispatch($educatable, $response);
+    }
 
-        Timeline::firstOrCreate([
-            'educatable_type' => $educatable->getMorphClass(),
-            'educatable_id' => $educatable->getKey(),
-            'timelineable_type' => $response->getMorphClass(),
-            'timelineable_id' => $response->getKey(),
-            'record_sortable_date' => $response->timeline()->sortableBy(),
-        ]);
+    public function deleted(EngagementResponse $response): void
+    {
+        /** @var Educatable $educatable */
+        $educatable = $response->sender;
+
+        TimelineableRecordDeleted::dispatch($educatable, $response);
     }
 }

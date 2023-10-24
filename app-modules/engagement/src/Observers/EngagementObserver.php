@@ -2,8 +2,10 @@
 
 namespace Assist\Engagement\Observers;
 
-use Assist\Timeline\Models\Timeline;
 use Assist\Engagement\Models\Engagement;
+use Assist\Timeline\Events\TimelineableRecordCreated;
+use Assist\Timeline\Events\TimelineableRecordDeleted;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 
 class EngagementObserver
@@ -26,18 +28,17 @@ class EngagementObserver
             TriggeredAutoSubscription::dispatch($user, $engagement);
         }
 
-        /** @var Student|Prospect $educatable */
+        /** @var Educatable $educatable */
         $educatable = $engagement->recipient;
 
-        // TODO Extract the timeline related actions
-        cache()->forget("timeline.synced.{$educatable->getMorphClass()}.{$educatable->getKey()}");
+        TimelineableRecordCreated::dispatch($educatable, $engagement);
+    }
 
-        Timeline::firstOrCreate([
-            'educatable_type' => $educatable->getMorphClass(),
-            'educatable_id' => $educatable->getKey(),
-            'timelineable_type' => $engagement->getMorphClass(),
-            'timelineable_id' => $engagement->getKey(),
-            'record_sortable_date' => $engagement->timeline()->sortableBy(),
-        ]);
+    public function deleted(Engagement $engagement): void
+    {
+        /** @var Educatable $educatable */
+        $educatable = $engagement->recipient;
+
+        TimelineableRecordDeleted::dispatch($educatable, $engagement);
     }
 }
