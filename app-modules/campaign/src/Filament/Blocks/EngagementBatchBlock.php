@@ -3,7 +3,6 @@
 namespace Assist\Campaign\Filament\Blocks;
 
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
@@ -22,42 +21,39 @@ class EngagementBatchBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Fieldset::make('Bulk Engagement Details')
-                ->schema([
-                    Select::make($fieldPrefix . 'delivery_methods')
-                        ->columnSpanFull()
-                        ->reactive()
-                        ->label('How would you like to send this engagement?')
-                        ->options(EngagementDeliveryMethod::class)
-                        ->multiple()
-                        ->minItems(1)
-                        ->validationAttribute('Delivery Method')
-                        ->required(),
-                    TextInput::make($fieldPrefix . 'subject')
-                        ->columnSpanFull()
-                        ->placeholder(__('Subject'))
-                        ->required()
-                        ->hidden(fn (callable $get) => collect($get($fieldPrefix . 'delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
-                        ->helperText('The subject will only be used for the email delivery method.'),
-                    Textarea::make($fieldPrefix . 'body')
-                        ->columnSpanFull()
-                        ->placeholder(__('Body'))
-                        ->required()
-                        ->maxLength(function (callable $get) use ($fieldPrefix) {
-                            if (collect($get($fieldPrefix . 'delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                return 320;
-                            }
+            Select::make($fieldPrefix . 'delivery_methods')
+                ->columnSpanFull()
+                ->reactive()
+                ->label('How would you like to send this engagement?')
+                ->options(EngagementDeliveryMethod::class)
+                ->multiple()
+                ->minItems(1)
+                ->validationAttribute('Delivery Method')
+                ->required(),
+            TextInput::make($fieldPrefix . 'subject')
+                ->columnSpanFull()
+                ->placeholder(__('Subject'))
+                ->required()
+                ->hidden(fn (callable $get) => collect($get($fieldPrefix . 'delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
+                ->helperText('The subject will only be used for the email delivery method.'),
+            Textarea::make($fieldPrefix . 'body')
+                ->columnSpanFull()
+                ->placeholder(__('Body'))
+                ->required()
+                ->maxLength(function (callable $get) use ($fieldPrefix) {
+                    if (collect($get($fieldPrefix . 'delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                        return 320;
+                    }
 
-                            return 65535;
-                        })
-                        ->helperText(function (callable $get) use ($fieldPrefix) {
-                            if (collect($get($fieldPrefix . 'delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                return 'The body of your message can be up to 320 characters long.';
-                            }
+                    return 65535;
+                })
+                ->helperText(function (callable $get) use ($fieldPrefix) {
+                    if (collect($get($fieldPrefix . 'delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                        return 'The body of your message can be up to 320 characters long.';
+                    }
 
-                            return 'The body of your message can be up to 65,535 characters long.';
-                        }),
-                ]),
+                    return 'The body of your message can be up to 65,535 characters long.';
+                }),
         ];
     }
 
