@@ -7,7 +7,10 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Assist\Campaign\Enums\CampaignActionType;
 use Assist\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
+use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -37,12 +40,15 @@ class CampaignAction extends BaseModel implements Auditable
 
     public function execute(): void
     {
-        match ($this->type) {
+        $result = match ($this->type) {
             CampaignActionType::BulkEngagement => EngagementBatch::executeFromCampaignAction($this),
+            CampaignActionType::ServiceRequest => ServiceRequest::executeFromCampaignAction($this),
             default => null
         };
 
-        $this->markAsExecuted();
+        if ($result === true) {
+            $this->markAsExecuted();
+        }
     }
 
     public function markAsExecuted(): void
@@ -60,7 +66,8 @@ class CampaignAction extends BaseModel implements Auditable
     public function getEditFields(): array
     {
         return match ($this->type) {
-            CampaignActionType::BulkEngagement => EngagementBatch::getEditFormFields(),
+            CampaignActionType::BulkEngagement => EngagementBatchBlock::make()->editFields(),
+            CampaignActionType::ServiceRequest => ServiceRequestBlock::make()->editFields(),
             default => []
         };
     }

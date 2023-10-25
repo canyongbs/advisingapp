@@ -6,7 +6,5 @@ use Assist\Campaign\Models\CampaignAction;
 
 interface ExecutableFromACampaignAction
 {
-    public static function executeFromCampaignAction(CampaignAction $action): void;
-
-    public static function getEditFormFields(): array;
+    public static function executeFromCampaignAction(CampaignAction $action): bool;
 }

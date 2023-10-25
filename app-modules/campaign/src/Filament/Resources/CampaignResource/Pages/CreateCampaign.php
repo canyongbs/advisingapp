@@ -11,6 +11,7 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\DateTimePicker;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
+use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
 use Assist\Campaign\Filament\Resources\CampaignResource;
 use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
@@ -48,6 +49,7 @@ class CreateCampaign extends CreateRecord
                         ->minItems(1)
                         ->blocks([
                             EngagementBatchBlock::make(),
+                            ServiceRequestBlock::make(),
                         ]),
                 ]),
             Step::make('Review Campaign')

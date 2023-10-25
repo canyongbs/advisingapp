@@ -12,7 +12,10 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Assist\Campaign\Models\CampaignAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Assist\Campaign\Enums\CampaignActionType;
+use Assist\Engagement\Models\EngagementBatch;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
@@ -24,6 +27,14 @@ class CampaignActionsRelationManager extends RelationManager
     {
         /** @var CampaignAction $action */
         $action = $form->model;
+
+        // TODO Find a slightly better way to do this...
+        $newModel = match ($action->type) {
+            CampaignActionType::BulkEngagement => EngagementBatch::class,
+            CampaignActionType::ServiceRequest => ServiceRequest::class
+        };
+
+        $form->model = $newModel;
 
         return $form
             ->schema([
