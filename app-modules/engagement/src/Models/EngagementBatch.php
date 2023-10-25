@@ -38,6 +38,8 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
                 'body' => $action->data['body'],
                 'deliveryMethods' => $action->data['delivery_methods'],
             ]));
+
+            return true;
         } catch (Exception $e) {
             return false;
         }
