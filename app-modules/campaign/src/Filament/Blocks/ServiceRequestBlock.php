@@ -27,21 +27,21 @@ class ServiceRequestBlock extends CampaignActionBlock
         $this->schema($this->createFields());
     }
 
-    public function createFields(): array
+    public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Select::make('division_id')
+            Select::make($fieldPrefix . 'division_id')
                 ->relationship('division', 'name')
                 ->label('Division')
                 ->required()
                 ->exists((new Division())->getTable(), 'id'),
-            Select::make('status_id')
+            Select::make($fieldPrefix . 'status_id')
                 ->relationship('status', 'name')
                 ->preload()
                 ->label('Status')
                 ->required()
                 ->exists((new ServiceRequestStatus())->getTable(), 'id'),
-            Select::make('priority_id')
+            Select::make($fieldPrefix . 'priority_id')
                 ->relationship(
                     name: 'priority',
                     titleAttribute: 'name',
@@ -50,69 +50,23 @@ class ServiceRequestBlock extends CampaignActionBlock
                 ->label('Priority')
                 ->required()
                 ->exists((new ServiceRequestPriority())->getTable(), 'id'),
-            Select::make('type_id')
+            Select::make($fieldPrefix . 'type_id')
                 ->relationship('type', 'name')
                 ->preload()
                 ->label('Type')
                 ->required()
                 ->exists((new ServiceRequestType())->getTable(), 'id'),
-            Select::make('assigned_to_id')
+            Select::make($fieldPrefix . 'assigned_to_id')
                 ->relationship('assignedTo', 'name')
                 ->searchable()
                 ->label('Assign Service Request to')
                 ->nullable()
                 ->exists((new User())->getTable(), 'id'),
-            Textarea::make('close_details')
+            Textarea::make($fieldPrefix . 'close_details')
                 ->label('Close Details/Description')
                 ->nullable()
                 ->string(),
-            Textarea::make('res_details')
-                ->label('Internal Service Request Details')
-                ->nullable()
-                ->string(),
-        ];
-    }
-
-    public function editFields(): array
-    {
-        return [
-            Select::make('data.division_id')
-                ->relationship('division', 'name')
-                ->label('Division')
-                ->required()
-                ->exists((new Division())->getTable(), 'id'),
-            Select::make('data.status_id')
-                ->relationship('status', 'name')
-                ->preload()
-                ->label('Status')
-                ->required()
-                ->exists((new ServiceRequestStatus())->getTable(), 'id'),
-            Select::make('data.priority_id')
-                ->relationship(
-                    name: 'priority',
-                    titleAttribute: 'name',
-                    modifyQueryUsing: fn (Builder $query) => $query->orderBy('order'),
-                )
-                ->label('Priority')
-                ->required()
-                ->exists((new ServiceRequestPriority())->getTable(), 'id'),
-            Select::make('data.type_id')
-                ->relationship('type', 'name')
-                ->preload()
-                ->label('Type')
-                ->required()
-                ->exists((new ServiceRequestType())->getTable(), 'id'),
-            Select::make('data.assigned_to_id')
-                ->relationship('assignedTo', 'name')
-                ->searchable()
-                ->label('Assign Service Request to')
-                ->nullable()
-                ->exists((new User())->getTable(), 'id'),
-            Textarea::make('data.close_details')
-                ->label('Close Details/Description')
-                ->nullable()
-                ->string(),
-            Textarea::make('data.res_details')
+            Textarea::make($fieldPrefix . 'res_details')
                 ->label('Internal Service Request Details')
                 ->nullable()
                 ->string(),
