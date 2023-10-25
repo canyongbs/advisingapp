@@ -11,7 +11,7 @@ class StudentEngagementTimeline extends Timeline
 {
     protected static string $resource = StudentResource::class;
 
-    protected static ?string $navigationLabel = 'Engagement Timeline';
+    protected static ?string $navigationLabel = 'Timeline';
 
     public string $emptyStateMessage = 'There are no engagements to show for this student.';
 
