@@ -19,12 +19,15 @@ use Filament\Notifications\Notification;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
+use Assist\Assistant\Enums\AssistantChatShareVia;
 use Assist\Assistant\Models\AssistantChatMessage;
+use Assist\Assistant\Enums\AssistantChatShareWith;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
 use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
+use Assist\Assistant\Notifications\SendAssistantTranscriptNotification;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 class PersonalAssistant extends Page
@@ -285,22 +288,35 @@ class PersonalAssistant extends Page
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
             ->form([
+                Select::make('via')
+                    ->label('Via')
+                    ->options(AssistantChatShareVia::class)
+                    ->enum(AssistantChatShareVia::class)
+                    ->default(AssistantChatShareVia::default())
+                    ->required()
+                    ->selectablePlaceholder(false)
+                    ->live(),
                 Select::make('target_type')
                     ->label('Type')
-                    ->options([
-                        'team' => 'Team',
-                        'user' => 'User',
-                    ])
-                    ->default('user')
+                    ->options(AssistantChatShareWith::class)
+                    ->enum(AssistantChatShareWith::class)
+                    ->default(AssistantChatShareWith::default())
                     ->required()
                     ->selectablePlaceholder(false)
                     ->live(),
                 Select::make('target_ids')
                     ->label('Targets')
-                    ->options(fn (Get $get): Collection => match ($get('target_type')) {
-                        'team' => Team::orderBy('name')->pluck('name', 'id'),
-                        'user' => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
-                        default => collect(),
+                    ->options(function (Get $get): Collection {
+                        return match ($get('via')) {
+                            AssistantChatShareVia::Email => match ($get('target_type')) {
+                                AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
+                                AssistantChatShareWith::User => User::orderBy('name')->pluck('name', 'id'),
+                            },
+                            AssistantChatShareVia::Internal => match ($get('target_type')) {
+                                AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
+                                AssistantChatShareWith::User => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            },
+                        };
                     })
                     ->searchable()
                     ->multiple()
@@ -309,38 +325,61 @@ class PersonalAssistant extends Page
             ->action(function (array $arguments, array $data) {
                 $chat = AssistantChat::find($arguments['chat']);
 
-                $users = match ($data['target_type']) {
-                    'team' => collect($data['target_ids'])
-                        ->map(fn ($id) => Team::find($id)->users()->whereKeyNot(auth()->id())->get())
-                        ->flatten()
-                        ->unique(),
-                    'user' => User::whereIn('id', $data['target_ids'])->get(),
+                $users = match ($data['via']) {
+                    AssistantChatShareVia::Email => match ($data['target_type']) {
+                        AssistantChatShareWith::Team => collect($data['target_ids'])
+                            ->map(fn ($id) => Team::find($id)->users)
+                            ->flatten()
+                            ->unique(),
+                        AssistantChatShareWith::User => User::whereIn('id', $data['target_ids'])->get(),
+                    },
+                    AssistantChatShareVia::Internal => match ($data['target_type']) {
+                        AssistantChatShareWith::Team => collect($data['target_ids'])
+                            ->map(fn ($id) => Team::find($id)->users()->whereKeyNot(auth()->id())->get())
+                            ->flatten()
+                            ->unique(),
+                        AssistantChatShareWith::User => User::whereIn('id', $data['target_ids'])->get(),
+                    }
                 };
 
                 $users
                     ->each(
-                        function (User $user) use ($chat) {
-                            $replica = $chat
-                                ->replicate(['id', 'user_id'])
-                                ->user()
-                                ->associate($user);
+                        function (User $user) use ($data, $chat) {
+                            switch ($data['via']) {
+                                case AssistantChatShareVia::Email:
+                                    $user->notify(new SendAssistantTranscriptNotification($chat));
 
-                            $replica->save();
+                                    Notification::make()
+                                        ->success()
+                                        ->title("You emailed an assistant chat to {$user->name}.")
+                                        ->sendToDatabase(auth()->user());
 
-                            $chat
-                                ->messages()
-                                ->each(
-                                    fn (AssistantChatMessage $message) => $message
-                                        ->replicate(['id', 'assistant_chat_id'])
-                                        ->chat()
-                                        ->associate($replica)
-                                        ->save()
-                                );
+                                    break;
+                                case AssistantChatShareVia::Internal:
+                                    $replica = $chat
+                                        ->replicate(['id', 'user_id'])
+                                        ->user()
+                                        ->associate($user);
 
-                            Notification::make()
-                                ->success()
-                                ->title("You shared an assistant chat with {$user->name}.")
-                                ->sendToDatabase(auth()->user());
+                                    $replica->save();
+
+                                    $chat
+                                        ->messages()
+                                        ->each(
+                                            fn (AssistantChatMessage $message) => $message
+                                                ->replicate(['id', 'assistant_chat_id'])
+                                                ->chat()
+                                                ->associate($replica)
+                                                ->save()
+                                        );
+
+                                    Notification::make()
+                                        ->success()
+                                        ->title("You shared an assistant chat with {$user->name}.")
+                                        ->sendToDatabase(auth()->user());
+
+                                    break;
+                            }
                         }
                     );
             })
