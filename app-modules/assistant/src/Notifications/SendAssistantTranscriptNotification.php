@@ -29,13 +29,15 @@ class SendAssistantTranscriptNotification extends Notification
             ->greeting("Hello {$notifiable->name},")
             ->line('Here is a copy of your chat with Canyon:');
 
-        $this->chat->messages->each(function ($chatMessage) use ($message) {
-            if ($chatMessage->from === AIChatMessageFrom::User) {
-                $message->line("You: {$chatMessage->message}");
-            } else {
-                $message->line("Canyon: {$chatMessage->message}");
-            }
-        });
+        $this->chat
+            ->messages
+            ->each(function ($chatMessage) use ($message) {
+                if ($chatMessage->from === AIChatMessageFrom::User) {
+                    $message->line("You: {$chatMessage->message}");
+                } else {
+                    $message->line("Canyon: {$chatMessage->message}");
+                }
+            });
 
         return $message;
     }
