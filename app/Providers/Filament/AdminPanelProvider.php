@@ -4,14 +4,12 @@ namespace App\Providers\Filament;
 
 use Filament\Panel;
 use Filament\PanelProvider;
-use App\Models\SettingsProperty;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\EditProfile;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
 use App\Filament\Pages\ProductHealth;
 use App\Filament\Actions\ImportAction;
-use Assist\Theme\Settings\ThemeSettings;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
