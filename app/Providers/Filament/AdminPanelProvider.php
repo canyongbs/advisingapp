@@ -41,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        $panel = $panel
+        return $panel
             ->default()
             ->id('admin')
             ->path('/')
@@ -95,16 +95,6 @@ class AdminPanelProvider extends PanelProvider
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(ProductHealth::class),
             ]);
-
-        $themeSettings = app(ThemeSettings::class);
-        $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
-        $favicon = $settingsProperty->getFirstMedia('favicon');
-
-        if ($themeSettings->is_favicon_active && $favicon) {
-            $panel->favicon($favicon->getTemporaryUrl(now()->addMinutes(5)));
-        }
-
-        return $panel;
     }
 
     public function boot(): void {}

@@ -60,6 +60,9 @@ class ManageBrandConfigurationSettings extends SettingsPage
                             ->afterStateUpdated(fn (Set $set) => $set('is_favicon_active', true))
                             ->deleteUploadedFileUsing(fn (Set $set) => $set('is_favicon_active', false))
                             ->hiddenLabel(),
+                        Toggle::make('is_favicon_active')
+                            ->label('Active')
+                            ->hidden(fn (Get $get): bool => blank($get('favicon'))),
                     ]),
                 Section::make('Logo')
                     ->aside()

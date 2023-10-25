@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use App\Console\Commands\SetupDefaultAssets;
 use Assist\Form\Database\Seeders\FormSeeder;
 use Assist\Task\Database\Seeders\TaskSeeder;
 use Assist\Team\Database\Seeders\TeamSeeder;
@@ -67,5 +68,7 @@ class DatabaseSeeder extends Seeder
             SuperAdminSeeder::class,
             PronounsSeeder::class,
         ]);
+
+        Artisan::call(SetupDefaultAssets::class);
     }
 }

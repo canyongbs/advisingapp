@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\SettingsProperty;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
+use Assist\Theme\Settings\ThemeSettings;
 use Filament\Support\Facades\FilamentColor;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -12,6 +14,14 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $themeSettings = app(ThemeSettings::class);
+        $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
+        $favicon = $settingsProperty->getFirstMedia('favicon');
+
+        if ($themeSettings->is_favicon_active && $favicon) {
+            filament()->getCurrentPanel()->favicon($favicon->getTemporaryUrl(now()->addMinutes(5)));
+        }
+
         // Changes to colors also need to be reflected in tailwind.config.js
         FilamentColor::register([
             'danger' => Color::Red,
