@@ -26,5 +26,7 @@ abstract class CampaignActionBlock extends Block
         return $this->generateFields('data.');
     }
 
+    abstract public function generateFields(string $fieldPrefix = ''): array;
+
     abstract public static function type(): string;
 }
