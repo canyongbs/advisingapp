@@ -24,6 +24,14 @@ class CreateCampaign extends CreateRecord
 
     protected static string $resource = CampaignResource::class;
 
+    public static function blocks(): array
+    {
+        return [
+            EngagementBatchBlock::make(),
+            ServiceRequestBlock::make(),
+        ];
+    }
+
     protected function getSteps(): array
     {
         /** @var User $user */
@@ -47,10 +55,7 @@ class CreateCampaign extends CreateRecord
                         ->label('Journey')
                         ->addActionLabel('Add a new Campaign Action')
                         ->minItems(1)
-                        ->blocks([
-                            EngagementBatchBlock::make(),
-                            ServiceRequestBlock::make(),
-                        ]),
+                        ->blocks(CreateCampaign::blocks()),
                 ]),
             Step::make('Review Campaign')
                 ->schema([

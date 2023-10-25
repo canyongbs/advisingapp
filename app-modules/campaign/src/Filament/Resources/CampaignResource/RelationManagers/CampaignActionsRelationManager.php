@@ -16,8 +16,8 @@ use Assist\Campaign\Enums\CampaignActionType;
 use Assist\Engagement\Models\EngagementBatch;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use App\Filament\Resources\RelationManagers\RelationManager;
+use Assist\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
 
 class CampaignActionsRelationManager extends RelationManager
 {
@@ -28,13 +28,10 @@ class CampaignActionsRelationManager extends RelationManager
         /** @var CampaignAction $action */
         $action = $form->model;
 
-        // TODO Find a slightly better way to do this...
-        $newModel = match ($action->type) {
+        $form->model = match ($action->type) {
             CampaignActionType::BulkEngagement => EngagementBatch::class,
             CampaignActionType::ServiceRequest => ServiceRequest::class
         };
-
-        $form->model = $newModel;
 
         return $form
             ->schema([
@@ -60,12 +57,10 @@ class CampaignActionsRelationManager extends RelationManager
                     ->form([
                         Builder::make('data')
                             ->addActionLabel('Add a new Campaign Action')
-                            ->maxItems(1)
-                            ->blocks([
-                                EngagementBatchBlock::make(),
-                            ]),
+                            ->blocks(CreateCampaign::blocks()),
                     ])
                     ->using(function (array $data, string $model): CampaignAction {
+                        // TODO This needs to be modified to support the creation of more than one block at a time
                         return $model::create([
                             'campaign_id' => $this->getOwnerRecord()->id,
                             'type' => $data['data'][0]['type'],
@@ -76,6 +71,7 @@ class CampaignActionsRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make()
+                    ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
                 DeleteAction::make()
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),

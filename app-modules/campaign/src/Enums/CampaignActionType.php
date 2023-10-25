@@ -2,9 +2,20 @@
 
 namespace Assist\Campaign\Enums;
 
-enum CampaignActionType: string
+use Filament\Support\Contracts\HasLabel;
+
+enum CampaignActionType: string implements HasLabel
 {
     case BulkEngagement = 'bulk_engagement';
 
     case ServiceRequest = 'service_request';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            CampaignActionType::BulkEngagement => 'Bulk Engagement',
+            CampaignActionType::ServiceRequest => 'Service Request',
+            default => $this->name,
+        };
+    }
 }
