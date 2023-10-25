@@ -14,7 +14,7 @@ class UsersTableSeeder extends Seeder
         /** Super Admin */
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
-            'email' => 'superadmin@assist.com',
+            'email' => 'sampleadmin@advising.app',
             'password' => Hash::make('password'),
         ]);
 
