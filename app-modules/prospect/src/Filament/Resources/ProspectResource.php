@@ -75,7 +75,7 @@ class ProspectResource extends Resource
             'manage-subscriptions' => ManageProspectSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => ManageProspectTasks::route('/{record}/tasks'),
             'view' => ViewProspect::route('/{record}'),
-            'engagement-timeline' => ProspectEngagementTimeline::route('/{record}/engagement-timeline'),
+            'timeline' => ProspectEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
         ];
     }

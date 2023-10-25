@@ -76,7 +76,7 @@ class StudentResource extends Resource
             'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => ManageStudentTasks::route('/{record}/tasks'),
             'view' => ViewStudent::route('/{record}'),
-            'engagement-timeline' => StudentEngagementTimeline::route('/{record}/engagement-timeline'),
+            'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
         ];
     }
