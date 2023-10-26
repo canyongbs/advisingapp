@@ -5,6 +5,7 @@ namespace Assist\Campaign\Filament\Blocks;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 
 class EngagementBatchBlock extends CampaignActionBlock
@@ -54,6 +55,11 @@ class EngagementBatchBlock extends CampaignActionBlock
 
                     return 'The body of your message can be up to 65,535 characters long.';
                 }),
+            DateTimePicker::make('execute_at')
+                ->label('When should the action be executed?')
+                ->required()
+                ->minDate(now(auth()->user()->timezone))
+                ->closeOnDateSelection(),
         ];
     }
 

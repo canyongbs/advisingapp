@@ -158,7 +158,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         );
     }
 
-    public static function executeFromCampaignAction(CampaignAction $action): bool
+    public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
             $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
@@ -178,7 +178,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
             return true;
         } catch (Exception $e) {
-            return false;
+            return $e->getMessage();
         }
     }
 

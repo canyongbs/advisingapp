@@ -28,7 +28,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
         return $this->belongsTo(User::class);
     }
 
-    public static function executeFromCampaignAction(CampaignAction $action): bool
+    public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
             CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
@@ -41,7 +41,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
 
             return true;
         } catch (Exception $e) {
-            return false;
+            return $e->getMessage();
         }
 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?

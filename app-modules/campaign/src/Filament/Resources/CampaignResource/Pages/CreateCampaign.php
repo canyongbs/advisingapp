@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\DateTimePicker;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
 use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
 use Assist\Campaign\Filament\Resources\CampaignResource;
@@ -59,10 +58,7 @@ class CreateCampaign extends CreateRecord
                 ]),
             Step::make('Review Campaign')
                 ->schema([
-                    DateTimePicker::make('execute_at')
-                        ->label('When should the campaign actions be executed?')
-                        ->required()
-                        ->closeOnDateSelection(),
+                    // TODO: Add review step in [ASSIST-731]
                 ]),
         ];
     }

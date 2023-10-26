@@ -8,9 +8,9 @@ use Assist\Campaign\Models\Campaign;
 use Illuminate\Support\ServiceProvider;
 use Assist\Campaign\Models\CampaignAction;
 use Illuminate\Console\Scheduling\Schedule;
-use Assist\Campaign\Actions\ExecuteCampaigns;
 use Assist\Campaign\Observers\CampaignObserver;
 use Assist\Authorization\AuthorizationRoleRegistry;
+use Assist\Campaign\Actions\ExecuteCampaignActions;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 
@@ -30,7 +30,7 @@ class CampaignServiceProvider extends ServiceProvider
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
-            $schedule->job(ExecuteCampaigns::class)
+            $schedule->job(ExecuteCampaignActions::class)
                 ->everyMinute()
                 ->withoutOverlapping();
         });
