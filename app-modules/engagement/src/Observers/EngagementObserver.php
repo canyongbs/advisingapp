@@ -3,6 +3,9 @@
 namespace Assist\Engagement\Observers;
 
 use Assist\Engagement\Models\Engagement;
+use Assist\Timeline\Events\TimelineableRecordCreated;
+use Assist\Timeline\Events\TimelineableRecordDeleted;
+use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 
 class EngagementObserver
@@ -24,5 +27,18 @@ class EngagementObserver
         if ($user = auth()->user()) {
             TriggeredAutoSubscription::dispatch($user, $engagement);
         }
+
+        /** @var Educatable $educatable */
+        $educatable = $engagement->recipient;
+
+        TimelineableRecordCreated::dispatch($educatable, $engagement);
+    }
+
+    public function deleted(Engagement $engagement): void
+    {
+        /** @var Educatable $educatable */
+        $educatable = $engagement->recipient;
+
+        TimelineableRecordDeleted::dispatch($educatable, $engagement);
     }
 }

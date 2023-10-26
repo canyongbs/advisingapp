@@ -3,11 +3,11 @@
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Assist\Engagement\Models\Engagement;
-use Assist\Timeline\Filament\Pages\Timeline;
 use Assist\Engagement\Models\EngagementResponse;
+use Assist\Timeline\Filament\Pages\TimelinePage;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 
-class ProspectEngagementTimeline extends Timeline
+class ProspectEngagementTimeline extends TimelinePage
 {
     protected static string $resource = ProspectResource::class;
 
@@ -15,17 +15,10 @@ class ProspectEngagementTimeline extends Timeline
 
     public string $emptyStateMessage = 'There are no engagements to show for this prospect.';
 
+    public string $noMoreRecordsMessage = "You have reached the end of this prospects's engagement timeline.";
+
     public array $modelsToTimeline = [
         Engagement::class,
         EngagementResponse::class,
     ];
-
-    public function mount($record): void
-    {
-        $this->recordModel = $this->record = $this->resolveRecord($record);
-
-        $this->authorizeAccess();
-
-        $this->aggregateRecords();
-    }
 }

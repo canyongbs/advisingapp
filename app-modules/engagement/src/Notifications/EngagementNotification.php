@@ -25,8 +25,7 @@ class EngagementNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage())
             ->subject($this->deliverable->engagement->subject)
-            // TODO Remove reliance on "preferred" as a field - extract to attribute
-            ->greeting('Hello ' . $this->deliverable->engagement->recipient->preferred . '!')
+            ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
             ->line($this->deliverable->engagement->body)
             ->salutation("Regards, {$this->deliverable->engagement->user->name}");
     }
