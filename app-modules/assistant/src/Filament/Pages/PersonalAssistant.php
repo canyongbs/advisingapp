@@ -326,24 +326,7 @@ class PersonalAssistant extends Page
 
                 $chat = AssistantChat::find($arguments['chat']);
 
-                $users = match ($data['via']) {
-                    AssistantChatShareVia::Email => match ($data['target_type']) {
-                        AssistantChatShareWith::Team => collect($data['target_ids'])
-                            ->map(fn ($id) => Team::find($id)->users)
-                            ->flatten()
-                            ->unique(),
-                        AssistantChatShareWith::User => User::whereIn('id', $data['target_ids'])->get(),
-                    },
-                    AssistantChatShareVia::Internal => match ($data['target_type']) {
-                        AssistantChatShareWith::Team => collect($data['target_ids'])
-                            ->map(fn ($id) => Team::find($id)->users()->whereKeyNot(auth()->id())->get())
-                            ->flatten()
-                            ->unique(),
-                        AssistantChatShareWith::User => User::whereIn('id', $data['target_ids'])->get(),
-                    }
-                };
-
-                dispatch(new ShareAssistantChatsJob($chat, $data['via'], $users, $sender));
+                dispatch(new ShareAssistantChatsJob($chat, $data['via'], $data['target_type'], $data['target_ids'], $sender));
             })
             ->icon('heroicon-o-share')
             ->color('warning')

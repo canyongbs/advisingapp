@@ -3,9 +3,9 @@
 namespace Assist\Assistant\Jobs;
 
 use App\Models\User;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
-use Filament\Notifications\Notification;
 use Illuminate\Queue\InteractsWithQueue;
 use Assist\Assistant\Models\AssistantChat;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,6 +20,7 @@ class ShareAssistantChatJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use Batchable;
 
     public function __construct(
         protected AssistantChat $chat,
@@ -33,14 +34,13 @@ class ShareAssistantChatJob implements ShouldQueue
      */
     public function handle(): void
     {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
+
         switch ($this->via) {
             case AssistantChatShareVia::Email:
                 $this->user->notify(new SendAssistantTranscriptNotification($this->chat, $this->sender));
-
-                Notification::make()
-                    ->success()
-                    ->title("You emailed an assistant chat to {$this->user->name}.")
-                    ->sendToDatabase($this->sender);
 
                 break;
             case AssistantChatShareVia::Internal:
@@ -60,11 +60,6 @@ class ShareAssistantChatJob implements ShouldQueue
                             ->associate($replica)
                             ->save()
                     );
-
-                Notification::make()
-                    ->success()
-                    ->title("You shared an assistant chat with {$this->user->name}.")
-                    ->sendToDatabase($this->sender);
 
                 break;
         }
