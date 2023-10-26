@@ -2,6 +2,7 @@
 
 namespace Assist\MeetingCenter\Providers;
 
+use Assist\MeetingCenter\Jobs\SyncCalendars;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Assist\MeetingCenter\Models\Calendar;
@@ -30,12 +31,9 @@ class MeetingCenterServiceProvider extends ServiceProvider
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
-            Calendar::all()
-                ->each(
-                    fn (Calendar $calendar) => $schedule->job(new SyncCalendar($calendar))
-                        ->everyMinute()
-                        ->withoutOverlapping()
-                );
+            $schedule->job(SyncCalendars::class)
+                ->everyMinute()
+                ->withoutOverlapping();
         });
 
         $this->registerRolesAndPermissions();
