@@ -60,12 +60,15 @@ class CampaignActionsRelationManager extends RelationManager
                             ->blocks(CreateCampaign::blocks()),
                     ])
                     ->using(function (array $data, string $model): CampaignAction {
-                        // TODO This needs to be modified to support the creation of more than one block at a time
-                        return $model::create([
-                            'campaign_id' => $this->getOwnerRecord()->id,
-                            'type' => $data['data'][0]['type'],
-                            'data' => $data['data'][0]['data'],
-                        ]);
+                        foreach ($data['data'] as $action) {
+                            $lastModel = $model::create([
+                                'campaign_id' => $this->getOwnerRecord()->id,
+                                'type' => $action['type'],
+                                'data' => $action['data'],
+                            ]);
+                        }
+
+                        return $lastModel;
                     })
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
@@ -74,6 +77,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
                 DeleteAction::make()
+                    ->modalHeading(fn (CampaignAction $action) => 'Delete ' . $action->type->getLabel())
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
             ->bulkActions([
