@@ -40,8 +40,6 @@ class PersonalAssistant extends Page
 
     protected static ?int $navigationSort = 1;
 
-    public Collection $chats;
-
     public Chat $chat;
 
     #[Rule(['required', 'string'])]
@@ -73,18 +71,9 @@ class PersonalAssistant extends Page
 
     public function mount(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         $this->authorize('assistant.access');
 
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();
-
-        $this->chats = $user
-            ->assistantChats()
-            ->doesntHave('folder')
-            ->latest()
-            ->get();
 
         /** @var AssistantChat $chat */
         $chat = $this->chats->first();
@@ -93,6 +82,19 @@ class PersonalAssistant extends Page
             id: $chat?->id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
         );
+    }
+
+    #[Computed]
+    public function chats(): EloquentCollection
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user
+            ->assistantChats()
+            ->doesntHave('folder')
+            ->latest()
+            ->get();
     }
 
     #[Computed]
@@ -265,16 +267,23 @@ class PersonalAssistant extends Page
             ->form([
                 Select::make('folder')
                     ->options(AssistantChatFolder::pluck('name', 'id'))
-                    ->placeholder(null)
-                    ->required(),
+                    ->placeholder('-'),
             ])
             ->action(function (array $arguments, array $data) {
                 $chat = AssistantChat::find($arguments['chat']);
                 $folder = AssistantChatFolder::find($data['folder']);
 
-                $chat->folder()
-                    ->associate($folder)
-                    ->save();
+                if ($folder) {
+                    $chat->folder()
+                        ->associate($folder)
+                        ->save();
+                } else {
+                    $chat->folder()
+                        ->disassociate()
+                        ->save();
+                }
+
+                unset($this->folders, $this->chats);
             })
             ->icon('heroicon-o-arrow-up-tray')
             ->color('warning')

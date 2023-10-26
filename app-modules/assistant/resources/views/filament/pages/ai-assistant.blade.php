@@ -27,10 +27,10 @@ use Illuminate\Support\Facades\Vite;
 
                         {{ ($this->newFolderAction) }}
 
-                        @if (count($chats))
+                        @if (count($this->chats))
                             <ul
                                 class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                                @foreach ($chats as $chatItem)
+                                @foreach ($this->chats as $chatItem)
                                     <li @class([
                                         'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                         'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
@@ -70,11 +70,20 @@ use Illuminate\Support\Facades\Vite;
                                     <span
                                         class='px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1'
                                         @click="expanded = ! expanded"
-                                    > {{ $folder->name }}
+                                    >
+                                        <x-filament::icon-button
+                                            icon="heroicon-o-folder-open"
+                                            x-show="expanded"
+                                        />
+                                        <x-filament::icon-button
+                                            icon="heroicon-o-folder"
+                                            x-show="expanded == false"
+                                        />
+                                        {{ $folder->name }}
                                     </span>
                                     @foreach ($folder->chats as $chatItem)
                                         <li @class([
-                                                'px-4 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                                'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                                 'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
                                             ]) x-show="expanded">
                                             <a
