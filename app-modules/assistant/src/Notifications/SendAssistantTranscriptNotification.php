@@ -44,7 +44,7 @@ class SendAssistantTranscriptNotification extends Notification implements Should
 
         $this->chat
             ->messages
-            ->each(function ($chatMessage) use ($senderIsNotifiable, $notifiable, $message) {
+            ->each(function ($chatMessage) use ($senderIsNotifiable, $message) {
                 if ($chatMessage->from === AIChatMessageFrom::User) {
                     if ($senderIsNotifiable) {
                         $message->line("You: {$chatMessage->message}");
