@@ -10,6 +10,7 @@ use Assist\Team\Models\Team;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
+use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
@@ -19,11 +20,13 @@ use Filament\Notifications\Notification;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
+use Assist\Assistant\Models\AssistantChatFolder;
 use Assist\Assistant\Models\AssistantChatMessage;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
 use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
@@ -75,11 +78,13 @@ class PersonalAssistant extends Page
 
         $this->authorize('assistant.access');
 
-        $this->consentAgreement = ConsentAgreement::query()
-            ->where('type', ConsentAgreementType::AzureOpenAI)
-            ->first();
+        $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();
 
-        $this->chats = $user->assistantChats()->latest()->get();
+        $this->chats = $user
+            ->assistantChats()
+            ->doesntHave('folder')
+            ->latest()
+            ->get();
 
         /** @var AssistantChat $chat */
         $chat = $this->chats->first();
@@ -88,6 +93,15 @@ class PersonalAssistant extends Page
             id: $chat?->id ?? null,
             messages: ChatMessage::collection($chat?->messages ?? []),
         );
+    }
+
+    #[Computed]
+    public function folders(): EloquentCollection
+    {
+        return AssistantChatFolder::whereRelation('user', 'id', auth()->id())
+            ->with('chats')
+            ->orderBy('name')
+            ->get();
     }
 
     public function determineIfConsentWasGiven(): void
@@ -218,6 +232,59 @@ class PersonalAssistant extends Page
         $this->chat = new Chat(id: null, messages: ChatMessage::collection([]));
     }
 
+    public function newFolderAction(): Action
+    {
+        return Action::make('newFolder')
+            ->modalSubmitActionLabel('Create')
+            ->modalWidth('md')
+            ->form([
+                TextInput::make('name')
+                    ->required()
+                    ->unique('assistant_chat_folders'),
+            ])
+            ->action(function (array $arguments, array $data) {
+                $folder = new AssistantChatFolder(['name' => $data['name']]);
+
+                /** @var User $user */
+                $user = auth()->user();
+                $folder->user()->associate($user);
+                $folder->save();
+            })
+            ->icon('heroicon-m-folder-plus')
+            ->color('info')
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+    }
+
+    public function moveChatAction(): Action
+    {
+        return Action::make('moveChat')
+            ->label('Move chat to a different folder')
+            ->modalSubmitActionLabel('Move')
+            ->modalWidth('md')
+            ->size(ActionSize::ExtraSmall)
+            ->form([
+                Select::make('folder')
+                    ->options(AssistantChatFolder::pluck('name', 'id'))
+                    ->placeholder(null)
+                    ->required(),
+            ])
+            ->action(function (array $arguments, array $data) {
+                $chat = AssistantChat::find($arguments['chat']);
+                $folder = AssistantChatFolder::find($data['folder']);
+
+                $chat->folder()
+                    ->associate($folder)
+                    ->save();
+            })
+            ->icon('heroicon-o-arrow-up-tray')
+            ->color('warning')
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
+    }
+
     public function deleteChatAction(): Action
     {
         return Action::make('deleteChat')
@@ -248,14 +315,12 @@ class PersonalAssistant extends Page
             ->modalSubmitActionLabel('Save')
             ->modalWidth('md')
             ->size(ActionSize::ExtraSmall)
-            ->form(
-                [
-                    TextInput::make('name')
-                        ->label('Name')
-                        ->placeholder('Rename this chat')
-                        ->required(),
-                ]
-            )
+            ->form([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->placeholder('Rename this chat')
+                    ->required(),
+            ])
             ->action(function (array $arguments, array $data) {
                 $chat = AssistantChat::find($arguments['chat']);
 

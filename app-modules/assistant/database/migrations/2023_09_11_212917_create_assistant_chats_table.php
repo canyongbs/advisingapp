@@ -12,8 +12,12 @@ return new class () extends Migration {
     {
         Schema::create('assistant_chats', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+
             $table->string('name');
+
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('assistant_chat_folder_id')->nullable()->constrained('assistant_chat_folders')->cascadeOnDelete();
+
             $table->timestamps();
         });
     }
