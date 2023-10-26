@@ -25,7 +25,7 @@ class ViewCampaign extends ViewRecord
                         // TODO Make link to caseload
                         TextEntry::make('caseload.name')
                             ->label('Caseload'),
-                        IconEntry::make('execute_at')
+                        IconEntry::make('execution_status')
                             ->label('Has Been Executed?')
                             ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
                             ->boolean(),

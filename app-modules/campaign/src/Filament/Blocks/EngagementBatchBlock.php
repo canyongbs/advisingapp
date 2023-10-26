@@ -55,10 +55,10 @@ class EngagementBatchBlock extends CampaignActionBlock
 
                     return 'The body of your message can be up to 65,535 characters long.';
                 }),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
+            DateTimePicker::make('execute_at')
                 ->label('When should the action be executed?')
                 ->required()
-                ->minDate(now())
+                ->minDate(now(auth()->user()->timezone))
                 ->closeOnDateSelection(),
         ];
     }

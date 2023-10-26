@@ -71,10 +71,10 @@ class ServiceRequestBlock extends CampaignActionBlock
                 ->label('Internal Service Request Details')
                 ->nullable()
                 ->string(),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
+            DateTimePicker::make('execute_at')
                 ->label('When should the action be executed?')
                 ->required()
-                ->minDate(now())
+                ->minDate(now(auth()->user()->timezone))
                 ->closeOnDateSelection(),
         ];
     }

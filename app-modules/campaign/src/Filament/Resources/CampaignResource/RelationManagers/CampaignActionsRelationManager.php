@@ -61,10 +61,14 @@ class CampaignActionsRelationManager extends RelationManager
                     ])
                     ->using(function (array $data, string $model): CampaignAction {
                         foreach ($data['data'] as $action) {
+                            $executeAt = $action['data']['execute_at'];
+                            unset($action['data']['execute_at']);
+
                             $lastModel = $model::create([
                                 'campaign_id' => $this->getOwnerRecord()->id,
                                 'type' => $action['type'],
                                 'data' => $action['data'],
+                                'execute_at' => $executeAt,
                             ]);
                         }
 
