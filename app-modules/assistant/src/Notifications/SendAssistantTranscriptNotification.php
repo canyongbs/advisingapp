@@ -32,7 +32,9 @@ class SendAssistantTranscriptNotification extends Notification implements Should
         $message = (new MailMessage())
             ->greeting("Hello {$notifiable->name},");
 
-        if ($this->sender->is($notifiable)) {
+        $senderIsNotifiable = $this->sender->is($notifiable);
+
+        if ($senderIsNotifiable) {
             $message->subject("Assistant Chat Transcript: {$this->chat->name}")
                 ->line('Here is a copy of your chat with Canyon:');
         } else {
@@ -42,9 +44,9 @@ class SendAssistantTranscriptNotification extends Notification implements Should
 
         $this->chat
             ->messages
-            ->each(function ($chatMessage) use ($notifiable, $message) {
+            ->each(function ($chatMessage) use ($senderIsNotifiable, $notifiable, $message) {
                 if ($chatMessage->from === AIChatMessageFrom::User) {
-                    if ($this->sender->is($notifiable)) {
+                    if ($senderIsNotifiable) {
                         $message->line("You: {$chatMessage->message}");
                     } else {
                         $message->line("{$this->sender->name}: {$chatMessage->message}");
