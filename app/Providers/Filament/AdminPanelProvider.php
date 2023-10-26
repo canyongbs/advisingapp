@@ -8,7 +8,6 @@ use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\EditProfile;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
-use Illuminate\Support\Facades\Vite;
 use App\Filament\Pages\ProductHealth;
 use App\Filament\Actions\ImportAction;
 use Filament\Infolists\Components\Entry;
@@ -47,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->profile(EditProfile::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->favicon(Vite::asset('resources/images/default-favicon.png'))
+            ->favicon(asset('/images/default-favicon.png'))
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
