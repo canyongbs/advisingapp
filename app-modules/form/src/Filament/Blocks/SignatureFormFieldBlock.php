@@ -4,20 +4,20 @@ namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
 use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 
-class TextInputFormFieldBlock extends FormFieldBlock
+class SignatureFormFieldBlock extends FormFieldBlock
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('Text Input');
+        $this->label('Signature');
     }
 
     public static function type(): string
     {
-        return 'text_input';
+        return 'signature';
     }
 
     public function fields(): array
@@ -27,7 +27,8 @@ class TextInputFormFieldBlock extends FormFieldBlock
 
     public static function getInfolistEntry(FormField $field): Entry
     {
-        return TextEntry::make($field->key)
-            ->label($field->label);
+        return ViewEntry::make($field->key)
+            ->label($field->label)
+            ->view('form::infolists.components.signature-entry');
     }
 }

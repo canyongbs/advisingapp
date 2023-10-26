@@ -3,6 +3,7 @@ import './widget.css';
 import App from './App.vue';
 import { defaultConfig, plugin } from '@formkit/vue';
 import config from './formkit.config.js';
+import VueSignaturePad from "vue-signature-pad";
 
 customElements.define(
     'form-embed',
@@ -13,6 +14,8 @@ customElements.define(
 
             // install plugins
             app.use(plugin, defaultConfig(config));
+
+            app.use(VueSignaturePad)
 
             app.config.devtools = true;
 
