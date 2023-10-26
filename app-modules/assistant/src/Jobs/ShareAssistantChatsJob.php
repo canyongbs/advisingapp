@@ -7,7 +7,6 @@ use Assist\Team\Models\Team;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Queue\SerializesModels;
-use Filament\Notifications\Notification;
 use Illuminate\Queue\InteractsWithQueue;
 use Assist\Assistant\Models\AssistantChat;
 use Illuminate\Contracts\Queue\ShouldQueue;
