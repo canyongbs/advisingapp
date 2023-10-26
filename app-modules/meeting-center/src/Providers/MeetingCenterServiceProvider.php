@@ -2,12 +2,11 @@
 
 namespace Assist\MeetingCenter\Providers;
 
-use Assist\MeetingCenter\Jobs\SyncCalendars;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Assist\MeetingCenter\Models\Calendar;
-use Assist\MeetingCenter\Jobs\SyncCalendar;
 use Illuminate\Console\Scheduling\Schedule;
+use Assist\MeetingCenter\Jobs\SyncCalendars;
 use Assist\MeetingCenter\MeetingCenterPlugin;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\Authorization\AuthorizationRoleRegistry;
