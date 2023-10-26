@@ -8,6 +8,7 @@ use Assist\Campaign\Enums\CampaignActionType;
 use Assist\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\ServiceManagement\Models\ServiceRequest;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
 use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
@@ -55,6 +56,7 @@ class CampaignAction extends BaseModel implements Auditable
     public function markAsSuccessfullyExecuted(): void
     {
         $this->update([
+            'last_execution_attempt_at' => now(),
             'successfully_executed_at' => now(),
         ]);
     }
@@ -65,6 +67,11 @@ class CampaignAction extends BaseModel implements Auditable
             'last_execution_attempt_at' => now(),
             'last_execution_attempt_error' => $response,
         ]);
+    }
+
+    public function scopeHasNotBeenExecuted(Builder $query): void
+    {
+        $query->whereNull('successfully_executed_at');
     }
 
     public function hasBeenExecuted(): bool
