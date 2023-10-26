@@ -12,6 +12,7 @@ use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\CreateStuden
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
@@ -42,6 +43,7 @@ class StudentResource extends Resource
             ManageStudentSubscriptions::class,
             ManageStudentInteractions::class,
             StudentEngagementTimeline::class,
+            ManageStudentCareTeam::class,
         ]);
     }
 
@@ -74,7 +76,8 @@ class StudentResource extends Resource
             'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => ManageStudentTasks::route('/{record}/tasks'),
             'view' => ViewStudent::route('/{record}'),
-            'engagement-timeline' => StudentEngagementTimeline::route('/{record}/engagement-timeline'),
+            'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
+            'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
         ];
     }
 }

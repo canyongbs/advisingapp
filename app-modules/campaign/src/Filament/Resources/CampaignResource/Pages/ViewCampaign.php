@@ -22,11 +22,10 @@ class ViewCampaign extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
+                        // TODO Make link to caseload
                         TextEntry::make('caseload.name')
                             ->label('Caseload'),
-                        TextEntry::make('execute_at')
-                            ->dateTime(),
-                        IconEntry::make('execute_at')
+                        IconEntry::make('execution_status')
                             ->label('Has Been Executed?')
                             ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())
                             ->boolean(),

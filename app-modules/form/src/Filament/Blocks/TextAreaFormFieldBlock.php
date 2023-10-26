@@ -3,7 +3,8 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
-use Filament\Forms\Components\Textarea as FilamentTextArea;
+use Filament\Infolists\Components\Entry;
+use Filament\Infolists\Components\TextEntry;
 
 class TextAreaFormFieldBlock extends FormFieldBlock
 {
@@ -19,15 +20,14 @@ class TextAreaFormFieldBlock extends FormFieldBlock
         return 'text_area';
     }
 
-    public static function display(FormField $field): FilamentTextArea
-    {
-        return FilamentTextArea::make($field->key)
-            ->label($field->label)
-            ->required($field->required);
-    }
-
     public function fields(): array
     {
         return [];
+    }
+
+    public static function getInfolistEntry(FormField $field): Entry
+    {
+        return TextEntry::make($field->key)
+            ->label($field->label);
     }
 }

@@ -50,7 +50,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                         ->required(),
                     Textarea::make('description'),
                 ]),
-            Step::make('Model')
+            Step::make('Caseload Type')
                 ->schema([
                     Select::make('model')
                         ->label('Population')
@@ -65,7 +65,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                         }),
                 ])
                 ->columns(2),
-            Step::make('Type')
+            Step::make('Identify Population')
                 ->schema([
                     Select::make('type')
                         ->options(CaseloadType::class)
@@ -74,7 +74,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                         ->required(),
                 ])
                 ->columns(2),
-            Step::make('Population')
+            Step::make('Create Caseload')
                 ->schema([
                     Placeholder::make('table')
                         ->content(fn (): Htmlable => $this->table)

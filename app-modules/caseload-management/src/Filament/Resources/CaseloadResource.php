@@ -9,12 +9,17 @@ use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use App\Filament\Tables\Filters\QueryBuilder;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\ListCaseloads;
 use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\CreateCaseload;
@@ -76,44 +81,44 @@ class CaseloadResource extends Resource
         return [
             QueryBuilder::make()
                 ->constraints([
-                    QueryBuilder\Constraints\TextConstraint::make('full_name')
+                    TextConstraint::make('full_name')
                         ->label('Full Name')
                         ->icon('heroicon-m-user'),
-                    QueryBuilder\Constraints\TextConstraint::make('first')
+                    TextConstraint::make('first')
                         ->label('First Name')
                         ->icon('heroicon-m-user'),
-                    QueryBuilder\Constraints\TextConstraint::make('last')
+                    TextConstraint::make('last')
                         ->label('Last Name')
                         ->icon('heroicon-m-user'),
-                    QueryBuilder\Constraints\TextConstraint::make('preferred')
+                    TextConstraint::make('preferred')
                         ->label('Preferred Name')
                         ->icon('heroicon-m-user'),
-                    QueryBuilder\Constraints\TextConstraint::make('sisid')
+                    TextConstraint::make('sisid')
                         ->label('Student ID')
                         ->icon('heroicon-m-finger-print'),
-                    QueryBuilder\Constraints\TextConstraint::make('otherid')
+                    TextConstraint::make('otherid')
                         ->label('Other ID')
                         ->icon('heroicon-m-finger-print'),
-                    QueryBuilder\Constraints\TextConstraint::make('email')
+                    TextConstraint::make('email')
                         ->label('Email Address')
                         ->icon('heroicon-m-envelope'),
-                    QueryBuilder\Constraints\TextConstraint::make('mobile')
+                    TextConstraint::make('mobile')
                         ->icon('heroicon-m-phone'),
-                    QueryBuilder\Constraints\TextConstraint::make('address')
+                    TextConstraint::make('address')
                         ->icon('heroicon-m-map-pin'),
-                    QueryBuilder\Constraints\TextConstraint::make('holds')
+                    TextConstraint::make('holds')
                         ->icon('heroicon-m-exclamation-triangle'),
-                    QueryBuilder\Constraints\BooleanConstraint::make('sap')
+                    BooleanConstraint::make('sap')
                         ->label('SAP')
                         ->icon('heroicon-m-academic-cap'),
-                    QueryBuilder\Constraints\BooleanConstraint::make('dual'),
-                    QueryBuilder\Constraints\BooleanConstraint::make('ferpa')
+                    BooleanConstraint::make('dual'),
+                    BooleanConstraint::make('ferpa')
                         ->label('FERPA')
                         ->icon('heroicon-m-lock-open'),
-                    QueryBuilder\Constraints\Constraint::make('subscribed')
+                    Constraint::make('subscribed')
                         ->icon('heroicon-m-bell')
                         ->operators([
-                            QueryBuilder\Constraints\Operators\Operator::make('subscribed')
+                            Operator::make('subscribed')
                                 ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')
                                 ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not subscribed' : 'You are subscribed')
                                 ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
@@ -121,76 +126,76 @@ class CaseloadResource extends Resource
                                     fn (Builder $query) => $query->whereKey(auth()->user()),
                                 )),
                         ]),
-                    QueryBuilder\Constraints\RelationshipConstraint::make('programs')
+                    RelationshipConstraint::make('programs')
                         ->multiple()
                         ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
                         ->icon('heroicon-m-academic-cap'),
-                    QueryBuilder\Constraints\TextConstraint::make('programSisid')
+                    TextConstraint::make('programSisid')
                         ->label('Program SISID')
                         ->relationship('programs', 'sisid'),
-                    QueryBuilder\Constraints\TextConstraint::make('programOtherid')
+                    TextConstraint::make('programOtherid')
                         ->label('Program STUID')
                         ->relationship('programs', 'otherid'),
-                    QueryBuilder\Constraints\TextConstraint::make('programDivision')
+                    TextConstraint::make('programDivision')
                         ->label('Program College')
                         ->relationship('programs', 'division'),
-                    QueryBuilder\Constraints\TextConstraint::make('programDescr')
+                    TextConstraint::make('programDescr')
                         ->label('Program Description')
                         ->relationship('programs', 'descr'),
                     QueryBuilder\Constraints\TextConstraint::make('programFoi')
                         ->label('Program Field of Interest')
                         ->relationship('programs', 'foi'),
-                    QueryBuilder\Constraints\NumberConstraint::make('programCumGpa')
+                    NumberConstraint::make('programCumGpa')
                         ->label('Program Cumulative GPA')
                         ->relationship('programs', 'cum_gpa'),
-                    QueryBuilder\Constraints\RelationshipConstraint::make('enrollments')
+                    RelationshipConstraint::make('enrollments')
                         ->multiple()
                         ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']))
                         ->icon('heroicon-m-folder-open'),
-                    QueryBuilder\Constraints\TextConstraint::make('enrollmentSisid')
+                    TextConstraint::make('enrollmentSisid')
                         ->label('Enrollment SISID')
                         ->relationship('enrollments', 'sisid'),
-                    QueryBuilder\Constraints\TextConstraint::make('enrollmentDivision')
+                    TextConstraint::make('enrollmentDivision')
                         ->label('Enrollment College')
                         ->relationship('enrollments', 'division'),
-                    QueryBuilder\Constraints\TextConstraint::make('enrollmentClassNbr')
+                    TextConstraint::make('enrollmentClassNbr')
                         ->label('Enrollment Course')
                         ->relationship('enrollments', 'class_nbr'),
-                    QueryBuilder\Constraints\TextConstraint::make('enrollmentCrseGradeOff')
+                    TextConstraint::make('enrollmentCrseGradeOff')
                         ->label('Enrollment Grade')
                         ->relationship('enrollments', 'crse_grade_off'),
-                    QueryBuilder\Constraints\NumberConstraint::make('enrollmentUntTaken')
+                    NumberConstraint::make('enrollmentUntTaken')
                         ->label('Enrollment Attempted')
                         ->relationship('enrollments', 'unt_taken'),
-                    QueryBuilder\Constraints\NumberConstraint::make('enrollmentUntEarned')
+                    NumberConstraint::make('enrollmentUntEarned')
                         ->label('Enrollment Earned')
                         ->relationship('enrollments', 'unt_earned'),
-                    QueryBuilder\Constraints\RelationshipConstraint::make('performances')
+                    RelationshipConstraint::make('performances')
                         ->multiple()
                         ->attributeLabel(fn (array $settings): string => Str::plural('performance', $settings['count']))
                         ->icon('heroicon-m-presentation-chart-line'),
-                    QueryBuilder\Constraints\TextConstraint::make('performanceSisid')
+                    TextConstraint::make('performanceSisid')
                         ->label('Performance SISID')
                         ->relationship('performances', 'sisid'),
-                    QueryBuilder\Constraints\TextConstraint::make('performanceAcadCareer')
+                    TextConstraint::make('performanceAcadCareer')
                         ->label('Performance Academic Career')
                         ->relationship('performances', 'acad_career'),
-                    QueryBuilder\Constraints\TextConstraint::make('performanceDivision')
+                    TextConstraint::make('performanceDivision')
                         ->label('Performance College')
                         ->relationship('performances', 'division'),
-                    QueryBuilder\Constraints\BooleanConstraint::make('performanceFirstGen')
+                    BooleanConstraint::make('performanceFirstGen')
                         ->label('Performance First Gen')
                         ->relationship('performances', 'first_gen'),
-                    QueryBuilder\Constraints\NumberConstraint::make('performanceCumAtt')
+                    NumberConstraint::make('performanceCumAtt')
                         ->label('Performance Cumulative Attempted')
                         ->relationship('performances', 'cum_att'),
-                    QueryBuilder\Constraints\NumberConstraint::make('performanceCumErn')
+                    NumberConstraint::make('performanceCumErn')
                         ->label('Performance Cumulative Earned')
                         ->relationship('performances', 'cum_ern'),
-                    QueryBuilder\Constraints\NumberConstraint::make('performancePctErn')
+                    NumberConstraint::make('performancePctErn')
                         ->label('Performance Percent Earned')
                         ->relationship('performances', 'pct_ern'),
-                    QueryBuilder\Constraints\NumberConstraint::make('performanceCumGpa')
+                    NumberConstraint::make('performanceCumGpa')
                         ->label('Performance Cumulative GPA')
                         ->relationship('performances', 'cum_gpa'),
                 ])
@@ -206,14 +211,46 @@ class CaseloadResource extends Resource
     private static function prospectFilters(): array
     {
         return [
-            SelectFilter::make('status')
-                ->relationship('status', 'name')
-                ->multiple()
-                ->preload(),
-            SelectFilter::make('source')
-                ->relationship('source', 'name')
-                ->multiple()
-                ->preload(),
+            QueryBuilder::make()
+                ->constraints([
+                    TextConstraint::make('first_name')
+                        ->icon('heroicon-m-user'),
+                    TextConstraint::make('last_name')
+                        ->icon('heroicon-m-user'),
+                    TextConstraint::make('full_name')
+                        ->icon('heroicon-m-user'),
+                    TextConstraint::make('preferred')
+                        ->label('Preferred Name')
+                        ->icon('heroicon-m-user'),
+                    TextConstraint::make('email')
+                        ->label('Email Address')
+                        ->icon('heroicon-m-envelope'),
+                    TextConstraint::make('email_2')
+                        ->label('Email Address 2')
+                        ->icon('heroicon-m-envelope'),
+                    TextConstraint::make('mobile')
+                        ->icon('heroicon-m-phone'),
+                    TextConstraint::make('phone')
+                        ->icon('heroicon-m-phone'),
+                    TextConstraint::make('address')
+                        ->icon('heroicon-m-map-pin'),
+                    TextConstraint::make('address_2')
+                        ->icon('heroicon-m-map-pin'),
+                    BooleanConstraint::make('sms_opt_out')
+                        ->label('SMS Opt Out')
+                        ->icon('heroicon-m-chat-bubble-bottom-center'),
+                    BooleanConstraint::make('email_bounce')
+                        ->icon('heroicon-m-arrow-uturn-left'),
+                    TextConstraint::make('hsgrad')
+                        ->label('HS Grad')
+                        ->icon('heroicon-m-academic-cap'),
+                ])
+                ->constraintPickerColumns([
+                    'md' => 2,
+                    'lg' => 3,
+                    'xl' => 4,
+                ])
+                ->constraintPickerWidth('7xl'),
         ];
     }
 

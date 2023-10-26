@@ -2,10 +2,11 @@
     "private": true,
     "scripts": {
         "dev": "vite",
+        "dev:form": "(cd widgets/form && vite)",
         "build:js-compile": "node ./bin/build.js",
         "build:filament": "php artisan filament:assets",
         "build:vite": "vite build",
-        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament",
+        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:form",
         "build:form": "(cd widgets/form && vite build)"
     },
     "devDependencies": {
@@ -29,10 +30,14 @@
         "select2": "^4.0.13",
         "tailwindcss": "^3.3.3",
         "tippy.js": "^6.3.7",
-        "vite": "^4.4.3"
+        "vite": "^4.4.3",
+        "vue-signature-pad": "^3.0.2"
     },
     "type": "module",
     "dependencies": {
+        "@formkit/icons": "^1.2.2",
+        "@formkit/themes": "^1.2.2",
+        "@formkit/vue": "^1.2.2",
         "dompurify": "^3.0.6",
         "flowbite": "^1.8.1",
         "showdown": "^2.1.0",

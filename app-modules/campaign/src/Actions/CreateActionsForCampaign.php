@@ -10,9 +10,13 @@ class CreateActionsForCampaign
     public function from(Campaign $campaign, CampaignActionsCreationData $data): void
     {
         foreach ($data->actions as $action) {
+            $executeAt = $action->data['execute_at'];
+            unset($action->data['execute_at']);
+
             $campaign->actions()->create([
                 'type' => $action->type,
                 'data' => $action->data,
+                'execute_at' => $executeAt,
             ]);
         }
     }

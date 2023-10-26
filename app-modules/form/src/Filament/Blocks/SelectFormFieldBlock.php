@@ -4,7 +4,8 @@ namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Select as FilamentSelect;
+use Filament\Infolists\Components\Entry;
+use Filament\Infolists\Components\TextEntry;
 
 class SelectFormFieldBlock extends FormFieldBlock
 {
@@ -20,18 +21,21 @@ class SelectFormFieldBlock extends FormFieldBlock
         return 'select';
     }
 
-    public static function display(FormField $field): FilamentSelect
-    {
-        return FilamentSelect::make($field->key)
-            ->label($field->label)
-            ->required($field->required)
-            ->options($field->config['options']);
-    }
-
     public function fields(): array
     {
         return [
-            KeyValue::make('options'),
+            KeyValue::make('options')
+                ->keyLabel('Value')
+                ->valueLabel('Label'),
         ];
+    }
+
+    public static function getInfolistEntry(FormField $field): Entry
+    {
+        return TextEntry::make($field->key)
+            ->label($field->label)
+            ->formatStateUsing(function ($state) use ($field) {
+                return $field->config['options'][$state] ?? $state;
+            });
     }
 }

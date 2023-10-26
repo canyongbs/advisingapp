@@ -3,18 +3,24 @@
 namespace Assist\Assistant\Filament\Pages;
 
 use App\Models\User;
+use Filament\Forms\Get;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
+use Assist\Team\Models\Team;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
 use Filament\Actions\StaticAction;
+use Illuminate\Support\Collection;
+use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
 use Filament\Forms\Components\TextInput;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
-use Illuminate\Database\Eloquent\Collection;
 use Assist\Consent\Enums\ConsentAgreementType;
+use Assist\Assistant\Enums\AssistantChatShareVia;
+use Assist\Assistant\Jobs\ShareAssistantChatsJob;
+use Assist\Assistant\Enums\AssistantChatShareWith;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
@@ -265,6 +271,64 @@ class PersonalAssistant extends Page
                 });
             })
             ->icon('heroicon-o-pencil')
+            ->color('warning')
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
+    }
+
+    public function shareChatAction(): Action
+    {
+        return Action::make('shareChat')
+            ->modalSubmitActionLabel('Share')
+            ->modalWidth('md')
+            ->size(ActionSize::ExtraSmall)
+            ->form([
+                Select::make('via')
+                    ->label('Via')
+                    ->options(AssistantChatShareVia::class)
+                    ->enum(AssistantChatShareVia::class)
+                    ->default(AssistantChatShareVia::default())
+                    ->required()
+                    ->selectablePlaceholder(false)
+                    ->live(),
+                Select::make('target_type')
+                    ->label('Type')
+                    ->options(AssistantChatShareWith::class)
+                    ->enum(AssistantChatShareWith::class)
+                    ->default(AssistantChatShareWith::default())
+                    ->required()
+                    ->selectablePlaceholder(false)
+                    ->live(),
+                Select::make('target_ids')
+                    ->label('Targets')
+                    ->options(function (Get $get): Collection {
+                        return match ($get('via')) {
+                            AssistantChatShareVia::Email => match ($get('target_type')) {
+                                AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
+                                AssistantChatShareWith::User => User::orderBy('name')->pluck('name', 'id'),
+                            },
+                            AssistantChatShareVia::Internal => match ($get('target_type')) {
+                                AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
+                                AssistantChatShareWith::User => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
+                            },
+                        };
+                    })
+                    ->searchable()
+                    ->multiple()
+                    ->required(),
+            ])
+            ->action(function (array $arguments, array $data) {
+                /** @var User $sender */
+                $sender = auth()->user();
+
+                $chat = AssistantChat::find($arguments['chat']);
+
+                dispatch(new ShareAssistantChatsJob($chat, $data['via'], $data['target_type'], $data['target_ids'], $sender));
+            })
+            ->icon('heroicon-o-share')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()

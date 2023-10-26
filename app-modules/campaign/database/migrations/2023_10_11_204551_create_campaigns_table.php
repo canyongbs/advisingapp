@@ -12,7 +12,6 @@ return new class () extends Migration {
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('caseload_id')->constrained('caseloads');
             $table->string('name');
-            $table->timestamp('execute_at');
             $table->timestamps();
             $table->softDeletes();
         });

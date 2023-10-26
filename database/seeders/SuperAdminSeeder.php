@@ -15,7 +15,7 @@ class SuperAdminSeeder extends Seeder
     public function run(): void
     {
         /** Super Admin */
-        $superAdmin = User::where('email', 'superadmin@assist.com')->first();
+        $superAdmin = User::where('email', 'sampleadmin@advising.app')->first();
 
         // Data for super admin
         $this->seedSubscribersFor($superAdmin);

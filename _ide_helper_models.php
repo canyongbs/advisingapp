@@ -76,6 +76,35 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Pronouns
+ *
+ * @property string $id
+ * @property string $label
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @method static \Database\Factories\PronounsFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pronouns withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperPronouns {}
+}
+
+namespace App\Models{
+/**
  * App\Models\SettingsProperty
  *
  * @property string $id
@@ -111,12 +140,19 @@ namespace App\Models{
  * @property string|null $emplid
  * @property string|null $name
  * @property string|null $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string|null $password
  * @property string|null $remember_token
  * @property string|null $locale
  * @property string|null $type
  * @property bool $is_external
+ * @property string|null $bio
+ * @property bool $is_bio_visible_on_profile
+ * @property string|null $avatar_url
+ * @property bool $are_teams_visible_on_profile
+ * @property string $timezone
+ * @property string|null $pronouns_id
+ * @property bool $are_pronouns_visible_on_profile
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -128,6 +164,7 @@ namespace App\Models{
  * @property-read int|null $assistant_chats_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Assist\MeetingCenter\Models\Calendar|null $calendar
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\Caseload> $caseloads
  * @property-read int|null $caseloads_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\ConsentAgreement> $consentAgreements
@@ -136,11 +173,16 @@ namespace App\Models{
  * @property-read int|null $engagement_batches_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\MeetingCenter\Models\CalendarEvent> $events
+ * @property-read int|null $events_count
  * @property-read mixed $is_admin
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Permission> $permissions
  * @property-read int|null $permissions_count
+ * @property-read \App\Models\Pronouns|null $pronouns
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospectSubscriptions
  * @property-read int|null $prospect_subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
@@ -166,17 +208,24 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
  * @method static \Illuminate\Database\Eloquent\Builder|User role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereArePronounsVisibleOnProfile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereAreTeamsVisibleOnProfile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereAvatarUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereBio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmplid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereIsBioVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePronounsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User withTrashed()
@@ -854,6 +903,7 @@ namespace Assist\Engagement\Models{
  * @property-read \Assist\Engagement\Models\EngagementBatch|null $engagementBatch
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $engagementDeliverables
  * @property-read int|null $engagement_deliverables_count
+ * @property-read \Assist\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
  * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasBeenDelivered()
@@ -1015,6 +1065,7 @@ namespace Assist\Engagement\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $sender
+ * @property-read \Assist\Timeline\Models\Timeline|null $timelineRecord
  * @method static \Assist\Engagement\Database\Factories\EngagementResponseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse newQuery()
@@ -1041,6 +1092,8 @@ namespace Assist\Form\Models{
  * @property string $id
  * @property string $name
  * @property string|null $description
+ * @property bool $embed_enabled
+ * @property array|null $allowed_domains
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -1052,9 +1105,11 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereAllowedDomains($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereEmbedEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)
@@ -1506,6 +1561,75 @@ namespace Assist\KnowledgeBase\Models{
  class IdeHelperKnowledgeBaseStatus {}
 }
 
+namespace Assist\MeetingCenter\Models{
+/**
+ * Assist\MeetingCenter\Models\Calendar
+ *
+ * @property string $id
+ * @property string $type
+ * @property mixed $provider_id
+ * @property mixed $oauth_token
+ * @property mixed $oauth_refresh_token
+ * @property string $user_id
+ * @property string $oauth_token_expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Assist\MeetingCenter\Enums\CalendarProvider $provider_type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\MeetingCenter\Models\CalendarEvent> $events
+ * @property-read int|null $events_count
+ * @property-read \App\Models\User $user
+ * @method static \Assist\MeetingCenter\Database\Factories\CalendarFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthRefreshToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthTokenExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCalendar {}
+}
+
+namespace Assist\MeetingCenter\Models{
+/**
+ * Assist\MeetingCenter\Models\CalendarEvent
+ *
+ * @property string $id
+ * @property string $title
+ * @property string|null $description
+ * @property string|null $provider_id
+ * @property string $calendar_id
+ * @property \Illuminate\Support\Carbon $starts_at
+ * @property \Illuminate\Support\Carbon $ends_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\MeetingCenter\Models\Calendar $calendar
+ * @method static \Assist\MeetingCenter\Database\Factories\CalendarEventFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereCalendarId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereStartsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCalendarEvent {}
+}
+
 namespace Assist\Notifications\Models{
 /**
  * Assist\Notifications\Models\Subscription
@@ -1663,8 +1787,9 @@ namespace Assist\Prospect\Models{
  * Assist\Prospect\Models\ProspectStatus
  *
  * @property string $id
+ * @property \Assist\Prospect\Enums\SystemProspectClassification $classification
  * @property string $name
- * @property string $color
+ * @property \Assist\Prospect\Enums\ProspectStatusColorOptions $color
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -1677,6 +1802,7 @@ namespace Assist\Prospect\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereClassification($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus whereDeletedAt($value)
@@ -1792,8 +1918,9 @@ namespace Assist\ServiceManagement\Models{
  * Assist\ServiceManagement\Models\ServiceRequestStatus
  *
  * @property string $id
+ * @property \Assist\ServiceManagement\Enums\SystemServiceRequestClassification $classification
  * @property string $name
- * @property string $color
+ * @property \Assist\ServiceManagement\Enums\ColumnColorOptions $color
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -1806,6 +1933,7 @@ namespace Assist\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereClassification($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus whereDeletedAt($value)
@@ -1988,6 +2116,37 @@ namespace Assist\Team\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperTeamUser {}
+}
+
+namespace Assist\Timeline\Models{
+/**
+ * Assist\Timeline\Models\Timeline
+ *
+ * @property string $id
+ * @property string $educatable_type
+ * @property string $educatable_id
+ * @property string $timelineable_type
+ * @property string $timelineable_id
+ * @property string $record_sortable_date
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $timelineable
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline forEducatable(\Assist\AssistDataModel\Models\Student|\Assist\Prospect\Models\Prospect $educatable)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereEducatableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereEducatableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereRecordSortableDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereTimelineableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereTimelineableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperTimeline {}
 }
 
 namespace Assist\Webhook\Models{

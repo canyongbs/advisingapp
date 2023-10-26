@@ -146,7 +146,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: gmp, redis
+          extensions: gd, gmp, redis
 
       - uses: actions/checkout@v4
         with:
@@ -168,6 +168,7 @@ jobs:
 
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        shell: bash
 
       - uses: actions/setup-node@v3
         with:
@@ -210,6 +211,15 @@ jobs:
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm install
+
+      - name: Build Assets
+        run: npm run build
 
       - name: Linting
         run: composer lint

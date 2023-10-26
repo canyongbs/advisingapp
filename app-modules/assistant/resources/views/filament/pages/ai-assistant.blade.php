@@ -49,6 +49,7 @@ use Illuminate\Support\Facades\Vite;
                                         </a>
 
                                         <div>
+                                            {{ ($this->shareChatAction)(['chat' => $chatItem->id]) }}
                                             {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}
                                             {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}
                                         </div>

@@ -19,6 +19,8 @@ class FormFactory extends Factory
         return [
             'name' => fake()->unique()->word(),
             'description' => fake()->sentences(asText: true),
+            'embed_enabled' => fake()->boolean(),
+            'allowed_domains' => [fake()->domainName()],
         ];
     }
 

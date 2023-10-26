@@ -5,6 +5,7 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
@@ -20,6 +21,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
+use Assist\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
@@ -101,6 +103,15 @@ class ListProspects extends ListRecords
                     ->relationship('source', 'name')
                     ->multiple()
                     ->preload(),
+                Filter::make('care_team')
+                    ->label('Care Team')
+                    ->query(
+                        function (Builder $query) {
+                            return $query
+                                ->whereRelation('careTeam', 'user_id', '=', auth()->id())
+                                ->get();
+                        }
+                    ),
             ])
             ->actions([
                 ViewAction::make(),
@@ -112,6 +123,7 @@ class ListProspects extends ListRecords
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
+                    ToggleCareTeamBulkAction::make(),
                 ]),
             ]);
     }

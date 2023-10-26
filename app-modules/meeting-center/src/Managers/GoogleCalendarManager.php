@@ -23,7 +23,7 @@ class GoogleCalendarManager implements CalendarInterface
      * @todo multiple calendars?
      * @todo multiple users? one event? multiple events?
      * */
-    public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null): array
+    public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): array
     {
         /**
          * @todo create without sync?
@@ -34,7 +34,7 @@ class GoogleCalendarManager implements CalendarInterface
         $parameters = [
             'singleEvents' => true,
             'orderBy' => 'startTime',
-            'maxResults' => 2500,
+            'maxResults' => $perPage ?? 2500,
             'pageToken' => null,
         ];
 
@@ -102,9 +102,9 @@ class GoogleCalendarManager implements CalendarInterface
         $service->events->delete($event->calendar->provider_id, $event->provider_id);
     }
 
-    public function syncEvents(Calendar $calendar): void
+    public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
     {
-        $events = collect($this->getEvents($calendar));
+        $events = collect($this->getEvents($calendar, $start, $end, $perPage));
 
         $events
             ->each(

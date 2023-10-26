@@ -2,6 +2,7 @@
 
 namespace Assist\ServiceManagement\Models;
 
+use Exception;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
@@ -12,6 +13,7 @@ use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,6 +26,7 @@ use Assist\AssistDataModel\Models\Traits\EducatableScopes;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
+use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
 use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
@@ -34,7 +37,7 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  *
  * @mixin IdeHelperServiceRequest
  */
-class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable
+class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction
 {
     use SoftDeletes;
     use PowerJoins;
@@ -153,6 +156,30 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
             'status_id',
             ServiceRequestStatus::where('classification', SystemServiceRequestClassification::Open)->pluck('id')
         );
+    }
+
+    public static function executeFromCampaignAction(CampaignAction $action): bool|string
+    {
+        try {
+            $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
+                ServiceRequest::create([
+                    'respondent_type' => $educatable->getMorphClass(),
+                    'respondent_id' => $educatable->getKey(),
+                    'close_details' => $action->data['close_details'],
+                    'res_details' => $action->data['res_details'],
+                    'division_id' => $action->data['division_id'],
+                    'status_id' => $action->data['status_id'],
+                    'type_id' => $action->data['type_id'],
+                    'priority_id' => $action->data['priority_id'],
+                    'assigned_to_id' => $action->data['assigned_to_id'] ?? null,
+                    'created_by_id' => $action->campaign->user->id,
+                ]);
+            });
+
+            return true;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     protected function serializeDate(DateTimeInterface $date): string

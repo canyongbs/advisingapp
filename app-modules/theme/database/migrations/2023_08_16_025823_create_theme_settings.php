@@ -6,5 +6,6 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         $this->migrator->add('theme.is_logo_active', false);
+        $this->migrator->add('theme.is_favicon_active', false);
     }
 };
