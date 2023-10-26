@@ -15,19 +15,17 @@ use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
 use Assist\Assistant\Enums\AssistantChatShareVia;
-use Assist\Assistant\Models\AssistantChatMessage;
+use Assist\Assistant\Jobs\ShareAssistantChatsJob;
 use Assist\Assistant\Enums\AssistantChatShareWith;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
 use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
-use Assist\Assistant\Notifications\SendAssistantTranscriptNotification;
 use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 class PersonalAssistant extends Page
@@ -323,6 +321,9 @@ class PersonalAssistant extends Page
                     ->required(),
             ])
             ->action(function (array $arguments, array $data) {
+                /** @var User $sender */
+                $sender = auth()->user();
+
                 $chat = AssistantChat::find($arguments['chat']);
 
                 $users = match ($data['via']) {
@@ -342,46 +343,7 @@ class PersonalAssistant extends Page
                     }
                 };
 
-                $users
-                    ->each(
-                        function (User $user) use ($data, $chat) {
-                            switch ($data['via']) {
-                                case AssistantChatShareVia::Email:
-                                    $user->notify(new SendAssistantTranscriptNotification($chat));
-
-                                    Notification::make()
-                                        ->success()
-                                        ->title("You emailed an assistant chat to {$user->name}.")
-                                        ->sendToDatabase(auth()->user());
-
-                                    break;
-                                case AssistantChatShareVia::Internal:
-                                    $replica = $chat
-                                        ->replicate(['id', 'user_id'])
-                                        ->user()
-                                        ->associate($user);
-
-                                    $replica->save();
-
-                                    $chat
-                                        ->messages()
-                                        ->each(
-                                            fn (AssistantChatMessage $message) => $message
-                                                ->replicate(['id', 'assistant_chat_id'])
-                                                ->chat()
-                                                ->associate($replica)
-                                                ->save()
-                                        );
-
-                                    Notification::make()
-                                        ->success()
-                                        ->title("You shared an assistant chat with {$user->name}.")
-                                        ->sendToDatabase(auth()->user());
-
-                                    break;
-                            }
-                        }
-                    );
+                dispatch(new ShareAssistantChatsJob($chat, $data['via'], $users, $sender));
             })
             ->icon('heroicon-o-share')
             ->color('warning')
