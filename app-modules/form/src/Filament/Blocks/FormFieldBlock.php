@@ -3,8 +3,8 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
-use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Checkbox;
+use Filament\Infolists\Components\Entry;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
@@ -33,9 +33,9 @@ abstract class FormFieldBlock extends Block
         return parent::make($name ?? static::type());
     }
 
-    abstract public static function display(FormField $field): Field;
-
     abstract public function fields(): array;
 
     abstract public static function type(): string;
+
+    abstract public static function getInfolistEntry(FormField $field): Entry;
 }
