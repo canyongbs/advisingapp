@@ -68,7 +68,7 @@ class CampaignActionsRelationManager extends RelationManager
                             ]);
                         }
 
-                        return $lastModel;
+                        return $lastModel ?? new CampaignAction();
                     })
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
