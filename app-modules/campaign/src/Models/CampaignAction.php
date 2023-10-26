@@ -25,7 +25,10 @@ class CampaignAction extends BaseModel implements Auditable
         'campaign_id',
         'type',
         'data',
-        'executed_at',
+        'execute_at',
+        'last_execution_attempt_at',
+        'last_execution_attempt_error',
+        'successfully_executed_at',
     ];
 
     protected $casts = [
@@ -40,21 +43,27 @@ class CampaignAction extends BaseModel implements Auditable
 
     public function execute(): void
     {
-        $result = match ($this->type) {
+        $response = match ($this->type) {
             CampaignActionType::BulkEngagement => EngagementBatch::executeFromCampaignAction($this),
             CampaignActionType::ServiceRequest => ServiceRequest::executeFromCampaignAction($this),
             default => null
         };
 
-        if ($result === true) {
-            $this->markAsExecuted();
-        }
+        $response === true ? $this->markAsSuccessfullyExecuted() : $this->markAsUnsuccessfullyExecuted($response);
     }
 
-    public function markAsExecuted(): void
+    public function markAsSuccessfullyExecuted(): void
     {
         $this->update([
-            'executed_at' => now(),
+            'successfully_executed_at' => now(),
+        ]);
+    }
+
+    public function markAsUnsuccessfullyExecuted(string $response): void
+    {
+        $this->update([
+            'last_execution_attempt_at' => now(),
+            'last_execution_attempt_error' => $response,
         ]);
     }
 

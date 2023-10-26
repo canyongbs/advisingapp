@@ -8,6 +8,7 @@ use Assist\Division\Models\Division;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\DateTimePicker;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Assist\ServiceManagement\Models\ServiceRequestType;
@@ -70,6 +71,11 @@ class ServiceRequestBlock extends CampaignActionBlock
                 ->label('Internal Service Request Details')
                 ->nullable()
                 ->string(),
+            DateTimePicker::make($fieldPrefix . 'execute_at')
+                ->label('When should the action be executed?')
+                ->required()
+                ->minDate(now())
+                ->closeOnDateSelection(),
         ];
     }
 

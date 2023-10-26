@@ -24,8 +24,6 @@ class ViewCampaign extends ViewRecord
                         TextEntry::make('name'),
                         TextEntry::make('caseload.name')
                             ->label('Caseload'),
-                        TextEntry::make('execute_at')
-                            ->dateTime(),
                         IconEntry::make('execute_at')
                             ->label('Has Been Executed?')
                             ->getStateUsing(fn (Campaign $record) => $record->hasBeenExecuted())

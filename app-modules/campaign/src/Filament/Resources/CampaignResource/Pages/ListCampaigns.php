@@ -24,8 +24,6 @@ class ListCampaigns extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name'),
                 TextColumn::make('caseload.name'),
-                TextColumn::make('execute_at')
-                    ->dateTime(),
             ])
             ->filters([
             ])
