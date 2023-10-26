@@ -211,5 +211,8 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
+      - name: Build Assets
+        run: npm run build
+
       - name: Linting
         run: composer lint
