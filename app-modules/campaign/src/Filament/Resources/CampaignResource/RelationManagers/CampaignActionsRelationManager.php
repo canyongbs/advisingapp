@@ -12,9 +12,12 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Assist\Campaign\Models\CampaignAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Assist\Campaign\Enums\CampaignActionType;
+use Assist\Engagement\Models\EngagementBatch;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
+use Assist\ServiceManagement\Models\ServiceRequest;
 use App\Filament\Resources\RelationManagers\RelationManager;
+use Assist\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
 
 class CampaignActionsRelationManager extends RelationManager
 {
@@ -24,6 +27,11 @@ class CampaignActionsRelationManager extends RelationManager
     {
         /** @var CampaignAction $action */
         $action = $form->model;
+
+        $form->model = match ($action->type) {
+            CampaignActionType::BulkEngagement => EngagementBatch::class,
+            CampaignActionType::ServiceRequest => ServiceRequest::class
+        };
 
         return $form
             ->schema([
@@ -49,24 +57,27 @@ class CampaignActionsRelationManager extends RelationManager
                     ->form([
                         Builder::make('data')
                             ->addActionLabel('Add a new Campaign Action')
-                            ->maxItems(1)
-                            ->blocks([
-                                EngagementBatchBlock::make(),
-                            ]),
+                            ->blocks(CreateCampaign::blocks()),
                     ])
                     ->using(function (array $data, string $model): CampaignAction {
-                        return $model::create([
-                            'campaign_id' => $this->getOwnerRecord()->id,
-                            'type' => $data['data'][0]['type'],
-                            'data' => $data['data'][0]['data'],
-                        ]);
+                        foreach ($data['data'] as $action) {
+                            $lastModel = $model::create([
+                                'campaign_id' => $this->getOwnerRecord()->id,
+                                'type' => $action['type'],
+                                'data' => $action['data'],
+                            ]);
+                        }
+
+                        return $lastModel ?? new CampaignAction();
                     })
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
             ->actions([
                 EditAction::make()
+                    ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
                 DeleteAction::make()
+                    ->modalHeading(fn (CampaignAction $action) => 'Delete ' . $action->type->getLabel())
                     ->hidden(fn () => $this->getOwnerRecord()->hasBeenExecuted() === true),
             ])
             ->bulkActions([
