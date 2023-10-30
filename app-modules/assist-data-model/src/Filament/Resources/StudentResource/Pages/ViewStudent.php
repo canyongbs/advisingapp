@@ -83,10 +83,10 @@ class ViewStudent extends ViewRecord
                             ->label('Last LMS Login')
                             ->default('N/A'),
                         TextEntry::make('f_e_term')
-                            ->label('First Entry Term')
+                            ->label('First Enrollment Term')
                             ->default('N/A'),
                         TextEntry::make('mr_e_term')
-                            ->label('Most Recent Entry Term')
+                            ->label('Most Recent Enrollment Term')
                             ->default('N/A'),
                     ])
                     ->columns(),
