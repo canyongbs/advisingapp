@@ -3,7 +3,6 @@
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -108,8 +107,6 @@ class ListStudents extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return [];
     }
 }

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Assist\AssistDataModel\Models\Student;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\CreateStudent;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
@@ -67,7 +66,6 @@ class StudentResource extends Resource
     {
         return [
             'index' => ListStudents::route('/'),
-            'create' => CreateStudent::route('/create'),
             'manage-alerts' => ManageStudentAlerts::route('/{record}/alerts'),
             'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
             'manage-files' => ManageStudentFiles::route('/{record}/files'),
