@@ -16,7 +16,7 @@ enum SystemProspectClassification: string implements HasLabel
 
     case Recycled = 'recycled';
 
-    case Dead = 'dead';
+    case NotInterested = 'not_interested';
 
     case Custom = 'custom';
 
@@ -24,6 +24,7 @@ enum SystemProspectClassification: string implements HasLabel
     {
         return match ($this) {
             SystemProspectClassification::InProgress => 'In Progress',
+            SystemProspectClassification::NotInterested => 'Not Interested',
             default => $this->name,
         };
     }
