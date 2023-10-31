@@ -128,7 +128,7 @@ class ListAlerts extends ListRecords
             ->defaultSort('created_at', 'desc');
     }
 
-    protected function caseloadFilter(Builder $query, array $data)
+    protected function caseloadFilter(Builder $query, array $data): void
     {
         if (blank($data['value'])) {
             return;
