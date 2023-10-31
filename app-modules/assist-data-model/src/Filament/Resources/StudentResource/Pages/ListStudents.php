@@ -15,6 +15,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Models\Caseload;
+use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
@@ -50,6 +51,7 @@ class ListStudents extends ListRecords
                     ->label('My Caseloads')
                     ->options(
                         auth()->user()->caseloads()
+                            ->where('model', CaseloadModel::Student)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
@@ -59,6 +61,7 @@ class ListStudents extends ListRecords
                     ->label('All Caseloads')
                     ->options(
                         Caseload::all()
+                            ->where('model', CaseloadModel::Student)
                             ->pluck('name', 'id'),
                     )
                     ->searchable()
