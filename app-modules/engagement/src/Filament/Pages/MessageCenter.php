@@ -2,7 +2,6 @@
 
 namespace Assist\Engagement\Filament\Pages;
 
-use Exception;
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Pages\Page;
@@ -16,19 +15,21 @@ use Illuminate\Support\Facades\DB;
 use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
+use App\Actions\GetRecordFromMorphAndKey;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Timeline\Actions\SyncTimelineData;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Engagement\Filament\Actions\EngagementCreateAction;
-use Assist\Timeline\Actions\AggregatesTimelineRecordsForModel;
+use Assist\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
 
 class MessageCenter extends Page
 {
     use WithPagination;
+    use LoadsTimelineRecords;
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
@@ -49,11 +50,13 @@ class MessageCenter extends Page
 
     public bool $loadingTimeline = false;
 
-    public ?Educatable $selectedEducatable;
-
-    public Collection $aggregateRecordsForEducatable;
+    public ?Educatable $recordModel = null;
 
     public Model $currentRecordToView;
+
+    public string $emptyStateMessage = 'There are currently no timeline items to show.';
+
+    public string $noMoreRecordsMessage = 'No more timeline items to show.';
 
     #[Url]
     public string $search = '';
@@ -77,14 +80,7 @@ class MessageCenter extends Page
     #[Url(as: 'endDate')]
     public ?string $filterEndDate = null;
 
-    // This is not yet used on the frontend, but will be
-    public array $paginationOptions = [
-        10,
-        25,
-        50,
-    ];
-
-    public int $pagination = 10;
+    public int $inboxPerPage = 10;
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -101,6 +97,8 @@ class MessageCenter extends Page
 
         $this->user = $user;
 
+        $this->timelineRecords = collect();
+
         $this->authorize('engagement.view_message_center');
     }
 
@@ -116,7 +114,7 @@ class MessageCenter extends Page
         ];
 
         if (in_array($property, $filters)) {
-            $this->resetPage();
+            $this->resetPage('inbox-page');
         }
     }
 
@@ -129,7 +127,14 @@ class MessageCenter extends Page
     {
         $this->loadingTimeline = true;
 
-        $this->aggregateRecordsForEducatable = resolve(AggregatesTimelineRecordsForModel::class)->handle($this->selectedEducatable, $this->modelsToTimeline);
+        $this->reset('initialLoad');
+        $this->reset('nextCursor');
+
+        $this->timelineRecords = collect();
+
+        resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
+
+        $this->loadTimelineRecords();
 
         $this->loadingTimeline = false;
     }
@@ -138,9 +143,18 @@ class MessageCenter extends Page
     {
         $this->loadingTimeline = true;
 
-        $this->selectedEducatable = $this->getRecordFromMorphAndKey($morphClass, $educatable);
+        $this->dispatch('scroll-to-top');
 
-        $this->aggregateRecordsForEducatable = resolve(AggregatesTimelineRecordsForModel::class)->handle($this->selectedEducatable, $this->modelsToTimeline);
+        $this->reset('initialLoad');
+        $this->reset('nextCursor');
+
+        $this->timelineRecords = collect();
+
+        $this->recordModel = resolve(GetRecordFromMorphAndKey::class)->via($morphClass, $educatable);
+
+        resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
+
+        $this->loadTimelineRecords();
 
         $this->loadingTimeline = false;
     }
@@ -152,21 +166,9 @@ class MessageCenter extends Page
         $this->selectEducatable($educatableId, $morphClass);
     }
 
-    // TODO Extract this away... This is also used in the timeline
-    public function getRecordFromMorphAndKey($morphReference, $key)
+    public function viewRecord($key, $morphReference)
     {
-        $className = Relation::getMorphedModel($morphReference);
-
-        if (is_null($className)) {
-            throw new Exception("Model not found for reference: {$morphReference}");
-        }
-
-        return $className::whereKey($key)->firstOrFail();
-    }
-
-    public function viewRecord($record, $morphReference)
-    {
-        $this->currentRecordToView = $this->getRecordFromMorphAndKey($morphReference, $record);
+        $this->currentRecordToView = resolve(GetRecordFromMorphAndKey::class)->via($morphReference, $key);
 
         $this->mountAction('view');
     }
@@ -265,7 +267,7 @@ class MessageCenter extends Page
 
     public function createAction(): CreateAction
     {
-        return EngagementCreateAction::make($this->selectedEducatable)->after(function () {
+        return EngagementCreateAction::make($this->recordModel)->after(function () {
             $this->refreshSelectedEducatable();
         });
     }
@@ -324,10 +326,8 @@ class MessageCenter extends Page
 
         $this->loadingInbox = false;
 
-        // TODO Depending on the number of records, we may want to utilize cursorPaginate here
-        // But, we do lose "total" result context, which actually might be pretty important for UX
         return [
-            'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->pagination),
+            'educatables' => $educatables->orderBy('latest_activity', 'desc')->paginate($this->inboxPerPage, pageName: 'inbox-page'),
         ];
     }
 }

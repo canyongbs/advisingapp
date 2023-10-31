@@ -8,6 +8,9 @@ use Assist\MeetingCenter\Enums\CalendarProvider;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperCalendar
+ */
 class Calendar extends BaseModel
 {
     protected $hidden = [

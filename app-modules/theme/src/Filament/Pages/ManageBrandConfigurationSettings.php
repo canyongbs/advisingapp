@@ -46,6 +46,24 @@ class ManageBrandConfigurationSettings extends SettingsPage
     {
         return $form
             ->schema([
+                Section::make('Favicon')
+                    ->aside()
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('favicon')
+                            ->disk('s3')
+                            ->collection('favicon')
+                            ->visibility('private')
+                            ->image()
+                            ->model(
+                                SettingsProperty::getInstance('theme.is_favicon_active'),
+                            )
+                            ->afterStateUpdated(fn (Set $set) => $set('is_favicon_active', true))
+                            ->deleteUploadedFileUsing(fn (Set $set) => $set('is_favicon_active', false))
+                            ->hiddenLabel(),
+                        Toggle::make('is_favicon_active')
+                            ->label('Active')
+                            ->hidden(fn (Get $get): bool => blank($get('favicon'))),
+                    ]),
                 Section::make('Logo')
                     ->aside()
                     ->schema([

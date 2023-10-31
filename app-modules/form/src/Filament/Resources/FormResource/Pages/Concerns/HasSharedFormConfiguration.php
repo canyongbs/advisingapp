@@ -11,9 +11,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Assist\Form\Filament\Blocks\SelectFormFieldBlock;
-use Assist\Form\Filament\Blocks\TextAreaFormFieldBlock;
-use Assist\Form\Filament\Blocks\TextInputFormFieldBlock;
+use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 trait HasSharedFormConfiguration
 {
@@ -52,11 +50,7 @@ trait HasSharedFormConfiguration
                         ->columnSpanFull()
                         ->reorderableWithDragAndDrop(false)
                         ->reorderableWithButtons()
-                        ->blocks([
-                            TextInputFormFieldBlock::make(),
-                            TextAreaFormFieldBlock::make(),
-                            SelectFormFieldBlock::make(),
-                        ]),
+                        ->blocks(FormFieldBlockRegistry::getInstances()),
                 ]),
         ];
     }

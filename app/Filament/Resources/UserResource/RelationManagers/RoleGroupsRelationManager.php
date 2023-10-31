@@ -52,9 +52,6 @@ class RoleGroupsRelationManager extends RelationManager implements HasActions
             ])
             ->actions([
                 DetachAction::make()
-                    ->label(function ($record) {
-                        return "Remove from {$record->name} Profile";
-                    })
                     ->requiresConfirmation()
                     ->modalDescription(function ($record) {
                         return "Are you sure you want to remove {$this->ownerRecord->name} from the {$record->name} Profile?";

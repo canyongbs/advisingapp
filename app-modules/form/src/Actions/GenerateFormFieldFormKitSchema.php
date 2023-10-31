@@ -28,6 +28,12 @@ class GenerateFormFieldFormKitSchema
                 'required' => $formField->required,
                 'options' => $formField->config['options'],
             ],
+            'signature' => (object) [
+                '$formkit' => 'signature',
+                'label' => $formField->label,
+                'name' => $formField->key,
+                'required' => $formField->required,
+            ],
         };
     }
 }

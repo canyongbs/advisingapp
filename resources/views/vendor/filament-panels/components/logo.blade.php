@@ -1,6 +1,7 @@
 @php
     use App\Models\SettingsProperty;
     use Assist\Theme\Settings\ThemeSettings;
+    use Illuminate\Support\Facades\Vite;
 
     $themeSettings = app(ThemeSettings::class);
 
@@ -33,7 +34,14 @@
         />
     @endif
 @else
-    <div class="fi-logo text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
-        {{ config('app.name') }}
-    </div>
+    <img
+        src="{{ Vite::asset('resources/images/default-logo-light.png') }}"
+        class="h-9 dark:hidden block"
+
+    />
+
+    <img
+        src="{{ Vite::asset('resources/images/default-logo-dark.png') }}"
+        class="h-9 hidden dark:block"
+    />
 @endif

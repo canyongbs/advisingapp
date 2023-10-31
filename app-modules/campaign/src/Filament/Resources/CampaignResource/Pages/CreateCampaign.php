@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\DateTimePicker;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
+use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
 use Assist\Campaign\Filament\Resources\CampaignResource;
 use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
@@ -22,6 +22,14 @@ class CreateCampaign extends CreateRecord
     use HasWizard;
 
     protected static string $resource = CampaignResource::class;
+
+    public static function blocks(): array
+    {
+        return [
+            EngagementBatchBlock::make(),
+            ServiceRequestBlock::make(),
+        ];
+    }
 
     protected function getSteps(): array
     {
@@ -46,16 +54,11 @@ class CreateCampaign extends CreateRecord
                         ->label('Journey')
                         ->addActionLabel('Add a new Campaign Action')
                         ->minItems(1)
-                        ->blocks([
-                            EngagementBatchBlock::make(),
-                        ]),
+                        ->blocks(CreateCampaign::blocks()),
                 ]),
             Step::make('Review Campaign')
                 ->schema([
-                    DateTimePicker::make('execute_at')
-                        ->label('When should the campaign actions be executed?')
-                        ->required()
-                        ->closeOnDateSelection(),
+                    // TODO: Add review step in [ASSIST-731]
                 ]),
         ];
     }
