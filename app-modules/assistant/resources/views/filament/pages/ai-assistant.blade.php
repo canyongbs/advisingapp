@@ -68,8 +68,7 @@ use Illuminate\Support\Facades\Vite;
                                     x-data="{ expanded: false }"
                                 >
                                     <span
-                                        class='px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1'
-                                        @click="expanded = ! expanded"
+                                        class='px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5'
                                     >
                                         <x-filament::icon-button
                                             icon="heroicon-o-folder-open"
@@ -77,9 +76,31 @@ use Illuminate\Support\Facades\Vite;
                                         />
                                         <x-filament::icon-button
                                             icon="heroicon-o-folder"
-                                            x-show="expanded == false"
+                                            x-show="expanded === false"
                                         />
-                                        {{ $folder->name }}
+                                        <span
+                                            class='px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5 space-x-1'
+                                        >
+                                            <span
+                                                class='fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm'
+                                                @click="expanded = ! expanded"
+                                            >
+                                                @if($folder->chats->count())
+                                                    <span class='fi-sidebar-item-label flex-1 truncate'>
+                                                        {{ $folder->name }} ({{$folder->chats->count()}})
+                                                    </span>
+                                                @else
+                                                    <span class='fi-sidebar-item-label flex-1 truncate'>
+                                                        {{ $folder->name }}
+                                                    </span>
+                                                @endif
+                                            </span>
+
+                                            <span>
+                                                {{ ($this->renameFolderAction)(['folder' => $folder->id]) }}
+                                                {{ ($this->deleteFolderAction)(['folder' => $folder->id]) }}
+                                            </span>
+                                        </span>
                                     </span>
                                     @foreach ($folder->chats as $chatItem)
                                         <li @class([

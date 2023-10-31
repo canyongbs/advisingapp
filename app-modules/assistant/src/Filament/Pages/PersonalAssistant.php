@@ -22,6 +22,7 @@ use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
 use Assist\Assistant\Models\AssistantChatFolder;
 use Assist\Assistant\Models\AssistantChatMessage;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
 use Assist\IntegrationAI\Exceptions\TokensExceededException;
@@ -101,7 +102,9 @@ class PersonalAssistant extends Page
     public function folders(): EloquentCollection
     {
         return AssistantChatFolder::whereRelation('user', 'id', auth()->id())
-            ->with('chats')
+            ->with([
+                'chats' => fn (HasMany $query) => $query->orderByDesc('updated_at'),
+            ])
             ->orderBy('name')
             ->get();
     }
@@ -237,6 +240,7 @@ class PersonalAssistant extends Page
     public function newFolderAction(): Action
     {
         return Action::make('newFolder')
+            ->label('New Folder')
             ->modalSubmitActionLabel('Create')
             ->modalWidth('md')
             ->form([
@@ -253,8 +257,60 @@ class PersonalAssistant extends Page
                 $folder->save();
             })
             ->icon('heroicon-m-folder-plus')
-            ->color('info')
+            ->color('primary')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+    }
+
+    public function renameFolderAction(): Action
+    {
+        return Action::make('renameFolder')
+            ->modalSubmitActionLabel('Rename')
+            ->modalWidth('md')
+            ->size(ActionSize::ExtraSmall)
+            ->form([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->placeholder('Rename this folder')
+                    ->required()
+                    ->unique('assistant_chat_folders'),
+            ])
+            ->action(function (array $arguments, array $data) {
+                AssistantChatFolder::find($arguments['folder'])
+                    ->update(['name' => $data['name']]);
+
+                unset($this->folders, $this->chats);
+            })
+            ->icon('heroicon-o-pencil')
+            ->color('warning')
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
+    }
+
+    public function deleteFolderAction(): Action
+    {
+        return Action::make('deleteFolder')
+            ->size(ActionSize::ExtraSmall)
+            ->requiresConfirmation()
+            ->action(function (array $arguments) {
+                $folder = AssistantChatFolder::find($arguments['folder']);
+
+                //TODO: disassociate for now, maybe delete?
+                $folder->chats()
+                    ->each(fn (AssistantChat $chat) => $chat->folder()->disassociate()->save());
+
+                $folder->delete();
+
+                unset($this->folders, $this->chats);
+            })
+            ->icon('heroicon-o-trash')
+            ->color('danger')
+            ->iconButton()
+            ->extraAttributes([
+                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
+            ]);
     }
 
     public function moveChatAction(): Action
