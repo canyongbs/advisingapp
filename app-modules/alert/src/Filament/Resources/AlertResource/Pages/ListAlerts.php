@@ -81,6 +81,14 @@ class ListAlerts extends ListRecords
                             callback: fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', auth()->id())
                         )
                     ),
+                Filter::make('care_team')
+                    ->label('Care Team')
+                    ->query(
+                        fn (Builder $query): Builder => $query->whereHas(
+                            relation: 'concern',
+                            callback: fn (Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
+                        )
+                    ),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status')
