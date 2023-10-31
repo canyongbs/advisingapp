@@ -34,7 +34,7 @@ trait EducatableScopes
             [Student::class, Prospect::class],
             fn (Builder $query, string $type) => $query->where(
                 app($type)::displayNameKey(),
-                'like',
+                'ilike',
                 "%{$search}%"
             )
         );
