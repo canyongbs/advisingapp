@@ -9,6 +9,8 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        DB::raw('CREATE CAST (VARCHAR AS uuid) WITH INOUT AS IMPLICIT');
+        DB::unprepared('DROP CAST IF EXISTS (VARCHAR AS uuid)');
+
+        DB::unprepared('CREATE CAST (VARCHAR AS uuid) WITH INOUT AS IMPLICIT');
     }
 };
