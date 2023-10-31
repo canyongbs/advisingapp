@@ -16,6 +16,8 @@ class PerformanceRelationManager extends RelationManager
 {
     protected static string $relationship = 'performances';
 
+    protected static ?string $title = 'Performance';
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
