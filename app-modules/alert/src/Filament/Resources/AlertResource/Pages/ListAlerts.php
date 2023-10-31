@@ -2,16 +2,17 @@
 
 namespace Assist\Alert\Filament\Resources\AlertResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables\Table;
 use Assist\Alert\Models\Alert;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
+use Assist\Alert\Enums\AlertStatus;
 use Assist\Prospect\Models\Prospect;
-use Filament\Tables\Actions\EditAction;
+use Assist\Alert\Enums\AlertSeverity;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
@@ -62,6 +63,7 @@ class ListAlerts extends ListRecords
                     ->forceSearchCaseInsensitive()
                     ->sortable(),
                 TextColumn::make('description')
+                    ->searchable()
                     ->limit(),
                 TextColumn::make('severity')
                     ->sortable(),
@@ -71,22 +73,21 @@ class ListAlerts extends ListRecords
                     ->sortable(),
             ])
             ->filters([
+                SelectFilter::make('severity')
+                    ->options(AlertSeverity::class),
+                SelectFilter::make('status')
+                    ->options(AlertStatus::class)
+                    ->multiple()
+                    ->default([AlertStatus::Active->value]),
             ])
             ->actions([
                 ViewAction::make(),
-                EditAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 }
