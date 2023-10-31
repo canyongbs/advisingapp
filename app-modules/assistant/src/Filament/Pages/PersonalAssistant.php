@@ -3,9 +3,6 @@
 namespace Assist\Assistant\Filament\Pages;
 
 use App\Models\User;
-use Assist\Assistant\Enums\AssistantChatShareVia;
-use Assist\Assistant\Enums\AssistantChatShareWith;
-use Assist\Assistant\Jobs\ShareAssistantChatsJob;
 use Filament\Forms\Get;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
@@ -19,12 +16,13 @@ use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Enums\ConsentAgreementType;
 use Assist\Assistant\Models\AssistantChatFolder;
-use Assist\Assistant\Models\AssistantChatMessage;
+use Assist\Assistant\Enums\AssistantChatShareVia;
+use Assist\Assistant\Jobs\ShareAssistantChatsJob;
+use Assist\Assistant\Enums\AssistantChatShareWith;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\IntegrationAI\Client\Contracts\AIChatClient;
 use Assist\IntegrationAI\Exceptions\ContentFilterException;
