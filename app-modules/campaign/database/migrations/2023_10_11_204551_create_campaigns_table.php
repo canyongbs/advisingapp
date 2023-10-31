@@ -12,6 +12,7 @@ return new class () extends Migration {
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('caseload_id')->constrained('caseloads');
             $table->string('name');
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

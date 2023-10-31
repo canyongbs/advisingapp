@@ -17,6 +17,14 @@ class CampaignFactory extends Factory
             'user_id' => User::factory(),
             'caseload_id' => Caseload::factory(),
             'name' => fake()->catchPhrase(),
+            'enabled' => true,
         ];
+    }
+
+    public function disabled(): self
+    {
+        return $this->state([
+            'enabled' => false,
+        ]);
     }
 }

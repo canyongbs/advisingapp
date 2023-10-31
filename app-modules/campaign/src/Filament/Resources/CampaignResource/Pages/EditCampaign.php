@@ -5,6 +5,7 @@ namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Assist\Campaign\Filament\Resources\CampaignResource;
@@ -28,6 +29,7 @@ class EditCampaign extends EditRecord
                     ->options($user->caseloads()->pluck('name', 'id'))
                     ->searchable()
                     ->required(),
+                Toggle::make('enabled'),
             ]);
     }
 

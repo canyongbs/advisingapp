@@ -74,6 +74,11 @@ class CampaignAction extends BaseModel implements Auditable
         $query->whereNull('successfully_executed_at');
     }
 
+    public function scopeCampaignEnabled(Builder $query): void
+    {
+        $query->whereRelation('campaign', 'enabled', true);
+    }
+
     public function hasBeenExecuted(): bool
     {
         return (bool) ! is_null($this->executed_at);
