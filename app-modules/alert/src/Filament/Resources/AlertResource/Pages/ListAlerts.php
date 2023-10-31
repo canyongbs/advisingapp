@@ -7,6 +7,7 @@ use Assist\Alert\Models\Alert;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
 use Assist\Alert\Enums\AlertStatus;
+use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Assist\Alert\Enums\AlertSeverity;
 use Filament\Tables\Actions\ViewAction;
@@ -73,6 +74,13 @@ class ListAlerts extends ListRecords
                     ->sortable(),
             ])
             ->filters([
+                Filter::make('subscribed')
+                    ->query(
+                        fn (Builder $query): Builder => $query->whereHas(
+                            relation: 'concern',
+                            callback: fn (Builder $query) => $query->whereRelation('subscriptions', 'user_id', auth()->id())
+                        )
+                    ),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status')
