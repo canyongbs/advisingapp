@@ -16,19 +16,12 @@ class AlertResource extends Resource
 
     protected static ?string $model = Alert::class;
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?string $label = 'Proactive Alerts';
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListAlerts::route('/'),
-            'create' => Pages\CreateAlert::route('/create'),
-            //'view' => Pages\ViewAlert::route('/{record}'),
-            'edit' => Pages\EditAlert::route('/{record}/edit'),
         ];
     }
 }
