@@ -18,6 +18,10 @@ class PronounsResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Settings';
 
+    protected static ?string $label = 'User Profile Pronoun';
+
+    protected static ?string $pluralLabel = 'User Profile Pronouns';
+
     protected static ?int $navigationSort = 17;
 
     public static function form(Form $form): Form
