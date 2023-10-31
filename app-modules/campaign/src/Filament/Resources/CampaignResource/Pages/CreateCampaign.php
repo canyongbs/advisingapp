@@ -7,6 +7,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
@@ -58,7 +59,8 @@ class CreateCampaign extends CreateRecord
                 ]),
             Step::make('Review Campaign')
                 ->schema([
-                    // TODO: Add review step in [ASSIST-731]
+                    ViewField::make('rating')
+                        ->view('filament.forms.components.campaigns.step-summary'),
                 ]),
         ];
     }
