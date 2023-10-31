@@ -12,6 +12,7 @@ use Assist\Prospect\Models\Prospect;
 use Assist\Alert\Enums\AlertSeverity;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +20,9 @@ use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\CaseloadManagement\Models\Caseload;
 use Assist\Alert\Filament\Resources\AlertResource;
+use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 
@@ -89,6 +92,24 @@ class ListAlerts extends ListRecords
                             callback: fn (Builder $query) => $query->whereRelation('careTeam', 'user_id', auth()->id())
                         )
                     ),
+                SelectFilter::make('my_caseloads')
+                    ->label('My Caseloads')
+                    ->options(
+                        auth()->user()->caseloads()
+                            ->pluck('name', 'id'),
+                    )
+                    ->searchable()
+                    ->optionsLimit(20)
+                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                SelectFilter::make('all_caseloads')
+                    ->label('All Caseloads')
+                    ->options(
+                        Caseload::all()
+                            ->pluck('name', 'id'),
+                    )
+                    ->searchable()
+                    ->optionsLimit(20)
+                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
                 SelectFilter::make('severity')
                     ->options(AlertSeverity::class),
                 SelectFilter::make('status')
@@ -105,5 +126,24 @@ class ListAlerts extends ListRecords
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    protected function caseloadFilter(Builder $query, array $data)
+    {
+        if (blank($data['value'])) {
+            return;
+        }
+
+        $caseload = Caseload::find($data['value']);
+
+        /** @var Model $model */
+        $model = resolve($caseload->model->class());
+
+        $query->whereIn(
+            'concern_id',
+            app(TranslateCaseloadFilters::class)
+                ->handle($data['value'])
+                ->pluck($model->getQualifiedKeyName()),
+        );
     }
 }
