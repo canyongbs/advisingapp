@@ -307,7 +307,7 @@ use Illuminate\Support\Facades\Vite;
                     </div>
 
                     <x-filament::section>
-                        <div class="prose max-w-none text-center dark:prose-invert">
+                        <div class="prose max-w-none text-center text-[.7rem] leading-4 dark:prose-invert">
                             {{ str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
                         </div>
                     </x-filament::section>
@@ -332,15 +332,11 @@ use Illuminate\Support\Facades\Vite;
                                 <x-filament::button
                                     wire:click="denyConsent"
                                     outlined
-                                    color="warning"
                                 >
                                     Cancel
                                 </x-filament::button>
-                                <x-filament::button
-                                    type="submit"
-                                    color="success"
-                                >
-                                    I understand
+                                <x-filament::button type="submit">
+                                    Continue
                                 </x-filament::button>
                             </div>
                         </form>
