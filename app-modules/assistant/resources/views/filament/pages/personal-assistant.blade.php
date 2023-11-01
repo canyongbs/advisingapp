@@ -284,7 +284,7 @@ use Illuminate\Support\Facades\Vite;
                 <x-filament::modal
                     id="consent-agreement"
                     width="5xl"
-                    alignment="center"
+                    alignment="left"
                     :close-by-clicking-away="false"
                     :close-button="false"
                 >
@@ -297,17 +297,17 @@ use Illuminate\Support\Facades\Vite;
                     @endif
 
                     <x-slot name="header">
-                        <h2 class="text-center text-xl font-semibold text-gray-950 dark:text-white">
+                        <h2 class="text-left text-xl font-semibold text-gray-950 dark:text-white">
                             {{ $consentAgreement->title }}
                         </h2>
                     </x-slot>
 
-                    <div class="prose max-w-none text-center dark:prose-invert">
+                    <div class="prose max-w-none text-left dark:prose-invert">
                         {{ str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
                     </div>
 
                     <x-filament::section>
-                        <div class="prose max-w-none text-center text-[.7rem] leading-4 dark:prose-invert">
+                        <div class="prose max-w-none text-left text-[.7rem] leading-4 dark:prose-invert">
                             {{ str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
                         </div>
                     </x-filament::section>
@@ -317,7 +317,7 @@ use Illuminate\Support\Facades\Vite;
                             class="flex w-full flex-col gap-6"
                             wire:submit="confirmConsent"
                         >
-                            <label class="mx-auto">
+                            <label>
                                 <x-filament::input.checkbox
                                     wire:model="consentedToTerms"
                                     required="true"
@@ -328,7 +328,7 @@ use Illuminate\Support\Facades\Vite;
                                 </span>
                             </label>
 
-                            <div class="flex justify-center gap-3">
+                            <div class="flex justify-start gap-3">
                                 <x-filament::button
                                     wire:click="denyConsent"
                                     outlined
