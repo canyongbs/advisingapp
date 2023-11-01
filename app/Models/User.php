@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\Consent\Models\Concerns\CanConsent;
 use Assist\MeetingCenter\Models\CalendarEvent;
+use Assist\Assistant\Models\AssistantChatFolder;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Assist\ServiceManagement\Models\ServiceRequest;
@@ -231,6 +232,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assistantChats(): HasMany
     {
         return $this->hasMany(AssistantChat::class);
+    }
+
+    public function assistantChatFolders(): HasMany
+    {
+        return $this->hasMany(AssistantChatFolder::class);
     }
 
     public function events(): HasMany

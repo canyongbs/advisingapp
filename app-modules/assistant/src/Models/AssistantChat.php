@@ -25,4 +25,9 @@ class AssistantChat extends BaseModel
     {
         return $this->hasMany(AssistantChatMessage::class);
     }
+
+    public function folder(): BelongsTo
+    {
+        return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
+    }
 }

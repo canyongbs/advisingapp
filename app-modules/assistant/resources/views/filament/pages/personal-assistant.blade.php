@@ -25,10 +25,12 @@ use Illuminate\Support\Facades\Vite;
                             {{ __('New Chat') }}
                         </x-filament::button>
 
-                        @if (count($chats))
+                        {{ $this->newFolderAction }}
+
+                        @if (count($this->chats))
                             <ul
                                 class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                                @foreach ($chats as $chatItem)
+                                @foreach ($this->chats as $chatItem)
                                     <li @class([
                                         'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                         'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
@@ -49,6 +51,7 @@ use Illuminate\Support\Facades\Vite;
                                         </a>
 
                                         <div>
+                                            {{ ($this->moveChatAction)(['chat' => $chatItem->id]) }}
                                             {{ ($this->shareChatAction)(['chat' => $chatItem->id]) }}
                                             {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}
                                             {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}
@@ -56,6 +59,82 @@ use Illuminate\Support\Facades\Vite;
                                     </li>
                                 @endforeach
                             </ul>
+                        @endif
+
+                        @if (count($this->folders))
+                            @foreach ($this->folders as $folder)
+                                <ul
+                                    class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
+                                    x-data="{ expanded: false }"
+                                >
+                                    <span
+                                        class='group flex w-full cursor-pointer items-center rounded-lg px-2 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5'
+                                    >
+                                        <x-filament::icon-button
+                                            icon="heroicon-o-folder-open"
+                                            x-show="expanded"
+                                        />
+                                        <x-filament::icon-button
+                                            icon="heroicon-o-folder"
+                                            x-show="expanded === false"
+                                        />
+                                        <span
+                                            class='group flex w-full cursor-pointer items-center space-x-1 rounded-lg px-2 outline-none transition duration-75 focus:bg-gray-100 dark:focus:bg-white/5'
+                                        >
+                                            <span
+                                                class='fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm'
+                                                @click="expanded = ! expanded"
+                                            >
+                                                @if ($folder->chats->count())
+                                                    <span class='fi-sidebar-item-label flex-1 truncate'>
+                                                        {{ $folder->name }} ({{ $folder->chats->count() }})
+                                                    </span>
+                                                @else
+                                                    <span class='fi-sidebar-item-label flex-1 truncate'>
+                                                        {{ $folder->name }}
+                                                    </span>
+                                                @endif
+                                            </span>
+
+                                            <span>
+                                                {{ ($this->renameFolderAction)(['folder' => $folder->id]) }}
+                                                {{ ($this->deleteFolderAction)(['folder' => $folder->id]) }}
+                                            </span>
+                                        </span>
+                                    </span>
+                                    @foreach ($folder->chats as $chatItem)
+                                        <li
+                                            @class([
+                                                'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                                'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
+                                            ])
+                                            x-show="expanded"
+                                        >
+                                            <a
+                                                @class([
+                                                    'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm',
+                                                ])
+                                                wire:click="selectChat('{{ $chatItem->id }}')"
+                                            >
+                                                <span @class([
+                                                    'fi-sidebar-item-label flex-1 truncate',
+                                                    'text-gray-700 dark:text-gray-200' => !$chat->id === $chatItem->id,
+                                                    'text-primary-600 dark:text-primary-400' => $chat->id === $chatItem->id,
+                                                ])>
+                                                    {{ $chatItem->name }}
+                                                </span>
+                                            </a>
+
+                                            <div>
+                                                {{ ($this->moveChatAction)(['chat' => $chatItem->id]) }}
+                                                {{ ($this->shareChatAction)(['chat' => $chatItem->id]) }}
+                                                {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}
+                                                {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endforeach
                         @endif
                     </div>
                 </div>
@@ -74,6 +153,7 @@ use Illuminate\Support\Facades\Vite;
                                                     <div class="relative flex flex-shrink-0 flex-col items-end">
                                                         <x-filament::avatar
                                                             class="rounded-full"
+                                                            alt="AI Assistant avatar"
                                                             :src="Vite::asset(
                                                                 'resources/images/canyon-ai-headshot.jpg',
                                                             )"
@@ -142,11 +222,13 @@ use Illuminate\Support\Facades\Vite;
                                                 class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
                                                 <div class="relative flex flex-shrink-0 flex-col items-end">
                                                     <div>
-                                                        <img
-                                                            class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
-                                                            src="{{ Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
-                                                            alt="Small avatar"
-                                                        >
+                                                        <x-filament::avatar
+                                                            class="rounded-full"
+                                                            alt="AI Assistant avatar"
+                                                            :src="Vite::asset(
+                                                                'resources/images/canyon-ai-headshot.jpg',
+                                                            )"
+                                                        />
                                                     </div>
                                                 </div>
                                                 <div
@@ -184,11 +266,13 @@ use Illuminate\Support\Facades\Vite;
                                                 class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
                                                 <div class="relative flex flex-shrink-0 flex-col items-end">
                                                     <div>
-                                                        <img
-                                                            class="relative flex h-12 w-12 items-center justify-center rounded-sm p-1 text-white"
-                                                            src="{{ Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
+                                                        <x-filament::avatar
+                                                            class="rounded-full"
                                                             alt="AI Assistant avatar"
-                                                        >
+                                                            :src="Vite::asset(
+                                                                'resources/images/canyon-ai-headshot.jpg',
+                                                            )"
+                                                        />
                                                     </div>
                                                 </div>
                                                 <div
