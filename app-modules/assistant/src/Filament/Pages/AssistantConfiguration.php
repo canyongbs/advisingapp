@@ -4,6 +4,7 @@ namespace Assist\Assistant\Filament\Pages;
 
 use App\Models\User;
 use Filament\Pages\Page;
+use Filament\Navigation\NavigationItem;
 use Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 
 class AssistantConfiguration extends Page
@@ -45,6 +46,17 @@ class AssistantConfiguration extends Page
         $user = auth()->user();
 
         abort_unless($user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation(), 403);
+
+        /** @var NavigationItem $firstNavItem */
+        $firstNavItem = collect($this->getSubNavigation())->first(function (NavigationItem $item) {
+            return $item->isVisible();
+        });
+
+        if (is_null($firstNavItem)) {
+            abort(403);
+        }
+
+        redirect($firstNavItem->getUrl());
     }
 
     public function getSubNavigation(): array
