@@ -3,9 +3,8 @@
 namespace Assist\Timeline\Models;
 
 use App\Models\BaseModel;
-use Assist\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -26,9 +25,9 @@ class Timeline extends BaseModel
         return $this->morphTo();
     }
 
-    public function scopeForEducatable(Builder $query, Student|Prospect $educatable)
+    public function scopeForEntity(Builder $query, Model $entity)
     {
-        return $query->where('entity_type', $educatable->getMorphClass())
-            ->where('entity_id', $educatable->getKey());
+        return $query->where('entity_type', $entity->getMorphClass())
+            ->where('entity_id', $entity->getKey());
     }
 }

@@ -3,8 +3,10 @@
 namespace Assist\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Filament\Resources\RelationManagers\RelationGroup;
+use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ServiceRequestTimeline;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ViewServiceRequest;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ListServiceRequests;
@@ -30,6 +32,15 @@ class ServiceRequestResource extends Resource
 
     protected static ?string $pluralLabel = 'Service Management';
 
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewServiceRequest::class,
+            EditServiceRequest::class,
+            ServiceRequestTimeline::class,
+        ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -49,6 +60,7 @@ class ServiceRequestResource extends Resource
             'create' => CreateServiceRequest::route('/create'),
             'view' => ViewServiceRequest::route('/{record}'),
             'edit' => EditServiceRequest::route('/{record}/edit'),
+            'timeline' => ServiceRequestTimeline::route('/{record}/timeline'),
         ];
     }
 }
