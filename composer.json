@@ -11,6 +11,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-gd": "*",
         "ext-pdo": "*",
         "awcodes/filament-tiptap-editor": "^3.0@beta",
         "barryvdh/laravel-debugbar": "^3.9",
@@ -21,7 +22,7 @@
         "canyon-gbs/audit": "*@dev",
         "canyon-gbs/authorization": "*",
         "canyon-gbs/campaign": "*",
-        "canyon-gbs/care-team": "^1.0",
+        "canyon-gbs/care-team": "*",
         "canyon-gbs/caseload-management": "*",
         "canyon-gbs/consent": "*",
         "canyon-gbs/division": "*",
@@ -63,6 +64,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/oauth2-client": "^2.7",
         "livewire/livewire": "^3.0",
+        "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.108",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
@@ -74,6 +76,7 @@
         "sqids/sqids": "^0.3.1",
         "staudenmeir/eloquent-has-many-deep": "^1.18",
         "stechstudio/filament-impersonate": "^3.5",
+        "tapp/filament-timezone-field": "^3.0",
         "tpetry/laravel-postgresql-enhanced": "^0.31.0",
         "twilio/sdk": "^7.7"
     },
