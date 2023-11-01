@@ -2,6 +2,7 @@
 
 namespace Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -30,6 +31,14 @@ class ListConsentAgreements extends ListRecords
             AssistantConfiguration::getUrl() => 'Artificial Intelligence',
             $this::getUrl() => 'User Agreement',
         ];
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can(['consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update']);
     }
 
     public function form(Form $form): Form

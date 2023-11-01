@@ -2,6 +2,7 @@
 
 namespace Assist\Assistant\Filament\Pages;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Textarea;
@@ -15,6 +16,16 @@ class ManageAiSettings extends SettingsPage
     protected static string $settings = AISettings::class;
 
     protected static ?string $title = 'Manage AI Settings';
+
+    public function mount(): void
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        abort_unless($user->can(['assistant.access_ai_settings']), 403);
+
+        parent::mount();
+    }
 
     public function getBreadcrumbs(): array
     {

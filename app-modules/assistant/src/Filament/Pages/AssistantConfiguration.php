@@ -2,6 +2,7 @@
 
 namespace Assist\Assistant\Filament\Pages;
 
+use App\Models\User;
 use Filament\Pages\Page;
 use Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 
@@ -30,15 +31,40 @@ class AssistantConfiguration extends Page
         ];
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation();
+    }
+
+    public function mount(): void
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        abort_unless($user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation(), 403);
+    }
+
     public function getSubNavigation(): array
     {
-        return [
-            ...$this->generateNavigationItems(
-                [
-                    ListConsentAgreements::class,
-                ]
-            ),
-            ...ManageAiSettings::getNavigationItems(),
-        ];
+        $navigationItems = $this->generateNavigationItems(
+            [
+                ListConsentAgreements::class,
+            ]
+        );
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($user->can(['assistant.access_ai_settings'])) {
+            $navigationItems = [
+                ...$navigationItems,
+                ...ManageAiSettings::getNavigationItems(),
+            ];
+        }
+
+        return $navigationItems;
     }
 }
