@@ -9,8 +9,7 @@ class CreateProspectsTable extends Migration
     public function up(): void
     {
         Schema::create('prospects', function (Blueprint $table) {
-            //Changed from uuid to resolve postgres inner join casting issue
-            $table->string('id')->primary();
+            $table->uuid('id')->primary();
             $table->foreignUuid('status_id')->references('id')->on('prospect_statuses');
             $table->foreignUuid('source_id')->references('id')->on('prospect_sources');
             $table->string('first_name');

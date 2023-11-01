@@ -40,8 +40,8 @@ class ProspectStatusSeeder extends Seeder
                         'color' => ProspectStatusColorOptions::Gray->value,
                     ],
                     [
-                        'classification' => SystemProspectClassification::Dead,
-                        'name' => 'Dead',
+                        'classification' => SystemProspectClassification::NotInterested,
+                        'name' => 'Not Interested',
                         'color' => ProspectStatusColorOptions::Danger->value,
                     ],
                 ]

@@ -4,9 +4,11 @@ namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
@@ -58,7 +60,11 @@ class CreateCampaign extends CreateRecord
                 ]),
             Step::make('Review Campaign')
                 ->schema([
-                    // TODO: Add review step in [ASSIST-731]
+                    Toggle::make('enabled')
+                        ->default(true)
+                        ->helperText('Toggle this off to set your campaign to a draft state.'),
+                    ViewField::make('step-summary')
+                        ->view('filament.forms.components.campaigns.step-summary'),
                 ]),
         ];
     }

@@ -40,7 +40,7 @@ class PersonalAssistant extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static string $view = 'assistant::filament.pages.ai-assistant';
+    protected static string $view = 'assistant::filament.pages.personal-assistant';
 
     protected static ?string $navigationGroup = 'Productivity Tools';
 

@@ -309,7 +309,7 @@ use Illuminate\Support\Facades\Vite;
                                     required
                                     wire:model.debounce="message"
                                     wire:loading.attr="disabled"
-                                        {{-- TODO: For some reason this causes issues with the response streaming --}}
+                                    {{-- TODO: For some reason this causes issues with the response streaming --}}
                                     {{-- @keydown.cmd.enter='$wire.sendMessage' --}}
                                     >
                                     </textarea>
@@ -333,10 +333,10 @@ use Illuminate\Support\Facades\Vite;
                                         <x-filament::loading-indicator class="h-5 w-5 text-primary-500"/>
                                     </div>
 
-                                    @error('message')
-                                    <p class="ml-auto text-xs text-red-500">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                                        @error('message')
+                                            <p class="ml-auto text-xs text-red-500">{{ $message }}</p>
+                                        @enderror
+                                    </div>
 
                                 @if (!$showCurrentResponse && !$chat->id && $chat->messages->count() > 0)
                                     <div
@@ -363,74 +363,70 @@ use Illuminate\Support\Facades\Vite;
             </div>
         @endif
 
-        @if ($consentedToTerms === false)
-            {{-- TODO potentially prevent closure of modal by pressing escape --}}
-            <x-filament::modal
-                id="consent-agreement"
-                width="5xl"
-                alignment="center"
-                :close-by-clicking-away="false"
-                :close-button="false"
-            >
-                @if ($loading === false)
-                    <x-slot name="trigger">
-                        <x-filament::button>
-                            Terms and Conditions
-                        </x-filament::button>
+            @if ($consentedToTerms === false)
+                {{-- TODO potentially prevent closure of modal by pressing escape --}}
+                <x-filament::modal
+                    id="consent-agreement"
+                    width="5xl"
+                    alignment="left"
+                    :close-by-clicking-away="false"
+                    :close-button="false"
+                >
+                    @if ($loading === false)
+                        <x-slot name="trigger">
+                            <x-filament::button>
+                                Terms and Conditions
+                            </x-filament::button>
+                        </x-slot>
+                    @endif
+
+                    <x-slot name="header">
+                        <h2 class="text-left text-xl font-semibold text-gray-950 dark:text-white">
+                            {{ $consentAgreement->title }}
+                        </h2>
                     </x-slot>
-                @endif
 
-                <x-slot name="header">
-                    <h2 class="text-center text-xl font-semibold text-gray-950 dark:text-white">
-                        {{ $consentAgreement->title }}
-                    </h2>
-                </x-slot>
-
-                <div class="prose max-w-none text-center dark:prose-invert">
-                    {{ str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
-                </div>
-
-                <x-filament::section>
-                    <div class="prose max-w-none text-center dark:prose-invert">
-                        {{ str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    <div class="prose max-w-none text-left dark:prose-invert">
+                        {{ str($consentAgreement->description)->markdown()->sanitizeHtml()->toHtmlString() }}
                     </div>
-                </x-filament::section>
 
-                <x-slot name="footer">
-                    <form
-                        class="flex w-full flex-col gap-6"
-                        wire:submit="confirmConsent"
-                    >
-                        <label class="mx-auto">
-                            <x-filament::input.checkbox
-                                wire:model="consentedToTerms"
-                                required="true"
-                            />
+                    <x-filament::section>
+                        <div class="prose max-w-none text-left text-[.7rem] leading-4 dark:prose-invert">
+                            {{ str($consentAgreement->body)->markdown()->sanitizeHtml()->toHtmlString() }}
+                        </div>
+                    </x-filament::section>
 
-                            <span class="ml-2 text-sm font-medium">
+                    <x-slot name="footer">
+                        <form
+                            class="flex w-full flex-col gap-6"
+                            wire:submit="confirmConsent"
+                        >
+                            <label>
+                                <x-filament::input.checkbox
+                                    wire:model="consentedToTerms"
+                                    required="true"
+                                />
+
+                                <span class="ml-2 text-sm font-medium">
                                     I agree to the terms and conditions
                                 </span>
-                        </label>
+                            </label>
 
-                        <div class="flex justify-center gap-3">
-                            <x-filament::button
-                                wire:click="denyConsent"
-                                outlined
-                                color="warning"
-                            >
-                                Cancel
-                            </x-filament::button>
-                            <x-filament::button
-                                type="submit"
-                                color="success"
-                            >
-                                I understand
-                            </x-filament::button>
-                        </div>
-                    </form>
-                </x-slot>
-            </x-filament::modal>
-        @endif
-        <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
-    </div>
-</x-filament-panels::page>
+                            <div class="flex justify-start gap-3">
+                                <x-filament::button
+                                    wire:click="denyConsent"
+                                    outlined
+                                >
+                                    Cancel
+                                </x-filament::button>
+                                <x-filament::button type="submit">
+                                    Continue
+                                </x-filament::button>
+                            </div>
+                        </form>
+                    </x-slot>
+                </x-filament::modal>
+            @endif
+            <script src="{{ FilamentAsset::getScriptSrc('assistantCurrentResponse', 'canyon-gbs/assistant') }}"></script>
+        </div>
+    </x-filament-panels::page>

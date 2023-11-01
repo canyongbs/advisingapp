@@ -15,6 +15,7 @@ class ExecuteCampaignActions implements ShouldQueue
         CampaignAction::query()
             ->where('execute_at', '<=', now())
             ->hasNotBeenExecuted()
+            ->campaignEnabled()
             ->cursor()
             ->each(function (CampaignAction $action) {
                 ExecuteCampaignAction::dispatch($action);

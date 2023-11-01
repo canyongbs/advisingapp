@@ -41,4 +41,11 @@ class CampaignActionFactory extends Factory
             'last_execution_attempt_error' => fake()->sentence(),
         ]);
     }
+
+    public function campaignDisabled(): self
+    {
+        return $this->state([
+            'campaign_id' => Campaign::factory()->disabled(),
+        ]);
+    }
 }
