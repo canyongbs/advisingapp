@@ -153,10 +153,10 @@ use Illuminate\Support\Facades\Vite;
                                                     <div class="relative flex flex-shrink-0 flex-col items-end">
                                                         <x-filament::avatar
                                                             class="rounded-full"
+                                                            alt="AI Assistant avatar"
                                                             :src="Vite::asset(
                                                                 'resources/images/canyon-ai-headshot.jpg',
                                                             )"
-                                                            alt="AI Assistant avatar"
                                                         />
                                                     </div>
                                                     <div
@@ -182,186 +182,186 @@ use Illuminate\Support\Facades\Vite;
                                                 </div>
                                             </div>
                                         </div>
-                                        @break
+                                    @break
 
                                     @case(AIChatMessageFrom::User)
 
-                                    @default
-                                        <div class="group w-full dark:bg-gray-800">
-                                            <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
-                                                <div
-                                                    class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
-                                                    <div class="relative flex flex-shrink-0 flex-col items-end">
-                                                        <div>
-                                                            <x-filament-panels::avatar.user :user="auth()->user()"/>
-                                                        </div>
-                                                    </div>
+                                        @default
+                                            <div class="group w-full dark:bg-gray-800">
+                                                <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                                     <div
-                                                        class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                                                        <div class="flex max-w-full flex-grow flex-col gap-3">
-                                                            <div
-                                                                class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                                <div>{{ $message->message }}</div>
+                                                        class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                        <div class="relative flex flex-shrink-0 flex-col items-end">
+                                                            <div>
+                                                                <x-filament-panels::avatar.user :user="auth()->user()" />
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
+                                                            <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                                <div
+                                                                    class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                                    <div>{{ $message->message }}</div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         @break
-                                @endswitch
-                            @endforeach
+                                    @endswitch
+                                @endforeach
 
-                            @if ($showCurrentResponse)
-                                <div
-                                    class="group w-full bg-white dark:bg-gray-900"
-                                    x-data="currentResponseData"
-                                >
-                                    <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
-                                        <div
-                                            class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
-                                            <div class="relative flex flex-shrink-0 flex-col items-end">
-                                                <div>
-                                                    <x-filament::avatar
-                                                        class="rounded-full"
-                                                        :src="Vite::asset(
-                                                                'resources/images/canyon-ai-headshot.jpg',
-                                                            )"
-                                                        alt="AI Assistant avatar"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                                                <div class="flex max-w-full flex-grow flex-col gap-3">
-                                                    <div
-                                                        class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                        <div
-                                                            class="hidden"
-                                                            id="hidden_current_response"
-                                                            wire:stream="currentResponse"
-                                                        >{{ $currentResponse }}</div>
-                                                        <div
-                                                            class="markdown light prose w-full break-words dark:prose-invert"
-                                                            id="current_response"
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if ($renderError)
-                                <div class="my-4 w-full rounded-lg bg-gray-200 p-4 sm:p-6 lg:px-8">
-                                    <h1 class="text-2xl font-bold text-red-400">Something went wrong</h1>
-                                    <p class="text-black">{{ $error }}</p>
-                                </div>
-
-                                <div
-                                    class="group w-full border-b border-black/10 bg-white dark:border-gray-900/50 dark:bg-gray-900">
-                                    <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
-                                        <div
-                                            class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
-                                            <div class="relative flex flex-shrink-0 flex-col items-end">
-                                                <div>
-                                                    <x-filament::avatar
-                                                        class="rounded-full"
-                                                        :src="Vite::asset(
-                                                                'resources/images/canyon-ai-headshot.jpg',
-                                                            )"
-                                                        alt="AI Assistant avatar"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                                                <div class="flex max-w-full flex-grow flex-col gap-3">
-                                                    <div
-                                                        class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                        <h1 class="text-2xl font-bold text-red-400">Something went wrong
-                                                        </h1>
-                                                        <p class="text-black">{{ $error }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <form wire:submit.prevent="sendMessage">
-                        <div
-                            class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                            <div class="bg-white dark:bg-gray-800">
-                                <label
-                                    class="sr-only"
-                                    for="message_input"
-                                >Type here</label>
-                                <textarea
-                                    class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-                                    id="message_input"
-                                    rows="4"
-                                    placeholder="Type here..."
-                                    required
-                                    wire:model.debounce="message"
-                                    wire:loading.attr="disabled"
-                                    {{-- TODO: For some reason this causes issues with the response streaming --}}
-                                    {{-- @keydown.cmd.enter='$wire.sendMessage' --}}
+                                @if ($showCurrentResponse)
+                                    <div
+                                        class="group w-full bg-white dark:bg-gray-900"
+                                        x-data="currentResponseData"
                                     >
-                                    </textarea>
-                            </div>
-                            <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                                <div class="flex items-center gap-3">
-                                    @if (!$showCurrentResponse)
-                                        <x-filament::button
-                                            form="sendMessage,ask"
-                                            type="submit"
-                                            wire:loading.remove
-                                        >
-                                            Post
-                                        </x-filament::button>
-                                    @endif
+                                        <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                            <div
+                                                class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                <div class="relative flex flex-shrink-0 flex-col items-end">
+                                                    <div>
+                                                        <x-filament::avatar
+                                                            class="rounded-full"
+                                                            alt="AI Assistant avatar"
+                                                            :src="Vite::asset(
+                                                                'resources/images/canyon-ai-headshot.jpg',
+                                                            )"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
+                                                    <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                        <div
+                                                            class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                            <div
+                                                                class="hidden"
+                                                                id="hidden_current_response"
+                                                                wire:stream="currentResponse"
+                                                            >{{ $currentResponse }}</div>
+                                                            <div
+                                                                class="markdown light prose w-full break-words dark:prose-invert"
+                                                                id="current_response"
+                                                            ></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if ($renderError)
+                                    <div class="my-4 w-full rounded-lg bg-gray-200 p-4 sm:p-6 lg:px-8">
+                                        <h1 class="text-2xl font-bold text-red-400">Something went wrong</h1>
+                                        <p class="text-black">{{ $error }}</p>
+                                    </div>
 
                                     <div
-                                        class="py-2"
-                                        wire:loading
-                                    >
-                                        <x-filament::loading-indicator class="h-5 w-5 text-primary-500"/>
+                                        class="group w-full border-b border-black/10 bg-white dark:border-gray-900/50 dark:bg-gray-900">
+                                        <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                            <div
+                                                class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                <div class="relative flex flex-shrink-0 flex-col items-end">
+                                                    <div>
+                                                        <x-filament::avatar
+                                                            class="rounded-full"
+                                                            alt="AI Assistant avatar"
+                                                            :src="Vite::asset(
+                                                                'resources/images/canyon-ai-headshot.jpg',
+                                                            )"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="agent-turn relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
+                                                    <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                        <div
+                                                            class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                            <h1 class="text-2xl font-bold text-red-400">Something went wrong
+                                                            </h1>
+                                                            <p class="text-black">{{ $error }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <form wire:submit.prevent="sendMessage">
+                            <div
+                                class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                                <div class="bg-white dark:bg-gray-800">
+                                    <label
+                                        class="sr-only"
+                                        for="message_input"
+                                    >Type here</label>
+                                    <textarea
+                                        class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                        id="message_input"
+                                        rows="4"
+                                        placeholder="Type here..."
+                                        required
+                                        wire:model.debounce="message"
+                                        wire:loading.attr="disabled"
+                                        {{-- TODO: For some reason this causes issues with the response streaming --}}
+                                        {{-- @keydown.cmd.enter='$wire.sendMessage' --}}
+                                    >
+                                    </textarea>
+                                </div>
+                                <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
+                                    <div class="flex items-center gap-3">
+                                        @if (!$showCurrentResponse)
+                                            <x-filament::button
+                                                form="sendMessage,ask"
+                                                type="submit"
+                                                wire:loading.remove
+                                            >
+                                                Post
+                                            </x-filament::button>
+                                        @endif
+
+                                        <div
+                                            class="py-2"
+                                            wire:loading
+                                        >
+                                            <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />
+                                        </div>
 
                                         @error('message')
                                             <p class="ml-auto text-xs text-red-500">{{ $message }}</p>
                                         @enderror
                                     </div>
 
-                                @if (!$showCurrentResponse && !$chat->id && $chat->messages->count() > 0)
-                                    <div
-                                        class="flex space-x-1 pl-0 sm:pl-2"
-                                        wire:loading.remove
-                                    >
-                                        {{ $this->saveChatAction }}
-                                    </div>
-                                @endif
+                                    @if (!$showCurrentResponse && !$chat->id && $chat->messages->count() > 0)
+                                        <div
+                                            class="flex space-x-1 pl-0 sm:pl-2"
+                                            wire:loading.remove
+                                        >
+                                            {{ $this->saveChatAction }}
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        @elseif($consentedToTerms === false && $loading === false)
-            <div class="flex flex-col justify-center">
-                <p class="mb-4">
-                    You must agree to the terms and conditions before continuing use of this feature.
-                </p>
-            </div>
-        @else
-            <div class="flex h-full w-full items-center justify-center">
-                <x-filament::loading-indicator class="h-12 w-12"/>
-            </div>
-        @endif
+            @elseif($consentedToTerms === false && $loading === false)
+                <div class="flex flex-col justify-center">
+                    <p class="mb-4">
+                        You must agree to the terms and conditions before continuing use of this feature.
+                    </p>
+                </div>
+            @else
+                <div class="flex h-full w-full items-center justify-center">
+                    <x-filament::loading-indicator class="h-12 w-12" />
+                </div>
+            @endif
 
             @if ($consentedToTerms === false)
                 {{-- TODO potentially prevent closure of modal by pressing escape --}}
