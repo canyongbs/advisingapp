@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Timeline extends BaseModel
 {
     protected $fillable = [
-        'educatable_type',
-        'educatable_id',
+        'entity_type',
+        'entity_id',
         'timelineable_type',
         'timelineable_id',
         'record_sortable_date',
@@ -28,7 +28,7 @@ class Timeline extends BaseModel
 
     public function scopeForEducatable(Builder $query, Student|Prospect $educatable)
     {
-        return $query->where('educatable_type', $educatable->getMorphClass())
-            ->where('educatable_id', $educatable->getKey());
+        return $query->where('entity_type', $educatable->getMorphClass())
+            ->where('entity_id', $educatable->getKey());
     }
 }

@@ -50,6 +50,6 @@ it('should add the specified record to the timeline', function () {
     expect(Timeline::count())->toBe(1);
     expect(Timeline::first()->timelineable_id)->toBe($response->getKey());
     expect(Timeline::first()->timelineable_type)->toBe($response->getMorphClass());
-    expect(Timeline::first()->educatable_id)->toBe($response->sender->getKey());
-    expect(Timeline::first()->educatable_type)->toBe($response->sender->getMorphClass());
+    expect(Timeline::first()->entity_id)->toBe($response->sender->getKey());
+    expect(Timeline::first()->entity_type)->toBe($response->sender->getMorphClass());
 });

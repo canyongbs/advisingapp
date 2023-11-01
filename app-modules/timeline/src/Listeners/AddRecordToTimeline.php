@@ -15,8 +15,8 @@ class AddRecordToTimeline
         cache()->forget("timeline.synced.{$educatable->getMorphClass()}.{$educatable->getKey()}");
 
         Timeline::firstOrCreate([
-            'educatable_type' => $educatable->getMorphClass(),
-            'educatable_id' => $educatable->getKey(),
+            'entity_type' => $educatable->getMorphClass(),
+            'entity_id' => $educatable->getKey(),
             'timelineable_type' => $event->model->getMorphClass(),
             'timelineable_id' => $event->model->getKey(),
             'record_sortable_date' => $event->model->timeline()->sortableBy(),

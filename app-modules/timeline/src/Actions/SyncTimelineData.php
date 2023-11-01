@@ -32,8 +32,8 @@ class SyncTimelineData
 
         $aggregateRecords->each(function ($record) use ($recordModel) {
             $timelineRecord = Timeline::firstOrCreate([
-                'educatable_type' => $recordModel->getMorphClass(),
-                'educatable_id' => $recordModel->getKey(),
+                'entity_type' => $recordModel->getMorphClass(),
+                'entity_id' => $recordModel->getKey(),
                 'timelineable_type' => $record->getMorphClass(),
                 'timelineable_id' => $record->getKey(),
                 'record_sortable_date' => $record->timeline()->sortableBy(),
