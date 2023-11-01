@@ -9,6 +9,7 @@ use Assist\Consent\Models\ConsentAgreement;
 use Assist\Consent\Models\UserConsentAgreement;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Consent\Observers\ConsentAgreementObserver;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class ConsentServiceProvider extends ServiceProvider
@@ -26,6 +27,13 @@ class ConsentServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+
+        $this->registerObservers();
+    }
+
+    public function registerObservers(): void
+    {
+        ConsentAgreement::observe(ConsentAgreementObserver::class);
     }
 
     protected function registerRolesAndPermissions()

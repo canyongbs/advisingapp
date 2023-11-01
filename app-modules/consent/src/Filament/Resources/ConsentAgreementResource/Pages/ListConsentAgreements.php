@@ -5,15 +5,14 @@ namespace Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Actions\Action;
 use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
-use Assist\Consent\Models\UserConsentAgreement;
 use Assist\Assistant\Filament\Pages\AssistantConfiguration;
 use Assist\Consent\Filament\Resources\ConsentAgreementResource;
 
@@ -74,7 +73,24 @@ class ListConsentAgreements extends ListRecords
             ->filters([
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make('edit')
+                    ->modalSubmitAction(false)
+                    ->extraModalFooterActions(
+                        [
+                            Action::make('save_changes')
+                                ->requiresConfirmation()
+                                ->modalIconColor('warning')
+                                ->modalHeading(fn ($record) => "Save Changes to {$record->title}?")
+                                ->modalDescription(fn ($record) => $record->type->getModalDescription())
+                                ->modalSubmitActionLabel('I understand, save changes')
+                                ->modalWidth('xl')
+                                ->action(function () {
+                                    $this->unmountTableAction();
+
+                                    $this->callMountedTableAction();
+                                }),
+                        ]
+                    ),
             ])
             ->bulkActions([]);
     }
@@ -82,28 +98,6 @@ class ListConsentAgreements extends ListRecords
     public function getSubNavigation(): array
     {
         return (new AssistantConfiguration())->getSubNavigation();
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('Save Changes')
-                ->requiresConfirmation()
-                ->modalIconColor('warning')
-                ->modalHeading("Save Changes to {$this->record->title}?")
-                ->modalDescription($this->record->type->getModalDescription())
-                ->modalSubmitActionLabel('I understand, save changes')
-                ->modalWidth('xl')
-                ->action(function () {
-                    $this->save();
-
-                    if ($this->record->users->count() > 0) {
-                        UserConsentAgreement::where('consent_agreement_id', $this->record->id)
-                            ->delete();
-                    }
-                }),
-            $this->getCancelFormAction(),
-        ];
     }
 
     protected function getHeaderActions(): array
