@@ -23,12 +23,22 @@ class AssistantConfiguration extends Page
 
     protected static ?string $title = 'Artificial Intelligence';
 
+    public function getBreadcrumbs(): array
+    {
+        return [
+            $this::getUrl() => 'Artificial Intelligence',
+        ];
+    }
+
     public function getSubNavigation(): array
     {
-        return $this->generateNavigationItems(
-            [
-                ListConsentAgreements::class,
-            ]
-        );
+        return [
+            ...$this->generateNavigationItems(
+                [
+                    ListConsentAgreements::class,
+                ]
+            ),
+            ...ManageAiSettings::getNavigationItems(),
+        ];
     }
 }
