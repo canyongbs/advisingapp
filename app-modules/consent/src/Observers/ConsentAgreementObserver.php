@@ -9,9 +9,6 @@ class ConsentAgreementObserver
 {
     public function updated(ConsentAgreement $consentAgreement): void
     {
-        if ($consentAgreement->users->count() > 0) {
-            UserConsentAgreement::where('consent_agreement_id', $consentAgreement->id)
-                ->delete();
-        }
+        $consentAgreement->userConsentAgreements->each(fn (UserConsentAgreement $consentAgreement) => $consentAgreement->delete());
     }
 }

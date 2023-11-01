@@ -33,4 +33,9 @@ class ConsentAgreement extends BaseModel implements Auditable
             ->withPivot('ip_address', 'deleted_at')
             ->withTimestamps();
     }
+
+    public function userConsentAgreements()
+    {
+        return $this->hasMany(UserConsentAgreement::class, 'consent_agreement_id');
+    }
 }
