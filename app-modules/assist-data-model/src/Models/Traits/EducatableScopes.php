@@ -29,14 +29,20 @@ trait EducatableScopes
 
     public function scopeEducatableSearch(Builder $query, string $relationship, string $search): Builder
     {
+        $search = strtolower($search);
+
         return $query->whereHasMorph(
             $relationship,
             [Student::class, Prospect::class],
-            fn (Builder $query, string $type) => $query->where(
-                app($type)::displayNameKey(),
-                'ilike',
-                "%{$search}%"
-            )
+            function (Builder $query, string $type) use ($search) {
+                $column = app($type)::displayNameKey();
+
+                $query->where(
+                    DB::raw("LOWER({$column})"),
+                    'like',
+                    "%{$search}%"
+                );
+            }
         );
     }
 }
