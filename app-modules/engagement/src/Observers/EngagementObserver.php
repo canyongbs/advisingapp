@@ -28,7 +28,7 @@ class EngagementObserver
             TriggeredAutoSubscription::dispatch($user, $engagement);
         }
 
-        /** @var Model $educatable */
+        /** @var Model $entity */
         $entity = $engagement->recipient;
 
         TimelineableRecordCreated::dispatch($entity, $engagement);
@@ -36,9 +36,9 @@ class EngagementObserver
 
     public function deleted(Engagement $engagement): void
     {
-        /** @var Model $educatable */
+        /** @var Model $entity */
         $entity = $engagement->recipient;
 
-        TimelineableRecordDeleted::dispatch($educatable, $engagement);
+        TimelineableRecordDeleted::dispatch($entity, $engagement);
     }
 }

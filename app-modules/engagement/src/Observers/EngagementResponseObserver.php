@@ -11,7 +11,7 @@ class EngagementResponseObserver
 {
     public function created(EngagementResponse $response): void
     {
-        /** @var Model $educatable */
+        /** @var Model $entity */
         $entity = $response->sender;
 
         TimelineableRecordCreated::dispatch($entity, $response);
@@ -19,7 +19,7 @@ class EngagementResponseObserver
 
     public function deleted(EngagementResponse $response): void
     {
-        /** @var Model $educatable */
+        /** @var Model $entity */
         $entity = $response->sender;
 
         TimelineableRecordDeleted::dispatch($entity, $response);
