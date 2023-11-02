@@ -20,7 +20,7 @@ class CreateEvent extends Command
 
     public function handle(): int
     {
-        $user = User::where('email', 'superadmin@assist.com')->first();
+        $user = User::where('email', 'sampleadmin@advising.app')->first();
 
         $user->calendar
             ->events()

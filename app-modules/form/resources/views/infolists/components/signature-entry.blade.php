@@ -7,9 +7,11 @@
     @endphp
 
     @if (filled($state))
-        <img
-            class="h-16 max-w-full"
-            src="{{ $state }}"
-        />
+        <div class="dark:bg-white">
+            <img
+                class="h-16 max-w-full"
+                src="{{ $state }}"
+            />
+        </div>
     @endif
 </x-dynamic-component>

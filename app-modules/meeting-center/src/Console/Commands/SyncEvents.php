@@ -20,7 +20,7 @@ class SyncEvents extends Command
 
     public function handle(): int
     {
-        $user = User::where('email', 'superadmin@assist.com')->first();
+        $user = User::where('email', 'sampleadmin@advising.app')->first();
 
         resolve(CalendarManager::class)
             ->driver($user->calendar->type)

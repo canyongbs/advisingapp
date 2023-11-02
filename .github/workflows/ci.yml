@@ -212,5 +212,14 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm install
+
+      - name: Build Assets
+        run: npm run build
+
       - name: Linting
         run: composer lint

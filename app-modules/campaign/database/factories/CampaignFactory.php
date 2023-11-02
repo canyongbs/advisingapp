@@ -17,7 +17,14 @@ class CampaignFactory extends Factory
             'user_id' => User::factory(),
             'caseload_id' => Caseload::factory(),
             'name' => fake()->catchPhrase(),
-            'execute_at' => fake()->dateTimeBetween('-1 week', '+1 year'),
+            'enabled' => true,
         ];
+    }
+
+    public function disabled(): self
+    {
+        return $this->state([
+            'enabled' => false,
+        ]);
     }
 }

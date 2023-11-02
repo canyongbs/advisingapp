@@ -47,7 +47,7 @@ class ManageAuditSettings extends SettingsPage
                     ->options(AuditableModels::all())
                     ->multiple()
                     ->in(AuditableModels::all()->keys()->toArray())
-                    ->constraints(
+                    ->rules(
                         [
                             'array',
                         ]

@@ -3,7 +3,6 @@
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -18,6 +17,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use Assist\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
@@ -81,6 +81,15 @@ class ListStudents extends ListRecords
                                 fn (Builder $query, $hold): Builder => $query->where('holds', 'ilike', "%{$hold}%"),
                             );
                     }),
+                Filter::make('care_team')
+                    ->label('Care Team')
+                    ->query(
+                        function (Builder $query) {
+                            return $query
+                                ->whereRelation('careTeam', 'user_id', '=', auth()->id())
+                                ->get();
+                        }
+                    ),
             ])
             ->actions([
                 ViewAction::make(),
@@ -91,14 +100,13 @@ class ListStudents extends ListRecords
                     SubscribeBulkAction::make(),
                     BulkEngagementAction::make(context: 'students'),
                     DeleteBulkAction::make(),
+                    ToggleCareTeamBulkAction::make(),
                 ]),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return [];
     }
 }

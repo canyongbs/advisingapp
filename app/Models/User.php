@@ -10,6 +10,7 @@ use Assist\Team\Models\TeamUser;
 use Spatie\MediaLibrary\HasMedia;
 use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
+use Assist\CareTeam\Models\CareTeam;
 use Assist\Prospect\Models\Prospect;
 use Assist\Authorization\Models\Role;
 use Filament\Models\Contracts\HasAvatar;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\Consent\Models\Concerns\CanConsent;
 use Assist\MeetingCenter\Models\CalendarEvent;
+use Assist\Assistant\Models\AssistantChatFolder;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Assist\ServiceManagement\Models\ServiceRequest;
@@ -154,6 +156,35 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    public function prospectCareTeams(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Prospect::class,
+            name: 'educatable',
+            table: 'care_teams'
+        )
+            ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    public function studentCareTeams(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Student::class,
+            name: 'educatable',
+            table: 'care_teams'
+        )
+            ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    public function careTeams(): HasMany
+    {
+        return $this->hasMany(CareTeam::class);
+    }
+
     public function roleGroups(): BelongsToMany
     {
         return $this->traitRoleGroups()
@@ -201,6 +232,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function assistantChats(): HasMany
     {
         return $this->hasMany(AssistantChat::class);
+    }
+
+    public function assistantChatFolders(): HasMany
+    {
+        return $this->hasMany(AssistantChatFolder::class);
     }
 
     public function events(): HasMany

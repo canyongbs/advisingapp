@@ -8,6 +8,7 @@ use App\Models\BaseModel;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
+use Assist\CareTeam\Models\CareTeam;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use OpenSearch\ScoutDriverPlus\Searchable;
@@ -166,6 +167,18 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     public function alerts(): MorphMany
     {
         return $this->morphMany(Alert::class, 'concern');
+    }
+
+    public function careTeam(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: User::class,
+            name: 'educatable',
+            table: 'care_teams',
+        )
+            ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     public static function displayNameKey(): string

@@ -6,6 +6,7 @@ use App\Models\User;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
+use Assist\CareTeam\Models\CareTeam;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -126,6 +127,18 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class, 'sisid', 'sisid');
+    }
+
+    public function careTeam(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: User::class,
+            name: 'educatable',
+            table: 'care_teams',
+        )
+            ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 
     public static function filamentResource(): string

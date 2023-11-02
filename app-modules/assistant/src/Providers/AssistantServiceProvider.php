@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Assist\Assistant\Models\AssistantChat;
 use Filament\Support\Facades\FilamentAsset;
+use Assist\Assistant\Models\AssistantChatFolder;
 use Assist\Assistant\Models\AssistantChatMessage;
 use Assist\IntegrationAI\Events\AIPromptInitiated;
 use Assist\Authorization\AuthorizationRoleRegistry;
@@ -30,6 +31,7 @@ class AssistantServiceProvider extends ServiceProvider
             'assistant_chat' => AssistantChat::class,
             'assistant_chat_message' => AssistantChatMessage::class,
             'assistant_chat_message_log' => AssistantChatMessageLog::class,
+            'assistant_chat_folder' => AssistantChatFolder::class,
         ]);
 
         $this->registerEvents();
@@ -39,7 +41,9 @@ class AssistantServiceProvider extends ServiceProvider
 
     public function registerAssets(): void
     {
-        FilamentAsset::register([Js::make('assistantCurrentResponse', __DIR__ . '/../../resources/js/dist/assistantCurrentResponse.js')->loadedOnRequest()], 'canyon-gbs/assistant');
+        FilamentAsset::register([
+            Js::make('assistantCurrentResponse', __DIR__ . '/../../resources/js/dist/assistantCurrentResponse.js')->loadedOnRequest(),
+        ], 'canyon-gbs/assistant');
     }
 
     protected function registerEvents(): void
@@ -47,7 +51,7 @@ class AssistantServiceProvider extends ServiceProvider
         Event::listen(AIPromptInitiated::class, LogAssistantChatMessage::class);
     }
 
-    protected function registerRolesAndPermissions()
+    protected function registerRolesAndPermissions(): void
     {
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 

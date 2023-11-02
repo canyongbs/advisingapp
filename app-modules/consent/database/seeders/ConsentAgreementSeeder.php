@@ -10,10 +10,10 @@ class ConsentAgreementSeeder extends Seeder
 {
     public function run(): void
     {
-        // Azure OpenAI Consent Agreement
+        // Artificial Intelligence Usage Agreement
         ConsentAgreement::factory()
             ->create([
-                'title' => 'Azure OpenAI Consent Agreement',
+                'title' => 'Artificial Intelligence Usage Agreement',
                 'description' => 'Please confirm that you have read the following agreement and consent to the terms and conditions.',
                 'type' => ConsentAgreementType::AzureOpenAI,
             ]);

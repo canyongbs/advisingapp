@@ -5,11 +5,13 @@ namespace Assist\Engagement\Models;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Assist\Prospect\Models\Prospect;
+use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Assist\Timeline\Models\Contracts\ProvidesATimeline;
 use Assist\Timeline\Timelines\EngagementResponseTimeline;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -31,6 +33,11 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
     protected $casts = [
         'sent_at' => 'datetime',
     ];
+
+    public function timelineRecord(): MorphOne
+    {
+        return $this->morphOne(Timeline::class, 'timelineable');
+    }
 
     public function timeline(): EngagementResponseTimeline
     {

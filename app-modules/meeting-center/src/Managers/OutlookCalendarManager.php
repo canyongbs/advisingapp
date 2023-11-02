@@ -13,7 +13,7 @@ class OutlookCalendarManager implements CalendarInterface
     // https://github.com/microsoftgraph/msgraph-sdk-php
     // https://learn.microsoft.com/en-us/graph/api/resources/webhooks?view=graph-rest-1.0
 
-    public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null): array
+    public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): array
     {
         // https://learn.microsoft.com/en-us/graph/api/user-list-calendars?view=graph-rest-1.0&tabs=http
         // https://learn.microsoft.com/en-us/graph/api/user-list-events?view=graph-rest-1.0&tabs=http
@@ -44,7 +44,7 @@ class OutlookCalendarManager implements CalendarInterface
         // TODO: Implement deleteEvent() method.
     }
 
-    public function syncEvents(Calendar $calendar): void
+    public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
     {
         // TODO: Implement syncEvents() method.
     }

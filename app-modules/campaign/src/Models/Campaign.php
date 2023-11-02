@@ -23,7 +23,11 @@ class Campaign extends BaseModel implements Auditable
     protected $fillable = [
         'caseload_id',
         'name',
-        'execute_at',
+        'enabled',
+    ];
+
+    protected $casts = [
+        'enabled' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -44,7 +48,7 @@ class Campaign extends BaseModel implements Auditable
     public function scopeHasNotBeenExecuted(Builder $query): void
     {
         $query->whereDoesntHave('actions', function (Builder $query) {
-            $query->whereNotNull('executed_at');
+            $query->whereNotNull('successfully_executed_at');
         });
     }
 
