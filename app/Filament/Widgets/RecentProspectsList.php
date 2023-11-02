@@ -38,26 +38,25 @@ class RecentProspectsList extends BaseWidget
                 IdColumn::make(),
                 TextColumn::make(Prospect::displayNameKey())
                     ->label('Name'),
-                TextColumn::make('email')
-                    ->translateLabel(),
+                TextColumn::make('email'),
                 TextColumn::make('mobile')
-                    ->translateLabel(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()
-                    ->translateLabel()
                     ->state(function (Prospect $record) {
                         return $record->status->name;
                     })
                     ->color(function (Prospect $record) {
                         return $record->status->color->value;
-                    }),
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('source.name')
                     ->label('Source')
-                    ->translateLabel(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label('Created')
-                    ->translateLabel()
-                    ->dateTime('g:ia - M j, Y '),
+                    ->dateTime('g:ia - M j, Y ')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 ViewAction::make()

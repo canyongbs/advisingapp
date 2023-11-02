@@ -81,7 +81,7 @@ class CampaignAction extends BaseModel implements Auditable
 
     public function hasBeenExecuted(): bool
     {
-        return (bool) ! is_null($this->executed_at);
+        return (bool) ! is_null($this->successfully_executed_at);
     }
 
     public function getEditFields(): array

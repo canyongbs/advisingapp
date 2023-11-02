@@ -29,26 +29,27 @@ class RecentKnowledgeBaseArticlesList extends BaseWidget
                 IdColumn::make(),
                 TextColumn::make('question')
                     ->label('Question/Issue/Feature')
-                    ->translateLabel()
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->limit()
+                    ->tooltip(fn (KnowledgeBaseItem $record): string => $record->question),
                 TextColumn::make('quality.name')
                     ->label('Quality')
-                    ->translateLabel()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status.name')
                     ->label('Status')
-                    ->translateLabel()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('public')
                     ->label('Public')
-                    ->translateLabel()
                     ->sortable()
-                    ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('category.name')
                     ->label('Category')
-                    ->translateLabel()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
                 ViewAction::make()
