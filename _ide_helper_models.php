@@ -857,6 +857,8 @@ namespace Assist\Consent\Models{
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\UserConsentAgreement> $userConsentAgreements
+ * @property-read int|null $user_consent_agreements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \Assist\Consent\Database\Factories\ConsentAgreementFactory factory($count = null, $state = [])

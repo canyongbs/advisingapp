@@ -5,8 +5,8 @@ namespace Assist\Consent\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Audit\Overrides\BelongsToMany;
 use Assist\Consent\Enums\ConsentAgreementType;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -32,5 +32,10 @@ class ConsentAgreement extends BaseModel implements Auditable
             ->using(UserConsentAgreement::class)
             ->withPivot('ip_address', 'deleted_at')
             ->withTimestamps();
+    }
+
+    public function userConsentAgreements()
+    {
+        return $this->hasMany(UserConsentAgreement::class, 'consent_agreement_id');
     }
 }
