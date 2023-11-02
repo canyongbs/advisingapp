@@ -15,6 +15,8 @@
                 $view = match ($action['type']) {
                     CampaignActionType::BulkEngagement->value => 'filament.forms.components.campaigns.actions.bulk-engagement',
                     CampaignActionType::ServiceRequest->value => 'filament.forms.components.campaigns.actions.service-request',
+                    CampaignActionType::ProactiveAlert->value => 'filament.forms.components.campaigns.actions.proactive-alert',
+                    CampaignActionType::Interaction->value => 'filament.forms.components.campaigns.actions.interaction',
                 };
             @endphp
 

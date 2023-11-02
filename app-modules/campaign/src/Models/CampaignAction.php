@@ -3,13 +3,17 @@
 namespace Assist\Campaign\Models;
 
 use App\Models\BaseModel;
+use Assist\Alert\Models\Alert;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Interaction\Models\Interaction;
 use Assist\Campaign\Enums\CampaignActionType;
 use Assist\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Assist\Campaign\Filament\Blocks\InteractionBlock;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Campaign\Filament\Blocks\ProactiveAlertBlock;
 use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
 use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -47,6 +51,8 @@ class CampaignAction extends BaseModel implements Auditable
         $response = match ($this->type) {
             CampaignActionType::BulkEngagement => EngagementBatch::executeFromCampaignAction($this),
             CampaignActionType::ServiceRequest => ServiceRequest::executeFromCampaignAction($this),
+            CampaignActionType::ProactiveAlert => Alert::executeFromCampaignAction($this),
+            CampaignActionType::Interaction => Interaction::executeFromCampaignAction($this),
             default => null
         };
 
@@ -89,6 +95,8 @@ class CampaignAction extends BaseModel implements Auditable
         return match ($this->type) {
             CampaignActionType::BulkEngagement => EngagementBatchBlock::make()->editFields(),
             CampaignActionType::ServiceRequest => ServiceRequestBlock::make()->editFields(),
+            CampaignActionType::ProactiveAlert => ProactiveAlertBlock::make()->editFields(),
+            CampaignActionType::Interaction => InteractionBlock::make()->editFields(),
             default => []
         };
     }

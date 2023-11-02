@@ -167,6 +167,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Assist\MeetingCenter\Models\Calendar|null $calendar
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CareTeam\Models\CareTeam> $careTeams
+ * @property-read int|null $care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\Caseload> $caseloads
  * @property-read int|null $caseloads_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\ConsentAgreement> $consentAgreements
@@ -749,6 +751,32 @@ namespace Assist\Campaign\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperCampaignAction {}
+}
+
+namespace Assist\CareTeam\Models{
+/**
+ * Assist\CareTeam\Models\CareTeam
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property string $educatable_id
+ * @property string $educatable_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $educatable
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam whereEducatableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam whereEducatableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CareTeam whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperCareTeam {}
 }
 
 namespace Assist\CaseloadManagement\Models{

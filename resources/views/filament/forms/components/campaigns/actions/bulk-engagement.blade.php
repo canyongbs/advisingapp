@@ -18,7 +18,7 @@
                 @endforeach
             </dd>
         </div>
-        <div class="flex flex-col py-3">
+        <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
             <dd class="text-sm font-semibold">{{ $action['subject'] }}</dd>
         </div>
