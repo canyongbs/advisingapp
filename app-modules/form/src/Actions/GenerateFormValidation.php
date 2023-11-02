@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Assist\Form\Models\Form;
 use Assist\Form\Models\FormField;
 use Illuminate\Database\Eloquent\Collection;
+use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class GenerateFormValidation
 {
@@ -20,32 +21,19 @@ class GenerateFormValidation
 
     public function fields(Collection $fields): array
     {
-        return $fields->mapWithKeys(fn (FormField $field) => [$field->key => $this->field($field)])->all();
-    }
+        $blocks = FormFieldBlockRegistry::keyByType();
 
-    public function field(FormField $field): array
-    {
-        $rules = collect();
+        return $fields
+            ->mapWithKeys(function (FormField $field) use ($blocks) {
+                $rules = collect();
 
-        if ($field->required) {
-            $rules->push('required');
-        }
+                if ($field->required) {
+                    $rules->push('required');
+                }
 
-        return $rules
-            ->merge(match ($field['type']) {
-                'text_input' => [
-                    'string',
-                    'max:255',
-                ],
-                'text_area' => [
-                    'string',
-                    'max:65535',
-                ],
-                'select' => [
-                    'string',
-                    'in:' . collect($field['config']['options'])->keys()->join(','),
-                ],
-                default => null,
+                return [$field->key => $rules
+                    ->merge($blocks[$field->type]::getValidationRules($field))
+                    ->all()];
             })
             ->all();
     }

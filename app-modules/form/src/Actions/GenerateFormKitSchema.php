@@ -5,6 +5,8 @@ namespace Assist\Form\Actions;
 use Assist\Form\Models\Form;
 use Assist\Form\Models\FormStep;
 use Assist\Form\Models\FormField;
+use Illuminate\Database\Eloquent\Collection;
+use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class GenerateFormKitSchema
 {
@@ -14,7 +16,7 @@ class GenerateFormKitSchema
             $content = $this->wizardContent($form);
         } else {
             $content = [
-                ...$form->fields->map(fn (FormField $field): array => $this->field($field)),
+                ...$this->fields($form->fields),
                 [
                     '$formkit' => 'submit',
                     'label' => 'Submit',
@@ -36,35 +38,13 @@ class GenerateFormKitSchema
         ];
     }
 
-    public function field(FormField $formField): array
+    public function fields(Collection $fields): array
     {
-        return match ($formField->type) {
-            'text_input' => [
-                '$formkit' => 'text',
-                'label' => $formField->label,
-                'name' => $formField->key,
-                ...($formField->required ? ['validation' => 'required'] : []),
-            ],
-            'text_area' => [
-                '$formkit' => 'textarea',
-                'label' => $formField->label,
-                'name' => $formField->key,
-                ...($formField->required ? ['validation' => 'required'] : []),
-            ],
-            'select' => [
-                '$formkit' => 'select',
-                'label' => $formField['label'],
-                'name' => $formField->key,
-                ...($formField->required ? ['validation' => 'required'] : []),
-                'options' => $formField->config['options'],
-            ],
-            'signature' => [
-                '$formkit' => 'signature',
-                'label' => $formField->label,
-                'name' => $formField->key,
-                ...($formField->required ? ['validation' => 'required'] : []),
-            ],
-        };
+        $blocks = FormFieldBlockRegistry::keyByType();
+
+        return $fields
+            ->map(fn (FormField $field): array => $blocks[$field->type]::getFormKitSchema($field))
+            ->all();
     }
 
     public function wizardContent(Form $form): array
@@ -125,7 +105,7 @@ class GenerateFormKitSchema
                                 '$formkit' => 'group',
                                 'id' => $step->label,
                                 'name' => $step->label,
-                                'children' => $step->fields->map(fn (FormField $field): array => $this->field($field)),
+                                'children' => $this->fields($step->fields),
                             ],
                         ],
                     ]),
