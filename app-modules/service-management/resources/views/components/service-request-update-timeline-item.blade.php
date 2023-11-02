@@ -11,9 +11,17 @@
                 class="font-medium underline"
                 href="{{ ServiceRequestUpdateResource::getUrl('view', ['record' => $record]) }}"
             >
-                Case Updated
+                Service Request Update
             </a>
             <span class="ml-2 flex space-x-2">
+                <x-filament::badge>
+                    @if ($record->internal === true)
+                        Internal
+                    @else
+                        External
+                    @endif
+                </x-filament::badge>
+
                 @if ($record->direction === ServiceRequestUpdateDirection::Inbound)
                     <x-filament::icon
                         class="h-5 w-5 text-gray-400 dark:text-gray-100"
