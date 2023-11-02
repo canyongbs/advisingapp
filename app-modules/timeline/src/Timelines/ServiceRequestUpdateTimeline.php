@@ -5,7 +5,7 @@ namespace Assist\Timeline\Timelines;
 use Filament\Actions\ViewAction;
 use Assist\Timeline\Models\CustomTimeline;
 use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\Engagement\Filament\Resources\EngagementResponseResource\Components\EngagementResponseViewAction;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Components\ServiceRequestUpdateViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
 class ServiceRequestUpdateTimeline extends CustomTimeline
@@ -36,6 +36,6 @@ class ServiceRequestUpdateTimeline extends CustomTimeline
 
     public function modalViewAction(): ViewAction
     {
-        return EngagementResponseViewAction::make()->record($this->serviceRequestUpdate);
+        return ServiceRequestUpdateViewAction::make()->record($this->serviceRequestUpdate);
     }
 }
