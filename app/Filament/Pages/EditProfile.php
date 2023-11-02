@@ -27,6 +27,9 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
+/**
+ * @property Form $form
+ */
 class EditProfile extends Page
 {
     use InteractsWithFormActions;
