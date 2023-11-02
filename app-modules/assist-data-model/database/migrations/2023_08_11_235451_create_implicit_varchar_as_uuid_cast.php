@@ -9,9 +9,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        $dbUser = config('database.connections.pgsql.username');
-
-        DB::unprepared("ALTER TYPE uuid OWNER TO {$dbUser};");
+        DB::unprepared("ALTER TYPE uuid OWNER TO CURRENT_USER;");
 
         DB::unprepared('DROP CAST IF EXISTS (VARCHAR AS uuid)');
 
