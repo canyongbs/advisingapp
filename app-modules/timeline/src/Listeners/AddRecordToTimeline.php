@@ -10,7 +10,7 @@ class AddRecordToTimeline
     public function handle(TimelineableRecordCreated $event): void
     {
         /** @var Model $entity */
-        $entity = $event->$entity;
+        $entity = $event->entity;
 
         cache()->forget("timeline.synced.{$entity->getMorphClass()}.{$entity->getKey()}");
 
