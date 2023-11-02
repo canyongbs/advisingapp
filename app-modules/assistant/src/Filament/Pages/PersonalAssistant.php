@@ -13,7 +13,9 @@ use App\Filament\Pages\Dashboard;
 use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
@@ -408,7 +410,7 @@ class PersonalAssistant extends Page
                     return $chat;
                 });
             })
-            ->icon('heroicon-o-pencil')
+            ->icon('heroicon-m-envelope')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
@@ -417,41 +419,31 @@ class PersonalAssistant extends Page
             ]);
     }
 
-    public function shareChatAction(): Action
+    public function cloneChatAction(): Action
     {
-        return Action::make('shareChat')
-            ->modalSubmitActionLabel('Share')
+        return Action::make('cloneChat')
+            ->label('Clone')
+            ->modalSubmitActionLabel('Continue')
+            ->modalFooterActionsAlignment(Alignment::Center)
             ->modalWidth('md')
-            ->size(ActionSize::ExtraSmall)
             ->form([
-                Select::make('via')
-                    ->label('Via')
-                    ->options(AssistantChatShareVia::class)
-                    ->enum(AssistantChatShareVia::class)
-                    ->default(AssistantChatShareVia::default())
-                    ->required()
-                    ->selectablePlaceholder(false)
-                    ->live(),
-                Select::make('target_type')
-                    ->label('Type')
+                Radio::make('target_type')
+                    ->label('With')
                     ->options(AssistantChatShareWith::class)
                     ->enum(AssistantChatShareWith::class)
                     ->default(AssistantChatShareWith::default())
                     ->required()
-                    ->selectablePlaceholder(false)
                     ->live(),
                 Select::make('target_ids')
-                    ->label('Targets')
+                    ->label(fn (Get $get): string => match ($get('target_type')) {
+                        AssistantChatShareWith::Team => 'Select Teams',
+                        AssistantChatShareWith::User => 'Select Users',
+                    })
+                    ->visible(fn (Get $get): bool => filled($get('target_type')))
                     ->options(function (Get $get): Collection {
-                        return match ($get('via')) {
-                            AssistantChatShareVia::Email => match ($get('target_type')) {
-                                AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
-                                AssistantChatShareWith::User => User::orderBy('name')->pluck('name', 'id'),
-                            },
-                            AssistantChatShareVia::Internal => match ($get('target_type')) {
-                                AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
-                                AssistantChatShareWith::User => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
-                            },
+                        return match ($get('target_type')) {
+                            AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            AssistantChatShareWith::User => User::whereKeyNot(auth()->id())->orderBy('name')->pluck('name', 'id'),
                         };
                     })
                     ->searchable()
@@ -464,15 +456,57 @@ class PersonalAssistant extends Page
 
                 $chat = AssistantChat::find($arguments['chat']);
 
-                dispatch(new ShareAssistantChatsJob($chat, $data['via'], $data['target_type'], $data['target_ids'], $sender));
+                dispatch(new ShareAssistantChatsJob($chat, AssistantChatShareVia::Internal, $data['target_type'], $data['target_ids'], $sender));
             })
-            ->icon('heroicon-o-share')
+            ->link()
+            ->icon('heroicon-m-document-duplicate')
             ->color('warning')
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
-            ->iconButton()
-            ->extraAttributes([
-                'class' => 'relative inline-flex w-5 h-5 hidden group-hover:inline-flex',
-            ]);
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
+    }
+
+    public function emailChatAction(): Action
+    {
+        return Action::make('emailChat')
+            ->label('Email')
+            ->modalSubmitActionLabel('Continue')
+            ->modalFooterActionsAlignment(Alignment::Center)
+            ->modalWidth('md')
+            ->form([
+                Radio::make('target_type')
+                    ->label('With')
+                    ->options(AssistantChatShareWith::class)
+                    ->enum(AssistantChatShareWith::class)
+                    ->default(AssistantChatShareWith::default())
+                    ->required()
+                    ->live(),
+                Select::make('target_ids')
+                    ->label(fn (Get $get): string => match ($get('target_type')) {
+                        AssistantChatShareWith::Team => 'Select Teams',
+                        AssistantChatShareWith::User => 'Select Users',
+                    })
+                    ->visible(fn (Get $get): bool => filled($get('target_type')))
+                    ->options(function (Get $get): Collection {
+                        return match ($get('target_type')) {
+                            AssistantChatShareWith::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            AssistantChatShareWith::User => User::orderBy('name')->pluck('name', 'id'),
+                        };
+                    })
+                    ->searchable()
+                    ->multiple()
+                    ->required(),
+            ])
+            ->action(function (array $arguments, array $data) {
+                /** @var User $sender */
+                $sender = auth()->user();
+
+                $chat = AssistantChat::find($arguments['chat']);
+
+                dispatch(new ShareAssistantChatsJob($chat, AssistantChatShareVia::Email, $data['target_type'], $data['target_ids'], $sender));
+            })
+            ->link()
+            ->icon('heroicon-m-envelope')
+            ->color('warning')
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'));
     }
 
     protected function setMessage(string $message, AIChatMessageFrom $from): void
