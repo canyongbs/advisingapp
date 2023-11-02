@@ -23,6 +23,9 @@ class ViewEngagementFile extends ViewRecord
                     ->schema([
                         TextEntry::make('description')
                             ->label('Description'),
+                        TextEntry::make('retention_date')
+                            ->label('Retention Date')
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'The file will be deleted automatically after this date. If left blank, the file will be kept indefinitely.'),
                         SpatieMediaLibraryImageEntry::make('file')
                             ->collection('file')
                             ->visibility('private')
