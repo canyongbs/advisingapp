@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
+/**
+ * @mixin IdeHelperCareTeam
+ */
 class CareTeam extends MorphPivot
 {
     use HasFactory;

@@ -2,6 +2,7 @@
 
 namespace Assist\Interaction\Models;
 
+use Exception;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Assist\Division\Models\Division;
