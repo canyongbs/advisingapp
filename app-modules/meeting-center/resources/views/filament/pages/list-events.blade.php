@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\Facades\FilamentAsset;
+    use Assist\MeetingCenter\Filament\Widgets\CalendarWidget;
 @endphp
 <x-filament-panels::page @class([
     'fi-resource-list-records-page',
@@ -90,8 +91,8 @@
             {{ FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
         </div>
     @elseif($viewType === 'calendar')
-        {{--        @livewire('task-calendar', $this->getWidgetData())--}}
-        <x-filament-actions::modals/>
+        <div>
+            @livewire(CalendarWidget::class)
+        </div>
     @endif
-    {{--    <script src="{{ FilamentAsset::getScriptSrc('calendar', 'canyon-gbs/meeting-center') }}"></script>--}}
 </x-filament-panels::page>

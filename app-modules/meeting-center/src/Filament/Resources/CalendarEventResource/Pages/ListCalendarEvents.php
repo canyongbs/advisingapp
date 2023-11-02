@@ -5,12 +5,14 @@ namespace Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
@@ -33,7 +35,7 @@ class ListCalendarEvents extends ListRecords
         to synchronize with below to continue.')
             ->modalContent(view('meeting-center::filament.components.calendar-setup-modal'))
             ->modalSubmitAction(false)
-            ->modalCancelAction(false)
+            ->modalCancelAction(Action::make('cancel')->color('gray')->url(Filament::getUrl()))
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false);
     }
@@ -52,7 +54,7 @@ class ListCalendarEvents extends ListRecords
                         $calendar = $user->calendar;
 
                         return resolve(CalendarManager::class)
-                            ->driver($calendar->type)
+                            ->driver($calendar->provider_type->value)
                             ->getCalendars($calendar);
                     })
                     ->required(),
@@ -68,7 +70,7 @@ class ListCalendarEvents extends ListRecords
                 $calendar->saveQuietly();
 
                 resolve(CalendarManager::class)
-                    ->driver($calendar->type)
+                    ->driver($calendar->provider_type->value)
                     ->syncEvents($calendar);
             });
     }
@@ -97,7 +99,8 @@ class ListCalendarEvents extends ListRecords
                 BulkActionGroup::make([
                     // DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('starts_at'));
     }
 
     protected function getHeaderActions(): array
