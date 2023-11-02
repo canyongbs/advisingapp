@@ -20,6 +20,10 @@ class EngagementFileResource extends Resource
 
     protected ?string $heading = 'Files and Documents';
 
+    protected static ?string $modelLabel = 'File or Document';
+
+    protected static ?string $pluralModelLabel = 'Files or Documents';
+
     public static function getRelations(): array
     {
         return [
