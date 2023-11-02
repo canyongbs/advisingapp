@@ -45,7 +45,9 @@ class Caseload extends BaseModel
     public function retrieveRecords(): Collection
     {
         if (count($this->subjects) > 0) {
-            return $this->subjects;
+            return $this->subjects->map(function (CaseloadSubject $subject) {
+                return $subject->subject;
+            });
         }
 
         /** @var Builder $modelQueryBuilder */

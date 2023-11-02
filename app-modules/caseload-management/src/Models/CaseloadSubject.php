@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CaseloadSubject extends BaseModel
 {
+    protected $fillable = [
+        'subject_id',
+        'subject_type',
+    ];
+
     public function caseload(): BelongsTo
     {
         return $this->belongsTo(Caseload::class);
