@@ -18,6 +18,7 @@ use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\CaseloadManagement\Models\Caseload;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
@@ -78,23 +79,26 @@ class ListProspects extends ListRecords
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('caseload')
+                SelectFilter::make('my_caseloads')
+                    ->label('My Caseloads')
                     ->options(
                         auth()->user()->caseloads()
                             ->where('model', CaseloadModel::Prospect)
                             ->pluck('name', 'id'),
                     )
-                    ->query(function (Builder $query, array $data) {
-                        if (blank($data['value'])) {
-                            return;
-                        }
-
-                        $query->whereKey(
-                            app(TranslateCaseloadFilters::class)
-                                ->handle($data['value'])
-                                ->pluck($query->getModel()->getQualifiedKeyName()),
-                        );
-                    }),
+                    ->searchable()
+                    ->optionsLimit(20)
+                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                SelectFilter::make('all_caseloads')
+                    ->label('All Caseloads')
+                    ->options(
+                        Caseload::all()
+                            ->where('model', CaseloadModel::Prospect)
+                            ->pluck('name', 'id'),
+                    )
+                    ->searchable()
+                    ->optionsLimit(20)
+                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
                 OpenSearchSelectFilter::make('status_id')
                     ->relationship('status', 'name')
                     ->multiple()
@@ -126,6 +130,19 @@ class ListProspects extends ListRecords
                     ToggleCareTeamBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected function caseloadFilter(Builder $query, array $data): void
+    {
+        if (blank($data['value'])) {
+            return;
+        }
+
+        $query->whereKey(
+            app(TranslateCaseloadFilters::class)
+                ->handle($data['value'])
+                ->pluck($query->getModel()->getQualifiedKeyName()),
+        );
     }
 
     protected function getHeaderActions(): array
