@@ -2,7 +2,9 @@
 
 namespace Assist\Authorization\Models\Concerns;
 
+use ReflectionClass;
 use Illuminate\Support\Collection;
+use App\Models\Attributes\NoPermissions;
 use App\Actions\Finders\ApplicationModules;
 
 // This trait is used to define specific permissions for a model
@@ -22,6 +24,10 @@ trait DefinesPermissions
 
     protected function webPermissions(): array
     {
+        if ((new ReflectionClass($this))->getAttributes(NoPermissions::class)) {
+            return [];
+        }
+
         return resolve(ApplicationModules::class)
             ->moduleConfig(
                 module: 'authorization',
@@ -31,6 +37,10 @@ trait DefinesPermissions
 
     protected function apiPermissions(): array
     {
+        if ((new ReflectionClass($this))->getAttributes(NoPermissions::class)) {
+            return [];
+        }
+
         return resolve(ApplicationModules::class)
             ->moduleConfig(
                 module: 'authorization',
