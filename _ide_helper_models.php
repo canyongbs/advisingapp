@@ -158,6 +158,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $assignedTasks
  * @property-read int|null $assigned_tasks_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChatFolder> $assistantChatFolders
+ * @property-read int|null $assistant_chat_folders_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChatMessageLog> $assistantChatMessageLogs
  * @property-read int|null $assistant_chat_message_logs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChat> $assistantChats
@@ -183,6 +185,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \App\Models\Pronouns|null $pronouns
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospectCareTeams
+ * @property-read int|null $prospect_care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospectSubscriptions
  * @property-read int|null $prospect_subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
@@ -191,6 +195,8 @@ namespace App\Models{
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Student> $studentCareTeams
+ * @property-read int|null $student_care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Student> $studentSubscriptions
  * @property-read int|null $student_subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
@@ -329,6 +335,8 @@ namespace Assist\AssistDataModel\Models{
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
+ * @property-read int|null $care_team_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $engagementResponses
@@ -376,6 +384,7 @@ namespace Assist\Assistant\Models{
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\Assistant\Models\AssistantChatFolder|null $folder
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChatMessage> $messages
  * @property-read int|null $messages_count
  * @property-read \App\Models\User $user
@@ -395,6 +404,22 @@ namespace Assist\Assistant\Models{
 
 namespace Assist\Assistant\Models{
 /**
+ * Assist\Assistant\Models\AssistantChatFolder
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChat> $chats
+ * @property-read int|null $chats_count
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAssistantChatFolder {}
+}
+
+namespace Assist\Assistant\Models{
+/**
  * Assist\Assistant\Models\AssistantChatMessage
  *
  * @property string $id
@@ -403,7 +428,7 @@ namespace Assist\Assistant\Models{
  * @property \Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom $from
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Assistant\Models\AssistantChat|null $chat
+ * @property-read \Assist\Assistant\Models\AssistantChat $chat
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage query()
@@ -636,7 +661,6 @@ namespace Assist\Campaign\Models{
  * @property string $user_id
  * @property string $caseload_id
  * @property string $name
- * @property string $execute_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -655,7 +679,6 @@ namespace Assist\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCaseloadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereExecuteAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUpdatedAt($value)
@@ -676,14 +699,19 @@ namespace Assist\Campaign\Models{
  * @property string $campaign_id
  * @property \Assist\Campaign\Enums\CampaignActionType $type
  * @property array $data
- * @property string|null $executed_at
+ * @property string $execute_at
+ * @property string|null $last_execution_attempt_at
+ * @property string|null $last_execution_attempt_error
+ * @property string|null $successfully_executed_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Assist\Campaign\Models\Campaign $campaign
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction campaignEnabled()
  * @method static \Assist\Campaign\Database\Factories\CampaignActionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction hasNotBeenExecuted()
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction onlyTrashed()
@@ -692,8 +720,11 @@ namespace Assist\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereData($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereExecutedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereExecuteAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereLastExecutionAttemptAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereLastExecutionAttemptError($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereSuccessfullyExecutedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction withTrashed()
@@ -1097,8 +1128,11 @@ namespace Assist\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property bool $is_wizard
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormStep> $steps
+ * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $submissions
  * @property-read int|null $submissions_count
  * @method static \Assist\Form\Database\Factories\FormFactory factory($count = null, $state = [])
@@ -1111,6 +1145,7 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereEmbedEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -1132,7 +1167,10 @@ namespace Assist\Form\Models{
  * @property string $form_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $step_id
+ * @property bool $is_wizard
  * @property-read \Assist\Form\Models\Form $form
+ * @property-read \Assist\Form\Models\FormStep|null $step
  * @method static \Assist\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newQuery()
@@ -1141,15 +1179,43 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereFormId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereLabel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereRequired($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereStepId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
  class IdeHelperFormField {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\FormStep
+ *
+ * @property string $id
+ * @property string $label
+ * @property string $form_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Assist\Form\Models\Form $form
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormStep {}
 }
 
 namespace Assist\Form\Models{
@@ -1690,6 +1756,8 @@ namespace Assist\Prospect\Models{
  * @property-read \App\Models\User|null $assignedTo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
+ * @property-read int|null $care_team_count
  * @property-read \App\Models\User|null $createdBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
