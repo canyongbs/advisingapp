@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
 use Assist\Timeline\Filament\Pages\TimelinePage;
 use Assist\ServiceManagement\Models\ServiceRequestUpdate;
