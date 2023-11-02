@@ -14,6 +14,8 @@ use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class EditProfile extends BaseEditProfile
 {
+    protected static string $view = 'filament.pages.edit-profile';
+
     public static function getLabel(): string
     {
         return 'User Profile';
