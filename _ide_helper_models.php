@@ -380,8 +380,9 @@ namespace Assist\Assistant\Models{
  * Assist\Assistant\Models\AssistantChat
  *
  * @property string $id
- * @property string $user_id
  * @property string $name
+ * @property string $user_id
+ * @property string|null $assistant_chat_folder_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Assist\Assistant\Models\AssistantChatFolder|null $folder
@@ -391,6 +392,7 @@ namespace Assist\Assistant\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereAssistantChatFolderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat whereName($value)
@@ -406,12 +408,22 @@ namespace Assist\Assistant\Models{
 /**
  * Assist\Assistant\Models\AssistantChatFolder
  *
+ * @property string $id
+ * @property string $name
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChat> $chats
  * @property-read int|null $chats_count
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -661,6 +673,7 @@ namespace Assist\Campaign\Models{
  * @property string $user_id
  * @property string $caseload_id
  * @property string $name
+ * @property bool $enabled
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -679,6 +692,7 @@ namespace Assist\Campaign\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCaseloadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign whereUpdatedAt($value)
@@ -1168,7 +1182,6 @@ namespace Assist\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $step_id
- * @property bool $is_wizard
  * @property-read \Assist\Form\Models\Form $form
  * @property-read \Assist\Form\Models\FormStep|null $step
  * @method static \Assist\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
@@ -1179,7 +1192,6 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereFormId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormField whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereLabel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereRequired($value)
