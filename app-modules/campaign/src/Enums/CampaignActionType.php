@@ -12,6 +12,8 @@ enum CampaignActionType: string implements HasLabel
 
     case ProactiveAlert = 'proactive_alert';
 
+    case Interaction = 'interaction';
+
     public function getLabel(): ?string
     {
         return match ($this) {

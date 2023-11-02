@@ -14,7 +14,7 @@ class ProactiveAlertBlock extends CampaignActionBlock
     {
         parent::setUp();
 
-        $this->label('Proactive Alerts');
+        $this->label('Proactive Alert');
 
         $this->schema($this->createFields());
     }
