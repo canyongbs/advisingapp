@@ -12,6 +12,7 @@ use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
+use Assist\Campaign\Filament\Blocks\ProactiveAlertBlock;
 use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
 use Assist\Campaign\Filament\Resources\CampaignResource;
 use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
@@ -30,6 +31,7 @@ class CreateCampaign extends CreateRecord
         return [
             EngagementBatchBlock::make(),
             ServiceRequestBlock::make(),
+            ProactiveAlertBlock::make(),
         ];
     }
 
