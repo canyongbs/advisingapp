@@ -31,7 +31,6 @@ class GoogleCalendarController extends CalendarController
 
         $calendar = $user->calendar ?: new Calendar();
         $calendar->type = CalendarProvider::Google;
-        $calendar->provider_id = env('GOOGLE_CALENDAR_ID'); //TODO: needs UI to select calendar
         $calendar->oauth_token = $token['access_token'];
         $calendar->oauth_refresh_token = $token['refresh_token'];
         $calendar->oauth_token_expires_at = Carbon::parse($token['created'] + $token['expires_in']);

@@ -11,7 +11,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->string('type');
-            $table->text('provider_id');
+            $table->text('provider_id')->nullable();
             $table->text('oauth_token');
             $table->text('oauth_refresh_token');
 

@@ -9,6 +9,13 @@ use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
 {
+    public function getCalendars(Calendar $calendar): array
+    {
+        // TODO: Implement getCalendars() method.
+
+        return [];
+    }
+
     // https://github.com/microsoftgraph/msgraph-sample-phpapp/tree/main
     // https://github.com/microsoftgraph/msgraph-sdk-php
     // https://learn.microsoft.com/en-us/graph/api/resources/webhooks?view=graph-rest-1.0

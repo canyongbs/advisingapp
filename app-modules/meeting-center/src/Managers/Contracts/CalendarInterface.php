@@ -8,6 +8,8 @@ use Assist\MeetingCenter\Models\CalendarEvent;
 
 interface CalendarInterface
 {
+    public function getCalendars(Calendar $calendar): array;
+
     public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): array;
 
     public function createEvent(CalendarEvent $event): void;

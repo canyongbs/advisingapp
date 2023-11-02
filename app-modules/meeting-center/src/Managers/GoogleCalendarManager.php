@@ -12,10 +12,23 @@ use Assist\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar\EventDateTime;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Google\Service\Calendar as GoogleCalendar;
+use Google\Service\Calendar\CalendarListEntry;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class GoogleCalendarManager implements CalendarInterface
 {
+    public function getCalendars(Calendar $calendar): array
+    {
+        $service = (new GoogleCalendar($this->client($calendar)));
+
+        return collect($service->calendarList->listCalendarList()
+            ->getItems())
+            ->filter(fn (CalendarListEntry $item) => ! str($item->id)->endsWith('@group.v.calendar.google.com'))
+            ->pluck('summary', 'id')
+            ->sortBy('summary')
+            ->toArray();
+    }
+
     /**
      * @see https://developers.google.com/calendar/api/v3/reference/events/watch
      *
