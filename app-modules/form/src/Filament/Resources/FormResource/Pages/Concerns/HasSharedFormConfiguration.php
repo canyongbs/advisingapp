@@ -3,11 +3,15 @@
 namespace Assist\Form\Filament\Resources\FormResource\Pages\Concerns;
 
 use Filament\Forms\Get;
+use Illuminate\Support\Arr;
 use Assist\Form\Models\Form;
 use Assist\Form\Rules\IsDomain;
+use Assist\Form\Models\FormStep;
+use Assist\Form\Models\FormField;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -43,33 +47,86 @@ trait HasSharedFormConfiguration
                         new IsDomain(),
                     ]
                 ),
+            Toggle::make('is_wizard')
+                ->label('Multi-step form')
+                ->live()
+                ->columnSpanFull(),
             Section::make('Fields')
                 ->schema([
-                    Builder::make('fields')
-                        ->label('')
+                    $this->fieldBuilder(),
+                ])
+                ->hidden(fn (Get $get) => $get('is_wizard')),
+            Repeater::make('steps')
+                ->schema([
+                    TextInput::make('label')
+                        ->required()
+                        ->string()
+                        ->maxLength(255)
+                        ->autocomplete(false)
                         ->columnSpanFull()
-                        ->reorderableWithDragAndDrop(false)
-                        ->reorderableWithButtons()
-                        ->blocks(FormFieldBlockRegistry::getInstances()),
-                ]),
+                        ->lazy(),
+                    $this->fieldBuilder(),
+                ])
+                ->addActionLabel('New step')
+                ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
+                ->visible(fn (Get $get) => $get('is_wizard'))
+                ->relationship()
+                ->columnSpanFull(),
         ];
     }
 
-    public function handleFieldSaving(Form $form, array $fields): void
+    public function fieldBuilder(): Builder
     {
-        collect($fields)
-            ->each(function ($field) use ($form) {
-                $data = collect($field['data']);
+        return Builder::make('fields')
+            ->hiddenLabel()
+            ->columnSpanFull()
+            ->reorderableWithDragAndDrop(false)
+            ->reorderableWithButtons()
+            ->blocks(FormFieldBlockRegistry::getInstances())
+            ->addActionLabel('New field')
+            ->dehydrated(false)
+            ->loadStateFromRelationshipsUsing(function (Builder $component, Form | FormStep $record) {
+                $fields = $record instanceof Form ?
+                    $record->fields()->whereNull('step_id')->get() :
+                    $record->fields;
 
-                $form
-                    ->fields()
-                    ->create([
-                        'key' => $data->get('key'),
-                        'type' => $field['type'],
-                        'label' => $data->get('label'),
-                        'required' => $data->get('required'),
-                        'config' => $data->except(['key', 'label', 'required']),
-                    ]);
+                $component->state(
+                    $fields
+                        ->map(fn (FormField $field): array => [
+                            'type' => $field->type,
+                            'data' => [
+                                'label' => $field->label,
+                                'key' => $field->key,
+                                'required' => $field->required,
+                                ...$field->config,
+                            ],
+                        ])
+                        ->all(),
+                );
+            })
+            ->saveRelationshipsUsing(function (Get $get, Form | FormStep $record, array $state) {
+                $record->fields()->delete();
+
+                if ($record instanceof FormStep) {
+                    $record->form->fields()->whereNull('step_id')->delete();
+                } elseif ($record instanceof Form) {
+                    $record->steps()->delete();
+                }
+
+                foreach ($state as $field) {
+                    $fieldData = $field['data'];
+
+                    $record
+                        ->fields()
+                        ->create([
+                            'key' => $fieldData['key'],
+                            'type' => $field['type'],
+                            'label' => $fieldData['label'],
+                            'required' => $fieldData['required'],
+                            'config' => Arr::except($fieldData, ['key', 'label', 'required']),
+                            ...($record instanceof FormStep ? ['form_id' => $record->form_id] : []),
+                        ]);
+                }
             });
     }
 }

@@ -4,32 +4,33 @@ namespace Assist\Form\Http\Controllers;
 
 use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
-use Assist\Form\Models\FormField;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Assist\Form\Actions\GenerateFormKitSchema;
 use Symfony\Component\HttpFoundation\Response;
 use Assist\Form\Actions\GenerateFormValidation;
-use Assist\Form\Actions\GenerateFormFieldFormKitSchema;
 
 class FormWidgetController extends Controller
 {
-    public function view(Request $request, Form $form): JsonResponse
+    public function view(GenerateFormKitSchema $generateSchema, Form $form): JsonResponse
     {
         return response()->json(
             [
                 'name' => $form->name,
                 'description' => $form->description,
-                'schema' => $form->fields->map(fn (FormField $field) => resolve(GenerateFormFieldFormKitSchema::class)->handle($field)),
-            ]
+                'submission_url' => URL::signedRoute('forms.submit', ['form' => $form]),
+                'schema' => $generateSchema($form),
+            ],
         );
     }
 
-    public function store(Request $request, Form $form): JsonResponse
+    public function store(Request $request, GenerateFormValidation $generateValidation, Form $form): JsonResponse
     {
         $validator = Validator::make(
             $request->all(),
-            resolve(GenerateFormValidation::class)->handle($form)
+            $generateValidation($form)
         );
 
         if ($validator->fails()) {

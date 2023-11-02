@@ -14,7 +14,7 @@
       }
     },
     {
-      "files": ["*.js", "*.css"],
+      "files": ["*.js", "*.css", "*.vue"],
       "options": {
         "printWidth": 120,
         "tabWidth": 4,
