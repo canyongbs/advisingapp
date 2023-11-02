@@ -11,9 +11,10 @@ use Assist\Form\Models\FormSubmission;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Infolists\Components\Group;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Infolists\Components\Section;
 use Filament\Tables\Actions\BulkActionGroup;
+use Illuminate\Database\Eloquent\Collection;
 use Assist\Form\Exports\FormSubmissionExport;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
@@ -32,8 +33,38 @@ class FormSubmissionsRelationManager extends RelationManager
 
         $blocks = FormFieldBlockRegistry::keyByType();
 
-        foreach ($submission->form->fields as $field) {
-            if (! array_key_exists($field->key, $submission->content)) {
+        $form = $submission->form;
+
+        if ($form->is_wizard) {
+            foreach ($form->steps as $step) {
+                $schema[] = Section::make($step->label)
+                    ->schema($this->getFieldsInfolistComponents(
+                        $step->fields,
+                        $blocks,
+                        data: $submission->content[$step->label] ?? [],
+                    ))
+                    ->statePath($step->label);
+            }
+        } else {
+            $schema = $this->getFieldsInfolistComponents(
+                $form->fields,
+                $blocks,
+                data: $submission->content,
+            );
+        }
+
+        return $infolist
+            ->schema($schema)
+            ->columns(1)
+            ->statePath('content');
+    }
+
+    public function getFieldsInfolistComponents(Collection $fields, array $blocks, array $data): array
+    {
+        $schema = [];
+
+        foreach ($fields as $field) {
+            if (! array_key_exists($field->key, $data)) {
                 continue;
             }
 
@@ -43,14 +74,10 @@ class FormSubmissionsRelationManager extends RelationManager
                 continue;
             }
 
-            $schema[$field->key] = $block::getInfolistEntry($field);
+            $schema[] = $block::getInfolistEntry($field);
         }
 
-        return $infolist
-            ->schema([
-                Group::make($schema)
-                    ->statePath('content'),
-            ]);
+        return $schema;
     }
 
     public function table(Table $table): Table
