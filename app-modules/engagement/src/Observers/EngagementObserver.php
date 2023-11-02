@@ -2,10 +2,10 @@
 
 namespace Assist\Engagement\Observers;
 
+use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
 use Assist\Timeline\Events\TimelineableRecordCreated;
 use Assist\Timeline\Events\TimelineableRecordDeleted;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
 
 class EngagementObserver
@@ -28,17 +28,17 @@ class EngagementObserver
             TriggeredAutoSubscription::dispatch($user, $engagement);
         }
 
-        /** @var Educatable $educatable */
-        $educatable = $engagement->recipient;
+        /** @var Model $entity */
+        $entity = $engagement->recipient;
 
-        TimelineableRecordCreated::dispatch($educatable, $engagement);
+        TimelineableRecordCreated::dispatch($entity, $engagement);
     }
 
     public function deleted(Engagement $engagement): void
     {
-        /** @var Educatable $educatable */
-        $educatable = $engagement->recipient;
+        /** @var Model $entity */
+        $entity = $engagement->recipient;
 
-        TimelineableRecordDeleted::dispatch($educatable, $engagement);
+        TimelineableRecordDeleted::dispatch($entity, $engagement);
     }
 }

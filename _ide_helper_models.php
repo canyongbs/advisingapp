@@ -2233,21 +2233,21 @@ namespace Assist\Timeline\Models{
  * Assist\Timeline\Models\Timeline
  *
  * @property string $id
- * @property string $educatable_type
- * @property string $educatable_id
+ * @property string $entity_type
+ * @property string $entity_id
  * @property string $timelineable_type
  * @property string $timelineable_id
  * @property string $record_sortable_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $timelineable
- * @method static \Illuminate\Database\Eloquent\Builder|Timeline forEducatable(\Assist\AssistDataModel\Models\Student|\Assist\Prospect\Models\Prospect $educatable)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline forEntity(\Illuminate\Database\Eloquent\Model $entity)
  * @method static \Illuminate\Database\Eloquent\Builder|Timeline newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Timeline newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Timeline query()
  * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereEducatableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereEducatableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereEntityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereEntityType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereRecordSortableDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Timeline whereTimelineableId($value)

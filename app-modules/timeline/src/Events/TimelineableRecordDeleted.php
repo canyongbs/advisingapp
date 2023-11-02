@@ -6,7 +6,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
 
 class TimelineableRecordDeleted
 {
@@ -15,7 +14,7 @@ class TimelineableRecordDeleted
     use SerializesModels;
 
     public function __construct(
-        public Educatable $educatable,
-        public Model $model
+        public Model $entity,
+        public Model $timelineableModel
     ) {}
 }
