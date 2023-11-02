@@ -7,18 +7,18 @@ use Filament\Forms\Components\KeyValue;
 use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\TextEntry;
 
-class SelectFormFieldBlock extends FormFieldBlock
+class RadioFormFieldBlock extends FormFieldBlock
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label('Select');
+        $this->label('Radio');
     }
 
     public static function type(): string
     {
-        return 'select';
+        return 'radio';
     }
 
     public function fields(): array
@@ -42,7 +42,7 @@ class SelectFormFieldBlock extends FormFieldBlock
     public static function getFormKitSchema(FormField $field): array
     {
         return [
-            '$formkit' => 'select',
+            '$formkit' => 'radio',
             'label' => $field->label,
             'name' => $field->key,
             ...($field->required ? ['validation' => 'required'] : []),

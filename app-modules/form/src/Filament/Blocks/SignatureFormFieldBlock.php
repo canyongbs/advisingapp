@@ -31,4 +31,14 @@ class SignatureFormFieldBlock extends FormFieldBlock
             ->label($field->label)
             ->view('form::infolists.components.signature-entry');
     }
+
+    public static function getFormKitSchema(FormField $field): array
+    {
+        return [
+            '$formkit' => 'signature',
+            'label' => $field->label,
+            'name' => $field->key,
+            ...($field->required ? ['validation' => 'required'] : []),
+        ];
+    }
 }

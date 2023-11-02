@@ -30,4 +30,19 @@ class TextInputFormFieldBlock extends FormFieldBlock
         return TextEntry::make($field->key)
             ->label($field->label);
     }
+
+    public static function getFormKitSchema(FormField $field): array
+    {
+        return [
+            '$formkit' => 'text',
+            'label' => $field->label,
+            'name' => $field->key,
+            ...($field->required ? ['validation' => 'required'] : []),
+        ];
+    }
+
+    public static function getValidationRules(FormField $field): array
+    {
+        return ['string', 'max:255'];
+    }
 }
