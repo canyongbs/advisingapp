@@ -1,8 +1,10 @@
 <?php
 
 use Assist\Alert\Models\Alert;
+use Assist\Alert\Enums\AlertStatus;
 use Assist\Campaign\Models\Campaign;
 use Assist\Prospect\Models\Prospect;
+use Assist\Alert\Enums\AlertSeverity;
 use Assist\Campaign\Models\CampaignAction;
 use Assist\Campaign\Enums\CampaignActionType;
 use Assist\CaseloadManagement\Models\Caseload;
@@ -49,4 +51,8 @@ it('will create the appropriate records for educatables in the caseload', functi
 
     // We should have created the appropriate alerts for the appropriate educatable records
     expect(Alert::count())->toBe(3);
+    expect(Alert::first()->description)->toBe('This is the description');
+    expect(Alert::first()->severity)->toBe(AlertSeverity::Low);
+    expect(Alert::first()->suggested_intervention)->toBe('This is the suggested intervention');
+    expect(Alert::first()->status)->toBe(AlertStatus::Active);
 });
