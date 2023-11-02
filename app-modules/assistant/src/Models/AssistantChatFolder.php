@@ -7,6 +7,9 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @mixin IdeHelperAssistantChatFolder
+ */
 class AssistantChatFolder extends BaseModel
 {
     protected $fillable = [
