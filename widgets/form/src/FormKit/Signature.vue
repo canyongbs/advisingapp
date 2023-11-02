@@ -20,6 +20,10 @@ const save = () => {
 
     props.context.node.input(data);
 };
+
+const resizeCanvas = () => {
+    pad.value.resizeCanvas();
+};
 </script>
 
 <template>
@@ -28,7 +32,7 @@ const save = () => {
             width="350px"
             height="100px"
             ref="pad"
-            :options="{ onEnd: save }"
+            :options="{ onBegin: resizeCanvas, onEnd: save }"
             class="border border-gray-400 rounded"
         />
 

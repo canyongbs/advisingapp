@@ -38,4 +38,11 @@ abstract class FormFieldBlock extends Block
     abstract public static function type(): string;
 
     abstract public static function getInfolistEntry(FormField $field): Entry;
+
+    abstract public static function getFormKitSchema(FormField $field): array;
+
+    public static function getValidationRules(FormField $field): array
+    {
+        return [];
+    }
 }

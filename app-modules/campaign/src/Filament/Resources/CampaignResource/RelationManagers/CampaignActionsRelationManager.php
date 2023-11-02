@@ -4,6 +4,7 @@ namespace Assist\Campaign\Filament\Resources\CampaignResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Assist\Alert\Models\Alert;
 use Filament\Forms\Components\Builder;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -11,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Assist\Campaign\Models\CampaignAction;
+use Assist\Interaction\Models\Interaction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Campaign\Enums\CampaignActionType;
 use Assist\Engagement\Models\EngagementBatch;
@@ -30,7 +32,9 @@ class CampaignActionsRelationManager extends RelationManager
 
         $form->model = match ($action->type) {
             CampaignActionType::BulkEngagement => EngagementBatch::class,
-            CampaignActionType::ServiceRequest => ServiceRequest::class
+            CampaignActionType::ServiceRequest => ServiceRequest::class,
+            CampaignActionType::ProactiveAlert => Alert::class,
+            CampaignActionType::Interaction => Interaction::class
         };
 
         return $form

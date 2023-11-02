@@ -32,7 +32,7 @@ trait LoadsTimelineRecords
         }
 
         $records = Timeline::query()
-            ->forEducatable($this->recordModel)
+            ->forEntity($this->recordModel)
             ->whereIn(
                 'timelineable_type',
                 collect($this->modelsToTimeline)->map(fn ($model) => resolve($model)->getMorphClass())->toArray()

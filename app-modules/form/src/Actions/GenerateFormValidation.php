@@ -2,36 +2,55 @@
 
 namespace Assist\Form\Actions;
 
+use Illuminate\Support\Arr;
 use Assist\Form\Models\Form;
+use Assist\Form\Models\FormField;
+use Illuminate\Database\Eloquent\Collection;
+use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class GenerateFormValidation
 {
-    public function handle(Form $form): array
+    public function __invoke(Form $form): array
     {
-        return $form->fields->mapWithKeys(function ($field) {
-            $rules = collect();
+        if ($form->is_wizard) {
+            return $this->wizardRules($form);
+        }
 
-            if ($field['required']) {
-                $rules->push('required');
-            }
+        return $this->fields($form->fields);
+    }
 
-            return [$field['key'] => $rules->merge(
-                match ($field['type']) {
-                    'text_input' => [
-                        'string',
-                        'max:255',
-                    ],
-                    'text_area' => [
-                        'string',
-                        'max:65535',
-                    ],
-                    'select' => [
-                        'string',
-                        'in:' . collect($field['config']['options'])->keys()->join(','),
-                    ],
-                    default => null,
+    public function fields(Collection $fields): array
+    {
+        $blocks = FormFieldBlockRegistry::keyByType();
+
+        return $fields
+            ->mapWithKeys(function (FormField $field) use ($blocks) {
+                $rules = collect();
+
+                if ($field->required) {
+                    $rules->push('required');
                 }
-            )->toArray()];
-        })->toArray();
+
+                return [$field->key => $rules
+                    ->merge($blocks[$field->type]::getValidationRules($field))
+                    ->all()];
+            })
+            ->all();
+    }
+
+    public function wizardRules(Form $form): array
+    {
+        $rules = collect();
+
+        foreach ($form->steps as $step) {
+            $rules->merge(
+                Arr::prependKeysWith(
+                    $this->fields($step->fields),
+                    prependWith: "{$step->label}.",
+                ),
+            );
+        }
+
+        return $rules->all();
     }
 }

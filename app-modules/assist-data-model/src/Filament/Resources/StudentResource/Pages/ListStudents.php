@@ -14,6 +14,7 @@ use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\CaseloadManagement\Models\Caseload;
 use Assist\CaseloadManagement\Enums\CaseloadModel;
 use Assist\Engagement\Filament\Actions\BulkEngagementAction;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
@@ -46,23 +47,26 @@ class ListStudents extends ListRecords
                     ->searchable(),
             ])
             ->filters([
-                SelectFilter::make('caseload')
+                SelectFilter::make('my_caseloads')
+                    ->label('My Caseloads')
                     ->options(
                         auth()->user()->caseloads()
                             ->where('model', CaseloadModel::Student)
                             ->pluck('name', 'id'),
                     )
-                    ->query(function (Builder $query, array $data) {
-                        if (blank($data['value'])) {
-                            return;
-                        }
-
-                        $query->whereKey(
-                            app(TranslateCaseloadFilters::class)
-                                ->handle($data['value'])
-                                ->pluck($query->getModel()->getQualifiedKeyName()),
-                        );
-                    }),
+                    ->searchable()
+                    ->optionsLimit(20)
+                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
+                SelectFilter::make('all_caseloads')
+                    ->label('All Caseloads')
+                    ->options(
+                        Caseload::all()
+                            ->where('model', CaseloadModel::Student)
+                            ->pluck('name', 'id'),
+                    )
+                    ->searchable()
+                    ->optionsLimit(20)
+                    ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
                 Filter::make('subscribed')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 TernaryFilter::make('sap')
@@ -103,6 +107,19 @@ class ListStudents extends ListRecords
                     ToggleCareTeamBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected function caseloadFilter(Builder $query, array $data): void
+    {
+        if (blank($data['value'])) {
+            return;
+        }
+
+        $query->whereKey(
+            app(TranslateCaseloadFilters::class)
+                ->handle($data['value'])
+                ->pluck($query->getModel()->getQualifiedKeyName()),
+        );
     }
 
     protected function getHeaderActions(): array

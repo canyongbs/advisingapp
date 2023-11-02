@@ -1,5 +1,55 @@
 <script setup>
-import { ref } from "vue";
+import { defineProps, ref, reactive } from 'vue';
+import useSteps from './useSteps.js';
+
+let { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps();
+
+const props = defineProps(['url']);
+
+const data = reactive({
+    steps,
+    visitedSteps,
+    activeStep,
+    plugins: [
+        stepPlugin
+    ],
+    setStep: target => () => {
+        setStep(target)
+    },
+    setActiveStep: stepName => () => {
+        data.activeStep = stepName
+    },
+    showStepErrors: stepName => {
+        return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && (visitedSteps.value && visitedSteps.value.includes(stepName))
+    },
+    stepIsValid: stepName => {
+        return steps[stepName].valid && steps[stepName].errorCount === 0
+    },
+    stringify: (value) => JSON.stringify(value, null, 2),
+    submitForm: async (data, node) => {
+        node.clearErrors();
+
+        fetch(formSubmissionUrl.value, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.errors) {
+                    node.setErrors([], json.errors);
+                    return;
+                }
+
+                submittedSuccess.value = true;
+            })
+            .catch((error) => {
+                node.setErrors([error]);
+            })
+    },
+})
 
 const submittedSuccess = ref(false);
 
@@ -13,9 +63,10 @@ const hostUrl = `${protocol}//${scriptHostname}`;
 const display = ref(false);
 const formName = ref("");
 const formDescription = ref("");
+const formSubmissionUrl = ref("");
 const schema = ref([]);
 
-fetch(`${hostUrl}/api/forms/${scriptQuery.form}`)
+fetch(props.url)
     .then((response) => response.json())
     .then((json) => {
         if (json.error) {
@@ -25,39 +76,16 @@ fetch(`${hostUrl}/api/forms/${scriptQuery.form}`)
         formName.value = json.name;
         formDescription.value = json.description;
         schema.value = json.schema;
+        formSubmissionUrl.value = json.submission_url;
         display.value = true;
     })
     .catch((error) => {
         console.error(`ASSIST Embed Form ${error}`);
     });
-
-const submit = async (data, node) => {
-    node.clearErrors();
-
-    fetch(`${hostUrl}/api/forms/${scriptQuery.form}/submit`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    })
-        .then((response) => response.json())
-        .then((json) => {
-            if (json.errors) {
-                node.setErrors([], json.errors);
-                return;
-            }
-
-            submittedSuccess.value = true;
-        })
-        .catch((error) => {
-            node.setErrors([error]);
-        });
-};
 </script>
 
 <template>
-    <div class="w-auto max-w-md font-sans">
+    <div class="font-sans">
         <div v-if="display && !submittedSuccess">
             <link
                 rel="stylesheet"
@@ -68,11 +96,11 @@ const submit = async (data, node) => {
                 {{ formName }}
             </h1>
 
-            <p class="text-base mb-2">{{ formDescription }}</p>
+            <p class="text-base mb-6">
+                {{ formDescription }}
+            </p>
 
-            <FormKit type="form" @submit="submit">
-                <FormKitSchema :schema="schema" />
-            </FormKit>
+            <FormKitSchema :schema="schema" :data="data" />
         </div>
 
         <div v-if="submittedSuccess">

@@ -8,8 +8,7 @@ import VueSignaturePad from "vue-signature-pad";
 customElements.define(
     'form-embed',
     defineCustomElement({
-        render: () => h(App),
-        setup() {
+        setup(props) {
             const app = createApp();
 
             // install plugins
@@ -22,6 +21,11 @@ customElements.define(
             const inst = getCurrentInstance();
             Object.assign(inst.appContext, app._context);
             Object.assign(inst.provides, app._context.provides);
+
+            return () => h(App, props)
         },
+        props: [
+            'url',
+        ],
     }),
 );

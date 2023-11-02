@@ -38,4 +38,23 @@ class SelectFormFieldBlock extends FormFieldBlock
                 return $field->config['options'][$state] ?? $state;
             });
     }
+
+    public static function getFormKitSchema(FormField $field): array
+    {
+        return [
+            '$formkit' => 'select',
+            'label' => $field->label,
+            'name' => $field->key,
+            ...($field->required ? ['validation' => 'required'] : []),
+            'options' => $field->config['options'],
+        ];
+    }
+
+    public static function getValidationRules(FormField $field): array
+    {
+        return [
+            'string',
+            'in:' . collect($field->config['options'])->keys()->join(','),
+        ];
+    }
 }

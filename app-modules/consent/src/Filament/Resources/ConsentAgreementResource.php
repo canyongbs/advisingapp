@@ -10,17 +10,7 @@ class ConsentAgreementResource extends Resource
 {
     protected static ?string $model = ConsentAgreement::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
-
-    protected static ?string $navigationLabel = 'AI Usage Agreement';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $modelLabel = 'AI Usage Agreement';
-
-    protected static ?string $pluralModelLabel = 'AI Usage Agreement';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getRelations(): array
     {
@@ -34,7 +24,7 @@ class ConsentAgreementResource extends Resource
             'index' => Pages\ListConsentAgreements::route('/'),
             // Creating consent agreements would currently require a code change
             // 'create' => Pages\CreateConsentAgreement::route('/create'),
-            'edit' => Pages\EditConsentAgreement::route('/{record}/edit'),
+            //'edit' => Pages\EditConsentAgreement::route('/{record}/edit'),
         ];
     }
 }

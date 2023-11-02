@@ -9,17 +9,17 @@ class AddRecordToTimeline
 {
     public function handle(TimelineableRecordCreated $event): void
     {
-        /** @var Educatable $educatable */
-        $educatable = $event->educatable;
+        /** @var Model $entity */
+        $entity = $event->entity;
 
-        cache()->forget("timeline.synced.{$educatable->getMorphClass()}.{$educatable->getKey()}");
+        cache()->forget("timeline.synced.{$entity->getMorphClass()}.{$entity->getKey()}");
 
         Timeline::firstOrCreate([
-            'educatable_type' => $educatable->getMorphClass(),
-            'educatable_id' => $educatable->getKey(),
-            'timelineable_type' => $event->model->getMorphClass(),
-            'timelineable_id' => $event->model->getKey(),
-            'record_sortable_date' => $event->model->timeline()->sortableBy(),
+            'entity_type' => $entity->getMorphClass(),
+            'entity_id' => $entity->getKey(),
+            'timelineable_type' => $event->timelineableModel->getMorphClass(),
+            'timelineable_id' => $event->timelineableModel->getKey(),
+            'record_sortable_date' => $event->timelineableModel->timeline()->sortableBy(),
         ]);
     }
 }

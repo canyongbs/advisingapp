@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use Filament\PanelProvider;
 use App\Filament\Pages\Dashboard;
+use Filament\Navigation\MenuItem;
 use App\Filament\Pages\EditProfile;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
@@ -44,7 +45,6 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('/')
             ->login(Login::class)
-            ->profile(EditProfile::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->favicon(asset('/images/default-favicon.png'))
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
@@ -93,6 +93,10 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()
                     ->usingPage(ProductHealth::class),
+            ])
+            ->userMenuItems([
+                'profile' => MenuItem::make()
+                    ->url(fn () => EditProfile::getUrl()),
             ]);
     }
 

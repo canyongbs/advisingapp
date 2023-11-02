@@ -22,3 +22,17 @@ it('will only dispatch jobs for actions that are scheduled and have not yet been
         return $job->action->is($actionToBeExecuted);
     });
 });
+
+it('will not dispatch jobs for scheduled and unexecuted actions with a disabled campaign', function () {
+    CampaignAction::factory()
+        ->campaignDisabled()
+        ->create([
+            'execute_at' => now()->subMinute(),
+        ]);
+
+    Queue::fake([ExecuteCampaignAction::class]);
+
+    ExecuteCampaignActions::dispatch();
+
+    Queue::assertNothingPushed();
+});

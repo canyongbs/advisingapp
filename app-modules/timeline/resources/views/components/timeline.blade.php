@@ -1,7 +1,7 @@
 @if ($timelineRecords->count() < 1)
     <x-timeline::empty-state :message="$emptyStateMessage" />
 @else
-    <ol class="relative">
+    <ol class="relative px-2">
         @foreach ($timelineRecords as $record)
             <li
                 class="relative -left-6 mb-10 ml-10 w-full rounded-lg p-4 hover:bg-gray-200 hover:dark:bg-gray-800 md:ml-6">

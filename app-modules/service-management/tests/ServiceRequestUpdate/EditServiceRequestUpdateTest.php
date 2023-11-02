@@ -52,6 +52,8 @@ test('EditServiceRequestUpdate requires valid data', function ($data, $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 
+    unset($serviceRequestUpdate->serviceRequest);
+
     assertDatabaseHas(ServiceRequestUpdate::class, $serviceRequestUpdate->toArray());
 
     expect(ServiceRequestUpdate::first()->serviceRequest->id)

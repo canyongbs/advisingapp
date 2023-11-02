@@ -23,6 +23,11 @@ class Campaign extends BaseModel implements Auditable
     protected $fillable = [
         'caseload_id',
         'name',
+        'enabled',
+    ];
+
+    protected $casts = [
+        'enabled' => 'boolean',
     ];
 
     public function user(): BelongsTo

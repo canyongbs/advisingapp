@@ -10,8 +10,10 @@ Route::prefix('api')
             ->name('forms.')
             ->group(function () {
                 Route::get('/{form}', [FormWidgetController::class, 'view'])
-                    ->name('show');
+                    ->middleware(['signed'])
+                    ->name('define');
                 Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
+                    ->middleware(['signed'])
                     ->name('submit');
             });
     });

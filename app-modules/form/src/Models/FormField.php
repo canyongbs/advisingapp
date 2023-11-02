@@ -16,6 +16,7 @@ class FormField extends BaseModel
         'key',
         'type',
         'required',
+        'form_id',
     ];
 
     protected $casts = [
@@ -26,5 +27,11 @@ class FormField extends BaseModel
     {
         return $this
             ->belongsTo(Form::class);
+    }
+
+    public function step(): BelongsTo
+    {
+        return $this
+            ->belongsTo(FormStep::class, 'step_id');
     }
 }

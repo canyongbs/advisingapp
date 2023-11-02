@@ -3,22 +3,23 @@
 namespace Assist\Timeline\Listeners;
 
 use Assist\Timeline\Models\Timeline;
+use Illuminate\Database\Eloquent\Model;
 use Assist\Timeline\Events\TimelineableRecordDeleted;
 
 class RemoveRecordFromTimeline
 {
     public function handle(TimelineableRecordDeleted $event): void
     {
-        /** @var Educatable $educatable */
-        $educatable = $event->educatable;
+        /** @var Model $entity */
+        $entity = $event->entity;
 
-        cache()->forget("timeline.synced.{$educatable->getMorphClass()}.{$educatable->getKey()}");
+        cache()->forget("timeline.synced.{$entity->getMorphClass()}.{$entity->getKey()}");
 
         Timeline::where([
-            'educatable_type' => $educatable->getMorphClass(),
-            'educatable_id' => $educatable->getKey(),
-            'timelineable_type' => $event->model->getMorphClass(),
-            'timelineable_id' => $event->model->getKey(),
+            'entity_type' => $entity->getMorphClass(),
+            'entity_id' => $entity->getKey(),
+            'timelineable_type' => $event->timelineableModel->getMorphClass(),
+            'timelineable_id' => $event->timelineableModel->getKey(),
         ])->delete();
     }
 }

@@ -2,26 +2,26 @@
 
 namespace Assist\Engagement\Observers;
 
+use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\EngagementResponse;
 use Assist\Timeline\Events\TimelineableRecordCreated;
 use Assist\Timeline\Events\TimelineableRecordDeleted;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
 
 class EngagementResponseObserver
 {
     public function created(EngagementResponse $response): void
     {
-        /** @var Educatable $educatable */
-        $educatable = $response->sender;
+        /** @var Model $entity */
+        $entity = $response->sender;
 
-        TimelineableRecordCreated::dispatch($educatable, $response);
+        TimelineableRecordCreated::dispatch($entity, $response);
     }
 
     public function deleted(EngagementResponse $response): void
     {
-        /** @var Educatable $educatable */
-        $educatable = $response->sender;
+        /** @var Model $entity */
+        $entity = $response->sender;
 
-        TimelineableRecordDeleted::dispatch($educatable, $response);
+        TimelineableRecordDeleted::dispatch($entity, $response);
     }
 }

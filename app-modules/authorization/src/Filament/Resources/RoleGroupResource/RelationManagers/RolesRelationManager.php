@@ -54,9 +54,7 @@ class RolesRelationManager extends RelationManager
                 // TODO We'll want to modify the messages of the detach to make it more clear
                 // To the end user they are also removing all of the roles from the user
                 // That have been assigned to them through the RoleGroup
-                DetachAction::make()->label(function () {
-                    return 'Remove from ' . $this->ownerRecord->name . ' Role Group';
-                }),
+                DetachAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
