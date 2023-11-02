@@ -410,7 +410,7 @@ class PersonalAssistant extends Page
                     return $chat;
                 });
             })
-            ->icon('heroicon-m-envelope')
+            ->icon('heroicon-o-pencil')
             ->color('warning')
             ->modalSubmitAction(fn (StaticAction $action) => $action->color('primary'))
             ->iconButton()
