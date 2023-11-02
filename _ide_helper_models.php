@@ -246,6 +246,7 @@ namespace Assist\Alert\Models{
 /**
  * Assist\Alert\Models\Alert
  *
+ * @property-read Student|Prospect $concern
  * @property string $id
  * @property string $concern_type
  * @property string $concern_id
@@ -258,7 +259,8 @@ namespace Assist\Alert\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $concern
+ * @method static \Illuminate\Database\Eloquent\Builder|Alert educatableSearch(string $relationship, string $search)
+ * @method static \Illuminate\Database\Eloquent\Builder|Alert educatableSort(string $direction)
  * @method static \Assist\Alert\Database\Factories\AlertFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newQuery()

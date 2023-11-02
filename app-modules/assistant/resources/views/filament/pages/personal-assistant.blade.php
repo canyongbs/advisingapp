@@ -52,7 +52,6 @@ use Illuminate\Support\Facades\Vite;
 
                                         <div>
                                             {{ ($this->moveChatAction)(['chat' => $chatItem->id]) }}
-                                            {{ ($this->shareChatAction)(['chat' => $chatItem->id]) }}
                                             {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}
                                             {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}
                                         </div>
@@ -127,7 +126,6 @@ use Illuminate\Support\Facades\Vite;
 
                                             <div>
                                                 {{ ($this->moveChatAction)(['chat' => $chatItem->id]) }}
-                                                {{ ($this->shareChatAction)(['chat' => $chatItem->id]) }}
                                                 {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}
                                                 {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}
                                             </div>
@@ -340,10 +338,15 @@ use Illuminate\Support\Facades\Vite;
 
                                     @if (!$showCurrentResponse && !$chat->id && $chat->messages->count() > 0)
                                         <div
-                                            class="flex space-x-1 pl-0 sm:pl-2"
+                                            class="flex pl-0 sm:pl-2"
                                             wire:loading.remove
                                         >
                                             {{ $this->saveChatAction }}
+                                        </div>
+                                    @elseif ($chat->id)
+                                        <div class="flex gap-3">
+                                            {{ ($this->cloneChatAction)(['chat' => $chat->id]) }}
+                                            {{ ($this->emailChatAction)(['chat' => $chat->id]) }}
                                         </div>
                                     @endif
                                 </div>
