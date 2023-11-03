@@ -3,6 +3,7 @@
 namespace Assist\MeetingCenter\Filament\Widgets;
 
 use App\Models\User;
+use Livewire\Attributes\On;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
@@ -18,14 +19,19 @@ class CalendarWidget extends FullCalendarWidget
         return $user->calendar
             ->events()
             ->get()
-            ->map(
-                fn (CalendarEvent $event) => EventData::make()
-                    ->id($event->id)
-                    ->title($event->title)
-                    ->start($event->starts_at)
-                    ->end($event->ends_at)
-                    ->url(CalendarEventResource::getUrl('view', ['record' => $event]), true)
-            )
+            ->map(fn (CalendarEvent $event) => EventData::make()
+                ->id($event->id)
+                ->title($event->title)
+                ->start($event->starts_at)
+                ->end($event->ends_at)
+                ->url(CalendarEventResource::getUrl('view', ['record' => $event]), true)
+                ->extendedProps(['shouldOpenInNewTab' => true]))
             ->toArray();
+    }
+
+    #[On('refresh-events')]
+    public function refreshEvents(): void
+    {
+        $this->refreshRecords();
     }
 }

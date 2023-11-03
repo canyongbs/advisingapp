@@ -7,7 +7,7 @@
     'fi-resource-list-records-page',
     'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
 ])>
-    {{-- TODO: Determine the best way to check if calendar set up --}}
+    {{-- TODO: Determine the best way to check if calendar is set up --}}
     @empty(auth()->user()->calendar?->oauth_token)
         <div wire:init="mountAction('setupCalendarProviderAction')">
         </div>

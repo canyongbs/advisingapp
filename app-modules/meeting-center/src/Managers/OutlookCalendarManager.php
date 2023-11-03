@@ -9,6 +9,9 @@ use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
 {
+    /**
+     * @return array<string, string>
+     */
     public function getCalendars(Calendar $calendar): array
     {
         // TODO: Implement getCalendars() method.

@@ -2,6 +2,7 @@
     <x-filament::icon-button
         icon="icon-google"
         size="xl"
+        outlined
         :href="route('calendar.google.login')"
         tag="a"
     >
@@ -11,6 +12,7 @@
     <x-filament::icon-button
         icon="icon-outlook"
         size="xl"
+        outlined
         tooltip="Coming Soon!"
     >
         Outlook

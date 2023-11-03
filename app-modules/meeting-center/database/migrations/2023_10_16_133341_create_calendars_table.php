@@ -10,6 +10,8 @@ return new class () extends Migration {
         Schema::create('calendars', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->text('name')->nullable();
+
             $table->string('provider_type');
             $table->text('provider_id')->nullable();
             $table->text('oauth_token');

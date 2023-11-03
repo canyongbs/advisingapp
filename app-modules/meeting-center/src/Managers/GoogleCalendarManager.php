@@ -17,6 +17,9 @@ use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class GoogleCalendarManager implements CalendarInterface
 {
+    /**
+     * @return array<string, string>
+     */
     public function getCalendars(Calendar $calendar): array
     {
         $service = (new GoogleCalendar($this->client($calendar)));

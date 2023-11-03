@@ -10,6 +10,7 @@ use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Actions\ActionGroup;
+use Illuminate\Support\Stringable;
 use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
@@ -55,11 +56,14 @@ class EditProfile extends Page
             Grid::make()
                 ->schema([
                     Placeholder::make('calendar')
-                        ->label(function () {
+                        ->label(function (): string {
                             /** @var User $user */
                             $user = auth()->user();
 
-                            return "{$user->calendar->provider_type?->getLabel()} Calendar";
+                            return str('Calendar')
+                                ->when($user->calendar->provider_type, fn (Stringable $str) => $str->prepend("{$user->calendar->provider_type->getLabel()} "))
+                                ->when($user->calendar->name, fn (Stringable $str) => $str->append(" - {$user->calendar->name}"))
+                                ->toString();
                         }),
                     Actions::make([
                         FormAction::make('Disconnect')

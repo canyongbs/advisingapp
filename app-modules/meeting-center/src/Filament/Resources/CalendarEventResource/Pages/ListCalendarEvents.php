@@ -5,10 +5,11 @@ namespace Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use Livewire\Attributes\Url;
 use Filament\Facades\Filament;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Radio;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
@@ -25,6 +26,7 @@ class ListCalendarEvents extends ListRecords
 
     protected static string $view = 'meeting-center::filament.pages.list-events';
 
+    #[Url(as: 'view')]
     public string $viewType = 'table';
 
     public function setupCalendarProviderAction(): Action
@@ -45,7 +47,7 @@ class ListCalendarEvents extends ListRecords
         return Action::make('selectCalendarAction')
             ->modalHeading('Select a Calendar')
             ->form([
-                Select::make('provider_id')
+                Radio::make('provider_id')
                     ->hiddenLabel()
                     ->options(function () {
                         /** @var User $user */
@@ -61,12 +63,20 @@ class ListCalendarEvents extends ListRecords
             ])
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
+            ->modalCancelAction(Action::make('cancel')->color('gray')->url(Filament::getUrl()))
             ->action(function (array $data): void {
                 /** @var User $user */
                 $user = auth()->user();
 
                 $calendar = $user->calendar;
                 $calendar->provider_id = $data['provider_id'];
+
+                $calendars = resolve(CalendarManager::class)
+                    ->driver($calendar->provider_type->value)
+                    ->getCalendars($calendar);
+
+                $calendar->name = $calendars[$data['provider_id']];
+
                 $calendar->saveQuietly();
 
                 resolve(CalendarManager::class)
@@ -107,6 +117,17 @@ class ListCalendarEvents extends ListRecords
     {
         return [
             // CreateAction::make(),
+            Action::make('Sync')
+                ->action(function () {
+                    /** @var User $user */
+                    $user = auth()->user();
+
+                    resolve(CalendarManager::class)
+                        ->driver($user->calendar->provider_type->value)
+                        ->syncEvents($user->calendar);
+
+                    $this->dispatch('refresh-events');
+                }),
         ];
     }
 }
