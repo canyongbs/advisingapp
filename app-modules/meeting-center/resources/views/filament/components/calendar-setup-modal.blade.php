@@ -9,12 +9,15 @@
         Google
     </x-filament::icon-button>
 
-    <x-filament::icon-button
-        icon="icon-outlook"
-        size="xl"
-        outlined
-        tooltip="Coming Soon!"
-    >
-        Outlook
-    </x-filament::icon-button>
+    <div class="grid justify-items-center">
+        <x-filament::icon-button
+            class="opacity-50"
+            icon="icon-outlook"
+            size="xl"
+            outlined
+        >
+            Outlook
+        </x-filament::icon-button>
+        Coming Soon!
+    </div>
 </div>
