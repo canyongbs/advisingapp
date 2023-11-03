@@ -139,7 +139,7 @@ class ListProspects extends ListRecords
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
                     ToggleCareTeamBulkAction::make(),
-                    BulkAction::make('update')
+                    BulkAction::make('bulk_update')
                         ->icon('heroicon-o-pencil-square')
                         ->form([
                             Select::make('field')
