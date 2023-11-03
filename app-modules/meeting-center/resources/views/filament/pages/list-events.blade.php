@@ -13,7 +13,7 @@
         </div>
     @endempty
 
-    @if(auth()->user()->calendar?->oauth_token && ! auth()->user()->calendar?->provider_id)
+    @if (auth()->user()->calendar?->oauth_token && !auth()->user()->calendar?->provider_id)
         <div wire:init="mountAction('selectCalendarAction')">
         </div>
     @endif

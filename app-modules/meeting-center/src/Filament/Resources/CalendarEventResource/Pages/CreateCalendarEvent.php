@@ -2,9 +2,8 @@
 
 namespace Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
 
 class CreateCalendarEvent extends CreateRecord
 {
