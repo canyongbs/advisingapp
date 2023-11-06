@@ -3,12 +3,13 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
-use Filament\Forms\Get;
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
-use Filament\Support\Concerns\HasIcon;
+use Filament\Forms\Get;
 use Filament\Support\Components\Component;
-use Filament\Forms\Components\Builder\Block;
+use Filament\Support\Concerns\HasIcon;
+use App\Filament\Tables\Filters\QueryBuilder;
 use Illuminate\Validation\ValidationException;
 
 class Constraint extends Component
@@ -30,9 +31,14 @@ class Constraint extends Component
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
+    /**
+     * @var array<string, mixed> | null
+     */
     protected ?array $settings = null;
 
     protected ?bool $isInverse = null;
+
+    protected QueryBuilder $filter;
 
     final public function __construct(string $name)
     {
@@ -101,6 +107,7 @@ class Constraint extends Component
 
                 return [
                     Select::make(static::OPERATOR_SELECT_NAME)
+                        ->label(__('filament-tables::filters/query-builder.form.operator.label'))
                         ->options($operatorSelectOptions)
                         ->default(array_key_first($operatorSelectOptions))
                         ->live()
@@ -141,6 +148,9 @@ class Constraint extends Component
             ->columns(3);
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getOperatorSelectOptions(): array
     {
         $options = [];
@@ -155,6 +165,9 @@ class Constraint extends Component
         return $options;
     }
 
+    /**
+     * @return array{string, bool}
+     */
     public function parseOperatorString(string $operator): array
     {
         if (str($operator)->endsWith('.inverse')) {
@@ -187,6 +200,18 @@ class Constraint extends Component
         return $this;
     }
 
+    public function filter(QueryBuilder $filter): static
+    {
+        $this->filter = $filter;
+
+        return $this;
+    }
+
+    public function getFilter(): QueryBuilder
+    {
+        return $this->filter;
+    }
+
     public function getAttribute(): string
     {
         return $this->evaluate($this->attribute) ?? $this->getName();
@@ -217,6 +242,9 @@ class Constraint extends Component
         return $this->modifyRelationshipQueryUsing;
     }
 
+    /**
+     * @param  array<string, mixed> | null  $settings
+     */
     public function settings(?array $settings): static
     {
         $this->settings = $settings;
@@ -231,6 +259,9 @@ class Constraint extends Component
         return $this;
     }
 
+    /**
+     * @return array<string, mixed> | null
+     */
     public function getSettings(): ?array
     {
         return $this->settings;

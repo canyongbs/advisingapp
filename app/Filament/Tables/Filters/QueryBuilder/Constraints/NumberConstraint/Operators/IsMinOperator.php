@@ -2,9 +2,12 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators;
 
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Database\Eloquent\Builder;
+
+use function Filament\Support\format_number;
 
 class IsMinOperator extends Operator
 {
@@ -17,22 +20,39 @@ class IsMinOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is less than' : 'Is minimum';
-    }
-
-    public function getFormSchema(): array
-    {
-        return [
-            TextInput::make('number')
-                ->numeric()
-                ->required(),
-            $this->getAggregateSelect(),
-        ];
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.number.is_min.label.inverse' :
+                'filament-tables::filters/query-builder.operators.number.is_min.label.direct',
+        );
     }
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getAttributeLabel()} is less than {$this->getSettings()['number']}" : "{$this->getAttributeLabel()} is minimum {$this->getSettings()['number']}";
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.number.is_min.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.number.is_min.summary.direct',
+            [
+                'attribute' => $this->getAttributeLabel(),
+                'number' => format_number($this->getSettings()['number']),
+            ],
+        );
+    }
+
+    /**
+     * @return array<Component>
+     */
+    public function getFormSchema(): array
+    {
+        return [
+            TextInput::make('number')
+                ->label(__('filament-tables::filters/query-builder.operators.number.form.number.label'))
+                ->numeric()
+                ->integer($this->getConstraint()->isInteger())
+                ->required(),
+            $this->getAggregateSelect(),
+        ];
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

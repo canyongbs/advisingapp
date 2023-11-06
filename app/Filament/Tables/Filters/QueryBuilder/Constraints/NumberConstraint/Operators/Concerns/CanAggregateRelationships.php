@@ -2,10 +2,12 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 
-use Illuminate\Support\Str;
+use Exception;
 use Filament\Forms\Components\Select;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Str;
 
 trait CanAggregateRelationships
 {
@@ -13,9 +15,9 @@ trait CanAggregateRelationships
 
     public const AGGREGATE_AVERAGE = 'avg';
 
-    public const AGGREGATE_MAXIMUM = 'max';
+    public const AGGREGATE_MAX = 'max';
 
-    public const AGGREGATE_MINIMUM = 'min';
+    public const AGGREGATE_MIN = 'min';
 
     public const AGGREGATE_SUM = 'sum';
 
@@ -56,11 +58,12 @@ trait CanAggregateRelationships
     protected function getAggregateSelect(): Select
     {
         return Select::make(static::AGGREGATE_SELECT_NAME)
+            ->label(__('filament-tables::filters/query-builder.operators.number.form.aggregate.label'))
             ->options([
-                static::AGGREGATE_AVERAGE => 'Average',
-                static::AGGREGATE_MAXIMUM => 'Maximum',
-                static::AGGREGATE_MINIMUM => 'Minimum',
-                static::AGGREGATE_SUM => 'Sum',
+                static::AGGREGATE_AVERAGE => __('filament-tables::filters/query-builder.operators.number.aggregates.average.label'),
+                static::AGGREGATE_MAX => __('filament-tables::filters/query-builder.operators.number.aggregates.min.label'),
+                static::AGGREGATE_MIN => __('filament-tables::filters/query-builder.operators.number.aggregates.max.label'),
+                static::AGGREGATE_SUM => __('filament-tables::filters/query-builder.operators.number.aggregates.sum.label'),
             ])
             ->visible($this->getConstraint()->queriesRelationships());
     }
@@ -74,13 +77,13 @@ trait CanAggregateRelationships
     {
         $attributeLabel = $this->getConstraint()->getAttributeLabel();
 
-        return match ($this->getAggregate()) {
-            static::AGGREGATE_AVERAGE => "Average {$attributeLabel}",
-            static::AGGREGATE_MAXIMUM => "Maximum {$attributeLabel}",
-            static::AGGREGATE_MINIMUM => "Minimum {$attributeLabel}",
-            static::AGGREGATE_SUM => "Sum of {$attributeLabel}",
+        return __(match ($this->getAggregate()) {
+            static::AGGREGATE_AVERAGE => 'filament-tables::filters/query-builder.operators.number.aggregates.average.summary',
+            static::AGGREGATE_MAX => 'filament-tables::filters/query-builder.operators.number.aggregates.max.summary',
+            static::AGGREGATE_MIN => 'filament-tables::filters/query-builder.operators.number.aggregates.min.summary',
+            static::AGGREGATE_SUM => 'filament-tables::filters/query-builder.operators.number.aggregates.sum.summary',
             default => $attributeLabel,
-        };
+        }, ['attribute' => $attributeLabel]);
     }
 
     protected function generateAggregateAlias(): string
@@ -99,5 +102,16 @@ trait CanAggregateRelationships
         $aggregateAlias = $this->generateAggregateAlias();
 
         return "{$aggregateAlias}.{$aggregateAlias}";
+    }
+
+    public function getConstraint(): ?NumberConstraint
+    {
+        $constraint = parent::getConstraint();
+
+        if (! ($constraint instanceof NumberConstraint)) {
+            throw new Exception('Constraint must be an instance of [' . NumberConstraint::class . '].');
+        }
+
+        return $constraint;
     }
 }

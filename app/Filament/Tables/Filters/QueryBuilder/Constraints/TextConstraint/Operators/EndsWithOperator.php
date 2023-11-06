@@ -2,11 +2,13 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
 
-use Illuminate\Support\Str;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Support\Str;
 
 class EndsWithOperator extends Operator
 {
@@ -17,28 +19,47 @@ class EndsWithOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Does not end with' : 'Ends with';
-    }
-
-    public function getFormSchema(): array
-    {
-        return [
-            TextInput::make('text')
-                ->required()
-                ->columnSpanFull(),
-        ];
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.text.ends_with.label.inverse' :
+                'filament-tables::filters/query-builder.operators.text.ends_with.label.direct',
+        );
     }
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} does not end with \"{$this->getSettings()['text']}\"" : "{$this->getConstraint()->getAttributeLabel()} ends with \"{$this->getSettings()['text']}\"";
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.text.ends_with.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.text.ends_with.summary.direct',
+            [
+                'attribute' => $this->getConstraint()->getAttributeLabel(),
+                'text' => $this->getSettings()['text'],
+            ],
+        );
+    }
+
+    /**
+     * @return array<Component>
+     */
+    public function getFormSchema(): array
+    {
+        return [
+            TextInput::make('text')
+                ->label(__('filament-tables::filters/query-builder.operators.text.form.text.label'))
+                ->required()
+                ->columnSpanFull(),
+        ];
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
         $text = trim($this->getSettings()['text']);
 
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        if ($databaseConnection->getDriverName() === 'pgsql') {
             $qualifiedColumn = new Expression("lower({$qualifiedColumn}::text)");
             $text = Str::lower($text);
         }

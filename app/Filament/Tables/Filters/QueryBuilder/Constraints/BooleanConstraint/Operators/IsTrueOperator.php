@@ -2,8 +2,8 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Database\Eloquent\Builder;
 
 class IsTrueOperator extends Operator
 {
@@ -14,12 +14,21 @@ class IsTrueOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is false' : 'Is true';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.boolean.is_true.label.inverse' :
+                'filament-tables::filters/query-builder.operators.boolean.is_true.label.direct',
+        );
     }
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} is false" : "{$this->getConstraint()->getAttributeLabel()} is true";
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.boolean.is_true.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.boolean.is_true.summary.direct',
+            ['attribute' => $this->getConstraint()->getAttributeLabel()],
+        );
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
