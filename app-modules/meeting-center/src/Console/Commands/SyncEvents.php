@@ -23,7 +23,7 @@ class SyncEvents extends Command
         $user = User::where('email', 'sampleadmin@advising.app')->first();
 
         resolve(CalendarManager::class)
-            ->driver($user->calendar->type)
+            ->driver($user->calendar->provider_type->value)
             ->syncEvents($user->calendar);
 
         return self::SUCCESS;

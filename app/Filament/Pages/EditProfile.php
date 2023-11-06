@@ -3,16 +3,20 @@
 namespace App\Filament\Pages;
 
 use Exception;
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Actions\ActionGroup;
+use Illuminate\Support\Stringable;
+use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +27,9 @@ use Filament\Forms\Components\RichEditor;
 use Illuminate\Validation\Rules\Password;
 use Filament\Forms\Components\Placeholder;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Assist\MeetingCenter\Managers\CalendarManager;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
@@ -44,67 +50,111 @@ class EditProfile extends Page
 
     public function form(Form $form): Form
     {
+        /** @var User $user */
         $user = auth()->user();
+
+        $connectedAccounts = collect([
+            Grid::make()
+                ->schema([
+                    Placeholder::make('calendar')
+                        ->label(function (): string {
+                            /** @var User $user */
+                            $user = auth()->user();
+
+                            return str('Calendar')
+                                ->when($user->calendar->provider_type, fn (Stringable $str) => $str->prepend("{$user->calendar->provider_type->getLabel()} "))
+                                ->when($user->calendar->name, fn (Stringable $str) => $str->append(" - {$user->calendar->name}"))
+                                ->toString();
+                        }),
+                    Actions::make([
+                        FormAction::make('Disconnect')
+                            ->icon('heroicon-m-trash')
+                            ->color('danger')
+                            ->requiresConfirmation()
+                            ->action(function () {
+                                /** @var User $user */
+                                $user = auth()->user();
+
+                                $calendar = $user->calendar;
+
+                                $revoked = resolve(CalendarManager::class)
+                                    ->driver($calendar->provider_type->value)
+                                    ->revokeToken($calendar);
+
+                                if ($revoked) {
+                                    $calendar->delete();
+                                }
+                            }),
+                    ])->alignRight(),
+                ])
+                ->visible(function (): bool {
+                    /** @var User $user */
+                    $user = auth()->user();
+
+                    return filled($user->calendar?->oauth_token);
+                }),
+        ])->filter(fn (Component $component) => $component->isVisible());
 
         return $form
             ->schema([
                 Section::make('Profile Information')
                     ->description('This information is visible to other users on your profile page, if you choose to make it visible.')
                     ->aside()
-                    ->schema(
-                        [
-                            SpatieMediaLibraryFileUpload::make('avatar')
-                                ->label('Avatar')
-                                ->visibility('private')
-                                ->disk('s3')
-                                ->collection('avatar')
-                                ->hidden($user->is_external)
-                                ->avatar(),
-                            $this->getNameFormComponent()
-                                ->disabled($user->is_external),
-                            RichEditor::make('bio')
-                                ->label('Personal Bio')
-                                ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'blockquote', 'bulletList', 'orderedList'])
-                                ->hint(fn (Get $get): string => $get('is_bio_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                            Checkbox::make('is_bio_visible_on_profile')
-                                ->label('Show Bio on profile')
-                                ->live(),
-                            Select::make('pronouns_id')
-                                ->relationship('pronouns', 'label')
-                                ->hint(fn (Get $get): string => $get('are_pronouns_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                            Checkbox::make('are_pronouns_visible_on_profile')
-                                ->label('Show Pronouns on profile')
-                                ->live(),
-                            Placeholder::make('teams')
-                                ->label(str('Team')->plural($user->teams->count()))
-                                ->content($user->teams->pluck('name')->join(', ', ' and '))
-                                ->hidden($user->teams->isEmpty())
-                                ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                            Checkbox::make('are_teams_visible_on_profile')
-                                ->label('Show ' . str('team')->plural($user->teams->count()) . ' on profile')
-                                ->live(),
-                            Placeholder::make('external_avatar')
-                                ->label('Avatar')
-                                ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
-                                ->visible($user->is_external),
-                        ]
-                    ),
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('avatar')
+                            ->label('Avatar')
+                            ->visibility('private')
+                            ->disk('s3')
+                            ->collection('avatar')
+                            ->hidden($user->is_external)
+                            ->avatar(),
+                        $this->getNameFormComponent()
+                            ->disabled($user->is_external),
+                        RichEditor::make('bio')
+                            ->label('Personal Bio')
+                            ->toolbarButtons(['bold', 'italic', 'underline', 'link', 'blockquote', 'bulletList', 'orderedList'])
+                            ->hint(fn (Get $get): string => $get('is_bio_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        Checkbox::make('is_bio_visible_on_profile')
+                            ->label('Show Bio on profile')
+                            ->live(),
+                        Select::make('pronouns_id')
+                            ->relationship('pronouns', 'label')
+                            ->hint(fn (Get $get): string => $get('are_pronouns_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        Checkbox::make('are_pronouns_visible_on_profile')
+                            ->label('Show Pronouns on profile')
+                            ->live(),
+                        Placeholder::make('teams')
+                            ->label(str('Team')->plural($user->teams->count()))
+                            ->content($user->teams->pluck('name')->join(', ', ' and '))
+                            ->hidden($user->teams->isEmpty())
+                            ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        Checkbox::make('are_teams_visible_on_profile')
+                            ->label('Show ' . str('team')->plural($user->teams->count()) . ' on profile')
+                            ->live(),
+                        Placeholder::make('external_avatar')
+                            ->label('Avatar')
+                            ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
+                            ->visible($user->is_external),
+                    ]),
                 Section::make('Account Information')
                     ->description('Update your account\'s information.')
                     ->aside()
-                    ->schema(
-                        [
-                            $this->getEmailFormComponent()
-                                ->disabled($user->is_external),
-                            $this->getPasswordFormComponent()
-                                ->hidden($user->is_external),
-                            $this->getPasswordConfirmationFormComponent()
-                                ->hidden($user->is_external),
-                            TimezoneSelect::make('timezone')
-                                ->required()
-                                ->selectablePlaceholder(false),
-                        ]
-                    ),
+                    ->schema([
+                        $this->getEmailFormComponent()
+                            ->disabled($user->is_external),
+                        $this->getPasswordFormComponent()
+                            ->hidden($user->is_external),
+                        $this->getPasswordConfirmationFormComponent()
+                            ->hidden($user->is_external),
+                        TimezoneSelect::make('timezone')
+                            ->required()
+                            ->selectablePlaceholder(false),
+                    ]),
+                Section::make('Connected Accounts')
+                    ->description('Disconnect your external accounts.')
+                    ->aside()
+                    ->schema($connectedAccounts->toArray())
+                    ->visible($connectedAccounts->count()),
             ]);
     }
 

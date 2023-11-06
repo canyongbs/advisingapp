@@ -12,10 +12,26 @@ use Assist\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar\EventDateTime;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Google\Service\Calendar as GoogleCalendar;
+use Google\Service\Calendar\CalendarListEntry;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class GoogleCalendarManager implements CalendarInterface
 {
+    /**
+     * @return array<string, string>
+     */
+    public function getCalendars(Calendar $calendar): array
+    {
+        $service = (new GoogleCalendar(static::client($calendar)));
+
+        return collect($service->calendarList->listCalendarList()
+            ->getItems())
+            ->filter(fn (CalendarListEntry $item) => ! str($item->id)->endsWith('@group.v.calendar.google.com'))
+            ->pluck('summary', 'id')
+            ->sortBy('summary')
+            ->toArray();
+    }
+
     /**
      * @see https://developers.google.com/calendar/api/v3/reference/events/watch
      *
@@ -29,7 +45,7 @@ class GoogleCalendarManager implements CalendarInterface
          * @todo create without sync?
          * @todo sync uncreated events?
          * */
-        $service = (new GoogleCalendar($this->client($calendar)));
+        $service = (new GoogleCalendar(static::client($calendar)));
 
         $parameters = [
             'singleEvents' => true,
@@ -39,7 +55,7 @@ class GoogleCalendarManager implements CalendarInterface
         ];
 
         if (is_null($start)) {
-            $start = now()->startOfDay();
+            $start = now()->subYears(2)->startOfDay();
         }
         $parameters['timeMin'] = $start->format(DateTimeInterface::RFC3339);
 
@@ -141,6 +157,12 @@ class GoogleCalendarManager implements CalendarInterface
 
         // TODO: needs to only delete orphaned events and not previous events
         // $calendar->events()->whereNotIn('provider_id', $events->pluck('id'))->delete();
+    }
+
+    public function revokeToken(Calendar $calendar): bool
+    {
+        return static::client($calendar)
+            ->revokeToken($calendar->oauth_token);
     }
 
     public static function client(?Calendar $calendar = null): Client

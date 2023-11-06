@@ -11,7 +11,7 @@ class CalendarEventObserver
     {
         if ($event->calendar) {
             resolve(CalendarManager::class)
-                ->driver($event->calendar->type)
+                ->driver($event->calendar->provider_type->value)
                 ->createEvent($event);
         }
     }
@@ -20,7 +20,7 @@ class CalendarEventObserver
     {
         if ($event->calendar) {
             resolve(CalendarManager::class)
-                ->driver($event->calendar->type)
+                ->driver($event->calendar->provider_type->value)
                 ->updateEvent($event);
         }
     }
@@ -29,7 +29,7 @@ class CalendarEventObserver
     {
         if ($event->calendar) {
             resolve(CalendarManager::class)
-                ->driver($event->calendar->type)
+                ->driver($event->calendar->provider_type->value)
                 ->deleteEvent($event);
         }
     }

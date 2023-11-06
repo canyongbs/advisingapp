@@ -22,7 +22,7 @@ class SyncCalendar implements ShouldQueue
     public function handle(): void
     {
         resolve(CalendarManager::class)
-            ->driver($this->calendar->type)
+            ->driver($this->calendar->provider_type->value)
             ->syncEvents($this->calendar);
     }
 }
