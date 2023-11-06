@@ -1,23 +1,30 @@
 @php use Filament\Support\Facades\FilamentView; @endphp
 
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament-panels::layout.direction') ?? 'ltr' }}"
-    @class([
-        'fi min-h-screen',
-        'dark' => filament()->hasDarkModeForced(),
-    ])
+    @class(['fi min-h-screen', 'dark' => filament()->hasDarkModeForced()])
 >
+
 <head>
     {{ FilamentView::renderHook('panels::head.start') }}
 
-    <meta charset="utf-8"/>
-    <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="utf-8" />
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    />
 
     @if ($favicon = filament()->getFavicon())
-        <link rel="icon" href="{{ $favicon }}"/>
+        <link
+            href="{{ $favicon }}"
+            rel="icon"
+        />
     @endif
 
     <title>
@@ -61,7 +68,7 @@
 
     {{ FilamentView::renderHook('panels::styles.after') }}
 
-    @if (! filament()->hasDarkMode())
+    @if (!filament()->hasDarkMode())
         <script>
             localStorage.setItem('theme', 'light')
         </script>
@@ -77,7 +84,7 @@
                 theme === 'dark' ||
                 (theme === 'system' &&
                     window.matchMedia('(prefers-color-scheme: dark)')
-                        .matches)
+                    .matches)
             ) {
                 document.documentElement.classList.add('dark')
             }
@@ -87,30 +94,28 @@
     {{ FilamentView::renderHook('panels::head.end') }}
 </head>
 
-<body
-    class="fi-body min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
->
-{{ FilamentView::renderHook('panels::body.start') }}
+<body class="fi-body min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
+    {{ FilamentView::renderHook('panels::body.start') }}
 
-{{ $slot }}
+    {{ $slot }}
 
-{{ FilamentView::renderHook('panels::scripts.before') }}
+    {{ FilamentView::renderHook('panels::scripts.before') }}
 
-@filamentScripts(withCore: true)
+    @filamentScripts(withCore: true)
 
-@if (config('filament.broadcasting.echo'))
-    <script data-navigate-once>
-        window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
+    @if (config('filament.broadcasting.echo'))
+        <script data-navigate-once>
+            window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
 
-        window.dispatchEvent(new CustomEvent('EchoLoaded'))
-    </script>
-@endif
+            window.dispatchEvent(new CustomEvent('EchoLoaded'))
+        </script>
+    @endif
 
-@stack('scripts')
+    @stack('scripts')
 
-{{ FilamentView::renderHook('panels::scripts.after') }}
+    {{ FilamentView::renderHook('panels::scripts.after') }}
 
-{{ FilamentView::renderHook('panels::body.end') }}
+    {{ FilamentView::renderHook('panels::body.end') }}
 </body>
-</html>
 
+</html>
