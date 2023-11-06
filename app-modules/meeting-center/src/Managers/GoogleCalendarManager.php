@@ -22,7 +22,7 @@ class GoogleCalendarManager implements CalendarInterface
      */
     public function getCalendars(Calendar $calendar): array
     {
-        $service = (new GoogleCalendar($this->client($calendar)));
+        $service = (new GoogleCalendar(static::client($calendar)));
 
         return collect($service->calendarList->listCalendarList()
             ->getItems())
@@ -45,7 +45,7 @@ class GoogleCalendarManager implements CalendarInterface
          * @todo create without sync?
          * @todo sync uncreated events?
          * */
-        $service = (new GoogleCalendar($this->client($calendar)));
+        $service = (new GoogleCalendar(static::client($calendar)));
 
         $parameters = [
             'singleEvents' => true,
@@ -157,6 +157,12 @@ class GoogleCalendarManager implements CalendarInterface
 
         // TODO: needs to only delete orphaned events and not previous events
         // $calendar->events()->whereNotIn('provider_id', $events->pluck('id'))->delete();
+    }
+
+    public function revokeToken(Calendar $calendar): bool
+    {
+        return static::client($calendar)
+            ->revokeToken($calendar->oauth_token);
     }
 
     public static function client(?Calendar $calendar = null): Client

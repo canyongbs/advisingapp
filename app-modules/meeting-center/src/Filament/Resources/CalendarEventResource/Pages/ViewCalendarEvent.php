@@ -20,6 +20,7 @@ class ViewCalendarEvent extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('title'),
+                        TextEntry::make('description'),
                         TextEntry::make('starts_at'),
                         TextEntry::make('ends_at'),
                     ])
@@ -30,7 +31,7 @@ class ViewCalendarEvent extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make(),
+            // EditAction::make(),
         ];
     }
 }

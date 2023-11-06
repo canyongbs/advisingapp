@@ -27,6 +27,7 @@ use Filament\Forms\Components\RichEditor;
 use Illuminate\Validation\Rules\Password;
 use Filament\Forms\Components\Placeholder;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Assist\MeetingCenter\Managers\CalendarManager;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -74,7 +75,15 @@ class EditProfile extends Page
                                 /** @var User $user */
                                 $user = auth()->user();
 
-                                $user->calendar->delete();
+                                $calendar = $user->calendar;
+
+                                $revoked = resolve(CalendarManager::class)
+                                    ->driver($calendar->provider_type->value)
+                                    ->revokeToken($calendar);
+
+                                if ($revoked) {
+                                    $calendar->delete();
+                                }
                             }),
                     ])->alignRight(),
                 ])

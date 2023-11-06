@@ -22,4 +22,6 @@ interface CalendarInterface
     public function deleteEvent(CalendarEvent $event): void;
 
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void;
+
+    public function revokeToken(Calendar $calendar): bool;
 }

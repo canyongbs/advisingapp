@@ -58,4 +58,10 @@ class OutlookCalendarManager implements CalendarInterface
     {
         // TODO: Implement syncEvents() method.
     }
+
+    public function revokeToken(Calendar $calendar): bool
+    {
+        // TODO: Implement revokeToken() method.
+        return false;
+    }
 }

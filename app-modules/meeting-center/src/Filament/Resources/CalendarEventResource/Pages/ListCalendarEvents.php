@@ -9,7 +9,8 @@ use Livewire\Attributes\Url;
 use Filament\Facades\Filament;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\Radio;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
@@ -47,7 +48,7 @@ class ListCalendarEvents extends ListRecords
         return Action::make('selectCalendarAction')
             ->modalHeading('Select a Calendar')
             ->form([
-                Radio::make('provider_id')
+                Select::make('provider_id')
                     ->hiddenLabel()
                     ->options(function () {
                         /** @var User $user */
@@ -79,6 +80,7 @@ class ListCalendarEvents extends ListRecords
 
                 $calendar->saveQuietly();
 
+                //TODO: queue
                 resolve(CalendarManager::class)
                     ->driver($calendar->provider_type->value)
                     ->syncEvents($calendar);
@@ -100,6 +102,10 @@ class ListCalendarEvents extends ListRecords
                 TextColumn::make('ends_at'),
             ])
             ->filters([
+                Filter::make('pastEvents')
+                    ->label('Hide Past Events')
+                    ->query(fn (Builder $query): Builder => $query->where('starts_at', '>=', now()->startOfDay()))
+                    ->default(),
             ])
             ->actions([
                 ViewAction::make(),
