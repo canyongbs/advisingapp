@@ -6,9 +6,11 @@ use Filament\Tables\Table;
 use Assist\Alert\Models\Alert;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
 use Assist\Alert\Enums\AlertStatus;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
+use Filament\Forms\Components\Radio;
 use Assist\Alert\Enums\AlertSeverity;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -126,6 +128,20 @@ class ListAlerts extends ListRecords
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make()
+                ->form([
+                    Radio::make('type')
+                        ->options([
+                            'student' => 'Student',
+                            'prospect' => 'Prospect',
+                        ]),
+                ]),
+        ];
     }
 
     protected function caseloadFilter(Builder $query, array $data): void
