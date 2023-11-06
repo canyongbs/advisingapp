@@ -10,8 +10,10 @@ use Filament\Actions\CreateAction;
 use Assist\Alert\Enums\AlertStatus;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
-use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Group;
 use Assist\Alert\Enums\AlertSeverity;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
@@ -19,10 +21,12 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
+use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Models\Caseload;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Assist\Alert\Filament\Resources\AlertResource;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
@@ -135,11 +139,38 @@ class ListAlerts extends ListRecords
         return [
             CreateAction::make()
                 ->form([
-                    Radio::make('type')
-                        ->options([
-                            'student' => 'Student',
-                            'prospect' => 'Prospect',
-                        ]),
+                    MorphToSelect::make('concern')
+                        ->label('Related To')
+                        ->types([
+                            Type::make(Student::class)
+                                ->titleAttribute(Student::displayNameKey()),
+                            Type::make(Prospect::class)
+                                ->titleAttribute(Prospect::displayNameKey()),
+                        ])
+                        ->searchable()
+                        ->required(),
+                    Group::make()
+                        ->schema([
+                            Textarea::make('description')
+                                ->required()
+                                ->string(),
+                            Select::make('severity')
+                                ->options(AlertSeverity::class)
+                                ->selectablePlaceholder(false)
+                                ->default(AlertSeverity::default())
+                                ->required()
+                                ->enum(AlertSeverity::class),
+                            Textarea::make('suggested_intervention')
+                                ->required()
+                                ->string(),
+                            Select::make('status')
+                                ->options(AlertStatus::class)
+                                ->selectablePlaceholder(false)
+                                ->default(AlertStatus::default())
+                                ->required()
+                                ->enum(AlertStatus::class),
+                        ])
+                        ->columns(),
                 ]),
         ];
     }
