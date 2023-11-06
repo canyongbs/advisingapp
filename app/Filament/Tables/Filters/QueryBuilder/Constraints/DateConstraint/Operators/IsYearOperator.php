@@ -4,8 +4,8 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Op
 
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class IsYearOperator extends Operator
 {

@@ -3,8 +3,8 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators\IsTrueOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators\IsTrueOperator;
 
 class BooleanConstraint extends Constraint
 {

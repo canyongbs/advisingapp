@@ -2,10 +2,10 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators;
 
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class IsMonthOperator extends Operator
 {
@@ -49,6 +49,11 @@ class IsMonthOperator extends Operator
         ];
     }
 
+    public function apply(Builder $query, string $qualifiedColumn): Builder
+    {
+        return $query->whereMonth($qualifiedColumn, $this->isInverse() ? '!=' : '=', $this->getSettings()['month']);
+    }
+
     /**
      * @return array<string>
      */
@@ -59,10 +64,5 @@ class IsMonthOperator extends Operator
                 $month => now()->setMonth($month)->getTranslatedMonthName(),
             ])
             ->all();
-    }
-
-    public function apply(Builder $query, string $qualifiedColumn): Builder
-    {
-        return $query->whereMonth($qualifiedColumn, $this->isInverse() ? '!=' : '=', $this->getSettings()['month']);
     }
 }

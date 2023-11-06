@@ -3,12 +3,12 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint\Operators;
 
 use Exception;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Select;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Component;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class IsOperator extends Operator
 {

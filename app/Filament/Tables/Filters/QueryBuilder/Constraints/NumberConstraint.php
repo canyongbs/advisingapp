@@ -3,10 +3,10 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator;
 
 class NumberConstraint extends Constraint
 {

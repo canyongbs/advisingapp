@@ -2,13 +2,13 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
 
+use Illuminate\Support\Str;
+use Illuminate\Database\Connection;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Str;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class ContainsOperator extends Operator
 {

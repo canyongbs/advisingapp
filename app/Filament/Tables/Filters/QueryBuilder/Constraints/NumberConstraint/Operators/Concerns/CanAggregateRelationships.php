@@ -3,11 +3,11 @@
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 
 use Exception;
+use Illuminate\Support\Str;
 use Filament\Forms\Components\Select;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Str;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 
 trait CanAggregateRelationships
 {
@@ -53,6 +53,17 @@ trait CanAggregateRelationships
         }
 
         return $query;
+    }
+
+    public function getConstraint(): ?NumberConstraint
+    {
+        $constraint = parent::getConstraint();
+
+        if (! ($constraint instanceof NumberConstraint)) {
+            throw new Exception('Constraint must be an instance of [' . NumberConstraint::class . '].');
+        }
+
+        return $constraint;
     }
 
     protected function getAggregateSelect(): Select
@@ -102,16 +113,5 @@ trait CanAggregateRelationships
         $aggregateAlias = $this->generateAggregateAlias();
 
         return "{$aggregateAlias}.{$aggregateAlias}";
-    }
-
-    public function getConstraint(): ?NumberConstraint
-    {
-        $constraint = parent::getConstraint();
-
-        if (! ($constraint instanceof NumberConstraint)) {
-            throw new Exception('Constraint must be an instance of [' . NumberConstraint::class . '].');
-        }
-
-        return $constraint;
     }
 }

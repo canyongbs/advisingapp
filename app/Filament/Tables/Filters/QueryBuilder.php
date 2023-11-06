@@ -5,13 +5,13 @@ namespace App\Filament\Tables\Filters;
 use Closure;
 use Exception;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
-use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
-use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
+use App\Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
+use App\Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 
 class QueryBuilder extends BaseFilter
 {

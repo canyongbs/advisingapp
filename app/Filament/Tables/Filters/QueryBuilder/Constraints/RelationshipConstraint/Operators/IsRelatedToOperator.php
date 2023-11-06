@@ -4,14 +4,14 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConst
 
 use Closure;
 use Exception;
-use Filament\Forms\Components\Component;
+use Illuminate\Support\Arr;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Component;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Services\RelationshipJoiner;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
 
 class IsRelatedToOperator extends Operator
 {

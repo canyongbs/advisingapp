@@ -4,8 +4,8 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConst
 
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class HasMinOperator extends Operator
 {

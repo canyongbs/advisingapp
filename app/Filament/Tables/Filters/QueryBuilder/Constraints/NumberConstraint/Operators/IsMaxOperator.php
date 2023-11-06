@@ -4,10 +4,11 @@ namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\
 
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
 
 use function Filament\Support\format_number;
+
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class IsMaxOperator extends Operator
 {

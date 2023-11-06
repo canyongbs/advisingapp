@@ -2,8 +2,8 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators;
 
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class IsTrueOperator extends Operator
 {
