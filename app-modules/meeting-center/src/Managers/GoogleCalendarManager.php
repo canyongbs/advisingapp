@@ -55,7 +55,7 @@ class GoogleCalendarManager implements CalendarInterface
         ];
 
         if (is_null($start)) {
-            $start = now()->startOfDay();
+            $start = now()->subYears(2)->startOfDay();
         }
         $parameters['timeMin'] = $start->format(DateTimeInterface::RFC3339);
 

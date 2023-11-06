@@ -30,6 +30,7 @@ class ListCalendarEvents extends ListRecords
     #[Url(as: 'view')]
     public string $viewType = 'table';
 
+    //TODO: Look into consolidating to not use an action
     public function setupCalendarProviderAction(): Action
     {
         return Action::make('setupCalendarProviderAction')
@@ -43,6 +44,7 @@ class ListCalendarEvents extends ListRecords
             ->closeModalByClickingAway(false);
     }
 
+    //TODO: Look into consolidating to not use an action
     public function selectCalendarAction(): Action
     {
         return Action::make('selectCalendarAction')
