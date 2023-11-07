@@ -50,9 +50,12 @@ it('will create the task records for educatables in the caseload', function () {
     expect(Task::count())->toBe($prospects->count());
 
     $task = Task::first();
+    $prospect = $prospects->first();
 
     expect($task->title)->toBe($data['title']);
     expect($task->description)->toBe($data['description']);
     expect($task->due->toString())->toBe($data['due']->toString());
     expect($task->assigned_to)->toBe($data['assigned_to']);
+    expect($task->concern_id)->toBe($prospect->getKey());
+    expect($task->concern_type)->toBe($prospect->getMorphClass());
 });
