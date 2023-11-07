@@ -13,26 +13,28 @@ class HandleAwsSnsRequest
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $data = json_decode($request->getContent(), true);
+
         app(StoreInboundWebhook::class)
             ->handle(
                 InboundWebhookSource::AwsSns,
-                $request->get('Type'),
+                $data['Type'],
                 $request->url(),
-                json_encode($request->all())
+                json_encode($data)
             );
 
-        if ($request->get('Type') === 'SubscriptionConfirmation') {
-            file_get_contents($request->get('SubscribeURL'));
+        if ($data['Type'] === 'SubscriptionConfirmation') {
+            file_get_contents($data['SubscribeURL']);
 
             return response(status: 200);
         }
 
-        if ($request->get('Type') === 'UnsubscribeConfirmation') {
+        if ($data['Type'] === 'UnsubscribeConfirmation') {
             // TODO: Look into whether or not we need to do something here, should we track this setup?
             return response(status: 200);
         }
 
-        if ($request->get('Type') !== 'Notification') {
+        if ($data['Type'] !== 'Notification') {
             throw new Exception('Unknown AWS SNS webhook type');
         }
 
