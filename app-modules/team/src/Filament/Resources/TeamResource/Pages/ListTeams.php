@@ -23,7 +23,10 @@ class ListTeams extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->sortable(),
+                TextColumn::make('division.name')
+                    ->sortable(),
                 TextColumn::make('description')
                     ->limit(50),
             ])

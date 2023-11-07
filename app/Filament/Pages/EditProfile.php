@@ -10,7 +10,6 @@ use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Actions\ActionGroup;
-use Illuminate\Support\Stringable;
 use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
@@ -61,10 +60,13 @@ class EditProfile extends Page
                             /** @var User $user */
                             $user = auth()->user();
 
-                            return str('Calendar')
-                                ->when($user->calendar->provider_type, fn (Stringable $str) => $str->prepend("{$user->calendar->provider_type->getLabel()} "))
-                                ->when($user->calendar->name, fn (Stringable $str) => $str->append(" - {$user->calendar->name}"))
-                                ->toString();
+                            return "{$user->calendar->provider_type->getLabel()} Calendar";
+                        })
+                        ->content(function (): ?string {
+                            /** @var User $user */
+                            $user = auth()->user();
+
+                            return $user->calendar?->name;
                         }),
                     Actions::make([
                         FormAction::make('Disconnect')
@@ -83,9 +85,15 @@ class EditProfile extends Page
 
                                 if ($revoked) {
                                     $calendar->delete();
+
+                                    Notification::make()
+                                        ->title("Disconnected {$calendar->provider_type->getLabel()} Calendar")
+                                        ->success()
+                                        ->send();
                                 }
                             }),
-                    ])->alignRight(),
+                    ])->alignRight()
+                        ->verticallyAlignCenter(),
                 ])
                 ->visible(function (): bool {
                     /** @var User $user */
@@ -130,6 +138,15 @@ class EditProfile extends Page
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         Checkbox::make('are_teams_visible_on_profile')
                             ->label('Show ' . str('team')->plural($user->teams->count()) . ' on profile')
+                            ->hidden($user->teams->isEmpty())
+                            ->live(),
+                        Placeholder::make('division')
+                            ->content($user->teams->first()?->division?->name)
+                            ->hidden(! $user->teams?->first()?->division()->exists())
+                            ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        Checkbox::make('is_division_visible_on_profile')
+                            ->label('Show division on profile')
+                            ->hidden(! $user->teams?->first()?->division()->exists())
                             ->live(),
                         Placeholder::make('external_avatar')
                             ->label('Avatar')
