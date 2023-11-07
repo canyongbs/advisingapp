@@ -10,7 +10,7 @@ class AwsSesInboundWebhookController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $data = json_decode($request->all()['Message'], true);
+        $data = json_decode(json_decode($request->getContent(), true)['Message'], true);
 
         $event = $data['eventType'];
 
