@@ -20,7 +20,7 @@ class VerifyAwsSnsRequest
 
         $validator = new MessageValidator();
 
-        if ($validator->isValid($message)) {
+        if (! $validator->isValid($message)) {
             abort(404);
         }
 
