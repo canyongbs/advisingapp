@@ -1,0 +1,26 @@
+{
+  "name": "canyon-gbs/integration-aws-ses-event-handling",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Assist\\IntegrationAwsSesEventHandling\\": "src/",
+      "Assist\\IntegrationAwsSesEventHandling\\Tests\\": "tests/",
+      "Assist\\IntegrationAwsSesEventHandling\\Database\\Factories\\": "database/factories/",
+      "Assist\\IntegrationAwsSesEventHandling\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Assist\\IntegrationAwsSesEventHandling\\Providers\\IntegrationAwsSesEventHandlingServiceProvider"
+      ]
+    }
+  }
+}
