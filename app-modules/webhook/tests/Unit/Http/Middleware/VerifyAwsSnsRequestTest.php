@@ -15,7 +15,7 @@ it('will abort the request if the request cannot be verified to have originated 
     });
 
     $request = Request::create(
-        uri: route('inbound.webhook.awsses'),
+        uri: url('/'),
         method: 'POST',
         content: json_encode($this->loadFixtureFromModule('webhook', 'sns-notification')),
     );
@@ -47,7 +47,7 @@ it('will process the request if the request can be verified to have originated f
     });
 
     $request = Request::create(
-        uri: route('inbound.webhook.awsses'),
+        uri: url('/'),
         method: 'POST',
         content: json_encode($this->loadFixtureFromModule('webhook', 'sns-notification')),
     );
