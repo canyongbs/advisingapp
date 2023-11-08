@@ -3,8 +3,8 @@
 namespace Assist\IntegrationAwsSesEventHandling\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Assist\IntegrationAwsSesEventHandling\Actions\AwsSesWebhookProcessor;
 
 class AwsSesInboundWebhookController extends Controller
 {
@@ -14,8 +14,23 @@ class AwsSesInboundWebhookController extends Controller
 
         $event = $data['eventType'];
 
-        AwsSesWebhookProcessor::dispatchToHandler($event, $data);
+        Log::info('AWS SES event: ' . json_encode($data));
 
-        return AwsSesWebhookProcessor::generateResponse($event);
+        // Leaving this here for now, we will eventually need to handle these events
+        //match ($event) {
+        //    'Bounce' => null,
+        //    'Complaint' => null,
+        //    'Delivery' => null,
+        //    'Send' => null,
+        //    'Reject' => null,
+        //    'Open' => null,
+        //    'Click' => null,
+        //    'Rendering Failure' => null,
+        //    'DeliveryDelay' => null,
+        //    'Subscription' => null,
+        //    default => throw new Exception('Unknown AWS SES event type'),
+        //};
+
+        return response(status: 200);
     }
 }
