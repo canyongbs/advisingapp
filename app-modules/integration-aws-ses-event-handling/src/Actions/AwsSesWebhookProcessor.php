@@ -4,7 +4,6 @@ namespace Assist\IntegrationAwsSesEventHandling\Actions;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Twilio\TwiML\MessagingResponse;
 
 class AwsSesWebhookProcessor
 {
@@ -28,8 +27,8 @@ class AwsSesWebhookProcessor
         //};
     }
 
-    public static function generateResponse(string $event): MessagingResponse|Response
+    public static function generateResponse(string $event): Response
     {
-        return response();
+        return response()->make();
     }
 }
