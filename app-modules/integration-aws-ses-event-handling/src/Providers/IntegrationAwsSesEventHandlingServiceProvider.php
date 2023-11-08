@@ -3,11 +3,14 @@
 namespace Assist\IntegrationAwsSesEventHandling\Providers;
 
 use Filament\Panel;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Mail\Events\MessageSending;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
+use Assist\IntegrationAwsSesEventHandling\Listeners\AddSesConfigurationSetToEmailHeaders;
 
 class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 {
@@ -21,6 +24,15 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Relation::morphMap([]);
 
         $this->registerRolesAndPermissions();
+        $this->registerEvents();
+    }
+
+    public function registerEvents(): void
+    {
+        Event::listen(
+            MessageSending::class,
+            AddSesConfigurationSetToEmailHeaders::class
+        );
     }
 
     protected function registerRolesAndPermissions()
