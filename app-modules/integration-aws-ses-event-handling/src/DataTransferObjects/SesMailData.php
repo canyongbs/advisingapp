@@ -3,6 +3,7 @@
 namespace Assist\IntegrationAwsSesEventHandling\DataTransferObjects;
 
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Optional;
 
 class SesMailData extends Data
 {
@@ -14,8 +15,8 @@ class SesMailData extends Data
         public string $sendingAccountId,
         public array $destination,
         public bool $headersTruncated,
-        public array $headers,
-        public array $commonHeaders,
+        public array|Optional $headers,
+        public array|Optional $commonHeaders,
         public array $tags,
     ) {}
 }

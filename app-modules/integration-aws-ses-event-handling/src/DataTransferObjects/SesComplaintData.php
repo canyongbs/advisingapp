@@ -14,7 +14,7 @@ class SesComplaintData extends Data
         public DataCollection $complainedRecipients,
         public string $timestamp,
         public string $feedbackId,
-        public string $complaintSubType,
+        public string|Optional $complaintSubType,
         public string|Optional $userAgent,
         public string|Optional $complaintFeedbackType,
         public string|Optional $arrivalDate,

@@ -10,7 +10,7 @@ use Spatie\LaravelData\Attributes\DataCollectionOf;
 class SesTopicPreferencesData extends Data
 {
     public function __construct(
-        public bool $unsubscribeAll,
+        public string $unsubscribeAll,
         #[DataCollectionOf(SesTopicSubscriptionStatusData::class)]
         public DataCollection $topicSubscriptionStatus,
         #[DataCollectionOf(SesTopicSubscriptionStatusData::class)]
