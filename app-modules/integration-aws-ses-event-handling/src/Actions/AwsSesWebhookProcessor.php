@@ -12,6 +12,7 @@ class AwsSesWebhookProcessor
     {
         Log::info('AWS SES event: ' . json_encode($data));
 
+        // Leaving this here for now, we will eventually need to handle these events
         //match ($event) {
         //    'Bounce' => null,
         //    'Complaint' => null,
