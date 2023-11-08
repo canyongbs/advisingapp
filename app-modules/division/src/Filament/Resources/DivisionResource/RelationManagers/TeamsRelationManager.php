@@ -17,16 +17,6 @@ class TeamsRelationManager extends RelationManager
 {
     protected static string $relationship = 'teams';
 
-    // public function form(Form $form): Form
-    // {
-    //     return $form
-    //         ->schema([
-    //             Forms\Components\TextInput::make('id')
-    //                 ->required()
-    //                 ->maxLength(255),
-    //         ]);
-    // }
-
     public function table(Table $table): Table
     {
         return $table
