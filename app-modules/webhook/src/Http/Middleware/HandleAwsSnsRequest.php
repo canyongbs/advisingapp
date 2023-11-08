@@ -8,33 +8,33 @@ use Illuminate\Http\Request;
 use Assist\Webhook\Enums\InboundWebhookSource;
 use Symfony\Component\HttpFoundation\Response;
 use Assist\Webhook\Actions\StoreInboundWebhook;
+use Assist\Webhook\DataTransferObjects\SnsMessage;
 
 class HandleAwsSnsRequest
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $data = json_decode($request->getContent(), true);
+        $data = SnsMessage::fromRequest($request);
 
         app(StoreInboundWebhook::class)
             ->handle(
                 InboundWebhookSource::AwsSns,
-                $data['Type'],
+                in_array($data->type, ['SubscriptionConfirmation', 'UnsubscribeConfirmation', 'Notification']) ? $data->type : 'UnknownSnsType',
                 $request->url(),
-                json_encode($data)
+                $request->getContent()
             );
 
-        if ($data['Type'] === 'SubscriptionConfirmation') {
-            file_get_contents($data['SubscribeURL']);
+        if ($data->type === 'SubscriptionConfirmation') {
+            file_get_contents($data->subscribeURL);
 
             return response(status: 200);
         }
 
-        if ($data['Type'] === 'UnsubscribeConfirmation') {
-            // TODO: Look into whether or not we need to do something here, should we track this setup?
+        if ($data->type === 'UnsubscribeConfirmation') {
             return response(status: 200);
         }
 
-        if ($data['Type'] !== 'Notification') {
+        if ($data->type !== 'Notification') {
             throw new Exception('Unknown AWS SNS webhook type');
         }
 
