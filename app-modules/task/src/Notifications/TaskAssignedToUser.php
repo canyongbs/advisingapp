@@ -4,10 +4,11 @@ namespace Assist\Task\Notifications;
 
 use App\Models\User;
 use Assist\Task\Models\Task;
+use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\HtmlString;
+use App\Notifications\Notification;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Assist\Task\Filament\Resources\TaskResource\Pages\EditTask;
@@ -20,7 +21,9 @@ class TaskAssignedToUser extends Notification implements ShouldQueue
 
     public function __construct(
         public Task $task,
-    ) {}
+    ) {
+        parent::__construct();
+    }
 
     public function via(User $notifiable): array
     {
@@ -49,5 +52,10 @@ class TaskAssignedToUser extends Notification implements ShouldQueue
             ->success()
             ->title("You have been assigned a new Task: {$link}")
             ->getDatabaseMessage();
+    }
+
+    protected function resolveEmailTemplate(): ?EmailTemplate
+    {
+        return EmailTemplate::first();
     }
 }
