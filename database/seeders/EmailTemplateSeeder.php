@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EmailTemplateSeeder extends Seeder
@@ -10,8 +9,5 @@ class EmailTemplateSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
-        //
-    }
+    public function run(): void {}
 }

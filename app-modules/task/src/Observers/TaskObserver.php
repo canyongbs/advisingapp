@@ -7,8 +7,8 @@ use App\Models\User;
 use Assist\Task\Models\Task;
 use Illuminate\Support\Facades\DB;
 use Assist\Authorization\Models\Permission;
-use Assist\Task\Notifications\TaskAssignedToUserNotification;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
+use Assist\Task\Notifications\TaskAssignedToUserNotification;
 
 class TaskObserver
 {

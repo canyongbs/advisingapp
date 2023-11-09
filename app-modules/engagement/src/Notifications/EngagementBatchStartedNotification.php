@@ -2,10 +2,10 @@
 
 namespace Assist\Engagement\Notifications;
 
-use App\Models\EmailTemplate;
 use App\Models\User;
-use App\Notifications\MailMessage;
+use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
+use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Filament\Notifications\Notification as FilamentNotification;
