@@ -8,6 +8,8 @@ use Filament\Infolists\Components\ViewEntry;
 
 class SignatureFormFieldBlock extends FormFieldBlock
 {
+    public string $preview = 'form::blocks.previews.signature';
+
     protected function setUp(): void
     {
         parent::setUp();

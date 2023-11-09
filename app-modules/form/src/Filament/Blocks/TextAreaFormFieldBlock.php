@@ -8,6 +8,8 @@ use Filament\Infolists\Components\TextEntry;
 
 class TextAreaFormFieldBlock extends FormFieldBlock
 {
+    public string $preview = 'form::blocks.previews.textarea';
+
     protected function setUp(): void
     {
         parent::setUp();

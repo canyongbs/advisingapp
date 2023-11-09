@@ -8,6 +8,8 @@ use Filament\Infolists\Components\IconEntry;
 
 class CheckboxFormFieldBlock extends FormFieldBlock
 {
+    public string $preview = 'form::blocks.previews.checkbox';
+
     protected function setUp(): void
     {
         parent::setUp();

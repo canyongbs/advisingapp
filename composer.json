@@ -13,7 +13,7 @@
         "php": "^8.2",
         "ext-gd": "*",
         "ext-pdo": "*",
-        "awcodes/filament-tiptap-editor": "^3.0@beta",
+        "awcodes/filament-tiptap-editor": "dev-test/bus-dan",
         "barryvdh/laravel-debugbar": "^3.9",
         "bvtterfly/model-state-machine": "^0.3.0",
         "canyon-gbs/alert": "*",

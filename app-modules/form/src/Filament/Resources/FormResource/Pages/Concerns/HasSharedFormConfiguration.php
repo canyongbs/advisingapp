@@ -2,6 +2,9 @@
 
 namespace Assist\Form\Filament\Resources\FormResource\Pages\Concerns;
 
+use App\TiptapBlocks\BatmanBlock;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Get;
 use Illuminate\Support\Arr;
 use Assist\Form\Models\Form;
@@ -75,58 +78,12 @@ trait HasSharedFormConfiguration
         ];
     }
 
-    public function fieldBuilder(): Builder
+    public function fieldBuilder(): TiptapEditor
     {
-        return Builder::make('fields')
-            ->hiddenLabel()
+        return TiptapEditor::make('content')
+            ->output(TiptapOutput::Json)
+            ->blocks(FormFieldBlockRegistry::get())
             ->columnSpanFull()
-            ->reorderableWithDragAndDrop(false)
-            ->reorderableWithButtons()
-            ->blocks(FormFieldBlockRegistry::getInstances())
-            ->addActionLabel('New field')
-            ->dehydrated(false)
-            ->loadStateFromRelationshipsUsing(function (Builder $component, Form | FormStep $record) {
-                $fields = $record instanceof Form ?
-                    $record->fields()->whereNull('step_id')->get() :
-                    $record->fields;
-
-                $component->state(
-                    $fields
-                        ->map(fn (FormField $field): array => [
-                            'type' => $field->type,
-                            'data' => [
-                                'label' => $field->label,
-                                'key' => $field->key,
-                                'required' => $field->required,
-                                ...$field->config,
-                            ],
-                        ])
-                        ->all(),
-                );
-            })
-            ->saveRelationshipsUsing(function (Get $get, Form | FormStep $record, array $state) {
-                $record->fields()->delete();
-
-                if ($record instanceof FormStep) {
-                    $record->form->fields()->whereNull('step_id')->delete();
-                } elseif ($record instanceof Form) {
-                    $record->steps()->delete();
-                }
-
-                foreach ($state as $field) {
-                    $fieldData = $field['data'];
-
-                    $record
-                        ->fields()
-                        ->create([
-                            'key' => $fieldData['key'],
-                            'type' => $field['type'],
-                            'label' => $fieldData['label'],
-                            'required' => $fieldData['required'],
-                            'config' => Arr::except($fieldData, ['key', 'label', 'required']),
-                            ...($record instanceof FormStep ? ['form_id' => $record->form_id] : []),
-                        ]);
-                }
-            });
+            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
     }
 }

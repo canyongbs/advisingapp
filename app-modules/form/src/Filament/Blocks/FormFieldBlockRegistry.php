@@ -26,16 +26,6 @@ class FormFieldBlockRegistry
     }
 
     /**
-     * @return array<FormFieldBlock>
-     */
-    public static function getInstances(): array
-    {
-        return collect(static::get())
-            ->map(fn (string $block): FormFieldBlock => $block::make())
-            ->all();
-    }
-
-    /**
      * @return array<string, class-string<FormFieldBlock>>
      */
     public static function keyByType(): array

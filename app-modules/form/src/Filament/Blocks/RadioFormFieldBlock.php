@@ -9,6 +9,8 @@ use Filament\Infolists\Components\TextEntry;
 
 class RadioFormFieldBlock extends FormFieldBlock
 {
+    public string $preview = 'form::blocks.previews.radio';
+
     protected function setUp(): void
     {
         parent::setUp();
