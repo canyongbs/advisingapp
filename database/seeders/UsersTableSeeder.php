@@ -3,29 +3,40 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Assist\Authorization\Models\Role;
+use Assist\Authorization\Models\RoleGroup;
 
 class UsersTableSeeder extends Seeder
 {
     public function run(): void
     {
-        /** Super Admin */
-        $superAdmin = User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'sampleadmin@advising.app',
-            'password' => Hash::make('password'),
-        ]);
+        $superAdminRoleGroup = RoleGroup::where('name', 'Super Administrator')->firstOrFail();
 
-        $superAdminRoles = Role::superAdmin()->get();
+        if (app()->environment('local')) {
+            $superAdmin = User::factory()->create([
+                'name' => 'Super Admin',
+                'email' => 'sampleadmin@advising.app',
+                'password' => Hash::make('password'),
+            ]);
 
-        $superAdmin->assignRole($superAdminRoles);
+            $superAdmin->roleGroups()->sync($superAdminRoleGroup);
+        }
 
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@assist.com',
-            'password' => Hash::make('password'),
-        ]);
+        collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRoleGroup) {
+            $user = User::where('email', $email)->first();
+
+            if (is_null($user)) {
+                $user = User::factory()->create([
+                    'name' => Str::title(Str::replace('.', ' ', Str::before($email, '@'))),
+                    'email' => $email,
+                    'password' => Hash::make('password'),
+                    'is_external' => true,
+                ]);
+            }
+
+            $user->roleGroups()->sync($superAdminRoleGroup);
+        });
     }
 }
