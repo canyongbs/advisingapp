@@ -2,10 +2,11 @@
 
 namespace Assist\Engagement\Notifications;
 
+use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
+use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Assist\Engagement\Models\EngagementDeliverable;
 
 class EngagementNotification extends Notification implements ShouldQueue
@@ -23,10 +24,16 @@ class EngagementNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage())
+        return MailMessage::make()
+            ->emailTemplate($this->resolveEmailTemplate())
             ->subject($this->deliverable->engagement->subject)
             ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
             ->line($this->deliverable->engagement->body)
             ->salutation("Regards, {$this->deliverable->engagement->user->name}");
+    }
+
+    private function resolveEmailTemplate(): ?EmailTemplate
+    {
+        return null;
     }
 }

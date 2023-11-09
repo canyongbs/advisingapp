@@ -3,11 +3,12 @@
 namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
+use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
+use App\Notifications\MailMessage;
 use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
 
 class EngagementEmailSentNotification extends Notification implements ShouldQueue
@@ -25,7 +26,8 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage())
+        return MailMessage::make()
+            ->emailTemplate($this->resolveEmailTemplate())
             ->subject('Your Engagement Email has successfully been delivered.')
             ->line("Your engagement was successfully delivered to {$this->engagement->recipient->display_name}.");
     }
@@ -37,5 +39,10 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
             ->title('Engagement Email Successfully Delivered')
             ->body("Your engagement email was successfully delivered to {$this->engagement->recipient->display_name}.")
             ->getDatabaseMessage();
+    }
+
+    private function resolveEmailTemplate(): ?EmailTemplate
+    {
+        return null;
     }
 }

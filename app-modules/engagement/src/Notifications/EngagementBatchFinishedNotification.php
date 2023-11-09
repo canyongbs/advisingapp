@@ -3,11 +3,12 @@
 namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
+use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
+use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Engagement\Models\EngagementBatch;
-use Illuminate\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
 
 class EngagementBatchFinishedNotification extends Notification implements ShouldQueue
@@ -27,13 +28,16 @@ class EngagementBatchFinishedNotification extends Notification implements Should
 
     public function toMail(object $notifiable): MailMessage
     {
+        $message = MailMessage::make()
+            ->emailTemplate($this->resolveEmailTemplate());
+
         if ($this->failedJobs > 0) {
-            return (new MailMessage())
+            return $message
                 ->subject('Bulk Engagements Finished Processing With Errors.')
                 ->line("{$this->failedJobs} jobs failed out of {$this->processedJobs} total jobs.");
         }
 
-        return (new MailMessage())
+        return $message
             ->subject('Bulk Engagements Finished Processing Successfully.')
             ->line("{$this->processedJobs} jobs processed successfully.");
     }
@@ -53,5 +57,10 @@ class EngagementBatchFinishedNotification extends Notification implements Should
             ->title('Bulk Engagement processing finished')
             ->body("{$this->processedJobs} jobs processed successfully.")
             ->getDatabaseMessage();
+    }
+
+    private function resolveEmailTemplate(): ?EmailTemplate
+    {
+        return null;
     }
 }

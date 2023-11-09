@@ -3,7 +3,9 @@
     <td class="header">
         <a href="{{ $url }}" style="display: inline-block;">
             @if ($emailTemplate?->hasMedia('logo'))
-                <img src="{{ $emailTemplate?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}" class="logo"
+                {{-- TODO: Don't use temporary urls? --}}
+                <img src="{{ $emailTemplate?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}"
+                     class="logo"
                      alt="Logo">
             @else
                 {{ $slot }}
