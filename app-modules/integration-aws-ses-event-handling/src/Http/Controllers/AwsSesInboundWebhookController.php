@@ -2,38 +2,40 @@
 
 namespace Assist\IntegrationAwsSesEventHandling\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Assist\IntegrationAwsSesEventHandling\Events\SesOpenEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesSendEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesClickEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesComplaintEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
 use Assist\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 
 class AwsSesInboundWebhookController extends Controller
 {
     public function __invoke(Request $request)
     {
-        //$data = json_decode(json_decode($request->getContent(), true)['Message'], true);
+        $data = SesEventData::fromRequest($request);
 
-        $dto = SesEventData::fromRequest($request);
-
-        ray($dto);
-
-        //$event = $data['eventType'];
-
-        //Log::info('AWS SES event: ' . json_encode($data));
-
-        // Leaving this here for now, we will eventually need to handle these events
-        //match ($event) {
-        //    'Bounce' => null,
-        //    'Complaint' => null,
-        //    'Delivery' => null,
-        //    'Send' => null,
-        //    'Reject' => null,
-        //    'Open' => null,
-        //    'Click' => null,
-        //    'Rendering Failure' => null,
-        //    'DeliveryDelay' => null,
-        //    'Subscription' => null,
-        //    default => throw new Exception('Unknown AWS SES event type'),
-        //};
+        match ($data->eventType) {
+            'Bounce' => SesBounceEvent::dispatch($data),
+            'Complaint' => SesComplaintEvent::dispatch($data),
+            'Delivery' => SesDeliveryEvent::dispatch($data),
+            'Send' => SesSendEvent::dispatch($data),
+            'Reject' => SesRejectEvent::dispatch($data),
+            'Open' => SesOpenEvent::dispatch($data),
+            'Click' => SesClickEvent::dispatch($data),
+            'Rendering Failure' => SesRenderingFailureEvent::dispatch($data),
+            'DeliveryDelay' => SesDeliveryDelayEvent::dispatch($data),
+            'Subscription' => SesSubscriptionEvent::dispatch($data),
+            default => throw new Exception('Unknown AWS SES event type'),
+        };
 
         return response(status: 200);
     }

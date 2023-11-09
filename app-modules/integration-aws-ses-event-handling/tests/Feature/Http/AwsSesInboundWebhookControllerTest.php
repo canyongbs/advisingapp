@@ -1,13 +1,29 @@
 <?php
 
+use Illuminate\Support\Facades\Event;
+
 use function Pest\Laravel\withHeaders;
 use function Pest\Laravel\withoutMiddleware;
 
 use Assist\Webhook\Http\Middleware\VerifyAwsSnsRequest;
+use Assist\IntegrationAwsSesEventHandling\Events\SesOpenEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesSendEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesClickEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesComplaintEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
+use Assist\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
+
+beforeEach(function () {
+    Event::fake();
+
+    withoutMiddleware(VerifyAwsSnsRequest::class);
+});
 
 it('handles a bounce event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'bounce'));
@@ -30,11 +46,11 @@ it('handles a bounce event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesBounceEvent::class);
 });
 
 it('handles a complaint event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'complaint'));
@@ -57,11 +73,11 @@ it('handles a complaint event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesComplaintEvent::class);
 });
 
 it('handles a delivery event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'delivery'));
@@ -84,11 +100,11 @@ it('handles a delivery event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesDeliveryEvent::class);
 });
 
 it('handles a send event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'send'));
@@ -111,11 +127,11 @@ it('handles a send event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesSendEvent::class);
 });
 
 it('handles a reject event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'reject'));
@@ -138,11 +154,11 @@ it('handles a reject event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesRejectEvent::class);
 });
 
 it('handles a open event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'open'));
@@ -165,11 +181,11 @@ it('handles a open event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesOpenEvent::class);
 });
 
 it('handles a click event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'click'));
@@ -192,11 +208,11 @@ it('handles a click event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesClickEvent::class);
 });
 
 it('handles a renderingFailure event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'renderingFailure'));
@@ -219,11 +235,11 @@ it('handles a renderingFailure event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesRenderingFailureEvent::class);
 });
 
 it('handles a DeliveryDelay event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'DeliveryDelay'));
@@ -246,11 +262,11 @@ it('handles a DeliveryDelay event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesDeliveryDelayEvent::class);
 });
 
 it('handles a Subscription event', function () {
-    withoutMiddleware(VerifyAwsSnsRequest::class);
-
     $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
     $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'Subscription'));
@@ -273,4 +289,6 @@ it('handles a Subscription event', function () {
     );
 
     $response->assertOk();
+
+    Event::assertDispatched(SesSubscriptionEvent::class);
 });
