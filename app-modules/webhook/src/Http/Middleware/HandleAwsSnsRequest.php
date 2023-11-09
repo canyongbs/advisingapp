@@ -25,6 +25,10 @@ class HandleAwsSnsRequest
             );
 
         if ($data->type === 'SubscriptionConfirmation') {
+            if (app()->environment('testing')) {
+                return response(status: 200);
+            }
+
             file_get_contents($data->subscribeURL);
 
             return response(status: 200);
