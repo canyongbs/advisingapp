@@ -13,6 +13,8 @@ return new class () extends Migration {
             $table->string('name')->unique();
             $table->text('description')->nullable();
 
+            $table->foreignUuid('division_id')->nullable()->constrained('divisions');
+
             $table->timestamps();
             $table->softDeletes();
         });

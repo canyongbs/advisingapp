@@ -4,6 +4,8 @@ namespace Assist\Team\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Assist\Division\Models\Division;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
@@ -22,5 +24,10 @@ class Team extends BaseModel
             ->belongsToMany(User::class)
             ->using(TeamUser::class)
             ->withTimestamps();
+    }
+
+    public function division(): BelongsTo
+    {
+        return $this->belongsTo(Division::class);
     }
 }

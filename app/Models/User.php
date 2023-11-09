@@ -84,6 +84,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'is_bio_visible_on_profile' => 'boolean',
         'are_pronouns_visible_on_profile' => 'boolean',
         'are_teams_visible_on_profile' => 'boolean',
+        'is_division_visible_on_profile' => 'boolean',
         'email_verified_at' => 'datetime',
     ];
 
@@ -101,6 +102,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'avatar_url',
         'are_teams_visible_on_profile',
         'timezone',
+        'is_division_visible_on_profile',
     ];
 
     public $orderable = [

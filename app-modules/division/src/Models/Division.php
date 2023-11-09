@@ -4,8 +4,10 @@ namespace Assist\Division\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Assist\Team\Models\Team;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Interaction\Models\Concerns\HasManyInteractions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -37,5 +39,10 @@ class Division extends BaseModel implements Auditable
     {
         return $this
             ->belongsTo(User::class);
+    }
+
+    public function teams(): HasMany
+    {
+        return $this->hasMany(Team::class);
     }
 }
