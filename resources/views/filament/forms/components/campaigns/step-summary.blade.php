@@ -18,6 +18,7 @@
                     CampaignActionType::ProactiveAlert->value => 'filament.forms.components.campaigns.actions.proactive-alert',
                     CampaignActionType::Interaction->value => 'filament.forms.components.campaigns.actions.interaction',
                     CampaignActionType::CareTeam->value => 'filament.forms.components.campaigns.actions.care-team',
+                    CampaignActionType::Task->value => 'filament.forms.components.campaigns.actions.task',
                 };
             @endphp
 

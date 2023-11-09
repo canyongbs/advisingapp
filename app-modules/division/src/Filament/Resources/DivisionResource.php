@@ -8,6 +8,7 @@ use Assist\Division\Filament\Resources\DivisionResource\Pages\EditDivision;
 use Assist\Division\Filament\Resources\DivisionResource\Pages\ViewDivision;
 use Assist\Division\Filament\Resources\DivisionResource\Pages\ListDivisions;
 use Assist\Division\Filament\Resources\DivisionResource\Pages\CreateDivision;
+use Assist\Division\Filament\Resources\DivisionResource\RelationManagers\TeamsRelationManager;
 
 class DivisionResource extends Resource
 {
@@ -21,7 +22,9 @@ class DivisionResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            TeamsRelationManager::make(),
+        ];
     }
 
     public static function getPages(): array
