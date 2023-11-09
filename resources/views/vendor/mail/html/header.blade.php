@@ -8,7 +8,9 @@
                      class="logo"
                      alt="Logo">
             @else
-                {{ $slot }}
+                <img src="{{ Vite::asset('resources/images/default-logo-light.png') }}"
+                     style="height: 75px; max-height: 75px; max-width: 100vw;"
+                     alt="Logo">
             @endif
         </a>
     </td>

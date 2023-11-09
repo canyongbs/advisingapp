@@ -14,7 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use Filament\Notifications\Notification as FilamentNotification;
 
-class TaskAssignedToUser extends Notification implements ShouldQueue
+class TaskAssignedToUserNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     use SerializesModels;
@@ -55,6 +55,6 @@ class TaskAssignedToUser extends Notification implements ShouldQueue
 
     private function resolveEmailTemplate(): ?EmailTemplate
     {
-        return EmailTemplate::first();
+        return null;
     }
 }

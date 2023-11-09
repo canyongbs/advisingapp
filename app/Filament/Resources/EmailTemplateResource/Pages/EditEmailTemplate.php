@@ -21,7 +21,8 @@ class EditEmailTemplate extends EditRecord
             ->schema([
                 TextInput::make('name')
                     ->string()
-                    ->required(),
+                    ->required()
+                    ->autocomplete(false),
                 Select::make('primary_color')
                     ->native(false)
                     ->allowHtml()

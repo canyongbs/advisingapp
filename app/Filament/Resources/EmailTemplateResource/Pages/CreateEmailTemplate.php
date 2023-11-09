@@ -30,7 +30,8 @@ class CreateEmailTemplate extends CreateRecord
                     ->required(),
                 TextInput::make('name')
                     ->string()
-                    ->required(),
+                    ->required()
+                    ->autocomplete(false),
                 Select::make('primary_color')
                     ->options(collect(Color::all())->keys()->sort()->mapWithKeys(fn ($color) => [$color => str($color)->headline()])),
                 SpatieMediaLibraryFileUpload::make('logo')

@@ -1,22 +1,18 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Notifications;
 
-use App\Models\EmailTemplate;
 use App\Models\User;
-use App\Notifications\MailMessage;
+use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class {{ class }} extends Notification
+class DemoNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(protected User $sender) {}
 
     /**
      * @return array<int, string>
@@ -29,7 +25,7 @@ class {{ class }} extends Notification
     public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate())
+            ->emailTemplate($this->resolveEmailTemplate($notifiable))
             ->line('The introduction to the notification.')
             ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');
@@ -40,13 +36,11 @@ class {{ class }} extends Notification
      */
     public function toArray(User $notifiable): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
-    private function resolveEmailTemplate(): ?EmailTemplate
+    private function resolveEmailTemplate(User $notifiable): ?EmailTemplate
     {
-        return null;
+        return $this->sender->teams()->first()?->division?->emailTemplate;
     }
 }
