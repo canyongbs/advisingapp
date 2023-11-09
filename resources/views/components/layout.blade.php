@@ -5,7 +5,7 @@
 >
 
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1"
@@ -48,7 +48,7 @@
                 theme === 'dark' ||
                 (theme === 'system' &&
                     window.matchMedia('(prefers-color-scheme: dark)')
-                        .matches)
+                    .matches)
             ) {
                 document.documentElement.classList.add('dark')
             }
@@ -58,7 +58,7 @@
 </head>
 
 <body class="fi-body min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
-{{ $slot }}
+    {{ $slot }}
 </body>
 
 </html>
