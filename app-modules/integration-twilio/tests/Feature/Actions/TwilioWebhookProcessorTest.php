@@ -1,17 +1,23 @@
 <?php
 
+use function Pest\Laravel\post;
+
 use Illuminate\Support\Facades\Queue;
+
+use function Tests\loadFixtureFromModule;
+use function Pest\Laravel\withoutMiddleware;
+
 use Assist\IntegrationTwilio\Actions\StatusCallback;
 use Assist\IntegrationTwilio\Actions\MessageReceived;
 
 it('will dispatch an appropriate job to process the incoming request', function () {
-    $this->withoutMiddleware();
+    withoutMiddleware();
 
     Queue::fake();
 
-    $this->post(
+    post(
         route('inbound.webhook.twilio', 'message_received'),
-        $this->loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
+        loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
     );
 
     Queue::assertPushed(MessageReceived::class);

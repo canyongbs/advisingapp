@@ -1,35 +1,43 @@
 <?php
 
+use function Pest\Laravel\post;
+
 use Illuminate\Support\Facades\Queue;
+
+use function Tests\loadFixtureFromModule;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\withoutMiddleware;
+use function Pest\Laravel\assertDatabaseMissing;
+
 use Assist\IntegrationTwilio\Actions\MessageReceived;
 
 it('will create an inbound webhook with the Twilio source and the correct event', function () {
     Queue::fake([MessageReceived::class]);
-    $this->withoutMiddleware();
+    withoutMiddleware();
 
-    $response = $this->post(
+    $response = post(
         route('inbound.webhook.twilio', 'message_received'),
-        $this->loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
+        loadFixtureFromModule('integration-twilio', 'MessageReceived/payload'),
     );
 
     $response->assertOk();
 
-    $this->assertDatabaseHas('inbound_webhooks', [
+    assertDatabaseHas('inbound_webhooks', [
         'source' => 'twilio',
         'event' => 'message_received',
     ]);
 
-    $this->assertDatabaseMissing('inbound_webhooks', [
+    assertDatabaseMissing('inbound_webhooks', [
         'source' => 'twilio',
         'event' => 'status_update',
     ]);
 
-    $response = $this->post(
+    post(
         route('inbound.webhook.twilio', 'status_update'),
-        $this->loadFixtureFromModule('integration-twilio', 'StatusCallback/sent'),
+        loadFixtureFromModule('integration-twilio', 'StatusCallback/sent'),
     );
 
-    $this->assertDatabaseHas('inbound_webhooks', [
+    assertDatabaseHas('inbound_webhooks', [
         'source' => 'twilio',
         'event' => 'status_update',
     ]);
