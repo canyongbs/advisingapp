@@ -4,6 +4,7 @@ namespace Assist\Campaign\Filament\Resources\CampaignResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Assist\CareTeam\Models\CareTeam;
 use Filament\Forms\Components\Builder;
@@ -36,7 +37,8 @@ class CampaignActionsRelationManager extends RelationManager
             CampaignActionType::ServiceRequest => ServiceRequest::class,
             CampaignActionType::ProactiveAlert => Alert::class,
             CampaignActionType::Interaction => Interaction::class,
-            CampaignActionType::CareTeam => CareTeam::class
+            CampaignActionType::CareTeam => CareTeam::class,
+            CampaignActionType::Task => Task::class,
         };
 
         return $form

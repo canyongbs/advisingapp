@@ -16,6 +16,8 @@ enum CampaignActionType: string implements HasLabel
 
     case CareTeam = 'care_team';
 
+    case Task = 'task';
+
     public function getLabel(): ?string
     {
         return match ($this) {
