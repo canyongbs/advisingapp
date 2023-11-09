@@ -9,6 +9,16 @@ use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
 {
+    /**
+     * @return array<string, string>
+     */
+    public function getCalendars(Calendar $calendar): array
+    {
+        // TODO: Implement getCalendars() method.
+
+        return [];
+    }
+
     // https://github.com/microsoftgraph/msgraph-sample-phpapp/tree/main
     // https://github.com/microsoftgraph/msgraph-sdk-php
     // https://learn.microsoft.com/en-us/graph/api/resources/webhooks?view=graph-rest-1.0
@@ -47,5 +57,11 @@ class OutlookCalendarManager implements CalendarInterface
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
     {
         // TODO: Implement syncEvents() method.
+    }
+
+    public function revokeToken(Calendar $calendar): bool
+    {
+        // TODO: Implement revokeToken() method.
+        return false;
     }
 }

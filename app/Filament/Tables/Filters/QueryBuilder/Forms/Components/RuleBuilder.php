@@ -2,10 +2,10 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
+use Exception;
 use Illuminate\Support\Str;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Actions\Action;
@@ -34,24 +34,33 @@ class RuleBuilder extends Builder
                     Builder\Block::make(static::OR_BLOCK_NAME)
                         ->label(function (?array $state, ?string $uuid) use ($component) {
                             if (blank($state) || blank($uuid)) {
-                                return 'Disjunction (OR)';
+                                return __('filament-tables::filters/query-builder.form.or_groups.block.label');
                             }
 
                             if (! count($state[static::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [])) {
-                                return '(No rules)';
+                                return __('filament-tables::filters/query-builder.no_rules');
                             }
 
                             $repeater = $component->getChildComponentContainer($uuid)
                                 ->getComponent(fn (Component $component): bool => $component instanceof Repeater);
 
+                            if (! ($repeater instanceof Repeater)) {
+                                throw new Exception('No repeater component found.');
+                            }
+
                             $itemLabels = collect($repeater->getChildComponentContainers())
                                 ->map(fn (ComponentContainer $blockContainer, string $blockContainerUuid): string => $repeater->getItemLabel($blockContainerUuid));
 
-                            return (($state['not'] ?? false) ? 'NOT ' : '') . '(' . $itemLabels->implode(') OR (') . ')';
+                            if ($itemLabels->count() === 1) {
+                                return $itemLabels->first();
+                            }
+
+                            return '(' . $itemLabels->implode(') ' . __('filament-tables::filters/query-builder.form.or_groups.block.or') . ' (') . ')';
                         })
                         ->icon('heroicon-m-bars-4')
                         ->schema(fn (): array => [
                             Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
+                                ->label(__('filament-tables::filters/query-builder.form.or_groups.label'))
                                 ->schema(fn (): array => [
                                     static::make('rules')
                                         ->constraints($this->getConstraints())
@@ -59,40 +68,55 @@ class RuleBuilder extends Builder
                                         ->blockPickerWidth($this->getBlockPickerWidth()),
                                 ])
                                 ->addAction(fn (Action $action) => $action
-                                    ->label('Add rule group')
+                                    ->label(__('filament-tables::filters/query-builder.actions.add_rule_group.label'))
                                     ->icon('heroicon-s-plus'))
-                                ->labelBetweenItems('OR')
+                                ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.or'))
                                 ->collapsible()
                                 ->expandAllAction(fn (Action $action) => $action->hidden())
                                 ->collapseAllAction(fn (Action $action) => $action->hidden())
                                 ->itemLabel(function (ComponentContainer $container, array $state): string {
                                     $builder = $container->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
-                                    $blockLabels = collect($builder->getChildComponentContainers())
-                                        ->map(fn (ComponentContainer $blockContainer, string $blockUuid): string => $blockContainer->getParentComponent()->getLabel($blockContainer->getRawState(), $blockUuid));
-
-                                    if ($blockLabels->isEmpty()) {
-                                        return '(No rules)';
+                                    if (! ($builder instanceof RuleBuilder)) {
+                                        throw new Exception('No rule builder component found.');
                                     }
 
-                                    return (($state['not'] ?? false) ? 'NOT ' : '') . '(' . $blockLabels->implode(') AND (') . ')';
+                                    $blockLabels = collect($builder->getChildComponentContainers())
+                                        ->map(function (ComponentContainer $blockContainer, string $blockUuid): string {
+                                            $block = $blockContainer->getParentComponent();
+
+                                            if (! ($block instanceof Builder\Block)) {
+                                                throw new Exception('No block component found.');
+                                            }
+
+                                            return $block->getLabel($blockContainer->getRawState(), $blockUuid);
+                                        });
+
+                                    if ($blockLabels->isEmpty()) {
+                                        return __('filament-tables::filters/query-builder.no_rules');
+                                    }
+
+                                    if ($blockLabels->count() === 1) {
+                                        return $blockLabels->first();
+                                    }
+
+                                    return '(' . $blockLabels->implode(') ' . __('filament-tables::filters/query-builder.form.rules.item.and') . ' (') . ')';
                                 })
                                 ->truncateItemLabel(false)
                                 ->cloneable()
                                 ->reorderable(false)
                                 ->hiddenLabel()
                                 ->generateUuidUsing(fn (): string => Str::random(4)),
-                            Checkbox::make('not')
-                                ->label('NOT'),
                         ]),
                 ];
             })
             ->addAction(fn (Action $action) => $action
-                ->label('Add rule')
+                ->label(__('filament-tables::filters/query-builder.actions.add_rule.label'))
                 ->icon('heroicon-s-plus'))
             ->addBetweenAction(fn (Action $action) => $action->hidden())
-            ->labelBetweenItems('AND')
+            ->label(__('filament-tables::filters/query-builder.form.rules.label'))
             ->hiddenLabel()
+            ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.and'))
             ->blockNumbers(false)
             ->collapsible()
             ->cloneable()

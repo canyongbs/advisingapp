@@ -2,20 +2,31 @@
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Models\User;
+use Filament\Forms\Get;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use App\Filament\Actions\ImportAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Assist\Prospect\Models\ProspectSource;
+use Assist\Prospect\Models\ProspectStatus;
 use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
+use Illuminate\Database\Eloquent\Collection;
 use Assist\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Models\Caseload;
@@ -128,6 +139,83 @@ class ListProspects extends ListRecords
                     BulkEngagementAction::make(context: 'prospects'),
                     DeleteBulkAction::make(),
                     ToggleCareTeamBulkAction::make(),
+                    BulkAction::make('bulk_update')
+                        ->icon('heroicon-o-pencil-square')
+                        ->form([
+                            Select::make('field')
+                                ->options([
+                                    'assigned_to_id' => 'Assigned To',
+                                    'description' => 'Description',
+                                    'email_bounce' => 'Email Bounce',
+                                    'hsgrad' => 'High School Graduation Date',
+                                    'sms_opt_out' => 'SMS Opt Out',
+                                    'source_id' => 'Source',
+                                    'status_id' => 'Status',
+                                ])
+                                ->required()
+                                ->live(),
+                            Select::make('assigned_to_id')
+                                ->label('Assigned To')
+                                ->relationship('assignedTo', 'name')
+                                ->searchable()
+                                ->exists(
+                                    table: (new User())->getTable(),
+                                    column: (new User())->getKeyName()
+                                )
+                                ->required()
+                                ->visible(fn (Get $get) => $get('field') === 'assigned_to_id'),
+                            Textarea::make('description')
+                                ->string()
+                                ->required()
+                                ->visible(fn (Get $get) => $get('field') === 'description'),
+                            Radio::make('email_bounce')
+                                ->label('Email Bounce')
+                                ->boolean()
+                                ->required()
+                                ->visible(fn (Get $get) => $get('field') === 'email_bounce'),
+                            TextInput::make('hsgrad')
+                                ->label('High School Graduation Date')
+                                ->numeric()
+                                ->minValue(1920)
+                                ->maxValue(now()->addYears(25)->year)
+                                ->required()
+                                ->visible(fn (Get $get) => $get('field') === 'hsgrad'),
+                            Radio::make('sms_opt_out')
+                                ->label('SMS Opt Out')
+                                ->boolean()
+                                ->required()
+                                ->visible(fn (Get $get) => $get('field') === 'sms_opt_out'),
+                            Select::make('source_id')
+                                ->label('Source')
+                                ->relationship('source', 'name')
+                                ->exists(
+                                    table: (new ProspectSource())->getTable(),
+                                    column: (new ProspectSource())->getKeyName()
+                                )
+                                ->required()
+                                ->visible(fn (Get $get) => $get('field') === 'source_id'),
+                            Select::make('status_id')
+                                ->label('Status')
+                                ->relationship('status', 'name')
+                                ->exists(
+                                    table: (new ProspectStatus())->getTable(),
+                                    column: (new ProspectStatus())->getKeyName()
+                                )
+                                ->required()
+                                ->visible(fn (Get $get) => $get('field') === 'status_id'),
+                        ])
+                        ->action(function (Collection $records, array $data) {
+                            $records->each(
+                                fn (Prospect $prospect) => $prospect
+                                    ->forceFill([$data['field'] => $data[$data['field']]])
+                                    ->save()
+                            );
+
+                            Notification::make()
+                                ->title($records->count() . ' ' . str('Prospect')->plural($records->count()) . ' Updated')
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ]);
     }

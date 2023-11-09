@@ -11,6 +11,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
+use Assist\Campaign\Filament\Blocks\TaskBlock;
+use Assist\Campaign\Filament\Blocks\CareTeamBlock;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
 use Assist\Campaign\Filament\Blocks\InteractionBlock;
 use Assist\Campaign\Filament\Blocks\ProactiveAlertBlock;
@@ -34,6 +36,8 @@ class CreateCampaign extends CreateRecord
             ServiceRequestBlock::make(),
             ProactiveAlertBlock::make(),
             InteractionBlock::make(),
+            CareTeamBlock::make(),
+            TaskBlock::make(),
         ];
     }
 
@@ -46,6 +50,7 @@ class CreateCampaign extends CreateRecord
             Step::make('Campaign Details')
                 ->schema([
                     TextInput::make('name')
+                        ->autocomplete(false)
                         ->required(),
                     Select::make('caseload_id')
                         ->label('Caseload')
@@ -75,7 +80,10 @@ class CreateCampaign extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $campaign = static::getModel()::create($data);
+        /** @var Model $model */
+        $model = static::getModel();
+
+        $campaign = $model::query()->create($data);
 
         resolve(CreateActionsForCampaign::class)->from(
             $campaign,

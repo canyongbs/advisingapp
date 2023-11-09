@@ -14,6 +14,9 @@ return new class () extends Migration {
             $table->text('description')->nullable();
             $table->boolean('embed_enabled')->default(false);
             $table->json('allowed_domains')->nullable();
+            $table->string('primary_color')->nullable();
+            $table->string('rounding')->nullable();
+            $table->boolean('is_wizard')->default(false);
 
             $table->timestamps();
             $table->softDeletes();

@@ -18,6 +18,11 @@ class MeetingCenterPlugin implements Plugin
             in: __DIR__ . '/Filament/Resources',
             for: 'Assist\\MeetingCenter\\Filament\\Resources'
         );
+
+        $panel->discoverWidgets(
+            in: __DIR__ . '/Filament/Widgets',
+            for: 'Assist\\MeetingCenter\\Filament\\Widgets'
+        );
     }
 
     public function boot(Panel $panel): void {}

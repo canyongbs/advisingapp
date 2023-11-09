@@ -20,7 +20,9 @@ class ViewTeam extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
-                        TextEntry::make('description'),
+                        TextEntry::make('division.name'),
+                        TextEntry::make('description')
+                            ->columnSpanFull(),
                     ])
                     ->columns(),
             ]);

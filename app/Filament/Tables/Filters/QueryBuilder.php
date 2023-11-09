@@ -3,9 +3,8 @@
 namespace App\Filament\Tables\Filters;
 
 use Closure;
+use Exception;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Forms\Components\Component;
@@ -29,23 +28,18 @@ class QueryBuilder extends BaseFilter
     {
         parent::setUp();
 
+        $this->label(__('filament-tables::filters/query-builder.label'));
+
         $this->form(fn (QueryBuilder $filter): array => [
-            Fieldset::make($filter->getLabel())
-                ->schema([
-                    RuleBuilder::make('rules')
-                        ->constraints($filter->getConstraints())
-                        ->blockPickerColumns($filter->getConstraintPickerColumns())
-                        ->blockPickerWidth($filter->getConstraintPickerWidth()),
-                    Checkbox::make('not')
-                        ->label('Exclude these filters (NOT)'),
-                ])
-                ->columns(1),
+            RuleBuilder::make('rules')
+                ->label($filter->getLabel())
+                ->constraints($filter->getConstraints())
+                ->blockPickerColumns($filter->getConstraintPickerColumns())
+                ->blockPickerWidth($filter->getConstraintPickerWidth()),
         ]);
 
         $this->query(function (Builder $query, array $data) {
-            $query->{($data['not'] ?? false) ? 'whereNot' : 'where'}(function (Builder $query) use ($data) {
-                $this->applyRulesToQuery($query, $data['rules'], $this->getRuleBuilder());
-            });
+            $this->applyRulesToQuery($query, $data['rules'], $this->getRuleBuilder());
         });
 
         $this->baseQuery(function (Builder $query, array $data) {
@@ -60,22 +54,20 @@ class QueryBuilder extends BaseFilter
         return 'queryBuilder';
     }
 
+    /**
+     * @param  array<string, mixed>  $rules
+     */
     public function applyRulesToQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
         foreach ($rules as $ruleIndex => $rule) {
             $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
-                $query->{$rule['data']['not'] ?? false ? 'whereNot' : 'where'}(function (Builder $query) use ($rule, $ruleBuilderBlockContainer) {
+                $query->where(function (Builder $query) use ($rule, $ruleBuilderBlockContainer) {
                     $isFirst = true;
 
                     foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
-                        $query->{match ([$isFirst, ($orGroup['not'] ?? false)]) {
-                            [true, false] => 'where',
-                            [true, true] => 'whereNot',
-                            [false, false] => 'orWhere',
-                            [false, true] => 'orWhereNot',
-                        }}(function (Builder $query) use ($orGroup, $orGroupIndex, $ruleBuilderBlockContainer) {
+                        $query->{$isFirst ? 'where' : 'orWhere'}(function (Builder $query) use ($orGroup, $orGroupIndex, $ruleBuilderBlockContainer) {
                             $this->applyRulesToQuery(
                                 $query,
                                 $orGroup['rules'],
@@ -100,6 +92,9 @@ class QueryBuilder extends BaseFilter
         return $query;
     }
 
+    /**
+     * @param  array<string, mixed>  $rules
+     */
     public function applyRulesToBaseQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
         foreach ($rules as $ruleIndex => $rule) {
@@ -181,17 +176,32 @@ class QueryBuilder extends BaseFilter
 
     protected function getRuleBuilder(): RuleBuilder
     {
-        return $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+        $builder = $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+
+        if (! ($builder instanceof RuleBuilder)) {
+            throw new Exception('No rule builder component found.');
+        }
+
+        return $builder;
     }
 
     protected function getNestedRuleBuilder(ComponentContainer $ruleBuilderBlockContainer, string $orGroupIndex): RuleBuilder
     {
-        return $ruleBuilderBlockContainer
+        $builder = $ruleBuilderBlockContainer
             ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
             ->getChildComponentContainer($orGroupIndex)
             ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+
+        if (! ($builder instanceof RuleBuilder)) {
+            throw new Exception('No nested rule builder component found.');
+        }
+
+        return $builder;
     }
 
+    /**
+     * @param  array<string, mixed>  $rule
+     */
     protected function tapOperatorFromRule(array $rule, ComponentContainer $ruleBuilderBlockContainer, Closure $callback): void
     {
         $constraint = $this->getConstraint($rule['type']);

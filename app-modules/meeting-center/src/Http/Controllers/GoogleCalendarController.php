@@ -4,12 +4,12 @@ namespace Assist\MeetingCenter\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Filament\Facades\Filament;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Assist\MeetingCenter\Models\Calendar;
 use Assist\MeetingCenter\Enums\CalendarProvider;
 use Assist\MeetingCenter\Managers\GoogleCalendarManager;
+use Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
 
 class GoogleCalendarController extends CalendarController
 {
@@ -30,14 +30,13 @@ class GoogleCalendarController extends CalendarController
         $user = auth()->user();
 
         $calendar = $user->calendar ?: new Calendar();
-        $calendar->type = CalendarProvider::Google;
-        $calendar->provider_id = env('GOOGLE_CALENDAR_ID'); //TODO: needs UI to select calendar
+        $calendar->provider_type = CalendarProvider::Google;
         $calendar->oauth_token = $token['access_token'];
         $calendar->oauth_refresh_token = $token['refresh_token'];
         $calendar->oauth_token_expires_at = Carbon::parse($token['created'] + $token['expires_in']);
 
         $user->calendar()->save($calendar);
 
-        return redirect()->to(Filament::getUrl());
+        return redirect()->to(ListCalendarEvents::getUrl());
     }
 }

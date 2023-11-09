@@ -14,12 +14,17 @@ enum CampaignActionType: string implements HasLabel
 
     case Interaction = 'interaction';
 
+    case CareTeam = 'care_team';
+
+    case Task = 'task';
+
     public function getLabel(): ?string
     {
         return match ($this) {
             CampaignActionType::BulkEngagement => 'Bulk Engagement',
             CampaignActionType::ServiceRequest => 'Service Request',
             CampaignActionType::ProactiveAlert => 'Proactive Alert',
+            CampaignActionType::CareTeam => 'Care Team',
             default => $this->name,
         };
     }

@@ -16,7 +16,7 @@ class AlertResource extends Resource
 
     protected static ?string $model = Alert::class;
 
-    protected static ?string $label = 'Proactive Alerts';
+    protected static ?string $label = 'Proactive Alert';
 
     public static function getPages(): array
     {

@@ -11,8 +11,6 @@ beforeEach(function () {
 });
 
 it('will assign permissions to roles as defined in our configuration', function () {
-    $this->markTestSkipped();
-
     // TODO This test needs to be fixed once we determine exactly how we are creating
     // and syncing roles and permissions through each module that introduces them.
     // Based on our configuration values
@@ -49,4 +47,4 @@ it('will assign permissions to roles as defined in our configuration', function 
 
     expect($apiAdmin->hasPermissionTo('export_reports'))->toBeTrue();
     expect($apiAdmin->hasPermissionTo('user.*.view'))->toBeFalse();
-});
+})->skip();
