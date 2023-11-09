@@ -244,6 +244,22 @@ class CaseloadResource extends Resource
                     TextConstraint::make('hsgrad')
                         ->label('HS Grad')
                         ->icon('heroicon-m-academic-cap'),
+                    RelationshipConstraint::make('status')
+                        ->icon('heroicon-m-flag')
+                        ->selectable(
+                            RelationshipConstraint\Operators\IsRelatedToOperator::make()
+                                ->titleAttribute('name')
+                                ->multiple()
+                                ->preload(),
+                        ),
+                    RelationshipConstraint::make('source')
+                        ->icon('heroicon-m-arrow-left-on-rectangle')
+                        ->selectable(
+                            RelationshipConstraint\Operators\IsRelatedToOperator::make()
+                                ->titleAttribute('name')
+                                ->multiple()
+                                ->preload(),
+                        ),
                 ])
                 ->constraintPickerColumns([
                     'md' => 2,

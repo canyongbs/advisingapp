@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators;
 
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
@@ -15,22 +16,38 @@ class HasMinOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Has less than' : 'Has minimum';
-    }
-
-    public function getFormSchema(): array
-    {
-        return [
-            TextInput::make('count')
-                ->integer()
-                ->required()
-                ->minValue(1),
-        ];
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.relationship.has_min.label.inverse' :
+                'filament-tables::filters/query-builder.operators.relationship.has_min.label.direct',
+        );
     }
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "Has less than {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}" : "Has minimum {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}";
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.relationship.has_min.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.relationship.has_min.summary.direct',
+            [
+                'relationship' => $this->getConstraint()->getAttributeLabel(),
+                'count' => $this->getSettings()['count'],
+            ],
+        );
+    }
+
+    /**
+     * @return array<Component>
+     */
+    public function getFormSchema(): array
+    {
+        return [
+            TextInput::make('count')
+                ->label(__('filament-tables::filters/query-builder.operators.relationship.form.count.label'))
+                ->numeric()
+                ->required()
+                ->minValue(1),
+        ];
     }
 
     public function applyToBaseQuery(Builder $query): Builder
