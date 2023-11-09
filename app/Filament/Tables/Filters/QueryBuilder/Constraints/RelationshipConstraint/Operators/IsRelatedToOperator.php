@@ -64,10 +64,6 @@ class IsRelatedToOperator extends Operator
         $relationshipQuery = $this->getRelationshipQuery();
 
         $values = $relationshipQuery
-            ->when(
-                $this->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
-                fn (Builder $query) => $query->distinct(),
-            )
             ->whereKey($values)
             ->pluck($relationshipQuery->qualifyColumn($this->getTitleAttribute()))
             ->join(glue: __('filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.values_glue.0'), finalGlue: __('filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.values_glue.final'));
