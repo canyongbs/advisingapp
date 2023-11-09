@@ -13,7 +13,7 @@ return new class () extends Migration {
             $table->string('name');
             $table->string('primary_color')->nullable();
 
-            $table->uuidMorphs('name');
+            $table->uuidMorphs('model');
 
             $table->timestamps();
 

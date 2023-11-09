@@ -13,6 +13,8 @@ class EmailTemplate extends BaseModel implements HasMedia
     protected $fillable = [
         'name',
         'primary_color',
+        'model_id',
+        'model_type',
     ];
 
     public function registerMediaCollections(): void
