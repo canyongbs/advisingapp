@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\EmailTemplateResource\Pages;
 
 use Filament\Forms\Form;
+use Filament\Support\Colors\Color;
 use Assist\Division\Models\Division;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Facades\FilamentColor;
 use Filament\Forms\Components\MorphToSelect;
 use App\Filament\Resources\EmailTemplateResource;
 use Filament\Forms\Components\MorphToSelect\Type;
@@ -32,7 +32,7 @@ class CreateEmailTemplate extends CreateRecord
                     ->string()
                     ->required(),
                 Select::make('primary_color')
-                    ->options(collect(FilamentColor::getColors())->keys()->sort()->mapWithKeys(fn ($color) => [$color => str($color)->headline()])),
+                    ->options(collect(Color::all())->keys()->sort()->mapWithKeys(fn ($color) => [$color => str($color)->headline()])),
                 SpatieMediaLibraryFileUpload::make('logo')
                     ->disk('s3')
                     ->collection('logo')
