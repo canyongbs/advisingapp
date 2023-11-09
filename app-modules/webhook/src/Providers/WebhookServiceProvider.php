@@ -3,6 +3,7 @@
 namespace Assist\Webhook\Providers;
 
 use Filament\Panel;
+use Aws\Sns\MessageValidator;
 use Assist\Webhook\WebhookPlugin;
 use Illuminate\Support\ServiceProvider;
 use Assist\Webhook\Models\InboundWebhook;
@@ -15,6 +16,11 @@ class WebhookServiceProvider extends ServiceProvider
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new WebhookPlugin()));
+
+        $this->app->bind(
+            MessageValidator::class,
+            fn () => new MessageValidator()
+        );
     }
 
     public function boot(): void

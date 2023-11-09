@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d27ab53532e49f3d7b3049c6627ea72d",
+    "content-hash": "f1f065f78ea60d391fd31c639eb3b38a",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -145,17 +145,73 @@
             "time": "2023-10-16T20:10:06+00:00"
         },
         {
-            "name": "aws/aws-sdk-php",
-            "version": "3.283.18",
+            "name": "aws/aws-php-sns-message-validator",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0263a41920f77a521660fb128701d9c9c6312756"
+                "url": "https://github.com/aws/aws-php-sns-message-validator.git",
+                "reference": "c9fce7635417bcc75383ec5f6fa3790a4d9729b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0263a41920f77a521660fb128701d9c9c6312756",
-                "reference": "0263a41920f77a521660fb128701d9c9c6312756",
+                "url": "https://api.github.com/repos/aws/aws-php-sns-message-validator/zipball/c9fce7635417bcc75383ec5f6fa3790a4d9729b8",
+                "reference": "c9fce7635417bcc75383ec5f6fa3790a4d9729b8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0",
+                "squizlabs/php_codesniffer": "^2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aws\\Sns\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Amazon Web Services",
+                    "homepage": "http://aws.amazon.com"
+                }
+            ],
+            "description": "Amazon SNS message validation for PHP",
+            "homepage": "http://aws.amazon.com/sdkforphp",
+            "keywords": [
+                "SNS",
+                "amazon",
+                "aws",
+                "cloud",
+                "message",
+                "sdk",
+                "webhooks"
+            ],
+            "support": {
+                "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
+                "issues": "https://github.com/aws/aws-sns-message-validator/issues",
+                "source": "https://github.com/aws/aws-php-sns-message-validator/tree/master"
+            },
+            "time": "2015-09-03T20:53:53+00:00"
+        },
+        {
+            "name": "aws/aws-sdk-php",
+            "version": "3.285.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aws/aws-sdk-php.git",
+                "reference": "41c7a9491455f89052cba62c4e4f0c748af51265"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/41c7a9491455f89052cba62c4e4f0c748af51265",
+                "reference": "41c7a9491455f89052cba62c4e4f0c748af51265",
                 "shasum": ""
             },
             "require": {
@@ -235,9 +291,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.283.18"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.285.0"
             },
-            "time": "2023-11-02T18:16:01+00:00"
+            "time": "2023-11-07T19:33:47+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1052,6 +1108,41 @@
                     "Assist\\IntegrationAI\\Tests\\": "tests/",
                     "Assist\\IntegrationAI\\Database\\Factories\\": "database/factories/",
                     "Assist\\IntegrationAI\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/integration-aws-ses-event-handling",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/integration-aws-ses-event-handling",
+                "reference": "f00e2cc93409f46114ebe7dd46442f989bf36014"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\IntegrationAwsSesEventHandling\\Providers\\IntegrationAwsSesEventHandlingServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\IntegrationAwsSesEventHandling\\": "src/",
+                    "Assist\\IntegrationAwsSesEventHandling\\Tests\\": "tests/",
+                    "Assist\\IntegrationAwsSesEventHandling\\Database\\Factories\\": "database/factories/",
+                    "Assist\\IntegrationAwsSesEventHandling\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -19024,5 +19115,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

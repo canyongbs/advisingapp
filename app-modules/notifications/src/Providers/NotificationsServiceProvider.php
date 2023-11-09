@@ -28,7 +28,7 @@ class NotificationsServiceProvider extends ServiceProvider
 
         $this->registerRolesAndPermissions();
         $this->registerObservers();
-        $this->registerevents();
+        $this->registerEvents();
     }
 
     protected function registerObservers(): void
