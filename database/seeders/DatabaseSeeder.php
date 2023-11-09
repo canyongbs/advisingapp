@@ -39,25 +39,26 @@ class DatabaseSeeder extends Seeder
         Artisan::call(SyncRolesAndPermissions::class);
 
         $this->call([
-            StudentSeeder::class,
+            SuperAdminProfileSeeder::class,
             UsersTableSeeder::class,
+            DivisionSeeder::class,
             ServiceRequestPrioritySeeder::class,
             ServiceRequestStatusSeeder::class,
             ServiceRequestTypeSeeder::class,
-            ServiceRequestSeeder::class,
-            ServiceRequestUpdateSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
-            ProspectSeeder::class,
             KnowledgeBaseCategorySeeder::class,
             KnowledgeBaseQualitySeeder::class,
             KnowledgeBaseStatusSeeder::class,
-            KnowledgeBaseItemSeeder::class,
-            TaskSeeder::class,
-            DivisionSeeder::class,
             ...InteractionSeeder::metadataSeeders(),
             ConsentAgreementSeeder::class,
-            InternalUsersSeeder::class,
+            PronounsSeeder::class,
+
+            ServiceRequestSeeder::class,
+            ServiceRequestUpdateSeeder::class,
+            ProspectSeeder::class,
+            KnowledgeBaseItemSeeder::class,
+            TaskSeeder::class,
             FormSeeder::class,
             AlertSeeder::class,
             TeamSeeder::class,
@@ -65,7 +66,7 @@ class DatabaseSeeder extends Seeder
             EngagementResponseSeeder::class,
             DemoEducatableEngagementSeeder::class,
             SuperAdminSeeder::class,
-            PronounsSeeder::class,
+            StudentSeeder::class,
         ]);
     }
 }
