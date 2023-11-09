@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Aws\Sns\MessageValidator;
 
 use function Pest\Laravel\mock;
+use function Tests\loadFixtureFromModule;
 
 use Assist\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,7 +18,7 @@ it('will abort the request if the request cannot be verified to have originated 
     $request = Request::create(
         uri: url('/'),
         method: 'POST',
-        content: json_encode($this->loadFixtureFromModule('webhook', 'sns-notification')),
+        content: json_encode(loadFixtureFromModule('webhook', 'sns-notification')),
     );
 
     $request->headers->add(
@@ -49,7 +50,7 @@ it('will process the request if the request can be verified to have originated f
     $request = Request::create(
         uri: url('/'),
         method: 'POST',
-        content: json_encode($this->loadFixtureFromModule('webhook', 'sns-notification')),
+        content: json_encode(loadFixtureFromModule('webhook', 'sns-notification')),
     );
 
     $request->headers->add(

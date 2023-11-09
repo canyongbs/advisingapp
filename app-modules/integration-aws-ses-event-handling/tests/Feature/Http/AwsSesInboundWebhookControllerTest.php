@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\withHeaders;
+use function Tests\loadFixtureFromModule;
 use function Pest\Laravel\withoutMiddleware;
 
 use Assist\Webhook\Http\Middleware\VerifyAwsSnsRequest;
@@ -24,9 +25,9 @@ beforeEach(function () {
 });
 
 it('handles a bounce event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'bounce'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'bounce'));
 
     $response = withHeaders(
         [
@@ -51,9 +52,9 @@ it('handles a bounce event', function () {
 });
 
 it('handles a complaint event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'complaint'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'complaint'));
 
     $response = withHeaders(
         [
@@ -78,9 +79,9 @@ it('handles a complaint event', function () {
 });
 
 it('handles a delivery event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'delivery'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'delivery'));
 
     $response = withHeaders(
         [
@@ -105,9 +106,9 @@ it('handles a delivery event', function () {
 });
 
 it('handles a send event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'send'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'send'));
 
     $response = withHeaders(
         [
@@ -132,9 +133,9 @@ it('handles a send event', function () {
 });
 
 it('handles a reject event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'reject'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'reject'));
 
     $response = withHeaders(
         [
@@ -159,9 +160,9 @@ it('handles a reject event', function () {
 });
 
 it('handles a open event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'open'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'open'));
 
     $response = withHeaders(
         [
@@ -186,9 +187,9 @@ it('handles a open event', function () {
 });
 
 it('handles a click event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'click'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'click'));
 
     $response = withHeaders(
         [
@@ -213,9 +214,9 @@ it('handles a click event', function () {
 });
 
 it('handles a renderingFailure event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'renderingFailure'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'renderingFailure'));
 
     $response = withHeaders(
         [
@@ -240,9 +241,9 @@ it('handles a renderingFailure event', function () {
 });
 
 it('handles a DeliveryDelay event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'DeliveryDelay'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'DeliveryDelay'));
 
     $response = withHeaders(
         [
@@ -267,9 +268,9 @@ it('handles a DeliveryDelay event', function () {
 });
 
 it('handles a Subscription event', function () {
-    $snsData = $this->loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
 
-    $snsData['Message'] = json_encode($this->loadFixtureFromModule('integration-aws-ses-event-handling', 'Subscription'));
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Subscription'));
 
     $response = withHeaders(
         [
