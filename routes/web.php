@@ -13,6 +13,7 @@ Route::get('/form-test', function () {
     return view('form-test');
 });
 
+//TODO: remove
 Route::get('/demo-notification', function () {
     /** @var User $user */
     $user = auth()->user();

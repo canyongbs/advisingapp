@@ -23,8 +23,8 @@ class EmailTemplate extends BaseModel implements HasMedia
             ->singleFile();
     }
 
-    public function model(): MorphTo
+    public function relatedTo(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo('model');
     }
 }

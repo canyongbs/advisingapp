@@ -25,9 +25,12 @@ class ListEmailTemplates extends ListRecords
                 TextColumn::make('name'),
                 TextColumn::make('model.name')
                     ->label('Related To')
-                    ->getStateUsing(fn (EmailTemplate $record): ?string => $record->model->name)
-                    ->url(fn (EmailTemplate $record) => match ($record->model ? $record->model::class : null) {
-                        Division::class => DivisionResource::getUrl('edit', ['record' => $record->model]),
+                    ->getStateUsing(fn (EmailTemplate $record): ?string => match ($record->relatedTo ? $record->relatedTo::class : null) {
+                        Division::class => $record->relatedTo->name,
+                        default => null,
+                    })
+                    ->url(fn (EmailTemplate $record) => match ($record->relatedTo ? $record->relatedTo::class : null) {
+                        Division::class => DivisionResource::getUrl('edit', ['record' => $record->relatedTo]),
                         default => null,
                     }),
             ])

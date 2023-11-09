@@ -21,7 +21,7 @@ class CreateEmailTemplate extends CreateRecord
     {
         return $form
             ->schema([
-                MorphToSelect::make('model')
+                MorphToSelect::make('relatedTo')
                     ->label('Related To')
                     ->types([
                         Type::make(Division::class)
