@@ -64,6 +64,8 @@ const display = ref(false);
 const formName = ref("");
 const formDescription = ref("");
 const formSubmissionUrl = ref("");
+const formPrimaryColor = ref("");
+const formRounding= ref("");
 const schema = ref([]);
 
 fetch(props.url)
@@ -77,6 +79,46 @@ fetch(props.url)
         formDescription.value = json.description;
         schema.value = json.schema;
         formSubmissionUrl.value = json.submission_url;
+        formPrimaryColor.value = json.primary_color;
+
+        formRounding.value = {
+            none: {
+                sm: '0px',
+                default: '0px',
+                md: '0px',
+                lg: '0px',
+                full: '0px',
+            },
+            sm: {
+                sm: '0.125rem',
+                default: '0.25rem',
+                md: '0.375rem',
+                lg: '0.5rem',
+                full: '9999px',
+            },
+            md: {
+                sm: '0.25rem',
+                default: '0.375rem',
+                md: '0.5rem',
+                lg: '0.75rem',
+                full: '9999px',
+            },
+            lg: {
+                sm: '0.375rem',
+                default: '0.5rem',
+                md: '0.75rem',
+                lg: '1rem',
+                full: '9999px',
+            },
+            full: {
+                sm: '9999px',
+                default: '9999px',
+                md: '9999px',
+                lg: '9999px',
+                full: '9999px',
+            },
+        }[json.rounding ?? 'md']
+
         display.value = true;
     })
     .catch((error) => {
@@ -85,7 +127,26 @@ fetch(props.url)
 </script>
 
 <template>
-    <div class="font-sans">
+    <div
+        :style="{
+            '--primary-50': formPrimaryColor[50],
+            '--primary-100': formPrimaryColor[100],
+            '--primary-200': formPrimaryColor[200],
+            '--primary-300': formPrimaryColor[300],
+            '--primary-400': formPrimaryColor[400],
+            '--primary-500': formPrimaryColor[500],
+            '--primary-600': formPrimaryColor[600],
+            '--primary-700': formPrimaryColor[700],
+            '--primary-800': formPrimaryColor[800],
+            '--primary-900': formPrimaryColor[900],
+            '--rounding-sm': formRounding.sm,
+            '--rounding': formRounding.default,
+            '--rounding-md': formRounding.md,
+            '--rounding-lg': formRounding.lg,
+            '--rounding-full': formRounding.full,
+        }"
+        class="font-sans"
+    >
         <div v-if="display && !submittedSuccess">
             <link
                 rel="stylesheet"
