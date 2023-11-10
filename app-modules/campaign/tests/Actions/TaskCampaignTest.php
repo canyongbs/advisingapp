@@ -38,8 +38,6 @@ it('will create the task records for educatables in the caseload', function (Col
         'created_by' => User::factory()->create()->id,
     ];
 
-    ray($data);
-
     $action = CampaignAction::factory()
         ->for($campaign, 'campaign')
         ->create([
