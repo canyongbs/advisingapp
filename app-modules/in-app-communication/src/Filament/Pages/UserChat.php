@@ -13,4 +13,12 @@ class UserChat extends Page
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'in-app-communication::filament.pages.user-chat';
+
+    public function generateToken()
+    {
+        //$token = new AccessToken(
+        //    accountSid: config('services.twilio.account_sid'),
+        //    signingKeySid: config('services.twilio.signing_key_sid'),
+        //)
+    }
 }
