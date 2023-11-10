@@ -4,11 +4,11 @@ namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
 use App\Models\EmailTemplate;
-use Assist\Engagement\Models\EngagementBatch;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Assist\Engagement\Models\EngagementBatch;
 use Filament\Notifications\Notification as FilamentNotification;
 
 class EngagementBatchStartedNotification extends Notification implements ShouldQueue
