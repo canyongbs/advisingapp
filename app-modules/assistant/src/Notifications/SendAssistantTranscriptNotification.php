@@ -71,6 +71,6 @@ class SendAssistantTranscriptNotification extends Notification implements Should
 
     private function resolveEmailTemplate(): ?EmailTemplate
     {
-        return null;
+        return $this->sender->teams()->first()?->division?->emailTemplate;
     }
 }

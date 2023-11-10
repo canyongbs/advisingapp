@@ -61,6 +61,6 @@ class EngagementBatchFinishedNotification extends Notification implements Should
 
     private function resolveEmailTemplate(): ?EmailTemplate
     {
-        return null;
+        return $this->engagementBatch->user->teams()->first()?->division?->emailTemplate;
     }
 }

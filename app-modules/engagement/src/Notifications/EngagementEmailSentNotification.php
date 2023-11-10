@@ -43,6 +43,6 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
 
     private function resolveEmailTemplate(): ?EmailTemplate
     {
-        return null;
+        return $this->engagement->createdBy->teams()->first()?->division?->emailTemplate;
     }
 }

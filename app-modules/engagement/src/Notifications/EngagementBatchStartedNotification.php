@@ -4,6 +4,7 @@ namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
 use App\Models\EmailTemplate;
+use Assist\Engagement\Models\EngagementBatch;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -15,6 +16,7 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
     use Queueable;
 
     public function __construct(
+        public EngagementBatch $engagementBatch,
         public int $jobsToProcess,
     ) {}
 
@@ -42,6 +44,6 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
 
     private function resolveEmailTemplate(): ?EmailTemplate
     {
-        return null;
+        return $this->engagementBatch->user->teams()->first()?->division?->emailTemplate;
     }
 }

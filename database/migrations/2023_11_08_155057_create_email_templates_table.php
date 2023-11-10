@@ -13,11 +13,11 @@ return new class () extends Migration {
             $table->string('name');
             $table->string('primary_color')->nullable();
 
-            $table->uuidMorphs('model');
+            $table->uuidMorphs('related_to');
 
             $table->timestamps();
 
-            $table->unique(['name', 'model_id', 'model_type']);
+            $table->unique(['name', 'related_to_type', 'related_to_id']);
         });
     }
 };

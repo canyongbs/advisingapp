@@ -55,6 +55,6 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
 
     private function resolveEmailTemplate(): ?EmailTemplate
     {
-        return null;
+        return $this->task->createdBy->teams()->first()?->division?->emailTemplate;
     }
 }

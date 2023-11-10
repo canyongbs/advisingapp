@@ -13,8 +13,8 @@ class EmailTemplate extends BaseModel implements HasMedia
     protected $fillable = [
         'name',
         'primary_color',
-        'model_id',
-        'model_type',
+        'related_to_type',
+        'related_to_id',
     ];
 
     public function registerMediaCollections(): void
@@ -25,6 +25,6 @@ class EmailTemplate extends BaseModel implements HasMedia
 
     public function relatedTo(): MorphTo
     {
-        return $this->morphTo('model');
+        return $this->morphTo();
     }
 }
