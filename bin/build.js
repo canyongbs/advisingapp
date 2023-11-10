@@ -1,6 +1,6 @@
-import * as esbuild from 'esbuild'
+import * as esbuild from 'esbuild';
 
-const isDev = process.argv.includes('--dev')
+const isDev = process.argv.includes('--dev');
 
 async function compile(options) {
     const context = await esbuild.context(options)
@@ -47,4 +47,10 @@ compile({
     ...defaultOptions,
     entryPoints: ['./app-modules/assistant/resources/js/assistantCurrentResponse.js'],
     outfile: './app-modules/assistant/resources/js/dist/assistantCurrentResponse.js',
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: ['./app-modules/in-app-communication/resources/js/userToUserChat.js'],
+    outfile: './app-modules/in-app-communication/resources/js/dist/userToUserChat.js',
 })
