@@ -99,7 +99,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'bio',
         'is_bio_visible_on_profile',
         'are_pronouns_visible_on_profile',
-        'avatar_url',
         'are_teams_visible_on_profile',
         'timezone',
         'is_division_visible_on_profile',
@@ -281,6 +280,12 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return ! $this->hasRole('authorization.super_admin');
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile();
+    }
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('avatar-height-250px')
@@ -290,10 +295,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function getFilamentAvatarUrl(): ?string
     {
-        if ($this->is_external) {
-            return $this->avatar_url;
-        }
-
         return $this->getFirstTemporaryUrl(now()->addMinutes(5), 'avatar', 'avatar-height-250px');
     }
 
