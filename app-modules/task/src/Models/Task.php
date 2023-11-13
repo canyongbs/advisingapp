@@ -2,14 +2,17 @@
 
 namespace Assist\Task\Models;
 
+use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Task\Enums\TaskStatus;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Assist\Prospect\Models\Prospect;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Bvtterfly\ModelStateMachine\HasStateMachine;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -20,6 +23,7 @@ use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\AssistDataModel\Models\Traits\EducatableScopes;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
@@ -27,7 +31,7 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  *
  * @mixin IdeHelperTask
  */
-class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
+class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, ExecutableFromACampaignAction
 {
     use HasFactory;
     use HasUuids;
@@ -91,5 +95,39 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription
     {
         $query->where('status', '=', TaskStatus::Pending)
             ->orWhere('status', '=', TaskStatus::InProgress);
+    }
+
+    public static function executeFromCampaignAction(CampaignAction $action): bool|string
+    {
+        try {
+            DB::beginTransaction();
+
+            $action
+                ->campaign
+                ->caseload
+                ->retrieveRecords()
+                ->each(function (Educatable $educatable) use ($action) {
+                    $task = new Task([
+                        'title' => $action->data['title'],
+                        'description' => $action->data['description'],
+                        'due' => $action->data['due'],
+                    ]);
+
+                    $task->assignedTo()->associate($action->data['assigned_to']);
+                    $task->createdBy()->associate($action->data['created_by']);
+                    $task->concern()->associate($educatable);
+                    $task->save();
+                });
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return $e->getMessage();
+        }
+
+        // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
     }
 }

@@ -1,0 +1,52 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Models\EmailTemplate;
+use App\Models\User;
+use App\Notifications\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
+
+class {{ class }} extends Notification
+{
+    use Queueable;
+
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(User $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(User $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->emailTemplate($this->resolveEmailTemplate())
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(User $notifiable): array
+    {
+        return [
+            //
+        ];
+    }
+
+    private function resolveEmailTemplate(): ?EmailTemplate
+    {
+        return null;
+    }
+}

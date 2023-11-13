@@ -2,8 +2,12 @@
 
 namespace App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators;
 
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+
+use function Filament\Support\format_number;
+
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 
 class IsMaxOperator extends Operator
@@ -17,22 +21,39 @@ class IsMaxOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is more than' : 'Is maximum';
-    }
-
-    public function getFormSchema(): array
-    {
-        return [
-            TextInput::make('number')
-                ->numeric()
-                ->required(),
-            $this->getAggregateSelect(),
-        ];
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.number.is_max.label.inverse' :
+                'filament-tables::filters/query-builder.operators.number.is_max.label.direct',
+        );
     }
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getAttributeLabel()} is more than {$this->getSettings()['number']}" : "{$this->getAttributeLabel()} is maximum {$this->getSettings()['number']}";
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.number.is_max.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.number.is_max.summary.direct',
+            [
+                'attribute' => $this->getAttributeLabel(),
+                'number' => format_number($this->getSettings()['number']),
+            ],
+        );
+    }
+
+    /**
+     * @return array<Component>
+     */
+    public function getFormSchema(): array
+    {
+        return [
+            TextInput::make('number')
+                ->label(__('filament-tables::filters/query-builder.operators.number.form.number.label'))
+                ->numeric()
+                ->integer($this->getConstraint()->isInteger())
+                ->required(),
+            $this->getAggregateSelect(),
+        ];
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

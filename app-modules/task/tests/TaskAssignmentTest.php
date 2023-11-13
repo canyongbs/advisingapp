@@ -4,7 +4,7 @@ use App\Models\User;
 use Assist\Task\Models\Task;
 use Assist\Authorization\Models\Permission;
 use Illuminate\Support\Facades\Notification;
-use Assist\Task\Notifications\TaskAssignedToUser;
+use Assist\Task\Notifications\TaskAssignedToUserNotification;
 
 beforeEach(function () {
     Notification::fake();
@@ -48,7 +48,7 @@ it('gives the proper permission to the assigned User of a Task on create and upd
 it('sends the proper notification to the assigned User', function () {
     $task = Task::factory()->assigned()->create();
 
-    Notification::assertSentTo($task->assignedTo, TaskAssignedToUser::class);
+    Notification::assertSentTo($task->assignedTo, TaskAssignedToUserNotification::class);
 
     // Reset the fake notification store
     Notification::fake();
@@ -59,8 +59,8 @@ it('sends the proper notification to the assigned User', function () {
 
     $task->assignedTo()->associate($newAssignedUser)->save();
 
-    Notification::assertSentTo($newAssignedUser, TaskAssignedToUser::class);
-    Notification::assertNotSentTo($originalAssignedUser, TaskAssignedToUser::class);
+    Notification::assertSentTo($newAssignedUser, TaskAssignedToUserNotification::class);
+    Notification::assertNotSentTo($originalAssignedUser, TaskAssignedToUserNotification::class);
 });
 
 it('it properly subscriptions the creator and assigned Users to the Subscribable', function () {

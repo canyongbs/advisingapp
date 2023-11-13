@@ -7,8 +7,8 @@ use App\Models\User;
 use Assist\Task\Models\Task;
 use Illuminate\Support\Facades\DB;
 use Assist\Authorization\Models\Permission;
-use Assist\Task\Notifications\TaskAssignedToUser;
 use Assist\Notifications\Events\TriggeredAutoSubscription;
+use Assist\Task\Notifications\TaskAssignedToUserNotification;
 
 class TaskObserver
 {
@@ -75,7 +75,7 @@ class TaskObserver
         DB::commit();
 
         if (! empty($task->assignedTo) && ($task->wasChanged('assigned_to') || ($task->wasRecentlyCreated))) {
-            $task->assignedTo->notify(new TaskAssignedToUser($task));
+            $task->assignedTo->notify(new TaskAssignedToUserNotification($task));
 
             TriggeredAutoSubscription::dispatch($task->assignedTo, $task);
         }
