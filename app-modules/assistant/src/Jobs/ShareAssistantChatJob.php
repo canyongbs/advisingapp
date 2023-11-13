@@ -46,15 +46,9 @@ class ShareAssistantChatJob implements ShouldQueue
             case AssistantChatShareVia::Internal:
 
                 $replica = $this->chat
-                    ->replicate(['id', 'user_id', 'assistant_chat_folder_id']);
-
-                $replica->user()
+                    ->replicate(['id', 'user_id', 'assistant_chat_folder_id'])
+                    ->user()
                     ->associate($this->user);
-
-                $replica->folder()
-                    ->associate($this->user->assistantChatFolders()->updateOrCreate([
-                        'name' => "Shared By: {$this->sender->name}",
-                    ]));
 
                 $replica->save();
 
