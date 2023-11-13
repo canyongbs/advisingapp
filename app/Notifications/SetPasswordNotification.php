@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\URL;
@@ -19,10 +20,10 @@ class SetPasswordNotification extends Notification
         return ['mail'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate())
+            ->emailTemplate($this->resolveEmailTemplate($notifiable))
             ->line('A new account has been created for you.')
             ->action('Set up your password', URL::temporarySignedRoute(
                 'login.one-time',
@@ -33,8 +34,8 @@ class SetPasswordNotification extends Notification
             ->line('Please contact support if you need a new link or have any issues setting up your account.');
     }
 
-    private function resolveEmailTemplate(): ?EmailTemplate
+    private function resolveEmailTemplate(User $notifiable): ?EmailTemplate
     {
-        return null;
+        return $notifiable->teams()->first()?->division?->emailTemplate;
     }
 }
