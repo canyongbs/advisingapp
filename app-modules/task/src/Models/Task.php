@@ -114,6 +114,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
                     ]);
 
                     $task->assignedTo()->associate($action->data['assigned_to']);
+                    $task->createdBy()->associate($action->data['created_by']);
                     $task->concern()->associate($educatable);
                     $task->save();
                 });
