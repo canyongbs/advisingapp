@@ -8,6 +8,7 @@ use Filament\Tables\Table;
 use Filament\Actions\Action;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
+use Filament\Actions\StaticAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Radio;
@@ -236,6 +237,7 @@ class ListProspects extends ListRecords
                 $this->unmountTableBulkAction();
             })
             ->requiresConfirmation()
+            ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger'))
             ->action(function () {
                 $this->engageActionData = [];
                 $this->engageActionRecords = [];
