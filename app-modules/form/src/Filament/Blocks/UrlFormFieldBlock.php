@@ -28,9 +28,9 @@ class UrlFormFieldBlock extends FormFieldBlock
 
     public static function getInfolistEntry(FormField $field): Entry
     {
-        return TextEntry::make($field->key)
+        return TextEntry::make($field->id)
             ->label($field->label)
-            ->url(fn (Model $record): ?string => $record->getAttributeValue($field->key));
+            ->url(fn (Model $record): ?string => $record->getAttributeValue($field->id));
     }
 
     public static function getFormKitSchema(FormField $field): array
@@ -38,8 +38,8 @@ class UrlFormFieldBlock extends FormFieldBlock
         return [
             '$formkit' => 'url',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 

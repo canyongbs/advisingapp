@@ -27,7 +27,7 @@ class NumberFormFieldBlock extends FormFieldBlock
 
     public static function getInfolistEntry(FormField $field): Entry
     {
-        return TextEntry::make($field->key)
+        return TextEntry::make($field->id)
             ->label($field->label)
             ->numeric();
     }
@@ -37,8 +37,8 @@ class NumberFormFieldBlock extends FormFieldBlock
         return [
             '$formkit' => 'number',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 

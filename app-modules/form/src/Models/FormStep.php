@@ -15,6 +15,11 @@ class FormStep extends BaseModel
 {
     protected $fillable = [
         'label',
+        'content',
+    ];
+
+    protected $casts = [
+        'content' => 'array',
     ];
 
     public function form(): BelongsTo

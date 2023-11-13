@@ -29,7 +29,7 @@ class SignatureFormFieldBlock extends FormFieldBlock
 
     public static function getInfolistEntry(FormField $field): Entry
     {
-        return ViewEntry::make($field->key)
+        return ViewEntry::make($field->id)
             ->label($field->label)
             ->view('form::infolists.components.signature-entry');
     }
@@ -39,8 +39,8 @@ class SignatureFormFieldBlock extends FormFieldBlock
         return [
             '$formkit' => 'signature',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 }

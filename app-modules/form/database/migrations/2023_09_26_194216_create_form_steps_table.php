@@ -9,8 +9,11 @@ return new class () extends Migration {
     {
         Schema::create('form_steps', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->text('label');
+            $table->json('content')->nullable();
             $table->foreignUuid('form_id')->constrained()->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

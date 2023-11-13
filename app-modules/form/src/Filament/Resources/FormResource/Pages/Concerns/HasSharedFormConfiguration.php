@@ -6,6 +6,7 @@ use App\TiptapBlocks\BatmanBlock;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Get;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Assist\Form\Models\Form;
@@ -67,7 +68,8 @@ trait HasSharedFormConfiguration
                 ->schema([
                     $this->fieldBuilder(),
                 ])
-                ->hidden(fn (Get $get) => $get('is_wizard')),
+                ->hidden(fn (Get $get) => $get('is_wizard'))
+                ->disabled(fn (?Form $record) => $record?->submissions()->exists()),
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
@@ -82,6 +84,7 @@ trait HasSharedFormConfiguration
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                 ->visible(fn (Get $get) => $get('is_wizard'))
+                ->disabled(fn (?Form $record) => $record?->submissions()->exists())
                 ->relationship()
                 ->columnSpanFull(),
             Section::make('Appearance')
@@ -102,7 +105,97 @@ trait HasSharedFormConfiguration
         return TiptapEditor::make('content')
             ->output(TiptapOutput::Json)
             ->blocks(FormFieldBlockRegistry::get())
+            ->floatingMenuTools(['blocks'])
+            ->saveRelationshipsUsing(function (TiptapEditor $component, Form | FormStep $record) {
+                $form = $record instanceof Form ? $record : $record->form;
+                $formStep = $record instanceof FormStep ? $record : null;
+
+                FormField::query()
+                    ->whereBelongsTo($form)
+                    ->when($formStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($formStep, 'step'))
+                    ->delete();
+
+                $content = $component->getJSON(decoded: true);
+                $content['content'] = $this->saveFieldsFromComponents(
+                    $form,
+                    $content['content'] ?? [],
+                    $formStep,
+                );
+
+                $record->content = $content;
+                $record->save();
+            })
+            ->dehydrated(false)
             ->columnSpanFull()
             ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+    }
+
+    public function saveFieldsFromComponents(Form $form, array $components, ?FormStep $formStep): array
+    {
+        foreach ($components as $componentKey => $component) {
+            if (array_key_exists('content', $component)) {
+                $components[$componentKey]['content'] = $this->saveFieldsFromComponents($form, $component['content'], $formStep);
+
+                continue;
+            }
+
+            if ($component['type'] !== 'tiptapBlock') {
+                continue;
+            }
+
+            $componentAttributes = $component['attrs'] ?? [];
+
+            if (array_key_exists('id', $componentAttributes)) {
+                $id = $componentAttributes['id'] ?? null;
+                unset($componentAttributes['id']);
+            }
+
+            if (array_key_exists('label', $componentAttributes['data'])) {
+                $label = $componentAttributes['data']['label'] ?? null;
+                unset($componentAttributes['data']['label']);
+            }
+
+            if (array_key_exists('isRequired', $componentAttributes['data'])) {
+                $isRequired = $componentAttributes['data']['isRequired'] ?? null;
+                unset($componentAttributes['data']['isRequired']);
+            }
+
+            $field = filled($id ?? null) ?
+                $form->fields()->find($id) :
+                (new FormField());
+            $field->form()->associate($form);
+            $field->step()->associate($formStep);
+            $field->label = $label ?? $componentAttributes['type'];
+            $field->is_required = $isRequired ?? false;
+            $field->type = $componentAttributes['type'];
+            $field->config = $componentAttributes['data'];
+            $field->save();
+
+            $components[$componentKey]['attrs']['id'] = $field->id;
+        }
+
+        return $components;
+    }
+
+    protected function afterCreate(): void
+    {
+        $this->clearFormContentForWizard();
+    }
+
+    protected function afterSave(): void
+    {
+        $this->clearFormContentForWizard();
+    }
+
+    protected function clearFormContentForWizard(): void
+    {
+        if ($this->record->is_wizard) {
+            $this->record->content = null;
+            $this->record->save();
+
+            return;
+        }
+
+        $this->record->steps()->delete();
     }
 }

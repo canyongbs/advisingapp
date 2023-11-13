@@ -1,4 +1,4 @@
-<x-form::blocks.previews.field-wrapper :$label :$required>
+<x-form::blocks.previews.field-wrapper :$label :$isRequired>
     <div class="grid gap-y-2">
         @foreach ($options as $option)
             <div class="flex items-center gap-2">

@@ -27,7 +27,7 @@ class DateFormFieldBlock extends FormFieldBlock
 
     public static function getInfolistEntry(FormField $field): Entry
     {
-        return TextEntry::make($field->key)
+        return TextEntry::make($field->id)
             ->label($field->label)
             ->date();
     }
@@ -37,8 +37,8 @@ class DateFormFieldBlock extends FormFieldBlock
         return [
             '$formkit' => 'date',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 

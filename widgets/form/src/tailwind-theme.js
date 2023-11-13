@@ -15,7 +15,7 @@ export default {
     loaderIcon: 'inline-flex items-center w-4 text-gray-600 animate-spin',
     message: 'text-red-500 mb-1 text-xs',
     messages: 'list-none p-0 mt-1 mb-0',
-    outer: 'mb-4 formkit-disabled:opacity-50 font-sans',
+    outer: 'not-prose mb-4 formkit-disabled:opacity-50 font-sans',
     prefixIcon:
       'w-10 flex self-stretch grow-0 shrink-0 rounded-tl rounded-bl border-r border-gray-400 bg-white bg-gradient-to-b from-transparent to-gray-200 [&>svg]:w-full [&>svg]:max-w-[1em] [&>svg]:max-h-[1em] [&>svg]:m-auto',
     suffixIcon:

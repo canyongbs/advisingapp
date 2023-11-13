@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Assist\Form\Actions\GenerateFormKitSchema;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Assist\Form\Actions\GenerateFormValidation;
 
@@ -45,9 +46,14 @@ class FormWidgetController extends Controller
             );
         }
 
-        $form->submissions()->create([
-            'content' => $request->all(),
-        ]);
+        $submission = $form->submissions()->create();
+
+        foreach ($validator->validated() as $fieldId => $response) {
+            $submission->fields()->attach(
+                $fieldId,
+                ['id' => Str::orderedUuid(), 'response' => $response],
+            );
+        }
 
         return response()->json(
             [

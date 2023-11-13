@@ -14,8 +14,6 @@ class FormSubmissionFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'content' => [fake()->word() => fake()->words(rand(1, 10), true)],
-        ];
+        return [];
     }
 }

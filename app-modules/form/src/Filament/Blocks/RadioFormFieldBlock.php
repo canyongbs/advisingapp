@@ -34,7 +34,7 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public static function getInfolistEntry(FormField $field): Entry
     {
-        return TextEntry::make($field->key)
+        return TextEntry::make($field->id)
             ->label($field->label)
             ->formatStateUsing(function ($state) use ($field) {
                 return $field->config['options'][$state] ?? $state;
@@ -46,8 +46,8 @@ class RadioFormFieldBlock extends FormFieldBlock
         return [
             '$formkit' => 'radio',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
             'options' => $field->config['options'],
         ];
     }

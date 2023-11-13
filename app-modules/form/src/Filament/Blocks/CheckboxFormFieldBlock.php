@@ -29,7 +29,7 @@ class CheckboxFormFieldBlock extends FormFieldBlock
 
     public static function getInfolistEntry(FormField $field): Entry
     {
-        return IconEntry::make($field->key)
+        return IconEntry::make($field->id)
             ->label($field->label)
             ->boolean();
     }
@@ -39,8 +39,8 @@ class CheckboxFormFieldBlock extends FormFieldBlock
         return [
             '$formkit' => 'checkbox',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 

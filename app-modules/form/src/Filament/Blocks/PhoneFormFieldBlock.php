@@ -27,7 +27,7 @@ class PhoneFormFieldBlock extends FormFieldBlock
 
     public static function getInfolistEntry(FormField $field): Entry
     {
-        return TextEntry::make($field->key)
+        return TextEntry::make($field->id)
             ->label($field->label);
     }
 
@@ -36,8 +36,8 @@ class PhoneFormFieldBlock extends FormFieldBlock
         return [
             '$formkit' => 'tel',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 
