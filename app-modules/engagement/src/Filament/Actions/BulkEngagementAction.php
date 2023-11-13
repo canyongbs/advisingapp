@@ -2,9 +2,8 @@
 
 namespace Assist\Engagement\Filament\Actions;
 
-use Livewire\Component;
-use Filament\Actions\Action;
 use Illuminate\Support\Collection;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\BulkAction;
@@ -13,6 +12,7 @@ use Filament\Forms\Components\Wizard\Step;
 use Assist\Engagement\Actions\CreateEngagementBatch;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 
 class BulkEngagementAction
 {
@@ -88,28 +88,7 @@ class BulkEngagementAction
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            // FIXME This is currently not working exactly as expected. Dan is taking a look and will report back
-            // ->modalCancelAction(
-            //     fn ($action) => Action::make('cancel')
-            //         ->requiresConfirmation()
-            //         ->modalDescription(fn () => 'The message has not been sent, are you sure you wish to return to the list view?')
-            //         ->cancelParentActions()
-            //         ->close()
-            // )
-            ->modalCancelAction(
-                fn () => Action::make('abc')
-                    ->action(fn () => ray('abc'))
-                    ->color('gray'),
-            )
-            // ->extraModalFooterActions([
-            //     Action::make('abc')
-            //         ->action(function (Action $action, Component $livewire) {
-            //             ray($action, $livewire);
-            //         })
-            //         ->color('gray'),
-            //     Action::make('edit')
-            //         ->url(fn (): string => filament()->getHomeUrl()),
-            // ])
+            ->modalCancelAction(fn (ListProspects $livewire) => $livewire->cancelEngageAction())
             ->deselectRecordsAfterCompletion();
     }
 }
