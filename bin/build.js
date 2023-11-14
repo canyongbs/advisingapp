@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild';
+import { polyfillNode } from 'esbuild-plugin-polyfill-node';
 
 const isDev = process.argv.includes('--dev');
 
@@ -40,7 +41,14 @@ const defaultOptions = {
                 }
             })
         }
-    }],
+    },
+        polyfillNode({
+            polyfills: {
+                crypto: true,
+                fs: true,
+            }
+        })
+    ],
 }
 
 compile({

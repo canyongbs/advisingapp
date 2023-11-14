@@ -149,6 +149,7 @@ namespace App\Models{
  * @property bool $is_bio_visible_on_profile
  * @property string|null $avatar_url
  * @property bool $are_teams_visible_on_profile
+ * @property bool $is_division_visible_on_profile
  * @property string $timezone
  * @property string|null $pronouns_id
  * @property bool $are_pronouns_visible_on_profile
@@ -173,6 +174,8 @@ namespace App\Models{
  * @property-read int|null $caseloads_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\ConsentAgreement> $consentAgreements
  * @property-read int|null $consent_agreements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\InAppCommunication\Models\TwilioConversation> $conversations
+ * @property-read int|null $conversations_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementBatch> $engagementBatches
  * @property-read int|null $engagement_batches_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
@@ -227,6 +230,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmplid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsBioVisibleOnProfile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereIsDivisionVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
@@ -932,6 +936,8 @@ namespace Assist\Division\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \App\Models\User|null $lastUpdatedBy
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Team\Models\Team> $teams
+ * @property-read int|null $teams_count
  * @method static \Assist\Division\Database\Factories\DivisionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Division newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Division newQuery()
@@ -1171,10 +1177,12 @@ namespace Assist\Form\Models{
  * @property string|null $description
  * @property bool $embed_enabled
  * @property array|null $allowed_domains
+ * @property string|null $primary_color
+ * @property \Assist\Form\Enums\Rounding|null $rounding
+ * @property bool $is_wizard
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property bool $is_wizard
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormStep> $steps
@@ -1193,6 +1201,8 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereRounding($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -1211,9 +1221,9 @@ namespace Assist\Form\Models{
  * @property bool $required
  * @property array $config
  * @property string $form_id
+ * @property string|null $step_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $step_id
  * @property-read \Assist\Form\Models\Form $form
  * @property-read \Assist\Form\Models\FormStep|null $step
  * @method static \Assist\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
@@ -1287,6 +1297,22 @@ namespace Assist\Form\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperFormSubmission {}
+}
+
+namespace Assist\InAppCommunication\Models{
+/**
+ * Assist\InAppCommunication\Models\TwilioConversation
+ *
+ * @property \Assist\InAppCommunication\Enums\ConversationType $type
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $participants
+ * @property-read int|null $participants_count
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperTwilioConversation {}
 }
 
 namespace Assist\Interaction\Models{
@@ -1676,15 +1702,15 @@ namespace Assist\MeetingCenter\Models{
  * Assist\MeetingCenter\Models\Calendar
  *
  * @property string $id
- * @property string $type
- * @property mixed $provider_id
+ * @property string|null $name
+ * @property \Assist\MeetingCenter\Enums\CalendarProvider $provider_type
+ * @property mixed|null $provider_id
  * @property mixed $oauth_token
  * @property mixed $oauth_refresh_token
  * @property string $user_id
  * @property string $oauth_token_expires_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Assist\MeetingCenter\Enums\CalendarProvider $provider_type
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\MeetingCenter\Models\CalendarEvent> $events
  * @property-read int|null $events_count
  * @property-read \App\Models\User $user
@@ -1694,11 +1720,12 @@ namespace Assist\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar query()
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthRefreshToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthTokenExpiresAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereProviderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereProviderType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereUserId($value)
  * @mixin \Eloquent
@@ -2184,9 +2211,11 @@ namespace Assist\Team\Models{
  * @property string $id
  * @property string $name
  * @property string|null $description
+ * @property string|null $division_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \Assist\Division\Models\Division|null $division
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \Assist\Team\Database\Factories\TeamFactory factory($count = null, $state = [])
@@ -2196,6 +2225,7 @@ namespace Assist\Team\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Team whereDivisionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Team whereUpdatedAt($value)

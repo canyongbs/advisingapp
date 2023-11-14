@@ -12,37 +12,31 @@ use Illuminate\Support\Facades\Vite;
 >
     <div
         class="flex h-full flex-col"
-        x-data="userToUserChat"
     >
         <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
             <div class="col-span-1">
                 <div class="flex flex-col gap-y-2">
-                    <x-filament::button
-                            icon="heroicon-m-plus"
-                            wire:click="newChat"
-                    >
-                        {{ __('New Chat') }}
-                    </x-filament::button>
+                    {{ $this->newChatAction }}
 
                     <ul
                         class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                        @foreach ($this->chats as $chatItem)
+                        @foreach ($this->conversations as $conversation)
                             <li @class([
                                         'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                        'bg-gray-100 dark:bg-white/5' => $chat->id === $chatItem->id,
+                                        'bg-gray-100 dark:bg-white/5' => $selectedConversation === $conversation['sid'],
                                     ])>
                                 <a
                                     @class([
                                         'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm',
                                     ])
-                                    wire:click="selectChat('{{ $chatItem->id }}')"
+                                    wire:click="selectConversation('{{ $conversation['sid'] }}')"
                                 >
                                     <span @class([
                                         'fi-sidebar-item-label flex-1 truncate',
-                                        'text-gray-700 dark:text-gray-200' => !$chat->id === $chatItem->id,
-                                        'text-primary-600 dark:text-primary-400' => $chat->id === $chatItem->id,
+                                        'text-gray-700 dark:text-gray-200' => !$selectedConversation === $conversation['sid'],
+                                        'text-primary-600 dark:text-primary-400' => $selectedConversation === $conversation['sid'],
                                     ])>
-                                        {{ $chatItem->name }}
+                                        {{ $conversation['sid'] }}
                                     </span>
                                 </a>
 
@@ -57,7 +51,7 @@ use Illuminate\Support\Facades\Vite;
                 </div>
             </div>
 
-            <div class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
+            <div x-data="userToUserChat(`{{ $selectedConversation }}`)" wire:key="conversation-{{ $selectedConversation }}" class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
                 <div
                     class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
                     <div class="divide-y dark:divide-none">
@@ -76,7 +70,7 @@ use Illuminate\Support\Facades\Vite;
                                             <div class="flex max-w-full flex-grow flex-col gap-3">
                                                 <div
                                                         class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                    <div x-text="message.text"></div>
+                                                    <div x-text="message.body"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -87,7 +81,7 @@ use Illuminate\Support\Facades\Vite;
                     </div>
                 </div>
 
-                <form>
+                <form x-bind="submit">
                     <div
                         class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                         <div class="bg-white dark:bg-gray-800">
@@ -96,20 +90,18 @@ use Illuminate\Support\Facades\Vite;
                                     for="message_input"
                             >Type here</label>
                             <textarea
-                                    class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-                                    id="message_input"
-                                    rows="4"
-                                    placeholder="Type here..."
-                                    required
-                                    >
-                                    </textarea>
+                                class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                id="message_input"
+                                x-model="message"
+                                rows="4"
+                                placeholder="Type here..."
+                                required
+                            >
+                            </textarea>
                         </div>
                         <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
                             <div class="flex items-center gap-3">
-                                <x-filament::button
-                                        form="sendMessage,ask"
-                                        type="submit"
-                                >
+                                <x-filament::button type="submit">
                                     Post
                                 </x-filament::button>
 

@@ -9,6 +9,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\InAppCommunication\InAppCommunicationPlugin;
+use Assist\InAppCommunication\Models\TwilioConversation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 
 class InAppCommunicationServiceProvider extends ServiceProvider
@@ -20,7 +21,11 @@ class InAppCommunicationServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([]);
+        Relation::morphMap(
+            [
+                'twilio_conversation' => TwilioConversation::class,
+            ]
+        );
 
         $this->registerRolesAndPermissions();
         $this->registerAssets();
