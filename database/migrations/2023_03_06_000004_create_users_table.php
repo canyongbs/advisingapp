@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->boolean('is_external')->default(false);
             $table->text('bio')->nullable();
             $table->boolean('is_bio_visible_on_profile')->default(false);
+            $table->string('avatar_url')->nullable();
             $table->boolean('are_teams_visible_on_profile')->default(false);
             $table->boolean('is_division_visible_on_profile')->default(false);
             $table->string('timezone')->default('UTC');

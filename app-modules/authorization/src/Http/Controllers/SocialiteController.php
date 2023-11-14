@@ -55,12 +55,11 @@ class SocialiteController extends Controller
                 ->get('https://graph.microsoft.com/v1.0/me/photo/$value');
 
             $user->addMediaFromString($request->body())->usingFileName(Str::uuid() . '.jpg')->toMediaCollection('avatar');
-        } else {
-            $user->addMediaFromUrl($socialiteUser->getAvatar())->toMediaCollection('avatar');
         }
 
         $user->update([
             'name' => $socialiteUser->getName(),
+            'avatar_url' => $socialiteUser->getAvatar(),
         ]);
 
         Auth::login($user);
