@@ -12,6 +12,7 @@ use Livewire\Attributes\Renderless;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Actions\Contracts\HasActions;
+use Illuminate\Database\Eloquent\Collection;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Assist\InAppCommunication\Enums\ConversationType;
@@ -28,7 +29,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public string $chatId = '';
 
-    public array $conversations = [];
+    public ?Collection $conversations = null;
 
     public ?string $selectedConversation = null;
 
@@ -38,7 +39,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public function mount()
     {
-        $this->conversations = auth()->user()->conversations->toArray();
+        $this->conversations = auth()->user()->conversations;
     }
 
     public function newChatAction()
@@ -72,8 +73,6 @@ class UserChat extends Page implements HasForms, HasActions
 
     public function selectConversation(string $conversationSid): void
     {
-        ray('hi');
-        //$this->dispatch('conversationchanged');
         $this->selectedConversation = $conversationSid;
     }
 
