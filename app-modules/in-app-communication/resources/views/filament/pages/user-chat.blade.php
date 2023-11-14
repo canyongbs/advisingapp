@@ -68,7 +68,14 @@ use Illuminate\Support\Facades\Vite;
                                             class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
                                         <div class="relative flex flex-shrink-0 flex-col items-end">
                                             <div>
-                                                <x-filament-panels::avatar.user :user="auth()->user()" />
+{{--                                                <x-filament-panels::avatar.user :user="auth()->user()" />--}}
+{{--                                                <p x-text="message.author"></p>--}}
+                                                <x-filament::avatar
+                                                    class="rounded-full"
+                                                    alt="AI Assistant avatar"
+                                                    x-bind:src="message.avatar"
+                                                />
+
                                             </div>
                                         </div>
                                         <div
@@ -76,7 +83,7 @@ use Illuminate\Support\Facades\Vite;
                                             <div class="flex max-w-full flex-grow flex-col gap-3">
                                                 <div
                                                         class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                    <div x-text="message.body"></div>
+                                                    <div x-text="message.message.body"></div>
                                                 </div>
                                             </div>
                                         </div>

@@ -95,4 +95,9 @@ class UserChat extends Page implements HasForms, HasActions
 
         return $token->toJWT();
     }
+
+    public function getUserAvatarUrl(string $userId): string
+    {
+        return filament()->getUserAvatarUrl(User::findOrFail($userId));
+    }
 }

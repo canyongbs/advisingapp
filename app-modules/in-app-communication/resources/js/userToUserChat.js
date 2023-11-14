@@ -39,11 +39,21 @@ document.addEventListener('alpine:init', () => {
                 this.conversation = await conversationsClient.getConversationBySid(selectedConversation);
 
                 this.conversation.getMessages().then((messages) => {
-                    this.messages = messages.items;
+                    messages.items.forEach(async (message) => {
+                        this.messages.push({
+                            // TODO: Store these so we don't have to get them per User
+                            avatar: await this.$wire.getUserAvatarUrl(message.author),
+                            message: message
+                        });
+                    });
                 });
 
-                this.conversation.on('messageAdded', (message) => {
-                    this.messages.push(message);
+                this.conversation.on('messageAdded', async (message) => {
+                    this.messages.push({
+                        // TODO: Store these so we don't have to get them per User
+                        avatar: await this.$wire.getUserAvatarUrl(message.author),
+                        message: message
+                    });
                 });
             }
             // this.$el.addEventListener('conversationchanged', () => console.log('event fired!'))
