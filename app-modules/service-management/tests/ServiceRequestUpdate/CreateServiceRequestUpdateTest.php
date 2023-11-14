@@ -61,7 +61,7 @@ test('CreateServiceRequestUpdate requires valid data', function ($data, $errors)
         'service_request not existing service_request id' => [CreateServiceRequestUpdateRequestFactory::new()->state(['service_request_id' => fake()->uuid()]), ['service_request_id' => 'exists']],
         'update missing' => [CreateServiceRequestUpdateRequestFactory::new()->without('update'), ['update' => 'required']],
         'update is not a string' => [CreateServiceRequestUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
-        'direction missing' => [CreateServiceRequestUpdateRequestFactory::new()->without('direction'), ['direction' => 'required']],
+        'direction missing' => [CreateServiceRequestUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
         'direction not a valid enum' => [CreateServiceRequestUpdateRequestFactory::new()->state(['direction' => 'invalid']), ['direction' => Enum::class]],
         'internal not a boolean' => [CreateServiceRequestUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
     ]
