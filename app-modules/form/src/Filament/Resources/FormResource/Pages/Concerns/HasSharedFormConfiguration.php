@@ -2,12 +2,7 @@
 
 namespace Assist\Form\Filament\Resources\FormResource\Pages\Concerns;
 
-use App\TiptapBlocks\BatmanBlock;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Get;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Assist\Form\Models\Form;
 use Assist\Form\Enums\Rounding;
@@ -18,13 +13,15 @@ use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Section;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use FilamentTiptapEditor\Enums\TiptapOutput;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait HasSharedFormConfiguration
 {
@@ -86,6 +83,7 @@ trait HasSharedFormConfiguration
                 ->visible(fn (Get $get) => $get('is_wizard'))
                 ->disabled(fn (?Form $record) => $record?->submissions()->exists())
                 ->relationship()
+                ->reorderable()
                 ->columnSpanFull(),
             Section::make('Appearance')
                 ->schema([
@@ -160,10 +158,7 @@ trait HasSharedFormConfiguration
                 unset($componentAttributes['data']['isRequired']);
             }
 
-            $field = filled($id ?? null) ?
-                $form->fields()->find($id) :
-                (new FormField());
-            $field->form()->associate($form);
+            $field = $form->fields()->findOrNew($id ?? null);
             $field->step()->associate($formStep);
             $field->label = $label ?? $componentAttributes['type'];
             $field->is_required = $isRequired ?? false;

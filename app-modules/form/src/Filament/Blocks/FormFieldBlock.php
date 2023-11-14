@@ -3,17 +3,15 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Hidden;
-use Filament\Infolists\Components\Entry;
-use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\TextInput as FilamentTextInput;
 use FilamentTiptapEditor\TiptapBlock;
-use Illuminate\Support\Str;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 abstract class FormFieldBlock extends TiptapBlock
 {
     public string $preview = 'form::blocks.previews.default';
+
+    public string $rendered = 'form::blocks.submissions.default';
 
     public function getFormSchema(): array
     {
@@ -34,7 +32,7 @@ abstract class FormFieldBlock extends TiptapBlock
             ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
-            ->ucfirst();;
+            ->ucfirst();
     }
 
     public function getIdentifier(): string
@@ -45,8 +43,6 @@ abstract class FormFieldBlock extends TiptapBlock
     abstract public function fields(): array;
 
     abstract public static function type(): string;
-
-    abstract public static function getInfolistEntry(FormField $field): Entry;
 
     abstract public static function getFormKitSchema(FormField $field): array;
 

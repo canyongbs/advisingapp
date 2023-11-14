@@ -13,6 +13,7 @@ return new class () extends Migration {
             $table->text('label');
             $table->json('content')->nullable();
             $table->foreignUuid('form_id')->constrained()->cascadeOnDelete();
+            $table->integer('sort');
 
             $table->timestamps();
         });

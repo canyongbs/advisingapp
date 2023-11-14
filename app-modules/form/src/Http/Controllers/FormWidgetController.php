@@ -2,6 +2,7 @@
 
 namespace Assist\Form\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Assist\Form\Actions\GenerateFormKitSchema;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Assist\Form\Actions\GenerateFormValidation;
 
@@ -48,11 +48,24 @@ class FormWidgetController extends Controller
 
         $submission = $form->submissions()->create();
 
-        foreach ($validator->validated() as $fieldId => $response) {
-            $submission->fields()->attach(
-                $fieldId,
-                ['id' => Str::orderedUuid(), 'response' => $response],
-            );
+        $data = $validator->validated();
+
+        if ($form->is_wizard) {
+            foreach ($form->steps as $step) {
+                foreach ($data[$step->label] as $fieldId => $response) {
+                    $submission->fields()->attach(
+                        $fieldId,
+                        ['id' => Str::orderedUuid(), 'response' => $response],
+                    );
+                }
+            }
+        } else {
+            foreach ($data as $fieldId => $response) {
+                $submission->fields()->attach(
+                    $fieldId,
+                    ['id' => Str::orderedUuid(), 'response' => $response],
+                );
+            }
         }
 
         return response()->json(

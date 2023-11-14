@@ -43,7 +43,7 @@ class GenerateFormValidation
         $rules = collect();
 
         foreach ($form->steps as $step) {
-            $rules->merge(
+            $rules = $rules->merge(
                 Arr::prependKeysWith(
                     $this->fields($step->fields),
                     prependWith: "{$step->label}.",

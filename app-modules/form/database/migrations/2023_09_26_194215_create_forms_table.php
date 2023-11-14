@@ -10,7 +10,7 @@ return new class () extends Migration {
         Schema::create('forms', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->string('name')->unique();
+            $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('embed_enabled')->default(false);
             $table->json('allowed_domains')->nullable();

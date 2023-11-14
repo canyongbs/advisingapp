@@ -1,3 +1,6 @@
-<x-form::blocks.previews.field-wrapper :$label :$isRequired>
+<x-form::blocks.field-wrapper
+    :$label
+    :$isRequired
+>
     <x-form::blocks.previews.field />
-</x-form::blocks.previews.field-wrapper>
+</x-form::blocks.field-wrapper>

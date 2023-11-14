@@ -1,3 +1,6 @@
-<x-form::blocks.previews.field-wrapper :$label :$isRequired>
-    <div class="rounded border h-16 w-full border-gray-500"></div>
-</x-form::blocks.previews.field-wrapper>
+<x-form::blocks.field-wrapper
+    :$label
+    :$isRequired
+>
+    <div class="h-16 w-full rounded border border-gray-500"></div>
+</x-form::blocks.field-wrapper>

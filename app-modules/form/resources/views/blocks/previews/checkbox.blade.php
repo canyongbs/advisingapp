@@ -1,5 +1,8 @@
 <div class="flex items-center gap-2">
-    <div class="rounded w-3 h-3 border border-gray-500"></div>
+    <div class="h-3 w-3 rounded border border-gray-500"></div>
 
-    <x-form::blocks.previews.field-wrapper :$label :$isRequired />
+    <x-form::blocks.field-wrapper
+        :$label
+        :$isRequired
+    />
 </div>

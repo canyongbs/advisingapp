@@ -4,7 +4,6 @@ namespace Assist\Form\Actions;
 
 use Assist\Form\Models\Form;
 use Assist\Form\Models\FormStep;
-use Assist\Form\Models\FormField;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
@@ -57,11 +56,11 @@ class GenerateFormKitSchema
                 'bulletList' => ['$el' => 'ul', 'children' => $this->content($component['content'] ?? [], $fields)],
                 'grid' => $this->grid($component, $fields),
                 'gridColumn' => ['$el' => 'div', 'children' => $this->content($component['content'], $fields), 'attrs' => ['class' => ['grid-col' => true]]],
-                'heading' => ['$el' => "h{$component['attrs']['level']}", 'children' => $this->content($component['content'], $fields),],
+                'heading' => ['$el' => "h{$component['attrs']['level']}", 'children' => $this->content($component['content'], $fields)],
                 'horizontalRule' => ['$el' => 'hr'],
                 'listItem' => ['$el' => 'li', 'children' => $this->content($component['content'] ?? [], $fields)],
                 'orderedList' => ['$el' => 'ol', 'children' => $this->content($component['content'] ?? [], $fields)],
-                'paragraph' => ['$el' => 'p', 'children' => $this->content($component['content'], $fields)],
+                'paragraph' => ['$el' => 'p', 'children' => $this->content($component['content'] ?? [], $fields)],
                 'small' => ['$el' => 'small', 'children' => $this->content($component['content'] ?? [], $fields)],
                 'text' => $this->text($component),
                 'tiptapBlock' => $blocks[$component['attrs']['type']]::getFormKitSchema($fields[$component['attrs']['id']]),

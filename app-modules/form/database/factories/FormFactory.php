@@ -2,10 +2,10 @@
 
 namespace Assist\Form\Database\Factories;
 
+use Illuminate\Support\Str;
 use Assist\Form\Models\Form;
 use Assist\Form\Models\FormField;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Form>
