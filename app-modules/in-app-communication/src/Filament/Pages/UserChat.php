@@ -28,7 +28,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public string $chatId = '';
 
-    public ?Collection $conversations = null;
+    public Collection $conversations;
 
     public ?string $selectedConversation = null;
 
@@ -64,7 +64,8 @@ class UserChat extends Page implements HasForms, HasActions
 
                 $conversation = app(CreateTwilioConversation::class)(type: ConversationType::UserToUser, users: $users);
 
-                $this->selectedConversation = $conversation;
+                $this->conversations->push($conversation);
+                $this->selectedConversation = $conversation->sid;
             });
     }
 
