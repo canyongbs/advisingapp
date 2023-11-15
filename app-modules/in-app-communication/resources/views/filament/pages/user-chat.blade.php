@@ -73,7 +73,7 @@ use Illuminate\Support\Facades\Vite;
                     </template>
                     <div x-show="!loading && !error" x-transition.delay.850ms class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
                         <div
-                                class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+                            class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
                         >
                             <div class="divide-y dark:divide-none">
                                 <template x-for="message in messages">
@@ -105,6 +105,12 @@ use Illuminate\Support\Facades\Vite;
                                     </div>
                                 </template>
                             </div>
+                            <template x-if="messagePaginator?.hasPrevPage">
+                                <div x-on:click="loadPreviousMessages" class="flex justify-center text-center mb-auto p-3 text-primary-500 cursor-pointer bg-white dark:bg-gray-700">
+                                    <p>Load previous messages...</p>
+                                    <x-filament::loading-indicator x-show="loadingPreviousMessages" class="ml-2 h-4 w-4 text-primary-500" />
+                                </div>
+                            </template>
                         </div>
 
                         <form x-bind="submit">

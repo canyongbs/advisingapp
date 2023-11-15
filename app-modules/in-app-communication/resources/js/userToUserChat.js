@@ -12,6 +12,8 @@ document.addEventListener('alpine:init', () => {
         error: false,
         errorMessage: '',
         conversation: null,
+        messagePaginator: null,
+        loadingPreviousMessages: false,
         messages: [],
         message: '',
         submit: {
@@ -102,6 +104,9 @@ document.addEventListener('alpine:init', () => {
             this.loadingMessage = 'Loading messages…';
 
             this.conversation.getMessages().then((messages) => {
+                this.messagePaginator = messages;
+                console.log(this.messagePaginator);
+
                 messages.items.forEach(async (message) => {
                     this.messages.push({
                         avatar: this.getAvatarUrl(message.author),
@@ -128,6 +133,25 @@ document.addEventListener('alpine:init', () => {
 
                 this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
             });
+        },
+        async loadPreviousMessages()
+        {
+            if (this.messagePaginator?.hasPrevPage) {
+                this.loadingPreviousMessages = true;
+
+                this.messagePaginator.prevPage().then((messages) => {
+                    this.messagePaginator = messages;
+
+                    messages.items.forEach(async (message) => {
+                        this.messages.unshift({
+                            avatar: this.getAvatarUrl(message.author),
+                            message: message
+                        });
+                    });
+                }).catch((error) => this.handleError(error));
+
+                this.loadingPreviousMessages = false;
+            }
         },
         async errorRetry() {
             this.error = false;
