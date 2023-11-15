@@ -77,7 +77,9 @@ document.addEventListener('alpine:init', () => {
             }
         },
         handleError(error) {
-            console.error(error);
+            console.error('Chat client error occurred, sending to error handler…');
+
+            this.$wire.handleError(JSON.stringify(error, Object.getOwnPropertyNames(error))).then(() => console.info('Chat client error sent to error handler.')).catch((error) => console.error('Error handler failed to handle error: ', error));
         }
     }));
 });

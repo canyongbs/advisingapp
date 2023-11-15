@@ -2,6 +2,7 @@
 
 namespace Assist\InAppCommunication\Filament\Pages;
 
+use Exception;
 use App\Models\User;
 use Twilio\Rest\Client;
 use Filament\Pages\Page;
@@ -11,6 +12,7 @@ use Twilio\Jwt\Grants\ChatGrant;
 use Livewire\Attributes\Renderless;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Actions\Contracts\HasActions;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -94,8 +96,24 @@ class UserChat extends Page implements HasForms, HasActions
         return $token->toJWT();
     }
 
+    #[Renderless]
     public function getUserAvatarUrl(string $userId): string
     {
         return filament()->getUserAvatarUrl(User::findOrFail($userId));
+    }
+
+    #[Renderless]
+    public function handleError(mixed $error): void
+    {
+        if (! $error instanceof Exception) {
+            $error = new Exception(json_encode($error));
+        }
+
+        report($error);
+
+        Notification::make()
+            ->title('Something went wrong. If this issue persists, please contact support.')
+            ->danger()
+            ->send();
     }
 }
