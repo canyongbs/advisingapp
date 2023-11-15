@@ -103,6 +103,7 @@ trait HasSharedFormConfiguration
         return TiptapEditor::make('content')
             ->output(TiptapOutput::Json)
             ->blocks(FormFieldBlockRegistry::get())
+            ->tools(['heading', 'hr', 'bullet-list', 'ordered-list', '|', 'bold', 'italic', 'small', '|', 'link', 'grid', 'blocks'])
             ->floatingMenuTools(['blocks'])
             ->saveRelationshipsUsing(function (TiptapEditor $component, Form | FormStep $record) {
                 $form = $record instanceof Form ? $record : $record->form;
