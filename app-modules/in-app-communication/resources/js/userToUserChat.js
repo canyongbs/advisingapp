@@ -27,21 +27,33 @@ document.addEventListener('alpine:init', () => {
             return avatarCache[userId];
 
         },
-        async init() {
-            console.log(selectedConversation);
-            // TODO: Break out into a separate function
-            if (conversationsClient === null) {
-                conversationsClient = new Client(await this.$wire.generateToken());
+        async initializeClient() {
+            conversationsClient = new Client(await this.$wire.generateToken());
 
-                conversationsClient.on('connectionStateChanged', (state) => {
-                    if (state === 'connecting') console.log('Connecting to Twilio…');
-                    if (state === 'connected') {
-                        console.log('You are connected.');
-                    }
-                    if (state === 'disconnecting') console.log('Disconnecting from Twilio…');
-                    if (state === 'disconnected') console.log('Disconnected from Twilio.');
-                    if (state === 'denied') console.log('Failed to connect.');
-                });
+            conversationsClient.on('connectionStateChanged', (state) => {
+                // TODO: Add a spinner or something to indicate that the client is connecting.
+                if (state === 'connecting') console.log('Connecting to Twilio…');
+                if (state === 'connected') {
+                    console.log('You are connected.');
+                }
+                if (state === 'disconnecting') console.log('Disconnecting from Twilio…');
+                if (state === 'disconnected') console.log('Disconnected from Twilio.');
+                if (state === 'denied') console.log('Failed to connect.');
+            });
+
+            conversationsClient.on("tokenAboutToExpire", async () => {
+                conversationsClient.updateToken(await this.$wire.generateToken());
+            });
+
+            conversationsClient.on("tokenExpired", async () => {
+                conversationsClient.updateToken(await this.$wire.generateToken());
+            });
+
+            return conversationsClient;
+        },
+        async init() {
+            if (conversationsClient === null) {
+                conversationsClient = this.initializeClient();
             }
 
             if (selectedConversation) {
@@ -63,6 +75,7 @@ document.addEventListener('alpine:init', () => {
                     });
                 });
             }
+            // This way of setting up an event listener does not seem to work here.
             // this.$el.addEventListener('conversationchanged', () => console.log('event fired!'))
         },
         destroy() {
