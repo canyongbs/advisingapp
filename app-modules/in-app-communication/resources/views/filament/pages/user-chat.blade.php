@@ -43,12 +43,10 @@ use Illuminate\Support\Facades\Vite;
                                         {{ $conversation->participants()->where('user_id', '!=', auth()->id())->first()->name }}
                                     </span>
                                 </a>
-
-                                {{--                                <div>--}}
-                                {{--                                    {{ ($this->moveChatAction)(['chat' => $chatItem->id]) }}--}}
-                                {{--                                    {{ ($this->editChatAction)(['chat' => $chatItem->id]) }}--}}
-                                {{--                                    {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}--}}
-                                {{--                                </div>--}}
+                                {{-- Will look into this later --}}
+{{--                                <div>--}}
+{{--                                    {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}--}}
+{{--                                </div>--}}
                             </li>
                         @endforeach
                     </ul>
