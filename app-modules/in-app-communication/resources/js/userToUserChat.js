@@ -65,6 +65,8 @@ document.addEventListener('alpine:init', () => {
                             message: message
                         });
                     });
+
+                    this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
                 })
                   .catch((error) => this.handleError(error));
 
@@ -73,6 +75,8 @@ document.addEventListener('alpine:init', () => {
                         avatar: this.getAvatarUrl(message.author),
                         message: message
                     });
+
+                    this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
                 });
             }
         },
