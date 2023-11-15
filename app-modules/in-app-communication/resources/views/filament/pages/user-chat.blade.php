@@ -85,9 +85,9 @@ use Illuminate\Support\Facades\Vite;
                                                 <div class="relative flex flex-shrink-0 flex-col items-end">
                                                     <div>
                                                         <x-filament::avatar
-                                                                class="rounded-full"
-                                                                alt="AI Assistant avatar"
-                                                                x-bind:src="message.avatar"
+                                                            class="rounded-full"
+                                                            alt="AI Assistant avatar"
+                                                            x-bind:src="message.avatar"
                                                         />
 
                                                     </div>

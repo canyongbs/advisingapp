@@ -90,22 +90,47 @@ document.addEventListener('alpine:init', () => {
             }
 
             if (selectedConversation) {
+                this.loadingMessage = 'Loading conversation…';
+
+                this.conversation = await conversationsClient.getConversationBySid(selectedConversation).catch((error) => {
+                    this.error = true;
+                    this.handleError(error);
+                });
+
                 await this.getMessages();
+
+                this.conversation.on('messageAdded', async (message) => {
+                    this.messages.push({
+                        avatar: this.getAvatarUrl(message.author),
+                        message: message
+                    });
+
+                    this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
+
+                    message.updateBody(Array.from({ length: 5 }, i => String.fromCharCode(Math.round(Math.ceil(Math.random() * 25) + 65))).join('')).catch((error) => this.handleError(error));
+                });
+
+                this.conversation.on('messageUpdated', async (data) => {
+                    const index = this.messages.findIndex((localMessage) => {
+                        return localMessage.message.sid === data.message.sid;
+                    });
+
+                    if (index !== -1) {
+                        this.messages[index] = {
+                            avatar: this.getAvatarUrl(data.message.author),
+                            message: data.message
+                        };
+                    }
+                });
+
+                this.loading = false;
             }
         },
         async getMessages() {
-            this.loadingMessage = 'Loading conversation…';
-
-            this.conversation = await conversationsClient.getConversationBySid(selectedConversation).catch((error) => {
-                this.error = true;
-                this.handleError(error);
-            });
-
             this.loadingMessage = 'Loading messages…';
 
             this.conversation.getMessages().then((messages) => {
                 this.messagePaginator = messages;
-                console.log(this.messagePaginator);
 
                 messages.items.forEach(async (message) => {
                     this.messages.push({
@@ -122,17 +147,6 @@ document.addEventListener('alpine:init', () => {
               });
 
             this.loadingMessage = 'Messages loaded...';
-
-            this.loading = false;
-
-            this.conversation.on('messageAdded', async (message) => {
-                this.messages.push({
-                    avatar: this.getAvatarUrl(message.author),
-                    message: message
-                });
-
-                this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
-            });
         },
         async loadPreviousMessages()
         {
@@ -160,6 +174,7 @@ document.addEventListener('alpine:init', () => {
 
             if (conversationsClient.connectionState === 'connected') {
                 await this.getMessages();
+                this.loading = false;
                 return;
             }
 
