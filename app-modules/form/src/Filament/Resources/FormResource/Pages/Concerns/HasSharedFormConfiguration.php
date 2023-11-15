@@ -32,6 +32,7 @@ trait HasSharedFormConfiguration
                 ->required()
                 ->string()
                 ->maxLength(255)
+                ->unique(ignoreRecord: true)
                 ->autocomplete(false)
                 ->columnSpanFull(),
             Textarea::make('description')
