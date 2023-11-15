@@ -95,7 +95,7 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'disable_floating_menus' => false,
+    'disable_floating_menus' => true,
     'disable_bubble_menus' => true,
     'floating_menu_tools' => ['media', 'grid', 'grid-builder', 'details', 'table', 'oembed', 'code-block'],
 ];
