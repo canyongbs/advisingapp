@@ -16,14 +16,12 @@ document.addEventListener('alpine:init', () => {
         loadingPreviousMessages: false,
         messages: [],
         message: '',
-        submit: {
-            ['@submit.prevent']() {
-                if (this.message.length === 0 || this.conversation === null) return;
+        submit: function() {
+            if (this.message.length === 0 || this.conversation === null) return;
 
-                this.conversation.sendMessage(this.message).catch((error) => this.handleError(error));
+            this.conversation.sendMessage(this.message).catch((error) => this.handleError(error));
 
-                this.message = '';
-            },
+            this.message = '';
         },
         getAvatarUrl: async function (userId) {
             if (avatarCache[userId]) return avatarCache[userId];
@@ -182,6 +180,15 @@ document.addEventListener('alpine:init', () => {
             console.error('Chat client error occurred, sending to error handler…');
 
             this.$wire.handleError(JSON.stringify(error, Object.getOwnPropertyNames(error))).then(() => console.info('Chat client error sent to error handler.')).catch((error) => console.error('Error handler failed to handle error: ', error));
+        },
+        typing(e)
+        {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                this.submit();
+            } else {
+                this.conversation?.typing();
+            }
         }
     }));
 });

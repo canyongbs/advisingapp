@@ -114,7 +114,7 @@ use Illuminate\Support\Facades\Vite;
                             </template>
                         </div>
 
-                        <form x-bind="submit">
+                        <form @submit.prevent="submit">
                             <div
                                     class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                                 <div class="bg-white dark:bg-gray-800">
@@ -123,12 +123,13 @@ use Illuminate\Support\Facades\Vite;
                                             for="message_input"
                                     >Type here</label>
                                     <textarea
-                                            class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-                                            id="message_input"
-                                            x-model="message"
-                                            rows="4"
-                                            placeholder="Type here..."
-                                            required
+                                        class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                        id="message_input"
+                                        x-model="message"
+                                        rows="4"
+                                        placeholder="Type here..."
+                                        required
+                                        x-on:keydown="typing"
                                     >
                                 </textarea>
                                 </div>
