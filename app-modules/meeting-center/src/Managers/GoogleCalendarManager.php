@@ -30,7 +30,6 @@ class GoogleCalendarManager implements CalendarInterface
         return collect($service->calendarList->listCalendarList()
             ->getItems())
             ->filter(fn (CalendarListEntry $item) => ! str($item->id)->endsWith('@group.v.calendar.google.com'))
-            ->ray()
             ->pluck('summary', 'id')
             ->sortBy('summary')
             ->toArray();
@@ -125,8 +124,6 @@ class GoogleCalendarManager implements CalendarInterface
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
     {
         $events = collect($this->getEvents($calendar, $start, $end, $perPage));
-
-        ray($events);
 
         $events
             ->each(
