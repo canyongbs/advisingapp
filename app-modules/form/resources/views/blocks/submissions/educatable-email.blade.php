@@ -1,3 +1,10 @@
+@php
+    use Assist\AssistDataModel\Models\Student;
+    use Assist\AssistDataModel\Filament\Resources\StudentResource;
+    use Assist\Prospect\Models\Prospect;
+    use Assist\Prospect\Filament\Resources\ProspectResource;
+@endphp
+
 <x-form::blocks.field-wrapper
     class="py-3"
     :$label
@@ -6,18 +13,18 @@
     @if (filled($response ?? null))
         <div class="not-prose flex flex-wrap items-center gap-3">
             <span>{{ $response ?? null }}</span>
-            @if ($authorType === \Assist\AssistDataModel\Models\Student::class)
+            @if ($authorType === Student::class)
                 <a
-                    href="{{ \Assist\AssistDataModel\Filament\Resources\StudentResource::getUrl('view', ['record' => $authorKey]) }}"
+                    href="{{ StudentResource::getUrl('view', ['record' => $authorKey]) }}"
                     target="_blank"
                 >
                     <x-filament::badge color="success">
                         Student
                     </x-filament::badge>
                 </a>
-            @elseif ($authorType === \Assist\Prospect\Models\Prospect::class)
+            @elseif ($authorType === Prospect::class)
                 <a
-                    href="{{ \Assist\Prospect\Filament\Resources\ProspectResource::getUrl('view', ['record' => $authorKey]) }}"
+                    href="{{ ProspectResource::getUrl('view', ['record' => $authorKey]) }}"
                     target="_blank"
                 >
                     <x-filament::badge color="success">

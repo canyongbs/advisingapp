@@ -14,7 +14,7 @@ use Assist\Form\Actions\GenerateFormKitSchema;
 use Symfony\Component\HttpFoundation\Response;
 use Assist\Form\Actions\GenerateFormValidation;
 use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
-use Assist\Form\Filament\Blocks\StudentEmailFormFieldBlock;
+use Assist\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
 class FormWidgetController extends Controller
 {
@@ -66,7 +66,7 @@ class FormWidgetController extends Controller
                         continue;
                     }
 
-                    if ($stepFields[$fieldId] !== StudentEmailFormFieldBlock::type()) {
+                    if ($stepFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
                         continue;
                     }
 
@@ -92,7 +92,7 @@ class FormWidgetController extends Controller
                     continue;
                 }
 
-                if ($formFields[$fieldId] !== StudentEmailFormFieldBlock::type()) {
+                if ($formFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
                     continue;
                 }
 

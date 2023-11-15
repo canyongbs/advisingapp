@@ -10,7 +10,7 @@ class FormFieldBlockRegistry
     public static function get(): array
     {
         return [
-            StudentEmailFormFieldBlock::class,
+            EducatableEmailFormFieldBlock::class,
             TextInputFormFieldBlock::class,
             TextAreaFormFieldBlock::class,
             SelectFormFieldBlock::class,

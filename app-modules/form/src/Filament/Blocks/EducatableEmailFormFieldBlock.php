@@ -7,15 +7,15 @@ use Filament\Forms\Components\Checkbox;
 use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
-class StudentEmailFormFieldBlock extends FormFieldBlock
+class EducatableEmailFormFieldBlock extends FormFieldBlock
 {
     public ?string $label = 'Student email address';
 
-    public string $rendered = 'form::blocks.submissions.student-email';
+    public string $rendered = 'form::blocks.submissions.educatable-email';
 
     public static function type(): string
     {
-        return 'student_email';
+        return 'educatable_email';
     }
 
     public function getFormSchema(): array
