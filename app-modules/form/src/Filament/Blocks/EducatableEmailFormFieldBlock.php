@@ -13,6 +13,8 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
 
     public string $rendered = 'form::blocks.submissions.educatable-email';
 
+    public ?string $icon = 'heroicon-m-user';
+
     public static function type(): string
     {
         return 'educatable_email';
