@@ -5,7 +5,6 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Rel
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -34,10 +33,11 @@ class ServiceRequestUpdatesRelationManager extends RelationManager
                     ->required()
                     ->string(),
                 Select::make('direction')
-                    ->options(collect(ServiceRequestUpdateDirection::cases())->mapWithKeys(fn (ServiceRequestUpdateDirection $direction) => [$direction->value => $direction->name]))
+                    ->options(ServiceRequestUpdateDirection::class)
                     ->label('Direction')
                     ->required()
-                    ->enum(ServiceRequestUpdateDirection::class),
+                    ->enum(ServiceRequestUpdateDirection::class)
+                    ->default(ServiceRequestUpdateDirection::default()),
                 Toggle::make('internal')
                     ->label('Internal')
                     ->rule(['boolean']),
@@ -56,11 +56,8 @@ class ServiceRequestUpdatesRelationManager extends RelationManager
                 IconColumn::make('internal')
                     ->boolean(),
                 TextColumn::make('direction')
-                    ->icon(fn (ServiceRequestUpdateDirection $state): string => match ($state) {
-                        ServiceRequestUpdateDirection::Inbound => 'heroicon-o-arrow-down-tray',
-                        ServiceRequestUpdateDirection::Outbound => 'heroicon-o-arrow-up-tray',
-                    })
-                    ->formatStateUsing(fn (ServiceRequestUpdateDirection $state): string => Str::ucfirst($state->value)),
+                    ->icon(fn (ServiceRequestUpdateDirection $state): string => $state->getIcon())
+                    ->formatStateUsing(fn (ServiceRequestUpdateDirection $state): string => $state->getLabel()),
                 TextColumn::make('created_at')
                     ->sortable(),
                 TextColumn::make('updated_at')
