@@ -39,6 +39,7 @@
         "@formkit/themes": "^1.2.2",
         "@formkit/vue": "^1.2.2",
         "@twilio/conversations": "^2.5.0",
+        "alpinejs": "^3.13.2",
         "dompurify": "^3.0.6",
         "esbuild-plugin-polyfill-node": "^0.3.0",
         "flowbite": "^1.8.1",

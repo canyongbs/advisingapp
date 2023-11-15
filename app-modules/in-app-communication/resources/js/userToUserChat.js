@@ -14,7 +14,7 @@ document.addEventListener('alpine:init', () => {
             ['@submit.prevent']() {
                 if (this.message.length === 0 || this.conversation === null) return;
 
-                this.conversation.sendMessage(this.message);
+                this.conversation.sendMessage(this.message).catch((error) => this.handleError(error));
 
                 this.message = '';
             },
@@ -25,7 +25,6 @@ document.addEventListener('alpine:init', () => {
             avatarCache[userId] = await this.$wire.getUserAvatarUrl(userId);
 
             return avatarCache[userId];
-
         },
         async initializeClient() {
             conversationsClient = new Client(await this.$wire.generateToken());
@@ -42,11 +41,11 @@ document.addEventListener('alpine:init', () => {
             });
 
             conversationsClient.on("tokenAboutToExpire", async () => {
-                conversationsClient.updateToken(await this.$wire.generateToken());
+                conversationsClient.updateToken(await this.$wire.generateToken()).catch((error) => this.handleError(error));
             });
 
             conversationsClient.on("tokenExpired", async () => {
-                conversationsClient.updateToken(await this.$wire.generateToken());
+                conversationsClient.updateToken(await this.$wire.generateToken()).catch((error) => this.handleError(error));
             });
 
             return conversationsClient;
@@ -57,7 +56,7 @@ document.addEventListener('alpine:init', () => {
             }
 
             if (selectedConversation) {
-                this.conversation = await conversationsClient.getConversationBySid(selectedConversation);
+                this.conversation = await conversationsClient.getConversationBySid(selectedConversation).catch((error) => this.handleError(error));
 
                 this.conversation.getMessages().then((messages) => {
                     messages.items.forEach(async (message) => {
@@ -66,7 +65,8 @@ document.addEventListener('alpine:init', () => {
                             message: message
                         });
                     });
-                });
+                })
+                  .catch((error) => this.handleError(error));
 
                 this.conversation.on('messageAdded', async (message) => {
                     this.messages.push({
@@ -75,11 +75,9 @@ document.addEventListener('alpine:init', () => {
                     });
                 });
             }
-            // This way of setting up an event listener does not seem to work here.
-            // this.$el.addEventListener('conversationchanged', () => console.log('event fired!'))
         },
-        destroy() {
-            // runs when the component is removed from the DOM
-        },
+        handleError(error) {
+            console.error(error);
+        }
     }));
 });
