@@ -11,6 +11,7 @@ use Filament\Actions\Action;
 use Twilio\Jwt\Grants\ChatGrant;
 use Livewire\Attributes\Renderless;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Actions\Contracts\HasActions;
@@ -77,21 +78,29 @@ class UserChat extends Page implements HasForms, HasActions
     }
 
     #[Renderless]
-    public function generateToken(): string
+    public function generateToken(bool $bustCache = false): string
     {
-        $apiKey = app(GetTwilioApiKey::class)();
+        if ($bustCache) {
+            Cache::forget('twilio_access_token_' . auth()->id());
+        }
 
-        $twilioClient = app(Client::class);
+        /** @var AccessToken $token */
+        $token = Cache::remember('twilio_access_token_' . auth()->id(), 21500, function () {
+            $apiKey = app(GetTwilioApiKey::class)();
 
-        $configuration = $twilioClient->conversations->v1->configuration()->fetch();
+            $twilioClient = app(Client::class);
 
-        $token = (new AccessToken(
-            accountSid: config('services.twilio.account_sid'),
-            signingKeySid: $apiKey->api_sid,
-            secret: $apiKey->secret,
-            identity: auth()->user()->id,
-        ))
-            ->addGrant((new ChatGrant())->setServiceSid($configuration->defaultChatServiceSid));
+            $configuration = $twilioClient->conversations->v1->configuration()->fetch();
+
+            return (new AccessToken(
+                accountSid: config('services.twilio.account_sid'),
+                signingKeySid: $apiKey->api_sid,
+                secret: $apiKey->secret,
+                ttl: 21600, // 6 hours
+                identity: auth()->user()->id,
+            ))
+                ->addGrant((new ChatGrant())->setServiceSid($configuration->defaultChatServiceSid));
+        });
 
         return $token->toJWT();
     }

@@ -55,80 +55,101 @@ use Illuminate\Support\Facades\Vite;
                 </div>
             </div>
 
-            <div x-data="userToUserChat(`{{ $selectedConversation }}`)"
-                 wire:key="conversation-{{ $selectedConversation }}"
-                 class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
+            @if(!is_null($selectedConversation))
                 <div
-                        class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800">
-                    <div class="divide-y dark:divide-none">
-                        <template x-for="message in messages">
-                            <div class="group w-full dark:bg-gray-800">
-                                <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
-                                    <div
-                                            class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
-                                        <div class="relative flex flex-shrink-0 flex-col items-end">
-                                            <div>
-{{--                                                <x-filament-panels::avatar.user :user="auth()->user()" />--}}
-{{--                                                <p x-text="message.author"></p>--}}
-                                                <x-filament::avatar
-                                                    class="rounded-full"
-                                                    alt="AI Assistant avatar"
-                                                    x-bind:src="message.avatar"
-                                                />
+                    x-data="userToUserChat(`{{ $selectedConversation }}`)"
+                    wire:key="conversation-{{ $selectedConversation }}"
+                    class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
+                >
+                    <div x-show="loading" x-transition.delay.800ms class="self-center flex flex-col items-center">
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
+                        <p class="text-center" x-text="loadingMessage"></p>
+                    </div>
+                    <template x-if="!loading && error">
+                        <div class="self-center flex flex-col items-center">
+                            <x-filament::icon class="h-12 w-12 text-primary-500" icon="heroicon-m-exclamation-triangle" />
+                            <p class="text-center">Something went wrong...</p>
+                            <p class="text-center" x-text="errorMessage"></p>
+                            <x-filament::button class="mt-2" x-on:click="errorRetry">Retry</x-filament::button>
+                        </div>
+                    </template>
+                    <div x-show="!loading && !error" x-transition.delay.850ms class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
+                        <div
+                                class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
+                        >
+                            <div class="divide-y dark:divide-none">
+                                <template x-for="message in messages">
+                                    <div class="group w-full dark:bg-gray-800">
+                                        <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                            <div
+                                                    class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                <div class="relative flex flex-shrink-0 flex-col items-end">
+                                                    <div>
+                                                        <x-filament::avatar
+                                                                class="rounded-full"
+                                                                alt="AI Assistant avatar"
+                                                                x-bind:src="message.avatar"
+                                                        />
 
-                                            </div>
-                                        </div>
-                                        <div
-                                                class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                                            <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                    </div>
+                                                </div>
                                                 <div
-                                                        class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
-                                                    <div x-text="message.message.body"></div>
+                                                        class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
+                                                    <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                        <div
+                                                                class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
+                                                            <div x-text="message.message.body"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <form x-bind="submit">
+                            <div
+                                    class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
+                                <div class="bg-white dark:bg-gray-800">
+                                    <label
+                                            class="sr-only"
+                                            for="message_input"
+                                    >Type here</label>
+                                    <textarea
+                                            class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
+                                            id="message_input"
+                                            x-model="message"
+                                            rows="4"
+                                            placeholder="Type here..."
+                                            required
+                                    >
+                                </textarea>
+                                </div>
+                                <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
+                                    <div class="flex items-center gap-3">
+                                        <x-filament::button type="submit">
+                                            Post
+                                        </x-filament::button>
+
+                                        {{--                                <div--}}
+                                        {{--                                        class="py-2"--}}
+                                        {{--                                        wire:loading--}}
+                                        {{--                                >--}}
+                                        {{--                                    <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />--}}
+                                        {{--                                </div>--}}
+                                    </div>
                                 </div>
                             </div>
-                        </template>
+                        </form>
                     </div>
                 </div>
-
-                <form x-bind="submit">
-                    <div
-                            class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
-                        <div class="bg-white dark:bg-gray-800">
-                            <label
-                                    class="sr-only"
-                                    for="message_input"
-                            >Type here</label>
-                            <textarea
-                                    class="w-full resize-none border-0 bg-white p-4 text-sm text-gray-900 focus:ring-0 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
-                                    id="message_input"
-                                    x-model="message"
-                                    rows="4"
-                                    placeholder="Type here..."
-                                    required
-                            >
-                            </textarea>
-                        </div>
-                        <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
-                            <div class="flex items-center gap-3">
-                                <x-filament::button type="submit">
-                                    Post
-                                </x-filament::button>
-
-                                {{--                                <div--}}
-                                {{--                                        class="py-2"--}}
-                                {{--                                        wire:loading--}}
-                                {{--                                >--}}
-                                {{--                                    <x-filament::loading-indicator class="h-5 w-5 text-primary-500" />--}}
-                                {{--                                </div>--}}
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            @else
+                <div class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
+                    <p class="text-xl text-center">Select or create a new Conversation</p>
+                </div>
+            @endif
         </div>
         <script src="{{ FilamentAsset::getScriptSrc('userToUserChat', 'canyon-gbs/in-app-communication') }}"></script>
     </div>

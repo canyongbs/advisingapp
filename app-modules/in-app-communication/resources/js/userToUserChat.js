@@ -7,6 +7,10 @@ document.addEventListener('alpine:init', () => {
     let conversationsClient = null;
 
     Alpine.data('userToUserChat', (selectedConversation) => ({
+        loading: true,
+        loadingMessage: 'Loading chat…',
+        error: false,
+        errorMessage: '',
         conversation: null,
         messages: [],
         message: '',
@@ -30,55 +34,112 @@ document.addEventListener('alpine:init', () => {
             conversationsClient = new Client(await this.$wire.generateToken());
 
             conversationsClient.on('connectionStateChanged', (state) => {
-                // TODO: Add a spinner or something to indicate that the client is connecting.
-                if (state === 'connecting') console.log('Connecting to Twilio…');
-                if (state === 'connected') {
-                    console.log('You are connected.');
+                switch (state) {
+                    case 'connecting':
+                        this.loading = true;
+                        this.loadingMessage = 'Connecting to chat…';
+                        this.error = false;
+                        this.errorMessage = '';
+                        break;
+                    case 'connected':
+                        this.loading = false;
+                        this.loadingMessage = 'Connected to chat.';
+                        break;
+                    case 'disconnecting':
+                        this.loading = true;
+                        this.loadingMessage = 'Disconnecting from chat…';
+                        this.error = false;
+                        this.errorMessage = '';
+                        break;
+                    case 'disconnected':
+                        this.loading = false;
+                        this.loadingMessage = 'Disconnected from chat.';
+                        this.error = false;
+                        this.errorMessage = '';
+                        break;
+                    case 'denied':
+                        this.loading = false;
+                        this.loadingMessage = 'Failed to connect.';
+                        this.error = true;
+                        this.errorMessage = 'Failed to connect to chat. Please try again later.';
+                        break;
+                    default:
+                        console.log('Unknown connection state: ', state);
+                        break;
                 }
-                if (state === 'disconnecting') console.log('Disconnecting from Twilio…');
-                if (state === 'disconnected') console.log('Disconnected from Twilio.');
-                if (state === 'denied') console.log('Failed to connect.');
             });
 
             conversationsClient.on("tokenAboutToExpire", async () => {
-                conversationsClient.updateToken(await this.$wire.generateToken()).catch((error) => this.handleError(error));
+                await this.attemptReconnect();
             });
 
             conversationsClient.on("tokenExpired", async () => {
-                conversationsClient.updateToken(await this.$wire.generateToken()).catch((error) => this.handleError(error));
+                await this.attemptReconnect();
             });
 
             return conversationsClient;
         },
+        async attemptReconnect() {
+            conversationsClient.updateToken(await this.$wire.generateToken(true)).catch((error) => this.handleError(error));
+        },
         async init() {
             if (conversationsClient === null) {
-                conversationsClient = this.initializeClient();
+                conversationsClient = await this.initializeClient();
             }
 
             if (selectedConversation) {
-                this.conversation = await conversationsClient.getConversationBySid(selectedConversation).catch((error) => this.handleError(error));
+                await this.getMessages();
+            }
+        },
+        async getMessages() {
+            this.loadingMessage = 'Loading conversation…';
 
-                this.conversation.getMessages().then((messages) => {
-                    messages.items.forEach(async (message) => {
-                        this.messages.push({
-                            avatar: this.getAvatarUrl(message.author),
-                            message: message
-                        });
-                    });
+            this.conversation = await conversationsClient.getConversationBySid(selectedConversation).catch((error) => {
+                this.error = true;
+                this.handleError(error);
+            });
 
-                    this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
-                })
-                  .catch((error) => this.handleError(error));
+            this.loadingMessage = 'Loading messages…';
 
-                this.conversation.on('messageAdded', async (message) => {
+            this.conversation.getMessages().then((messages) => {
+                messages.items.forEach(async (message) => {
                     this.messages.push({
                         avatar: this.getAvatarUrl(message.author),
                         message: message
                     });
-
-                    this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
                 });
+
+                this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
+            })
+              .catch((error) => {
+                  this.error = true;
+                  this.handleError(error)
+              });
+
+            this.loadingMessage = 'Messages loaded...';
+
+            this.loading = false;
+
+            this.conversation.on('messageAdded', async (message) => {
+                this.messages.push({
+                    avatar: this.getAvatarUrl(message.author),
+                    message: message
+                });
+
+                this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
+            });
+        },
+        async errorRetry() {
+            this.error = false;
+            this.errorMessage = '';
+            this.loading = true;
+
+            if (conversationsClient.connectionState === 'connected') {
+                await this.getMessages();
+                return;
             }
+
+            await this.initializeClient();
         },
         handleError(error) {
             console.error('Chat client error occurred, sending to error handler…');
