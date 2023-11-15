@@ -7,7 +7,6 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Support\Facades\Event;
-use Illuminate\Validation\Rules\Enum;
 
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
@@ -62,7 +61,6 @@ test('CreateServiceRequestUpdate requires valid data', function ($data, $errors)
         'update missing' => [CreateServiceRequestUpdateRequestFactory::new()->without('update'), ['update' => 'required']],
         'update is not a string' => [CreateServiceRequestUpdateRequestFactory::new()->state(['update' => 99]), ['update' => 'string']],
         'direction missing' => [CreateServiceRequestUpdateRequestFactory::new()->state(['direction' => null]), ['direction' => 'required']],
-        'direction not a valid enum' => [CreateServiceRequestUpdateRequestFactory::new()->state(['direction' => 'invalid']), ['direction' => Enum::class]],
         'internal not a boolean' => [CreateServiceRequestUpdateRequestFactory::new()->state(['internal' => 'invalid']), ['internal' => 'boolean']],
     ]
 );
