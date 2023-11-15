@@ -17,7 +17,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Assist\InAppCommunication\Enums\ConversationType;
 use Assist\IntegrationTwilio\Actions\GetTwilioApiKey;
-use Assist\InAppCommunication\Actions\AddUserToConversation;
 use Assist\InAppCommunication\Actions\CreateTwilioConversation;
 
 class UserChat extends Page implements HasForms, HasActions
@@ -63,9 +62,7 @@ class UserChat extends Page implements HasForms, HasActions
                     ]
                 );
 
-                $conversation = app(CreateTwilioConversation::class)(type: ConversationType::UserToUser);
-
-                $users->each(fn (User $user) => app(AddUserToConversation::class)(user: $user, conversation: $conversation));
+                $conversation = app(CreateTwilioConversation::class)(type: ConversationType::UserToUser, users: $users);
 
                 $this->selectedConversation = $conversation;
             });
