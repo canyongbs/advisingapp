@@ -8,6 +8,8 @@ class DateFormFieldBlock extends FormFieldBlock
 {
     public string $rendered = 'form::blocks.submissions.date';
 
+    public ?string $icon = 'heroicon-m-calendar';
+
     public static function type(): string
     {
         return 'date';

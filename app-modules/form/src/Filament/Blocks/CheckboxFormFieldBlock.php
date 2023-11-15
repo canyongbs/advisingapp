@@ -10,6 +10,8 @@ class CheckboxFormFieldBlock extends FormFieldBlock
 
     public string $rendered = 'form::blocks.submissions.checkbox';
 
+    public ?string $icon = 'heroicon-m-check-circle';
+
     public static function type(): string
     {
         return 'checkbox';

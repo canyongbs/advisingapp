@@ -8,6 +8,8 @@ class NumberFormFieldBlock extends FormFieldBlock
 {
     public string $rendered = 'form::blocks.submissions.number';
 
+    public ?string $icon = 'heroicon-m-variable';
+
     public static function type(): string
     {
         return 'number';

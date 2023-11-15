@@ -10,6 +10,8 @@ class SignatureFormFieldBlock extends FormFieldBlock
 
     public string $rendered = 'form::blocks.submissions.signature';
 
+    public ?string $icon = 'heroicon-m-pencil';
+
     public static function type(): string
     {
         return 'signature';

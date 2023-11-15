@@ -8,6 +8,8 @@ class TextAreaFormFieldBlock extends FormFieldBlock
 {
     public string $preview = 'form::blocks.previews.textarea';
 
+    public ?string $icon = 'heroicon-m-bars-3-center-left';
+
     public static function type(): string
     {
         return 'text_area';

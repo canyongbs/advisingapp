@@ -11,6 +11,8 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public string $rendered = 'form::blocks.submissions.radio';
 
+    public ?string $icon = 'heroicon-m-list-bullet';
+
     public static function type(): string
     {
         return 'radio';

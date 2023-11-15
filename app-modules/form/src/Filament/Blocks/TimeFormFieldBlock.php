@@ -8,6 +8,8 @@ class TimeFormFieldBlock extends FormFieldBlock
 {
     public string $rendered = 'form::blocks.submissions.time';
 
+    public ?string $icon = 'heroicon-m-clock';
+
     public static function type(): string
     {
         return 'time';

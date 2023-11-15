@@ -13,6 +13,8 @@ abstract class FormFieldBlock extends TiptapBlock
 
     public string $rendered = 'form::blocks.submissions.default';
 
+    public ?string $icon = 'heroicon-m-cube';
+
     public function getFormSchema(): array
     {
         return [
