@@ -16,6 +16,7 @@ document.addEventListener('alpine:init', () => {
         loadingPreviousMessages: false,
         messages: [],
         message: '',
+        usersTyping: [],
         submit: function() {
             if (this.message.length === 0 || this.conversation === null) return;
 
@@ -116,6 +117,31 @@ document.addEventListener('alpine:init', () => {
                             avatar: this.getAvatarUrl(data.message.author),
                             message: data.message
                         };
+                    }
+                });
+
+                this.conversation.on('typingStarted', (participant) => {
+                    const index = this.usersTyping.findIndex((user) => {
+                        return participant.identity === participant.identity;
+                    });
+
+                    if (index === -1) {
+                        this.usersTyping.push(
+                          {
+                              identity: participant.identity,
+                              avatar: this.getAvatarUrl(participant.identity)
+                          }
+                        );
+                    }
+                });
+
+                this.conversation.on('typingEnded', (participant) => {
+                    const index = this.usersTyping.findIndex((user) => {
+                        return participant.identity === participant.identity;
+                    });
+
+                    if (index !== -1) {
+                        this.usersTyping.splice(index, 1);
                     }
                 });
 

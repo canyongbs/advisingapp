@@ -89,7 +89,6 @@ use Illuminate\Support\Facades\Vite;
                                                             alt="AI Assistant avatar"
                                                             x-bind:src="message.avatar"
                                                         />
-
                                                     </div>
                                                 </div>
                                                 <div
@@ -110,6 +109,23 @@ use Illuminate\Support\Facades\Vite;
                                 <div x-on:click="loadPreviousMessages" class="flex justify-center text-center mb-auto p-3 text-primary-500 cursor-pointer bg-white dark:bg-gray-700">
                                     <p>Load previous messages...</p>
                                     <x-filament::loading-indicator x-show="loadingPreviousMessages" class="ml-2 h-4 w-4 text-primary-500" />
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="h-4">
+                            <template x-if="usersTyping.length">
+                                <div class="flex relative justify-center items-center space-x-0.5">
+                                    <template x-for="user in usersTyping">
+                                        <x-filament::avatar
+                                            size="w-4 h-4"
+                                            alt="User Avatar"
+                                            x-bind:src="user.avatar"
+                                        />
+                                    </template>
+                                    <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-100"></span>
+                                    <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-200"></span>
+                                    <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-300"></span>
                                 </div>
                             </template>
                         </div>
