@@ -8,6 +8,8 @@ class EmailFormFieldBlock extends FormFieldBlock
 {
     public ?string $label = 'Email address';
 
+    public ?string $icon = 'heroicon-m-at-symbol';
+
     public static function type(): string
     {
         return 'email';

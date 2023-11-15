@@ -9,6 +9,8 @@ class SelectFormFieldBlock extends FormFieldBlock
 {
     public string $rendered = 'form::blocks.submissions.select';
 
+    public ?string $icon = 'heroicon-m-queue-list';
+
     public static function type(): string
     {
         return 'select';

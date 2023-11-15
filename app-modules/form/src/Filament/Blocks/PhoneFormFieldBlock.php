@@ -8,6 +8,8 @@ class PhoneFormFieldBlock extends FormFieldBlock
 {
     public ?string $label = 'Phone number';
 
+    public ?string $icon = 'heroicon-m-phone';
+
     public static function type(): string
     {
         return 'phone';
