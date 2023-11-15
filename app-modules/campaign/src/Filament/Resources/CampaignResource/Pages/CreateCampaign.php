@@ -3,6 +3,7 @@
 namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use App\Models\User;
+use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
@@ -62,8 +63,8 @@ class CreateCampaign extends CreateRecord
             Step::make('Define Journey')
                 ->schema([
                     Builder::make('actions')
-                        ->label('Journey')
-                        ->addActionLabel('Add a new Campaign Action')
+                        ->label(fn () => new HtmlString('<span class="text-xl">Journey Steps</span>'))
+                        ->addActionLabel('Add a new Journey Step')
                         ->minItems(1)
                         ->blocks(CreateCampaign::blocks()),
                 ]),

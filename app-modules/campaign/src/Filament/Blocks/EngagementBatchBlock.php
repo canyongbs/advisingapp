@@ -14,7 +14,7 @@ class EngagementBatchBlock extends CampaignActionBlock
     {
         parent::setUp();
 
-        $this->label('Bulk Engagement');
+        $this->label('Email or Text');
 
         $this->schema($this->createFields());
     }
@@ -56,7 +56,7 @@ class EngagementBatchBlock extends CampaignActionBlock
                     return 'The body of your message can be up to 65,535 characters long.';
                 }),
             DateTimePicker::make('execute_at')
-                ->label('When should the action be executed?')
+                ->label('When should the journey step be executed?')
                 ->required()
                 ->minDate(now(auth()->user()->timezone))
                 ->closeOnDateSelection(),
