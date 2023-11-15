@@ -4,6 +4,7 @@ namespace Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -23,6 +24,9 @@ class ViewCalendarEvent extends ViewRecord
                         TextEntry::make('description'),
                         TextEntry::make('starts_at'),
                         TextEntry::make('ends_at'),
+                        TextEntry::make('emails')
+                            ->label('Attendees')
+                            ->badge(),
                     ])
                     ->columns(),
             ]);
@@ -31,7 +35,8 @@ class ViewCalendarEvent extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            // EditAction::make(),
+            EditAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

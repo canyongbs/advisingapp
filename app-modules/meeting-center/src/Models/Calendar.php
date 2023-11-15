@@ -22,6 +22,7 @@ class Calendar extends BaseModel
     protected $casts = [
         'provider_id' => 'encrypted',
         'provider_type' => CalendarProvider::class,
+        'provider_email' => 'encrypted',
         'oauth_token' => 'encrypted',
         'oauth_refresh_token' => 'encrypted',
         'oauth_expires_at' => 'datetime',

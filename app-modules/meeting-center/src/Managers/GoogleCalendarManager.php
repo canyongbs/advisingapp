@@ -9,7 +9,10 @@ use Google\Service\Oauth2;
 use Illuminate\Support\Carbon;
 use Google\Service\Calendar\Event;
 use Assist\MeetingCenter\Models\Calendar;
+use Google\Service\Calendar\EventCreator;
+use Google\Service\Calendar\EventAttendee;
 use Google\Service\Calendar\EventDateTime;
+use Google\Service\Calendar\EventOrganizer;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Google\Service\Calendar as GoogleCalendar;
 use Google\Service\Calendar\CalendarListEntry;
@@ -27,6 +30,7 @@ class GoogleCalendarManager implements CalendarInterface
         return collect($service->calendarList->listCalendarList()
             ->getItems())
             ->filter(fn (CalendarListEntry $item) => ! str($item->id)->endsWith('@group.v.calendar.google.com'))
+            ->ray()
             ->pluck('summary', 'id')
             ->sortBy('summary')
             ->toArray();
@@ -121,6 +125,8 @@ class GoogleCalendarManager implements CalendarInterface
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
     {
         $events = collect($this->getEvents($calendar, $start, $end, $perPage));
+
+        ray($events);
 
         $events
             ->each(
@@ -218,6 +224,31 @@ class GoogleCalendarManager implements CalendarInterface
         $end = new EventDateTime();
         $end->setDateTime($event->ends_at);
         $googleEvent->setEnd($end);
+
+        $attendees = collect($event->emails)
+            // If you add yourself as an attendee you end up with a weird duplicate event on the calendar...
+            ->reject(fn (string $email): bool => $email === $event->calendar->provider_email)
+            ->map(function ($email) {
+                $attendee = new EventAttendee();
+                $attendee->setEmail($email);
+
+                return $attendee;
+            })
+            ->flatten()
+            ->toArray();
+
+        $googleEvent->setAttendees($attendees);
+
+        // TODO: I don't think these do anything...
+        // $organizer = new EventOrganizer();
+        // $organizer->setEmail($event->calendar->provider_email);
+        // $organizer->setSelf(true);
+        // $googleEvent->setOrganizer($organizer);
+        //
+        // $creator = new EventCreator();
+        // $creator->setEmail($event->calendar->provider_email);
+        // $creator->setSelf(true);
+        // $googleEvent->setCreator($creator);
 
         return $googleEvent;
     }

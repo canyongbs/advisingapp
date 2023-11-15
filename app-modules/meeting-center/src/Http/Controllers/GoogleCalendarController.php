@@ -3,6 +3,7 @@
 namespace Assist\MeetingCenter\Http\Controllers;
 
 use App\Models\User;
+use Google\Service\Oauth2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -26,11 +27,14 @@ class GoogleCalendarController extends CalendarController
 
         $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
 
+        $email = (new Oauth2($client))->userinfo_v2_me->get()['email'];
+
         /** @var User $user */
         $user = auth()->user();
 
         $calendar = $user->calendar ?: new Calendar();
         $calendar->provider_type = CalendarProvider::Google;
+        $calendar->provider_email = $email;
         $calendar->oauth_token = $token['access_token'];
         $calendar->oauth_refresh_token = $token['refresh_token'];
         $calendar->oauth_token_expires_at = Carbon::parse($token['created'] + $token['expires_in']);

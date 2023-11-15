@@ -16,6 +16,12 @@ class CalendarEventObserver
         }
     }
 
+    // public function updating(CalendarEvent $event): void
+    // {
+    //     $event->starts_at = $event->starts_at->shiftTimezone('UTC');
+    //     $event->ends_at = $event->ends_at->shiftTimezone('UTC');
+    // }
+
     public function updated(CalendarEvent $event): void
     {
         if ($event->calendar) {
