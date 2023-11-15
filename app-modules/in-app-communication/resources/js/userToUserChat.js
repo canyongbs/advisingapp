@@ -106,8 +106,6 @@ document.addEventListener('alpine:init', () => {
                     });
 
                     this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
-
-                    message.updateBody(Array.from({ length: 5 }, i => String.fromCharCode(Math.round(Math.ceil(Math.random() * 25) + 65))).join('')).catch((error) => this.handleError(error));
                 });
 
                 this.conversation.on('messageUpdated', async (data) => {
