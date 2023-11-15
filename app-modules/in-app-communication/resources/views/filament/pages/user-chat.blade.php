@@ -76,11 +76,12 @@ use Illuminate\Support\Facades\Vite;
                             class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
                         >
                             <div class="divide-y dark:divide-none">
-                                <template x-for="message in messages">
+                                <template x-for="message in messages" :key="message.message.index">
                                     <div class="group w-full dark:bg-gray-800">
                                         <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
                                             <div
-                                                    class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl"
+                                            >
                                                 <div class="relative flex flex-shrink-0 flex-col items-end">
                                                     <div>
                                                         <x-filament::avatar
