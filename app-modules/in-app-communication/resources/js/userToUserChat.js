@@ -2,7 +2,8 @@ document.addEventListener('alpine:init', () => {
     global = globalThis;
     const { Client } = require('@twilio/conversations');
 
-    // Create the Twilio Client
+    let avatarCache = {};
+
     let conversationsClient = null;
 
     Alpine.data('userToUserChat', (selectedConversation) => ({
@@ -17,6 +18,14 @@ document.addEventListener('alpine:init', () => {
 
                 this.message = '';
             },
+        },
+        getAvatarUrl: async function (userId) {
+            if (avatarCache[userId]) return avatarCache[userId];
+
+            avatarCache[userId] = await this.$wire.getUserAvatarUrl(userId);
+
+            return avatarCache[userId];
+
         },
         async init() {
             console.log(selectedConversation);
@@ -41,8 +50,7 @@ document.addEventListener('alpine:init', () => {
                 this.conversation.getMessages().then((messages) => {
                     messages.items.forEach(async (message) => {
                         this.messages.push({
-                            // TODO: Store these so we don't have to get them per User
-                            avatar: await this.$wire.getUserAvatarUrl(message.author),
+                            avatar: this.getAvatarUrl(message.author),
                             message: message
                         });
                     });
@@ -50,8 +58,7 @@ document.addEventListener('alpine:init', () => {
 
                 this.conversation.on('messageAdded', async (message) => {
                     this.messages.push({
-                        // TODO: Store these so we don't have to get them per User
-                        avatar: await this.$wire.getUserAvatarUrl(message.author),
+                        avatar: this.getAvatarUrl(message.author),
                         message: message
                     });
                 });
