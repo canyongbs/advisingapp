@@ -11,9 +11,13 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->foreignUuid('form_id')->constrained('forms')->cascadeOnDelete();
+            $table->string('author_id')->nullable();
+            $table->string('author_type')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['author_type', 'author_id']);
         });
     }
 };

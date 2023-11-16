@@ -3,6 +3,7 @@
 namespace Assist\Form\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -25,5 +26,10 @@ class FormSubmission extends BaseModel
             'field_id',
         )
             ->withPivot(['id', 'response']);
+    }
+
+    public function author(): MorphTo
+    {
+        return $this->morphTo();
     }
 }

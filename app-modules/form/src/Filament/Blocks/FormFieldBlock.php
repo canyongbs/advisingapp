@@ -42,7 +42,10 @@ abstract class FormFieldBlock extends TiptapBlock
         return static::type();
     }
 
-    abstract public function fields(): array;
+    public function fields(): array
+    {
+        return [];
+    }
 
     abstract public static function type(): string;
 
@@ -51,5 +54,12 @@ abstract class FormFieldBlock extends TiptapBlock
     public static function getValidationRules(FormField $field): array
     {
         return [];
+    }
+
+    public static function getSubmissionState(mixed $response): array
+    {
+        return [
+            'response' => $response,
+        ];
     }
 }
