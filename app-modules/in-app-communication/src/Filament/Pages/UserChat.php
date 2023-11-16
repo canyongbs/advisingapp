@@ -35,9 +35,15 @@ class UserChat extends Page implements HasForms, HasActions
 
     public ?string $selectedConversation = null;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static ?string $navigationGroup = 'Productivity Tools';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-oval-left-ellipsis';
 
     protected static string $view = 'in-app-communication::filament.pages.user-chat';
+
+    protected static ?string $title = 'Realtime Chat';
 
     public function mount()
     {

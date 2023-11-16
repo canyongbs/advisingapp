@@ -12,7 +12,7 @@ class AlertResource extends Resource
 
     protected static ?string $navigationGroup = 'Productivity Tools';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $model = Alert::class;
 
