@@ -24,7 +24,7 @@ document.addEventListener('alpine:init', () => {
 
             this.message = '';
         },
-        getAvatarUrl: async function (userId) {
+        async getAvatarUrl(userId) {
             if (avatarCache[userId]) return avatarCache[userId];
 
             avatarCache[userId] = await this.$wire.getUserAvatarUrl(userId);
@@ -100,7 +100,7 @@ document.addEventListener('alpine:init', () => {
 
                 this.conversation.on('messageAdded', async (message) => {
                     this.messages.push({
-                        avatar: this.getAvatarUrl(message.author),
+                        avatar: await this.getAvatarUrl(message.author),
                         message: message
                     });
 
@@ -114,13 +114,13 @@ document.addEventListener('alpine:init', () => {
 
                     if (index !== -1) {
                         this.messages[index] = {
-                            avatar: this.getAvatarUrl(data.message.author),
+                            avatar: await this.getAvatarUrl(data.message.author),
                             message: data.message
                         };
                     }
                 });
 
-                this.conversation.on('typingStarted', (participant) => {
+                this.conversation.on('typingStarted', async (participant) => {
                     const index = this.usersTyping.findIndex((user) => {
                         return participant.identity === participant.identity;
                     });
@@ -129,7 +129,7 @@ document.addEventListener('alpine:init', () => {
                         this.usersTyping.push(
                           {
                               identity: participant.identity,
-                              avatar: this.getAvatarUrl(participant.identity)
+                              avatar: await this.getAvatarUrl(participant.identity)
                           }
                         );
                     }
@@ -156,7 +156,7 @@ document.addEventListener('alpine:init', () => {
 
                 messages.items.forEach(async (message) => {
                     this.messages.push({
-                        avatar: this.getAvatarUrl(message.author),
+                        avatar: await this.getAvatarUrl(message.author),
                         message: message
                     });
                 });
@@ -180,7 +180,7 @@ document.addEventListener('alpine:init', () => {
 
                     messages.items.forEach(async (message) => {
                         this.messages.unshift({
-                            avatar: this.getAvatarUrl(message.author),
+                            avatar: await this.getAvatarUrl(message.author),
                             message: message
                         });
                     });

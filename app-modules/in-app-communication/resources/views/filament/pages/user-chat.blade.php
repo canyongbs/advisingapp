@@ -140,9 +140,9 @@ use Illuminate\Support\Facades\Vite;
                                         <div x-show="usersTyping.length" class="flex relative justify-center h-6 items-center gap-0.5">
                                             <template x-for="user in usersTyping">
                                                 <x-filament::avatar
-                                                        size="w-4 h-4"
-                                                        alt="User Avatar"
-                                                        x-bind:src="user.avatar"
+                                                    size="w-4 h-4"
+                                                    alt="User Avatar"
+                                                    x-bind:src="user.avatar"
                                                 />
                                             </template>
                                             <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-100"></span>
