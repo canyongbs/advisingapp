@@ -10,10 +10,12 @@ use Illuminate\Support\Facades\DB;
 use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Kirschbaum\PowerJoins\PowerJoins;
+use App\Models\Contracts\IsSearchable;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Campaign\Models\CampaignAction;
+use OpenSearch\ScoutDriverPlus\Searchable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,7 +39,7 @@ use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequ
  *
  * @mixin IdeHelperServiceRequest
  */
-class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction
+class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction, IsSearchable
 {
     use SoftDeletes;
     use PowerJoins;
@@ -45,6 +47,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use HasUuids;
     use HasManyMorphedInteractions;
     use EducatableScopes;
+    use Searchable;
 
     protected $fillable = [
         'respondent_type',
@@ -93,6 +96,31 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         } while ($attempts < 3);
 
         return $save;
+    }
+
+    public function searchableAs(): string
+    {
+        return config('scout.prefix') . 'service_requests';
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => (int) $this->getScoutKey(),
+            'service_request_number' => $this->service_request_number,
+            'respondent_type' => $this->respondent_type,
+            'respondent_id' => $this->respondent_id,
+            'close_details' => $this->close_details,
+            'res_details' => $this->res_details,
+            'division_id' => $this->division_id,
+            'status_id' => $this->status_id,
+            'type_id' => $this->type_id,
+            'priority_id' => $this->priority_id,
+            'assigned_to_id' => $this->assigned_to_id,
+            'created_by_id' => $this->created_by_id,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+        ];
     }
 
     public function identifier(): string

@@ -12,13 +12,17 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\ServiceManagement\Models\ServiceRequest;
+use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ListServiceRequests extends ListRecords
 {
+    use FilterTableWithOpenSearch;
+
     protected static string $resource = ServiceRequestResource::class;
 
     public function table(Table $table): Table
@@ -26,7 +30,7 @@ class ListServiceRequests extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('service_request_number')
+                OpenSearchTextColumn::make('service_request_number')
                     ->label('Service Request #')
                     ->searchable()
                     ->sortable(),
