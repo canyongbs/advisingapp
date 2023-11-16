@@ -27,11 +27,11 @@ class GenerateFormValidation
             ->mapWithKeys(function (FormField $field) use ($blocks) {
                 $rules = collect();
 
-                if ($field->required) {
+                if ($field->is_required) {
                     $rules->push('required');
                 }
 
-                return [$field->key => $rules
+                return [$field->id => $rules
                     ->merge($blocks[$field->type]::getValidationRules($field))
                     ->all()];
             })
@@ -43,7 +43,7 @@ class GenerateFormValidation
         $rules = collect();
 
         foreach ($form->steps as $step) {
-            $rules->merge(
+            $rules = $rules->merge(
                 Arr::prependKeysWith(
                     $this->fields($step->fields),
                     prependWith: "{$step->label}.",

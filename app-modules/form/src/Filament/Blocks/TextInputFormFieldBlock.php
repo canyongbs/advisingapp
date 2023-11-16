@@ -3,17 +3,10 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
-use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\TextEntry;
 
 class TextInputFormFieldBlock extends FormFieldBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->label('Text Input');
-    }
+    public ?string $icon = 'heroicon-m-minus';
 
     public static function type(): string
     {
@@ -25,19 +18,13 @@ class TextInputFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-    public static function getInfolistEntry(FormField $field): Entry
-    {
-        return TextEntry::make($field->key)
-            ->label($field->label);
-    }
-
     public static function getFormKitSchema(FormField $field): array
     {
         return [
             '$formkit' => 'text',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 

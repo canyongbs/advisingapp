@@ -3,17 +3,12 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
-use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\TextEntry;
 
 class NumberFormFieldBlock extends FormFieldBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    public string $rendered = 'form::blocks.submissions.number';
 
-        $this->label('Number');
-    }
+    public ?string $icon = 'heroicon-m-variable';
 
     public static function type(): string
     {
@@ -25,20 +20,13 @@ class NumberFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-    public static function getInfolistEntry(FormField $field): Entry
-    {
-        return TextEntry::make($field->key)
-            ->label($field->label)
-            ->numeric();
-    }
-
     public static function getFormKitSchema(FormField $field): array
     {
         return [
             '$formkit' => 'number',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 

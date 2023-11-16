@@ -24,8 +24,7 @@ class FormFieldFactory extends Factory
 
         return [
             'label' => fake()->words(asText: true),
-            'key' => fake()->unique()->word(),
-            'required' => fake()->boolean(),
+            'is_required' => fake()->boolean(),
             'type' => $type,
             'config' => $config,
         ];

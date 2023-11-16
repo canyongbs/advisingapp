@@ -19,9 +19,11 @@ class Form extends BaseModel
         'is_wizard',
         'primary_color',
         'rounding',
+        'content',
     ];
 
     protected $casts = [
+        'content' => 'array',
         'embed_enabled' => 'boolean',
         'allowed_domains' => 'array',
         'is_wizard' => 'boolean',

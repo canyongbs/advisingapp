@@ -11,15 +11,12 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->text('label');
-            $table->string('key');
             $table->text('type');
-            $table->boolean('required');
+            $table->boolean('is_required');
             $table->json('config');
 
-            $table->foreignUuid('form_id')->constrained('forms');
+            $table->foreignUuid('form_id')->constrained('forms')->cascadeOnDelete();
             $table->foreignUuid('step_id')->nullable()->constrained('form_steps')->cascadeOnDelete();
-
-            $table->unique(['key', 'form_id']);
 
             $table->timestamps();
         });

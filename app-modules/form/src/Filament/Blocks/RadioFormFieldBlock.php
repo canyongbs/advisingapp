@@ -4,17 +4,14 @@ namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
 use Filament\Forms\Components\KeyValue;
-use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\TextEntry;
 
 class RadioFormFieldBlock extends FormFieldBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    public string $preview = 'form::blocks.previews.radio';
 
-        $this->label('Radio');
-    }
+    public string $rendered = 'form::blocks.submissions.radio';
+
+    public ?string $icon = 'heroicon-m-list-bullet';
 
     public static function type(): string
     {
@@ -30,22 +27,13 @@ class RadioFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    public static function getInfolistEntry(FormField $field): Entry
-    {
-        return TextEntry::make($field->key)
-            ->label($field->label)
-            ->formatStateUsing(function ($state) use ($field) {
-                return $field->config['options'][$state] ?? $state;
-            });
-    }
-
     public static function getFormKitSchema(FormField $field): array
     {
         return [
             '$formkit' => 'radio',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
             'options' => $field->config['options'],
         ];
     }

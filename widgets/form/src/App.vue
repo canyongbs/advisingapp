@@ -147,17 +147,17 @@ fetch(props.url)
         }"
         class="font-sans"
     >
-        <div v-if="display && !submittedSuccess">
+        <div class="prose max-w-none" v-if="display && !submittedSuccess">
             <link
                 rel="stylesheet"
                 v-bind:href="hostUrl + '/js/widgets/form/style.css'"
             />
 
-            <h1 class="text-2xl font-bold mb-2 text-center">
+            <h1>
                 {{ formName }}
             </h1>
 
-            <p class="text-base mb-6">
+            <p>
                 {{ formDescription }}
             </p>
 
