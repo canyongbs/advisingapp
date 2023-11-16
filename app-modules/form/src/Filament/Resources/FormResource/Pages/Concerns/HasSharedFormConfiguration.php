@@ -61,6 +61,7 @@ trait HasSharedFormConfiguration
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
+                ->disabled(fn (?Form $record) => $record?->submissions()->exists())
                 ->columnSpanFull(),
             Section::make('Fields')
                 ->schema([
@@ -105,6 +106,7 @@ trait HasSharedFormConfiguration
             ->output(TiptapOutput::Json)
             ->blocks(FormFieldBlockRegistry::get())
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
+            ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
             ->saveRelationshipsUsing(function (TiptapEditor $component, Form | FormStep $record) {
                 $form = $record instanceof Form ? $record : $record->form;

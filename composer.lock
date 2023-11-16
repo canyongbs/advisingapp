@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "0019e449a23456720c0e8e649e76d2bf1611f006"
+                "reference": "032d43f5760ee1d889a90d5d2356dcb73a70ccbb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/0019e449a23456720c0e8e649e76d2bf1611f006",
-                "reference": "0019e449a23456720c0e8e649e76d2bf1611f006",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/032d43f5760ee1d889a90d5d2356dcb73a70ccbb",
+                "reference": "032d43f5760ee1d889a90d5d2356dcb73a70ccbb",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-15T19:58:23+00:00"
+            "time": "2023-11-16T09:51:52+00:00"
         },
         {
             "name": "aws/aws-crt-php",
