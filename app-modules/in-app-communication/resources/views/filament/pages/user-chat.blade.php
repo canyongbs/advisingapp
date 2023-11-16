@@ -113,23 +113,6 @@ use Illuminate\Support\Facades\Vite;
                             </template>
                         </div>
 
-                        <div class="h-4">
-                            <template x-if="usersTyping.length">
-                                <div class="flex relative justify-center items-center space-x-0.5">
-                                    <template x-for="user in usersTyping">
-                                        <x-filament::avatar
-                                            size="w-4 h-4"
-                                            alt="User Avatar"
-                                            x-bind:src="user.avatar"
-                                        />
-                                    </template>
-                                    <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-100"></span>
-                                    <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-200"></span>
-                                    <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-300"></span>
-                                </div>
-                            </template>
-                        </div>
-
                         <form @submit.prevent="submit">
                             <div
                                     class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
@@ -154,6 +137,18 @@ use Illuminate\Support\Facades\Vite;
                                         <x-filament::button type="submit">
                                             Post
                                         </x-filament::button>
+                                        <div x-show="usersTyping.length" class="flex relative justify-center h-6 items-center gap-0.5">
+                                            <template x-for="user in usersTyping">
+                                                <x-filament::avatar
+                                                        size="w-4 h-4"
+                                                        alt="User Avatar"
+                                                        x-bind:src="user.avatar"
+                                                />
+                                            </template>
+                                            <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-100"></span>
+                                            <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-200"></span>
+                                            <span class="w-2 h-2 rounded-full bg-primary-500 text-primary-500 animate-bounce animation-delay-300"></span>
+                                        </div>
 
                                         {{--                                <div--}}
                                         {{--                                        class="py-2"--}}
