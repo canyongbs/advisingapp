@@ -16,6 +16,7 @@ final class CreateServiceRequestsIndex implements MigrationInterface
             $mapping->text('service_request_number');
             $mapping->text('respondent_type');
             $mapping->text('respondent_id');
+            $mapping->text('respondent_name');
             $mapping->text('close_details');
             $mapping->text('res_details');
             $mapping->keyword('division_id');

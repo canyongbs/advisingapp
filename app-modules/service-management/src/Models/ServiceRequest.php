@@ -110,6 +110,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
             'service_request_number' => $this->service_request_number,
             'respondent_type' => $this->respondent_type,
             'respondent_id' => $this->respondent_id,
+            'respondent_name' => $this->respondent->display_name,
             'close_details' => $this->close_details,
             'res_details' => $this->res_details,
             'division_id' => $this->division_id,
