@@ -2,6 +2,7 @@
 
 namespace Assist\Form\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -45,9 +46,27 @@ class FormWidgetController extends Controller
             );
         }
 
-        $form->submissions()->create([
-            'content' => $request->all(),
-        ]);
+        $submission = $form->submissions()->create();
+
+        $data = $validator->validated();
+
+        if ($form->is_wizard) {
+            foreach ($form->steps as $step) {
+                foreach ($data[$step->label] as $fieldId => $response) {
+                    $submission->fields()->attach(
+                        $fieldId,
+                        ['id' => Str::orderedUuid(), 'response' => $response],
+                    );
+                }
+            }
+        } else {
+            foreach ($data as $fieldId => $response) {
+                $submission->fields()->attach(
+                    $fieldId,
+                    ['id' => Str::orderedUuid(), 'response' => $response],
+                );
+            }
+        }
 
         return response()->json(
             [

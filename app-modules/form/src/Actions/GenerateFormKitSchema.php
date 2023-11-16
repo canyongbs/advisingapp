@@ -4,7 +4,6 @@ namespace Assist\Form\Actions;
 
 use Assist\Form\Models\Form;
 use Assist\Form\Models\FormStep;
-use Assist\Form\Models\FormField;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
@@ -13,10 +12,20 @@ class GenerateFormKitSchema
     public function __invoke(Form $form): array
     {
         if ($form->is_wizard) {
+            $form->loadMissing([
+                'steps' => [
+                    'fields',
+                ],
+            ]);
+
             $content = $this->wizardContent($form);
         } else {
+            $form->loadMissing([
+                'fields',
+            ]);
+
             $content = [
-                ...$this->fields($form->fields),
+                ...$this->content($form->content['content'] ?? [], $form->fields->keyBy('id')),
                 [
                     '$formkit' => 'submit',
                     'label' => 'Submit',
@@ -38,13 +47,83 @@ class GenerateFormKitSchema
         ];
     }
 
-    public function fields(Collection $fields): array
+    public function content(array $content, ?Collection $fields = null): array
     {
         $blocks = FormFieldBlockRegistry::keyByType();
 
-        return $fields
-            ->map(fn (FormField $field): array => $blocks[$field->type]::getFormKitSchema($field))
-            ->all();
+        return array_map(
+            fn (array $component): array | string => match ($component['type'] ?? null) {
+                'bulletList' => ['$el' => 'ul', 'children' => $this->content($component['content'] ?? [], $fields)],
+                'grid' => $this->grid($component, $fields),
+                'gridColumn' => ['$el' => 'div', 'children' => $this->content($component['content'], $fields), 'attrs' => ['class' => ['grid-col' => true]]],
+                'heading' => ['$el' => "h{$component['attrs']['level']}", 'children' => $this->content($component['content'], $fields)],
+                'horizontalRule' => ['$el' => 'hr'],
+                'listItem' => ['$el' => 'li', 'children' => $this->content($component['content'] ?? [], $fields)],
+                'orderedList' => ['$el' => 'ol', 'children' => $this->content($component['content'] ?? [], $fields)],
+                'paragraph' => ['$el' => 'p', 'children' => $this->content($component['content'] ?? [], $fields)],
+                'small' => ['$el' => 'small', 'children' => $this->content($component['content'] ?? [], $fields)],
+                'text' => $this->text($component),
+                'tiptapBlock' => $blocks[$component['attrs']['type']]::getFormKitSchema($fields[$component['attrs']['id']]),
+                default => [],
+            },
+            $content,
+        );
+    }
+
+    public function grid(array $component, ?Collection $fields): array
+    {
+        return [
+            '$el' => 'div',
+            'attrs' => [
+                'class' => [
+                    ...match ($component['attrs']['type']) {
+                        'asymetric-left-thirds' => ['asymetric-grid-left-thirds' => true],
+                        'asymetric-right-thirds' => ['asymetric-grid-right-thirds' => true],
+                        'asymetric-left-fourths' => ['asymetric-grid-left-fourths' => true],
+                        'asymetric-right-fourths' => ['asymetric-grid-right-fourths' => true],
+                        'fixed' => ['fixed-grid-' . $component['attrs']['cols'] => true],
+                        'responsive' => ['responsive-grid-' . $component['attrs']['cols'] => true],
+                        default => [],
+                    },
+                ],
+            ],
+            'children' => $this->content($component['content'], $fields),
+        ];
+    }
+
+    public function text(array $component): array | string
+    {
+        if (filled($component['marks'] ?? [])) {
+            return array_reduce(
+                $component['marks'],
+                fn (array | string $text, array $mark): array | string => match ($mark['type']) {
+                    'bold' => [
+                        '$el' => 'strong',
+                        'children' => $component['text'],
+                    ],
+                    'italic' => [
+                        '$el' => 'em',
+                        'children' => $component['text'],
+                    ],
+                    'link' => [
+                        '$el' => 'a',
+                        'attrs' => [
+                            'href' => $mark['attrs']['href'] ?? null,
+                            'target' => $mark['attrs']['target'] ?? null,
+                        ],
+                        'children' => $component['text'],
+                    ],
+                    'small' => [
+                        '$el' => 'small',
+                        'children' => $component['text'],
+                    ],
+                    default => $text,
+                },
+                $component['text'],
+            );
+        }
+
+        return $component['text'];
     }
 
     public function wizardContent(Form $form): array
@@ -105,7 +184,7 @@ class GenerateFormKitSchema
                                 '$formkit' => 'group',
                                 'id' => $step->label,
                                 'name' => $step->label,
-                                'children' => $this->fields($step->fields),
+                                'children' => $this->content($step->content['content'] ?? [], $step->fields->keyBy('id')),
                             ],
                         ],
                     ]),

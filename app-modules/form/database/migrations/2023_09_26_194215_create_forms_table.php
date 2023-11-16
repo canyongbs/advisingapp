@@ -17,6 +17,7 @@ return new class () extends Migration {
             $table->string('primary_color')->nullable();
             $table->string('rounding')->nullable();
             $table->boolean('is_wizard')->default(false);
+            $table->json('content')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
