@@ -16,10 +16,11 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Interaction\Imports\InteractionsImporter;
 use Assist\Interaction\Filament\Resources\InteractionResource;
+use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 
 class ListInteractions extends ListRecords
 {
-    // use FilterTableWithOpenSearch;
+    use FilterTableWithOpenSearch;
 
     protected static string $resource = InteractionResource::class;
 
@@ -28,20 +29,27 @@ class ListInteractions extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('campaign.name')
-                    ->searchable(),
-                TextColumn::make('driver.name')
-                    ->searchable(),
-                TextColumn::make('division.name')
-                    ->searchable(),
-                TextColumn::make('outcome.name')
-                    ->searchable(),
-                TextColumn::make('relation.name')
-                    ->searchable(),
-                TextColumn::make('status.name')
-                    ->searchable(),
-                TextColumn::make('type.name')
-                    ->searchable(),
+                OpenSearchTextColumn::make('campaign_name')
+                    ->searchable()
+                    ->getStateUsing(fn (Interaction $record) => $record->campaign->name),
+                OpenSearchTextColumn::make('driver_name')
+                    ->searchable()
+                    ->getStateUsing(fn (Interaction $record) => $record->driver->name),
+                OpenSearchTextColumn::make('division_name')
+                    ->searchable()
+                    ->getStateUsing(fn (Interaction $record) => $record->division->name),
+                OpenSearchTextColumn::make('outcome_name')
+                    ->searchable()
+                    ->getStateUsing(fn (Interaction $record) => $record->outcome->name),
+                OpenSearchTextColumn::make('relation_name')
+                    ->searchable()
+                    ->getStateUsing(fn (Interaction $record) => $record->relation->name),
+                OpenSearchTextColumn::make('status_name')
+                    ->searchable()
+                    ->getStateUsing(fn (Interaction $record) => $record->status->name),
+                OpenSearchTextColumn::make('type_name')
+                    ->searchable()
+                    ->getStateUsing(fn (Interaction $record) => $record->type->name),
                 TextColumn::make('start_datetime')
                     ->label('Start Time')
                     ->dateTime(),
@@ -51,9 +59,9 @@ class ListInteractions extends ListRecords
                 TextColumn::make('created_at')
                     ->state(fn ($record) => $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6))
                     ->label('Duration'),
-                TextColumn::make('subject')
+                OpenSearchTextColumn::make('subject')
                     ->searchable(),
-                TextColumn::make('description')
+                OpenSearchTextColumn::make('description')
                     ->searchable(),
             ])
             ->filters([
