@@ -5,7 +5,6 @@ namespace Assist\InAppCommunication\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Assist\InAppCommunication\Enums\ConversationType;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
@@ -13,9 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class TwilioConversation extends Model
 {
-    // TODO: Make Factory
-    use HasFactory;
-
     protected $primaryKey = 'sid';
 
     protected $keyType = 'string';
