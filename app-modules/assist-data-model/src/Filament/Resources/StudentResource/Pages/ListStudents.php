@@ -5,13 +5,13 @@ namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Tables\Filters\TernaryFilter;
-use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Models\Caseload;
@@ -22,31 +22,28 @@ use Assist\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
-use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 
 class ListStudents extends ListRecords
 {
-    use FilterTableWithOpenSearch;
-
     protected static string $resource = StudentResource::class;
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
-                OpenSearchTextColumn::make(Student::displayNameKey())
+                TextColumn::make(Student::displayNameKey())
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                OpenSearchTextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
-                OpenSearchTextColumn::make('mobile')
+                TextColumn::make('mobile')
                     ->searchable(),
-                OpenSearchTextColumn::make('phone')
+                TextColumn::make('phone')
                     ->searchable(),
-                OpenSearchTextColumn::make('sisid')
+                TextColumn::make('sisid')
                     ->searchable(),
-                OpenSearchTextColumn::make('otherid')
+                TextColumn::make('otherid')
                     ->searchable(),
             ])
             ->filters([

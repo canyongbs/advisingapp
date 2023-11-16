@@ -75,47 +75,6 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
             : 'students';
     }
 
-    public function searchableAs(): string
-    {
-        return config('scout.prefix') . 'students';
-    }
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'sisid' => $this->getScoutKey(),
-            'otherid' => $this->otherid,
-            'first' => $this->first,
-            'last' => $this->last,
-            'full_name' => $this->full_name,
-            'preferred' => $this->preferred,
-            'email' => $this->email,
-            'email_2' => $this->email_2,
-            'mobile' => $this->mobile,
-            'sms_opt_out' => $this->sms_opt_out,
-            'email_bounce' => $this->email_bounce,
-            'phone' => $this->phone,
-            'address' => $this->address,
-            'address_2' => $this->address_2,
-            'address_3' => $this->address_3,
-            'city' => $this->city,
-            'state' => $this->state,
-            'postal' => $this->postal,
-            'birthdate' => $this->birthdate,
-            'hsgrad' => (int) $this->hsgrad,
-            'dual' => $this->dual,
-            'ferpa' => $this->ferpa,
-            'dfw' => $this->dfw,
-            'sap' => $this->sap,
-            'holds' => $this->holds,
-            'firstgen' => $this->firstgen,
-            'ethnicity' => $this->ethnicity,
-            'lastlmslogin' => $this->lastlmslogin,
-            'f_e_term' => $this->f_e_term,
-            'mr_e_term' => $this->mr_e_term,
-        ];
-    }
-
     public function identifier(): string
     {
         return $this->sisid;
