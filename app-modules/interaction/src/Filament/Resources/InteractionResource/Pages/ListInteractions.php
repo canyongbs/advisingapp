@@ -16,11 +16,10 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Interaction\Imports\InteractionsImporter;
 use Assist\Interaction\Filament\Resources\InteractionResource;
-use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 
 class ListInteractions extends ListRecords
 {
-    use FilterTableWithOpenSearch;
+    // use FilterTableWithOpenSearch;
 
     protected static string $resource = InteractionResource::class;
 
@@ -43,18 +42,18 @@ class ListInteractions extends ListRecords
                     ->searchable(),
                 TextColumn::make('type.name')
                     ->searchable(),
-                OpenSearchTextColumn::make('start_datetime')
+                TextColumn::make('start_datetime')
                     ->label('Start Time')
                     ->dateTime(),
-                OpenSearchTextColumn::make('end_datetime')
+                TextColumn::make('end_datetime')
                     ->label('End Time')
                     ->dateTime(),
-                OpenSearchTextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->state(fn ($record) => $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6))
                     ->label('Duration'),
-                OpenSearchTextColumn::make('subject')
+                TextColumn::make('subject')
                     ->searchable(),
-                OpenSearchTextColumn::make('description')
+                TextColumn::make('description')
                     ->searchable(),
             ])
             ->filters([
