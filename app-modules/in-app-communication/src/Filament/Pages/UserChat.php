@@ -49,6 +49,7 @@ class UserChat extends Page implements HasForms, HasActions
         return Action::make('newChat')
             ->label('New Chat')
             ->icon('heroicon-m-plus')
+            ->modalWidth('sm')
             ->form([
                 Select::make('user')
                     ->options(
