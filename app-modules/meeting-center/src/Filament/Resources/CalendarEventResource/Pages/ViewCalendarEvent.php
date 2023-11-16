@@ -24,8 +24,7 @@ class ViewCalendarEvent extends ViewRecord
                         TextEntry::make('description'),
                         TextEntry::make('starts_at'),
                         TextEntry::make('ends_at'),
-                        TextEntry::make('emails')
-                            ->label('Attendees')
+                        TextEntry::make('attendees')
                             ->badge(),
                     ])
                     ->columns(),

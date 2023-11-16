@@ -17,13 +17,13 @@ class CalendarEvent extends BaseModel
         'ends_at',
         'provider_id',
         'calendar_id',
-        'emails',
+        'attendees',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
-        'emails' => 'array',
+        'attendees' => 'array',
     ];
 
     public function calendar(): BelongsTo

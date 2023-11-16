@@ -35,8 +35,7 @@ class EditCalendarEvent extends EditRecord
             DateTimePicker::make('ends_at')
                 ->timezone($user->timezone)
                 ->required(),
-            TagsInput::make('emails')
-                ->label('Attendees')
+            TagsInput::make('attendees')
                 ->placeholder('Add attendee email')
                 ->nestedRecursiveRules(['email']),
         ]);

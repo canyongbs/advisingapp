@@ -12,7 +12,7 @@ return new class () extends Migration {
 
             $table->string('title');
             $table->text('description')->nullable();
-            $table->json('emails')->nullable();
+            $table->json('attendees')->nullable();
 
             $table->string('provider_id')->nullable();
             $table->foreignUuid('calendar_id')->constrained('calendars')->cascadeOnDelete();

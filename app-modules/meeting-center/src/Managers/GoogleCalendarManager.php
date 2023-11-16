@@ -9,10 +9,8 @@ use Google\Service\Oauth2;
 use Illuminate\Support\Carbon;
 use Google\Service\Calendar\Event;
 use Assist\MeetingCenter\Models\Calendar;
-use Google\Service\Calendar\EventCreator;
 use Google\Service\Calendar\EventAttendee;
 use Google\Service\Calendar\EventDateTime;
-use Google\Service\Calendar\EventOrganizer;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Google\Service\Calendar as GoogleCalendar;
 use Google\Service\Calendar\CalendarListEntry;
@@ -222,7 +220,7 @@ class GoogleCalendarManager implements CalendarInterface
         $end->setDateTime($event->ends_at);
         $googleEvent->setEnd($end);
 
-        $attendees = collect($event->emails)
+        $attendees = collect($event->attendees)
             // If you add yourself as an attendee you end up with a weird duplicate event on the calendar...
             ->reject(fn (string $email): bool => $email === $event->calendar->provider_email)
             ->map(function ($email) {
@@ -235,17 +233,6 @@ class GoogleCalendarManager implements CalendarInterface
             ->toArray();
 
         $googleEvent->setAttendees($attendees);
-
-        // TODO: I don't think these do anything...
-        // $organizer = new EventOrganizer();
-        // $organizer->setEmail($event->calendar->provider_email);
-        // $organizer->setSelf(true);
-        // $googleEvent->setOrganizer($organizer);
-        //
-        // $creator = new EventCreator();
-        // $creator->setEmail($event->calendar->provider_email);
-        // $creator->setSelf(true);
-        // $googleEvent->setCreator($creator);
 
         return $googleEvent;
     }
