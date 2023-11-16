@@ -19,7 +19,7 @@ final class CreateKnowledgeBaseItemsIndex implements MigrationInterface
             $mapping->text('notes');
             $mapping->keyword('quality_id');
             $mapping->keyword('status_id');
-            $mapping->text('category_id');
+            $mapping->keyword('category_id');
             $mapping->date('created_at', ['format' => 'yyyy-MM-dd HH:mm:ss']);
             $mapping->date('updated_at', ['format' => 'yyyy-MM-dd HH:mm:ss']);
 
