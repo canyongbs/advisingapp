@@ -10,6 +10,7 @@ use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
 use Assist\CareTeam\Models\CareTeam;
 use Assist\Form\Models\FormSubmission;
+use App\Models\Contracts\IsSearchable;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use OpenSearch\ScoutDriverPlus\Searchable;
@@ -38,7 +39,7 @@ use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @mixin IdeHelperProspect
  */
-class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, HasFilamentResource
+class Prospect extends BaseModel implements Auditable, Subscribable, Educatable, HasFilamentResource, IsSearchable
 {
     use HasUuids;
     use SoftDeletes;

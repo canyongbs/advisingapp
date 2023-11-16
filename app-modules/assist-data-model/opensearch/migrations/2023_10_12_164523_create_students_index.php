@@ -7,19 +7,17 @@ use OpenSearch\Adapter\Indices\Settings;
 use OpenSearch\Migrations\Facades\Index;
 use OpenSearch\Migrations\MigrationInterface;
 
-final class CreateProspectsIndex implements MigrationInterface
+final class CreateStudentsIndex implements MigrationInterface
 {
     public function up(): void
     {
-        Index::createIfNotExists('prospects', function (Mapping $mapping, Settings $settings) {
-            $mapping->keyword('id');
-            $mapping->keyword('status_id');
-            $mapping->keyword('source_id');
-            $mapping->text('first_name');
-            $mapping->text('last_name');
+        Index::createIfNotExists('students', function (Mapping $mapping, Settings $settings) {
+            $mapping->text('sisid');
+            $mapping->text('otherid');
+            $mapping->text('first');
+            $mapping->text('last');
             $mapping->text('full_name', ['analyzer' => 'autocomplete']);
             $mapping->text('preferred');
-            $mapping->text('description');
             $mapping->text('email');
             $mapping->text('email_2');
             $mapping->text('mobile');
@@ -28,12 +26,22 @@ final class CreateProspectsIndex implements MigrationInterface
             $mapping->text('phone');
             $mapping->text('address');
             $mapping->text('address_2');
+            $mapping->text('address_3');
+            $mapping->text('city');
+            $mapping->keyword('state');
+            $mapping->keyword('postal');
             $mapping->date('birthdate', ['format' => 'date']);
             $mapping->integer('hsgrad');
-            $mapping->text('assigned_to_id');
-            $mapping->text('created_by_id');
-            $mapping->date('created_at', ['format' => 'yyyy-MM-dd HH:mm:ss']);
-            $mapping->date('updated_at', ['format' => 'yyyy-MM-dd HH:mm:ss']);
+            $mapping->text('dual');
+            $mapping->text('ferpa');
+            $mapping->text('dfw');
+            $mapping->text('sap');
+            $mapping->text('holds');
+            $mapping->boolean('firstgen');
+            $mapping->text('ethnicity');
+            $mapping->date('lastlmslogin', ['format' => 'date_time']);
+            $mapping->text('f_e_term');
+            $mapping->text('mr_e_term');
 
             $settings->analysis([
                 'filter' => [
@@ -59,6 +67,6 @@ final class CreateProspectsIndex implements MigrationInterface
 
     public function down(): void
     {
-        Index::dropIfExists('prospects');
+        Index::dropIfExists('students');
     }
 }

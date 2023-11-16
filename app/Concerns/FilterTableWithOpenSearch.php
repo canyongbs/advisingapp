@@ -4,7 +4,7 @@ namespace App\Concerns;
 
 use Exception;
 use Filament\Tables\Columns\Column;
-use Assist\Prospect\Models\Prospect;
+use App\Models\Contracts\IsSearchable;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
 use OpenSearch\Adapter\Documents\Document;
@@ -77,10 +77,13 @@ trait FilterTableWithOpenSearch
                 }
             });
 
+        /** @var IsSearchable $model */
+        $model = app($this->getModel());
+
         if ($filterWithOpenSearchQuery) {
             $query->whereIn(
-                'id',
-                Prospect::searchQuery($openSearchQuery)
+                $model->getKeyName(),
+                $model::searchQuery($openSearchQuery)
                     ->execute()
                     ->documents()
                     ->map(fn (Document $document) => $document->id())
