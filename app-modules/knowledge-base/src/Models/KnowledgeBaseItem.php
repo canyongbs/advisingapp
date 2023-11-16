@@ -53,8 +53,11 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia, IsSear
             'solution' => $this->solution,
             'notes' => $this->notes,
             'quality_id' => $this->quality_id,
+            'quality_name' => $this->quality->name,
             'status_id' => $this->status_id,
+            'status_name' => $this->status->name,
             'category_id' => $this->category_id,
+            'category_name' => $this->category->name,
         ];
     }
 

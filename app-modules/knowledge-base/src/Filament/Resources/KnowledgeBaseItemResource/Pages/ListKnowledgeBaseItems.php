@@ -13,6 +13,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
@@ -33,34 +34,43 @@ class ListKnowledgeBaseItems extends ListRecords
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('quality.name')
+                OpenSearchTextColumn::make('quality_name')
                     ->label('Quality')
                     ->translateLabel()
-                    ->sortable(),
-                TextColumn::make('status.name')
+                    ->searchable()
+                    ->sortable()
+                    ->getStateUsing(fn (KnowledgeBaseItem $record) => $record->quality->name),
+                OpenSearchTextColumn::make('status_name')
                     ->label('Status')
                     ->translateLabel()
-                    ->sortable(),
-                OpenSearchTextColumn::make('public')
+                    ->searchable()
+                    ->sortable()
+                    ->getStateUsing(fn (KnowledgeBaseItem $record) => $record->status->name),
+                TextColumn::make('public')
                     ->label('Public')
                     ->translateLabel()
                     ->sortable()
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
-                TextColumn::make('category.name')
+                OpenSearchTextColumn::make('category_name')
                     ->label('Category')
                     ->translateLabel()
-                    ->sortable(),
+                    ->searchable()
+                    ->sortable()
+                    ->getStateUsing(fn (KnowledgeBaseItem $record) => $record->category->name),
             ])
             ->filters([
-                OpenSearchSelectFilter::make('quality')
+                OpenSearchSelectFilter::make('quality_id')
+                    ->label('Quality')
                     ->relationship('quality', 'name')
                     ->multiple()
                     ->preload(),
-                OpenSearchSelectFilter::make('status')
+                OpenSearchSelectFilter::make('status_id')
+                    ->label('Status')
                     ->relationship('status', 'name')
                     ->multiple()
                     ->preload(),
-                OpenSearchSelectFilter::make('category')
+                OpenSearchSelectFilter::make('category_id')
+                    ->label('Category')
                     ->relationship('category', 'name')
                     ->multiple()
                     ->preload(),
