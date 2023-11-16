@@ -11,13 +11,17 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Assist\Interaction\Models\Interaction;
+use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Interaction\Imports\InteractionsImporter;
 use Assist\Interaction\Filament\Resources\InteractionResource;
+use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 
 class ListInteractions extends ListRecords
 {
+    use FilterTableWithOpenSearch;
+
     protected static string $resource = InteractionResource::class;
 
     public function table(Table $table): Table
@@ -39,18 +43,18 @@ class ListInteractions extends ListRecords
                     ->searchable(),
                 TextColumn::make('type.name')
                     ->searchable(),
-                TextColumn::make('start_datetime')
+                OpenSearchTextColumn::make('start_datetime')
                     ->label('Start Time')
                     ->dateTime(),
-                TextColumn::make('end_datetime')
+                OpenSearchTextColumn::make('end_datetime')
                     ->label('End Time')
                     ->dateTime(),
-                TextColumn::make('created_at')
+                OpenSearchTextColumn::make('created_at')
                     ->state(fn ($record) => $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6))
                     ->label('Duration'),
-                TextColumn::make('subject')
+                OpenSearchTextColumn::make('subject')
                     ->searchable(),
-                TextColumn::make('description')
+                OpenSearchTextColumn::make('description')
                     ->searchable(),
             ])
             ->filters([
