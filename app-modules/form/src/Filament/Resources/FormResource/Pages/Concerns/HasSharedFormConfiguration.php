@@ -90,9 +90,19 @@ trait HasSharedFormConfiguration
             Section::make('Appearance')
                 ->schema([
                     Select::make('primary_color')
-                        ->options(collect(Color::all())->keys()->mapWithKeys(fn (string $color): array => [
-                            $color => Str::title($color),
-                        ])->all()),
+                        ->allowHtml()
+                        ->native(false)
+                        ->options(
+                            collect(Color::all())
+                                ->keys()
+                                ->sort()
+                                ->mapWithKeys(fn (string $color) => [
+                                    $color => "<span class='flex items-center gap-x-4'>
+                                <span class='rounded-full w-4 h-4' style='background:rgb(" . Color::all()[$color]['500'] . ")'></span>
+                                <span>" . str($color)->headline() . '</span>
+                                </span>',
+                                ])
+                        ),
                     Select::make('rounding')
                         ->options(Rounding::class),
                 ])

@@ -33,7 +33,19 @@ class CreateEmailTemplate extends CreateRecord
                     ->required()
                     ->autocomplete(false),
                 Select::make('primary_color')
-                    ->options(collect(Color::all())->keys()->sort()->mapWithKeys(fn ($color) => [$color => str($color)->headline()])),
+                    ->allowHtml()
+                    ->native(false)
+                    ->options(
+                        collect(Color::all())
+                            ->keys()
+                            ->sort()
+                            ->mapWithKeys(fn (string $color) => [
+                                $color => "<span class='flex items-center gap-x-4'>
+                                <span class='rounded-full w-4 h-4' style='background:rgb(" . Color::all()[$color]['500'] . ")'></span>
+                                <span>" . str($color)->headline() . '</span>
+                                </span>',
+                            ])
+                    ),
                 SpatieMediaLibraryFileUpload::make('logo')
                     ->disk('s3')
                     ->collection('logo')
