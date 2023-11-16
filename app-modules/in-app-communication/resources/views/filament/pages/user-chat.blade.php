@@ -17,22 +17,24 @@ use Assist\InAppCommunication\Models\TwilioConversation;
                 <div class="flex flex-col gap-y-2">
                     {{ $this->newChatAction }}
 
-                    <ul
-                            class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                        @foreach ($this->conversations as $conversation)
-                            @php
-                                /** @var TwilioConversation $conversation */
-                            @endphp
-                            <li @class([
+
+                    @if($this->conversations->isNotEmpty())
+                        <ul
+                                class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                            @foreach ($this->conversations as $conversation)
+                                @php
+                                    /** @var TwilioConversation $conversation */
+                                @endphp
+                                <li @class([
                                         'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                         'bg-gray-100 dark:bg-white/5' => $selectedConversation === $conversation['sid'],
                                     ])>
-                                <a
-                                        @class([
-                                            'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm',
-                                        ])
-                                        wire:click="selectConversation('{{ $conversation['sid'] }}')"
-                                >
+                                    <a
+                                            @class([
+                                                'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm',
+                                            ])
+                                            wire:click="selectConversation('{{ $conversation['sid'] }}')"
+                                    >
                                     <span @class([
                                         'fi-sidebar-item-label flex-1 truncate',
                                         'text-gray-700 dark:text-gray-200' => !$selectedConversation === $conversation['sid'],
@@ -40,14 +42,15 @@ use Assist\InAppCommunication\Models\TwilioConversation;
                                     ])>
                                         {{ $conversation->participants()->where('user_id', '!=', auth()->id())->first()->name }}
                                     </span>
-                                </a>
-                                {{-- Will look into this later --}}
-{{--                                <div>--}}
-{{--                                    {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}--}}
-{{--                                </div>--}}
-                            </li>
-                        @endforeach
-                    </ul>
+                                    </a>
+                                    {{-- TODO: Will look into this later --}}
+                                    {{--                                <div>--}}
+                                    {{--                                    {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }}--}}
+                                    {{--                                </div>--}}
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
             </div>
 
@@ -162,7 +165,7 @@ use Assist\InAppCommunication\Models\TwilioConversation;
                 </div>
             @else
                 <div class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3">
-                    <p class="text-xl text-center">Select or create a new Conversation</p>
+                    <p class="text-xl text-center">Select or create a new Chat</p>
                 </div>
             @endif
         </div>
