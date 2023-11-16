@@ -2,8 +2,6 @@
 
 use Filament\Support\Facades\FilamentAsset;
 use Assist\InAppCommunication\Models\TwilioConversation;
-use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
-use Illuminate\Support\Facades\Vite;
 
 ?>
 
@@ -75,7 +73,7 @@ use Illuminate\Support\Facades\Vite;
                         <div
                             class="flex max-h-[calc(100vh-24rem)] flex-1 flex-col-reverse overflow-y-scroll rounded-xl border border-gray-950/5 text-sm shadow-sm dark:border-white/10 dark:bg-gray-800"
                         >
-                            <div class="divide-y dark:divide-none">
+                            <div class="divide-y dark:divide-gray-700">
                                 <template x-for="message in messages" :key="message.message.index">
                                     <div class="group w-full dark:bg-gray-800">
                                         <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
@@ -86,7 +84,7 @@ use Illuminate\Support\Facades\Vite;
                                                     <div>
                                                         <x-filament::avatar
                                                             class="rounded-full"
-                                                            alt="AI Assistant avatar"
+                                                            alt="User Avatar"
                                                             x-bind:src="message.avatar"
                                                         />
                                                     </div>
