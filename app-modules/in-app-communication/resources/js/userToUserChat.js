@@ -17,7 +17,7 @@ document.addEventListener('alpine:init', () => {
         messages: [],
         message: '',
         usersTyping: [],
-        submit: function() {
+        submit: function () {
             if (this.message.length === 0 || this.conversation === null) return;
 
             this.conversation.sendMessage(this.message).catch((error) => this.handleError(error));
@@ -70,18 +70,20 @@ document.addEventListener('alpine:init', () => {
                 }
             });
 
-            conversationsClient.on("tokenAboutToExpire", async () => {
+            conversationsClient.on('tokenAboutToExpire', async () => {
                 await this.attemptReconnect();
             });
 
-            conversationsClient.on("tokenExpired", async () => {
+            conversationsClient.on('tokenExpired', async () => {
                 await this.attemptReconnect();
             });
 
             return conversationsClient;
         },
         async attemptReconnect() {
-            conversationsClient.updateToken(await this.$wire.generateToken(true)).catch((error) => this.handleError(error));
+            conversationsClient
+                .updateToken(await this.$wire.generateToken(true))
+                .catch((error) => this.handleError(error));
         },
         async init() {
             if (conversationsClient === null) {
@@ -91,17 +93,19 @@ document.addEventListener('alpine:init', () => {
             if (selectedConversation) {
                 this.loadingMessage = 'Loading conversation…';
 
-                this.conversation = await conversationsClient.getConversationBySid(selectedConversation).catch((error) => {
-                    this.error = true;
-                    this.handleError(error);
-                });
+                this.conversation = await conversationsClient
+                    .getConversationBySid(selectedConversation)
+                    .catch((error) => {
+                        this.error = true;
+                        this.handleError(error);
+                    });
 
                 await this.getMessages();
 
                 this.conversation.on('messageAdded', async (message) => {
                     this.messages.push({
                         avatar: await this.getAvatarUrl(message.author),
-                        message: message
+                        message: message,
                     });
 
                     this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
@@ -115,7 +119,7 @@ document.addEventListener('alpine:init', () => {
                     if (index !== -1) {
                         this.messages[index] = {
                             avatar: await this.getAvatarUrl(data.message.author),
-                            message: data.message
+                            message: data.message,
                         };
                     }
                 });
@@ -126,12 +130,10 @@ document.addEventListener('alpine:init', () => {
                     });
 
                     if (index === -1) {
-                        this.usersTyping.push(
-                          {
-                              identity: participant.identity,
-                              avatar: await this.getAvatarUrl(participant.identity)
-                          }
-                        );
+                        this.usersTyping.push({
+                            identity: participant.identity,
+                            avatar: await this.getAvatarUrl(participant.identity),
+                        });
                     }
                 });
 
@@ -151,40 +153,44 @@ document.addEventListener('alpine:init', () => {
         async getMessages() {
             this.loadingMessage = 'Loading messages…';
 
-            this.conversation.getMessages().then((messages) => {
-                this.messagePaginator = messages;
-
-                messages.items.forEach(async (message) => {
-                    this.messages.push({
-                        avatar: await this.getAvatarUrl(message.author),
-                        message: message
-                    });
-                });
-
-                this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
-            })
-              .catch((error) => {
-                  this.error = true;
-                  this.handleError(error)
-              });
-
-            this.loadingMessage = 'Messages loaded...';
-        },
-        async loadPreviousMessages()
-        {
-            if (this.messagePaginator?.hasPrevPage) {
-                this.loadingPreviousMessages = true;
-
-                this.messagePaginator.prevPage().then((messages) => {
+            this.conversation
+                .getMessages()
+                .then((messages) => {
                     this.messagePaginator = messages;
 
                     messages.items.forEach(async (message) => {
-                        this.messages.unshift({
+                        this.messages.push({
                             avatar: await this.getAvatarUrl(message.author),
-                            message: message
+                            message: message,
                         });
                     });
-                }).catch((error) => this.handleError(error));
+
+                    this.conversation.setAllMessagesRead().catch((error) => this.handleError(error));
+                })
+                .catch((error) => {
+                    this.error = true;
+                    this.handleError(error);
+                });
+
+            this.loadingMessage = 'Messages loaded...';
+        },
+        async loadPreviousMessages() {
+            if (this.messagePaginator?.hasPrevPage) {
+                this.loadingPreviousMessages = true;
+
+                this.messagePaginator
+                    .prevPage()
+                    .then((messages) => {
+                        this.messagePaginator = messages;
+
+                        messages.items.forEach(async (message) => {
+                            this.messages.unshift({
+                                avatar: await this.getAvatarUrl(message.author),
+                                message: message,
+                            });
+                        });
+                    })
+                    .catch((error) => this.handleError(error));
 
                 this.loadingPreviousMessages = false;
             }
@@ -205,16 +211,18 @@ document.addEventListener('alpine:init', () => {
         handleError(error) {
             console.error('Chat client error occurred, sending to error handler…');
 
-            this.$wire.handleError(JSON.stringify(error, Object.getOwnPropertyNames(error))).then(() => console.info('Chat client error sent to error handler.')).catch((error) => console.error('Error handler failed to handle error: ', error));
+            this.$wire
+                .handleError(JSON.stringify(error, Object.getOwnPropertyNames(error)))
+                .then(() => console.info('Chat client error sent to error handler.'))
+                .catch((error) => console.error('Error handler failed to handle error: ', error));
         },
-        typing(e)
-        {
+        typing(e) {
             if (e.keyCode === 13) {
                 e.preventDefault();
                 this.submit();
             } else {
                 this.conversation?.typing();
             }
-        }
+        },
     }));
 });
