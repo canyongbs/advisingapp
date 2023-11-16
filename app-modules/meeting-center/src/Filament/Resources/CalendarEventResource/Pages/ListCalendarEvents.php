@@ -8,12 +8,13 @@ use Filament\Actions\Action;
 use Livewire\Attributes\Url;
 use Filament\Facades\Filament;
 use App\Filament\Columns\IdColumn;
-use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -99,9 +100,15 @@ class ListCalendarEvents extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('title'),
-                TextColumn::make('starts_at'),
-                TextColumn::make('ends_at'),
+                TextColumn::make('title')
+                    ->sortable(),
+                TextColumn::make('starts_at')
+                    ->sortable(),
+                TextColumn::make('ends_at')
+                    ->sortable(),
+                TextColumn::make('attendees')
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Filter::make('pastEvents')
@@ -111,12 +118,16 @@ class ListCalendarEvents extends ListRecords
             ])
             ->actions([
                 ViewAction::make(),
-                // EditAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    // DeleteBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
+            ])
+            ->headerActions([
+                CreateAction::make(),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('starts_at'));
     }

@@ -25,17 +25,16 @@ class CalendarEventResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
             'index' => ListCalendarEvents::route('/'),
-            // 'create' => CreateCalendarEvent::route('/create'),
+            'create' => CreateCalendarEvent::route('/create'),
             'view' => ViewCalendarEvent::route('/{record}'),
-            // 'edit' => EditCalendarEvent::route('/{record}/edit'),
+            'edit' => EditCalendarEvent::route('/{record}/edit'),
         ];
     }
 }

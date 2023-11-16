@@ -9,6 +9,7 @@ use Google\Service\Oauth2;
 use Illuminate\Support\Carbon;
 use Google\Service\Calendar\Event;
 use Assist\MeetingCenter\Models\Calendar;
+use Google\Service\Calendar\EventAttendee;
 use Google\Service\Calendar\EventDateTime;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Google\Service\Calendar as GoogleCalendar;
@@ -218,6 +219,20 @@ class GoogleCalendarManager implements CalendarInterface
         $end = new EventDateTime();
         $end->setDateTime($event->ends_at);
         $googleEvent->setEnd($end);
+
+        $attendees = collect($event->attendees)
+            // If you add yourself as an attendee you end up with a weird duplicate event on the calendar...
+            ->reject(fn (string $email): bool => $email === $event->calendar->provider_email)
+            ->map(function ($email) {
+                $attendee = new EventAttendee();
+                $attendee->setEmail($email);
+
+                return $attendee;
+            })
+            ->flatten()
+            ->toArray();
+
+        $googleEvent->setAttendees($attendees);
 
         return $googleEvent;
     }

@@ -16,11 +16,14 @@ class CalendarEvent extends BaseModel
         'starts_at',
         'ends_at',
         'provider_id',
+        'calendar_id',
+        'attendees',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'attendees' => 'array',
     ];
 
     public function calendar(): BelongsTo
