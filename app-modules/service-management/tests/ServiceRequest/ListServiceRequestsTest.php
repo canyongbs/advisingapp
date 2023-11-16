@@ -30,27 +30,27 @@ test('The correct details are displayed on the ListServiceRequests page', functi
                 $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'respondent.display_name',
+                'respondent_name',
                 $serviceRequest->respondent->full_name,
                 $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'respondent.sisid',
+                'respondent_id',
                 $serviceRequest->respondent->sisid,
                 $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'respondent.otherid',
+                'respondent_otherid',
                 $serviceRequest->respondent->otherid,
                 $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'division.name',
+                'division_name',
                 $serviceRequest->division->name,
                 $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'assignedTo.name',
+                'assigned_to_name',
                 $serviceRequest->assignedTo->name,
                 $serviceRequest
             )
