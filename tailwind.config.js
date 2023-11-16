@@ -1,6 +1,7 @@
 import preset from './vendor/filament/support/tailwind.config.preset';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
+import plugin from 'tailwindcss/plugin';
 
 export default {
     presets: [preset],
@@ -129,5 +130,23 @@ export default {
             },
         },
     },
-    plugins: [forms, typography, require('flowbite/plugin')],
+    plugins: [
+        forms,
+        typography,
+        require('flowbite/plugin'),
+        plugin(({ matchUtilities, theme }) => {
+            matchUtilities(
+                {
+                    'animation-delay': (value) => {
+                        return {
+                            'animation-delay': value,
+                        };
+                    },
+                },
+                {
+                    values: theme('transitionDelay'),
+                },
+            );
+        }),
+    ],
 };

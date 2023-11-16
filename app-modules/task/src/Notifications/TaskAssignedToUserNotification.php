@@ -4,16 +4,17 @@ namespace Assist\Task\Notifications;
 
 use App\Models\User;
 use Assist\Task\Models\Task;
+use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
+use App\Notifications\MailMessage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Assist\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use Filament\Notifications\Notification as FilamentNotification;
 
-class TaskAssignedToUser extends Notification implements ShouldQueue
+class TaskAssignedToUserNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     use SerializesModels;
@@ -31,7 +32,8 @@ class TaskAssignedToUser extends Notification implements ShouldQueue
     {
         $truncatedTaskDescription = str($this->task->description)->limit(50);
 
-        return (new MailMessage())
+        return MailMessage::make()
+            ->emailTemplate($this->resolveEmailTemplate())
             ->subject('You have been assigned a new Task')
             ->line('You have been assigned the task: ')
             ->line("\"{$truncatedTaskDescription}\"");
@@ -49,5 +51,10 @@ class TaskAssignedToUser extends Notification implements ShouldQueue
             ->success()
             ->title("You have been assigned a new Task: {$link}")
             ->getDatabaseMessage();
+    }
+
+    private function resolveEmailTemplate(): ?EmailTemplate
+    {
+        return $this->task->createdBy->teams()->first()?->division?->emailTemplate;
     }
 }

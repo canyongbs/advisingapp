@@ -72,7 +72,7 @@ class ServiceRequestBlock extends CampaignActionBlock
                 ->nullable()
                 ->string(),
             DateTimePicker::make('execute_at')
-                ->label('When should the action be executed?')
+                ->label('When should the journey step be executed?')
                 ->required()
                 ->minDate(now(auth()->user()->timezone))
                 ->closeOnDateSelection(),

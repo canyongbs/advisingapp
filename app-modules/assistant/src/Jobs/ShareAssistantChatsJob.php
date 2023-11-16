@@ -66,7 +66,9 @@ class ShareAssistantChatsJob implements ShouldQueue
                 ->get()
                 ->each(function (Team $team) use ($sender, $via) {
                     $jobs = $team
-                        ->users
+                        ->users()
+                        ->whereKeyNot($sender->id)
+                        ->get()
                         ->map(fn (User $user) => new ShareAssistantChatJob($this->chat, $this->via, $user, $this->sender));
 
                     Bus::batch($jobs)

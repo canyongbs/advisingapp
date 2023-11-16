@@ -3,46 +3,63 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
+use FilamentTiptapEditor\TiptapBlock;
 use Filament\Forms\Components\Checkbox;
-use Filament\Infolists\Components\Entry;
-use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
-abstract class FormFieldBlock extends Block
+abstract class FormFieldBlock extends TiptapBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    public string $preview = 'form::blocks.previews.default';
 
-        $this->schema([
+    public string $rendered = 'form::blocks.submissions.default';
+
+    public ?string $icon = 'heroicon-m-cube';
+
+    public function getFormSchema(): array
+    {
+        return [
             FilamentTextInput::make('label')
                 ->required()
                 ->string()
                 ->maxLength(255),
-            FilamentTextInput::make('key')
-                ->required()
-                ->string()
-                ->maxLength(255),
-            Checkbox::make('required'),
+            Checkbox::make('isRequired')
+                ->label('Required'),
             ...$this->fields(),
-        ]);
+        ];
     }
 
-    public static function make(string $name = null): static
+    public function getLabel(): string
     {
-        return parent::make($name ?? static::type());
+        return $this->label ?? (string) str(static::type())
+            ->afterLast('.')
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst();
     }
 
-    abstract public function fields(): array;
+    public function getIdentifier(): string
+    {
+        return static::type();
+    }
+
+    public function fields(): array
+    {
+        return [];
+    }
 
     abstract public static function type(): string;
-
-    abstract public static function getInfolistEntry(FormField $field): Entry;
 
     abstract public static function getFormKitSchema(FormField $field): array;
 
     public static function getValidationRules(FormField $field): array
     {
         return [];
+    }
+
+    public static function getSubmissionState(mixed $response): array
+    {
+        return [
+            'response' => $response,
+        ];
     }
 }

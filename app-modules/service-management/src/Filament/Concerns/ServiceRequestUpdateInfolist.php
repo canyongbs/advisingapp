@@ -2,7 +2,6 @@
 
 namespace Assist\ServiceManagement\Filament\Concerns;
 
-use Illuminate\Support\Str;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Assist\ServiceManagement\Models\ServiceRequestUpdate;
@@ -23,11 +22,8 @@ trait ServiceRequestUpdateInfolist
             IconEntry::make('internal')
                 ->boolean(),
             TextEntry::make('direction')
-                ->icon(fn (ServiceRequestUpdateDirection $state): string => match ($state) {
-                    ServiceRequestUpdateDirection::Inbound => 'heroicon-o-arrow-down-tray',
-                    ServiceRequestUpdateDirection::Outbound => 'heroicon-o-arrow-up-tray',
-                })
-                ->formatStateUsing(fn (ServiceRequestUpdateDirection $state): string => Str::ucfirst($state->value)),
+                ->icon(fn (ServiceRequestUpdateDirection $state): string => $state->getIcon())
+                ->formatStateUsing(fn (ServiceRequestUpdateDirection $state): string => $state->getLabel()),
             TextEntry::make('update')
                 ->columnSpanFull(),
         ];

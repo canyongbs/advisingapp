@@ -5,7 +5,6 @@ namespace Assist\ServiceManagement\Filament\Resources;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
@@ -49,10 +48,11 @@ class ServiceRequestUpdateResource extends Resource
                     ->required()
                     ->string(),
                 Select::make('direction')
-                    ->options(collect(ServiceRequestUpdateDirection::cases())->mapWithKeys(fn (ServiceRequestUpdateDirection $direction) => [$direction->value => $direction->name]))
+                    ->options(ServiceRequestUpdateDirection::class)
                     ->label('Direction')
                     ->required()
-                    ->enum(ServiceRequestUpdateDirection::class),
+                    ->enum(ServiceRequestUpdateDirection::class)
+                    ->default(ServiceRequestUpdateDirection::default()),
                 Toggle::make('internal')
                     ->label('Internal')
                     ->rule(['boolean']),
@@ -109,11 +109,8 @@ class ServiceRequestUpdateResource extends Resource
                     ->label('Internal'),
                 Tables\Columns\TextColumn::make('direction')
                     ->label('Direction')
-                    ->formatStateUsing(fn (ServiceRequestUpdateDirection $state): string => Str::ucfirst($state->value))
-                    ->icon(fn (ServiceRequestUpdateDirection $state): string => match ($state) {
-                        ServiceRequestUpdateDirection::Inbound => 'heroicon-o-arrow-down-tray',
-                        ServiceRequestUpdateDirection::Outbound => 'heroicon-o-arrow-up-tray',
-                    }),
+                    ->formatStateUsing(fn (ServiceRequestUpdateDirection $state): string => $state->getLabel())
+                    ->icon(fn (ServiceRequestUpdateDirection $state): string => $state->getIcon()),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('internal')
@@ -122,10 +119,7 @@ class ServiceRequestUpdateResource extends Resource
                 Tables\Filters\SelectFilter::make('direction')
                     ->label('Direction')
                     ->translateLabel()
-                    ->options(
-                        collect(ServiceRequestUpdateDirection::cases())
-                            ->mapWithKeys(fn (ServiceRequestUpdateDirection $direction) => [$direction->value => $direction->name])
-                    ),
+                    ->options(ServiceRequestUpdateDirection::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

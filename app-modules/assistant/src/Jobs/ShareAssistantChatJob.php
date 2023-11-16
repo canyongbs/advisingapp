@@ -44,8 +44,9 @@ class ShareAssistantChatJob implements ShouldQueue
 
                 break;
             case AssistantChatShareVia::Internal:
+
                 $replica = $this->chat
-                    ->replicate(['id', 'user_id'])
+                    ->replicate(['id', 'user_id', 'assistant_chat_folder_id'])
                     ->user()
                     ->associate($this->user);
 

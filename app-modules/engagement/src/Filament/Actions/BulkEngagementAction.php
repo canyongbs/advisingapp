@@ -2,7 +2,6 @@
 
 namespace Assist\Engagement\Filament\Actions;
 
-use Filament\Actions\Action;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -12,6 +11,7 @@ use Filament\Forms\Components\Wizard\Step;
 use Assist\Engagement\Actions\CreateEngagementBatch;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
 
 class BulkEngagementAction
 {
@@ -87,15 +87,7 @@ class BulkEngagementAction
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            // FIXME This is currently not working exactly as expected. Dan is taking a look and will report back
-            ->modalCancelAction(
-                fn ($action) => Action::make('cancel')
-                    ->requiresConfirmation()
-                    ->modalDescription(fn () => 'The message has not been sent, are you sure you wish to return to the list view?')
-                    ->cancelParentActions()
-                    ->close()
-                    ->color('gray'),
-            )
+            ->modalCancelAction(fn (ListProspects $livewire) => $livewire->cancelEngageAction())
             ->deselectRecordsAfterCompletion();
     }
 }

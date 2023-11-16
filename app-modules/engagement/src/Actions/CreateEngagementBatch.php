@@ -36,6 +36,7 @@ class CreateEngagementBatch implements ShouldQueue
         ]);
 
         $this->data->records->each(function (Student|Prospect $record) use ($engagementBatch) {
+            /** @var Engagement $engagement */
             $engagement = $engagementBatch->engagements()->create([
                 'user_id' => $engagementBatch->user_id,
                 'recipient_id' => $record->identifier(),
@@ -58,7 +59,7 @@ class CreateEngagementBatch implements ShouldQueue
             return $deliverable->jobForDelivery();
         });
 
-        $engagementBatch->user->notify(new EngagementBatchStartedNotification(jobsToProcess: $deliverableJobs->count()));
+        $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch, $deliverableJobs->count()));
 
         Bus::batch($deliverableJobs)
             ->name("Process Bulk Engagement {$engagementBatch->id}")

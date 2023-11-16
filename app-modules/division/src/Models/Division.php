@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Team\Models\Team;
 use OwenIt\Auditing\Contracts\Auditable;
+use App\Models\Concerns\HasEmailTemplates;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +21,7 @@ class Division extends BaseModel implements Auditable
     use AuditableTrait;
     use HasManyInteractions;
     use SoftDeletes;
+    use HasEmailTemplates;
 
     protected $fillable = [
         'name',

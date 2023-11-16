@@ -35,6 +35,7 @@ it('will create the task records for educatables in the caseload', function (Col
         'description' => 'This is a description.',
         'due' => now()->addDay(),
         'assigned_to' => User::factory()->create()->id,
+        'created_by' => User::factory()->create()->id,
     ];
 
     $action = CampaignAction::factory()
@@ -56,6 +57,7 @@ it('will create the task records for educatables in the caseload', function (Col
         expect($task->description)->toBe($data['description']);
         expect($task->due->toString())->toBe($data['due']->toString());
         expect($task->assigned_to)->toBe($data['assigned_to']);
+        expect($task->created_by)->toBe($data['created_by']);
         expect($task->concern_id)->toBe($educatable->getKey());
         expect($task->concern_type)->toBe($educatable->getMorphClass());
     });

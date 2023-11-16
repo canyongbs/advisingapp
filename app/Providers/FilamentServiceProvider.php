@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use Illuminate\View\View;
 use App\Models\SettingsProperty;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
 use Assist\Theme\Settings\ThemeSettings;
+use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -138,5 +140,10 @@ class FilamentServiceProvider extends ServiceProvider
                 950 => '#4b0c2f',
             ],
         ]);
+
+        FilamentView::registerRenderHook(
+            'panels::body.end',
+            fn (): View => view('assist.filament.footer'),
+        );
     }
 }

@@ -10,6 +10,7 @@ class FormFieldBlockRegistry
     public static function get(): array
     {
         return [
+            EducatableEmailFormFieldBlock::class,
             TextInputFormFieldBlock::class,
             TextAreaFormFieldBlock::class,
             SelectFormFieldBlock::class,
@@ -23,16 +24,6 @@ class FormFieldBlockRegistry
             PhoneFormFieldBlock::class,
             UrlFormFieldBlock::class,
         ];
-    }
-
-    /**
-     * @return array<FormFieldBlock>
-     */
-    public static function getInstances(): array
-    {
-        return collect(static::get())
-            ->map(fn (string $block): FormFieldBlock => $block::make())
-            ->all();
     }
 
     /**

@@ -41,6 +41,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Assist\InAppCommunication\Models\TwilioConversation;
 use Assist\Engagement\Models\Concerns\HasManyEngagements;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -123,6 +124,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'roles.title',
         'locale',
     ];
+
+    public function conversations(): BelongsToMany
+    {
+        return $this->belongsToMany(TwilioConversation::class, 'twilio_conversation_user', 'user_id', 'conversation_sid')
+            ->withPivot('participant_sid')
+            ->withTimestamps()
+            ->as('participant');
+    }
 
     public function caseloads(): HasMany
     {
@@ -281,6 +290,12 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return ! $this->hasRole('authorization.super_admin');
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile();
+    }
+
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('avatar-height-250px')
@@ -290,11 +305,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function getFilamentAvatarUrl(): ?string
     {
-        if ($this->is_external) {
-            return $this->avatar_url;
-        }
-
-        return $this->getFirstTemporaryUrl(now()->addMinutes(5), 'avatar', 'avatar-height-250px');
+        return $this->avatar_url ?: $this->getFirstTemporaryUrl(now()->addMinutes(5), 'avatar', 'avatar-height-250px');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

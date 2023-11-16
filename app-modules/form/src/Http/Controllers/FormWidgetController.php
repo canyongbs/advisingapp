@@ -2,6 +2,7 @@
 
 namespace Assist\Form\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use Assist\Form\Actions\GenerateFormKitSchema;
 use Symfony\Component\HttpFoundation\Response;
 use Assist\Form\Actions\GenerateFormValidation;
+use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
+use Assist\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
 class FormWidgetController extends Controller
 {
@@ -29,7 +32,7 @@ class FormWidgetController extends Controller
         );
     }
 
-    public function store(Request $request, GenerateFormValidation $generateValidation, Form $form): JsonResponse
+    public function store(Request $request, GenerateFormValidation $generateValidation, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, Form $form): JsonResponse
     {
         $validator = Validator::make(
             $request->all(),
@@ -45,9 +48,65 @@ class FormWidgetController extends Controller
             );
         }
 
-        $form->submissions()->create([
-            'content' => $request->all(),
-        ]);
+        $submission = $form->submissions()->create();
+
+        $data = $validator->validated();
+
+        if ($form->is_wizard) {
+            foreach ($form->steps as $step) {
+                $stepFields = $step->fields()->pluck('type', 'id')->all();
+
+                foreach ($data[$step->label] as $fieldId => $response) {
+                    $submission->fields()->attach(
+                        $fieldId,
+                        ['id' => Str::orderedUuid(), 'response' => $response],
+                    );
+
+                    if ($submission->author) {
+                        continue;
+                    }
+
+                    if ($stepFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+                        continue;
+                    }
+
+                    $author = $resolveSubmissionAuthorFromEmail($response);
+
+                    if (! $author) {
+                        continue;
+                    }
+
+                    $submission->author()->associate($author);
+                }
+            }
+        } else {
+            $formFields = $form->fields()->pluck('type', 'id')->all();
+
+            foreach ($data as $fieldId => $response) {
+                $submission->fields()->attach(
+                    $fieldId,
+                    ['id' => Str::orderedUuid(), 'response' => $response],
+                );
+
+                if ($submission->author) {
+                    continue;
+                }
+
+                if ($formFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+                    continue;
+                }
+
+                $author = $resolveSubmissionAuthorFromEmail($response);
+
+                if (! $author) {
+                    continue;
+                }
+
+                $submission->author()->associate($author);
+            }
+        }
+
+        $submission->save();
 
         return response()->json(
             [

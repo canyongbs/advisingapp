@@ -3,17 +3,12 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
-use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\TextEntry;
 
 class DateFormFieldBlock extends FormFieldBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    public string $rendered = 'form::blocks.submissions.date';
 
-        $this->label('Date');
-    }
+    public ?string $icon = 'heroicon-m-calendar';
 
     public static function type(): string
     {
@@ -25,20 +20,13 @@ class DateFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-    public static function getInfolistEntry(FormField $field): Entry
-    {
-        return TextEntry::make($field->key)
-            ->label($field->label)
-            ->date();
-    }
-
     public static function getFormKitSchema(FormField $field): array
     {
         return [
             '$formkit' => 'date',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 
