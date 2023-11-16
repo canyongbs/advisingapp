@@ -53,6 +53,15 @@ class UserChat extends Page implements HasForms, HasActions
                 Select::make('user')
                     ->options(
                         User::where('id', '!=', auth()->user()->id)
+                            ->whereDoesntHave(
+                                'conversations',
+                                fn ($query) => $query
+                                    ->where('type', ConversationType::UserToUser)
+                                    ->whereHas(
+                                        'participants',
+                                        fn ($query) => $query->where('user_id', auth()->user()->id)
+                                    )
+                            )
                             ->pluck('name', 'id')
                     )
                     ->searchable(),
