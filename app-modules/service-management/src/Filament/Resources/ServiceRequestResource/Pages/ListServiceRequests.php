@@ -21,7 +21,7 @@ use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ListServiceRequests extends ListRecords
 {
-    use FilterTableWithOpenSearch;
+    // use FilterTableWithOpenSearch;
 
     protected static string $resource = ServiceRequestResource::class;
 
@@ -30,7 +30,8 @@ class ListServiceRequests extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                OpenSearchTextColumn::make('service_request_number')
+                // TODO In order to make this column searchable, all of the other searchable columns need to be OpenSearchTextColumn as well
+                TextColumn::make('service_request_number')
                     ->label('Service Request #')
                     ->searchable()
                     ->sortable(),

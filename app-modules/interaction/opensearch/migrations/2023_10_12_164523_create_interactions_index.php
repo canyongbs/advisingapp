@@ -7,7 +7,7 @@ use OpenSearch\Adapter\Indices\Settings;
 use OpenSearch\Migrations\Facades\Index;
 use OpenSearch\Migrations\MigrationInterface;
 
-final class CreateProspectsIndex implements MigrationInterface
+final class CreateInteractionsIndex implements MigrationInterface
 {
     public function up(): void
     {
