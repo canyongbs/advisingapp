@@ -6,7 +6,9 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use Spatie\MediaLibrary\HasMedia;
 use Assist\Division\Models\Division;
+use App\Models\Contracts\IsSearchable;
 use OwenIt\Auditing\Contracts\Auditable;
+use OpenSearch\ScoutDriverPlus\Searchable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,11 +18,12 @@ use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 /**
  * @mixin IdeHelperKnowledgeBaseItem
  */
-class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
+class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia, IsSearchable
 {
     use AuditableTrait;
     use HasUuids;
     use InteractsWithMedia;
+    use Searchable;
 
     protected $casts = [
         'public' => 'boolean',
@@ -35,6 +38,25 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
         'solution',
         'notes',
     ];
+
+    public function searchableAs(): string
+    {
+        return config('scout.prefix') . 'knowledge_base_items';
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->getScoutKey(),
+            'question' => $this->question,
+            'public' => $this->public,
+            'solution' => $this->solution,
+            'notes' => $this->notes,
+            'quality_id' => $this->quality_id,
+            'status_id' => $this->status_id,
+            'category_id' => $this->category_id,
+        ];
+    }
 
     public function quality(): BelongsTo
     {

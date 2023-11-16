@@ -9,14 +9,18 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
+use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
+use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
 
 class ListKnowledgeBaseItems extends ListRecords
 {
+    use FilterTableWithOpenSearch;
+
     protected static string $resource = KnowledgeBaseItemResource::class;
 
     public function table(Table $table): Table
@@ -24,7 +28,7 @@ class ListKnowledgeBaseItems extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('question')
+                OpenSearchTextColumn::make('question')
                     ->label('Question/Issue/Feature')
                     ->translateLabel()
                     ->searchable()
@@ -37,7 +41,7 @@ class ListKnowledgeBaseItems extends ListRecords
                     ->label('Status')
                     ->translateLabel()
                     ->sortable(),
-                TextColumn::make('public')
+                OpenSearchTextColumn::make('public')
                     ->label('Public')
                     ->translateLabel()
                     ->sortable()
@@ -48,15 +52,15 @@ class ListKnowledgeBaseItems extends ListRecords
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('quality')
+                OpenSearchSelectFilter::make('quality')
                     ->relationship('quality', 'name')
                     ->multiple()
                     ->preload(),
-                SelectFilter::make('status')
+                OpenSearchSelectFilter::make('status')
                     ->relationship('status', 'name')
                     ->multiple()
                     ->preload(),
-                SelectFilter::make('category')
+                OpenSearchSelectFilter::make('category')
                     ->relationship('category', 'name')
                     ->multiple()
                     ->preload(),
