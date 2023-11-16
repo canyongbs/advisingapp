@@ -7,9 +7,7 @@ use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use App\Concerns\FilterTableWithOpenSearch;
@@ -18,10 +16,11 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
 
 class ListServiceRequests extends ListRecords
 {
-    // use FilterTableWithOpenSearch;
+    use FilterTableWithOpenSearch;
 
     protected static string $resource = ServiceRequestResource::class;
 
@@ -30,18 +29,17 @@ class ListServiceRequests extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                // TODO In order to make this column searchable, all of the other searchable columns need to be OpenSearchTextColumn as well
-                TextColumn::make('service_request_number')
+                OpenSearchTextColumn::make('service_request_number')
                     ->label('Service Request #')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('respondent.display_name')
+                OpenSearchTextColumn::make('respondent_name')
                     ->label('Related To')
                     ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->{$record->respondent::displayNameKey()})
                     ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'respondent', search: $search))
-                    // TODO: Find a way to get IDE to recognize educatableSort() method
+                // TODO: Find a way to get IDE to recognize educatableSort() method
                     ->sortable(query: fn (Builder $query, string $direction): Builder => $query->educatableSort($direction)),
-                TextColumn::make('respondent.sisid')
+                OpenSearchTextColumn::make('respondent_id')
                     ->label('SIS ID')
                     ->searchable()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
@@ -51,7 +49,7 @@ class ListServiceRequests extends ListRecords
                                 ->where('service_requests.respondent_type', '=', 'student');
                         })->orderBy('sisid', $direction);
                     }),
-                TextColumn::make('respondent.otherid')
+                OpenSearchTextColumn::make('respondent_otherid')
                     ->label('Other ID')
                     ->searchable()
                     ->sortable(query: function (Builder $query, string $direction): Builder {
@@ -60,22 +58,27 @@ class ListServiceRequests extends ListRecords
                             $join->on('service_requests.respondent_id', '=', 'students.sisid')
                                 ->where('service_requests.respondent_type', '=', 'student');
                         })->orderBy('otherid', $direction);
-                    }),
-                TextColumn::make('division.name')
+                    })
+                    ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->otherid),
+                OpenSearchTextColumn::make('division_name')
                     ->label('Division')
                     ->searchable()
-                    ->sortable(),
-                TextColumn::make('assignedTo.name')
+                    ->sortable()
+                    ->getStateUsing(fn (ServiceRequest $record) => $record->division->name),
+                OpenSearchTextColumn::make('assigned_to_name')
                     ->label('Assigned to')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->getStateUsing(fn (ServiceRequest $record) => $record->assignedTo->name),
             ])
             ->filters([
-                SelectFilter::make('priority')
+                OpenSearchSelectFilter::make('priority_id')
+                    ->label('Priority')
                     ->relationship('priority', 'name')
                     ->multiple()
                     ->preload(),
-                SelectFilter::make('status')
+                OpenSearchSelectFilter::make('status_id')
+                    ->label('Status')
                     ->relationship('status', 'name')
                     ->multiple()
                     ->preload(),

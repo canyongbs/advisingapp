@@ -17,13 +17,16 @@ final class CreateServiceRequestsIndex implements MigrationInterface
             $mapping->text('respondent_type');
             $mapping->text('respondent_id');
             $mapping->text('respondent_name');
+            $mapping->text('respondent_otherid');
             $mapping->text('close_details');
             $mapping->text('res_details');
             $mapping->keyword('division_id');
+            $mapping->text('division_name');
             $mapping->keyword('status_id');
             $mapping->keyword('type_id');
             $mapping->keyword('priority_id');
             $mapping->keyword('assigned_to_id');
+            $mapping->text('assigned_to_name');
             $mapping->keyword('created_by_id');
             $mapping->date('created_at', ['format' => 'yyyy-MM-dd HH:mm:ss']);
             $mapping->date('updated_at', ['format' => 'yyyy-MM-dd HH:mm:ss']);
