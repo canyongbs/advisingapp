@@ -3,14 +3,13 @@
 namespace Assist\Form\Filament\Resources\FormResource\Pages\Concerns;
 
 use Filament\Forms\Get;
-use Illuminate\Support\Str;
 use Assist\Form\Models\Form;
 use Assist\Form\Enums\Rounding;
 use Assist\Form\Rules\IsDomain;
 use Assist\Form\Models\FormStep;
 use Assist\Form\Models\FormField;
-use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Grid;
+use App\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
@@ -89,10 +88,7 @@ trait HasSharedFormConfiguration
                 ->columnSpanFull(),
             Section::make('Appearance')
                 ->schema([
-                    Select::make('primary_color')
-                        ->options(collect(Color::all())->keys()->mapWithKeys(fn (string $color): array => [
-                            $color => Str::title($color),
-                        ])->all()),
+                    ColorSelect::make('primary_color'),
                     Select::make('rounding')
                         ->options(Rounding::class),
                 ])
