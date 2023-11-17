@@ -19,7 +19,7 @@ class CalendarEventResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationLabel = 'Events';
+    protected static ?string $navigationLabel = 'Schedule';
 
     protected static ?string $modelLabel = 'Event';
 

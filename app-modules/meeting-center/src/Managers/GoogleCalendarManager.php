@@ -126,15 +126,20 @@ class GoogleCalendarManager implements CalendarInterface
         $events
             ->each(
                 function (Event $event) use ($calendar) {
+                    $data = [
+                        'title' => $event->summary,
+                        'description' => $event->description,
+                        'starts_at' => $event->start->dateTime,
+                        'ends_at' => $event->end->dateTime,
+                        'attendees' => collect($event->getAttendees())
+                            ->map(fn (EventAttendee $attendee) => $attendee->getEmail())
+                            ->prepend($calendar->provider_email),
+                    ];
+
                     $userEvent = $calendar->events()->where('provider_id', $event->id)->first();
 
                     if ($userEvent) {
-                        $userEvent->fill([
-                            'title' => $event->summary,
-                            'description' => $event->description,
-                            'starts_at' => $event->start->dateTime,
-                            'ends_at' => $event->end->dateTime,
-                        ]);
+                        $userEvent->fill($data);
 
                         if ($userEvent->isDirty()) {
                             $userEvent->updateQuietly();
@@ -143,10 +148,7 @@ class GoogleCalendarManager implements CalendarInterface
                         $calendar->events()
                             ->createQuietly([
                                 'provider_id' => $event->id,
-                                'title' => $event->summary,
-                                'description' => $event->description,
-                                'starts_at' => $event->start->dateTime,
-                                'ends_at' => $event->end->dateTime,
+                                ...$data,
                             ]);
                     }
                 }

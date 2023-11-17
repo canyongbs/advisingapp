@@ -8,12 +8,12 @@ use Filament\Actions\Action;
 use Livewire\Attributes\Url;
 use Filament\Facades\Filament;
 use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -25,6 +25,8 @@ use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
 class ListCalendarEvents extends ListRecords
 {
     protected static string $resource = CalendarEventResource::class;
+
+    protected ?string $heading = 'Schedule';
 
     protected static string $view = 'meeting-center::filament.pages.list-events';
 
@@ -126,16 +128,13 @@ class ListCalendarEvents extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->headerActions([
-                CreateAction::make(),
-            ])
             ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('starts_at'));
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            // CreateAction::make(),
+            CreateAction::make(),
             Action::make('Sync')
                 ->action(function () {
                     /** @var User $user */
