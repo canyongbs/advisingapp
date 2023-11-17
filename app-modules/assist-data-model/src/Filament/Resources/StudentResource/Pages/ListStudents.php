@@ -22,9 +22,13 @@ use Assist\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
+use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
+use Assist\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
 
-class ListStudents extends ListRecords
+class ListStudents extends ListRecords implements HasBulkEngagementAction
 {
+    use ImplementsHasBulkEngagementAction;
+
     protected static string $resource = StudentResource::class;
 
     public function table(Table $table): Table

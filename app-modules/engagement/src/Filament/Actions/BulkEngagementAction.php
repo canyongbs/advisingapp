@@ -11,7 +11,7 @@ use Filament\Forms\Components\Wizard\Step;
 use Assist\Engagement\Actions\CreateEngagementBatch;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;
+use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 
 class BulkEngagementAction
 {
@@ -87,7 +87,7 @@ class BulkEngagementAction
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
-            ->modalCancelAction(fn (ListProspects $livewire) => $livewire->cancelEngageAction())
+            ->modalCancelAction(fn (HasBulkEngagementAction $livewire) => $livewire->cancelBulkEngagementAction())
             ->deselectRecordsAfterCompletion();
     }
 }

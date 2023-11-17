@@ -3,6 +3,8 @@
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
+use Assist\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
+use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
@@ -42,15 +44,12 @@ use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
 use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
 
-class ListProspects extends ListRecords
+class ListProspects extends ListRecords implements HasBulkEngagementAction
 {
     use FilterTableWithOpenSearch;
+    use ImplementsHasBulkEngagementAction;
 
     protected static string $resource = ProspectResource::class;
-
-    public array $engageActionData = [];
-
-    public array $engageActionRecords = [];
 
     public function table(Table $table): Table
     {
@@ -223,39 +222,6 @@ class ListProspects extends ListRecords
                                 ->send();
                         }),
                 ]),
-            ]);
-    }
-
-    public function cancelEngageAction(): Action
-    {
-        return Action::make('cancelEngage')
-            ->label('Cancel')
-            ->mountUsing(function () {
-                $this->engageActionData = $this->mountedTableBulkActionData;
-                $this->engageActionRecords = $this->selectedTableRecords;
-
-                $this->unmountTableBulkAction();
-            })
-            ->requiresConfirmation()
-            ->modalSubmitAction(fn (StaticAction $action) => $action->color('danger'))
-            ->action(function () {
-                $this->engageActionData = [];
-                $this->engageActionRecords = [];
-            })
-            ->modalDescription(fn () => 'The message has not been sent, are you sure you wish to return to the list view?')
-            ->closeModalByClickingAway(false)
-            ->modalCloseButton(false)
-            ->modalCancelAction(false)
-            ->extraModalFooterActions([
-                Action::make('restoreEngageBulkAction')
-                    ->label('Cancel')
-                    ->action(function () {
-                        $this->mountTableBulkAction('engage');
-
-                        $this->mountedTableBulkActionData = $this->engageActionData;
-                        $this->selectedTableRecords = $this->engageActionRecords;
-                    })
-                    ->cancelParentActions(),
             ]);
     }
 
