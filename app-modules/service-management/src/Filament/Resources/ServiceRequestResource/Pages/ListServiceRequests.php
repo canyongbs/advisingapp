@@ -15,6 +15,8 @@ use Illuminate\Database\Query\JoinClause;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\ServiceManagement\Models\ServiceRequest;
+use Assist\AssistDataModel\Models\Scopes\EducatableSort;
+use Assist\AssistDataModel\Models\Scopes\EducatableSearch;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ListServiceRequests extends ListRecords
@@ -33,9 +35,8 @@ class ListServiceRequests extends ListRecords
                 TextColumn::make('respondent.display_name')
                     ->label('Related To')
                     ->getStateUsing(fn (ServiceRequest $record) => $record->respondent->{$record->respondent::displayNameKey()})
-                    ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'respondent', search: $search))
-                    // TODO: Find a way to get IDE to recognize educatableSort() method
-                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->educatableSort($direction)),
+                    ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'respondent', search: $search)))
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->tap(new EducatableSort($direction))),
                 TextColumn::make('respondent.sisid')
                     ->label('SIS ID')
                     ->searchable()
