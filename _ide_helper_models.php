@@ -12,6 +12,37 @@
 
 namespace App\Models{
 /**
+ * App\Models\EmailTemplate
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $primary_color
+ * @property string $related_to_type
+ * @property string $related_to_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $relatedTo
+ * @method static \Database\Factories\EmailTemplateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereRelatedToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereRelatedToType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEmailTemplate {}
+}
+
+namespace App\Models{
+/**
  * App\Models\FailedImportRow
  *
  * @property string $id
@@ -353,6 +384,8 @@ namespace Assist\AssistDataModel\Models{
  * @property-read int|null $engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Enrollment> $enrollments
  * @property-read int|null $enrollments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $formSubmissions
+ * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -933,6 +966,7 @@ namespace Assist\Division\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
+ * @property-read \App\Models\EmailTemplate|null $emailTemplate
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \App\Models\User|null $lastUpdatedBy
@@ -1180,6 +1214,7 @@ namespace Assist\Form\Models{
  * @property string|null $primary_color
  * @property \Assist\Form\Enums\Rounding|null $rounding
  * @property bool $is_wizard
+ * @property array|null $content
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -1194,6 +1229,7 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form query()
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereAllowedDomains($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDescription($value)
@@ -1216,9 +1252,8 @@ namespace Assist\Form\Models{
  *
  * @property string $id
  * @property string $label
- * @property string $key
  * @property string $type
- * @property bool $required
+ * @property bool $is_required
  * @property array $config
  * @property string $form_id
  * @property string|null $step_id
@@ -1234,9 +1269,8 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereFormId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormField whereKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormField whereIsRequired($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereLabel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormField whereRequired($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereStepId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormField whereUpdatedAt($value)
@@ -1252,7 +1286,9 @@ namespace Assist\Form\Models{
  *
  * @property string $id
  * @property string $label
+ * @property array|null $content
  * @property string $form_id
+ * @property int $sort
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
@@ -1261,10 +1297,12 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereFormId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereSort($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -1277,17 +1315,22 @@ namespace Assist\Form\Models{
  * Assist\Form\Models\FormSubmission
  *
  * @property string $id
- * @property array $content
  * @property string $form_id
+ * @property string|null $author_id
+ * @property string|null $author_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
+ * @property-read int|null $fields_count
  * @property-read \Assist\Form\Models\Form $form
  * @method static \Assist\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission query()
- * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereAuthorType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereFormId($value)
@@ -1303,12 +1346,21 @@ namespace Assist\InAppCommunication\Models{
 /**
  * Assist\InAppCommunication\Models\TwilioConversation
  *
+ * @property string $sid
+ * @property string|null $friendly_name
  * @property \Assist\InAppCommunication\Enums\ConversationType $type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $participants
  * @property-read int|null $participants_count
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereFriendlyName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1705,6 +1757,7 @@ namespace Assist\MeetingCenter\Models{
  * @property string|null $name
  * @property \Assist\MeetingCenter\Enums\CalendarProvider $provider_type
  * @property mixed|null $provider_id
+ * @property mixed $provider_email
  * @property mixed $oauth_token
  * @property mixed $oauth_refresh_token
  * @property string $user_id
@@ -1724,6 +1777,7 @@ namespace Assist\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthRefreshToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereOauthTokenExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereProviderEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereProviderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereProviderType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar whereUpdatedAt($value)
@@ -1741,6 +1795,7 @@ namespace Assist\MeetingCenter\Models{
  * @property string $id
  * @property string $title
  * @property string|null $description
+ * @property array|null $attendees
  * @property string|null $provider_id
  * @property string $calendar_id
  * @property \Illuminate\Support\Carbon $starts_at
@@ -1752,6 +1807,7 @@ namespace Assist\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereAttendees($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereCalendarId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent whereDescription($value)
@@ -1836,6 +1892,8 @@ namespace Assist\Prospect\Models{
  * @property-read int|null $engagement_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $formSubmissions
+ * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
