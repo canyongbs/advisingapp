@@ -3,14 +3,10 @@
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
-use Assist\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
-use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
-use Filament\Actions\Action;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
-use Filament\Actions\StaticAction;
 use Filament\Tables\Filters\Filter;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Radio;
@@ -42,7 +38,9 @@ use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Notifications\Filament\Actions\SubscribeTableAction;
 use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
+use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
+use Assist\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
 
 class ListProspects extends ListRecords implements HasBulkEngagementAction
 {
