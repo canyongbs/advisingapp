@@ -24,6 +24,14 @@ For more information or inquiries please visit our website at
 https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 EOM
 
+# system('git', 'add', '.')
+
+# files = `git ls-files`.split
+
+# files.each do |file|
+#   handle(file.chomp)
+# end
+
 def evaluateFile(filePath, startTag, endTag)
     fullCopyright = "#{startTag}\n#{COPYRIGHT}\n#{endTag}"
 
@@ -116,18 +124,10 @@ def handle(filePath)
         when '.vue'
           vue(filePath)
         else
-            puts "Unknown file type: #{filePath}"
+            puts "Unknown file type: #{filePath}, skipping..."
     end
   end
 end
-
-# system('git', 'add', '.')
-
-# files = `git ls-files`.split
-
-# files.each do |file|
-#   handle(file.chomp)
-# end
 
 class String
 def black;          "\e[30m#{self}\e[0m" end
