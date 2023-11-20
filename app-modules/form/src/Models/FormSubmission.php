@@ -3,12 +3,16 @@
 namespace Assist\Form\Models;
 
 use App\Models\BaseModel;
+use Assist\Prospect\Models\Prospect;
+use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @mixin IdeHelperFormSubmission
+ *
+ * @property Student|Prospect|null $author
  */
 class FormSubmission extends BaseModel
 {

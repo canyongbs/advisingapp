@@ -6,11 +6,15 @@ use Filament\Panel;
 use Assist\Form\FormPlugin;
 use Assist\Form\Models\Form;
 use Assist\Form\Models\FormField;
+use Illuminate\Support\Facades\Event;
 use Assist\Form\Models\FormSubmission;
 use Illuminate\Support\ServiceProvider;
+use Assist\Form\Events\FormSubmissionCreated;
+use Assist\Form\Observers\FormSubmissionObserver;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Authorization\AuthorizationPermissionRegistry;
+use Assist\Form\Listeners\NotifySubscribersOfFormSubmission;
 
 class FormServiceProvider extends ServiceProvider
 {
@@ -28,9 +32,24 @@ class FormServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+        $this->registerObservers();
+        $this->registerEvents();
     }
 
-    protected function registerRolesAndPermissions()
+    public function registerObservers(): void
+    {
+        FormSubmission::observe(FormSubmissionObserver::class);
+    }
+
+    public function registerEvents(): void
+    {
+        Event::listen(
+            events: FormSubmissionCreated::class,
+            listener: NotifySubscribersOfFormSubmission::class
+        );
+    }
+
+    protected function registerRolesAndPermissions(): void
     {
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 
