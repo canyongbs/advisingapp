@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 COPYRIGHT = <<EOM
+
 Copyright © 2022-2023, Canyon GBS LLC
 
 All rights reserved.
