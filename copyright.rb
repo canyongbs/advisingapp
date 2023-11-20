@@ -24,6 +24,26 @@ For more information or inquiries please visit our website at
 https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 EOM
 
+def evaluateFile(filePath, startTag, endTag)
+    fullCopyright = "#{startTag}\n#{COPYRIGHT}\n#{endTag}"
+
+    if copyrightTagExists(startTag, endTag, filePath)
+        if copyrightNeedsUpdate(
+            startTag,
+            endTag,
+            filePath
+        )
+            puts "Updating copyright in #{filePath}...".brown
+            replace(filePath, startTag, endTag, "\n#{COPYRIGHT}\n")
+        else
+            puts "No changes needed in #{filePath}, skipping...".green
+        end
+    else
+        puts "Copyright not found in #{filePath}, adding copyright...".brown
+        insert(filePath, fullCopyright)
+    end
+end
+
 def copyrightTagExists(startTag, endTag, filePath)
     !File.read(filePath).scan(/(?<=#{Regexp.escape(startTag)})([\S\s]*?)(?=#{Regexp.escape(endTag)})/m).empty?
 end
@@ -36,29 +56,16 @@ def insert(file, tag)
   File.write(file, "#{tag}\n\n#{File.read(file)}")
 end
 
-def replace(file)
-  puts file
+def replace(filePath, startTag, endTag, replacement)
+    content = File.read(filePath)
+    File.write(filePath, content.gsub(/(?<=#{Regexp.escape(startTag)})[\S\s]*?(?=#{Regexp.escape(endTag)})/m, replacement))
 end
 
 def blade(filePath)
     startTag = "{{--\n<copyright>"
     endTag = "</copyright>\n--}}"
-    fullCopyright = "#{startTag}\n#{COPYRIGHT}\n#{endTag}"
 
-    if copyrightTagExists(startTag, endTag, filePath)
-        if copyrightNeedsUpdate(
-            startTag,
-            endTag,
-            filePath
-        )
-            puts "Updating copyright in #{filePath}...".brown
-        else
-            puts "No changes needed in #{filePath}, skipping...".green
-        end
-    else
-        puts "Copyright not found in #{filePath}, adding copyright...".brown
-        insert(filePath, fullCopyright)
-    end
+    evaluateFile(filePath, startTag, endTag)
 end
 
 def php(file)
