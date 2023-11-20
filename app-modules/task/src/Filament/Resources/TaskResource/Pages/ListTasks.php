@@ -28,6 +28,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Task\Filament\Resources\TaskResource;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Assist\Prospect\Filament\Resources\ProspectResource;
+use Assist\AssistDataModel\Models\Scopes\EducatableSearch;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
@@ -66,7 +67,7 @@ class ListTasks extends ListRecords
                 TextColumn::make('concern.display_name')
                     ->label('Related To')
                     ->getStateUsing(fn (Task $record): ?string => $record->concern?->{$record->concern::displayNameKey()})
-                    ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'concern', search: $search))
+                    ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'concern', search: $search)))
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
                         Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
