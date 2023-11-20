@@ -3,6 +3,8 @@
 namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use App\Models\User;
+use Assist\Campaign\Filament\Blocks\SubscriptionBlock;
+use Assist\Campaign\Models\Campaign;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -39,6 +41,7 @@ class CreateCampaign extends CreateRecord
             InteractionBlock::make(),
             CareTeamBlock::make(),
             TaskBlock::make(),
+            SubscriptionBlock::make(),
         ];
     }
 
@@ -84,6 +87,7 @@ class CreateCampaign extends CreateRecord
         /** @var Model $model */
         $model = static::getModel();
 
+        /** @var Campaign $campaign */
         $campaign = $model::query()->create($data);
 
         resolve(CreateActionsForCampaign::class)->from(
