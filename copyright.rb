@@ -117,7 +117,7 @@ def handle(filePath)
         when '.vue'
           vue(filePath)
         else
-            puts "Unknown file type: #{filePath}, skipping..."
+            puts "Unknown file type: #{filePath}, skipping...".gray
     end
   end
 end
