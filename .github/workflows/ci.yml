@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.pat-token }}
 
       - name: Set up Ruby
-        uses: actions/setup-ruby@v2
+        uses: actions/setup-ruby@v1
 
       - name: Run Ruby Script
         run: ruby ./copywrite.rb
