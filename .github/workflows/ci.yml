@@ -40,6 +40,11 @@ jobs:
       - name: Run Ruby Script
         run: ruby ./copyright.rb
 
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: >
+            chore: fix enforcement of copyright on all files
   fix-code-style:
     runs-on: ubuntu-22.04
 
