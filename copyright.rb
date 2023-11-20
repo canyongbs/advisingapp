@@ -89,8 +89,11 @@ def css(file)
   puts file
 end
 
-def vue(file)
-  puts file
+def vue(filePath)
+    startTag = "<!--\n<COPYRIGHT>"
+    endTag = "</COPYRIGHT>\n-->"
+
+    evaluateFile(filePath, startTag, endTag)
 end
 
 def handle(filePath)
@@ -149,6 +152,7 @@ end
 [
     'app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
     'app-modules/assistant/resources/views/filament/pages/personal-assistant.blade.php',
+    'widgets/form/src/App.vue',
 ].each do |file|
     handle(file)
 end
