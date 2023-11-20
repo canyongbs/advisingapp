@@ -81,12 +81,18 @@ def php(filePath)
     evaluateFile(filePath, startTag, endTag)
 end
 
-def js(file)
-  puts file
+def js(filePath)
+    startTag = "/*\n<COPYRIGHT>"
+    endTag = "</COPYRIGHT>\n*/"
+
+    evaluateFile(filePath, startTag, endTag)
 end
 
-def css(file)
-  puts file
+def css(filePath)
+    startTag = "/*\n<COPYRIGHT>"
+    endTag = "</COPYRIGHT>\n*/"
+
+    evaluateFile(filePath, startTag, endTag)
 end
 
 def vue(filePath)
@@ -153,6 +159,8 @@ end
     'app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
     'app-modules/assistant/resources/views/filament/pages/personal-assistant.blade.php',
     'widgets/form/src/App.vue',
+    'widgets/form/src/widget.js',
+    'widgets/form/src/widget.css',
 ].each do |file|
     handle(file)
 end
