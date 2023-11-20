@@ -38,7 +38,7 @@ jobs:
         uses: actions/setup-ruby@v1
 
       - name: Run Ruby Script
-        run: ruby ./copywrite.rb
+        run: ruby ./copyright.rb
 
   fix-code-style:
     runs-on: ubuntu-22.04
