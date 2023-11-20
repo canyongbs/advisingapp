@@ -3,25 +3,11 @@
 namespace Assist\Campaign\Models;
 
 use App\Models\BaseModel;
-use Assist\Campaign\Filament\Blocks\SubscriptionBlock;
-use Assist\Notifications\Models\Subscription;
-use Assist\Task\Models\Task;
-use Assist\Alert\Models\Alert;
-use Assist\CareTeam\Models\CareTeam;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Interaction\Models\Interaction;
 use Assist\Campaign\Enums\CampaignActionType;
-use Assist\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Assist\Campaign\Filament\Blocks\TaskBlock;
-use Assist\Campaign\Filament\Blocks\CareTeamBlock;
-use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Assist\Campaign\Filament\Blocks\InteractionBlock;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Campaign\Filament\Blocks\ProactiveAlertBlock;
-use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
-use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**

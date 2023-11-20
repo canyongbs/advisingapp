@@ -3,9 +3,8 @@
 namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use App\Models\User;
-use Assist\Campaign\Filament\Blocks\SubscriptionBlock;
-use Assist\Campaign\Models\Campaign;
 use Illuminate\Support\HtmlString;
+use Assist\Campaign\Models\Campaign;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
@@ -18,6 +17,7 @@ use Assist\Campaign\Filament\Blocks\TaskBlock;
 use Assist\Campaign\Filament\Blocks\CareTeamBlock;
 use Assist\Campaign\Actions\CreateActionsForCampaign;
 use Assist\Campaign\Filament\Blocks\InteractionBlock;
+use Assist\Campaign\Filament\Blocks\SubscriptionBlock;
 use Assist\Campaign\Filament\Blocks\ProactiveAlertBlock;
 use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
 use Assist\Campaign\Filament\Resources\CampaignResource;

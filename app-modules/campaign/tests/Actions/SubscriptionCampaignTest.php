@@ -2,8 +2,6 @@
 
 use App\Models\User;
 use Assist\Campaign\Models\Campaign;
-use Assist\Notifications\Actions\SubscriptionCreate;
-use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Prospect\Models\Prospect;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Campaign\Models\CampaignAction;
@@ -11,7 +9,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Assist\Campaign\Enums\CampaignActionType;
 use Assist\CaseloadManagement\Models\Caseload;
 use Assist\CaseloadManagement\Enums\CaseloadType;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
+use Assist\Notifications\Actions\SubscriptionCreate;
+use Assist\Notifications\Models\Contracts\Subscribable;
 
 it('will create the subscription records for subscribables in the caseload', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
     $caseload = Caseload::factory()->create([
