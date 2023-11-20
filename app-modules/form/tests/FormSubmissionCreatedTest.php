@@ -30,6 +30,7 @@ test('FormSubmissionCreated Event has the proper listeners', function () {
 test('NotifySubscribersOfFormSubmission dispatches the correct Notification', function () {
     Notification::fake();
 
+    /** @var FormSubmission $submission */
     $submission = FormSubmission::factory()->make();
 
     $user = User::factory()->create();
@@ -41,7 +42,7 @@ test('NotifySubscribersOfFormSubmission dispatches the correct Notification', fu
 
     $submission->save();
 
-    $submission->author->subscriptions->map(fn ($subscription) => $subscription->user)->each(function (User $user) use ($submission) {
+    $submission->author->subscriptions->map(fn ($subscription) => $subscription->user)->each(function (User $user) {
         Notification::assertSentTo(notifiable: $user, notification: AuthorLinkedFormSubmissionCreatedNotification::class);
     });
 });
