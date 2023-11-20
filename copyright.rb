@@ -57,9 +57,9 @@ def insert(filePath, tag)
     # If is a php file, insert after the opening php tag
     if !(filePath =~ /\.blade\.php\z/) && File.extname(filePath) == '.php'
         content = File.read(filePath)
-        File.write(filePath, content.gsub(/<\?php/, "<?php\n\n#{tag}\n"))
+        File.write(filePath, content.gsub(/<\?php/, "<?php\n\n#{tag}"))
     else
-        File.write(filePath, "#{tag}\n\n#{File.read(filePath)}")
+        File.write(filePath, "#{tag}\n#{File.read(filePath)}")
     end
 end
 
