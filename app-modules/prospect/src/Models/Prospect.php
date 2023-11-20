@@ -9,6 +9,7 @@ use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
 use Assist\CareTeam\Models\CareTeam;
+use Assist\Form\Models\FormSubmission;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use OpenSearch\ScoutDriverPlus\Searchable;
@@ -179,6 +180,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
             ->using(CareTeam::class)
             ->withPivot('id')
             ->withTimestamps();
+    }
+
+    public function formSubmissions(): MorphMany
+    {
+        return $this->morphMany(FormSubmission::class, 'author');
     }
 
     public static function displayNameKey(): string

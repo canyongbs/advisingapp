@@ -18,7 +18,7 @@ class EngagementFileResource extends Resource
 
     protected static ?string $navigationGroup = 'Productivity Tools';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $navigationLabel = 'Files and Documents';
 

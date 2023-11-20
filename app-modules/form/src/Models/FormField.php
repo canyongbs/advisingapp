@@ -13,14 +13,14 @@ class FormField extends BaseModel
     protected $fillable = [
         'config',
         'label',
-        'key',
         'type',
-        'required',
+        'is_required',
         'form_id',
     ];
 
     protected $casts = [
         'config' => 'array',
+        'is_required' => 'bool',
     ];
 
     public function form(): BelongsTo

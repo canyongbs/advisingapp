@@ -4,17 +4,12 @@ namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
 use Filament\Forms\Components\KeyValue;
-use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\TextEntry;
 
 class SelectFormFieldBlock extends FormFieldBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    public string $rendered = 'form::blocks.submissions.select';
 
-        $this->label('Select');
-    }
+    public ?string $icon = 'heroicon-m-queue-list';
 
     public static function type(): string
     {
@@ -30,22 +25,13 @@ class SelectFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    public static function getInfolistEntry(FormField $field): Entry
-    {
-        return TextEntry::make($field->key)
-            ->label($field->label)
-            ->formatStateUsing(function ($state) use ($field) {
-                return $field->config['options'][$state] ?? $state;
-            });
-    }
-
     public static function getFormKitSchema(FormField $field): array
     {
         return [
             '$formkit' => 'select',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
             'options' => $field->config['options'],
         ];
     }

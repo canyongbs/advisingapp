@@ -3,17 +3,12 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
-use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\TextEntry;
 
 class TimeFormFieldBlock extends FormFieldBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    public string $rendered = 'form::blocks.submissions.time';
 
-        $this->label('Time');
-    }
+    public ?string $icon = 'heroicon-m-clock';
 
     public static function type(): string
     {
@@ -25,20 +20,13 @@ class TimeFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-    public static function getInfolistEntry(FormField $field): Entry
-    {
-        return TextEntry::make($field->key)
-            ->label($field->label)
-            ->time();
-    }
-
     public static function getFormKitSchema(FormField $field): array
     {
         return [
             '$formkit' => 'time',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 }

@@ -3,17 +3,14 @@
 namespace Assist\Form\Filament\Blocks;
 
 use Assist\Form\Models\FormField;
-use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\ViewEntry;
 
 class SignatureFormFieldBlock extends FormFieldBlock
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    public string $preview = 'form::blocks.previews.signature';
 
-        $this->label('Signature');
-    }
+    public string $rendered = 'form::blocks.submissions.signature';
+
+    public ?string $icon = 'heroicon-m-pencil';
 
     public static function type(): string
     {
@@ -25,20 +22,13 @@ class SignatureFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-    public static function getInfolistEntry(FormField $field): Entry
-    {
-        return ViewEntry::make($field->key)
-            ->label($field->label)
-            ->view('form::infolists.components.signature-entry');
-    }
-
     public static function getFormKitSchema(FormField $field): array
     {
         return [
             '$formkit' => 'signature',
             'label' => $field->label,
-            'name' => $field->key,
-            ...($field->required ? ['validation' => 'required'] : []),
+            'name' => $field->id,
+            ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 }

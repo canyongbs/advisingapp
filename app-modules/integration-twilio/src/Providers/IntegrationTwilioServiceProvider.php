@@ -2,6 +2,7 @@
 
 namespace Assist\IntegrationTwilio\Providers;
 
+use Twilio\Rest\Client;
 use Illuminate\Support\ServiceProvider;
 use Assist\Engagement\Actions\FindEngagementResponseSender;
 use Assist\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
@@ -18,6 +19,11 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 
             return new FindEngagementResponseSender();
         });
+
+        $this->app->bind(Client::class, fn () => new Client(
+            config('services.twilio.account_sid'),
+            config('services.twilio.auth_token')
+        ));
     }
 
     public function boot(): void {}

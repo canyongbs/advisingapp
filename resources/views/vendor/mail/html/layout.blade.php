@@ -30,11 +30,11 @@
         @endphp
 
         .button-primary {
-            background-color: rgb({{ $color[500] }});
-            border-bottom: 8px solid rgb({{ $color[500] }});
-            border-left: 18px solid rgb({{ $color[500] }});
-            border-right: 18px solid rgb({{ $color[500] }});
-            border-top: 8px solid rgb({{ $color[500] }});
+            background-color: rgb({{ $color[600] }});
+            border-bottom: 8px solid rgb({{ $color[600] }});
+            border-left: 18px solid rgb({{ $color[600] }});
+            border-right: 18px solid rgb({{ $color[600] }});
+            border-top: 8px solid rgb({{ $color[600] }});
         }
     </style>
 </head>

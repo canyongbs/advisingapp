@@ -41,6 +41,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Assist\InAppCommunication\Models\TwilioConversation;
 use Assist\Engagement\Models\Concerns\HasManyEngagements;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -123,6 +124,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'roles.title',
         'locale',
     ];
+
+    public function conversations(): BelongsToMany
+    {
+        return $this->belongsToMany(TwilioConversation::class, 'twilio_conversation_user', 'user_id', 'conversation_sid')
+            ->withPivot('participant_sid')
+            ->withTimestamps()
+            ->as('participant');
+    }
 
     public function caseloads(): HasMany
     {
