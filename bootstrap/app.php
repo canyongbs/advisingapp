@@ -18,7 +18,7 @@ Notice:
 - The copyright notice in this file and across all files and applications in this
  repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
 - The software solution, including services, infrastructure, and code, is offered as a
- Software as a Service (SaaS) by Canyon GBS LLC.
+ Software as a Service (SaaS) by Canyon GBS L
 - Use of this software implies agreement to the license terms and conditions as stated
  in the AGPL 3.0 License.
 
