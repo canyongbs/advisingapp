@@ -25,14 +25,6 @@ For more information or inquiries please visit our website at
 https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 EOM
 
-# system('git', 'add', '.')
-
-# files = `git ls-files`.split
-
-# files.each do |file|
-#   handle(file.chomp)
-# end
-
 def evaluateFile(filePath, startTag, endTag)
     fullCopyright = "#{startTag}\n#{COPYRIGHT}\n#{endTag}"
 
@@ -156,12 +148,18 @@ def blink;          "\e[5m#{self}\e[25m" end
 def reverse_color;  "\e[7m#{self}\e[27m" end
 end
 
-[
-    'app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
-    'app-modules/assistant/resources/views/filament/pages/personal-assistant.blade.php',
-    'widgets/form/src/App.vue',
-    'widgets/form/src/widget.js',
-    'widgets/form/src/widget.css',
-].each do |file|
-    handle(file)
+# [
+#     'app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+#     'app-modules/assistant/resources/views/filament/pages/personal-assistant.blade.php',
+#     'widgets/form/src/App.vue',
+#     'widgets/form/src/widget.js',
+#     'widgets/form/src/widget.css',
+# ].each do |file|
+#     handle(file)
+# end
+
+system('git', 'add', '.')
+
+`git ls-files`.split.each do |file|
+  handle(file.chomp)
 end
