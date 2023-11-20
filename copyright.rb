@@ -52,8 +52,14 @@ def copyrightNeedsUpdate(startTag, endTag, filePath)
     File.read(filePath).scan(/(?<=#{Regexp.escape(startTag)})(\n#{Regexp.escape(COPYRIGHT)}\n)(?=#{Regexp.escape(endTag)})/m).empty?
 end
 
-def insert(file, tag)
-  File.write(file, "#{tag}\n\n#{File.read(file)}")
+def insert(filePath, tag)
+    # If is a php file, insert after the opening php tag
+    if !(filePath =~ /\.blade\.php\z/) && File.extname(filePath) == '.php'
+        content = File.read(filePath)
+        File.write(filePath, content.gsub(/<\?php/, "<?php\n\n#{tag}\n"))
+    else
+        File.write(filePath, "#{tag}\n\n#{File.read(filePath)}")
+    end
 end
 
 def replace(filePath, startTag, endTag, replacement)
@@ -62,14 +68,17 @@ def replace(filePath, startTag, endTag, replacement)
 end
 
 def blade(filePath)
-    startTag = "{{--\n<copyright>"
-    endTag = "</copyright>\n--}}"
+    startTag = "{{--\n<COPYRIGHT>"
+    endTag = "</COPYRIGHT>\n--}}"
 
     evaluateFile(filePath, startTag, endTag)
 end
 
-def php(file)
-  puts file
+def php(filePath)
+    startTag = "/*\n<COPYRIGHT>"
+    endTag = "</COPYRIGHT>\n*/"
+
+    evaluateFile(filePath, startTag, endTag)
 end
 
 def js(file)
@@ -137,4 +146,9 @@ def blink;          "\e[5m#{self}\e[25m" end
 def reverse_color;  "\e[7m#{self}\e[27m" end
 end
 
-handle('app-modules/assistant/resources/views/filament/pages/personal-assistant.blade.php')
+[
+    'app-modules/assistant/src/Filament/Pages/PersonalAssistant.php',
+    'app-modules/assistant/resources/views/filament/pages/personal-assistant.blade.php',
+].each do |file|
+    handle(file)
+end
