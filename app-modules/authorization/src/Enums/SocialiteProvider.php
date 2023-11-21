@@ -40,6 +40,8 @@ enum SocialiteProvider: string
 {
     case Azure = 'azure';
 
+    case AzureCalendar = 'azure_calendar';
+
     case Google = 'google';
 
     public function driver(): Provider|MockInterface
@@ -55,6 +57,12 @@ enum SocialiteProvider: string
                 config('services.azure.client_secret'),
                 config('services.azure.redirect'),
                 ['tenant' => config('services.azure.tenant_id', 'common')]
+            ),
+            'azure_calendar' => new Config(
+                key: config('services.azure_calendar.client_id'),
+                secret: config('services.azure_calendar.client_secret'),
+                callbackUri: route('calendar.outlook.callback'),
+                additionalProviderConfig: ['tenant' => config('services.azure_calendar.tenant_id', 'common')]
             ),
             'google' => new Config(
                 config('services.google.client_id'),

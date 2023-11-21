@@ -31,18 +31,44 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\MeetingCenter\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Filament\Facades\Filament;
+use Laravel\Socialite\Two\User;
 use Illuminate\Http\RedirectResponse;
+use SocialiteProviders\Azure\Provider;
+use Assist\MeetingCenter\Models\Calendar;
+use Assist\MeetingCenter\Enums\CalendarProvider;
+use Assist\Authorization\Enums\SocialiteProvider;
+use Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
 
 class OutlookCalendarController extends CalendarController
 {
     public function login(Request $request): RedirectResponse
     {
-        return redirect()->to('https://outlook.com/');
+        /** @var Provider $driver */
+        $driver = SocialiteProvider::AzureCalendar->driver();
+
+        return $driver
+            ->setConfig(SocialiteProvider::AzureCalendar->config())
+            ->scopes(['Calendars.ReadWrite', 'User.Read'])
+            ->redirect();
     }
 
     public function callback(Request $request): RedirectResponse
     {
-        return redirect()->to(Filament::getUrl());
+        /** @var User $socialiteUser */
+        $socialiteUser = SocialiteProvider::AzureCalendar->driver()->user();
+
+        $user = auth()->user();
+
+        $calendar = $user->calendar ?: new Calendar();
+
+        $calendar->provider_type = CalendarProvider::Outlook;
+        $calendar->provider_email = $socialiteUser->getEmail();
+        $calendar->oauth_token = $socialiteUser->token;
+        $calendar->oauth_refresh_token = $socialiteUser->refreshToken;
+        $calendar->oauth_expires_at = now()->addSeconds($socialiteUser->expiresIn);
+
+        $user->calendar()->save($calendar);
+
+        return redirect()->to(ListCalendarEvents::getUrl());
     }
 }
