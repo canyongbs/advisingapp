@@ -12,7 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        // TODO: Look into whether or not we should, and if so how, to add CSRF protection to form submit
-        '/api/forms/*/submit',
+        '/api/forms/*',
     ];
 }

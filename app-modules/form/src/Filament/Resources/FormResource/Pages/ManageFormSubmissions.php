@@ -11,6 +11,8 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Form\Exports\FormSubmissionExport;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -67,6 +69,16 @@ class ManageFormSubmissions extends ManageRelatedRecords
             ->actions([
                 ViewAction::make()
                     ->modalHeading(fn (FormSubmission $record) => "Submission Details: {$record->created_at}")
+                    ->infolist(fn (FormSubmission $record): ?array => ($record->author && $record->form->is_authenticated) ? [
+                        Section::make('Authenticated author')
+                            ->schema([
+                                TextEntry::make('author.' . $record->author::displayNameKey())
+                                    ->label('Name'),
+                                TextEntry::make('author.email')
+                                    ->label('Email address'),
+                            ])
+                            ->columns(2),
+                    ] : null)
                     ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record])),
                 DeleteAction::make(),
             ])

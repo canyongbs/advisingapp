@@ -57,11 +57,13 @@ trait HasSharedFormConfiguration
                         ),
                 ])
                 ->columnSpanFull(),
+            Toggle::make('is_authenticated')
+                ->label('Requires authentication')
+                ->helperText('If enabled, only students and prospects can submit this form, and they must verify their email address first.'),
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
-                ->disabled(fn (?Form $record) => $record?->submissions()->exists())
-                ->columnSpanFull(),
+                ->disabled(fn (?Form $record) => $record?->submissions()->exists()),
             Section::make('Fields')
                 ->schema([
                     $this->fieldBuilder(),
@@ -105,6 +107,10 @@ trait HasSharedFormConfiguration
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
             ->saveRelationshipsUsing(function (TiptapEditor $component, Form | FormStep $record) {
+                if ($component->isDisabled()) {
+                    return;
+                }
+
                 $form = $record instanceof Form ? $record : $record->form;
                 $formStep = $record instanceof FormStep ? $record : null;
 
@@ -113,7 +119,7 @@ trait HasSharedFormConfiguration
                     ->when($formStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($formStep, 'step'))
                     ->delete();
 
-                $content = $component->getJSON(decoded: true);
+                $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
                 $content['content'] = $this->saveFieldsFromComponents(
                     $form,
                     $content['content'] ?? [],

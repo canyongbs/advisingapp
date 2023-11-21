@@ -16,6 +16,7 @@ return new class () extends Migration {
             $table->json('allowed_domains')->nullable();
             $table->string('primary_color')->nullable();
             $table->string('rounding')->nullable();
+            $table->boolean('is_authenticated')->default(false);
             $table->boolean('is_wizard')->default(false);
             $table->json('content')->nullable();
 

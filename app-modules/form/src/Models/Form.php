@@ -16,6 +16,7 @@ class Form extends BaseModel
         'description',
         'embed_enabled',
         'allowed_domains',
+        'is_authenticated',
         'is_wizard',
         'primary_color',
         'rounding',
@@ -26,6 +27,7 @@ class Form extends BaseModel
         'content' => 'array',
         'embed_enabled' => 'boolean',
         'allowed_domains' => 'array',
+        'is_authenticated' => 'boolean',
         'is_wizard' => 'boolean',
         'rounding' => Rounding::class,
     ];
