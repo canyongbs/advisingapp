@@ -25,4 +25,18 @@ class AssistantChatFolder extends BaseModel
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function defaults(): array
+    {
+        return [
+            'Analytics',
+            'Content Creation',
+            'Draft Communications',
+            'Ideation',
+            'Language Translation',
+            'Project Planning',
+            'Research',
+            'Technical Support',
+        ];
+    }
 }
