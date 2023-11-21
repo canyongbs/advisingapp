@@ -104,12 +104,12 @@ class CreateEngagement extends CreateRecord
                     ]),
                 Fieldset::make('Send your engagement')
                     ->schema([
-                        Toggle::make('send_later')
+                        Toggle::make('scheduled')
                             ->reactive()
                             ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('deliver_at')
                             ->required()
-                            ->visible(fn (callable $get) => $get('send_later')),
+                            ->visible(fn (callable $get) => $get('scheduled')),
                     ]),
             ]);
     }

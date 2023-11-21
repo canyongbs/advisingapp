@@ -66,11 +66,13 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'body',
         'recipient_id',
         'recipient_type',
+        'scheduled',
         'deliver_at',
     ];
 
     protected $casts = [
         'deliver_at' => 'datetime',
+        'scheduled' => 'boolean',
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
@@ -126,6 +128,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function batch(): BelongsTo
     {
         return $this->engagementBatch();
+    }
+
+    public function scopeIsScheduled(Builder $query): void
+    {
+        $query->where('scheduled', true);
     }
 
     public function scopeHasBeenDelivered(Builder $query): void
