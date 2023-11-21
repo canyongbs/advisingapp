@@ -20,12 +20,37 @@ jobs:
 
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
-  fix-code-style:
+  enforce-copyright:
     runs-on: ubuntu-22.04
 
     timeout-minutes: 10
 
     needs: [build-deps]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.pat-token }}
+
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+
+      - name: Run Ruby Script
+        run: ruby ./copyright.rb
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: >
+            chore: fix enforcement of copyright on all files
+  fix-code-style:
+    runs-on: ubuntu-22.04
+
+    timeout-minutes: 10
+
+    needs: [build-deps, enforce-copyright]
 
     steps:
       - uses: shivammathur/setup-php@v2
@@ -95,7 +120,7 @@ jobs:
 
     timeout-minutes: 15
 
-    needs: [build-deps,fix-code-style]
+    needs: [build-deps,enforce-copyright,fix-code-style]
 
     services:
       postgres:
@@ -198,7 +223,7 @@ jobs:
 
     timeout-minutes: 10
 
-    needs: [build-deps,fix-code-style]
+    needs: [build-deps,enforce-copyright,fix-code-style]
 
     steps:
       - uses: shivammathur/setup-php@v2
