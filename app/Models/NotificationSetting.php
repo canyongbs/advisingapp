@@ -30,6 +30,9 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace App\Models;
 
+use Assist\Division\Models\Division;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -37,7 +40,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * @mixin IdeHelperEmailTemplate
  */
-class EmailTemplate extends BaseModel implements HasMedia
+class NotificationSetting extends BaseModel implements HasMedia
 {
     use InteractsWithMedia;
 
@@ -54,8 +57,20 @@ class EmailTemplate extends BaseModel implements HasMedia
             ->singleFile();
     }
 
-    public function relatedTo(): MorphTo
+    public function settings(): HasMany
     {
-        return $this->morphTo();
+        return $this->hasMany(NotificationSettingPivot::class);
+    }
+
+    public function divisions(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Division::class,
+            name: 'related_to',
+            table: 'notification_settings_pivot'
+        )
+            ->using(NotificationSettingPivot::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 }

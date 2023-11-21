@@ -32,7 +32,7 @@ namespace Assist\Task\Notifications;
 
 use App\Models\User;
 use Assist\Task\Models\Task;
-use App\Models\EmailTemplate;
+use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Support\HtmlString;
@@ -81,7 +81,7 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
             ->getDatabaseMessage();
     }
 
-    private function resolveEmailTemplate(): ?EmailTemplate
+    private function resolveEmailTemplate(): ?NotificationSetting
     {
         return $this->task->createdBy->teams()->first()?->division?->emailTemplate;
     }

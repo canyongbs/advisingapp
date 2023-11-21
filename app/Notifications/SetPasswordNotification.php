@@ -31,7 +31,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace App\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
+use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Notifications\Notification;
@@ -62,7 +62,7 @@ class SetPasswordNotification extends Notification
             ->line('Please contact support if you need a new link or have any issues setting up your account.');
     }
 
-    private function resolveEmailTemplate(User $notifiable): ?EmailTemplate
+    private function resolveEmailTemplate(User $notifiable): ?NotificationSetting
     {
         return $notifiable->teams()->first()?->division?->emailTemplate;
     }

@@ -30,6 +30,9 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Division\Filament\Resources\DivisionResource\Pages;
 
+use App\Models\NotificationSetting;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use App\Filament\Fields\TiptapEditor;
@@ -37,6 +40,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Assist\Division\Filament\Resources\DivisionResource;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class EditDivision extends EditRecord
 {
@@ -63,6 +67,9 @@ class EditDivision extends EditRecord
                 TiptapEditor::make('footer')
                     ->string()
                     ->columnSpanFull(),
+                Select::make('notificationSetting')
+                    ->options(NotificationSetting::pluck('name', 'id'))
+                    ->searchable(),
             ]);
     }
 

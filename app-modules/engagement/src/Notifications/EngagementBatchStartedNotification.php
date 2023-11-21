@@ -31,7 +31,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
+use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -70,7 +70,7 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
             ->getDatabaseMessage();
     }
 
-    private function resolveEmailTemplate(): ?EmailTemplate
+    private function resolveEmailTemplate(): ?NotificationSetting
     {
         return $this->engagementBatch->user->teams()->first()?->division?->emailTemplate;
     }

@@ -28,38 +28,34 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\EmailTemplateResource\Pages;
+namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
-use Filament\Actions\DeleteAction;
 use Assist\Division\Models\Division;
 use App\Forms\Components\ColorSelect;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\MorphToSelect;
-use App\Filament\Resources\EmailTemplateResource;
+use App\Filament\Resources\NotificationSettingResource;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-class EditEmailTemplate extends EditRecord
+class CreateNotificationSetting extends CreateRecord
 {
-    protected static string $resource = EmailTemplateResource::class;
+    protected static string $resource = NotificationSettingResource::class;
 
     public function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
-                MorphToSelect::make('relatedTo')
-                    ->label('Related To')
-                    ->types([
-                        Type::make(Division::class)
-                            ->titleAttribute('name'),
-                    ])
-                    ->required(),
                 TextInput::make('name')
                     ->string()
                     ->required()
                     ->autocomplete(false),
+                Textarea::make('description')
+                    ->string(),
                 ColorSelect::make('primary_color'),
                 SpatieMediaLibraryFileUpload::make('logo')
                     ->disk('s3')
@@ -67,12 +63,5 @@ class EditEmailTemplate extends EditRecord
                     ->visibility('private')
                     ->image(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
     }
 }

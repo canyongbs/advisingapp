@@ -31,7 +31,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Assistant\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
+use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Assist\Assistant\Models\AssistantChat;
@@ -97,7 +97,7 @@ class SendAssistantTranscriptNotification extends Notification implements Should
         return [];
     }
 
-    private function resolveEmailTemplate(): ?EmailTemplate
+    private function resolveEmailTemplate(): ?NotificationSetting
     {
         return $this->sender->teams()->first()?->division?->emailTemplate;
     }

@@ -28,24 +28,36 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Filament\Resources;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Models\NotificationSetting;
+use Filament\Resources\Resource;
+use App\Filament\Resources\NotificationSettingResource\Pages\EditNotificationSetting;
+use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
+use App\Filament\Resources\NotificationSettingResource\Pages\CreateNotificationSetting;
+
+class NotificationSettingResource extends Resource
+{
+    protected static ?string $model = NotificationSetting::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 10;
+
+    public static function getRelations(): array
     {
-        Schema::create('email_templates', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name');
-            $table->string('primary_color')->nullable();
-
-            $table->uuidMorphs('related_to');
-
-            $table->timestamps();
-
-            $table->unique(['name', 'related_to_type', 'related_to_id']);
-        });
+        return [
+        ];
     }
-};
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListNotificationSettings::route('/'),
+            'create' => CreateNotificationSetting::route('/create'),
+            'edit' => EditNotificationSetting::route('/{record}/edit'),
+        ];
+    }
+}

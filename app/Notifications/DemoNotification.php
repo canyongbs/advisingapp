@@ -31,7 +31,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace App\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
+use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -67,7 +67,7 @@ class DemoNotification extends Notification implements ShouldQueue
         return [];
     }
 
-    private function resolveEmailTemplate(User $notifiable): ?EmailTemplate
+    private function resolveEmailTemplate(User $notifiable): ?NotificationSetting
     {
         return $this->sender->teams()->first()?->division?->emailTemplate;
     }

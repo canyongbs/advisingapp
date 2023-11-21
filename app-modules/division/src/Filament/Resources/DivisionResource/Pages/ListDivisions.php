@@ -64,6 +64,7 @@ class ListDivisions extends ListRecords
                     ->label('Updated At')
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
                     ->sortable(),
+                TextColumn::make('notificationSetting.setting.name'),
             ])
             ->filters([
             ])
