@@ -128,7 +128,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function defaultAssistantChatFoldersHaveBeenCreated(): bool
     {
-        return $this->default_assistant_chat_folders_created;
+        return (bool) $this->default_assistant_chat_folders_created;
     }
 
     public function conversations(): BelongsToMany
