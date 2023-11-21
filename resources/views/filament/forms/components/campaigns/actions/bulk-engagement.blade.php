@@ -4,7 +4,7 @@
 
 <x-filament::fieldset>
     <x-slot name="label">
-        Bulk Engagement
+        Email or Text
     </x-slot>
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">

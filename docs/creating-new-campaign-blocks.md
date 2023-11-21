@@ -10,15 +10,15 @@ If the display label for the block is more than one word add the case to the `ge
 
 2. Create a block file in `app-modules/campaign/src/Filament/Blocks` following the existing files as a guide. Name this file something like `{Action}Block`. Then associate this file's `editFields` function to the new case in `getEditFields`.
 
-3. Create a new step summary blade file in `resources/views/filament/forms/components/campaigns/actions` called `{slug}.blade.php`. This file will display the summary of the block at the end of creating an action. Follow the existing files for examples on styling.
+3. Add the block to the `blocks` function in the enum. This function controls the ordering and display of the blocks.
 
-4. Create a function in the model file referenced in step 1 called `executeFromCampaignAction` it should accept `CampaignAction` as a parameter: `CampaignAction $action`: 
+4. Create a new step summary blade file in `resources/views/filament/forms/components/campaigns/actions` called `{slug}.blade.php`. This file will display the summary of the block at the end of creating an action. Follow the existing files for examples on styling.
+
+5. Create a function in the model file referenced in step 1 called `executeFromCampaignAction` it should accept `CampaignAction` as a parameter: `CampaignAction $action`: 
     ```php
    public static function executeFromCampaignAction(CampaignAction $action): bool|string
    ```
    This function is the main working area of the block. Refer to the existing blocks for suggestions on how to structure the code. Add this new function to the enum's `executeAction`.
-
-5. Add the block to the `blocks` function in `app-modules/campaign/src/Filament/Resources/CampaignResource/Pages/CreateCampaign`. This function controls the ordering and display of the blocks.
 
 By filling in the enum's functions you should successfully integrate a new block.
 

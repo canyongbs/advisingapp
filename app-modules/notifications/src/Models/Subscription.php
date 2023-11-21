@@ -15,11 +15,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
+use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 
 /**
  * @mixin IdeHelperSubscription
  */
-class Subscription extends MorphPivot
+class Subscription extends MorphPivot implements ExecutableFromACampaignAction
 {
     use HasFactory;
     use DefinesPermissions;

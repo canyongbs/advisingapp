@@ -12,9 +12,9 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Assist\Campaign\Models\CampaignAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Assist\Campaign\Enums\CampaignActionType;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
 
 class CampaignActionsRelationManager extends RelationManager
 {
@@ -51,7 +51,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->form([
                         Builder::make('data')
                             ->addActionLabel('Add a new Campaign Action')
-                            ->blocks(CreateCampaign::blocks()),
+                            ->blocks(CampaignActionType::blocks()),
                     ])
                     ->using(function (array $data, string $model): CampaignAction {
                         foreach ($data['data'] as $action) {

@@ -35,10 +35,23 @@ enum CampaignActionType: string implements HasLabel
 
     case Subscription = 'subscription';
 
+    public static function blocks(): array
+    {
+        return [
+            EngagementBatchBlock::make(),
+            ServiceRequestBlock::make(),
+            ProactiveAlertBlock::make(),
+            InteractionBlock::make(),
+            CareTeamBlock::make(),
+            TaskBlock::make(),
+            SubscriptionBlock::make(),
+        ];
+    }
+
     public function getLabel(): ?string
     {
         return match ($this) {
-            CampaignActionType::BulkEngagement => 'Bulk Engagement',
+            CampaignActionType::BulkEngagement => 'Email or Text',
             CampaignActionType::ServiceRequest => 'Service Request',
             CampaignActionType::ProactiveAlert => 'Proactive Alert',
             CampaignActionType::CareTeam => 'Care Team',
@@ -61,20 +74,30 @@ enum CampaignActionType: string implements HasLabel
 
     public function getEditFields(): array
     {
-        return match ($this) {
-            CampaignActionType::BulkEngagement => EngagementBatchBlock::make()->editFields(),
-            CampaignActionType::ServiceRequest => ServiceRequestBlock::make()->editFields(),
-            CampaignActionType::ProactiveAlert => ProactiveAlertBlock::make()->editFields(),
-            CampaignActionType::Interaction => InteractionBlock::make()->editFields(),
-            CampaignActionType::CareTeam => CareTeamBlock::make()->editFields(),
-            CampaignActionType::Task => TaskBlock::make()->editFields(),
-            CampaignActionType::Subscription => SubscriptionBlock::make()->editFields(),
+        $block = match ($this) {
+            CampaignActionType::BulkEngagement => EngagementBatchBlock::make(),
+            CampaignActionType::ServiceRequest => ServiceRequestBlock::make(),
+            CampaignActionType::ProactiveAlert => ProactiveAlertBlock::make(),
+            CampaignActionType::Interaction => InteractionBlock::make(),
+            CampaignActionType::CareTeam => CareTeamBlock::make(),
+            CampaignActionType::Task => TaskBlock::make(),
+            CampaignActionType::Subscription => SubscriptionBlock::make(),
         };
+
+        return $block->editFields();
     }
 
     public function getStepSummaryView(): string
     {
-        return 'filament.forms.components.campaigns.actions.' . str($this->value)->slug();
+        return match ($this) {
+            CampaignActionType::BulkEngagement => 'filament.forms.components.campaigns.actions.bulk-engagement',
+            CampaignActionType::ServiceRequest => 'filament.forms.components.campaigns.actions.service-request',
+            CampaignActionType::ProactiveAlert => 'filament.forms.components.campaigns.actions.proactive-alert',
+            CampaignActionType::Interaction => 'filament.forms.components.campaigns.actions.interaction',
+            CampaignActionType::CareTeam => 'filament.forms.components.campaigns.actions.care-team',
+            CampaignActionType::Task => 'filament.forms.components.campaigns.actions.task',
+            CampaignActionType::Subscription => 'filament.forms.components.campaigns.actions.subscription',
+        };
     }
 
     public function executeAction(CampaignAction $action): bool|string

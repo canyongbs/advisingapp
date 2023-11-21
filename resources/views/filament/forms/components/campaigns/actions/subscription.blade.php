@@ -1,13 +1,6 @@
 @php
     use Carbon\Carbon;
     use App\Models\User;
-    use Assist\Division\Models\Division;
-    use Assist\Interaction\Models\InteractionType;
-    use Assist\Interaction\Models\InteractionStatus;
-    use Assist\Interaction\Models\InteractionDriver;
-    use Assist\Interaction\Models\InteractionOutcome;
-    use Assist\Interaction\Models\InteractionCampaign;
-    use Assist\Interaction\Models\InteractionRelation;
 @endphp
 
 <x-filament::fieldset>
