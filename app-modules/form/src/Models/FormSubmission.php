@@ -38,9 +38,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * @mixin IdeHelperFormSubmission
- *
  * @property Student|Prospect|null $author
+ *
+ * @mixin IdeHelperFormSubmission
  */
 class FormSubmission extends BaseModel
 {

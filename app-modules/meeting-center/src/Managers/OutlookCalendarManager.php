@@ -31,8 +31,12 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\MeetingCenter\Managers;
 
 use DateTime;
+use DateTimeInterface;
 use Microsoft\Graph\Graph;
+use Microsoft\Graph\Model\Event;
+use Illuminate\Support\Facades\Http;
 use Assist\MeetingCenter\Models\Calendar;
+use GuzzleHttp\Exception\ClientException;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
@@ -49,9 +53,9 @@ class OutlookCalendarManager implements CalendarInterface
             ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
             ->execute();
 
-        rd($calendars);
-
-        return [];
+        return collect($calendars)->filter(fn (\Microsoft\Graph\Model\Calendar $item) => $item->getCanEdit())
+            ->mapWithKeys(fn (\Microsoft\Graph\Model\Calendar $item) => [$item->getId() => $item->getName()])
+            ->toArray();
     }
 
     // https://github.com/microsoftgraph/msgraph-sample-phpapp/tree/main
@@ -60,10 +64,36 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): array
     {
-        // https://learn.microsoft.com/en-us/graph/api/user-list-calendars?view=graph-rest-1.0&tabs=http
-        // https://learn.microsoft.com/en-us/graph/api/user-list-events?view=graph-rest-1.0&tabs=http
+        $client = $this->makeClient($calendar);
 
-        // TODO: Implement getEvents() method.
+        $start = $start ?? now()->subYears(2)->startOfDay();
+
+        $end = $end ?? now()->addYears(2)->endOfDay();
+
+        $request = $client->createRequest(
+            requestType: 'GET',
+            endpoint: '/me/calendar/calendarView?' . http_build_query([
+                'startDateTime' => $start->format(DateTimeInterface::ATOM),
+                'endDateTime' => $end->format(DateTimeInterface::ATOM),
+            ])
+        )
+            ->setReturnType(Event::class);
+
+        try {
+            $events = $request->execute();
+        } catch (ClientException $exception) {
+            if ($exception->getCode() === 401) {
+                $calendar = $this->refreshToken($calendar);
+
+                $request->setAccessToken($calendar->oauth_token);
+
+                $events = $request->execute();
+            } else {
+                throw $exception;
+            }
+        }
+
+        ray($events);
 
         return [];
     }
@@ -91,12 +121,53 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
     {
-        // TODO: Implement syncEvents() method.
+        $events = $this->getEvents($calendar, $start, $end, $perPage);
     }
 
     public function revokeToken(Calendar $calendar): bool
     {
         // TODO: Implement revokeToken() method.
         return false;
+    }
+
+    public function refreshToken(Calendar $calendar): Calendar
+    {
+        $response = Http::asForm()->post(
+            'https://login.microsoftonline.com/' . config('services.azure_calendar.tenant_id') . '/oauth2/token?api-version=v1.0',
+            [
+                'client_id' => config('services.azure_calendar.client_id'),
+                'client_secret' => config('services.azure_calendar.client_secret'),
+                'grant_type' => 'refresh_token',
+                'scope' => ['Calendars.ReadWrite', 'User.Read', 'offline_access'],
+                'refresh_token' => $calendar->oauth_refresh_token,
+            ]
+        );
+
+        if ($response->clientError() || $response->serverError()) {
+            if ($response->clientError()) {
+                // TODO: Send out an alert to the user that their token has expired and they need to re-authenticate
+            }
+
+            $response->throw();
+        }
+
+        $data = $response->object();
+
+        $calendar->oauth_token = $data->access_token;
+        $calendar->oauth_refresh_token = $data->refresh_token;
+        $calendar->oauth_token_expires_at = now()->addSeconds($data->expires_in);
+
+        $calendar->save();
+
+        return $calendar;
+    }
+
+    public function makeClient(Calendar $calendar): Graph
+    {
+        if ($calendar->oauth_token_expires_at->isPast()) {
+            $calendar = $this->refreshToken($calendar);
+        }
+
+        return (new Graph())->setAccessToken($calendar->oauth_token);
     }
 }

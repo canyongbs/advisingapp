@@ -48,6 +48,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
 use Assist\MeetingCenter\Managers\CalendarManager;
+use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
 
 class ListCalendarEvents extends ListRecords
@@ -89,9 +90,11 @@ class ListCalendarEvents extends ListRecords
 
                         $calendar = $user->calendar;
 
-                        return resolve(CalendarManager::class)
-                            ->driver($calendar->provider_type->value)
-                            ->getCalendars($calendar);
+                        /** @var CalendarInterface $calendarManager */
+                        $calendarManager = resolve(CalendarManager::class)
+                            ->driver($calendar->provider_type->value);
+
+                        return $calendarManager->getCalendars($calendar);
                     })
                     ->required(),
             ])

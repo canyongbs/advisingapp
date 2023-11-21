@@ -44,7 +44,7 @@ class Calendar extends BaseModel
     protected $hidden = [
         'oauth_token',
         'oauth_refresh_token',
-        'oauth_expires_at',
+        'oauth_token_expires_at',
     ];
 
     protected $casts = [
@@ -53,7 +53,7 @@ class Calendar extends BaseModel
         'provider_email' => 'encrypted',
         'oauth_token' => 'encrypted',
         'oauth_refresh_token' => 'encrypted',
-        'oauth_expires_at' => 'datetime',
+        'oauth_token_expires_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
