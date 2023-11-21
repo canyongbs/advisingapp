@@ -1,7 +1,10 @@
 import showdown from 'showdown';
 import DOMPurify from 'dompurify';
+import Clipboard from '@ryangjchandler/alpine-clipboard';
 
 document.addEventListener('alpine:init', () => {
+    Alpine.plugin(Clipboard);
+
     Alpine.data('currentResponseData', () => ({
         init() {
             const observer = new MutationObserver((mutations) => {
