@@ -145,7 +145,7 @@ it('will only dispatch a job to send an engagement that is scheduled', function 
     Queue::fake(EngagementEmailChannelDelivery::class);
     Notification::fake();
 
-    // Given that we have an engagement that is not scheduled
+    // Given that we have an engagement that is not scheduled but should otherwise be delivered
     Engagement::factory()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->email()->count(1))
