@@ -28,15 +28,6 @@ class AssistantChatFolder extends BaseModel
 
     public static function defaults(): array
     {
-        return [
-            'Analytics',
-            'Content Creation',
-            'Draft Communications',
-            'Ideation',
-            'Language Translation',
-            'Project Planning',
-            'Research',
-            'Technical Support',
-        ];
+        return config('assistant.default_chat_folders');
     }
 }
