@@ -34,6 +34,9 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @mixin IdeHelperEmailTemplate
+ */
 class EmailTemplate extends BaseModel implements HasMedia
 {
     use InteractsWithMedia;

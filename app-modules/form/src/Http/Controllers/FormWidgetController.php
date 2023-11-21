@@ -37,6 +37,7 @@ use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Assist\Form\Models\FormSubmission;
 use Illuminate\Support\Facades\Validator;
 use Assist\Form\Actions\GenerateFormKitSchema;
 use Symfony\Component\HttpFoundation\Response;
@@ -76,6 +77,7 @@ class FormWidgetController extends Controller
             );
         }
 
+        /** @var FormSubmission $submission */
         $submission = $form->submissions()->create();
 
         $data = $validator->validated();
