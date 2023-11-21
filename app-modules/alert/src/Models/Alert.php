@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\AssistDataModel\Models\Traits\EducatableScopes;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
@@ -29,7 +28,6 @@ class Alert extends BaseModel implements Auditable, CanTriggerAutoSubscription, 
 {
     use SoftDeletes;
     use AuditableTrait;
-    use EducatableScopes;
 
     protected $fillable = [
         'concern_id',

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a2dd6f007865294d2cedd05b8621d91e",
+    "content-hash": "aacfed36126cbacfd8c21404a836f7ba",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "d0e66111dc64362863f9a8b10e1395bb2ebdb493"
+                "reference": "aeca1a685f9943a96bd7033ffbdf40469737de7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/d0e66111dc64362863f9a8b10e1395bb2ebdb493",
-                "reference": "d0e66111dc64362863f9a8b10e1395bb2ebdb493",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/aeca1a685f9943a96bd7033ffbdf40469737de7b",
+                "reference": "aeca1a685f9943a96bd7033ffbdf40469737de7b",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-16T17:11:20+00:00"
+            "time": "2023-11-16T19:21:55+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -202,16 +202,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.286.2",
+            "version": "3.286.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "33a763586e840e5162ff8144a9532aa43172e11c"
+                "reference": "29079a62c6a30ac594b50285494b4dec279b4648"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/33a763586e840e5162ff8144a9532aa43172e11c",
-                "reference": "33a763586e840e5162ff8144a9532aa43172e11c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/29079a62c6a30ac594b50285494b4dec279b4648",
+                "reference": "29079a62c6a30ac594b50285494b4dec279b4648",
                 "shasum": ""
             },
             "require": {
@@ -291,9 +291,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.286.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.286.3"
             },
-            "time": "2023-11-15T19:19:39+00:00"
+            "time": "2023-11-16T19:12:53+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1071,6 +1071,41 @@
                     "Assist\\Form\\Tests\\": "tests/",
                     "Assist\\Form\\Database\\Factories\\": "database/factories/",
                     "Assist\\Form\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/in-app-communication",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/in-app-communication",
+                "reference": "543c04e47babcea487c01524130754aa4fbe48a4"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\InAppCommunication\\Providers\\InAppCommunicationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\InAppCommunication\\": "src/",
+                    "Assist\\InAppCommunication\\Tests\\": "tests/",
+                    "Assist\\InAppCommunication\\Database\\Factories\\": "database/factories/",
+                    "Assist\\InAppCommunication\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -16932,16 +16967,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.18.8",
+            "version": "0.18.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "374bab157a41f6849556edc53125f856eb6c1c8c"
+                "reference": "f36bc0a707fd8af301df5108740ce41f9db8eded"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/374bab157a41f6849556edc53125f856eb6c1c8c",
-                "reference": "374bab157a41f6849556edc53125f856eb6c1c8c",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/f36bc0a707fd8af301df5108740ce41f9db8eded",
+                "reference": "f36bc0a707fd8af301df5108740ce41f9db8eded",
                 "shasum": ""
             },
             "require": {
@@ -16976,7 +17011,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.18.8"
+                "source": "https://github.com/rectorphp/rector/tree/0.18.10"
             },
             "funding": [
                 {
@@ -16984,7 +17019,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-14T15:30:19+00:00"
+            "time": "2023-11-16T19:42:21+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -19108,5 +19143,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

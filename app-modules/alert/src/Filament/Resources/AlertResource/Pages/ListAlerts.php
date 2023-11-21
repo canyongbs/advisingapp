@@ -28,6 +28,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\CaseloadManagement\Models\Caseload;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Assist\Alert\Filament\Resources\AlertResource;
+use Assist\AssistDataModel\Models\Scopes\EducatableSearch;
 use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
@@ -69,7 +70,7 @@ class ListAlerts extends ListRecords
                         Prospect::class => ManageProspectAlerts::getUrl(['record' => $record->concern]),
                         default => null,
                     })
-                    ->searchable(query: fn (Builder $query, $search) => $query->educatableSearch(relationship: 'concern', search: $search))
+                    ->searchable(query: fn (Builder $query, $search) => $query->tap(new EducatableSearch(relationship: 'concern', search: $search)))
                     ->forceSearchCaseInsensitive()
                     ->sortable(),
                 TextColumn::make('description')

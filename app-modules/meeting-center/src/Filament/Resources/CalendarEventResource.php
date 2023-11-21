@@ -19,23 +19,22 @@ class CalendarEventResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationLabel = 'Events';
+    protected static ?string $navigationLabel = 'Schedule';
 
     protected static ?string $modelLabel = 'Event';
 
     public static function getRelations(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
             'index' => ListCalendarEvents::route('/'),
-            // 'create' => CreateCalendarEvent::route('/create'),
+            'create' => CreateCalendarEvent::route('/create'),
             'view' => ViewCalendarEvent::route('/{record}'),
-            // 'edit' => EditCalendarEvent::route('/{record}/edit'),
+            'edit' => EditCalendarEvent::route('/{record}/edit'),
         ];
     }
 }

@@ -9,6 +9,7 @@ use Google\Service\Oauth2;
 use Illuminate\Support\Carbon;
 use Google\Service\Calendar\Event;
 use Assist\MeetingCenter\Models\Calendar;
+use Google\Service\Calendar\EventAttendee;
 use Google\Service\Calendar\EventDateTime;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Google\Service\Calendar as GoogleCalendar;
@@ -125,15 +126,20 @@ class GoogleCalendarManager implements CalendarInterface
         $events
             ->each(
                 function (Event $event) use ($calendar) {
+                    $data = [
+                        'title' => $event->summary,
+                        'description' => $event->description,
+                        'starts_at' => $event->start->dateTime,
+                        'ends_at' => $event->end->dateTime,
+                        'attendees' => collect($event->getAttendees())
+                            ->map(fn (EventAttendee $attendee) => $attendee->getEmail())
+                            ->prepend($calendar->provider_email),
+                    ];
+
                     $userEvent = $calendar->events()->where('provider_id', $event->id)->first();
 
                     if ($userEvent) {
-                        $userEvent->fill([
-                            'title' => $event->summary,
-                            'description' => $event->description,
-                            'starts_at' => $event->start->dateTime,
-                            'ends_at' => $event->end->dateTime,
-                        ]);
+                        $userEvent->fill($data);
 
                         if ($userEvent->isDirty()) {
                             $userEvent->updateQuietly();
@@ -142,10 +148,7 @@ class GoogleCalendarManager implements CalendarInterface
                         $calendar->events()
                             ->createQuietly([
                                 'provider_id' => $event->id,
-                                'title' => $event->summary,
-                                'description' => $event->description,
-                                'starts_at' => $event->start->dateTime,
-                                'ends_at' => $event->end->dateTime,
+                                ...$data,
                             ]);
                     }
                 }
@@ -218,6 +221,20 @@ class GoogleCalendarManager implements CalendarInterface
         $end = new EventDateTime();
         $end->setDateTime($event->ends_at);
         $googleEvent->setEnd($end);
+
+        $attendees = collect($event->attendees)
+            // If you add yourself as an attendee you end up with a weird duplicate event on the calendar...
+            ->reject(fn (string $email): bool => $email === $event->calendar->provider_email)
+            ->map(function ($email) {
+                $attendee = new EventAttendee();
+                $attendee->setEmail($email);
+
+                return $attendee;
+            })
+            ->flatten()
+            ->toArray();
+
+        $googleEvent->setAttendees($attendees);
 
         return $googleEvent;
     }

@@ -14,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -24,6 +25,8 @@ use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
 class ListCalendarEvents extends ListRecords
 {
     protected static string $resource = CalendarEventResource::class;
+
+    protected ?string $heading = 'Schedule';
 
     protected static string $view = 'meeting-center::filament.pages.list-events';
 
@@ -99,9 +102,15 @@ class ListCalendarEvents extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('title'),
-                TextColumn::make('starts_at'),
-                TextColumn::make('ends_at'),
+                TextColumn::make('title')
+                    ->sortable(),
+                TextColumn::make('starts_at')
+                    ->sortable(),
+                TextColumn::make('ends_at')
+                    ->sortable(),
+                TextColumn::make('attendees')
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Filter::make('pastEvents')
@@ -111,11 +120,12 @@ class ListCalendarEvents extends ListRecords
             ])
             ->actions([
                 ViewAction::make(),
-                // EditAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    // DeleteBulkAction::make(),
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('starts_at'));
@@ -124,7 +134,7 @@ class ListCalendarEvents extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            // CreateAction::make(),
+            CreateAction::make(),
             Action::make('Sync')
                 ->action(function () {
                     /** @var User $user */
