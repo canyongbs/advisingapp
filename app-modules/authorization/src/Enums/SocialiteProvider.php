@@ -46,7 +46,13 @@ enum SocialiteProvider: string
 
     public function driver(): Provider|MockInterface
     {
-        return Socialite::driver($this->value);
+        return Socialite::driver(
+            match ($this->value) {
+                'azure', 'azure_calendar' => 'azure',
+                'google' => 'google',
+                default => throw new Exception('Invalid socialite provider'),
+            }
+        );
     }
 
     public function config(): Config

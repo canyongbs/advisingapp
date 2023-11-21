@@ -31,6 +31,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\MeetingCenter\Managers;
 
 use DateTime;
+use Microsoft\Graph\Graph;
 use Assist\MeetingCenter\Models\Calendar;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
@@ -42,7 +43,13 @@ class OutlookCalendarManager implements CalendarInterface
      */
     public function getCalendars(Calendar $calendar): array
     {
-        // TODO: Implement getCalendars() method.
+        $client = (new Graph())->setAccessToken($calendar->oauth_token);
+
+        $calendars = $client->createRequest('GET', '/me/calendars')
+            ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
+            ->execute();
+
+        rd($calendars);
 
         return [];
     }

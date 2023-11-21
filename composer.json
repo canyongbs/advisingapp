@@ -69,7 +69,7 @@
         "league/oauth2-client": "^2.7",
         "livewire/livewire": "^3.0",
         "maatwebsite/excel": "^3.1",
-        "microsoft/microsoft-graph": "^2.0",
+        "microsoft/microsoft-graph": "^1.109",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
         "saade/filament-fullcalendar": "^3.0",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",

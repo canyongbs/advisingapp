@@ -29,22 +29,20 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
     <x-filament::icon-button
         icon="icon-google"
         size="xl"
-        outlined
+        outlined=""
         :href="route('calendar.google.login')"
         tag="a"
     >
         Google
     </x-filament::icon-button>
 
-    <div class="grid justify-items-center">
-        <x-filament::icon-button
-            class="opacity-50"
+    <x-filament::icon-button
             icon="icon-outlook"
             size="xl"
-            outlined
-        >
-            Outlook
-        </x-filament::icon-button>
-        Coming Soon!
-    </div>
+            outlined=""
+            :href="route('calendar.outlook.login')"
+            tag="a"
+    >
+        Outlook
+    </x-filament::icon-button>
 </div>

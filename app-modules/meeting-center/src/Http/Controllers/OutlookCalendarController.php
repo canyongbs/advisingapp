@@ -48,24 +48,31 @@ class OutlookCalendarController extends CalendarController
 
         return $driver
             ->setConfig(SocialiteProvider::AzureCalendar->config())
-            ->scopes(['Calendars.ReadWrite', 'User.Read'])
+            ->scopes(['Calendars.ReadWrite', 'User.Read', 'offline_access'])
             ->redirect();
     }
 
     public function callback(Request $request): RedirectResponse
     {
+        /** @var Provider $driver */
+        $driver = SocialiteProvider::AzureCalendar->driver();
+
         /** @var User $socialiteUser */
-        $socialiteUser = SocialiteProvider::AzureCalendar->driver()->user();
+        $socialiteUser = $driver
+            ->setConfig(SocialiteProvider::AzureCalendar->config())
+            ->user();
 
         $user = auth()->user();
 
         $calendar = $user->calendar ?: new Calendar();
 
+        ray($socialiteUser);
+
         $calendar->provider_type = CalendarProvider::Outlook;
         $calendar->provider_email = $socialiteUser->getEmail();
         $calendar->oauth_token = $socialiteUser->token;
         $calendar->oauth_refresh_token = $socialiteUser->refreshToken;
-        $calendar->oauth_expires_at = now()->addSeconds($socialiteUser->expiresIn);
+        $calendar->oauth_token_expires_at = now()->addSeconds($socialiteUser->expiresIn);
 
         $user->calendar()->save($calendar);
 
