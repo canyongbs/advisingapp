@@ -35,9 +35,11 @@ use DateTimeInterface;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model\Event;
 use Illuminate\Support\Facades\Http;
+use Microsoft\Graph\Core\GraphConstants;
 use Assist\MeetingCenter\Models\Calendar;
 use GuzzleHttp\Exception\ClientException;
 use Assist\MeetingCenter\Models\CalendarEvent;
+use Assist\MeetingCenter\Services\GraphRequest;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
@@ -66,36 +68,51 @@ class OutlookCalendarManager implements CalendarInterface
     {
         $client = $this->makeClient($calendar);
 
-        $start = $start ?? now()->subYears(2)->startOfDay();
+        $start = $start ?? now()->subDays(2)->startOfDay();
 
         $end = $end ?? now()->addYears(2)->endOfDay();
 
-        $request = $client->createRequest(
+        $events = [];
+
+        $request = $client->createCollectionRequest(
             requestType: 'GET',
             endpoint: '/me/calendar/calendarView?' . http_build_query([
+                '$top' => $perPage ?? GraphConstants::MAX_PAGE_SIZE,
                 'startDateTime' => $start->format(DateTimeInterface::ATOM),
                 'endDateTime' => $end->format(DateTimeInterface::ATOM),
             ])
-        )
-            ->setReturnType(Event::class);
+        );
 
-        try {
-            $events = $request->execute();
-        } catch (ClientException $exception) {
-            if ($exception->getCode() === 401) {
-                $calendar = $this->refreshToken($calendar);
+        do {
+            try {
+                $response = $request->execute();
+            } catch (ClientException $exception) {
+                if ($exception->getCode() === 401) {
+                    $calendar = $this->refreshToken($calendar);
 
-                $request->setAccessToken($calendar->oauth_token);
+                    $request->setAccessToken($calendar->oauth_token);
 
-                $events = $request->execute();
-            } else {
-                throw $exception;
+                    $response = $request->execute();
+                } else {
+                    throw $exception;
+                }
             }
-        }
+
+            $events = array_merge($events, $response->getResponseAsObject(Event::class));
+
+            if ($response->getNextLink() !== null) {
+                $request = $client->createCollectionRequest(
+                    requestType: 'GET',
+                    endpoint: $response->getNextLink()
+                );
+            } else {
+                $request = null;
+            }
+        } while ($request !== null);
 
         ray($events);
 
-        return [];
+        return $events;
     }
 
     public function createEvent(CalendarEvent $event): void
@@ -169,5 +186,24 @@ class OutlookCalendarManager implements CalendarInterface
         }
 
         return (new Graph())->setAccessToken($calendar->oauth_token);
+    }
+
+    protected function executeRequest(Calendar $calendar, GraphRequest $request): mixed
+    {
+        try {
+            $response = $request->execute();
+        } catch (ClientException $exception) {
+            if ($exception->getCode() === 401) {
+                $calendar = $this->refreshToken($calendar);
+
+                $request->setAccessToken($calendar->oauth_token);
+
+                $response = $request->execute();
+            } else {
+                throw $exception;
+            }
+        }
+
+        return $response;
     }
 }
