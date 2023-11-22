@@ -159,6 +159,12 @@ class ListCalendarEvents extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ])
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                /** @var User $user */
+                $user = auth()->user();
+
+                return $query->whereRelation('calendar', 'user_id', $user->id);
+            })
             ->defaultSort('starts_at', 'desc');
     }
 
