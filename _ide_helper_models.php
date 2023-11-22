@@ -212,6 +212,7 @@ namespace App\Models{
  * @property string $timezone
  * @property string|null $pronouns_id
  * @property bool $are_pronouns_visible_on_profile
+ * @property bool $default_assistant_chat_folders_created
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -283,6 +284,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAvatarUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereBio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereDefaultAssistantChatFoldersCreated($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
@@ -324,8 +326,6 @@ namespace Assist\Alert\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @method static \Illuminate\Database\Eloquent\Builder|Alert educatableSearch(string $relationship, string $search)
- * @method static \Illuminate\Database\Eloquent\Builder|Alert educatableSort(string $direction)
  * @method static \Assist\Alert\Database\Factories\AlertFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newQuery()
@@ -2074,8 +2074,6 @@ namespace Assist\ServiceManagement\Models{
  * @property-read int|null $service_request_updates_count
  * @property-read \Assist\ServiceManagement\Models\ServiceRequestStatus|null $status
  * @property-read \Assist\ServiceManagement\Models\ServiceRequestType|null $type
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest educatableSearch(string $relationship, string $search)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest educatableSort(string $direction)
  * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newQuery()
@@ -2262,8 +2260,6 @@ namespace Assist\Task\Models{
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
  * @method static \Illuminate\Database\Eloquent\Builder|Task byNextDue()
- * @method static \Illuminate\Database\Eloquent\Builder|Task educatableSearch(string $relationship, string $search)
- * @method static \Illuminate\Database\Eloquent\Builder|Task educatableSort(string $direction)
  * @method static \Assist\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()
