@@ -159,7 +159,7 @@ class ListCalendarEvents extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('starts_at'));
+            ->defaultSort('starts_at', 'desc');
     }
 
     protected function getHeaderActions(): array
