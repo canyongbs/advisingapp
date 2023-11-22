@@ -84,12 +84,12 @@ class GoogleCalendarManager implements CalendarInterface
         ];
 
         if (is_null($start)) {
-            $start = now()->subYears(2)->startOfDay();
+            $start = now()->subYear()->startOfDay();
         }
         $parameters['timeMin'] = $start->format(DateTimeInterface::RFC3339);
 
         if (is_null($end)) {
-            $end = now()->addYears(2)->endOfDay();
+            $end = now()->addYear()->endOfDay();
         }
         $parameters['timeMax'] = $end->format(DateTimeInterface::RFC3339);
 
