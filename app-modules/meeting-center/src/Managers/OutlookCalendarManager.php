@@ -148,9 +148,30 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function updateEvent(CalendarEvent $event): void
     {
-        // https://learn.microsoft.com/en-us/graph/api/event-update?view=graph-rest-1.0&tabs=http
+        $client = $this->makeClient($event->calendar);
 
-        // TODO: Implement updateEvent() method.
+        $request = $client->createRequest(
+            requestType: 'PATCH',
+            endpoint: "/me/calendars/{$event->calendar->provider_id}/events/{$event->provider_id}",
+        )
+            ->attachBody($this->toMicrosoftGraphEvent($event));
+
+        try {
+            $response = $request->execute();
+        } catch (ClientException $exception) {
+            if ($exception->getCode() === 401) {
+                $calendar = $this->refreshToken($event->calendar);
+
+                $request->setAccessToken($calendar->oauth_token);
+
+                $response = $request->execute();
+            } else {
+                throw $exception;
+            }
+        }
+
+        $event->provider_id = $response->getResponseAsObject(Event::class)->getId();
+        $event->saveQuietly();
     }
 
     public function deleteEvent(CalendarEvent $event): void
