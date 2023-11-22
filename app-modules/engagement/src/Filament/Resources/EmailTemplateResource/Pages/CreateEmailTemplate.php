@@ -59,11 +59,4 @@ class CreateEmailTemplate extends CreateRecord
                     ->required(),
             ]);
     }
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        ray('data', $data);
-
-        return $data;
-    }
 }
