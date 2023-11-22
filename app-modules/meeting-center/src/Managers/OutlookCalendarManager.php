@@ -227,7 +227,7 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function revokeToken(Calendar $calendar): bool
     {
-        // TODO: Implement revokeToken() method.
+        // There is currently not a way to do this that doesn't require invalidating all refresh_tokens a User has, which would mess with other applications
         return false;
     }
 
