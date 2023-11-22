@@ -28,34 +28,22 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace Assist\Engagement\Models;
 
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use App\Models\BaseModel;
 
 /**
  * @mixin IdeHelperEmailTemplate
  */
-class EmailTemplate extends BaseModel implements HasMedia
+class EmailTemplate extends BaseModel
 {
-    use InteractsWithMedia;
-
     protected $fillable = [
         'name',
-        'primary_color',
-        'related_to_type',
-        'related_to_id',
+        'description',
+        'content',
     ];
 
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('logo')
-            ->singleFile();
-    }
-
-    public function relatedTo(): MorphTo
-    {
-        return $this->morphTo();
-    }
+    protected $casts = [
+        'content' => 'array',
+    ];
 }

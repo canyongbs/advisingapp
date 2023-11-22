@@ -28,17 +28,13 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\EmailTemplateResource\Pages;
+namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
 use Filament\Forms\Form;
-use Assist\Division\Models\Division;
-use App\Forms\Components\ColorSelect;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\MorphToSelect;
-use App\Filament\Resources\EmailTemplateResource;
-use Filament\Forms\Components\MorphToSelect\Type;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 
 class CreateEmailTemplate extends CreateRecord
 {
@@ -48,23 +44,26 @@ class CreateEmailTemplate extends CreateRecord
     {
         return $form
             ->schema([
-                MorphToSelect::make('relatedTo')
-                    ->label('Related To')
-                    ->types([
-                        Type::make(Division::class)
-                            ->titleAttribute('name'),
-                    ])
-                    ->required(),
                 TextInput::make('name')
+                    ->columnSpan('1/4')
                     ->string()
                     ->required()
                     ->autocomplete(false),
-                ColorSelect::make('primary_color'),
-                SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
-                    ->collection('logo')
-                    ->visibility('private')
-                    ->image(),
+                TextInput::make('description')
+                    ->columnSpanFull()
+                    ->string()
+                    ->autocomplete(false),
+                TiptapEditor::make('content')
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->required(),
             ]);
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        ray('data', $data);
+
+        return $data;
     }
 }

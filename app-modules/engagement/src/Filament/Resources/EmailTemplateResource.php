@@ -28,24 +28,30 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace Assist\Engagement\Filament\Resources;
 
-return new class () extends Migration {
-    public function up(): void
+use Filament\Resources\Resource;
+use Assist\Engagement\Models\EmailTemplate;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
+
+class EmailTemplateResource extends Resource
+{
+    protected static ?string $model = EmailTemplate::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 10;
+
+    public static function getPages(): array
     {
-        Schema::create('email_templates', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name');
-            $table->string('primary_color')->nullable();
-
-            $table->uuidMorphs('related_to');
-
-            $table->timestamps();
-
-            $table->unique(['name', 'related_to_type', 'related_to_id']);
-        });
+        return [
+            'index' => ListEmailTemplates::route('/'),
+            'create' => CreateEmailTemplate::route('/create'),
+            'edit' => EditEmailTemplate::route('/{record}/edit'),
+        ];
     }
-};
+}

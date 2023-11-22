@@ -28,15 +28,21 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace App\Models\Concerns;
+namespace Assist\Engagement\Database\Factories;
 
-use App\Models\EmailTemplate;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-trait HasEmailTemplates
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EmailTemplate>
+ */
+class EmailTemplateFactory extends Factory
 {
-    public function emailTemplate(): MorphOne
+    public function definition(): array
     {
-        return $this->morphOne(EmailTemplate::class, 'related_to');
+        return [
+            'name' => fake()->word,
+            'description' => fake()->sentence,
+            'content' => fake()->paragraph,
+        ];
     }
 }
