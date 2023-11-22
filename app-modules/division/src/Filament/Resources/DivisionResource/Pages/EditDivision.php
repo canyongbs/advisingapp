@@ -30,17 +30,16 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Division\Filament\Resources\DivisionResource\Pages;
 
-use App\Models\NotificationSetting;
-use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
+use App\Models\NotificationSetting;
+use Assist\Division\Models\Division;
 use App\Filament\Fields\TiptapEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Assist\Division\Filament\Resources\DivisionResource;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class EditDivision extends EditRecord
 {
@@ -67,10 +66,46 @@ class EditDivision extends EditRecord
                 TiptapEditor::make('footer')
                     ->string()
                     ->columnSpanFull(),
-                Select::make('notificationSetting')
+                Select::make('notification_setting_id')
+                    ->label('Notification Setting')
                     ->options(NotificationSetting::pluck('name', 'id'))
                     ->searchable(),
             ]);
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data = parent::mutateFormDataBeforeFill($data);
+
+        /** @var Division $division */
+        $division = $this->getRecord();
+
+        $data['notification_setting_id'] = $division->notificationSetting?->setting->id;
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data = parent::mutateFormDataBeforeSave($data);
+
+        /** @var Division $division */
+        $division = $this->getRecord();
+
+        if ($data['notification_setting_id']) {
+            $division->notificationSetting()->updateOrCreate([
+                'related_to_id' => $division->id,
+                'related_to_type' => $division->getMorphClass(),
+            ], [
+                'notification_setting_id' => $data['notification_setting_id'],
+            ]);
+        } else {
+            $division->notificationSetting()->delete();
+        }
+
+        unset($data['notification_setting_id']);
+
+        return $data;
     }
 
     protected function getHeaderActions(): array

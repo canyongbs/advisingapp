@@ -30,7 +30,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Engagement\Notifications;
 
-use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -53,15 +52,9 @@ class EngagementNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate())
             ->subject($this->deliverable->engagement->subject)
             ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
             ->line($this->deliverable->engagement->body)
             ->salutation("Regards, {$this->deliverable->engagement->user->name}");
-    }
-
-    private function resolveEmailTemplate(): ?NotificationSetting
-    {
-        return $this->deliverable->engagement->createdBy->teams()->first()?->division?->emailTemplate;
     }
 }

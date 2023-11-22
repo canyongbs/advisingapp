@@ -31,8 +31,8 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace App\Notifications;
 
 use App\Models\User;
-use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
+use App\Models\NotificationSetting;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -53,7 +53,7 @@ class DemoNotification extends Notification implements ShouldQueue
     public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate($notifiable))
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->line('The introduction to the notification.')
             ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');
@@ -67,8 +67,8 @@ class DemoNotification extends Notification implements ShouldQueue
         return [];
     }
 
-    private function resolveEmailTemplate(User $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $this->sender->teams()->first()?->division?->emailTemplate;
+        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

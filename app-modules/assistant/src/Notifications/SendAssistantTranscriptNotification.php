@@ -31,9 +31,9 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Assistant\Notifications;
 
 use App\Models\User;
-use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
+use App\Models\NotificationSetting;
 use Assist\Assistant\Models\AssistantChat;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -59,7 +59,7 @@ class SendAssistantTranscriptNotification extends Notification implements Should
     public function toMail(User $notifiable): MailMessage
     {
         $message = MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate())
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->greeting("Hello {$notifiable->name},");
 
         $senderIsNotifiable = $this->sender->is($notifiable);
@@ -97,8 +97,8 @@ class SendAssistantTranscriptNotification extends Notification implements Should
         return [];
     }
 
-    private function resolveEmailTemplate(): ?NotificationSetting
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $this->sender->teams()->first()?->division?->emailTemplate;
+        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

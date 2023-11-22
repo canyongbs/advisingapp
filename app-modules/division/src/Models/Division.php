@@ -30,16 +30,14 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Division\Models;
 
-use App\Models\NotificationSetting;
-use App\Models\NotificationSettingPivot;
 use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Team\Models\Team;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use App\Models\NotificationSettingPivot;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Concerns\HasEmailTemplates;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Interaction\Models\Concerns\HasManyInteractions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;

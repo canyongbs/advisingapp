@@ -30,12 +30,11 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace App\Models;
 
+use Spatie\MediaLibrary\HasMedia;
 use Assist\Division\Models\Division;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @mixin IdeHelperEmailTemplate

@@ -29,7 +29,7 @@ class {{ class }} extends Notification
     public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate())
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->line('The introduction to the notification.')
             ->action('Notification Action', url('/'))
             ->line('Thank you for using our application!');
@@ -45,7 +45,7 @@ class {{ class }} extends Notification
         ];
     }
 
-    private function resolveEmailTemplate(): ?EmailTemplate
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
         return null;
     }

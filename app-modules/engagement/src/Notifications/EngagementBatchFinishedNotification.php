@@ -31,9 +31,9 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
-use App\Models\NotificationSetting;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
+use App\Models\NotificationSetting;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Engagement\Models\EngagementBatch;
@@ -54,10 +54,10 @@ class EngagementBatchFinishedNotification extends Notification implements Should
         return ['mail', 'database'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
         $message = MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate());
+            ->settings($this->resolveNotificationSetting($notifiable));
 
         if ($this->failedJobs > 0) {
             return $message
@@ -87,8 +87,8 @@ class EngagementBatchFinishedNotification extends Notification implements Should
             ->getDatabaseMessage();
     }
 
-    private function resolveEmailTemplate(): ?NotificationSetting
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $this->engagementBatch->user->teams()->first()?->division?->emailTemplate;
+        return $this->engagementBatch->user->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

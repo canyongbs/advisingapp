@@ -25,7 +25,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 --}}
-@props(['emailTemplate' => null])
+@props(['settings' => null])
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -53,7 +53,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
         }
 
         @php
-            $color = \Filament\Support\Colors\Color::all()[$emailTemplate?->primary_color ?? 'blue'];
+            $color = \Filament\Support\Colors\Color::all()[$settings?->primary_color ?? 'blue'];
         @endphp
 
         .button-primary {

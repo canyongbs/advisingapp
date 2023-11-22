@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class NotificationSettingPivot extends MorphPivot
 {
@@ -23,7 +23,7 @@ class NotificationSettingPivot extends MorphPivot
 
     public function setting(): BelongsTo
     {
-        return $this->belongsTo(NotificationSetting::class);
+        return $this->belongsTo(NotificationSetting::class, 'notification_setting_id');
     }
 
     public function relatedTo(): MorphTo

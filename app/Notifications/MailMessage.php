@@ -40,10 +40,10 @@ class MailMessage extends BaseMailMessage
         return app(static::class);
     }
 
-    public function emailTemplate(?NotificationSetting $emailTemplate): static
+    public function settings(?NotificationSetting $setting): static
     {
         $this->markdown('vendor.notifications.email', [
-            'emailTemplate' => $emailTemplate,
+            'settings' => $setting,
         ]);
 
         return $this;

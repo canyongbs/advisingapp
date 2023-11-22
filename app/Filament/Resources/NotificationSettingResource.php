@@ -30,8 +30,8 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace App\Filament\Resources;
 
-use App\Models\NotificationSetting;
 use Filament\Resources\Resource;
+use App\Models\NotificationSetting;
 use App\Filament\Resources\NotificationSettingResource\Pages\EditNotificationSetting;
 use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
 use App\Filament\Resources\NotificationSettingResource\Pages\CreateNotificationSetting;

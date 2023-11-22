@@ -31,16 +31,13 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
 use Filament\Tables\Table;
-use App\Models\NotificationSetting;
 use Filament\Actions\CreateAction;
-use Assist\Division\Models\Division;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
 use App\Filament\Resources\NotificationSettingResource;
-use Assist\Division\Filament\Resources\DivisionResource;
 
 class ListNotificationSettings extends ListRecords
 {
