@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.1.6",
+            "version": "v3.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "3c37e9654a3736b40f845e6c17bd607af3070d69"
+                "reference": "1fca55707ef7db4891094dcdf7b1f02b5b8f085d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/3c37e9654a3736b40f845e6c17bd607af3070d69",
-                "reference": "3c37e9654a3736b40f845e6c17bd607af3070d69",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/1fca55707ef7db4891094dcdf7b1f02b5b8f085d",
+                "reference": "1fca55707ef7db4891094dcdf7b1f02b5b8f085d",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +80,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.1.6"
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.1.7"
             },
             "funding": [
                 {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-21T18:43:45+00:00"
+            "time": "2023-11-22T17:47:08+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -202,16 +202,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.288.0",
+            "version": "3.288.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "6485aad8d3cfa55e3bcea2b4b347f86ee233fc33"
+                "reference": "a1dfa12c7165de0b731ae8074c4ba1f3ae733f89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6485aad8d3cfa55e3bcea2b4b347f86ee233fc33",
-                "reference": "6485aad8d3cfa55e3bcea2b4b347f86ee233fc33",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a1dfa12c7165de0b731ae8074c4ba1f3ae733f89",
+                "reference": "a1dfa12c7165de0b731ae8074c4ba1f3ae733f89",
                 "shasum": ""
             },
             "require": {
@@ -291,9 +291,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.288.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.288.1"
             },
-            "time": "2023-11-21T19:08:29+00:00"
+            "time": "2023-11-22T19:35:38+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
