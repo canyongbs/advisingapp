@@ -29,7 +29,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
     <x-filament::icon-button
         icon="icon-google"
         size="xl"
-        outlined=""
         :href="route('calendar.google.login')"
         tag="a"
     >
@@ -39,7 +38,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
     <x-filament::icon-button
         icon="icon-outlook"
         size="xl"
-        outlined=""
         :href="route('calendar.outlook.login')"
         tag="a"
     >
