@@ -169,6 +169,18 @@ class PersonalAssistant extends Page
 
         $user->consentTo($this->consentAgreement);
 
+        if (! $user->defaultAssistantChatFoldersHaveBeenCreated()) {
+            foreach (AssistantChatFolder::defaults() as $default) {
+                $user->assistantChatFolders()->create([
+                    'name' => $default,
+                ]);
+            }
+
+            $user->update([
+                'default_assistant_chat_folders_created' => true,
+            ]);
+        }
+
         $this->dispatch('close-modal', id: 'consent-agreement');
     }
 

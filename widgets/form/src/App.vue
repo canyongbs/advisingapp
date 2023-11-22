@@ -57,9 +57,10 @@ const data = reactive({
         node.clearErrors();
 
         fetch(formSubmissionUrl.value, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
         })
@@ -67,6 +68,7 @@ const data = reactive({
             .then((json) => {
                 if (json.errors) {
                     node.setErrors([], json.errors);
+
                     return;
                 }
 
@@ -80,7 +82,7 @@ const data = reactive({
 
 const submittedSuccess = ref(false);
 
-const scriptUrl = new URL(document.currentScript.getAttribute("src"));
+const scriptUrl = new URL(document.currentScript.getAttribute('src'));
 const protocol = scriptUrl.protocol;
 const scriptHostname = scriptUrl.hostname;
 const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
@@ -88,12 +90,22 @@ const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
 const hostUrl = `${protocol}//${scriptHostname}`;
 
 const display = ref(false);
-const formName = ref("");
-const formDescription = ref("");
-const formSubmissionUrl = ref("");
-const formPrimaryColor = ref("");
-const formRounding= ref("");
+const formName = ref('');
+const formIsAuthenticated = ref(false);
+const formDescription = ref('');
+const formSubmissionUrl = ref('');
+const formPrimaryColor = ref('');
+const formRounding= ref('');
 const schema = ref([]);
+
+const authentication = ref({
+    code: null,
+    email: null,
+    isRequested: false,
+    requestedMessage: null,
+    requestUrl: null,
+    url: null,
+});
 
 fetch(props.url)
     .then((response) => response.json())
@@ -105,8 +117,10 @@ fetch(props.url)
         formName.value = json.name;
         formDescription.value = json.description;
         schema.value = json.schema;
-        formSubmissionUrl.value = json.submission_url;
+        formIsAuthenticated.value = json.is_authenticated ?? false;
+        formSubmissionUrl.value = json.submission_url ?? null;
         formPrimaryColor.value = json.primary_color;
+        authentication.value.requestUrl = json.authentication_url ?? null;
 
         formRounding.value = {
             none: {
@@ -151,6 +165,86 @@ fetch(props.url)
     .catch((error) => {
         console.error(`ASSIST Embed Form ${error}`);
     });
+
+async function authenticate (formData, node) {
+    node.clearErrors();
+
+    if (authentication.value.isRequested) {
+        fetch(authentication.value.url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                code: formData.code,
+            }),
+        })
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.errors) {
+                    node.setErrors([], json.errors);
+
+                    return;
+                }
+
+                if (json.is_expired) {
+                    node.setErrors(['The authentication code expires after 24 hours. Please authenticate again.']);
+
+                    authentication.value.isRequested = false;
+                    authentication.value.requestedMessage = null;
+
+                    return;
+                }
+
+                if (! json.submission_url) {
+                    node.setErrors([json.message]);
+
+                    return;
+                }
+
+                formSubmissionUrl.value = json.submission_url;
+            })
+            .catch((error) => {
+                node.setErrors([error]);
+            });
+
+        return;
+    }
+
+    fetch(authentication.value.requestUrl, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: formData.email,
+        }),
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            if (json.errors) {
+                node.setErrors([], json.errors);
+
+                return;
+            }
+
+            if (! json.authentication_url) {
+                node.setErrors([json.message]);
+
+                return;
+            }
+
+            authentication.value.isRequested = true;
+            authentication.value.requestedMessage = json.message;
+            authentication.value.url = json.authentication_url;
+        })
+        .catch((error) => {
+            node.setErrors([error]);
+        });
+}
+
 </script>
 
 <template>
@@ -188,7 +282,50 @@ fetch(props.url)
                 {{ formDescription }}
             </p>
 
-            <FormKitSchema :schema="schema" :data="data" />
+            <div v-if="! formSubmissionUrl">
+                <FormKit type="form" @submit="authenticate" v-model="authentication">
+                    <FormKit
+                        type="email"
+                        label="Your email address"
+                        name="email"
+                        validation="required|email"
+                        validation-visibility="submit"
+                        :disabled="authentication.isRequested"
+                    />
+
+                    <p
+                        v-if="authentication.requestedMessage"
+                        class="text-sm"
+                    >
+                        {{ authentication.requestedMessage }}
+                    </p>
+
+                    <FormKit
+                        type="otp"
+                        digits="6"
+                        label="Authentication code"
+                        name="code"
+                        help="We’ve sent a code to your email address."
+                        validation="required"
+                        validation-visibility="submit"
+                        v-if="authentication.isRequested"
+                    />
+                </FormKit>
+            </div>
+
+            <div v-if="formSubmissionUrl" class="space-y-6">
+                <p
+                    v-if="formIsAuthenticated"
+                    class="text-sm"
+                >
+                    Signed in as <strong>{{ authentication.email }}</strong>
+                </p>
+
+                <FormKitSchema
+                    :schema="schema"
+                    :data="data"
+                />
+            </div>
         </div>
 
         <div v-if="submittedSuccess">

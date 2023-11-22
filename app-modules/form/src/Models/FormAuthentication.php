@@ -28,46 +28,42 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Database\Factories;
+namespace Assist\Form\Models;
 
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\BaseModel;
+use Illuminate\Database\Query\Builder;
+use App\Models\Attributes\NoPermissions;
+use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @mixin IdeHelperFormStep
  */
-class UserFactory extends Factory
+#[NoPermissions]
+class FormAuthentication extends BaseModel
 {
-    /**
-     * Define the model's default state.
-     */
-    public function definition(): array
+    use MassPrunable;
+
+    public function form(): BelongsTo
     {
-        return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'remember_token' => Str::random(10),
-            'is_external' => false,
-            'default_assistant_chat_folders_created' => false,
-        ];
+        return $this
+            ->belongsTo(Form::class);
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function author(): MorphTo
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->morphTo();
     }
 
-    public function external(): static
+    public function isExpired(): bool
     {
-        return $this->state(fn (array $attributes) => [
-            'is_external' => true,
-        ]);
+        return $this->created_at->addDay()->isPast();
+    }
+
+    public function prunable(): Builder
+    {
+        return static::query()
+            ->where('created_at', '<', now()->subMonth());
     }
 }

@@ -113,6 +113,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'is_bio_visible_on_profile' => 'boolean',
         'are_pronouns_visible_on_profile' => 'boolean',
         'are_teams_visible_on_profile' => 'boolean',
+        'default_assistant_chat_folders_created' => 'boolean',
         'is_division_visible_on_profile' => 'boolean',
         'email_verified_at' => 'datetime',
     ];
@@ -128,6 +129,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'bio',
         'is_bio_visible_on_profile',
         'are_pronouns_visible_on_profile',
+        'default_assistant_chat_folders_created',
         'avatar_url',
         'are_teams_visible_on_profile',
         'timezone',
@@ -152,6 +154,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'roles.title',
         'locale',
     ];
+
+    public function defaultAssistantChatFoldersHaveBeenCreated(): bool
+    {
+        return $this->default_assistant_chat_folders_created;
+    }
 
     public function conversations(): BelongsToMany
     {

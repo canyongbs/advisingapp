@@ -28,11 +28,15 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions\Contracts;
-
-use Filament\Actions\Action;
-
-interface HasBulkEngagementAction
-{
-    public function cancelBulkEngagementAction(): Action;
-}
+return [
+    'default_chat_folders' => [
+        'Analytics',
+        'Content Creation',
+        'Draft Communications',
+        'Ideation',
+        'Language Translation',
+        'Project Planning',
+        'Research',
+        'Technical Support',
+    ],
+];

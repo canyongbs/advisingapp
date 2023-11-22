@@ -91,7 +91,7 @@ class GenerateFormKitSchema
                 'paragraph' => ['$el' => 'p', 'children' => $this->content($component['content'] ?? [], $fields)],
                 'small' => ['$el' => 'small', 'children' => $this->content($component['content'] ?? [], $fields)],
                 'text' => $this->text($component),
-                'tiptapBlock' => $blocks[$component['attrs']['type']]::getFormKitSchema($fields[$component['attrs']['id']]),
+                'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field) : [],
                 default => [],
             },
             $content,

@@ -28,11 +28,24 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions\Contracts;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Actions\Action;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('form_authentications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-interface HasBulkEngagementAction
-{
-    public function cancelBulkEngagementAction(): Action;
-}
+            $table->string('author_id')->nullable();
+            $table->string('author_type')->nullable();
+            $table->string('code')->nullable();
+            $table->foreignUuid('form_id')->constrained('forms')->cascadeOnDelete();
+
+            $table->timestamps();
+
+            $table->index(['author_type', 'author_id']);
+        });
+    }
+};

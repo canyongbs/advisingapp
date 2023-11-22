@@ -32,6 +32,7 @@ namespace App\Console;
 
 use Assist\Audit\Models\Audit;
 use App\Models\FailedImportRow;
+use Assist\Form\Models\FormAuthentication;
 use Illuminate\Console\Scheduling\Schedule;
 use Assist\Engagement\Models\EngagementFile;
 use Illuminate\Database\Console\PruneCommand;
@@ -62,8 +63,9 @@ class Kernel extends ConsoleKernel
         collect([
             Audit::class,
             AssistantChatMessageLog::class,
-            FailedImportRow::class,
             EngagementFile::class,
+            FailedImportRow::class,
+            FormAuthentication::class,
         ])
             ->each(
                 fn ($model) => $schedule->command(PruneCommand::class, [

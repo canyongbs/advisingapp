@@ -53,4 +53,9 @@ class AssistantChatFolder extends BaseModel
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function defaults(): array
+    {
+        return config('assistant.default_chat_folders');
+    }
 }

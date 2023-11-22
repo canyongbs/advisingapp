@@ -56,6 +56,7 @@ class CreateUsersTable extends Migration
 
             $table->foreignUuid('pronouns_id')->nullable()->constrained('pronouns')->nullOnDelete();
             $table->boolean('are_pronouns_visible_on_profile')->default(false);
+            $table->boolean('default_assistant_chat_folders_created')->default(false);
 
             $table->datetime('email_verified_at')->nullable();
 

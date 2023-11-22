@@ -13,7 +13,7 @@
         "php": "^8.2",
         "ext-gd": "*",
         "ext-pdo": "*",
-        "awcodes/filament-tiptap-editor": "dev-test/bus-dan#aeca1a685f9943a96bd7033ffbdf40469737de7b",
+        "awcodes/filament-tiptap-editor": "^3.1",
         "aws/aws-php-sns-message-validator": "^1.1",
         "aws/aws-sdk-php": "^3.285",
         "barryvdh/laravel-debugbar": "^3.9",

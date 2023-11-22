@@ -29,7 +29,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
     use Assist\Form\Actions\GenerateFormEmbedCode;
 @endphp
 
-<div class="flex items-center justify-center py-16">
+<div class="flex items-center justify-center px-4 py-16">
     <div class="w-full max-w-4xl">
         {!! resolve(GenerateFormEmbedCode::class)->handle($this->form) !!}
     </div>
