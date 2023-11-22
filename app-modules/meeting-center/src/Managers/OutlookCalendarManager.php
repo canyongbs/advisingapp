@@ -47,6 +47,7 @@ use Microsoft\Graph\Model\DateTimeTimeZone;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
+use Symfony\Component\HttpFoundation\Response
 
 class OutlookCalendarManager implements CalendarInterface
 {
@@ -153,7 +154,7 @@ class OutlookCalendarManager implements CalendarInterface
         try {
             $response = $request->execute();
         } catch (ClientException $exception) {
-            if ($exception->getCode() === 401) {
+            if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
                 $calendar = $this->refreshToken($event->calendar);
 
                 $request->setAccessToken($calendar->oauth_token);
@@ -180,7 +181,7 @@ class OutlookCalendarManager implements CalendarInterface
         try {
             $request->execute();
         } catch (ClientException $exception) {
-            if ($exception->getCode() === 401) {
+            if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
                 $calendar = $this->refreshToken($event->calendar);
 
                 $request->setAccessToken($calendar->oauth_token);
