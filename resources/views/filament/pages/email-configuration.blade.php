@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
 Copyright © 2022-2023, Canyon GBS LLC
@@ -26,26 +24,7 @@ For more information or inquiries please visit our website at
 https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-filament-panels::page>
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::create('email_templates', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name');
-            $table->string('primary_color')->nullable();
-
-            $table->uuidMorphs('related_to');
-
-            $table->timestamps();
-
-            $table->unique(['name', 'related_to_type', 'related_to_id']);
-        });
-    }
-};
+</x-filament-panels::page>

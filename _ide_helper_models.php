@@ -40,7 +40,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace App\Models{
 /**
- * App\Models\EmailTemplate
+ * App\Models\NotificationSetting
  *
  * @property string $id
  * @property string $name
@@ -53,16 +53,16 @@ namespace App\Models{
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $relatedTo
  * @method static \Database\Factories\EmailTemplateFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate query()
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate wherePrimaryColor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereRelatedToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereRelatedToType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereRelatedToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereRelatedToType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -994,7 +994,7 @@ namespace Assist\Division\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
- * @property-read \App\Models\EmailTemplate|null $emailTemplate
+ * @property-read \App\Models\NotificationSetting|null $emailTemplate
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \App\Models\User|null $lastUpdatedBy

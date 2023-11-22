@@ -31,9 +31,9 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
+use App\Models\NotificationSetting;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Engagement\Models\EngagementBatch;
@@ -53,10 +53,10 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
         return ['mail', 'database'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate())
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->subject('Bulk Engagement processing started')
             ->line("We've started processing your bulk engagement of {$this->jobsToProcess} jobs, and we'll keep you updated on the progress.");
     }
@@ -70,8 +70,8 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
             ->getDatabaseMessage();
     }
 
-    private function resolveEmailTemplate(): ?EmailTemplate
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $this->engagementBatch->user->teams()->first()?->division?->emailTemplate;
+        return $this->engagementBatch->user->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

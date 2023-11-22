@@ -37,6 +37,7 @@ use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use App\Filament\Resources\NotificationSettingResource;
 use Assist\Division\Filament\Resources\DivisionResource;
 
 class ViewDivision extends ViewRecord
@@ -71,6 +72,10 @@ class ViewDivision extends ViewRecord
                                     ->datetime(config('project.datetime_format') ?? 'Y-m-d H:i:s'),
                             ])
                             ->columns(),
+                        TextEntry::make('notificationSetting.setting.name')
+                            ->label('Notification Setting')
+                            ->color(fn (Division $record) => $record->notificationSetting?->setting ? 'primary' : null)
+                            ->url(fn (Division $record) => $record->notificationSetting?->setting ? NotificationSettingResource::getUrl('edit', ['record' => $record->notificationSetting->setting]) : null),
                         TextEntry::make('header')
                             ->columnSpanFull()
                             ->view('filament.infolists.entries.html'),

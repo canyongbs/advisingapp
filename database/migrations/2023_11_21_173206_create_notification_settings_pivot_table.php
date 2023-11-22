@@ -28,14 +28,22 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Database\Seeders;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Seeder;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('notification_settings_pivot', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-class EmailTemplateSeeder extends Seeder
-{
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void {}
-}
+            $table->foreignUuid('notification_setting_id')->constrained('notification_settings');
+            $table->uuidMorphs('related_to');
+
+            $table->timestamps();
+
+            $table->unique(['notification_setting_id', 'related_to_type', 'related_to_id']);
+        });
+    }
+};

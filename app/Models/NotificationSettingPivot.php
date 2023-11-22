@@ -28,15 +28,34 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace App\Models\Concerns;
+namespace App\Models;
 
-use App\Models\EmailTemplate;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
-trait HasEmailTemplates
+class NotificationSettingPivot extends MorphPivot
 {
-    public function emailTemplate(): MorphOne
+    use HasUuids;
+
+    public $timestamps = true;
+
+    protected $table = 'notification_settings_pivot';
+
+    protected $fillable = [
+        'notification_setting_id',
+        'related_to_id',
+        'related_to_type',
+    ];
+
+    public function setting(): BelongsTo
     {
-        return $this->morphOne(EmailTemplate::class, 'related_to');
+        return $this->belongsTo(NotificationSetting::class, 'notification_setting_id');
+    }
+
+    public function relatedTo(): MorphTo
+    {
+        return $this->morphTo();
     }
 }

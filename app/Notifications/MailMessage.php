@@ -30,7 +30,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace App\Notifications;
 
-use App\Models\EmailTemplate;
+use App\Models\NotificationSetting;
 use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
 
 class MailMessage extends BaseMailMessage
@@ -40,10 +40,10 @@ class MailMessage extends BaseMailMessage
         return app(static::class);
     }
 
-    public function emailTemplate(?EmailTemplate $emailTemplate): static
+    public function settings(?NotificationSetting $setting): static
     {
         $this->markdown('vendor.notifications.email', [
-            'emailTemplate' => $emailTemplate,
+            'settings' => $setting,
         ]);
 
         return $this;

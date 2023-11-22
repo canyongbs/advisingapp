@@ -28,23 +28,48 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Database\Factories;
+namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Spatie\MediaLibrary\HasMedia;
+use Assist\Division\Models\Division;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EmailTemplate>
+ * @mixin IdeHelperEmailTemplate
  */
-class EmailTemplateFactory extends Factory
+class NotificationSetting extends BaseModel implements HasMedia
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    use InteractsWithMedia;
+
+    protected $fillable = [
+        'name',
+        'primary_color',
+        'related_to_type',
+        'related_to_id',
+    ];
+
+    public function registerMediaCollections(): void
     {
-        return [
-        ];
+        $this->addMediaCollection('logo')
+            ->singleFile();
+    }
+
+    public function settings(): HasMany
+    {
+        return $this->hasMany(NotificationSettingPivot::class);
+    }
+
+    public function divisions(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Division::class,
+            name: 'related_to',
+            table: 'notification_settings_pivot'
+        )
+            ->using(NotificationSettingPivot::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 }

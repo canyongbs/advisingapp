@@ -30,15 +30,15 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace App\Filament\Resources;
 
-use App\Models\EmailTemplate;
 use Filament\Resources\Resource;
-use App\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
-use App\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
-use App\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
+use App\Models\NotificationSetting;
+use App\Filament\Resources\NotificationSettingResource\Pages\EditNotificationSetting;
+use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
+use App\Filament\Resources\NotificationSettingResource\Pages\CreateNotificationSetting;
 
-class EmailTemplateResource extends Resource
+class NotificationSettingResource extends Resource
 {
-    protected static ?string $model = EmailTemplate::class;
+    protected static ?string $model = NotificationSetting::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -55,9 +55,9 @@ class EmailTemplateResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListEmailTemplates::route('/'),
-            'create' => CreateEmailTemplate::route('/create'),
-            'edit' => EditEmailTemplate::route('/{record}/edit'),
+            'index' => ListNotificationSettings::route('/'),
+            'create' => CreateNotificationSetting::route('/create'),
+            'edit' => EditNotificationSetting::route('/{record}/edit'),
         ];
     }
 }

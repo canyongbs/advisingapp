@@ -28,34 +28,21 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-
-/**
- * @mixin IdeHelperEmailTemplate
- */
-class EmailTemplate extends BaseModel implements HasMedia
-{
-    use InteractsWithMedia;
-
-    protected $fillable = [
-        'name',
-        'primary_color',
-        'related_to_type',
-        'related_to_id',
-    ];
-
-    public function registerMediaCollections(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $this->addMediaCollection('logo')
-            ->singleFile();
-    }
+        Schema::create('notification_settings', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function relatedTo(): MorphTo
-    {
-        return $this->morphTo();
+            $table->string('name');
+            $table->string('primary_color')->nullable();
+            $table->longText('description')->nullable();
+
+            $table->timestamps();
+        });
     }
-}
+};
