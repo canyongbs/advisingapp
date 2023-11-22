@@ -1342,6 +1342,7 @@ namespace Assist\Form\Models{
 /**
  * Assist\Form\Models\FormSubmission
  *
+ * @property Student|Prospect|null $author
  * @property string $id
  * @property string $form_id
  * @property string|null $author_id
@@ -1349,7 +1350,6 @@ namespace Assist\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
  * @property-read \Assist\Form\Models\Form $form
@@ -1789,7 +1789,7 @@ namespace Assist\MeetingCenter\Models{
  * @property mixed $oauth_token
  * @property mixed $oauth_refresh_token
  * @property string $user_id
- * @property string $oauth_token_expires_at
+ * @property \Illuminate\Support\Carbon $oauth_token_expires_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\MeetingCenter\Models\CalendarEvent> $events
