@@ -42,12 +42,14 @@ it('will dispatch a job to send all engagements that should be delivered via ema
 
     // Given that we have an engagement that should be delivered
     $engagement = Engagement::factory()
+        ->scheduled()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->email()->count(1))
         ->create();
 
     // And an engagement that shouldn't be sent until some point in the future
     $futureEngagement = Engagement::factory()
+        ->scheduled()
         ->deliverLater()
         ->has(EngagementDeliverable::factory()->email()->count(1))
         ->create();
@@ -70,12 +72,14 @@ it('will dispatch a job to send all engagements that should be delivered via sms
 
     // Given that we have an engagement that should be delivered
     $engagement = Engagement::factory()
+        ->scheduled()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->sms()->count(1))
         ->create();
 
     // And an engagement that shouldn't be sent until some point in the future
     $futureEngagement = Engagement::factory()
+        ->scheduled()
         ->deliverLater()
         ->has(EngagementDeliverable::factory()->sms()->count(1))
         ->create();
@@ -99,6 +103,7 @@ it('will not dispatch a job to send an engagement that has already been delivere
 
     // Given that we have an engagement
     $engagement = Engagement::factory()
+        ->scheduled()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->email()->count(1))
         ->create();
@@ -125,6 +130,23 @@ it('will not dispatch a job to send an engagement that is part of a batch', func
     // Given that we have an engagement
     $engagement = Engagement::factory()
         ->ofBatch()
+        ->deliverNow()
+        ->has(EngagementDeliverable::factory()->email()->count(1))
+        ->create();
+
+    // When our job runs to pick up engagements
+    DeliverEngagements::dispatchSync();
+
+    // This engagement should not be picked up and delivered
+    Queue::assertPushed(EngagementEmailChannelDelivery::class, 0);
+});
+
+it('will only dispatch a job to send an engagement that is scheduled', function () {
+    Queue::fake(EngagementEmailChannelDelivery::class);
+    Notification::fake();
+
+    // Given that we have an engagement that is not scheduled but should otherwise be delivered
+    Engagement::factory()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->email()->count(1))
         ->create();

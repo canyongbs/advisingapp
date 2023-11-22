@@ -105,4 +105,11 @@ class EngagementFactory extends Factory
             'engagement_batch_id' => EngagementBatch::factory(),
         ]);
     }
+
+    public function scheduled(): self
+    {
+        return $this->state([
+            'scheduled' => true,
+        ]);
+    }
 }
