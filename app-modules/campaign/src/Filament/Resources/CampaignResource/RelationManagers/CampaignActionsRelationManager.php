@@ -32,9 +32,6 @@ namespace Assist\Campaign\Filament\Resources\CampaignResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Assist\Task\Models\Task;
-use Assist\Alert\Models\Alert;
-use Assist\CareTeam\Models\CareTeam;
 use Filament\Forms\Components\Builder;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -42,14 +39,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Assist\Campaign\Models\CampaignAction;
-use Assist\Interaction\Models\Interaction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Assist\Campaign\Enums\CampaignActionType;
-use Assist\Engagement\Models\EngagementBatch;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\ServiceManagement\Models\ServiceRequest;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
 
 class CampaignActionsRelationManager extends RelationManager
 {
@@ -60,14 +53,7 @@ class CampaignActionsRelationManager extends RelationManager
         /** @var CampaignAction $action */
         $action = $form->model;
 
-        $form->model = match ($action->type) {
-            CampaignActionType::BulkEngagement => EngagementBatch::class,
-            CampaignActionType::ServiceRequest => ServiceRequest::class,
-            CampaignActionType::ProactiveAlert => Alert::class,
-            CampaignActionType::Interaction => Interaction::class,
-            CampaignActionType::CareTeam => CareTeam::class,
-            CampaignActionType::Task => Task::class,
-        };
+        $form->model = $action->type->getModel();
 
         return $form
             ->schema([
@@ -75,7 +61,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->disabled(),
-                ...$action->getEditFields(),
+                ...$action->type->getEditFields(),
             ]);
     }
 
@@ -93,7 +79,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->form([
                         Builder::make('data')
                             ->addActionLabel('Add a new Campaign Action')
-                            ->blocks(CreateCampaign::blocks()),
+                            ->blocks(CampaignActionType::blocks()),
                     ])
                     ->using(function (array $data, string $model): CampaignAction {
                         foreach ($data['data'] as $action) {
