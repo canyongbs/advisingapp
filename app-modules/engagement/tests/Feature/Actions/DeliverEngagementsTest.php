@@ -1,5 +1,33 @@
 <?php
 
+/*
+<COPYRIGHT>
+
+Copyright © 2022-2023, Canyon GBS LLC
+
+All rights reserved.
+
+This file is part of a project developed using Laravel, which is an open-source framework for PHP.
+Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
+projects used in the development of this solution.
+
+This project is licensed under the Affero General Public License (AGPL) 3.0.
+For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+
+Notice:
+- The copyright notice in this file and across all files and applications in this
+ repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
+- The software solution, including services, infrastructure, and code, is offered as a
+ Software as a Service (SaaS) by Canyon GBS LLC.
+- Use of this software implies agreement to the license terms and conditions as stated
+ in the AGPL 3.0 License.
+
+For more information or inquiries please visit our website at
+https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Queue;
 use Assist\Engagement\Models\Engagement;
@@ -14,12 +42,14 @@ it('will dispatch a job to send all engagements that should be delivered via ema
 
     // Given that we have an engagement that should be delivered
     $engagement = Engagement::factory()
+        ->scheduled()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->email()->count(1))
         ->create();
 
     // And an engagement that shouldn't be sent until some point in the future
     $futureEngagement = Engagement::factory()
+        ->scheduled()
         ->deliverLater()
         ->has(EngagementDeliverable::factory()->email()->count(1))
         ->create();
@@ -42,12 +72,14 @@ it('will dispatch a job to send all engagements that should be delivered via sms
 
     // Given that we have an engagement that should be delivered
     $engagement = Engagement::factory()
+        ->scheduled()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->sms()->count(1))
         ->create();
 
     // And an engagement that shouldn't be sent until some point in the future
     $futureEngagement = Engagement::factory()
+        ->scheduled()
         ->deliverLater()
         ->has(EngagementDeliverable::factory()->sms()->count(1))
         ->create();
@@ -71,6 +103,7 @@ it('will not dispatch a job to send an engagement that has already been delivere
 
     // Given that we have an engagement
     $engagement = Engagement::factory()
+        ->scheduled()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->email()->count(1))
         ->create();
@@ -97,6 +130,23 @@ it('will not dispatch a job to send an engagement that is part of a batch', func
     // Given that we have an engagement
     $engagement = Engagement::factory()
         ->ofBatch()
+        ->deliverNow()
+        ->has(EngagementDeliverable::factory()->email()->count(1))
+        ->create();
+
+    // When our job runs to pick up engagements
+    DeliverEngagements::dispatchSync();
+
+    // This engagement should not be picked up and delivered
+    Queue::assertPushed(EngagementEmailChannelDelivery::class, 0);
+});
+
+it('will only dispatch a job to send an engagement that is scheduled', function () {
+    Queue::fake(EngagementEmailChannelDelivery::class);
+    Notification::fake();
+
+    // Given that we have an engagement that is not scheduled but should otherwise be delivered
+    Engagement::factory()
         ->deliverNow()
         ->has(EngagementDeliverable::factory()->email()->count(1))
         ->create();

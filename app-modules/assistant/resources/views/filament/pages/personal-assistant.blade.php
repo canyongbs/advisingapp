@@ -1,3 +1,30 @@
+{{--
+<COPYRIGHT>
+
+Copyright © 2022-2023, Canyon GBS LLC
+
+All rights reserved.
+
+This file is part of a project developed using Laravel, which is an open-source framework for PHP.
+Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
+projects used in the development of this solution.
+
+This project is licensed under the Affero General Public License (AGPL) 3.0.
+For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+
+Notice:
+- The copyright notice in this file and across all files and applications in this
+ repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
+- The software solution, including services, infrastructure, and code, is offered as a
+ Software as a Service (SaaS) by Canyon GBS LLC.
+- Use of this software implies agreement to the license terms and conditions as stated
+ in the AGPL 3.0 License.
+
+For more information or inquiries please visit our website at
+https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+--}}
 <?php
 
 use Filament\Support\Facades\FilamentAsset;
@@ -168,13 +195,29 @@ use Illuminate\Support\Facades\Vite;
                                                             </div>
                                                         </div>
                                                         <div class="flex justify-between empty:hidden lg:block">
-                                                            {{--                                                            <div --}}
-                                                            {{--                                                                class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2"> --}}
-                                                            {{--                                                                <x-filament::icon --}}
-                                                            {{--                                                                    class="ml-auto flex h-6 w-6 cursor-pointer items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400" --}}
-                                                            {{--                                                                    icon="heroicon-o-clipboard" --}}
-                                                            {{--                                                                /> --}}
-                                                            {{--                                                            </div> --}}
+                                                            <div
+                                                                class="visible mt-2 flex justify-center gap-2 self-end text-gray-400 md:gap-3 lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:translate-x-full lg:gap-1 lg:self-center lg:pl-2"
+                                                                x-data=" {
+                                                                     messageCopied: false,
+                                                                     copyMessage() {
+                                                                         this.messageCopied = true;
+                                                                         setTimeout(() => { this.messageCopied = false }, 2000);
+                                                                     }
+                                                                 }"
+                                                            >
+                                                                <x-filament::icon
+                                                                    class="ml-auto flex h-6 w-6 cursor-pointer items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
+                                                                    icon="heroicon-o-clipboard-document-check"
+                                                                    x-show="messageCopied"
+                                                                />
+                                                                <x-filament::icon
+                                                                    class="ml-auto flex h-6 w-6 cursor-pointer items-center gap-2 rounded-md p-1 text-xs hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
+                                                                    icon="heroicon-o-clipboard"
+                                                                    x-show="! messageCopied"
+                                                                    x-clipboard.raw="{{ $message->message }}"
+                                                                    @click="copyMessage"
+                                                                />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

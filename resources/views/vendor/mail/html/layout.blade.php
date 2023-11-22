@@ -1,4 +1,31 @@
-@props(['emailTemplate' => null])
+{{--
+<COPYRIGHT>
+
+Copyright © 2022-2023, Canyon GBS LLC
+
+All rights reserved.
+
+This file is part of a project developed using Laravel, which is an open-source framework for PHP.
+Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
+projects used in the development of this solution.
+
+This project is licensed under the Affero General Public License (AGPL) 3.0.
+For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+
+Notice:
+- The copyright notice in this file and across all files and applications in this
+ repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
+- The software solution, including services, infrastructure, and code, is offered as a
+ Software as a Service (SaaS) by Canyon GBS LLC.
+- Use of this software implies agreement to the license terms and conditions as stated
+ in the AGPL 3.0 License.
+
+For more information or inquiries please visit our website at
+https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+--}}
+@props(['settings' => null])
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -26,15 +53,15 @@
         }
 
         @php
-            $color = \Filament\Support\Colors\Color::all()[$emailTemplate?->primary_color ?? 'blue'];
+            $color = \Filament\Support\Colors\Color::all()[$settings?->primary_color ?? 'blue'];
         @endphp
 
         .button-primary {
-            background-color: rgb({{ $color[500] }});
-            border-bottom: 8px solid rgb({{ $color[500] }});
-            border-left: 18px solid rgb({{ $color[500] }});
-            border-right: 18px solid rgb({{ $color[500] }});
-            border-top: 8px solid rgb({{ $color[500] }});
+            background-color: rgb({{ $color[600] }});
+            border-bottom: 8px solid rgb({{ $color[600] }});
+            border-left: 18px solid rgb({{ $color[600] }});
+            border-right: 18px solid rgb({{ $color[600] }});
+            border-top: 8px solid rgb({{ $color[600] }});
         }
     </style>
 </head>

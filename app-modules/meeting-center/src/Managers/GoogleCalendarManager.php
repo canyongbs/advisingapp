@@ -1,5 +1,33 @@
 <?php
 
+/*
+<COPYRIGHT>
+
+Copyright © 2022-2023, Canyon GBS LLC
+
+All rights reserved.
+
+This file is part of a project developed using Laravel, which is an open-source framework for PHP.
+Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
+projects used in the development of this solution.
+
+This project is licensed under the Affero General Public License (AGPL) 3.0.
+For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+
+Notice:
+- The copyright notice in this file and across all files and applications in this
+ repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
+- The software solution, including services, infrastructure, and code, is offered as a
+ Software as a Service (SaaS) by Canyon GBS LLC.
+- Use of this software implies agreement to the license terms and conditions as stated
+ in the AGPL 3.0 License.
+
+For more information or inquiries please visit our website at
+https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
 namespace Assist\MeetingCenter\Managers;
 
 use DateTime;
@@ -56,12 +84,12 @@ class GoogleCalendarManager implements CalendarInterface
         ];
 
         if (is_null($start)) {
-            $start = now()->subYears(2)->startOfDay();
+            $start = now()->subYear()->startOfDay();
         }
         $parameters['timeMin'] = $start->format(DateTimeInterface::RFC3339);
 
         if (is_null($end)) {
-            $end = now()->addYears(2)->endOfDay();
+            $end = now()->addYear()->endOfDay();
         }
         $parameters['timeMax'] = $end->format(DateTimeInterface::RFC3339);
 
@@ -126,15 +154,20 @@ class GoogleCalendarManager implements CalendarInterface
         $events
             ->each(
                 function (Event $event) use ($calendar) {
+                    $data = [
+                        'title' => $event->summary,
+                        'description' => $event->description,
+                        'starts_at' => $event->start->dateTime,
+                        'ends_at' => $event->end->dateTime,
+                        'attendees' => collect($event->getAttendees())
+                            ->map(fn (EventAttendee $attendee) => $attendee->getEmail())
+                            ->prepend($calendar->provider_email),
+                    ];
+
                     $userEvent = $calendar->events()->where('provider_id', $event->id)->first();
 
                     if ($userEvent) {
-                        $userEvent->fill([
-                            'title' => $event->summary,
-                            'description' => $event->description,
-                            'starts_at' => $event->start->dateTime,
-                            'ends_at' => $event->end->dateTime,
-                        ]);
+                        $userEvent->fill($data);
 
                         if ($userEvent->isDirty()) {
                             $userEvent->updateQuietly();
@@ -143,10 +176,7 @@ class GoogleCalendarManager implements CalendarInterface
                         $calendar->events()
                             ->createQuietly([
                                 'provider_id' => $event->id,
-                                'title' => $event->summary,
-                                'description' => $event->description,
-                                'starts_at' => $event->start->dateTime,
-                                'ends_at' => $event->end->dateTime,
+                                ...$data,
                             ]);
                     }
                 }
