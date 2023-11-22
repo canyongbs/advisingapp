@@ -49,9 +49,6 @@ use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
 {
-    /**
-     * @return array<string, string>
-     */
     public function getCalendars(Calendar $calendar): array
     {
         $client = (new Graph())->setAccessToken($calendar->oauth_token);
@@ -64,10 +61,6 @@ class OutlookCalendarManager implements CalendarInterface
             ->mapWithKeys(fn (\Microsoft\Graph\Model\Calendar $item) => [$item->getId() => $item->getName()])
             ->toArray();
     }
-
-    // https://github.com/microsoftgraph/msgraph-sample-phpapp/tree/main
-    // https://github.com/microsoftgraph/msgraph-sdk-php
-    // https://learn.microsoft.com/en-us/graph/api/resources/webhooks?view=graph-rest-1.0
 
     public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): array
     {
@@ -200,7 +193,9 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
     {
-        collect($this->getEvents($calendar, $start, $end, $perPage))
+        $providerEvents = collect($this->getEvents($calendar, $start, $end, $perPage));
+
+        $providerEvents
             ->each(function (Event $providerEvent) use ($calendar) {
                 $userEvent = $calendar->events()->where('provider_id', $providerEvent->getId())->first() ?? $calendar->events()->make();
 
@@ -220,9 +215,14 @@ class OutlookCalendarManager implements CalendarInterface
                 }
             });
 
-        // TODO: Create events that don't exist in the provider calendar
+        $calendar->events()
+            ->whereNull('provider_id')
+            ->each(fn ($event) => $this->createEvent($event));
 
-        // TODO: Delete events that don't exist in the provider calendar anymore
+        $calendar->events()
+            ->whereNotNull('provider_id')
+            ->whereNotIn('provider_id', $providerEvents->map(fn (Event $event) => $event->getId()))
+            ->delete();
     }
 
     public function revokeToken(Calendar $calendar): bool
