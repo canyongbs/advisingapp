@@ -31,6 +31,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\MeetingCenter\Managers;
 
 use DateTime;
+use Carbon\Carbon;
 use DateTimeInterface;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model\Event;
@@ -39,7 +40,6 @@ use Microsoft\Graph\Core\GraphConstants;
 use Assist\MeetingCenter\Models\Calendar;
 use GuzzleHttp\Exception\ClientException;
 use Assist\MeetingCenter\Models\CalendarEvent;
-use Assist\MeetingCenter\Services\GraphRequest;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
@@ -110,8 +110,6 @@ class OutlookCalendarManager implements CalendarInterface
             }
         } while ($request !== null);
 
-        ray($events);
-
         return $events;
     }
 
@@ -138,7 +136,29 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
     {
-        $events = $this->getEvents($calendar, $start, $end, $perPage);
+        collect($this->getEvents($calendar, $start, $end, $perPage))
+            ->each(function (Event $providerEvent) use ($calendar) {
+                $userEvent = $calendar->events()->where('provider_id', $providerEvent->getId())->first() ?? $calendar->events()->make();
+
+                $userEvent->fill([
+                    'provider_id' => $providerEvent->getId(),
+                    'title' => $providerEvent->getSubject(),
+                    'description' => $providerEvent->getBodyPreview(),
+                    'starts_at' => Carbon::parse($providerEvent->getStart()->getDateTime(), $providerEvent->getStart()->getTimeZone()),
+                    'ends_at' => Carbon::parse($providerEvent->getEnd()->getDateTime(), $providerEvent->getEnd()->getTimeZone()),
+                    'attendees' => collect($providerEvent->getAttendees())
+                        ->map(fn ($attendee) => $attendee['emailAddress']['address'])
+                        ->prepend($calendar->provider_email),
+                ]);
+
+                if ($userEvent->isDirty()) {
+                    $userEvent->saveQuietly();
+                }
+            });
+
+        // TODO: Create events that don't exist in the provider calendar
+
+        // TODO: Delete events that don't exist in the provider calendar anymore
     }
 
     public function revokeToken(Calendar $calendar): bool
@@ -186,24 +206,5 @@ class OutlookCalendarManager implements CalendarInterface
         }
 
         return (new Graph())->setAccessToken($calendar->oauth_token);
-    }
-
-    protected function executeRequest(Calendar $calendar, GraphRequest $request): mixed
-    {
-        try {
-            $response = $request->execute();
-        } catch (ClientException $exception) {
-            if ($exception->getCode() === 401) {
-                $calendar = $this->refreshToken($calendar);
-
-                $request->setAccessToken($calendar->oauth_token);
-
-                $response = $request->execute();
-            } else {
-                throw $exception;
-            }
-        }
-
-        return $response;
     }
 }
