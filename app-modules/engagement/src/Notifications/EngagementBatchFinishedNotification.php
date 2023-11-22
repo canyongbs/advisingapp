@@ -31,7 +31,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -56,8 +55,7 @@ class EngagementBatchFinishedNotification extends Notification implements Should
 
     public function toMail(object $notifiable): MailMessage
     {
-        $message = MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate());
+        $message = MailMessage::make();
 
         if ($this->failedJobs > 0) {
             return $message
@@ -85,10 +83,5 @@ class EngagementBatchFinishedNotification extends Notification implements Should
             ->title('Bulk Engagement processing finished')
             ->body("{$this->processedJobs} jobs processed successfully.")
             ->getDatabaseMessage();
-    }
-
-    private function resolveEmailTemplate(): ?EmailTemplate
-    {
-        return $this->engagementBatch->user->teams()->first()?->division?->emailTemplate;
     }
 }

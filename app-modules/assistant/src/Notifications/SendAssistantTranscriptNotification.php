@@ -31,7 +31,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Assistant\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Assist\Assistant\Models\AssistantChat;
@@ -59,7 +58,6 @@ class SendAssistantTranscriptNotification extends Notification implements Should
     public function toMail(User $notifiable): MailMessage
     {
         $message = MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate())
             ->greeting("Hello {$notifiable->name},");
 
         $senderIsNotifiable = $this->sender->is($notifiable);
@@ -95,10 +93,5 @@ class SendAssistantTranscriptNotification extends Notification implements Should
     public function toArray(object $notifiable): array
     {
         return [];
-    }
-
-    private function resolveEmailTemplate(): ?EmailTemplate
-    {
-        return $this->sender->teams()->first()?->division?->emailTemplate;
     }
 }

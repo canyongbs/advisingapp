@@ -31,7 +31,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace App\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Notifications\Notification;
@@ -51,7 +50,6 @@ class SetPasswordNotification extends Notification
     public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate($notifiable))
             ->line('A new account has been created for you.')
             ->action('Set up your password', URL::temporarySignedRoute(
                 'login.one-time',
@@ -60,10 +58,5 @@ class SetPasswordNotification extends Notification
             ))
             ->line('For security reasons, this link will expire in 24 hours.')
             ->line('Please contact support if you need a new link or have any issues setting up your account.');
-    }
-
-    private function resolveEmailTemplate(User $notifiable): ?EmailTemplate
-    {
-        return $notifiable->teams()->first()?->division?->emailTemplate;
     }
 }

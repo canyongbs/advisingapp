@@ -31,7 +31,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Engagement\Notifications;
 
 use App\Models\User;
-use App\Models\EmailTemplate;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Assist\Engagement\Models\Engagement;
@@ -55,7 +54,6 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->emailTemplate($this->resolveEmailTemplate())
             ->subject('Your Engagement Email has successfully been delivered.')
             ->line("Your engagement was successfully delivered to {$this->engagement->recipient->display_name}.");
     }
@@ -67,10 +65,5 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
             ->title('Engagement Email Successfully Delivered')
             ->body("Your engagement email was successfully delivered to {$this->engagement->recipient->display_name}.")
             ->getDatabaseMessage();
-    }
-
-    private function resolveEmailTemplate(): ?EmailTemplate
-    {
-        return $this->engagement->createdBy->teams()->first()?->division?->emailTemplate;
     }
 }
