@@ -87,7 +87,7 @@ class OutlookCalendarManager implements CalendarInterface
             try {
                 $response = $request->execute();
             } catch (ClientException $exception) {
-                if ($exception->getCode() === 401) {
+                if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
                     $calendar = $this->refreshToken($calendar);
 
                     $request->setAccessToken($calendar->oauth_token);
@@ -126,7 +126,7 @@ class OutlookCalendarManager implements CalendarInterface
         try {
             $response = $request->execute();
         } catch (ClientException $exception) {
-            if ($exception->getCode() === 401) {
+            if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
                 $calendar = $this->refreshToken($event->calendar);
 
                 $request->setAccessToken($calendar->oauth_token);
@@ -247,7 +247,7 @@ class OutlookCalendarManager implements CalendarInterface
         );
 
         if ($response->clientError() || $response->serverError()) {
-            if ($response->status() === 401) {
+            if ($response->status() === Response::HTTP_UNAUTHORIZED) {
                 // TODO: Handle informing the User that the token is invalid and they need to re-authenticate and clearing the token out of our storage
             }
 
