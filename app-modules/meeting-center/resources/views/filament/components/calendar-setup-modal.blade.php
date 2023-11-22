@@ -37,11 +37,11 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
     </x-filament::icon-button>
 
     <x-filament::icon-button
-            icon="icon-outlook"
-            size="xl"
-            outlined=""
-            :href="route('calendar.outlook.login')"
-            tag="a"
+        icon="icon-outlook"
+        size="xl"
+        outlined=""
+        :href="route('calendar.outlook.login')"
+        tag="a"
     >
         Outlook
     </x-filament::icon-button>
