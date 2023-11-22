@@ -66,8 +66,6 @@ class OutlookCalendarController extends CalendarController
 
         $calendar = $user->calendar ?: new Calendar();
 
-        ray($socialiteUser);
-
         $calendar->provider_type = CalendarProvider::Outlook;
         $calendar->provider_email = $socialiteUser->getEmail();
         $calendar->oauth_token = $socialiteUser->token;
