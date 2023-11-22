@@ -245,8 +245,8 @@ class OutlookCalendarManager implements CalendarInterface
         );
 
         if ($response->clientError() || $response->serverError()) {
-            if ($response->clientError()) {
-                // TODO: Send out an alert to the user that their token has expired and they need to re-authenticate
+            if ($response->status() === 401) {
+                // TODO: Handle informing the User that the token is invalid and they need to re-authenticate and clearing the token out of our storage
             }
 
             $response->throw();
