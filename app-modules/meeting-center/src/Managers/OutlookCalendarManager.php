@@ -176,9 +176,26 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function deleteEvent(CalendarEvent $event): void
     {
-        // https://learn.microsoft.com/en-us/graph/api/event-delete?view=graph-rest-1.0&tabs=http
+        $client = $this->makeClient($event->calendar);
 
-        // TODO: Implement deleteEvent() method.
+        $request = $client->createRequest(
+            requestType: 'DELETE',
+            endpoint: "/me/calendars/{$event->calendar->provider_id}/events/{$event->provider_id}",
+        );
+
+        try {
+            $request->execute();
+        } catch (ClientException $exception) {
+            if ($exception->getCode() === 401) {
+                $calendar = $this->refreshToken($event->calendar);
+
+                $request->setAccessToken($calendar->oauth_token);
+
+                $request->execute();
+            } else {
+                throw $exception;
+            }
+        }
     }
 
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
