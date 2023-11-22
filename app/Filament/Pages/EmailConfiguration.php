@@ -58,8 +58,7 @@ class EmailConfiguration extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        // return $user->can(['assistant.access_ai_settings']) || ListNotificationSettings::shouldRegisterNavigation();
-        return true;
+        return $user->can(['notification_setting.view-any']) || ListNotificationSettings::shouldRegisterNavigation();
     }
 
     public function mount(): void
@@ -67,35 +66,44 @@ class EmailConfiguration extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        // abort_unless($user->can(['assistant.access_ai_settings']) || ListNotificationSettings::shouldRegisterNavigation(), 403);
+        abort_unless($user->can(['notification_setting.view-any']) || ListNotificationSettings::shouldRegisterNavigation(), Response::HTTP_FORBIDDEN);
 
         /** @var NavigationItem $firstNavItem */
-        $firstNavItem = collect($this->getSubNavigation())->first(function (NavigationItem $item) {
-            return $item->isVisible();
-        });
+        $firstNavItem = collect($this->getSubNavigation())
+            ->first(function (NavigationItem $item) {
+                return $item->isVisible();
+            });
 
         abort_if(is_null($firstNavItem), Response::HTTP_FORBIDDEN);
 
         redirect($firstNavItem->getUrl());
     }
 
+    public static function getNavigationItems(): array
+    {
+        $item = parent::getNavigationItems()[0];
+
+        $item->isActiveWhen(function (): bool {
+            $subItems = (new EmailConfiguration())->getSubNavigation();
+
+            foreach ($subItems as $subItem) {
+                if (request()->fullUrlIs($subItem->getUrl())) {
+                    return true;
+                }
+            }
+
+            return request()->routeIs(static::getRouteName());
+        });
+
+        return [$item];
+    }
+
     public function getSubNavigation(): array
     {
-        $navigationItems = $this->generateNavigationItems([
+        return $this->generateNavigationItems([
             ListNotificationSettings::class,
             EmailTemplates::class,
             TextMessageTemplates::class,
         ]);
-
-        /** @var User $user */
-        $user = auth()->user();
-
-        // if ($user->can(['assistant.access_ai_settings'])) {
-        //     $navigationItems = [
-        //         ...$navigationItems,
-        //     ];
-        // }
-
-        return $navigationItems;
     }
 }

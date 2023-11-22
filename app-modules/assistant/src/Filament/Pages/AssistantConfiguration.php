@@ -87,6 +87,25 @@ class AssistantConfiguration extends Page
         redirect($firstNavItem->getUrl());
     }
 
+    public static function getNavigationItems(): array
+    {
+        $item = parent::getNavigationItems()[0];
+
+        $item->isActiveWhen(function (): bool {
+            $subItems = (new AssistantConfiguration())->getSubNavigation();
+
+            foreach ($subItems as $subItem) {
+                if (request()->fullUrlIs($subItem->getUrl())) {
+                    return true;
+                }
+            }
+
+            return request()->routeIs(static::getRouteName());
+        });
+
+        return [$item];
+    }
+
     public function getSubNavigation(): array
     {
         $navigationItems = $this->generateNavigationItems(

@@ -48,7 +48,7 @@ class ListNotificationSettings extends ListRecords
 
     protected static ?string $title = 'Notification Settings';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-bell';
 
     public function getBreadcrumbs(): array
     {
@@ -75,6 +75,12 @@ class ListNotificationSettings extends ListRecords
                 ]),
             ]);
     }
+
+    // public static function getNavigationItems(array $urlParameters = []) : array
+    // {
+    //     ray(parent::getNavigationItems($urlParameters))
+    //     return parent::getNavigationItems($urlParameters);
+    // }
 
     public function getSubNavigation(): array
     {
