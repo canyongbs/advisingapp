@@ -35,10 +35,15 @@ use Carbon\Carbon;
 use DateTimeInterface;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model\Event;
+use Microsoft\Graph\Model\Attendee;
+use Microsoft\Graph\Model\BodyType;
+use Microsoft\Graph\Model\ItemBody;
 use Illuminate\Support\Facades\Http;
+use Microsoft\Graph\Model\EmailAddress;
 use Microsoft\Graph\Core\GraphConstants;
 use Assist\MeetingCenter\Models\Calendar;
 use GuzzleHttp\Exception\ClientException;
+use Microsoft\Graph\Model\DateTimeTimeZone;
 use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
@@ -68,9 +73,9 @@ class OutlookCalendarManager implements CalendarInterface
     {
         $client = $this->makeClient($calendar);
 
-        $start = $start ?? now()->subDays(2)->startOfDay();
+        $start = $start ?? now()->subYear()->startOfDay();
 
-        $end = $end ?? now()->addYears(2)->endOfDay();
+        $end = $end ?? now()->addYear()->endOfDay();
 
         $events = [];
 
@@ -115,9 +120,30 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function createEvent(CalendarEvent $event): void
     {
-        // https://learn.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http
+        $client = $this->makeClient($event->calendar);
 
-        // TODO: Implement createEvent() method.
+        $request = $client->createRequest(
+            requestType: 'POST',
+            endpoint: "/me/calendars/{$event->calendar->provider_id}/events",
+        )
+            ->attachBody($this->toMicrosoftGraphEvent($event));
+
+        try {
+            $response = $request->execute();
+        } catch (ClientException $exception) {
+            if ($exception->getCode() === 401) {
+                $calendar = $this->refreshToken($event->calendar);
+
+                $request->setAccessToken($calendar->oauth_token);
+
+                $response = $request->execute();
+            } else {
+                throw $exception;
+            }
+        }
+
+        $event->provider_id = $response->getResponseAsObject(Event::class)->getId();
+        $event->saveQuietly();
     }
 
     public function updateEvent(CalendarEvent $event): void
@@ -206,5 +232,42 @@ class OutlookCalendarManager implements CalendarInterface
         }
 
         return (new Graph())->setAccessToken($calendar->oauth_token);
+    }
+
+    protected function toMicrosoftGraphEvent(CalendarEvent $event): Event
+    {
+        return (new Event())
+            ->setSubject($event->title)
+            ->setBody(
+                (new ItemBody())
+                    ->setContentType(new BodyType(BodyType::HTML))
+                    ->setContent($event->description)
+            )
+            ->setStart(
+                (new DateTimeTimeZone())
+                    ->setDateTime((new DateTime($event->starts_at))->format(DateTimeInterface::ATOM))
+                    // TODO: Fix timezone to work with system changes to working with timezone once we get to it
+                    ->setTimeZone('UTC')
+            )
+            ->setEnd(
+                (new DateTimeTimeZone())
+                    ->setDateTime((new DateTime($event->ends_at))->format(DateTimeInterface::ATOM))
+                    // TODO: Fix timezone to work with system changes to working with timezone once we get to it
+                    ->setTimeZone('UTC')
+            )
+            ->setAttendees(
+                collect($event->attendees)
+                    ->reject(fn ($attendee) => $attendee === $event->calendar->provider_email)
+                    ->map(
+                        fn ($attendee) => (new Attendee())
+                            ->setEmailAddress(
+                                (new EmailAddress())
+                                    ->setAddress($attendee)
+                            )
+                    )
+                    ->flatten()
+                    ->toArray()
+            )
+            ->setTransactionId($event->id);
     }
 }
