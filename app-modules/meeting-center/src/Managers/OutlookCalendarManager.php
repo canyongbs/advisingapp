@@ -45,6 +45,7 @@ use Assist\MeetingCenter\Models\Calendar;
 use GuzzleHttp\Exception\ClientException;
 use Microsoft\Graph\Model\DateTimeTimeZone;
 use Assist\MeetingCenter\Models\CalendarEvent;
+use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
@@ -54,11 +55,11 @@ class OutlookCalendarManager implements CalendarInterface
         $client = (new Graph())->setAccessToken($calendar->oauth_token);
 
         $calendars = $client->createRequest('GET', '/me/calendars')
-            ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
+            ->setReturnType(MicrosoftGraphCalendar::class)
             ->execute();
 
-        return collect($calendars)->filter(fn (\Microsoft\Graph\Model\Calendar $item) => $item->getCanEdit())
-            ->mapWithKeys(fn (\Microsoft\Graph\Model\Calendar $item) => [$item->getId() => $item->getName()])
+        return collect($calendars)->filter(fn (MicrosoftGraphCalendar $item) => $item->getCanEdit())
+            ->mapWithKeys(fn (MicrosoftGraphCalendar $item) => [$item->getId() => $item->getName()])
             ->toArray();
     }
 
