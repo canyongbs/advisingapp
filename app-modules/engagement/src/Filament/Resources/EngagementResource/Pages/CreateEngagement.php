@@ -120,4 +120,13 @@ class CreateEngagement extends CreateRecord
 
         $createDeliverablesForEngagement($this->record, $this->data['delivery_methods']);
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        if ($data['scheduled'] === false) {
+            $data['scheduled'] = true;
+        }
+
+        return $data;
+    }
 }
