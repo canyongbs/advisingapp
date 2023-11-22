@@ -45,9 +45,9 @@ use Assist\MeetingCenter\Models\Calendar;
 use GuzzleHttp\Exception\ClientException;
 use Microsoft\Graph\Model\DateTimeTimeZone;
 use Assist\MeetingCenter\Models\CalendarEvent;
+use Symfony\Component\HttpFoundation\Response;
 use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
 use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
-use Symfony\Component\HttpFoundation\Response
 
 class OutlookCalendarManager implements CalendarInterface
 {
