@@ -33,6 +33,7 @@ namespace Assist\Engagement\Notifications;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
+use App\Models\NotificationSetting;
 use Assist\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -51,9 +52,10 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
         return ['mail', 'database'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->subject('Your Engagement Email has successfully been delivered.')
             ->line("Your engagement was successfully delivered to {$this->engagement->recipient->display_name}.");
     }
@@ -65,5 +67,10 @@ class EngagementEmailSentNotification extends Notification implements ShouldQueu
             ->title('Engagement Email Successfully Delivered')
             ->body("Your engagement email was successfully delivered to {$this->engagement->recipient->display_name}.")
             ->getDatabaseMessage();
+    }
+
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

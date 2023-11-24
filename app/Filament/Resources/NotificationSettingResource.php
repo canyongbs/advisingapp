@@ -28,41 +28,36 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Models;
+namespace App\Filament\Resources;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Assist\MeetingCenter\Enums\CalendarProvider;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Resources\Resource;
+use App\Models\NotificationSetting;
+use App\Filament\Resources\NotificationSettingResource\Pages\EditNotificationSetting;
+use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
+use App\Filament\Resources\NotificationSettingResource\Pages\CreateNotificationSetting;
 
-/**
- * @mixin IdeHelperCalendar
- */
-class Calendar extends BaseModel
+class NotificationSettingResource extends Resource
 {
-    protected $hidden = [
-        'oauth_token',
-        'oauth_refresh_token',
-        'oauth_token_expires_at',
-    ];
+    protected static ?string $model = NotificationSetting::class;
 
-    protected $casts = [
-        'provider_id' => 'encrypted',
-        'provider_type' => CalendarProvider::class,
-        'provider_email' => 'encrypted',
-        'oauth_token' => 'encrypted',
-        'oauth_refresh_token' => 'encrypted',
-        'oauth_token_expires_at' => 'datetime',
-    ];
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public function user(): BelongsTo
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 10;
+
+    public static function getRelations(): array
     {
-        return $this->belongsTo(User::class);
+        return [
+        ];
     }
 
-    public function events(): HasMany
+    public static function getPages(): array
     {
-        return $this->hasMany(CalendarEvent::class);
+        return [
+            'index' => ListNotificationSettings::route('/'),
+            'create' => CreateNotificationSetting::route('/create'),
+            'edit' => EditNotificationSetting::route('/{record}/edit'),
+        ];
     }
 }

@@ -28,41 +28,34 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Models;
+namespace App\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Assist\MeetingCenter\Enums\CalendarProvider;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
-/**
- * @mixin IdeHelperCalendar
- */
-class Calendar extends BaseModel
+class NotificationSettingPivot extends MorphPivot
 {
-    protected $hidden = [
-        'oauth_token',
-        'oauth_refresh_token',
-        'oauth_token_expires_at',
+    use HasUuids;
+
+    public $timestamps = true;
+
+    protected $table = 'notification_settings_pivot';
+
+    protected $fillable = [
+        'notification_setting_id',
+        'related_to_id',
+        'related_to_type',
     ];
 
-    protected $casts = [
-        'provider_id' => 'encrypted',
-        'provider_type' => CalendarProvider::class,
-        'provider_email' => 'encrypted',
-        'oauth_token' => 'encrypted',
-        'oauth_refresh_token' => 'encrypted',
-        'oauth_token_expires_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function setting(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(NotificationSetting::class, 'notification_setting_id');
     }
 
-    public function events(): HasMany
+    public function relatedTo(): MorphTo
     {
-        return $this->hasMany(CalendarEvent::class);
+        return $this->morphTo();
     }
 }

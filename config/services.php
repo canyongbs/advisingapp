@@ -66,6 +66,12 @@ return [
         'tenant_id' => env('AZURE_TENANT_ID', 'common'),
     ],
 
+    'azure_calendar' => [
+        'client_id' => env('AZURE_CALENDAR_CLIENT_ID', env('AZURE_CLIENT_ID')),
+        'client_secret' => env('AZURE_CALENDAR_CLIENT_SECRET', env('AZURE_CLIENT_SECRET')),
+        'tenant_id' => env('AZURE_CALENDAR_TENANT_ID', env('AZURE_TENANT_ID', 'common')),
+    ],
+
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),

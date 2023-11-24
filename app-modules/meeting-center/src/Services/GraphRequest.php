@@ -28,41 +28,12 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Models;
+namespace Assist\MeetingCenter\Services;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Assist\MeetingCenter\Enums\CalendarProvider;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @mixin IdeHelperCalendar
- */
-class Calendar extends BaseModel
+class GraphRequest extends \Microsoft\Graph\Http\GraphRequest
 {
-    protected $hidden = [
-        'oauth_token',
-        'oauth_refresh_token',
-        'oauth_token_expires_at',
-    ];
-
-    protected $casts = [
-        'provider_id' => 'encrypted',
-        'provider_type' => CalendarProvider::class,
-        'provider_email' => 'encrypted',
-        'oauth_token' => 'encrypted',
-        'oauth_refresh_token' => 'encrypted',
-        'oauth_token_expires_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function execute($client = null)
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function events(): HasMany
-    {
-        return $this->hasMany(CalendarEvent::class);
+        return parent::execute($client);
     }
 }

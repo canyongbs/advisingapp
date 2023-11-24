@@ -48,6 +48,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
 use Assist\MeetingCenter\Managers\CalendarManager;
+use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
 use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
 
 class ListCalendarEvents extends ListRecords
@@ -89,9 +90,11 @@ class ListCalendarEvents extends ListRecords
 
                         $calendar = $user->calendar;
 
-                        return resolve(CalendarManager::class)
-                            ->driver($calendar->provider_type->value)
-                            ->getCalendars($calendar);
+                        /** @var CalendarInterface $calendarManager */
+                        $calendarManager = resolve(CalendarManager::class)
+                            ->driver($calendar->provider_type->value);
+
+                        return $calendarManager->getCalendars($calendar);
                     })
                     ->required(),
             ])
@@ -156,7 +159,13 @@ class ListCalendarEvents extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->orderBy('starts_at'));
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                /** @var User $user */
+                $user = auth()->user();
+
+                return $query->whereRelation('calendar', 'user_id', $user->id);
+            })
+            ->defaultSort('starts_at', 'desc');
     }
 
     protected function getHeaderActions(): array

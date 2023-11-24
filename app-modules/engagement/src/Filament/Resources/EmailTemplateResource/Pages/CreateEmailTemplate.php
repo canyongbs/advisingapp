@@ -45,14 +45,11 @@ class CreateEmailTemplate extends CreateRecord
         return $form
             ->schema([
                 TextInput::make('name')
-                    ->columnSpan('1/4')
                     ->string()
-                    ->required()
-                    ->autocomplete(false),
+                    ->required(),
                 TextInput::make('description')
                     ->columnSpanFull()
-                    ->string()
-                    ->autocomplete(false),
+                    ->string(),
                 TiptapEditor::make('content')
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])

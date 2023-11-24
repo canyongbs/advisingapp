@@ -28,41 +28,43 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Models;
+namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Assist\MeetingCenter\Enums\CalendarProvider;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Columns\OpenSearch\TextColumn;
+use App\Filament\Resources\NotificationSettingResource;
 
-/**
- * @mixin IdeHelperCalendar
- */
-class Calendar extends BaseModel
+class ListNotificationSettings extends ListRecords
 {
-    protected $hidden = [
-        'oauth_token',
-        'oauth_refresh_token',
-        'oauth_token_expires_at',
-    ];
+    protected static string $resource = NotificationSettingResource::class;
 
-    protected $casts = [
-        'provider_id' => 'encrypted',
-        'provider_type' => CalendarProvider::class,
-        'provider_email' => 'encrypted',
-        'oauth_token' => 'encrypted',
-        'oauth_refresh_token' => 'encrypted',
-        'oauth_token_expires_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function table(Table $table): Table
     {
-        return $this->belongsTo(User::class);
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+            ])
+            ->filters([
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
-    public function events(): HasMany
+    protected function getHeaderActions(): array
     {
-        return $this->hasMany(CalendarEvent::class);
+        return [
+            CreateAction::make(),
+        ];
     }
 }

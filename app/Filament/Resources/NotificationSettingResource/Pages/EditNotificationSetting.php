@@ -28,33 +28,38 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
+namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
-use App\Filament\Fields\TiptapEditor;
+use App\Forms\Components\ColorSelect;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Engagement\Filament\Resources\EmailTemplateResource;
+use App\Filament\Resources\NotificationSettingResource;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-class EditEmailTemplate extends EditRecord
+class EditNotificationSetting extends EditRecord
 {
-    protected static string $resource = EmailTemplateResource::class;
+    protected static string $resource = NotificationSettingResource::class;
 
     public function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
                 TextInput::make('name')
                     ->string()
-                    ->required(),
-                TextInput::make('description')
-                    ->columnSpanFull()
+                    ->required()
+                    ->autocomplete(false),
+                Textarea::make('description')
                     ->string(),
-                TiptapEditor::make('content')
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->required(),
+                ColorSelect::make('primary_color'),
+                SpatieMediaLibraryFileUpload::make('logo')
+                    ->disk('s3')
+                    ->collection('logo')
+                    ->visibility('private')
+                    ->image(),
             ]);
     }
 

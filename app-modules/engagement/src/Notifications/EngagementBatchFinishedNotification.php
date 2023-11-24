@@ -33,6 +33,7 @@ namespace Assist\Engagement\Notifications;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
+use App\Models\NotificationSetting;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Engagement\Models\EngagementBatch;
@@ -53,9 +54,10 @@ class EngagementBatchFinishedNotification extends Notification implements Should
         return ['mail', 'database'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
-        $message = MailMessage::make();
+        $message = MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable));
 
         if ($this->failedJobs > 0) {
             return $message
@@ -83,5 +85,10 @@ class EngagementBatchFinishedNotification extends Notification implements Should
             ->title('Bulk Engagement processing finished')
             ->body("{$this->processedJobs} jobs processed successfully.")
             ->getDatabaseMessage();
+    }
+
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $this->engagementBatch->user->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

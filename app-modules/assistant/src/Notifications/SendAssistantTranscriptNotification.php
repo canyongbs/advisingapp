@@ -33,6 +33,7 @@ namespace Assist\Assistant\Notifications;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
+use App\Models\NotificationSetting;
 use Assist\Assistant\Models\AssistantChat;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -58,6 +59,7 @@ class SendAssistantTranscriptNotification extends Notification implements Should
     public function toMail(User $notifiable): MailMessage
     {
         $message = MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->greeting("Hello {$notifiable->name},");
 
         $senderIsNotifiable = $this->sender->is($notifiable);
@@ -93,5 +95,10 @@ class SendAssistantTranscriptNotification extends Notification implements Should
     public function toArray(object $notifiable): array
     {
         return [];
+    }
+
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

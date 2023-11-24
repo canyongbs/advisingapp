@@ -28,41 +28,22 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Assist\MeetingCenter\Enums\CalendarProvider;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @mixin IdeHelperCalendar
- */
-class Calendar extends BaseModel
-{
-    protected $hidden = [
-        'oauth_token',
-        'oauth_refresh_token',
-        'oauth_token_expires_at',
-    ];
-
-    protected $casts = [
-        'provider_id' => 'encrypted',
-        'provider_type' => CalendarProvider::class,
-        'provider_email' => 'encrypted',
-        'oauth_token' => 'encrypted',
-        'oauth_refresh_token' => 'encrypted',
-        'oauth_token_expires_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(User::class);
-    }
+        Schema::create('notification_settings_pivot', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function events(): HasMany
-    {
-        return $this->hasMany(CalendarEvent::class);
+            $table->foreignUuid('notification_setting_id')->constrained('notification_settings');
+            $table->uuidMorphs('related_to');
+
+            $table->timestamps();
+
+            $table->unique(['notification_setting_id', 'related_to_type', 'related_to_id']);
+        });
     }
-}
+};

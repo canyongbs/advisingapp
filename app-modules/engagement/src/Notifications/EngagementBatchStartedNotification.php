@@ -33,6 +33,7 @@ namespace Assist\Engagement\Notifications;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
+use App\Models\NotificationSetting;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Engagement\Models\EngagementBatch;
@@ -52,9 +53,10 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
         return ['mail', 'database'];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->subject('Bulk Engagement processing started')
             ->line("We've started processing your bulk engagement of {$this->jobsToProcess} jobs, and we'll keep you updated on the progress.");
     }
@@ -66,5 +68,10 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
             ->title('Bulk Engagement processing started')
             ->body("{$this->jobsToProcess} jobs due for processing.")
             ->getDatabaseMessage();
+    }
+
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $this->engagementBatch->user->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

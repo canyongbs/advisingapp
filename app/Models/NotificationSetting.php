@@ -28,41 +28,48 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Models;
+namespace App\Models;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Assist\MeetingCenter\Enums\CalendarProvider;
+use Spatie\MediaLibrary\HasMedia;
+use Assist\Division\Models\Division;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
- * @mixin IdeHelperCalendar
+ * @mixin IdeHelperEmailTemplate
  */
-class Calendar extends BaseModel
+class NotificationSetting extends BaseModel implements HasMedia
 {
-    protected $hidden = [
-        'oauth_token',
-        'oauth_refresh_token',
-        'oauth_token_expires_at',
+    use InteractsWithMedia;
+
+    protected $fillable = [
+        'name',
+        'primary_color',
+        'related_to_type',
+        'related_to_id',
     ];
 
-    protected $casts = [
-        'provider_id' => 'encrypted',
-        'provider_type' => CalendarProvider::class,
-        'provider_email' => 'encrypted',
-        'oauth_token' => 'encrypted',
-        'oauth_refresh_token' => 'encrypted',
-        'oauth_token_expires_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function registerMediaCollections(): void
     {
-        return $this->belongsTo(User::class);
+        $this->addMediaCollection('logo')
+            ->singleFile();
     }
 
-    public function events(): HasMany
+    public function settings(): HasMany
     {
-        return $this->hasMany(CalendarEvent::class);
+        return $this->hasMany(NotificationSettingPivot::class);
+    }
+
+    public function divisions(): MorphToMany
+    {
+        return $this->morphedByMany(
+            related: Division::class,
+            name: 'related_to',
+            table: 'notification_settings_pivot'
+        )
+            ->using(NotificationSettingPivot::class)
+            ->withPivot('id')
+            ->withTimestamps();
     }
 }

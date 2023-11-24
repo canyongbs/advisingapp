@@ -32,6 +32,7 @@ namespace App\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use App\Models\NotificationSetting;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Notifications\Notification;
 
@@ -50,6 +51,7 @@ class SetPasswordNotification extends Notification
     public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->line('A new account has been created for you.')
             ->action('Set up your password', URL::temporarySignedRoute(
                 'login.one-time',
@@ -58,5 +60,10 @@ class SetPasswordNotification extends Notification
             ))
             ->line('For security reasons, this link will expire in 24 hours.')
             ->line('Please contact support if you need a new link or have any issues setting up your account.');
+    }
+
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
     }
 }
