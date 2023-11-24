@@ -37,11 +37,11 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
-use App\Filament\Resources\NotificationSettingResource;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 
 class ListEmailTemplates extends ListRecords
 {
-    protected static string $resource = NotificationSettingResource::class;
+    protected static string $resource = EmailTemplateResource::class;
 
     public function table(Table $table): Table
     {

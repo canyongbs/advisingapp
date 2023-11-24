@@ -44,10 +44,8 @@ class EditEmailTemplate extends EditRecord
     public function form(Form $form): Form
     {
         return $form
-            ->columns(1)
             ->schema([
                 TextInput::make('name')
-                    ->columnSpan('1/4')
                     ->string()
                     ->required(),
                 TextInput::make('description')
