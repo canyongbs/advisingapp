@@ -17,14 +17,11 @@ class CreateSmsTemplate extends CreateRecord
         return $form
             ->schema([
                 TextInput::make('name')
-                    ->columnSpan('1/4')
                     ->string()
-                    ->required()
-                    ->autocomplete(false),
+                    ->required(),
                 TextInput::make('description')
                     ->columnSpanFull()
-                    ->string()
-                    ->autocomplete(false),
+                    ->string(),
                 RichEditor::make('content')
                     ->columnSpanFull()
                     ->toolbarButtons([

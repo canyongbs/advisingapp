@@ -19,11 +19,10 @@ class EditSmsTemplate extends EditRecord
             ->schema([
                 TextInput::make('name')
                     ->string()
-                    ->required()
-                    ->autocomplete(false),
+                    ->required(),
                 TextInput::make('description')
-                    ->string()
-                    ->autocomplete(false),
+                    ->columnSpanFull()
+                    ->string(),
                 RichEditor::make('content')
                     ->columnSpanFull()
                     ->toolbarButtons([
