@@ -28,25 +28,12 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-<<<<<<<< HEAD:app-modules/engagement/database/factories/EmailTemplateFactory.php
-namespace Assist\Engagement\Database\Factories;
-========
 namespace Assist\MeetingCenter\Services;
->>>>>>>> develop:app-modules/meeting-center/src/Services/AzureGraph.php
 
 use Microsoft\Graph\Graph;
 
 class AzureGraph extends Graph
 {
-<<<<<<<< HEAD:app-modules/engagement/database/factories/EmailTemplateFactory.php
-    public function definition(): array
-    {
-        return [
-            'name' => fake()->word,
-            'description' => fake()->sentence,
-            'content' => fake()->paragraph,
-        ];
-========
     public string $accessToken;
 
     public string $refreshToken;
@@ -63,6 +50,5 @@ class AzureGraph extends Graph
         $this->refreshToken = $refreshToken;
 
         return $this;
->>>>>>>> develop:app-modules/meeting-center/src/Services/AzureGraph.php
     }
 }

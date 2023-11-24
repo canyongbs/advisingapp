@@ -37,15 +37,11 @@ return new class () extends Migration {
     {
         Schema::create('notification_settings', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('name');
-<<<<<<<< HEAD:app-modules/engagement/database/migrations/2023_11_08_155057_create_email_templates_table.php
-            $table->text('description')->nullable();
-            $table->json('content');
-========
             $table->string('primary_color')->nullable();
             $table->longText('description')->nullable();
 
->>>>>>>> develop:database/migrations/2023_11_08_155057_create_notification_settings_table.php
             $table->timestamps();
         });
     }

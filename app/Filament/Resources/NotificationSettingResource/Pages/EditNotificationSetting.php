@@ -28,16 +28,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-<<<<<<<< HEAD:app-modules/engagement/src/Filament/Resources/EmailTemplateResource/Pages/EditEmailTemplate.php
-namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
-
-use Filament\Forms\Form;
-use Filament\Actions\DeleteAction;
-use App\Filament\Fields\TiptapEditor;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use Assist\Engagement\Filament\Resources\EmailTemplateResource;
-========
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
 use Filament\Forms\Form;
@@ -48,7 +38,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\NotificationSettingResource;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
->>>>>>>> develop:app/Filament/Resources/NotificationSettingResource/Pages/EditNotificationSetting.php
 
 class EditNotificationSetting extends EditRecord
 {
@@ -63,15 +52,6 @@ class EditNotificationSetting extends EditRecord
                     ->string()
                     ->required()
                     ->autocomplete(false),
-<<<<<<<< HEAD:app-modules/engagement/src/Filament/Resources/EmailTemplateResource/Pages/EditEmailTemplate.php
-                TextInput::make('description')
-                    ->string()
-                    ->autocomplete(false),
-                TiptapEditor::make('content')
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->string(),
-========
                 Textarea::make('description')
                     ->string(),
                 ColorSelect::make('primary_color'),
@@ -80,7 +60,6 @@ class EditNotificationSetting extends EditRecord
                     ->collection('logo')
                     ->visibility('private')
                     ->image(),
->>>>>>>> develop:app/Filament/Resources/NotificationSettingResource/Pages/EditNotificationSetting.php
             ]);
     }
 

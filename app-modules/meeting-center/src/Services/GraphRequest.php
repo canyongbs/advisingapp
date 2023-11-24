@@ -28,20 +28,12 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-<<<<<<<< HEAD:app-modules/engagement/database/seeders/EmailTemplateSeeder.php
-namespace Assist\Engagement\Database\Seeders;
-========
 namespace Assist\MeetingCenter\Services;
->>>>>>>> develop:app-modules/meeting-center/src/Services/GraphRequest.php
 
 class GraphRequest extends \Microsoft\Graph\Http\GraphRequest
 {
-<<<<<<<< HEAD:app-modules/engagement/database/seeders/EmailTemplateSeeder.php
-    public function run(): void {}
-========
     public function execute($client = null)
     {
         return parent::execute($client);
     }
->>>>>>>> develop:app-modules/meeting-center/src/Services/GraphRequest.php
 }

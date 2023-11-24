@@ -28,20 +28,13 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources;
+namespace App\Filament\Resources;
 
 use Filament\Resources\Resource;
-<<<<<<<< HEAD:app-modules/engagement/src/Filament/Resources/EmailTemplateResource.php
-use Assist\Engagement\Models\EmailTemplate;
-use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
-use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
-use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
-========
 use App\Models\NotificationSetting;
 use App\Filament\Resources\NotificationSettingResource\Pages\EditNotificationSetting;
 use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
 use App\Filament\Resources\NotificationSettingResource\Pages\CreateNotificationSetting;
->>>>>>>> develop:app/Filament/Resources/NotificationSettingResource.php
 
 class NotificationSettingResource extends Resource
 {
@@ -52,6 +45,12 @@ class NotificationSettingResource extends Resource
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 10;
+
+    public static function getRelations(): array
+    {
+        return [
+        ];
+    }
 
     public static function getPages(): array
     {
