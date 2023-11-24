@@ -28,7 +28,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-<<<<<<<< HEAD:app-modules/engagement/src/Filament/Resources/EmailTemplateResource/Pages/CreateEmailTemplate.php
 namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
 use Filament\Forms\Form;
@@ -36,21 +35,10 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Engagement\Filament\Resources\EmailTemplateResource;
-========
-namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
-use Filament\Forms\Form;
-use App\Forms\Components\ColorSelect;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Resources\NotificationSettingResource;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
->>>>>>>> develop:app/Filament/Resources/NotificationSettingResource/Pages/CreateNotificationSetting.php
-
-class CreateNotificationSetting extends CreateRecord
+class CreateEmailTemplate extends CreateRecord
 {
-    protected static string $resource = NotificationSettingResource::class;
+    protected static string $resource = EmailTemplateResource::class;
 
     public function form(Form $form): Form
     {
@@ -60,27 +48,14 @@ class CreateNotificationSetting extends CreateRecord
                 TextInput::make('name')
                     ->columnSpan('1/4')
                     ->string()
-                    ->required()
-                    ->autocomplete(false),
-<<<<<<<< HEAD:app-modules/engagement/src/Filament/Resources/EmailTemplateResource/Pages/CreateEmailTemplate.php
+                    ->required(),
                 TextInput::make('description')
                     ->columnSpanFull()
-                    ->string()
-                    ->autocomplete(false),
+                    ->string(),
                 TiptapEditor::make('content')
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
-========
-                Textarea::make('description')
-                    ->string(),
-                ColorSelect::make('primary_color'),
-                SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
-                    ->collection('logo')
-                    ->visibility('private')
-                    ->image(),
->>>>>>>> develop:app/Filament/Resources/NotificationSettingResource/Pages/CreateNotificationSetting.php
             ]);
     }
 }

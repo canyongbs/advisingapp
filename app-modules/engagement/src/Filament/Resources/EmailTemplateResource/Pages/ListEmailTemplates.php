@@ -28,11 +28,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-<<<<<<<< HEAD:app-modules/engagement/src/Filament/Resources/EmailTemplateResource/Pages/ListEmailTemplates.php
 namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
-========
-namespace App\Filament\Resources\NotificationSettingResource\Pages;
->>>>>>>> develop:app/Filament/Resources/NotificationSettingResource/Pages/ListNotificationSettings.php
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
@@ -41,13 +37,9 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
-<<<<<<<< HEAD:app-modules/engagement/src/Filament/Resources/EmailTemplateResource/Pages/ListEmailTemplates.php
-use Assist\Engagement\Filament\Resources\EmailTemplateResource;
-========
 use App\Filament\Resources\NotificationSettingResource;
->>>>>>>> develop:app/Filament/Resources/NotificationSettingResource/Pages/ListNotificationSettings.php
 
-class ListNotificationSettings extends ListRecords
+class ListEmailTemplates extends ListRecords
 {
     protected static string $resource = NotificationSettingResource::class;
 
@@ -56,10 +48,7 @@ class ListNotificationSettings extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('name'),
-<<<<<<<< HEAD:app-modules/engagement/src/Filament/Resources/EmailTemplateResource/Pages/ListEmailTemplates.php
                 TextColumn::make('description'),
-========
->>>>>>>> develop:app/Filament/Resources/NotificationSettingResource/Pages/ListNotificationSettings.php
             ])
             ->filters([
             ])
