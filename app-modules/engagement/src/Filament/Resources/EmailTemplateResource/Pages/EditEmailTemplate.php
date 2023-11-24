@@ -47,15 +47,16 @@ class EditEmailTemplate extends EditRecord
             ->columns(1)
             ->schema([
                 TextInput::make('name')
+                    ->columnSpan('1/4')
                     ->string()
                     ->required(),
                 TextInput::make('description')
-                    ->string()
-                    ->autocomplete(false),
+                    ->columnSpanFull()
+                    ->string(),
                 TiptapEditor::make('content')
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->string(),
+                    ->required(),
             ]);
     }
 
