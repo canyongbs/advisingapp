@@ -16,7 +16,7 @@ class SmsTemplateResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 12;
 
     public static function getPages(): array
     {
