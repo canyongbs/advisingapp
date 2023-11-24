@@ -35,6 +35,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
+/**
+ * @mixin IdeHelperNotificationSettingPivot
+ */
 class NotificationSettingPivot extends MorphPivot
 {
     use HasUuids;
