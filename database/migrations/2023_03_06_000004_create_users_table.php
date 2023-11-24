@@ -53,6 +53,8 @@ class CreateUsersTable extends Migration
             $table->boolean('are_teams_visible_on_profile')->default(false);
             $table->boolean('is_division_visible_on_profile')->default(false);
             $table->string('timezone')->default('UTC');
+            $table->boolean('has_enabled_public_profile')->default(false);
+            $table->string('public_profile_slug')->nullable()->unique();
 
             $table->foreignUuid('pronouns_id')->nullable()->constrained('pronouns')->nullOnDelete();
             $table->boolean('are_pronouns_visible_on_profile')->default(false);

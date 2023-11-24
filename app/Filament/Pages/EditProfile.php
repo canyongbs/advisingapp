@@ -41,6 +41,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Filament\Forms\Components\Actions;
@@ -133,6 +134,22 @@ class EditProfile extends Page
 
         return $form
             ->schema([
+                Section::make('Public')
+                    ->aside()
+                    ->schema([
+                        Toggle::make('has_enabled_public_profile')
+                            ->label('Enable public profile')
+                            ->live(),
+                        TextInput::make('public_profile_slug')
+                            ->label('Url')
+                            ->visible(fn (Get $get) => $get('has_enabled_public_profile'))
+                            //TODO: default doesn't work for some reason
+                            ->afterStateHydrated(fn (TextInput $component, $state) => $component->state($state ?? str($user->name)->lower()->slug('')))
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255)
+                            ->required()
+                            ->prefix(str(route('view-public-user-profile', ['user' => $user]))->beforeLast('/')->append('/')),
+                    ]),
                 Section::make('Profile Information')
                     ->description('This information is visible to other users on your profile page, if you choose to make it visible.')
                     ->aside()

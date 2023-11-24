@@ -116,6 +116,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'default_assistant_chat_folders_created' => 'boolean',
         'is_division_visible_on_profile' => 'boolean',
         'email_verified_at' => 'datetime',
+        'has_enabled_public_profile' => 'boolean',
     ];
 
     protected $fillable = [
@@ -134,6 +135,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'are_teams_visible_on_profile',
         'timezone',
         'is_division_visible_on_profile',
+        'has_enabled_public_profile',
+        'public_profile_slug',
     ];
 
     public $orderable = [

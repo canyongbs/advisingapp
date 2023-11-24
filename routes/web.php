@@ -31,11 +31,15 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Notifications\DemoNotification;
+use App\Http\Controllers\ViewPublicUserProfileController;
 use App\Http\Controllers\Imports\DownloadImportFailureCsv;
 
 Route::get('/imports/{import}/failed-rows/download', DownloadImportFailureCsv::class)
     ->name('imports.failed-rows.download')
     ->middleware(['auth']);
+
+Route::get('/profile/public/{user:public_profile_slug}', ViewPublicUserProfileController::class)
+    ->name('view-public-user-profile');
 
 Route::get('/form-test', function () {
     return view('form-test');
