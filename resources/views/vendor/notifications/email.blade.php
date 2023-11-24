@@ -25,7 +25,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 --}}
-<x-mail::message :emailTemplate="$emailTemplate ?? null">
+<x-mail::message :settings="$settings ?? null">
 {{-- Greeting --}}
 @if (! empty($greeting))
 # {{ $greeting }}

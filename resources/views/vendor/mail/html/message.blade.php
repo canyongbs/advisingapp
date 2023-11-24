@@ -25,11 +25,11 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 --}}
-@props(['emailTemplate' => null])
-<x-mail::layout :emailTemplate="$emailTemplate">
+@props(['settings' => null])
+<x-mail::layout :settings="$settings">
     {{-- Header --}}
     <x-slot:header>
-        <x-mail::header :url="config('app.url')" :emailTemplate="$emailTemplate">
+        <x-mail::header :url="config('app.url')" :settings="$settings">
             {{ config('app.name') }}
         </x-mail::header>
     </x-slot:header>

@@ -25,7 +25,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 --}}
-@props(['url', 'emailTemplate' => null])
+@props(['url', 'settings' => null])
 @php
     use App\Models\SettingsProperty;
     use Assist\Theme\Settings\ThemeSettings;
@@ -37,9 +37,9 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 <tr>
     <td class="header">
         <a href="{{ $url }}" style="display: inline-block;">
-            @if ($emailTemplate?->hasMedia('logo'))
+            @if ($settings?->hasMedia('logo'))
                 {{-- TODO: Don't use temporary urls? --}}
-                <img src="{{ $emailTemplate?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}"
+                <img src="{{ $settings?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
                      alt="{{ config('app.name') }}">
             @elseif ($themeSettings->is_logo_active && $logo)
