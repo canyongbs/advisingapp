@@ -28,17 +28,17 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Database\Factories;
+namespace Assist\Application\Database\Factories;
 
 use Illuminate\Support\Str;
-use Assist\Form\Models\Form;
-use Assist\Form\Models\FormField;
+use Assist\Application\Models\Application;
+use Assist\Application\Models\ApplicationField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Form>
+ * @extends Factory<Application>
  */
-class FormFactory extends Factory
+class ApplicationFactory extends Factory
 {
     /**
      * @return array<string, mixed>
@@ -55,13 +55,13 @@ class FormFactory extends Factory
 
     public function configure(): static
     {
-        return $this->afterCreating(function (Form $form) {
-            if ($form->fields()->doesntExist()) {
-                $form->fields()->createMany(FormField::factory()->count(3)->make()->toArray());
+        return $this->afterCreating(function (Application $application) {
+            if ($application->fields()->doesntExist()) {
+                $application->fields()->createMany(ApplicationField::factory()->count(3)->make()->toArray());
 
-                $form->content = [
+                $application->content = [
                     'type' => 'doc',
-                    'content' => $form->fields->map(fn (FormField $field): array => [
+                    'content' => $application->fields->map(fn (ApplicationField $field): array => [
                         'type' => 'tiptapBlock',
                         'attrs' => [
                             'id' => $field->id,
@@ -74,14 +74,14 @@ class FormFactory extends Factory
                         ],
                     ])->all(),
                 ];
-                $form->save();
+                $application->save();
             }
 
-            if ($form->submissions()->doesntExist()) {
+            if ($application->submissions()->doesntExist()) {
                 for ($i = 0; $i < rand(1, 3); $i++) {
-                    $submission = $form->submissions()->create();
+                    $submission = $application->submissions()->create();
 
-                    foreach ($form->fields as $field) {
+                    foreach ($application->fields as $field) {
                         $submission->fields()->attach(
                             $field,
                             ['id' => Str::orderedUuid(), 'response' => fake()->words(rand(1, 10), true)],

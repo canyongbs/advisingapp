@@ -28,33 +28,40 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Database\Factories;
+namespace Assist\Application\Database\Factories;
 
-use Assist\Form\Models\FormField;
+use Assist\Prospect\Models\Prospect;
+use Assist\Application\Models\Application;
+use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Assist\Application\Models\ApplicationSubmission;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
- * @extends Factory<FormField>
+ * @extends Factory<ApplicationSubmission>
  */
-class FormFieldFactory extends Factory
+class ApplicationSubmissionFactory extends Factory
 {
     /**
      * @return array<string, mixed>
      */
     public function definition(): array
     {
-        $type = fake()->randomElement(['text_input', 'text_area', 'select']);
-
-        $config = match ($type) {
-            'select' => json_decode('{"options":{"us":"United States","ca":"Canada","uk":"United Kingdom"}}'),
-            default => [],
-        };
-
         return [
-            'label' => fake()->words(asText: true),
-            'is_required' => fake()->boolean(),
-            'type' => $type,
-            'config' => $config,
+            'application_id' => Application::factory(),
+            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
+            'author_id' => function (array $attributes) {
+                $authorClass = Relation::getMorphedModel($attributes['author_type']);
+
+                /** @var Student|Prospect $authorModel */
+                $authorModel = new $authorClass();
+
+                $author = $authorClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $authorModel::factory()->create();
+
+                return $author->getKey();
+            },
         ];
     }
 }
