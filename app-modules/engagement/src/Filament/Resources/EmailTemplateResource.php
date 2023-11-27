@@ -28,42 +28,30 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Engagement\Filament\Resources;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Query\Builder;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Resources\Resource;
+use Assist\Engagement\Models\EmailTemplate;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
 
-/**
- * @mixin IdeHelperFormAuthentication
- */
-#[NoPermissions]
-class FormAuthentication extends BaseModel
+class EmailTemplateResource extends Resource
 {
-    use MassPrunable;
+    protected static ?string $model = EmailTemplate::class;
 
-    public function form(): BelongsTo
-    {
-        return $this
-            ->belongsTo(Form::class);
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public function author(): MorphTo
-    {
-        return $this->morphTo();
-    }
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public function isExpired(): bool
-    {
-        return $this->created_at->addDay()->isPast();
-    }
+    protected static ?int $navigationSort = 11;
 
-    public function prunable(): Builder
+    public static function getPages(): array
     {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
+        return [
+            'index' => ListEmailTemplates::route('/'),
+            'create' => CreateEmailTemplate::route('/create'),
+            'edit' => EditEmailTemplate::route('/{record}/edit'),
+        ];
     }
 }
