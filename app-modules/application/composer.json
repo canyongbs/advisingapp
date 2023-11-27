@@ -5,7 +5,8 @@
   "version": "1.0",
   "license": "proprietary",
   "require": {
-    "filament/filament": "^3.0.0"
+    "filament/filament": "^3.0.0",
+    "canyon-gbs/form": "*"
   },
   "autoload": {
     "psr-4": {
@@ -22,5 +23,14 @@
         "Assist\\Application\\Providers\\ApplicationServiceProvider"
       ]
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../../app-modules/*",
+      "options": {
+        "symlink": true
+      }
+    }
+  ]
 }
