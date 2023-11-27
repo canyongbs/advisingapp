@@ -45,7 +45,7 @@ use Filament\Infolists\Components\Fieldset;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\RepeatableEntry;
+use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use App\Filament\Resources\RelationManagers\RelationManager;
 use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
@@ -83,14 +83,17 @@ class EngagementsRelationManager extends RelationManager
                     ->label('Created By'),
                 Fieldset::make('Content')
                     ->schema([
-                        TextEntry::make('subject'),
+                        TextEntry::make('subject')
+                            ->hidden(fn (Engagement $engagement): bool => $engagement->deliverable->channel === EngagementDeliveryMethod::Sms),
                         TextEntry::make('body'),
                     ]),
-                RepeatableEntry::make('deliverables')
+                Fieldset::make('deliverable')
+                    ->label('Delivery Information')
                     ->columnSpanFull()
                     ->schema([
-                        TextEntry::make('channel'),
-                        IconEntry::make('delivery_status')
+                        TextEntry::make('deliverable.channel')
+                            ->label('Channel'),
+                        IconEntry::make('deliverable.delivery_status')
                             ->icon(fn (EngagementDeliveryStatus $state): string => match ($state) {
                                 EngagementDeliveryStatus::Successful => 'heroicon-o-check-circle',
                                 EngagementDeliveryStatus::Awaiting => 'heroicon-o-clock',
@@ -100,9 +103,12 @@ class EngagementsRelationManager extends RelationManager
                                 EngagementDeliveryStatus::Successful => 'success',
                                 EngagementDeliveryStatus::Awaiting => 'info',
                                 EngagementDeliveryStatus::Failed => 'danger',
-                            }),
-                        TextEntry::make('delivered_at'),
-                        TextEntry::make('delivery_response'),
+                            })
+                            ->label('Status'),
+                        TextEntry::make('deliverable.delivered_at')
+                            ->label('Delivered At'),
+                        TextEntry::make('deliverable.delivery_response')
+                            ->label('Response'),
                     ])
                     ->columns(2),
             ]);
@@ -116,13 +122,8 @@ class EngagementsRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('subject'),
                 TextColumn::make('body'),
-                TextColumn::make('channels')
-                    ->label('Delivery Channels')
-                    ->state(function (Engagement $record) {
-                        return $record->deliverables->pluck('channel')->map(function ($channel) {
-                            return $channel->name;
-                        })->implode(', ');
-                    }),
+                TextColumn::make('deliverable.channel')
+                    ->label('Delivery Channel'),
             ])
             ->filters([
             ])
@@ -136,7 +137,8 @@ class EngagementsRelationManager extends RelationManager
                 ViewAction::make(),
             ])
             ->bulkActions([
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public function afterCreate(Engagement $engagement, string $deliveryMethod): void

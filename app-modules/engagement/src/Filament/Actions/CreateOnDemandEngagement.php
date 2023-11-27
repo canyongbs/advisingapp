@@ -31,7 +31,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace Assist\Engagement\Filament\Actions;
 
 use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
 
 class CreateOnDemandEngagement
@@ -48,8 +47,6 @@ class CreateOnDemandEngagement
 
         $createDeliverablesForEngagement($engagement, $data['delivery_method']);
 
-        $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
-            $deliverable->deliver();
-        });
+        $engagement->deliverable->deliver();
     }
 }

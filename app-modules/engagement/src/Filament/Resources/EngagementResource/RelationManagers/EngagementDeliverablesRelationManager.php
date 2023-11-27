@@ -46,7 +46,7 @@ use App\Filament\Resources\RelationManagers\RelationManager;
 
 class EngagementDeliverablesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'engagementDeliverables';
+    protected static string $relationship = 'deliverable';
 
     protected static ?string $recordTitleAttribute = 'channel';
 
@@ -58,7 +58,7 @@ class EngagementDeliverablesRelationManager extends RelationManager
                     ->label('How would you like to send this engagement?')
                     ->translateLabel()
                     ->options(EngagementDeliveryMethod::class)
-                    ->disableOptionWhen(fn (string $value) => $this->ownerRecord->deliverables->where('channel', EngagementDeliveryMethod::from($value))->count() > 0)
+                    ->disableOptionWhen(fn (string $value) => $this->ownerRecord->deliverable->channel === EngagementDeliveryMethod::from($value))
                     ->validationAttribute('Delivery Method')
                     ->required(),
             ]);

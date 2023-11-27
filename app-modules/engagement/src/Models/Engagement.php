@@ -39,8 +39,8 @@ use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Timeline\Timelines\EngagementTimeline;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -88,7 +88,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public static function getTimelineData(Model $forModel): Collection
     {
-        return $forModel->orderedEngagements()->with(['deliverables', 'batch'])->get();
+        return $forModel->orderedEngagements()->with(['deliverable', 'batch'])->get();
     }
 
     public function user(): BelongsTo
@@ -101,14 +101,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->user();
     }
 
-    public function engagementDeliverables(): HasMany
+    public function engagementDeliverable(): HasOne
     {
-        return $this->hasMany(EngagementDeliverable::class);
+        return $this->hasOne(EngagementDeliverable::class);
     }
 
-    public function deliverables(): HasMany
+    public function deliverable(): HasOne
     {
-        return $this->engagementDeliverables();
+        return $this->engagementDeliverable();
     }
 
     public function recipient(): MorphTo
@@ -137,14 +137,14 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function scopeHasBeenDelivered(Builder $query): void
     {
-        $query->whereDoesntHave('engagementDeliverables', function (Builder $query) {
+        $query->whereDoesntHave('engagementDeliverable', function (Builder $query) {
             $query->whereNull('delivered_at');
         });
     }
 
     public function scopeHasNotBeenDelivered(Builder $query): void
     {
-        $query->whereDoesntHave('engagementDeliverables', function (Builder $query) {
+        $query->whereDoesntHave('engagementDeliverable', function (Builder $query) {
             $query->whereNotNull('delivered_at');
         });
     }
@@ -166,7 +166,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function hasBeenDelivered(): bool
     {
-        return (bool) $this->deliverables->filter(fn (EngagementDeliverable $deliverable) => $deliverable->hasBeenDelivered())->count() > 0;
+        return (bool) $this->deliverable->hasBeenDelivered();
     }
 
     public function getSubscribable(): ?Subscribable

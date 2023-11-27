@@ -89,7 +89,7 @@ class SuperAdminSeeder extends Seeder
 
                 for ($i = 0; $i < $numberOfEngagements; $i++) {
                     Engagement::factory()
-                        ->has(EngagementDeliverable::factory()->count(1)->randomizeState(), 'engagementDeliverables')
+                        ->has(EngagementDeliverable::factory()->count(1)->randomizeState(), 'engagementDeliverable')
                         ->for($student, 'recipient')
                         ->create([
                             'user_id' => $user->id,
@@ -112,7 +112,7 @@ class SuperAdminSeeder extends Seeder
 
                 for ($i = 0; $i < $numberOfEngagements; $i++) {
                     Engagement::factory()
-                        ->has(EngagementDeliverable::factory()->count(1)->randomizeState(), 'engagementDeliverables')
+                        ->has(EngagementDeliverable::factory()->count(1)->randomizeState(), 'engagementDeliverable')
                         ->for($prospect, 'recipient')
                         ->create([
                             'user_id' => $user->id,

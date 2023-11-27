@@ -79,9 +79,7 @@ class CreateEngagementBatch implements ShouldQueue
         });
 
         $deliverables = $engagementBatch->engagements->map(function (Engagement $engagement) {
-            return $engagement->deliverables->each(function (EngagementDeliverable $deliverable) {
-                return $deliverable;
-            });
+            return $engagement->deliverable;
         });
 
         $deliverableJobs = $deliverables->flatten()->map(function (EngagementDeliverable $deliverable) {

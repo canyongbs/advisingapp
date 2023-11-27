@@ -39,7 +39,7 @@ class CreateDeliverablesForEngagement
         $deliveryMethods = is_array($deliveryMethods) ? $deliveryMethods : [$deliveryMethods];
 
         foreach ($deliveryMethods as $deliveryMethod) {
-            $engagement->deliverables()->create([
+            $engagement->deliverable()->create([
                 'channel' => $deliveryMethod,
             ]);
         }

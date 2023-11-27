@@ -103,7 +103,7 @@ it('will create deliverables for the created engagements', function () {
     ]));
 
     expect(EngagementDeliverable::count())->toBe(1);
-    expect(Engagement::first()->deliverables()->count())->toBe(1);
+    expect(Engagement::first()->deliverable()->count())->toBe(1);
 });
 
 it('will dispatch a batch of jobs for each engagement that needs to be delivered', function () {

@@ -36,7 +36,6 @@ use Assist\Engagement\Models\Engagement;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Assist\Engagement\Models\EngagementDeliverable;
 
 class DeliverEngagements implements ShouldQueue
 {
@@ -54,9 +53,7 @@ class DeliverEngagements implements ShouldQueue
             ->hasNotBeenDelivered()
             ->cursor()
             ->each(function (Engagement $engagement) {
-                $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
-                    $deliverable->deliver();
-                });
+                $engagement->deliverable->deliver();
             });
     }
 }

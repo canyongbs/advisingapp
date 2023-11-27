@@ -33,7 +33,6 @@ namespace Assist\Engagement\Filament\Concerns;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\RepeatableEntry;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 
 // TODO Re-use this trait across other places where infolist is rendered
@@ -49,11 +48,13 @@ trait EngagementInfolist
                     TextEntry::make('subject'),
                     TextEntry::make('body'),
                 ]),
-            RepeatableEntry::make('deliverables')
+            Fieldset::make('deliverable')
+                ->label('Delivery Information')
                 ->columnSpanFull()
                 ->schema([
-                    TextEntry::make('channel'),
-                    IconEntry::make('delivery_status')
+                    TextEntry::make('deliverable.channel')
+                        ->label('Channel'),
+                    IconEntry::make('deliverable.delivery_status')
                         ->icon(fn (EngagementDeliveryStatus $state): string => match ($state) {
                             EngagementDeliveryStatus::Successful => 'heroicon-o-check-circle',
                             EngagementDeliveryStatus::Awaiting => 'heroicon-o-clock',
@@ -63,9 +64,12 @@ trait EngagementInfolist
                             EngagementDeliveryStatus::Successful => 'success',
                             EngagementDeliveryStatus::Awaiting => 'warning',
                             EngagementDeliveryStatus::Failed => 'danger',
-                        }),
-                    TextEntry::make('delivered_at'),
-                    TextEntry::make('delivery_response'),
+                        })
+                        ->label('Status'),
+                    TextEntry::make('deliverable.delivered_at')
+                        ->label('Delivered At'),
+                    TextEntry::make('deliverable.delivery_response')
+                        ->label('Response'),
                 ])
                 ->columns(2),
         ];
