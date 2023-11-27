@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[NoPermissions]
+/**
+ * @mixin IdeHelperApplicationStep
+ */
 class ApplicationStep extends SubmissibleStep
 {
     protected $fillable = [

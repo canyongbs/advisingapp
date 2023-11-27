@@ -6,6 +6,9 @@ use Assist\Form\Enums\Rounding;
 use Assist\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @mixin IdeHelperApplication
+ */
 class Application extends Submissible
 {
     protected $fillable = [

@@ -6,6 +6,9 @@ use Assist\Form\Models\Submission;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @mixin IdeHelperApplicationSubmission
+ */
 class ApplicationSubmission extends Submission
 {
     public function submissible(): BelongsTo

@@ -7,6 +7,9 @@ use Assist\Form\Models\SubmissibleAuthentication;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[NoPermissions]
+/**
+ * @mixin IdeHelperApplicationAuthentication
+ */
 class ApplicationAuthentication extends SubmissibleAuthentication
 {
     public function submissible(): BelongsTo
