@@ -2,14 +2,12 @@
 
 namespace Assist\Application\Models;
 
-use App\Models\BaseModel;
 use Assist\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Form\Models\Submissible;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Application extends BaseModel
+class Application extends Submissible
 {
-    use HasFactory;
-
     protected $fillable = [
         'name',
         'description',
@@ -28,4 +26,19 @@ class Application extends BaseModel
         'is_wizard' => 'boolean',
         'rounding' => Rounding::class,
     ];
+
+    public function fields(): HasMany
+    {
+        return $this->hasMany(ApplicationField::class);
+    }
+
+    public function steps(): HasMany
+    {
+        return $this->hasMany(ApplicationStep::class);
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(ApplicationSubmission::class);
+    }
 }
