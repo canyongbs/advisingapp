@@ -32,10 +32,16 @@ namespace Assist\Application\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Assist\Authorization\AuthorizationRoleRegistry;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\Application\ApplicationPlugin;
+use Assist\Application\Models\Application;
+use Assist\Application\Models\ApplicationStep;
+use Assist\Application\Models\ApplicationField;
+use Assist\Authorization\AuthorizationRoleRegistry;
+use Assist\Application\Models\ApplicationSubmission;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Application\Models\ApplicationAuthentication;
+use Assist\Authorization\AuthorizationPermissionRegistry;
+use Assist\Application\Observers\ApplicationSubmissionObserver;
 
 class ApplicationServiceProvider extends ServiceProvider
 {
@@ -46,9 +52,31 @@ class ApplicationServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Relation::morphMap([]);
+        Relation::morphMap([
+            'application' => Application::class,
+            'application_field' => ApplicationField::class,
+            'application_submission' => ApplicationSubmission::class,
+            'application_step' => ApplicationStep::class,
+            'application_authentication' => ApplicationAuthentication::class,
+        ]);
 
         $this->registerRolesAndPermissions();
+        $this->registerObservers();
+        $this->registerEvents();
+    }
+
+    public function registerObservers(): void
+    {
+        ApplicationSubmission::observe(ApplicationSubmissionObserver::class);
+    }
+
+    public function registerEvents(): void
+    {
+        //Event::listen(
+        //    events: ApplicationSubmissionCreated::class,
+        //    // TODO: Swap out for the correct listener
+        //    listener: NotifySubscribersOfFormSubmission::class
+        //);
     }
 
     protected function registerRolesAndPermissions()
