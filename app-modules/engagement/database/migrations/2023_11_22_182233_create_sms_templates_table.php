@@ -28,18 +28,19 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Database\Factories;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-class EmailTemplateFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'name' => fake()->word(),
-            'description' => fake()->sentence(),
-            'content' => fake()->paragraph(),
-        ];
+        Schema::create('sms_templates', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->text('content');
+            $table->timestamps();
+        });
     }
-}
+};

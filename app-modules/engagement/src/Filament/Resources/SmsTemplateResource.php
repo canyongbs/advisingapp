@@ -28,18 +28,30 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Database\Factories;
+namespace Assist\Engagement\Filament\Resources;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Filament\Resources\Resource;
+use Assist\Engagement\Models\SmsTemplate;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
 
-class EmailTemplateFactory extends Factory
+class SmsTemplateResource extends Resource
 {
-    public function definition(): array
+    protected static ?string $model = SmsTemplate::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 12;
+
+    public static function getPages(): array
     {
         return [
-            'name' => fake()->word(),
-            'description' => fake()->sentence(),
-            'content' => fake()->paragraph(),
+            'index' => ListSmsTemplates::route('/'),
+            'create' => CreateSmsTemplate::route('/create'),
+            'edit' => EditSmsTemplate::route('/{record}/edit'),
         ];
     }
 }

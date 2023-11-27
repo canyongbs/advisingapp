@@ -28,18 +28,44 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Database\Factories;
+namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource;
 
-class EmailTemplateFactory extends Factory
+class ListSmsTemplates extends ListRecords
 {
-    public function definition(): array
+    protected static string $resource = SmsTemplateResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('description'),
+            ])
+            ->filters([
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
     {
         return [
-            'name' => fake()->word(),
-            'description' => fake()->sentence(),
-            'content' => fake()->paragraph(),
+            CreateAction::make(),
         ];
     }
 }

@@ -28,18 +28,37 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Database\Factories;
+namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
+use Filament\Resources\Pages\CreateRecord;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource;
 
-class EmailTemplateFactory extends Factory
+class CreateSmsTemplate extends CreateRecord
 {
-    public function definition(): array
+    protected static string $resource = SmsTemplateResource::class;
+
+    public function form(Form $form): Form
     {
-        return [
-            'name' => fake()->word(),
-            'description' => fake()->sentence(),
-            'content' => fake()->paragraph(),
-        ];
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->string()
+                    ->required(),
+                TextInput::make('description')
+                    ->columnSpanFull()
+                    ->string(),
+                RichEditor::make('content')
+                    ->columnSpanFull()
+                    ->toolbarButtons([
+                        'link',
+                        'redo',
+                        'undo',
+                    ])
+                    ->maxLength(320)
+                    ->required(),
+            ]);
     }
 }

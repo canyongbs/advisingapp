@@ -34,6 +34,7 @@ use Filament\Panel;
 use Assist\Engagement\EngagementPlugin;
 use Illuminate\Support\ServiceProvider;
 use Assist\Engagement\Models\Engagement;
+use Assist\Engagement\Models\SmsTemplate;
 use Assist\Engagement\Models\EmailTemplate;
 use Illuminate\Console\Scheduling\Schedule;
 use Assist\Engagement\Models\EngagementFile;
@@ -65,6 +66,7 @@ class EngagementServiceProvider extends ServiceProvider
             'engagement_response' => EngagementResponse::class,
             'engagement_file' => EngagementFile::class,
             'email_template' => EmailTemplate::class,
+            'sms_template' => SmsTemplate::class,
         ]);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {

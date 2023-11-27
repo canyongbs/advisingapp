@@ -28,18 +28,18 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Database\Factories;
+namespace Assist\Engagement\Models;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\BaseModel;
 
-class EmailTemplateFactory extends Factory
+/**
+ * @mixin IdeHelperSmsTemplate
+ */
+class SmsTemplate extends BaseModel
 {
-    public function definition(): array
-    {
-        return [
-            'name' => fake()->word(),
-            'description' => fake()->sentence(),
-            'content' => fake()->paragraph(),
-        ];
-    }
+    protected $fillable = [
+        'name',
+        'description',
+        'content',
+    ];
 }

@@ -1286,6 +1286,20 @@ namespace Assist\Engagement\Models{
  class IdeHelperEngagementResponse {}
 }
 
+namespace Assist\Engagement\Models{
+/**
+ * Assist\Engagement\Models\SmsTemplate
+ *
+ * @method static \Assist\Engagement\Database\Factories\SmsTemplateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSmsTemplate {}
+}
+
 namespace Assist\Form\Models{
 /**
  * Assist\Form\Models\Form
