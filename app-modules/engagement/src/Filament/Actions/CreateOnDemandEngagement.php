@@ -28,24 +28,28 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace Assist\Engagement\Filament\Actions;
 
-return new class () extends Migration {
-    public function up(): void
+use Illuminate\Database\Eloquent\Model;
+use Assist\Engagement\Models\EngagementDeliverable;
+use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
+
+class CreateOnDemandEngagement
+{
+    public function __invoke(Model $educatable, array $data): void
     {
-        Schema::create('engagements', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->nullable()->constrained('users');
-            $table->foreignUuid('engagement_batch_id')->nullable()->constrained('engagement_batches');
-            $table->string('recipient_id')->nullable();
-            $table->string('recipient_type')->nullable();
-            $table->string('subject')->nullable();
-            $table->longText('body')->nullable();
-            $table->boolean('scheduled')->default(true);
-            $table->timestamp('deliver_at');
-            $table->timestamps();
+        $engagement = $educatable->engagements()->create([
+            'subject' => $data['subject'],
+            'body' => $data['body'],
+            'scheduled' => false,
+        ]);
+
+        $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
+
+        $createDeliverablesForEngagement($engagement, $data['delivery_method']);
+
+        $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
+            $deliverable->deliver();
         });
     }
-};
+}

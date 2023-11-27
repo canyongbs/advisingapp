@@ -50,34 +50,31 @@ class EngagementBatchBlock extends CampaignActionBlock
     public function generateFields(string $fieldPrefix = ''): array
     {
         return [
-            Select::make($fieldPrefix . 'delivery_methods')
+            Select::make($fieldPrefix . 'delivery_method')
                 ->columnSpanFull()
                 ->reactive()
                 ->label('How would you like to send this engagement?')
                 ->options(EngagementDeliveryMethod::class)
-                ->multiple()
-                ->minItems(1)
                 ->validationAttribute('Delivery Method')
                 ->required(),
             TextInput::make($fieldPrefix . 'subject')
                 ->columnSpanFull()
                 ->placeholder(__('Subject'))
                 ->required()
-                ->hidden(fn (callable $get) => collect($get($fieldPrefix . 'delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
-                ->helperText('The subject will only be used for the email delivery method.'),
+                ->hidden(fn (callable $get) => collect($get($fieldPrefix . 'delivery_method'))->doesntContain(EngagementDeliveryMethod::Email->value)),
             Textarea::make($fieldPrefix . 'body')
                 ->columnSpanFull()
                 ->placeholder(__('Body'))
                 ->required()
                 ->maxLength(function (callable $get) use ($fieldPrefix) {
-                    if (collect($get($fieldPrefix . 'delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                    if (collect($get($fieldPrefix . 'delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
                         return 320;
                     }
 
                     return 65535;
                 })
                 ->helperText(function (callable $get) use ($fieldPrefix) {
-                    if (collect($get($fieldPrefix . 'delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                    if (collect($get($fieldPrefix . 'delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
                         return 'The body of your message can be up to 320 characters long.';
                     }
 
