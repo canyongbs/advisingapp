@@ -40,7 +40,7 @@ class EngagementBatchCreationData extends Data
         public User $user,
         public Collection $records,
         public string $body,
-        public array $deliveryMethods,
+        public string $deliveryMethod,
         public ?string $subject = null,
     ) {}
 }

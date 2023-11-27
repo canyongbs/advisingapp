@@ -96,7 +96,7 @@ class BulkEngagementAction
                     'records' => $records,
                     'subject' => $data['subject'],
                     'body' => $data['body'],
-                    'deliveryMethods' => $data['delivery_method'],
+                    'deliveryMethod' => $data['delivery_method'],
                 ]));
             })
             ->modalSubmitActionLabel('Send')

@@ -74,7 +74,7 @@ class CreateEngagementBatch implements ShouldQueue
             ]);
 
             $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
-            $createDeliverablesForEngagement($engagement, $this->data->deliveryMethods);
+            $createDeliverablesForEngagement($engagement, $this->data->deliveryMethod);
         });
 
         $deliverables = $engagementBatch->engagements->map(function (Engagement $engagement) {
