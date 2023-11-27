@@ -47,10 +47,6 @@ Route::get('/imports/{import}/failed-rows/download', DownloadImportFailureCsv::c
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
     ->name('users.profile.view.public');
 
-Route::get('/form-test', function () {
-    return view('form-test');
-});
-
 //TODO: remove
 Route::get('/demo-notification', function () {
     /** @var User $user */
