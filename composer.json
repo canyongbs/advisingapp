@@ -19,6 +19,7 @@
         "barryvdh/laravel-debugbar": "^3.9",
         "bvtterfly/model-state-machine": "^0.3.0",
         "canyon-gbs/alert": "*",
+        "canyon-gbs/application": "*",
         "canyon-gbs/assist-data-model": "*",
         "canyon-gbs/assistant": "*",
         "canyon-gbs/audit": "*@dev",
