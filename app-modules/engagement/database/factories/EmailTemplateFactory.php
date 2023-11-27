@@ -28,42 +28,18 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Engagement\Database\Factories;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Query\Builder;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @mixin IdeHelperFormAuthentication
- */
-#[NoPermissions]
-class FormAuthentication extends BaseModel
+class EmailTemplateFactory extends Factory
 {
-    use MassPrunable;
-
-    public function form(): BelongsTo
+    public function definition(): array
     {
-        return $this
-            ->belongsTo(Form::class);
-    }
-
-    public function author(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    public function isExpired(): bool
-    {
-        return $this->created_at->addDay()->isPast();
-    }
-
-    public function prunable(): Builder
-    {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
+        return [
+            'name' => fake()->word,
+            'description' => fake()->sentence,
+            'content' => fake()->paragraph,
+        ];
     }
 }

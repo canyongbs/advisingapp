@@ -34,6 +34,7 @@ use Filament\Panel;
 use Assist\Engagement\EngagementPlugin;
 use Illuminate\Support\ServiceProvider;
 use Assist\Engagement\Models\Engagement;
+use Assist\Engagement\Models\EmailTemplate;
 use Illuminate\Console\Scheduling\Schedule;
 use Assist\Engagement\Models\EngagementFile;
 use Assist\Engagement\Models\EngagementBatch;
@@ -63,6 +64,7 @@ class EngagementServiceProvider extends ServiceProvider
             'engagement_batch' => EngagementBatch::class,
             'engagement_response' => EngagementResponse::class,
             'engagement_file' => EngagementFile::class,
+            'email_template' => EmailTemplate::class,
         ]);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {

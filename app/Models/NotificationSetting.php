@@ -37,7 +37,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
- * @mixin IdeHelperEmailTemplate
+ * @mixin IdeHelperNotificationSetting
  */
 class NotificationSetting extends BaseModel implements HasMedia
 {

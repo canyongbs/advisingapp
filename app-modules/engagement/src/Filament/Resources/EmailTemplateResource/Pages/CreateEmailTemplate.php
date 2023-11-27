@@ -28,42 +28,32 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Query\Builder;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Forms\Form;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 
-/**
- * @mixin IdeHelperFormAuthentication
- */
-#[NoPermissions]
-class FormAuthentication extends BaseModel
+class CreateEmailTemplate extends CreateRecord
 {
-    use MassPrunable;
+    protected static string $resource = EmailTemplateResource::class;
 
-    public function form(): BelongsTo
+    public function form(Form $form): Form
     {
-        return $this
-            ->belongsTo(Form::class);
-    }
-
-    public function author(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    public function isExpired(): bool
-    {
-        return $this->created_at->addDay()->isPast();
-    }
-
-    public function prunable(): Builder
-    {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->string()
+                    ->required(),
+                TextInput::make('description')
+                    ->columnSpanFull()
+                    ->string(),
+                TiptapEditor::make('content')
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->required(),
+            ]);
     }
 }
