@@ -32,11 +32,11 @@
 </COPYRIGHT>
 --}}
 @php
-    use Assist\Form\Actions\GenerateFormEmbedCode;
+    use Assist\Form\Actions\GenerateSubmissibleEmbedCode;
 @endphp
 
 <div class="flex items-center justify-center px-4 py-16">
     <div class="w-full max-w-4xl">
-        {!! resolve(GenerateFormEmbedCode::class)->handle($this->form) !!}
+        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($this->form) !!}
     </div>
 </div>
