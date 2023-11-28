@@ -6,13 +6,10 @@ use App\Models\BaseModel;
 use Illuminate\Database\Query\Builder;
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property string $label
- * @property array $content
  * @property-read Submissible $submissible
  * @property-read Collection<int, SubmissibleField> $fields
  */
@@ -23,9 +20,9 @@ abstract class SubmissibleStep extends BaseModel
 
     abstract public function fields(): HasMany;
 
-    abstract protected function label(): Attribute;
+    abstract public function getLabel(): string;
 
-    abstract protected function content(): Attribute;
+    abstract public function getContent(): ?array;
 
     protected static function boot(): void
     {

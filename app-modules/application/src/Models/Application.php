@@ -4,7 +4,6 @@ namespace Assist\Application\Models;
 
 use Assist\Form\Enums\Rounding;
 use Assist\Form\Models\Submissible;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -46,17 +45,13 @@ class Application extends Submissible
         return $this->hasMany(ApplicationSubmission::class);
     }
 
-    protected function isWizard(): Attribute
+    public function isWizard(): bool
     {
-        return Attribute::make(
-            get: fn ($value) => (bool) $value,
-        );
+        return $this->is_wizard;
     }
 
-    protected function content(): Attribute
+    public function getContent(): ?array
     {
-        return Attribute::make(
-            get: fn ($value) => $value,
-        );
+        return $this->content;
     }
 }

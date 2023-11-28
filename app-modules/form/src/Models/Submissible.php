@@ -5,15 +5,12 @@ namespace Assist\Form\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
- * @property bool $is_wizard
- * @property array|null $content
  * @property-read Collection<int, SubmissibleStep> $steps
  * @property-read Collection<int, SubmissibleField> $fields
  */
@@ -29,9 +26,9 @@ abstract class Submissible extends Model
 
     abstract public function submissions(): HasMany;
 
-    abstract protected function isWizard(): Attribute;
+    abstract public function isWizard(): bool;
 
-    abstract protected function content(): Attribute;
+    abstract public function getContent(): ?array;
 
     protected function serializeDate(DateTimeInterface $date): string
     {

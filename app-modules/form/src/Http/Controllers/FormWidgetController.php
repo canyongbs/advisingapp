@@ -52,7 +52,7 @@ use Illuminate\Support\Facades\Notification;
 use Assist\Form\Actions\GenerateFormKitSchema;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Assist\Form\Actions\GenerateFormValidation;
+use Assist\Form\Actions\GenerateSubmissibleValidation;
 use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use Assist\Form\Notifications\AuthenticateFormNotification;
 use Assist\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
@@ -141,7 +141,7 @@ class FormWidgetController extends Controller
 
     public function store(
         Request $request,
-        GenerateFormValidation $generateValidation,
+        GenerateSubmissibleValidation $generateValidation,
         ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail,
         Form $form,
     ): JsonResponse {

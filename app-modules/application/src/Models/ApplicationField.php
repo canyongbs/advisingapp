@@ -34,4 +34,14 @@ class ApplicationField extends SubmissibleField
         return $this
             ->belongsTo(ApplicationStep::class, 'step_id');
     }
+
+    public function isRequired(): bool
+    {
+        return $this->is_required;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
 }
