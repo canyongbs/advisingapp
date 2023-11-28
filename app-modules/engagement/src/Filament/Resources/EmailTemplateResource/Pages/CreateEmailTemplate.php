@@ -28,19 +28,32 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
+use Filament\Forms\Form;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 
-class EngagementBatchCreationData extends Data
+class CreateEmailTemplate extends CreateRecord
 {
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
+    protected static string $resource = EmailTemplateResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->string()
+                    ->required(),
+                TextInput::make('description')
+                    ->columnSpanFull()
+                    ->string(),
+                TiptapEditor::make('content')
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->required(),
+            ]);
+    }
 }

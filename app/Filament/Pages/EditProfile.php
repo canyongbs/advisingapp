@@ -52,8 +52,10 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TimePicker;
 use Illuminate\Validation\Rules\Password;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Assist\MeetingCenter\Managers\CalendarManager;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -76,6 +78,7 @@ class EditProfile extends Page
 
     public ?array $data = [];
 
+    //TODO: I feel like a lot of these could be refactored into a settings file instead of adding them directly to the user migration.
     public function form(Form $form): Form
     {
         /** @var User $user */
@@ -132,6 +135,28 @@ class EditProfile extends Page
                 }),
         ])->filter(fn (Component $component) => $component->isVisible());
 
+        $officeHoursDays = collect([
+            'sunday',
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+        ])->map(
+            fn ($day) => Grid::make(3)
+                ->schema([
+                    Toggle::make("office_hours_days.{$day}.enabled")
+                        ->label(str($day)->ucfirst())
+                        ->inline(false)
+                        ->live(),
+                    TimePicker::make("office_hours_days.{$day}.start")
+                        ->visible(fn (Get $get) => $get("office_hours_days.{$day}.enabled")),
+                    TimePicker::make("office_hours_days.{$day}.end")
+                        ->visible(fn (Get $get) => $get("office_hours_days.{$day}.enabled")),
+                ])
+        )->toArray();
+
         return $form
             ->schema([
                 Section::make('Public')
@@ -182,7 +207,7 @@ class EditProfile extends Page
                             ->hidden($user->teams->isEmpty())
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         Checkbox::make('are_teams_visible_on_profile')
-                            ->label('Show ' . str('team')->plural($user->teams->count()) . ' on profile')
+                            ->label('Show ' . str('team')->plural($user->teams->count())->ucfirst() . ' on profile')
                             ->hidden($user->teams->isEmpty())
                             ->live(),
                         Placeholder::make('division')
@@ -190,7 +215,7 @@ class EditProfile extends Page
                             ->hidden(! $user->teams?->first()?->division()->exists())
                             ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         Checkbox::make('is_division_visible_on_profile')
-                            ->label('Show division on profile')
+                            ->label('Show Division on profile')
                             ->hidden(! $user->teams?->first()?->division()->exists())
                             ->live(),
                         Placeholder::make('external_avatar')
@@ -217,6 +242,33 @@ class EditProfile extends Page
                     ->aside()
                     ->schema($connectedAccounts->toArray())
                     ->visible($connectedAccounts->count()),
+                Section::make('Office Hours')
+                    ->aside()
+                    ->schema([
+                        Toggle::make('office_hours_are_enabled')
+                            ->label('Enable office hours')
+                            ->live(),
+                        Toggle::make('appointments_are_restricted_to_existing_students')
+                            ->label('Restrict appointments to existing students')
+                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                        Section::make('Days')
+                            ->schema($officeHoursDays)
+                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('out_of_office_is_enabled')
+                                    ->label('Out of office')
+                                    ->inline(false)
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                                DateTimePicker::make('out_of_office_starts_at')
+                                    ->label('Start')
+                                    ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                                DateTimePicker::make('out_of_office_ends_at')
+                                    ->label('End')
+                                    ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                            ]),
+                    ]),
             ]);
     }
 

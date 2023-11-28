@@ -28,19 +28,30 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+namespace Assist\Engagement\Filament\Resources;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
+use Filament\Resources\Resource;
+use Assist\Engagement\Models\EmailTemplate;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\CreateEmailTemplate;
 
-class EngagementBatchCreationData extends Data
+class EmailTemplateResource extends Resource
 {
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
+    protected static ?string $model = EmailTemplate::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 11;
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListEmailTemplates::route('/'),
+            'create' => CreateEmailTemplate::route('/create'),
+            'edit' => EditEmailTemplate::route('/{record}/edit'),
+        ];
+    }
 }

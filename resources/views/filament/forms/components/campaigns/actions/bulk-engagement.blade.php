@@ -36,13 +36,11 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
         <div class="flex flex-col pb-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Delivery Methods</dt>
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Delivery Method</dt>
             <dd class="flex flex-row space-x-2 text-sm font-semibold">
-                @foreach ($action['delivery_methods'] as $deliveryMethod)
-                    <x-filament::badge>
-                        {{ $deliveryMethod }}
-                    </x-filament::badge>
-                @endforeach
+                <x-filament::badge>
+                    {{ $action['delivery_method'] }}
+                </x-filament::badge>
             </dd>
         </div>
         <div class="flex flex-col pt-3">

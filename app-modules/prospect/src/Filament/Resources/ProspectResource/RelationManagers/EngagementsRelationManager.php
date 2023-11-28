@@ -128,15 +128,8 @@ class EngagementsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->mutateFormDataUsing(function (array $data): array {
-                        if ($data['scheduled'] === false) {
-                            $data['scheduled'] = true;
-                        }
-
-                        return $data;
-                    })
                     ->after(function (Engagement $engagement, array $data) {
-                        $this->afterCreate($engagement, $data['delivery_methods']);
+                        $this->afterCreate($engagement, $data['delivery_method']);
                     }),
             ])
             ->actions([
@@ -146,10 +139,10 @@ class EngagementsRelationManager extends RelationManager
             ]);
     }
 
-    public function afterCreate(Engagement $engagement, array $deliveryMethods): void
+    public function afterCreate(Engagement $engagement, string $deliveryMethod): void
     {
         $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
 
-        $createDeliverablesForEngagement($engagement, $deliveryMethods);
+        $createDeliverablesForEngagement($engagement, $deliveryMethod);
     }
 }

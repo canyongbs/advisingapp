@@ -40,37 +40,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace App\Models{
 /**
- * App\Models\NotificationSetting
- *
- * @property string $id
- * @property string $name
- * @property string|null $primary_color
- * @property string $related_to_type
- * @property string $related_to_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
- * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $relatedTo
- * @method static \Database\Factories\EmailTemplateFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting query()
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting wherePrimaryColor($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereRelatedToId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereRelatedToType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperEmailTemplate {}
-}
-
-namespace App\Models{
-/**
  * App\Models\FailedImportRow
  *
  * @property string $id
@@ -131,6 +100,64 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperImport {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NotificationSetting
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $primary_color
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Division\Models\Division> $divisions
+ * @property-read int|null $divisions_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\NotificationSettingPivot> $settings
+ * @property-read int|null $settings_count
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSetting whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperNotificationSetting {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\NotificationSettingPivot
+ *
+ * @property string $id
+ * @property string $notification_setting_id
+ * @property string $related_to_type
+ * @property string $related_to_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $relatedTo
+ * @property-read \App\Models\NotificationSetting $setting
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot query()
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot whereNotificationSettingId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot whereRelatedToId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot whereRelatedToType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|NotificationSettingPivot whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperNotificationSettingPivot {}
 }
 
 namespace App\Models{
@@ -994,10 +1021,10 @@ namespace Assist\Division\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
- * @property-read \App\Models\NotificationSetting|null $emailTemplate
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \App\Models\User|null $lastUpdatedBy
+ * @property-read \App\Models\NotificationSettingPivot|null $notificationSetting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Team\Models\Team> $teams
  * @property-read int|null $teams_count
  * @method static \Assist\Division\Database\Factories\DivisionFactory factory($count = null, $state = [])
@@ -1026,6 +1053,32 @@ namespace Assist\Division\Models{
 
 namespace Assist\Engagement\Models{
 /**
+ * Assist\Engagement\Models\EmailTemplate
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property array $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Assist\Engagement\Database\Factories\EmailTemplateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEmailTemplate {}
+}
+
+namespace Assist\Engagement\Models{
+/**
  * Assist\Engagement\Models\Engagement
  *
  * @property-read Educatable $recipient
@@ -1036,6 +1089,7 @@ namespace Assist\Engagement\Models{
  * @property string|null $recipient_type
  * @property string|null $subject
  * @property string|null $body
+ * @property bool $scheduled
  * @property \Illuminate\Support\Carbon $deliver_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -1054,6 +1108,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement isScheduled()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement query()
@@ -1066,6 +1121,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereRecipientType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereScheduled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereSubject($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereUserId($value)
@@ -1230,6 +1286,20 @@ namespace Assist\Engagement\Models{
  class IdeHelperEngagementResponse {}
 }
 
+namespace Assist\Engagement\Models{
+/**
+ * Assist\Engagement\Models\SmsTemplate
+ *
+ * @method static \Assist\Engagement\Database\Factories\SmsTemplateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSmsTemplate {}
+}
+
 namespace Assist\Form\Models{
 /**
  * Assist\Form\Models\Form
@@ -1241,6 +1311,7 @@ namespace Assist\Form\Models{
  * @property array|null $allowed_domains
  * @property string|null $primary_color
  * @property \Assist\Form\Enums\Rounding|null $rounding
+ * @property bool $is_authenticated
  * @property bool $is_wizard
  * @property array|null $content
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -1263,6 +1334,7 @@ namespace Assist\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereEmbedEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsAuthenticated($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form wherePrimaryColor($value)
@@ -1272,6 +1344,35 @@ namespace Assist\Form\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperForm {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\FormAuthentication
+ *
+ * @property string $id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property string|null $code
+ * @property string $form_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
+ * @property-read \Assist\Form\Models\Form $form
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormAuthentication {}
 }
 
 namespace Assist\Form\Models{

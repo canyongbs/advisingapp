@@ -28,19 +28,37 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
+use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
+use Filament\Resources\Pages\CreateRecord;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource;
 
-class EngagementBatchCreationData extends Data
+class CreateSmsTemplate extends CreateRecord
 {
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
+    protected static string $resource = SmsTemplateResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->string()
+                    ->required(),
+                TextInput::make('description')
+                    ->columnSpanFull()
+                    ->string(),
+                RichEditor::make('content')
+                    ->columnSpanFull()
+                    ->toolbarButtons([
+                        'link',
+                        'redo',
+                        'undo',
+                    ])
+                    ->maxLength(320)
+                    ->required(),
+            ]);
+    }
 }

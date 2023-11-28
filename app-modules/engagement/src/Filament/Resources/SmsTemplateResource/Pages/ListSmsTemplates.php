@@ -28,42 +28,44 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Query\Builder;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource;
 
-/**
- * @mixin IdeHelperFormAuthentication
- */
-#[NoPermissions]
-class FormAuthentication extends BaseModel
+class ListSmsTemplates extends ListRecords
 {
-    use MassPrunable;
+    protected static string $resource = SmsTemplateResource::class;
 
-    public function form(): BelongsTo
+    public function table(Table $table): Table
     {
-        return $this
-            ->belongsTo(Form::class);
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('description'),
+            ])
+            ->filters([
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
-    public function author(): MorphTo
+    protected function getHeaderActions(): array
     {
-        return $this->morphTo();
-    }
-
-    public function isExpired(): bool
-    {
-        return $this->created_at->addDay()->isPast();
-    }
-
-    public function prunable(): Builder
-    {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
+        return [
+            CreateAction::make(),
+        ];
     }
 }
