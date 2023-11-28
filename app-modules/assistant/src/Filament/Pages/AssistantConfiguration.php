@@ -30,7 +30,6 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Assistant\Filament\Pages;
 
-use App\Filament\Pages\EmailConfiguration;
 use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
