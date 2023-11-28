@@ -37,12 +37,12 @@
 namespace Assist\Form\Actions;
 
 use Assist\Form\Models\FormField;
-use Assist\Form\Models\FormSubmission;
+use Assist\Form\Models\Submission;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class InjectSubmissionStateIntoTipTapContent
 {
-    public function __invoke(FormSubmission $submission, array $content, ?array $blocks = null): array
+    public function __invoke(Submission $submission, array $content, ?array $blocks = null): array
     {
         $blocks ??= FormFieldBlockRegistry::keyByType();
 
