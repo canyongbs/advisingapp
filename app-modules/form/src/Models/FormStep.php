@@ -37,6 +37,7 @@
 namespace Assist\Form\Models;
 
 use App\Models\Attributes\NoPermissions;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -66,5 +67,15 @@ class FormStep extends SubmissibleStep
     public function fields(): HasMany
     {
         return $this->hasMany(FormField::class, 'step_id');
+    }
+
+    protected function label(): Attribute
+    {
+        return new Attribute(get: fn ($value) => $value);
+    }
+
+    protected function content(): Attribute
+    {
+        return new Attribute(get: fn ($value) => $value);
     }
 }

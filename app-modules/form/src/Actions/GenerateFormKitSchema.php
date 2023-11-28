@@ -36,30 +36,30 @@
 
 namespace Assist\Form\Actions;
 
-use Assist\Form\Models\Form;
-use Assist\Form\Models\FormStep;
+use Assist\Form\Models\Submissible;
+use Assist\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class GenerateFormKitSchema
 {
-    public function __invoke(Form $form): array
+    public function __invoke(Submissible $submissible): array
     {
-        if ($form->is_wizard) {
-            $form->loadMissing([
+        if ($submissible->is_wizard) {
+            $submissible->loadMissing([
                 'steps' => [
                     'fields',
                 ],
             ]);
 
-            $content = $this->wizardContent($form);
+            $content = $this->wizardContent($submissible);
         } else {
-            $form->loadMissing([
+            $submissible->loadMissing([
                 'fields',
             ]);
 
             $content = [
-                ...$this->content($form->content['content'] ?? [], $form->fields->keyBy('id')),
+                ...$this->content($submissible->content['content'] ?? [], $submissible->fields->keyBy('id')),
                 [
                     '$formkit' => 'submit',
                     'label' => 'Submit',
@@ -160,7 +160,7 @@ class GenerateFormKitSchema
         return $component['text'];
     }
 
-    public function wizardContent(Form $form): array
+    public function wizardContent(Submissible $submissible): array
     {
         return [
             [
@@ -205,7 +205,7 @@ class GenerateFormKitSchema
                     'class' => 'form-body',
                 ],
                 'children' => [
-                    ...$form->steps->map(fn (FormStep $step): array => [
+                    ...$submissible->steps->map(fn (SubmissibleStep $step): array => [
                         '$el' => 'section',
                         'attrs' => [
                             'style' => [
@@ -230,7 +230,7 @@ class GenerateFormKitSchema
                         'children' => [
                             [
                                 '$formkit' => 'button',
-                                'disabled' => '$activeStep === "' . $form->steps->first()->label . '"',
+                                'disabled' => '$activeStep === "' . $submissible->steps->first()->label . '"',
                                 'onClick' => '$setStep(-1)',
                                 'children' => 'Previous Step',
                             ],
@@ -238,7 +238,7 @@ class GenerateFormKitSchema
                                 '$el' => 'div',
                                 'attrs' => [
                                     'style' => [
-                                        'if' => '$activeStep === "' . $form->steps->last()->label . '"',
+                                        'if' => '$activeStep === "' . $submissible->steps->last()->label . '"',
                                         'then' => 'display: none;',
                                     ],
                                 ],
@@ -254,7 +254,7 @@ class GenerateFormKitSchema
                                 '$el' => 'div',
                                 'attrs' => [
                                     'style' => [
-                                        'if' => '$activeStep !== "' . $form->steps->last()->label . '"',
+                                        'if' => '$activeStep !== "' . $submissible->steps->last()->label . '"',
                                         'then' => 'display: none;',
                                     ],
                                 ],

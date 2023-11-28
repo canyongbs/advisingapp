@@ -4,6 +4,7 @@ namespace Assist\Application\Models;
 
 use Assist\Form\Models\SubmissibleStep;
 use App\Models\Attributes\NoPermissions;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -34,5 +35,15 @@ class ApplicationStep extends SubmissibleStep
     {
         return $this
             ->hasMany(ApplicationField::class, 'step_id');
+    }
+
+    protected function label(): Attribute
+    {
+        return new Attribute(get: fn ($value) => $value);
+    }
+
+    protected function content(): Attribute
+    {
+        return new Attribute(get: fn ($value) => $value);
     }
 }

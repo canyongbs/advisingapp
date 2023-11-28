@@ -37,6 +37,7 @@
 namespace Assist\Form\Models;
 
 use Assist\Form\Enums\Rounding;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -78,5 +79,19 @@ class Form extends Submissible
     public function submissions(): HasMany
     {
         return $this->hasMany(FormSubmission::class);
+    }
+
+    protected function isWizard(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => (bool) $value,
+        );
+    }
+
+    protected function content(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value,
+        );
     }
 }
