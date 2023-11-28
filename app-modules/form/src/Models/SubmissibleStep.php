@@ -32,7 +32,7 @@ abstract class SubmissibleStep extends BaseModel
         parent::boot();
 
         static::saving(
-            fn (FormStep $step) => $step->sort ??= $step->form->steps->count(),
+            fn (SubmissibleStep $step) => $step->sort ??= $step->submissible->steps->count(),
         );
 
         static::withGlobalScope(

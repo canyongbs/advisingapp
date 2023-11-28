@@ -91,7 +91,7 @@ class Form extends Submissible
     protected function content(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value,
+            get: fn ($value) => json_decode($value, true),
         );
     }
 }

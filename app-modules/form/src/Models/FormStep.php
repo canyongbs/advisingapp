@@ -61,7 +61,7 @@ class FormStep extends SubmissibleStep
     public function submissible(): BelongsTo
     {
         return $this
-            ->belongsTo(Form::class);
+            ->belongsTo(Form::class, 'form_id');
     }
 
     public function fields(): HasMany
@@ -76,6 +76,6 @@ class FormStep extends SubmissibleStep
 
     protected function content(): Attribute
     {
-        return new Attribute(get: fn ($value) => $value);
+        return new Attribute(get: fn ($value) => json_decode($value, true));
     }
 }
