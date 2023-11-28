@@ -31,9 +31,10 @@
 
 </COPYRIGHT>
 --}}
+
 <div class="tiptap-rendered-content flex flex-col gap-6">
-    @if ($submission->form->is_wizard)
-        @foreach ($submission->form->steps as $step)
+    @if ($submission->submissible->is_wizard)
+        @foreach ($submission->submissible->steps as $step)
             <x-filament::section>
                 <x-slot name="heading">
                     {{ $step->label }}
