@@ -36,7 +36,7 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormField;
+use Assist\Form\Models\SubmissibleField;
 
 class TimeFormFieldBlock extends FormFieldBlock
 {
@@ -54,12 +54,12 @@ class TimeFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-    public static function getFormKitSchema(FormField $field): array
+    public static function getFormKitSchema(SubmissibleField $field): array
     {
         return [
             '$formkit' => 'time',
             'label' => $field->label,
-            'name' => $field->id,
+            'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $is_required
  * @property string $type
  * @property string $label
+ * @property array $config
  * @property-read Submissible $submissible
  * @property-read SubmissibleStep $step
  */
@@ -32,5 +33,10 @@ abstract class SubmissibleField extends BaseModel
     protected function label(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('label') ? $this->castAttribute('label', $value) : $value);
+    }
+
+    protected function config(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => $this->hasCast('config') ? $this->castAttribute('config', $value) : $value);
     }
 }

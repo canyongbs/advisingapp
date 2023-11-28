@@ -41,7 +41,7 @@ use Illuminate\Http\Request;
 use Assist\Form\Models\Submissible;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureFormIsEmbeddableAndAuthorized
+class EnsureSubmittibleIsEmbeddableAndAuthorized
 {
     public function handle(Request $request, Closure $next, string $binding): Response
     {

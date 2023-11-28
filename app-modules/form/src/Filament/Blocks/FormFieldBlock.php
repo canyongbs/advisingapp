@@ -36,9 +36,9 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormField;
 use FilamentTiptapEditor\TiptapBlock;
 use Filament\Forms\Components\Checkbox;
+use Assist\Form\Models\SubmissibleField;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 abstract class FormFieldBlock extends TiptapBlock
@@ -83,9 +83,9 @@ abstract class FormFieldBlock extends TiptapBlock
 
     abstract public static function type(): string;
 
-    abstract public static function getFormKitSchema(FormField $field): array;
+    abstract public static function getFormKitSchema(SubmissibleField $field): array;
 
-    public static function getValidationRules(FormField $field): array
+    public static function getValidationRules(SubmissibleField $field): array
     {
         return [];
     }
