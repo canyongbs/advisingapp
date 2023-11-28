@@ -51,14 +51,14 @@ class GenerateSubmissibleEmbedCode
                 EOD;
             })(),
             Application::class => (function () use ($submissible) {
-                // TODO: Implement this.
-                //$scriptUrl = url('js/widgets/application/assist-application-widget.js?');
-                //$formDefinitionUrl = URL::signedRoute('applications.define', ['application' => $submissible]);
-                //
-                //return <<<EOD
-                //<application-embed url="{$formDefinitionUrl}"></application-embed>
-                //<script src="{$scriptUrl}"></script>
-                //EOD;
+                // TODO: Finish the implementation of the application widget.
+                $scriptUrl = url('js/widgets/application/assist-application-widget.js?');
+                $formDefinitionUrl = URL::signedRoute('applications.define', ['application' => $submissible]);
+
+                return <<<EOD
+                <application-embed url="{$formDefinitionUrl}"></application-embed>
+                <script src="{$scriptUrl}"></script>
+                EOD;
             })(),
             default => throw new Exception('Unsupported submissible type.'),
         };

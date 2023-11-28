@@ -3,12 +3,16 @@
 namespace Assist\Form\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Support\Carbon;
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property Carbon|null $created_at
+ */
 #[NoPermissions]
 abstract class SubmissibleAuthentication extends BaseModel
 {
