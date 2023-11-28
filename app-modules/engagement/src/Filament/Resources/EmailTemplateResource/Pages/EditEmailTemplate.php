@@ -28,41 +28,40 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Models;
+namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Assist\MeetingCenter\Enums\CalendarProvider;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
+use App\Filament\Fields\TiptapEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 
-/**
- * @mixin IdeHelperCalendar
- */
-class Calendar extends BaseModel
+class EditEmailTemplate extends EditRecord
 {
-    protected $hidden = [
-        'oauth_token',
-        'oauth_refresh_token',
-        'oauth_token_expires_at',
-    ];
+    protected static string $resource = EmailTemplateResource::class;
 
-    protected $casts = [
-        'provider_id' => 'encrypted',
-        'provider_type' => CalendarProvider::class,
-        'provider_email' => 'encrypted',
-        'oauth_token' => 'encrypted',
-        'oauth_refresh_token' => 'encrypted',
-        'oauth_token_expires_at' => 'datetime',
-    ];
-
-    public function user(): BelongsTo
+    public function form(Form $form): Form
     {
-        return $this->belongsTo(User::class);
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->string()
+                    ->required(),
+                TextInput::make('description')
+                    ->columnSpanFull()
+                    ->string(),
+                TiptapEditor::make('content')
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->required(),
+            ]);
     }
 
-    public function events(): HasMany
+    protected function getHeaderActions(): array
     {
-        return $this->hasMany(CalendarEvent::class);
+        return [
+            DeleteAction::make(),
+        ];
     }
 }

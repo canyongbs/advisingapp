@@ -28,19 +28,27 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+namespace Assist\MeetingCenter\Services;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
+use Microsoft\Graph\Graph;
 
-class EngagementBatchCreationData extends Data
+class AzureGraph extends Graph
 {
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
+    public string $accessToken;
+
+    public string $refreshToken;
+
+    public function setAccessToken($accessToken): self
+    {
+        $this->accessToken = $accessToken;
+
+        return parent::setAccessToken($accessToken);
+    }
+
+    public function setRefreshToken(string $refreshToken): self
+    {
+        $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
 }

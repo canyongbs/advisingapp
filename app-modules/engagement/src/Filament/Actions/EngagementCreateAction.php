@@ -37,9 +37,7 @@ use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
-use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
 
 class EngagementCreateAction
 {
@@ -51,15 +49,13 @@ class EngagementCreateAction
             ->modalHeading('Send Engagement')
             ->modalDescription("Send an engagement to {$educatable->display_name}.")
             ->steps([
-                Step::make('Choose your delivery methods')
-                    ->description('Select email, sms, or both.')
+                Step::make('Choose your delivery method')
+                    ->description('Select email or sms.')
                     ->schema([
-                        Select::make('delivery_methods')
+                        Select::make('delivery_method')
                             ->label('How would you like to send this engagement?')
                             ->translateLabel()
                             ->options(EngagementDeliveryMethod::class)
-                            ->multiple()
-                            ->minItems(1)
                             ->validationAttribute('Delivery Method')
                             ->required(),
                     ]),
@@ -71,21 +67,20 @@ class EngagementCreateAction
                             ->translateLabel()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
-                            ->helperText('The subject will only be used for the email delivery method.'),
+                            ->hidden(fn (callable $get) => collect($get('delivery_method'))->doesntContain(EngagementDeliveryMethod::Email->value)),
                         Textarea::make('body')
                             ->translateLabel()
                             ->placeholder(__('Body'))
                             ->required()
                             ->maxLength(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
                                     return 320;
                                 }
 
                                 return 65535;
                             })
                             ->helperText(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
                                     return 'The body of your message can be up to 320 characters long.';
                                 }
 
@@ -94,19 +89,9 @@ class EngagementCreateAction
                     ]),
             ])
             ->action(function (array $data) use ($educatable) {
-                // TODO Probably extract all of this to an action
-                $engagement = $educatable->engagements()->create([
-                    'subject' => $data['subject'],
-                    'body' => $data['body'],
-                ]);
+                $createOnDemandEngagement = resolve(CreateOnDemandEngagement::class);
 
-                $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
-
-                $createDeliverablesForEngagement($engagement, $data['delivery_methods']);
-
-                $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
-                    $deliverable->deliver();
-                });
+                $createOnDemandEngagement($educatable, $data);
             })
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)

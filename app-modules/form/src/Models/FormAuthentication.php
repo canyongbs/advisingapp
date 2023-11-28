@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperFormStep
+ * @mixin IdeHelperFormAuthentication
  */
 #[NoPermissions]
 class FormAuthentication extends BaseModel

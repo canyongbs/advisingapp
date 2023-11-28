@@ -28,19 +28,19 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
-
-class EngagementBatchCreationData extends Data
-{
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
-}
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('email_templates', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->json('content');
+            $table->timestamps();
+        });
+    }
+};

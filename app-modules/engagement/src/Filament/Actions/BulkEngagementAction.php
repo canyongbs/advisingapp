@@ -50,15 +50,13 @@ class BulkEngagementAction
             ->modalHeading('Send Bulk Engagement')
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to engage.")
             ->steps([
-                Step::make('Choose your delivery methods')
-                    ->description('Select email, sms, or both.')
+                Step::make('Choose your delivery method')
+                    ->description('Select email or sms.')
                     ->schema([
-                        Select::make('delivery_methods')
+                        Select::make('delivery_method')
                             ->label('How would you like to send this engagement?')
                             ->translateLabel()
                             ->options(EngagementDeliveryMethod::class)
-                            ->multiple()
-                            ->minItems(1)
                             ->validationAttribute('Delivery Method')
                             ->required(),
                     ]),
@@ -70,37 +68,26 @@ class BulkEngagementAction
                             ->translateLabel()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
-                            ->helperText('The subject will only be used for the email delivery method.'),
+                            ->hidden(fn (callable $get) => collect($get('delivery_method'))->doesntContain(EngagementDeliveryMethod::Email->value)),
                         // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
                         Textarea::make('body')
                             ->translateLabel()
                             ->placeholder(__('Body'))
                             ->required()
                             ->maxLength(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
                                     return 320;
                                 }
 
                                 return 65535;
                             })
                             ->helperText(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
                                     return 'The body of your message can be up to 320 characters long.';
                                 }
 
                                 return 'The body of your message can be up to 65,535 characters long.';
                             }),
-                        // TODO Potentially re-enable this later...
-                        // Fieldset::make('Send your engagement')
-                        //     ->schema([
-                        //         Toggle::make('send_later')
-                        //             ->reactive()
-                        //             ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
-                        //         DateTimePicker::make('deliver_at')
-                        //             ->required()
-                        //             ->visible(fn (callable $get) => $get('send_later')),
-                        //     ]),
                     ]),
             ])
             ->action(function (Collection $records, array $data) {
@@ -109,7 +96,7 @@ class BulkEngagementAction
                     'records' => $records,
                     'subject' => $data['subject'],
                     'body' => $data['body'],
-                    'deliveryMethods' => $data['delivery_methods'],
+                    'deliveryMethod' => $data['delivery_method'],
                 ]));
             })
             ->modalSubmitActionLabel('Send')

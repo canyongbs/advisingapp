@@ -28,19 +28,18 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+namespace Assist\Engagement\Models;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
+use App\Models\BaseModel;
 
-class EngagementBatchCreationData extends Data
+/**
+ * @mixin IdeHelperSmsTemplate
+ */
+class SmsTemplate extends BaseModel
 {
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
+    protected $fillable = [
+        'name',
+        'description',
+        'content',
+    ];
 }

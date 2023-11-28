@@ -66,6 +66,7 @@ class EngagementFactory extends Factory
             'subject' => fake()->sentence,
             'body' => fake()->paragraph,
             'deliver_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
+            'scheduled' => true,
         ];
     }
 
@@ -106,10 +107,10 @@ class EngagementFactory extends Factory
         ]);
     }
 
-    public function scheduled(): self
+    public function onDemand(): self
     {
         return $this->state([
-            'scheduled' => true,
+            'scheduled' => false,
         ]);
     }
 }

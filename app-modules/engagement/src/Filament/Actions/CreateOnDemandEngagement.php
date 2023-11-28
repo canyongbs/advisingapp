@@ -28,19 +28,28 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+namespace Assist\Engagement\Filament\Actions;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Assist\Engagement\Models\EngagementDeliverable;
+use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
 
-class EngagementBatchCreationData extends Data
+class CreateOnDemandEngagement
 {
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
+    public function __invoke(Model $educatable, array $data): void
+    {
+        $engagement = $educatable->engagements()->create([
+            'subject' => $data['subject'],
+            'body' => $data['body'],
+            'scheduled' => false,
+        ]);
+
+        $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
+
+        $createDeliverablesForEngagement($engagement, $data['delivery_method']);
+
+        $engagement->deliverables()->each(function (EngagementDeliverable $deliverable) {
+            $deliverable->deliver();
+        });
+    }
 }

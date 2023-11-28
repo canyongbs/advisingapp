@@ -28,19 +28,30 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+namespace Assist\Engagement\Filament\Resources;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
+use Filament\Resources\Resource;
+use Assist\Engagement\Models\SmsTemplate;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
 
-class EngagementBatchCreationData extends Data
+class SmsTemplateResource extends Resource
 {
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
+    protected static ?string $model = SmsTemplate::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 12;
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListSmsTemplates::route('/'),
+            'create' => CreateSmsTemplate::route('/create'),
+            'edit' => EditSmsTemplate::route('/{record}/edit'),
+        ];
+    }
 }

@@ -28,19 +28,18 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\DataTransferObjects;
+namespace Assist\Engagement\Database\Factories;
 
-use App\Models\User;
-use Spatie\LaravelData\Data;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class EngagementBatchCreationData extends Data
+class EmailTemplateFactory extends Factory
 {
-    public function __construct(
-        public User $user,
-        public Collection $records,
-        public string $body,
-        public string $deliveryMethod,
-        public ?string $subject = null,
-    ) {}
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->word(),
+            'description' => fake()->sentence(),
+            'content' => fake()->paragraph(),
+        ];
+    }
 }
