@@ -45,7 +45,7 @@ class GenerateFormKitSchema
 {
     public function __invoke(Submissible $submissible): array
     {
-        if ($submissible->isWizard()) {
+        if ($submissible->is_wizard) {
             $submissible->loadMissing([
                 'steps' => [
                     'fields',
@@ -209,15 +209,15 @@ class GenerateFormKitSchema
                         '$el' => 'section',
                         'attrs' => [
                             'style' => [
-                                'if' => '$activeStep !== "' . $step->getLabel() . '"',
+                                'if' => '$activeStep !== "' . $step->label . '"',
                                 'then' => 'display: none;',
                             ],
                         ],
                         'children' => [
                             [
                                 '$formkit' => 'group',
-                                'id' => $step->getLabel(),
-                                'name' => $step->getLabel(),
+                                'id' => $step->label,
+                                'name' => $step->label,
                                 'children' => $this->content($step->content['content'] ?? [], $step->fields->keyBy('id')),
                             ],
                         ],

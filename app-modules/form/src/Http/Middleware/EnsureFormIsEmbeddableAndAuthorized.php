@@ -57,11 +57,11 @@ class EnsureFormIsEmbeddableAndAuthorized
         $referer = parse_url($referer)['host'];
 
         if ($referer != parse_url(config('app.url'))['host']) {
-            if (! $submissible->isEmbedEnabled()) {
+            if (! $submissible->embed_enabled) {
                 return response()->json(['error' => 'Embedding is not enabled for this form.'], 403);
             }
 
-            $allowedDomains = collect($submissible->getAllowedDomains() ?? []);
+            $allowedDomains = collect($submissible->allowed_domains ?? []);
 
             if (! $allowedDomains->contains($referer)) {
                 return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);

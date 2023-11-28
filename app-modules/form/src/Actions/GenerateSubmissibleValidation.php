@@ -46,7 +46,7 @@ class GenerateSubmissibleValidation
 {
     public function __invoke(Submissible $submissible): array
     {
-        if ($submissible->isWizard()) {
+        if ($submissible->is_wizard) {
             return $this->wizardRules($submissible);
         }
 
@@ -61,13 +61,13 @@ class GenerateSubmissibleValidation
             ->mapWithKeys(function (SubmissibleField $field) use ($blocks) {
                 $rules = collect();
 
-                if ($field->isRequired()) {
+                if ($field->is_required) {
                     $rules->push('required');
                 }
 
                 return [
                     $field->getKey() => $rules
-                        ->merge($blocks[$field->getType()]::getValidationRules($field))
+                        ->merge($blocks[$field->type]::getValidationRules($field))
                         ->all(),
                 ];
             })
@@ -82,7 +82,7 @@ class GenerateSubmissibleValidation
             $rules = $rules->merge(
                 Arr::prependKeysWith(
                     $this->fields($step->fields),
-                    prependWith: "{$step->getLabel()}.",
+                    prependWith: "{$step->label}.",
                 ),
             );
         }

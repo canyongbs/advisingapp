@@ -67,14 +67,4 @@ class FormStep extends SubmissibleStep
     {
         return $this->hasMany(FormField::class, 'step_id');
     }
-
-    public function getLabel(): string
-    {
-        return $this->label;
-    }
-
-    public function getContent(): ?array
-    {
-        return $this->content;
-    }
 }

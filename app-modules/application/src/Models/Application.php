@@ -44,24 +44,4 @@ class Application extends Submissible
     {
         return $this->hasMany(ApplicationSubmission::class);
     }
-
-    public function isWizard(): bool
-    {
-        return $this->is_wizard;
-    }
-
-    public function getContent(): ?array
-    {
-        return $this->content;
-    }
-
-    public function isEmbedEnabled(): bool
-    {
-        return $this->embed_enabled;
-    }
-
-    public function getAllowedDomains(): ?array
-    {
-        return $this->allowed_domains;
-    }
 }
