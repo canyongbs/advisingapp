@@ -34,11 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Models\SupportItem;
-use App\Models\SupportPage;
-use App\Models\SupportFeedbackItem;
-use App\Models\SupportTrainingItem;
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -190,12 +185,7 @@ return [
     |
     */
 
-    'ignored_models' => [
-        SupportFeedbackItem::class,
-        SupportItem::class,
-        SupportPage::class,
-        SupportTrainingItem::class,
-    ],
+    'ignored_models' => [],
 
     /*
     |--------------------------------------------------------------------------
