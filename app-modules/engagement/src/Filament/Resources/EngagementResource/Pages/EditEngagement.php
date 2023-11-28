@@ -30,8 +30,8 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
-use Filament\Actions;
 use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Toggle;
@@ -74,12 +74,12 @@ class EditEngagement extends EditRecord
                     ]),
                 Fieldset::make('Send your engagement')
                     ->schema([
-                        Toggle::make('scheduled')
+                        Toggle::make('send_later')
                             ->reactive()
                             ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('deliver_at')
                             ->required()
-                            ->visible(fn (callable $get) => $get('scheduled')),
+                            ->visible(fn (callable $get) => $get('send_later')),
                     ]),
             ]);
     }
@@ -87,7 +87,7 @@ class EditEngagement extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

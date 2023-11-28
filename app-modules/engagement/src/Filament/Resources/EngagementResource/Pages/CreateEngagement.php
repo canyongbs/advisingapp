@@ -54,14 +54,11 @@ class CreateEngagement extends CreateRecord
         return $form
             ->schema([
                 // TODO Better validation error messages here, "You must select at least 1 delivery method"
-                Select::make('delivery_methods')
+                Select::make('delivery_method')
                     ->label('How would you like to send this engagement?')
                     ->translateLabel()
                     ->options(EngagementDeliveryMethod::class)
-                    ->multiple()
-                    ->minItems(1)
-                    ->validationAttribute('Delivery Methods')
-                    ->helperText('You can select multiple delivery methods.')
+                    ->validationAttribute('Delivery Method')
                     ->reactive(),
                 Fieldset::make('Content')
                     ->schema([
@@ -70,21 +67,20 @@ class CreateEngagement extends CreateRecord
                             ->translateLabel()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
-                            ->helperText('The subject will only be used for the email delivery method.'),
+                            ->hidden(fn (callable $get) => collect($get('delivery_method'))->doesntContain(EngagementDeliveryMethod::Email->value)),
                         Textarea::make('body')
                             ->translateLabel()
                             ->placeholder(__('Body'))
                             ->required()
                             ->maxLength(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
                                     return 320;
                                 }
 
                                 return 65535;
                             })
                             ->helperText(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
+                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
                                     return 'The body of your message can be up to 320 characters long.';
                                 }
 
@@ -104,12 +100,12 @@ class CreateEngagement extends CreateRecord
                     ]),
                 Fieldset::make('Send your engagement')
                     ->schema([
-                        Toggle::make('scheduled')
+                        Toggle::make('send_later')
                             ->reactive()
                             ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('deliver_at')
                             ->required()
-                            ->visible(fn (callable $get) => $get('scheduled')),
+                            ->visible(fn (callable $get) => $get('send_later')),
                     ]),
             ]);
     }
@@ -118,15 +114,6 @@ class CreateEngagement extends CreateRecord
     {
         $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
 
-        $createDeliverablesForEngagement($this->record, $this->data['delivery_methods']);
-    }
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        if ($data['scheduled'] === false) {
-            $data['scheduled'] = true;
-        }
-
-        return $data;
+        $createDeliverablesForEngagement($this->record, $this->data['delivery_method']);
     }
 }

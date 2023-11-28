@@ -71,10 +71,11 @@ class CreateEngagementBatch implements ShouldQueue
                 'recipient_type' => $record->getMorphClass(),
                 'subject' => $this->data->subject,
                 'body' => $this->data->body,
+                'scheduled' => false,
             ]);
 
             $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
-            $createDeliverablesForEngagement($engagement, $this->data->deliveryMethods);
+            $createDeliverablesForEngagement($engagement, $this->data->deliveryMethod);
         });
 
         $deliverables = $engagementBatch->engagements->map(function (Engagement $engagement) {
