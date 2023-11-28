@@ -32,27 +32,37 @@ namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\RichEditor;
+use App\Filament\Pages\EmailConfiguration;
 use Assist\Engagement\Filament\Resources\SmsTemplateResource;
 
 class EditSmsTemplate extends EditRecord
 {
     protected static string $resource = SmsTemplateResource::class;
 
+    public function getBreadcrumbs(): array
+    {
+        return [
+            ...(new EmailConfiguration())->getBreadcrumbs(),
+            ...parent::getBreadcrumbs(),
+        ];
+    }
+
     public function form(Form $form): Form
     {
         return $form
+            ->columns(1)
             ->schema([
                 TextInput::make('name')
                     ->string()
-                    ->required(),
-                TextInput::make('description')
-                    ->columnSpanFull()
+                    ->required()
+                    ->autocomplete(false),
+                Textarea::make('description')
                     ->string(),
                 RichEditor::make('content')
-                    ->columnSpanFull()
                     ->toolbarButtons([
                         'link',
                         'redo',

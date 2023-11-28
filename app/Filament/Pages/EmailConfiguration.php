@@ -34,7 +34,9 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
 use Symfony\Component\HttpFoundation\Response;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
 use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
 
 class EmailConfiguration extends Page
 {
@@ -87,7 +89,7 @@ class EmailConfiguration extends Page
             $subItems = (new EmailConfiguration())->getSubNavigation();
 
             foreach ($subItems as $subItem) {
-                if (request()->fullUrlIs($subItem->getUrl())) {
+                if (str(request()->fullUrl())->contains(str($subItem->getUrl())->after('/'))) {
                     return true;
                 }
             }
@@ -102,8 +104,8 @@ class EmailConfiguration extends Page
     {
         return $this->generateNavigationItems([
             ListNotificationSettings::class,
-            EmailTemplates::class,
-            TextMessageTemplates::class,
+            ListEmailTemplates::class,
+            ListSmsTemplates::class,
         ]);
     }
 }

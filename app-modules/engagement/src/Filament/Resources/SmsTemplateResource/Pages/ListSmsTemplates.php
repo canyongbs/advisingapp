@@ -35,6 +35,7 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\EmailConfiguration;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Engagement\Filament\Resources\SmsTemplateResource;
@@ -42,6 +43,18 @@ use Assist\Engagement\Filament\Resources\SmsTemplateResource;
 class ListSmsTemplates extends ListRecords
 {
     protected static string $resource = SmsTemplateResource::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-oval-left-ellipsis';
+
+    protected static ?string $navigationLabel = 'Text Message Templates';
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            ...(new EmailConfiguration())->getBreadcrumbs(),
+            ...parent::getBreadcrumbs(),
+        ];
+    }
 
     public function table(Table $table): Table
     {
@@ -60,6 +73,11 @@ class ListSmsTemplates extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public function getSubNavigation(): array
+    {
+        return (new EmailConfiguration())->getSubNavigation();
     }
 
     protected function getHeaderActions(): array

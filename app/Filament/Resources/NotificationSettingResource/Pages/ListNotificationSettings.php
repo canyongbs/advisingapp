@@ -54,7 +54,7 @@ class ListNotificationSettings extends ListRecords
     {
         return [
             ...(new EmailConfiguration())->getBreadcrumbs(),
-            $this::getUrl() => $this::getNavigationLabel(),
+            ...parent::getBreadcrumbs(),
         ];
     }
 
@@ -63,6 +63,7 @@ class ListNotificationSettings extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('name'),
+                TextColumn::make('description'),
             ])
             ->filters([
             ])
@@ -75,12 +76,6 @@ class ListNotificationSettings extends ListRecords
                 ]),
             ]);
     }
-
-    // public static function getNavigationItems(array $urlParameters = []) : array
-    // {
-    //     ray(parent::getNavigationItems($urlParameters))
-    //     return parent::getNavigationItems($urlParameters);
-    // }
 
     public function getSubNavigation(): array
     {
