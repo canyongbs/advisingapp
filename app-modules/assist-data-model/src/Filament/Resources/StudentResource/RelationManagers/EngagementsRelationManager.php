@@ -47,8 +47,8 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
+use Assist\Engagement\Actions\CreateEngagementDeliverable;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
 use Assist\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
 
 class EngagementsRelationManager extends RelationManager
@@ -143,8 +143,8 @@ class EngagementsRelationManager extends RelationManager
 
     public function afterCreate(Engagement $engagement, string $deliveryMethod): void
     {
-        $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
+        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
 
-        $createDeliverablesForEngagement($engagement, $deliveryMethod);
+        $createEngagementDeliverable($engagement, $deliveryMethod);
     }
 }

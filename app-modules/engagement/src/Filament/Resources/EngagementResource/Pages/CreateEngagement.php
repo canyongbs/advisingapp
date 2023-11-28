@@ -42,8 +42,8 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
+use Assist\Engagement\Actions\CreateEngagementDeliverable;
 use Assist\Engagement\Filament\Resources\EngagementResource;
-use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
 
 class CreateEngagement extends CreateRecord
 {
@@ -112,8 +112,8 @@ class CreateEngagement extends CreateRecord
 
     public function afterCreate(): void
     {
-        $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
+        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
 
-        $createDeliverablesForEngagement($this->record, $this->data['delivery_method']);
+        $createEngagementDeliverable($this->record, $this->data['delivery_method']);
     }
 }

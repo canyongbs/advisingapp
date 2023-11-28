@@ -32,16 +32,12 @@ namespace Assist\Engagement\Actions;
 
 use Assist\Engagement\Models\Engagement;
 
-class CreateDeliverablesForEngagement
+class CreateEngagementDeliverable
 {
-    public function __invoke(Engagement $engagement, array|string $deliveryMethods): void
+    public function __invoke(Engagement $engagement, string $deliveryMethod): void
     {
-        $deliveryMethods = is_array($deliveryMethods) ? $deliveryMethods : [$deliveryMethods];
-
-        foreach ($deliveryMethods as $deliveryMethod) {
-            $engagement->deliverable()->create([
-                'channel' => $deliveryMethod,
-            ]);
-        }
+        $engagement->deliverable()->create([
+            'channel' => $deliveryMethod,
+        ]);
     }
 }
