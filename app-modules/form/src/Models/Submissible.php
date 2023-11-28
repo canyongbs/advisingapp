@@ -30,6 +30,10 @@ abstract class Submissible extends Model
 
     abstract public function getContent(): ?array;
 
+    abstract public function isEmbedEnabled(): bool;
+
+    abstract public function getAllowedDomains(): ?array;
+
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');

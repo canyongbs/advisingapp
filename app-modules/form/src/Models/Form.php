@@ -89,4 +89,14 @@ class Form extends Submissible
     {
         return $this->content;
     }
+
+    public function isEmbedEnabled(): bool
+    {
+        return $this->embed_enabled;
+    }
+
+    public function getAllowedDomains(): ?array
+    {
+        return $this->allowed_domains;
+    }
 }

@@ -38,12 +38,16 @@ namespace Assist\Form\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Assist\Form\Models\Submissible;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureFormIsEmbeddableAndAuthorized
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string $binding): Response
     {
+        /** @var Submissible $submissible */
+        $submissible = $request->route($binding);
+
         $referer = $request->headers->get('referer');
 
         if (! $referer) {
@@ -53,11 +57,11 @@ class EnsureFormIsEmbeddableAndAuthorized
         $referer = parse_url($referer)['host'];
 
         if ($referer != parse_url(config('app.url'))['host']) {
-            if (! $request->form->embed_enabled) {
+            if (! $submissible->isEmbedEnabled()) {
                 return response()->json(['error' => 'Embedding is not enabled for this form.'], 403);
             }
 
-            $allowedDomains = collect($request->form->allowed_domains ?? []);
+            $allowedDomains = collect($submissible->getAllowedDomains() ?? []);
 
             if (! $allowedDomains->contains($referer)) {
                 return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);

@@ -96,7 +96,7 @@ class FormWidgetController extends Controller
 
         $authentication = new FormAuthentication();
         $authentication->author()->associate($author);
-        $authentication->form()->associate($form);
+        $authentication->submissible()->associate($form);
         $authentication->code = Hash::make($code);
         $authentication->save();
 
@@ -134,7 +134,7 @@ class FormWidgetController extends Controller
         return response()->json([
             'submission_url' => URL::signedRoute('forms.submit', [
                 'authentication' => $authentication,
-                'form' => $authentication->form,
+                'form' => $authentication->submissible,
             ]),
         ]);
     }
