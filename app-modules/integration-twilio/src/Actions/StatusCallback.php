@@ -71,7 +71,7 @@ class StatusCallback implements ShouldQueue
         // TODO In order to potentially reduce the amount of noise from jobs, we might want to introduce a "screener" that eliminates certain jobs based on their status
         // And only run the update if it's a status that we want to run some type of update against. For instance, we will receive callbacks for
         // queued, sending, sent, etc... but we don't actually want/need to do anything during these lifecycle hooks. We only really care about
-        // delivered, undelivered, failed, etc... statuses. So we might essentially want to introduce a "screen" that blocks out certain status updates
+        // delivered, undelivered, failed, etc... statuses.
         UpdateEngagementDeliverableStatus::dispatch($deliverable, $this->data);
     }
 }
