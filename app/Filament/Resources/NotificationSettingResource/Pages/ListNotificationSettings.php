@@ -40,6 +40,7 @@ use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Pages\EmailConfiguration;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
@@ -49,11 +50,26 @@ class ListNotificationSettings extends ListRecords
 {
     protected static string $resource = NotificationSettingResource::class;
 
+    protected static ?string $navigationLabel = 'Notification Settings';
+
+    protected static ?string $title = 'Notification Settings';
+
+    protected static ?string $navigationIcon = 'heroicon-o-bell';
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            ...(new EmailConfiguration())->getBreadcrumbs(),
+            ...parent::getBreadcrumbs(),
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('name'),
+                TextColumn::make('description'),
             ])
             ->filters([
             ])
@@ -65,6 +81,11 @@ class ListNotificationSettings extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public function getSubNavigation(): array
+    {
+        return (new EmailConfiguration())->getSubNavigation();
     }
 
     protected function getHeaderActions(): array

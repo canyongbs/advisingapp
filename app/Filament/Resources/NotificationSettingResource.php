@@ -52,10 +52,11 @@ class NotificationSettingResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function getRelations(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public static function getPages(): array

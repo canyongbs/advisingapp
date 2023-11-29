@@ -52,6 +52,8 @@ class EmailTemplateResource extends Resource
 
     protected static ?int $navigationSort = 11;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function getPages(): array
     {
         return [

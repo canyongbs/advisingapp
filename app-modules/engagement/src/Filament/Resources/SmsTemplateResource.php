@@ -50,7 +50,13 @@ class SmsTemplateResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Administration';
 
+    protected static ?string $navigationLabel = 'Text Message Templates';
+
+    protected static ?string $modelLabel = 'text message template';
+
     protected static ?int $navigationSort = 12;
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {
