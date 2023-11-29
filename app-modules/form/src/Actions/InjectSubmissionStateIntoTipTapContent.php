@@ -36,8 +36,8 @@
 
 namespace Assist\Form\Actions;
 
-use Assist\Form\Models\FormField;
 use Assist\Form\Models\Submission;
+use Assist\Form\Models\SubmissibleField;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class InjectSubmissionStateIntoTipTapContent
@@ -74,7 +74,7 @@ class InjectSubmissionStateIntoTipTapContent
             }
 
             $field = $submission->fields
-                ->first(fn (FormField $field): bool => $field->id === $componentAttributes['id']);
+                ->first(fn (SubmissibleField $field): bool => $field->getKey() === $componentAttributes['id']);
 
             if (! $field) {
                 continue;

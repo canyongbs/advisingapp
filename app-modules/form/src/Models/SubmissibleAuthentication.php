@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property Carbon|null $created_at
+ * @property-read Submissible $submissible
  */
 #[NoPermissions]
 abstract class SubmissibleAuthentication extends BaseModel

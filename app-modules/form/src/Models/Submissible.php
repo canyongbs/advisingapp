@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
+ * @property string $name
  * @property ?array $content
  * @property bool $embed_enabled
  * @property bool $is_wizard
@@ -30,6 +31,11 @@ abstract class Submissible extends Model
     abstract public function steps(): HasMany;
 
     abstract public function submissions(): HasMany;
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => $this->hasCast('name') ? $this->castAttribute('name', $value) : $value);
+    }
 
     protected function content(): Attribute
     {

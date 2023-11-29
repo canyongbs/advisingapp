@@ -48,7 +48,7 @@
         @endforeach
     @else
         <x-form::submissions.content
-            :content="$submission->form->content"
+            :content="$submission->submissible->content"
             :submission="$submission"
         />
     @endif

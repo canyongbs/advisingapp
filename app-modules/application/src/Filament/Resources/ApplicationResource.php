@@ -6,7 +6,6 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Application\Models\Application;
-use Assist\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
 use Assist\Application\Filament\Resources\ApplicationResource\Pages\EditApplication;
 use Assist\Application\Filament\Resources\ApplicationResource\Pages\ListApplications;
 use Assist\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
@@ -33,8 +32,7 @@ class ApplicationResource extends Resource
     {
         return $page->generateNavigationItems([
             EditApplication::class,
-            // TODO
-            ManageFormSubmissions::class,
+            ManageApplicationSubmissions::class,
         ]);
     }
 

@@ -38,16 +38,16 @@ namespace Assist\Form\Notifications;
 
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
-use Assist\Form\Models\FormAuthentication;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\AnonymousNotifiable;
+use Assist\Form\Models\SubmissibleAuthentication;
 
 class AuthenticateFormNotification extends Notification
 {
     use Queueable;
 
     public function __construct(
-        public FormAuthentication $formAuthentication,
+        public SubmissibleAuthentication $submissibleAuthentication,
         public int $code,
     ) {}
 
@@ -62,7 +62,7 @@ class AuthenticateFormNotification extends Notification
     public function toMail(AnonymousNotifiable $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->subject("Your authentication code for {$this->formAuthentication->form->name}")
+            ->subject("Your authentication code for {$this->submissibleAuthentication->submissible->name}")
             ->line("Your code is: {$this->code}.")
             ->line('You should type this code into the form to authenticate yourself.')
             ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
