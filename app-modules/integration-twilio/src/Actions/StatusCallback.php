@@ -57,7 +57,7 @@ class StatusCallback implements ShouldQueue
 
     public function handle(): void
     {
-        $deliverable = EngagementDeliverable::where('external_id', $this->data['MessageSid'])->first();
+        $deliverable = EngagementDeliverable::where('external_reference_id', $this->data['MessageSid'])->first();
 
         if (is_null($deliverable)) {
             // TODO Potentially trigger a notification to an admin that a message was received for a non-existent deliverable
