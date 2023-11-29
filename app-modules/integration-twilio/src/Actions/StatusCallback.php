@@ -35,6 +35,8 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Assist\Engagement\Models\EngagementDeliverable;
+use Assist\Engagement\Actions\UpdateEngagementDeliverableStatus;
 
 class StatusCallback implements ShouldQueue
 {
@@ -49,6 +51,13 @@ class StatusCallback implements ShouldQueue
 
     public function handle(): void
     {
-        // TODO Handle a status update event
+        $deliverable = EngagementDeliverable::where('external_id', $this->data['MessageSid'])->first();
+
+        if (is_null($deliverable)) {
+            // TODO Potentially trigger a notification to an admin that a message was received for a non-existent deliverable
+            return;
+        }
+
+        UpdateEngagementDeliverableStatus::dispatch($deliverable, $this->data);
     }
 }

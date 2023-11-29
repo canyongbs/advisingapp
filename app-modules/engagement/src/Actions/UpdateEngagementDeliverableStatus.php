@@ -28,26 +28,39 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-use Assist\Engagement\Enums\EngagementDeliveryStatus;
+namespace Assist\Engagement\Actions;
 
-return new class () extends Migration {
-    public function up(): void
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Assist\Engagement\Models\EngagementDeliverable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+
+class UpdateEngagementDeliverableStatus implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        public EngagementDeliverable $deliverable,
+        public array $data
+    ) {}
+
+    public function handle(): void
     {
-        Schema::create('engagement_deliverables', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('engagement_id')->constrained('engagements')->unique();
-            $table->string('channel');
-            $table->string('external_reference_id')->nullable()->unique();
-            $table->string('external_status')->nullable();
-            $table->string('delivery_status')->default(EngagementDeliveryStatus::Awaiting->value);
-            $table->timestamp('delivered_at')->nullable();
-            $table->timestamp('last_delivery_attempt')->nullable();
-            $table->longText('delivery_response')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        $this->deliverable->driver()->updateDeliveryStatus($this->data);
     }
-};
+
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping($this->deliverable->id))
+                ->releaseAfter(30)
+                ->expireAfter(300),
+        ];
+    }
+}

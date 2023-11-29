@@ -47,7 +47,7 @@ class TwilioWebhookProcessor
     {
         return match ($event) {
             'message_received' => new MessagingResponse(),
-            'status_callback' => response(),
+            'status_callback' => response(status: 200),
         };
     }
 }
