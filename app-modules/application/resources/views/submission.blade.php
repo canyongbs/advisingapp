@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,21 +30,26 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace Assist\Form\Filament\Pages;
+<div class="tiptap-rendered-content flex flex-col gap-6">
+    @if ($submission->submissible->is_wizard)
+        @foreach ($submission->submissible->steps as $step)
+            <x-filament::section>
+                <x-slot name="heading">
+                    {{ $step->label }}
+                </x-slot>
 
-use Filament\Pages\Page;
-
-class ManageAdmissions extends Page
-{
-    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
-
-    protected static string $view = 'assist.filament.pages.coming-soon';
-
-    protected static ?string $navigationGroup = 'Forms and Surveys';
-
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $navigationLabel = 'Manage Admissions';
-}
+                <x-form::submissions.content
+                    :content="$step->content"
+                    :submission="$submission"
+                />
+            </x-filament::section>
+        @endforeach
+    @else
+        <x-form::submissions.content
+            :content="$submission->form->content"
+            :submission="$submission"
+        />
+    @endif
+</div>
