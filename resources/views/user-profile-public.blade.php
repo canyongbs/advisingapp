@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,29 +30,5 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-use App\Models\User;
-use Illuminate\Support\Facades\Route;
-use App\Notifications\DemoNotification;
-use App\Http\Controllers\ViewPublicUserProfileController;
-use App\Http\Controllers\Imports\DownloadImportFailureCsv;
-
-Route::get('/imports/{import}/failed-rows/download', DownloadImportFailureCsv::class)
-    ->name('imports.failed-rows.download')
-    ->middleware(['auth']);
-
-Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
-    ->name('users.profile.view.public');
-
-Route::get('/form-test', function () {
-    return view('form-test');
-});
-
-//TODO: remove
-Route::get('/demo-notification', function () {
-    /** @var User $user */
-    $user = auth()->user();
-
-    return (new DemoNotification($user))->toMail(User::first())->render();
-})->middleware(['auth']);
+--}}
+{{ json_encode($data) }}

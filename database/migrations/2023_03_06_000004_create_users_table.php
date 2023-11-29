@@ -59,9 +59,11 @@ class CreateUsersTable extends Migration
             $table->boolean('are_teams_visible_on_profile')->default(false);
             $table->boolean('is_division_visible_on_profile')->default(false);
             $table->string('timezone')->default('UTC');
+            $table->boolean('has_enabled_public_profile')->default(false);
+            $table->string('public_profile_slug')->nullable()->unique();
             $table->boolean('office_hours_are_enabled')->default(false);
             $table->boolean('appointments_are_restricted_to_existing_students')->default(false);
-            $table->json('office_hours_days')->nullable();
+            $table->json('office_hours')->nullable();
             $table->boolean('out_of_office_is_enabled')->default(false);
             $table->datetime('out_of_office_starts_at')->nullable();
             $table->datetime('out_of_office_ends_at')->nullable();
