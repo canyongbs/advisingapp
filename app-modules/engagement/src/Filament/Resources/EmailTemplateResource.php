@@ -50,7 +50,7 @@ class EmailTemplateResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 120;
 
     protected static bool $shouldRegisterNavigation = false;
 

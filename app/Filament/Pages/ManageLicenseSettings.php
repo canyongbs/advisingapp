@@ -12,7 +12,13 @@ use Filament\Forms\Components\DatePicker;
 
 class ManageLicenseSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static ?string $navigationIcon = 'heroicon-o-key';
+
+    protected static ?string $navigationLabel = 'Subscription Management';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 10;
 
     protected static string $settings = LicenseSettings::class;
 

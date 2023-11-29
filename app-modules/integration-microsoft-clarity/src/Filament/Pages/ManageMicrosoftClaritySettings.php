@@ -56,7 +56,7 @@ class ManageMicrosoftClaritySettings extends SettingsPage
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 80;
 
     public static function shouldRegisterNavigation(): bool
     {
