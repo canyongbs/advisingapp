@@ -74,14 +74,13 @@ class CreateEngagementBatch implements ShouldQueue
                 'scheduled' => false,
             ]);
 
-            $createDeliverablesForEngagement = resolve(CreateDeliverablesForEngagement::class);
-            $createDeliverablesForEngagement($engagement, $this->data->deliveryMethod);
+            $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
+
+            $createEngagementDeliverable($engagement, $this->data->deliveryMethod);
         });
 
         $deliverables = $engagementBatch->engagements->map(function (Engagement $engagement) {
-            return $engagement->deliverables->each(function (EngagementDeliverable $deliverable) {
-                return $deliverable;
-            });
+            return $engagement->deliverable;
         });
 
         $deliverableJobs = $deliverables->flatten()->map(function (EngagementDeliverable $deliverable) {

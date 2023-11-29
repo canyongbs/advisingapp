@@ -57,11 +57,11 @@ it('will dispatch a job to send all engagements that should be delivered via ema
 
     // A job to "send" the engagement should be dispatched for only the first engagement
     Queue::assertPushed(EngagementEmailChannelDelivery::class, function ($job) use ($engagement) {
-        return $job->deliverable->is($engagement->deliverables->first());
+        return $job->deliverable->is($engagement->deliverable);
     });
 
     Queue::assertNotPushed(EngagementEmailChannelDelivery::class, function ($job) use ($futureEngagement) {
-        return $job->deliverable->is($futureEngagement->deliverables->first());
+        return $job->deliverable->is($futureEngagement->deliverable);
     });
 });
 
@@ -85,11 +85,11 @@ it('will dispatch a job to send all engagements that should be delivered via sms
 
     // A job to "send" the engagement should be dispatched for only the first engagement
     Queue::assertPushed(EngagementSmsChannelDelivery::class, function ($job) use ($engagement) {
-        return $job->deliverable->is($engagement->deliverables->first());
+        return $job->deliverable->is($engagement->deliverable);
     });
 
     Queue::assertNotPushed(EngagementSmsChannelDelivery::class, function ($job) use ($futureEngagement) {
-        return $job->deliverable->is($futureEngagement->deliverables->first());
+        return $job->deliverable->is($futureEngagement->deliverable);
     });
 });
 
@@ -105,7 +105,7 @@ it('will not dispatch a job to send an engagement that has already been delivere
 
     // And it has already been delivered
     DeliverEngagements::dispatchSync();
-    $engagement->deliverables->first()->markDeliverySuccessful();
+    $engagement->deliverable->markDeliverySuccessful();
 
     Queue::assertPushed(EngagementEmailChannelDelivery::class, 1);
 

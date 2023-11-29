@@ -38,7 +38,7 @@ return new class () extends Migration {
     {
         Schema::create('engagement_deliverables', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('engagement_id')->constrained('engagements');
+            $table->foreignUuid('engagement_id')->constrained('engagements')->unique();
             $table->string('channel');
             $table->string('delivery_status')->default(EngagementDeliveryStatus::Awaiting->value);
             $table->timestamp('delivered_at')->nullable();
