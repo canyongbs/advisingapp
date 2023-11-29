@@ -17,7 +17,7 @@ class SmsDriver implements DeliverableDriver
         ]);
 
         match ($this->deliverable->external_status) {
-            'delivered', 'read' => $this->deliverable->markDeliverySuccessful(),
+            'delivered' => $this->deliverable->markDeliverySuccessful(),
             'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($data['ErrorMessage'] ?? null),
             default => null,
         };
