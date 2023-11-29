@@ -39,7 +39,7 @@ Route::get('/imports/{import}/failed-rows/download', DownloadImportFailureCsv::c
     ->middleware(['auth']);
 
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
-    ->name('view-public-user-profile');
+    ->name('users.profile.view.public');
 
 Route::get('/form-test', function () {
     return view('form-test');

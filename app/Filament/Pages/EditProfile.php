@@ -175,13 +175,14 @@ class EditProfile extends Page
                             ->unique(ignoreRecord: true)
                             ->maxLength(255)
                             ->required()
-                            ->prefix(str(route('view-public-user-profile', ['user' => $user->id]))->beforeLast('/')->append('/'))
+                            //The id doesn't matter because we're just using it to generate a piece of a url
+                            ->prefix(str(route('users.profile.view.public', ['user' => -1]))->beforeLast('/')->append('/'))
                             ->suffixAction(
                                 FormAction::make('viewPublicProfile')
-                                    ->url(fn (Get $get) => route('view-public-user-profile', ['user' => $get('public_profile_slug')]))
+                                    ->url(fn () => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
                                     ->icon('heroicon-m-arrow-top-right-on-square')
                                     ->openUrlInNewTab()
-                                    ->visible(fn (Get $get) => $get('public_profile_slug')),
+                                    ->visible(fn () => $user->public_profile_slug),
                             )
                             ->live(),
                     ]),
@@ -218,24 +219,22 @@ class EditProfile extends Page
                         Placeholder::make('teams')
                             ->label(str('Team')->plural($user->teams->count()))
                             ->content($user->teams->pluck('name')->join(', ', ' and '))
-                            ->hidden($user->teams->isEmpty()),
-                        //TODO: Removing for now because this wasn't on the list of public fields desired by Product
-
-                        // ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        // Checkbox::make('are_teams_visible_on_profile')
-                        //     ->label('Show ' . str('team')->plural($user->teams->count())->ucfirst() . ' on profile')
-                        //     ->hidden($user->teams->isEmpty())
-                        //     ->live(),
+                            ->hidden($user->teams->isEmpty())
+                            ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        //TODO: Right now this is not passed to the frontend
+                        Checkbox::make('are_teams_visible_on_profile')
+                            ->label('Show ' . str('team')->plural($user->teams->count())->ucfirst() . ' on profile')
+                            ->hidden($user->teams->isEmpty())
+                            ->live(),
                         Placeholder::make('division')
                             ->content($user->teams->first()?->division?->name)
-                            ->hidden(! $user->teams?->first()?->division()->exists()),
-                        //TODO: Removing for now because this wasn't on the list of public fields desired by Product
-
-                        // ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        // Checkbox::make('is_division_visible_on_profile')
-                        //     ->label('Show Division on profile')
-                        //     ->hidden(! $user->teams?->first()?->division()->exists())
-                        //     ->live(),
+                            ->hidden(! $user->teams?->first()?->division()->exists())
+                            ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        //TODO: Right now this is not passed to the frontend
+                        Checkbox::make('is_division_visible_on_profile')
+                            ->label('Show Division on profile')
+                            ->hidden(! $user->teams?->first()?->division()->exists())
+                            ->live(),
                     ]),
                 Section::make('Account Information')
                     ->description("Update your account's information.")
