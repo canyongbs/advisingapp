@@ -36,7 +36,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,19 +62,17 @@ class EmailConfiguration extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
+        /** @var NavigationItem $firstNavItem */
+        $firstNavItem = collect((new EmailConfiguration())->getSubNavigation())
+            ->first(function (NavigationItem $item) {
+                return $item->isVisible();
+            });
 
-        return $user->can(['notification_setting.view-any']) || ListNotificationSettings::shouldRegisterNavigation();
+        return ! is_null($firstNavItem);
     }
 
     public function mount(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        abort_unless($user->can(['notification_setting.view-any']) || ListNotificationSettings::shouldRegisterNavigation(), Response::HTTP_FORBIDDEN);
-
         /** @var NavigationItem $firstNavItem */
         $firstNavItem = collect($this->getSubNavigation())
             ->first(function (NavigationItem $item) {
