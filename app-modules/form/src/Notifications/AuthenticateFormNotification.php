@@ -39,8 +39,8 @@ namespace Assist\Form\Notifications;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\AnonymousNotifiable;
 use Assist\Form\Models\SubmissibleAuthentication;
+use Illuminate\Notifications\AnonymousNotifiable;
 
 class AuthenticateFormNotification extends Notification
 {
