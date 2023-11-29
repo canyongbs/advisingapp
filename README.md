@@ -5,7 +5,6 @@
 <!--[![Issues][issues-shield]][issues-url]-->
 [![Contributors][contributors-shield]][contributors-url]
 [![Stargazers][stars-shield]][stars-url]
-[![AGPL 3.0 License][license-shield]][license-url]
 
 <!-- PROJECT LOGO -->
 [![Canyon GBS GitHub Header Image!](https://s3.us-west-2.amazonaws.com/canyongbs.com/LinkedIn-CompanyCoverImage.png "Canyyon GBS GitHub Header Image")](https://canyongbs.com)\
@@ -15,12 +14,11 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<!-- [![ASSIST Dashboard Screen Shot][product-screenshot]](https://assistforhighered.org/) -->
 👋 Welcome!\
 \
-This repository includes the software required for the AI + CRM components in Canyon GBS LLC's AI + CRM + Data + Analytics ecosystem solution for colleges and universities in North America. This solution is known as __ASSIST by Canyon GBS™__, where ASSIST is an abbrieviation for __Advanced Student Support & Interaction Servicing Technology™__. \
+This repository includes the software solution known as __Advising App™__ created by Canyon GBS™. \
 \
-The software in this repository is offerred as a fully managed and supported, SOC 2 compliant and ISO 27001:2022 certified, SaaS offerring to colleges and universities through Canyon GBS LLC. Additionally, the software is released as open-source under AGPL 3.0 (see the [license file](./LICENSE) for more details.)\
+The software in this repository is offerred as a fully managed and supported, SOC 2 compliant and ISO 27001:2022 certified, SaaS offerring to colleges and universities through Canyon GBS LLC. Additionally, the software is released as open-source under the Elastic License 2.0 (see the [license file](./LICENSE) for more details.)\
 \
 _Note: This software is developed, under copyright, and trademarked by Canyon GBS LLC ([canyongbs.com](https://canyongbs.com))._
 
@@ -67,7 +65,7 @@ A [PHP](https://php.net) TALL Stack is used to create our software:
 
 ### Dependences for AI + CRM (800+)
 
-* [GitHub Insights: Dependencies](https://github.com/canyongbs/assistbycanyongbs/network/dependencies)
+* [GitHub Insights: Dependencies](https://github.com/canyongbs/advisingapp/network/dependencies)
 
 ### Recommended Cloud Infrastructure
 
@@ -103,13 +101,13 @@ _Note: More documentation coming soon._
 
 For SaaS customers, please channel your feature requests through your customer success associate. For issues, please open a support request so that your issue can be promptly addressed.\
 \
-For DIY customers, please open your feature request or issue using [GitHub Issues](https://github.com/canyongbs/assistbycanyongbs/issues).
+For DIY customers, please open your feature request or issue using [GitHub Issues](https://github.com/canyongbs/advisingapp/issues).
 
 ## Contributing
 
 The software for this project is created and managed by a professional engineering team inside Canyon GBS LLC.\
 \
-All contributions to the project must be pre-approved in order to ensure product integrity. Create an issue with the "enhancement" tag, and include the details of your proposed change. A member of the product team at Canyon GBS will review, and if approved, you may fork the repo and create a pull request. Once complete, engineering at Canyon GBS will review for quality assurance prior to merging the PR. You may be asked to make changes in order to meet our quality standards for the project.\
+All contributions to the project must be pre-approved in order to ensure product integrity. Create an issue with the "enhancement" tag, and include the details of your proposed change. A member of the product team at Canyon GBS will review, and if approved, you may fork the repo and create a pull request. Once complete, engineering at Canyon GBS will review for quality assurance prior to merging the PR. You may be asked to make changes in order to meet our quality standards for the project.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -121,7 +119,7 @@ _Don't forget to ⭐ the project to show your support! Thanks again!_
 
 ## License
 
-This software is developed by Canyon GBS LLC who is the copyright and trademark holder for this project. The source code itself is distributed under AGPL 3.0 License. See [License](./LICENSE) for more details.
+This software is developed by Canyon GBS LLC who is the copyright and trademark holder for this project. The source code itself is distributed under the Elastic License 2.0. See [License](./LICENSE) for more details.
 
 ## Contact Information
 
@@ -147,15 +145,15 @@ The creation and successful release of this ambitious project would not have bee
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/canyongbs/assistbycanyongbs.svg?style=for-the-badge
-[contributors-url]: https://github.com/canyongbs/assistbycanyongbs/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/canyongbs/assistbycanyongbs.svg?style=for-the-badge
-[forks-url]: https://github.com/canyongbs/assistbycanyongbs/network/members
-[stars-shield]: https://img.shields.io/github/stars/canyongbs/assistbycanyongbs.svg?style=for-the-badge
-[stars-url]: https://github.com/joelicatajr/assistbycanyongbs/stargazers
-[issues-shield]: https://img.shields.io/github/issues/canyongbs/assistbycanyongbs.svg?style=for-the-badge
-[issues-url]: https://github.com/joelicatajr/assistbycanyongbs/issues
-[license-shield]: https://img.shields.io/github/license/canyongbs/assistbycanyongbs.svg?style=for-the-badge
-[license-url]: https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/canyongbs/advisingapp.svg?style=for-the-badge
+[contributors-url]: https://github.com/canyongbs/advisingapp/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/canyongbs/advisingapp.svg?style=for-the-badge
+[forks-url]: https://github.com/canyongbs/advisingapp/network/members
+[stars-shield]: https://img.shields.io/github/stars/canyongbs/advisingapp.svg?style=for-the-badge
+[stars-url]: https://github.com/canyongbs/advisingapp/stargazers
+[issues-shield]: https://img.shields.io/github/issues/canyongbs/advisingapp.svg?style=for-the-badge
+[issues-url]: https://github.com/canyongbs/advisingapp/issues
+<!-- [license-shield]: https://img.shields.io/github/license/canyongbs/advisingapp.svg?style=for-the-badge -->
+[license-url]: https://github.com/canyongbs/advisingapp/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/company/canyongbs
