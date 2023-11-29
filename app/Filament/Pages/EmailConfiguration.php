@@ -36,10 +36,12 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
+use Symfony\Component\HttpFoundation\Response;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
 use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
 
 class EmailConfiguration extends Page
 {
@@ -51,61 +53,62 @@ class EmailConfiguration extends Page
 
     protected static string $view = 'filament.pages.email-configuration';
 
-    protected static bool $shouldRegisterNavigation = false;
+    public function getBreadcrumbs(): array
+    {
+        return [
+            $this::getUrl() => 'Email Configuration',
+        ];
+    }
 
-    // public function getBreadcrumbs(): array
-    // {
-    //     return [
-    //         $this::getUrl() => 'Email Configuration',
-    //     ];
-    // }
-    //
-    // public static function shouldRegisterNavigation(): bool
-    // {
-    //     /** @var User $user */
-    //     $user = auth()->user();
-    //
-    //     return $user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation();
-    // }
-    //
-    // public function mount(): void
-    // {
-    //     /** @var User $user */
-    //     $user = auth()->user();
-    //
-    //     abort_unless($user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation(), 403);
-    //
-    //     /** @var NavigationItem $firstNavItem */
-    //     $firstNavItem = collect($this->getSubNavigation())->first(function (NavigationItem $item) {
-    //         return $item->isVisible();
-    //     });
-    //
-    //     if (is_null($firstNavItem)) {
-    //         abort(403);
-    //     }
-    //
-    //     abort_unless($firstNavItem, Response);
-    //
-    //     redirect($firstNavItem->getUrl());
-    // }
-    //
-    // public function getSubNavigation(): array
-    // {
-    //     $navigationItems = $this->generateNavigationItems(
-    //         [
-    //             ListNotificationSettings::class,
-    //         ]
-    //     );
-    //
-    //     /** @var User $user */
-    //     $user = auth()->user();
-    //
-    //     if ($user->can(['assistant.access_ai_settings'])) {
-    //         $navigationItems = [
-    //             ...$navigationItems,
-    //         ];
-    //     }
-    //
-    //     return $navigationItems;
-    // }
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var NavigationItem $firstNavItem */
+        $firstNavItem = collect((new EmailConfiguration())->getSubNavigation())
+            ->first(function (NavigationItem $item) {
+                return $item->isVisible();
+            });
+
+        return ! is_null($firstNavItem);
+    }
+
+    public function mount(): void
+    {
+        /** @var NavigationItem $firstNavItem */
+        $firstNavItem = collect($this->getSubNavigation())
+            ->first(function (NavigationItem $item) {
+                return $item->isVisible();
+            });
+
+        abort_if(is_null($firstNavItem), Response::HTTP_FORBIDDEN);
+
+        redirect($firstNavItem->getUrl());
+    }
+
+    public static function getNavigationItems(): array
+    {
+        $item = parent::getNavigationItems()[0];
+
+        $item->isActiveWhen(function (): bool {
+            $subItems = (new EmailConfiguration())->getSubNavigation();
+
+            foreach ($subItems as $subItem) {
+                if (str(request()->fullUrl())->contains(str($subItem->getUrl())->after('/'))) {
+                    return true;
+                }
+            }
+
+            return request()->routeIs(static::getRouteName());
+        });
+
+        return [$item];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return $this->generateNavigationItems([
+            ListNotificationSettings::class,
+            ListEmailTemplates::class,
+            ListSmsTemplates::class,
+        ]);
+    }
 }

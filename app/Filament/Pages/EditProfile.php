@@ -152,19 +152,46 @@ class EditProfile extends Page
         ])->map(
             fn ($day) => Grid::make(3)
                 ->schema([
-                    Toggle::make("office_hours_days.{$day}.enabled")
+                    Toggle::make("office_hours.{$day}.enabled")
                         ->label(str($day)->ucfirst())
                         ->inline(false)
                         ->live(),
-                    TimePicker::make("office_hours_days.{$day}.start")
-                        ->visible(fn (Get $get) => $get("office_hours_days.{$day}.enabled")),
-                    TimePicker::make("office_hours_days.{$day}.end")
-                        ->visible(fn (Get $get) => $get("office_hours_days.{$day}.enabled")),
+                    TimePicker::make("office_hours.{$day}.starts_at")
+                        ->required()
+                        ->visible(fn (Get $get) => $get("office_hours.{$day}.enabled")),
+                    TimePicker::make("office_hours.{$day}.ends_at")
+                        ->required()
+                        ->visible(fn (Get $get) => $get("office_hours.{$day}.enabled")),
                 ])
         )->toArray();
 
         return $form
             ->schema([
+                Section::make('Public Profile')
+                    ->aside()
+                    ->schema([
+                        Toggle::make('has_enabled_public_profile')
+                            ->label('Enable public profile')
+                            ->live(),
+                        TextInput::make('public_profile_slug')
+                            ->label('Url')
+                            ->visible(fn (Get $get) => $get('has_enabled_public_profile'))
+                            //TODO: default doesn't work for some reason
+                            ->afterStateHydrated(fn (TextInput $component, $state) => $component->state($state ?? str($user->name)->lower()->slug('')))
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255)
+                            ->required()
+                            //The id doesn't matter because we're just using it to generate a piece of a url
+                            ->prefix(str(route('users.profile.view.public', ['user' => -1]))->beforeLast('/')->append('/'))
+                            ->suffixAction(
+                                FormAction::make('viewPublicProfile')
+                                    ->url(fn () => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
+                                    ->icon('heroicon-m-arrow-top-right-on-square')
+                                    ->openUrlInNewTab()
+                                    ->visible(fn () => $user->public_profile_slug),
+                            )
+                            ->live(),
+                    ]),
                 Section::make('Profile Information')
                     ->description('This information is visible to other users on your profile page, if you choose to make it visible.')
                     ->aside()
@@ -176,6 +203,10 @@ class EditProfile extends Page
                             ->collection('avatar')
                             ->hidden($user->is_external)
                             ->avatar(),
+                        Placeholder::make('external_avatar')
+                            ->label('Avatar')
+                            ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
+                            ->visible($user->is_external),
                         $this->getNameFormComponent()
                             ->disabled($user->is_external),
                         RichEditor::make('bio')
@@ -196,6 +227,7 @@ class EditProfile extends Page
                             ->content($user->teams->pluck('name')->join(', ', ' and '))
                             ->hidden($user->teams->isEmpty())
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        //TODO: Right now this is not passed to the frontend
                         Checkbox::make('are_teams_visible_on_profile')
                             ->label('Show ' . str('team')->plural($user->teams->count())->ucfirst() . ' on profile')
                             ->hidden($user->teams->isEmpty())
@@ -204,17 +236,14 @@ class EditProfile extends Page
                             ->content($user->teams->first()?->division?->name)
                             ->hidden(! $user->teams?->first()?->division()->exists())
                             ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        //TODO: Right now this is not passed to the frontend
                         Checkbox::make('is_division_visible_on_profile')
                             ->label('Show Division on profile')
                             ->hidden(! $user->teams?->first()?->division()->exists())
                             ->live(),
-                        Placeholder::make('external_avatar')
-                            ->label('Avatar')
-                            ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
-                            ->visible($user->is_external),
                     ]),
                 Section::make('Account Information')
-                    ->description('Update your account\'s information.')
+                    ->description("Update your account's information.")
                     ->aside()
                     ->schema([
                         $this->getEmailFormComponent()
@@ -253,9 +282,11 @@ class EditProfile extends Page
                                     ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
                                 DateTimePicker::make('out_of_office_starts_at')
                                     ->label('Start')
+                                    ->required()
                                     ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
                                 DateTimePicker::make('out_of_office_ends_at')
                                     ->label('End')
+                                    ->required()
                                     ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
                             ]),
                     ]),

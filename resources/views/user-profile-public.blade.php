@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,38 +30,5 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace Assist\Engagement\Filament\Resources;
-
-use Filament\Resources\Resource;
-use Assist\Engagement\Models\SmsTemplate;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
-
-class SmsTemplateResource extends Resource
-{
-    protected static ?string $model = SmsTemplate::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?string $navigationLabel = 'Text Message Templates';
-
-    protected static ?string $modelLabel = 'text message template';
-
-    protected static ?int $navigationSort = 12;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListSmsTemplates::route('/'),
-            'create' => CreateSmsTemplate::route('/create'),
-            'edit' => EditSmsTemplate::route('/{record}/edit'),
-        ];
-    }
-}
+--}}
+{{ json_encode($data) }}
