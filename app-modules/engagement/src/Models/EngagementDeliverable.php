@@ -114,7 +114,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
         };
     }
 
-    // TODO We can move this to the "handler"
+    // TODO We can move this to the "driver"
     public function jobForDelivery(): QueuedEngagementDelivery
     {
         return match ($this->channel) {
@@ -124,7 +124,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
         };
     }
 
-    // TODO We can move this to the "handler"
+    // TODO We can move this to the "driver"
     public function deliver(): void
     {
         match ($this->channel) {

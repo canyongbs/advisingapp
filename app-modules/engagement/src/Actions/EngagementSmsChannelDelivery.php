@@ -58,6 +58,4 @@ class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
             'external_status' => $message->status,
         ]);
     }
-
-
 }

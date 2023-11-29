@@ -52,8 +52,7 @@ class CreateEngagementResponse
 
         if (! is_null($sender)) {
             EngagementResponse::create([
-                // TODO Need to handle this better, perhaps some getter on the Prospect/Student
-                'sender_id' => $sender->id ?? $sender->sisid,
+                'sender_id' => $sender->getKey(),
                 'sender_type' => $sender->getMorphClass(),
                 'content' => $data->body,
                 // TODO We might need to retroactively get this data from the Twilio API
