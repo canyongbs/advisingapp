@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Engagement\Handlers;
+namespace Assist\Engagement\Drivers;
 
 interface DeliverableDriver
 {

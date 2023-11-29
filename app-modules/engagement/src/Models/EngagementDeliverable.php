@@ -37,10 +37,10 @@
 namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
+use Assist\Engagement\Drivers\SmsDriver;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Engagement\Handlers\SmsDriver;
-use Assist\Engagement\Handlers\EmailDriver;
-use Assist\Engagement\Handlers\DeliverableDriver;
+use Assist\Engagement\Drivers\EmailDriver;
+use Assist\Engagement\Drivers\DeliverableDriver;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
