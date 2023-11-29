@@ -31,8 +31,8 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewPublicUserProfileController extends Controller
@@ -70,7 +70,7 @@ class ViewPublicUserProfileController extends Controller
                     ? $office_hours
                     : false,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
-            ]
+            ],
         ]);
     }
 }
