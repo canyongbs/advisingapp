@@ -3,27 +3,33 @@
 /*
 <COPYRIGHT>
 
-Copyright © 2022-2023, Canyon GBS LLC
+    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
 
-All rights reserved.
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
-This file is part of a project developed using Laravel, which is an open-source framework for PHP.
-Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
-projects used in the development of this solution.
+    Notice:
 
-This project is licensed under the Affero General Public License (AGPL) 3.0.
-For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
 
-Notice:
-- The copyright notice in this file and across all files and applications in this
- repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
-- The software solution, including services, infrastructure, and code, is offered as a
- Software as a Service (SaaS) by Canyon GBS LLC.
-- Use of this software implies agreement to the license terms and conditions as stated
- in the AGPL 3.0 License.
-
-For more information or inquiries please visit our website at
-https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 */
@@ -1266,11 +1272,9 @@ namespace Assist\Engagement\Models{
  * @property-read int|null $audits_count
  * @property-read \Assist\Engagement\Models\EngagementBatch|null $batch
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $deliverables
- * @property-read int|null $deliverables_count
+ * @property-read \Assist\Engagement\Models\EngagementDeliverable|null $deliverable
  * @property-read \Assist\Engagement\Models\EngagementBatch|null $engagementBatch
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $engagementDeliverables
- * @property-read int|null $engagement_deliverables_count
+ * @property-read \Assist\Engagement\Models\EngagementDeliverable|null $engagementDeliverable
  * @property-read \Assist\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
  * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
@@ -1453,6 +1457,20 @@ namespace Assist\Engagement\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperEngagementResponse {}
+}
+
+namespace Assist\Engagement\Models{
+/**
+ * Assist\Engagement\Models\SmsTemplate
+ *
+ * @method static \Assist\Engagement\Database\Factories\SmsTemplateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSmsTemplate {}
 }
 
 namespace Assist\Form\Models{
