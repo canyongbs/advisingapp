@@ -37,7 +37,10 @@
 namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
+use Assist\Engagement\Drivers\SmsDriver;
 use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Engagement\Drivers\EmailDriver;
+use Assist\Engagement\Drivers\DeliverableDriver;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,6 +58,8 @@ class EngagementDeliverable extends BaseModel implements Auditable
     use AuditableTrait;
 
     protected $fillable = [
+        'external_reference_id',
+        'external_status',
         'channel',
         'delivery_status',
         'delivered_at',
@@ -81,22 +86,35 @@ class EngagementDeliverable extends BaseModel implements Auditable
 
     public function markDeliverySuccessful(): void
     {
-        $this->update([
-            'delivery_status' => EngagementDeliveryStatus::Successful,
-            'delivered_at' => now(),
-            'last_delivery_attempt' => now(),
-        ]);
+        if (! $this->hasBeenDelivered()) {
+            $this->update([
+                'delivery_status' => EngagementDeliveryStatus::Successful,
+                'delivered_at' => now(),
+                'last_delivery_attempt' => now(),
+            ]);
+        }
     }
 
     public function markDeliveryFailed(string $reason): void
     {
-        $this->update([
-            'delivery_status' => EngagementDeliveryStatus::Failed,
-            'last_delivery_attempt' => now(),
-            'delivery_response' => $reason,
-        ]);
+        if (! $this->hasBeenDelivered()) {
+            $this->update([
+                'delivery_status' => EngagementDeliveryStatus::Failed,
+                'last_delivery_attempt' => now(),
+                'delivery_response' => $reason,
+            ]);
+        }
     }
 
+    public function driver(): DeliverableDriver
+    {
+        return match ($this->channel) {
+            EngagementDeliveryMethod::Email => new EmailDriver($this),
+            EngagementDeliveryMethod::Sms => new SmsDriver($this),
+        };
+    }
+
+    // TODO We can move this to the "driver"
     public function jobForDelivery(): QueuedEngagementDelivery
     {
         return match ($this->channel) {
@@ -106,6 +124,7 @@ class EngagementDeliverable extends BaseModel implements Auditable
         };
     }
 
+    // TODO We can move this to the "driver"
     public function deliver(): void
     {
         match ($this->channel) {

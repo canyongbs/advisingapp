@@ -34,25 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions;
+namespace Assist\Engagement\Drivers;
 
-use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Actions\CreateEngagementDeliverable;
+use Assist\Engagement\Models\EngagementDeliverable;
 
-class CreateOnDemandEngagement
+class SmsDriver implements DeliverableDriver
 {
-    public function __invoke(Model $educatable, array $data): void
+    public function __construct(
+        protected EngagementDeliverable $deliverable
+    ) {}
+
+    public function updateDeliveryStatus(array $data): void
     {
-        $engagement = $educatable->engagements()->create([
-            'subject' => $data['subject'] ?? null,
-            'body' => $data['body'],
-            'scheduled' => false,
+        $this->deliverable->update([
+            'external_status' => $data['MessageStatus'] ?? null,
         ]);
 
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $data['delivery_method']);
-
-        $engagement->deliverable->deliver();
+        match ($this->deliverable->external_status) {
+            'delivered' => $this->deliverable->markDeliverySuccessful(),
+            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($data['ErrorMessage'] ?? null),
+            default => null,
+        };
     }
 }

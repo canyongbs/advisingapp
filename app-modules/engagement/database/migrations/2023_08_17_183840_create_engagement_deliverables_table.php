@@ -46,6 +46,8 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('engagement_id')->constrained('engagements')->unique();
             $table->string('channel');
+            $table->string('external_reference_id')->nullable()->unique();
+            $table->string('external_status')->nullable();
             $table->string('delivery_status')->default(EngagementDeliveryStatus::Awaiting->value);
             $table->timestamp('delivered_at')->nullable();
             $table->timestamp('last_delivery_attempt')->nullable();

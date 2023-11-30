@@ -34,25 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions;
+namespace Assist\Engagement\Actions;
 
-use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Actions\CreateEngagementDeliverable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Assist\Engagement\Models\EngagementDeliverable;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class CreateOnDemandEngagement
+class UpdateEngagementDeliverableStatus implements ShouldQueue
 {
-    public function __invoke(Model $educatable, array $data): void
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        public EngagementDeliverable $deliverable,
+        public array $data
+    ) {}
+
+    public function handle(): void
     {
-        $engagement = $educatable->engagements()->create([
-            'subject' => $data['subject'] ?? null,
-            'body' => $data['body'],
-            'scheduled' => false,
-        ]);
+        $this->deliverable->driver()->updateDeliveryStatus($this->data);
+    }
 
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $data['delivery_method']);
-
-        $engagement->deliverable->deliver();
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping($this->deliverable->id))
+                ->releaseAfter(30)
+                ->expireAfter(300),
+        ];
     }
 }

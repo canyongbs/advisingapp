@@ -34,25 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions;
+namespace Assist\Engagement\Drivers;
 
-use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Actions\CreateEngagementDeliverable;
+use Assist\Engagement\Models\EngagementDeliverable;
 
-class CreateOnDemandEngagement
+class EmailDriver implements DeliverableDriver
 {
-    public function __invoke(Model $educatable, array $data): void
-    {
-        $engagement = $educatable->engagements()->create([
-            'subject' => $data['subject'] ?? null,
-            'body' => $data['body'],
-            'scheduled' => false,
-        ]);
+    public function __construct(
+        protected EngagementDeliverable $deliverable
+    ) {}
 
-        $createEngagementDeliverable = resolve(CreateEngagementDeliverable::class);
-
-        $createEngagementDeliverable($engagement, $data['delivery_method']);
-
-        $engagement->deliverable->deliver();
-    }
+    public function updateDeliveryStatus(array $data): void {}
 }

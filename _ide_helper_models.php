@@ -1103,11 +1103,9 @@ namespace Assist\Engagement\Models{
  * @property-read int|null $audits_count
  * @property-read \Assist\Engagement\Models\EngagementBatch|null $batch
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $deliverables
- * @property-read int|null $deliverables_count
+ * @property-read \Assist\Engagement\Models\EngagementDeliverable|null $deliverable
  * @property-read \Assist\Engagement\Models\EngagementBatch|null $engagementBatch
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $engagementDeliverables
- * @property-read int|null $engagement_deliverables_count
+ * @property-read \Assist\Engagement\Models\EngagementDeliverable|null $engagementDeliverable
  * @property-read \Assist\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
  * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
@@ -1171,6 +1169,7 @@ namespace Assist\Engagement\Models{
  * @property string $id
  * @property string $engagement_id
  * @property \Assist\Engagement\Enums\EngagementDeliveryMethod $channel
+ * @property string|null $external_reference_id
  * @property \Assist\Engagement\Enums\EngagementDeliveryStatus $delivery_status
  * @property \Illuminate\Support\Carbon|null $delivered_at
  * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
@@ -1192,6 +1191,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryResponse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereEngagementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereExternalReferenceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereLastDeliveryAttempt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
