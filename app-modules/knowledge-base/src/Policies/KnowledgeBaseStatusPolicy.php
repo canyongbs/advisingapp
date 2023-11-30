@@ -38,10 +38,17 @@ namespace Assist\KnowledgeBase\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
+use App\Support\FeatureAccessResponse;
 use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
 
 class KnowledgeBaseStatusPolicy
 {
+    public function before(): FeatureAccessResponse | null | bool
+    {
+        return Gate::denies('knowledge-management') ? FeatureAccessResponse::deny() : null;
+    }
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(

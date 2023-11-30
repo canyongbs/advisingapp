@@ -37,6 +37,8 @@
 namespace Assist\KnowledgeBase\Providers;
 
 use Filament\Panel;
+use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Assist\KnowledgeBase\KnowledgeBasePlugin;
 use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
@@ -66,6 +68,8 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
 
         $this->registerRolesAndPermissions();
         $this->registerObservers();
+
+        Gate::define('knowledge-management', fn () => app(LicenseSettings::class)->data->addons->knowledgeManagement);
     }
 
     public function registerObservers(): void
