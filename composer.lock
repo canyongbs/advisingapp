@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab619a01717a0be2b885f0665ee5f694",
+    "content-hash": "a96f1e137a024446764e80e302fcb1b1",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -680,6 +680,42 @@
                     "Assist\\Alert\\Tests\\": "tests/",
                     "Assist\\Alert\\Database\\Factories\\": "database/factories/",
                     "Assist\\Alert\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/application",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/application",
+                "reference": "6c0d1c84c7de3a02ef31a9e916d6d13ad3acdd7b"
+            },
+            "require": {
+                "canyon-gbs/form": "*",
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\Application\\Providers\\ApplicationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\Application\\": "src/",
+                    "Assist\\Application\\Tests\\": "tests/",
+                    "Assist\\Application\\Database\\Factories\\": "database/factories/",
+                    "Assist\\Application\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -3308,7 +3344,7 @@
         },
         {
             "name": "filament/actions",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
@@ -3359,7 +3395,7 @@
         },
         {
             "name": "filament/filament",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
@@ -3424,7 +3460,7 @@
         },
         {
             "name": "filament/forms",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
@@ -3480,7 +3516,7 @@
         },
         {
             "name": "filament/infolists",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
@@ -3531,7 +3567,7 @@
         },
         {
             "name": "filament/notifications",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
@@ -3583,7 +3619,7 @@
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -3620,7 +3656,7 @@
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
@@ -3667,7 +3703,7 @@
         },
         {
             "name": "filament/support",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
@@ -3724,16 +3760,16 @@
         },
         {
             "name": "filament/tables",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
-                "reference": "ec02aca49f96c2614baedc99d1910ee6a876171f"
+                "reference": "1ce8248a19b7406a736929cfb0efe0264fd3ca4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/tables/zipball/ec02aca49f96c2614baedc99d1910ee6a876171f",
-                "reference": "ec02aca49f96c2614baedc99d1910ee6a876171f",
+                "url": "https://api.github.com/repos/filamentphp/tables/zipball/1ce8248a19b7406a736929cfb0efe0264fd3ca4b",
+                "reference": "1ce8248a19b7406a736929cfb0efe0264fd3ca4b",
                 "shasum": ""
             },
             "require": {
@@ -3773,11 +3809,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-11-30T16:08:27+00:00"
+            "time": "2023-11-30T16:21:09+00:00"
         },
         {
             "name": "filament/widgets",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
