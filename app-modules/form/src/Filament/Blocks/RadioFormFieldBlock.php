@@ -36,8 +36,8 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormField;
 use Filament\Forms\Components\KeyValue;
+use Assist\Form\Models\SubmissibleField;
 
 class RadioFormFieldBlock extends FormFieldBlock
 {
@@ -61,18 +61,18 @@ class RadioFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    public static function getFormKitSchema(FormField $field): array
+    public static function getFormKitSchema(SubmissibleField $field): array
     {
         return [
             '$formkit' => 'radio',
             'label' => $field->label,
-            'name' => $field->id,
+            'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
             'options' => $field->config['options'],
         ];
     }
 
-    public static function getValidationRules(FormField $field): array
+    public static function getValidationRules(SubmissibleField $field): array
     {
         return [
             'string',

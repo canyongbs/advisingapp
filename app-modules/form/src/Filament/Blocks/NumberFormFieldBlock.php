@@ -36,7 +36,7 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormField;
+use Assist\Form\Models\SubmissibleField;
 
 class NumberFormFieldBlock extends FormFieldBlock
 {
@@ -54,17 +54,17 @@ class NumberFormFieldBlock extends FormFieldBlock
         return [];
     }
 
-    public static function getFormKitSchema(FormField $field): array
+    public static function getFormKitSchema(SubmissibleField $field): array
     {
         return [
             '$formkit' => 'number',
             'label' => $field->label,
-            'name' => $field->id,
+            'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 
-    public static function getValidationRules(FormField $field): array
+    public static function getValidationRules(SubmissibleField $field): array
     {
         return ['numeric'];
     }

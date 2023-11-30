@@ -47,6 +47,7 @@ class ResolveSubmissionAuthorFromEmail
             return null;
         }
 
+        /** @var Student $student */
         $student = Student::query()
             ->where('email', $email)
             ->orWhere('email_2', $email)
@@ -56,6 +57,7 @@ class ResolveSubmissionAuthorFromEmail
             return $student;
         }
 
+        /** @var Prospect $prospect */
         $prospect = Prospect::query()
             ->where('email', $email)
             ->orWhere('email_2', $email)

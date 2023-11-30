@@ -103,7 +103,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
             ->actions([
                 ViewAction::make()
                     ->modalHeading(fn (FormSubmission $record) => "Submission Details: {$record->created_at}")
-                    ->infolist(fn (FormSubmission $record): ?array => ($record->author && $record->form->is_authenticated) ? [
+                    ->infolist(fn (FormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Authenticated author')
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())

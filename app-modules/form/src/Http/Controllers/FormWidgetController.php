@@ -52,7 +52,7 @@ use Illuminate\Support\Facades\Notification;
 use Assist\Form\Actions\GenerateFormKitSchema;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Assist\Form\Actions\GenerateFormValidation;
+use Assist\Form\Actions\GenerateSubmissibleValidation;
 use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use Assist\Form\Notifications\AuthenticateFormNotification;
 use Assist\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
@@ -96,7 +96,7 @@ class FormWidgetController extends Controller
 
         $authentication = new FormAuthentication();
         $authentication->author()->associate($author);
-        $authentication->form()->associate($form);
+        $authentication->submissible()->associate($form);
         $authentication->code = Hash::make($code);
         $authentication->save();
 
@@ -134,14 +134,14 @@ class FormWidgetController extends Controller
         return response()->json([
             'submission_url' => URL::signedRoute('forms.submit', [
                 'authentication' => $authentication,
-                'form' => $authentication->form,
+                'form' => $authentication->submissible,
             ]),
         ]);
     }
 
     public function store(
         Request $request,
-        GenerateFormValidation $generateValidation,
+        GenerateSubmissibleValidation $generateValidation,
         ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail,
         Form $form,
     ): JsonResponse {

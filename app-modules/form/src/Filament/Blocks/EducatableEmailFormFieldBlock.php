@@ -36,8 +36,8 @@
 
 namespace Assist\Form\Filament\Blocks;
 
-use Assist\Form\Models\FormField;
 use Filament\Forms\Components\Checkbox;
+use Assist\Form\Models\SubmissibleField;
 use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
@@ -68,17 +68,17 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
         ];
     }
 
-    public static function getFormKitSchema(FormField $field): array
+    public static function getFormKitSchema(SubmissibleField $field): array
     {
         return [
             '$formkit' => 'email',
             'label' => $field->label,
-            'name' => $field->id,
+            'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
         ];
     }
 
-    public static function getValidationRules(FormField $field): array
+    public static function getValidationRules(SubmissibleField $field): array
     {
         return ['string', 'email', 'max:255'];
     }

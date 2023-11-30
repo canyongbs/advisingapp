@@ -36,10 +36,8 @@
 
 namespace Assist\Form\Models;
 
-use App\Models\BaseModel;
 use Assist\Prospect\Models\Prospect;
 use Assist\AssistDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -48,11 +46,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *
  * @mixin IdeHelperFormSubmission
  */
-class FormSubmission extends BaseModel
+class FormSubmission extends Submission
 {
-    public function form(): BelongsTo
+    public function submissible(): BelongsTo
     {
-        return $this->belongsTo(Form::class);
+        return $this
+            ->belongsTo(Form::class, 'form_id');
     }
 
     public function fields(): BelongsToMany
@@ -64,10 +63,5 @@ class FormSubmission extends BaseModel
             'field_id',
         )
             ->withPivot(['id', 'response']);
-    }
-
-    public function author(): MorphTo
-    {
-        return $this->morphTo();
     }
 }
