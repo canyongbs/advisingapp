@@ -34,36 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources;
+namespace App\Settings;
 
-use Filament\Resources\Resource;
-use Assist\Engagement\Models\SmsTemplate;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
+use Spatie\LaravelSettings\Settings;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 
-class SmsTemplateResource extends Resource
+class LicenseSettings extends Settings
 {
-    protected static ?string $model = SmsTemplate::class;
+    public ?string $license_key;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public ?LicenseData $data;
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    public static function group(): string
+    {
+        return 'license';
+    }
 
-    protected static ?string $navigationLabel = 'Text Message Templates';
-
-    protected static ?string $modelLabel = 'text message template';
-
-    protected static ?int $navigationSort = 130;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function getPages(): array
+    public static function encrypted(): array
     {
         return [
-            'index' => ListSmsTemplates::route('/'),
-            'create' => CreateSmsTemplate::route('/create'),
-            'edit' => EditSmsTemplate::route('/{record}/edit'),
+            'license_key',
+            'data',
         ];
     }
 }

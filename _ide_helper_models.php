@@ -243,6 +243,12 @@ namespace App\Models{
  * @property bool $are_teams_visible_on_profile
  * @property bool $is_division_visible_on_profile
  * @property string $timezone
+ * @property bool $office_hours_are_enabled
+ * @property bool $appointments_are_restricted_to_existing_students
+ * @property array|null $office_hours_days
+ * @property bool $out_of_office_is_enabled
+ * @property string|null $out_of_office_starts_at
+ * @property string|null $out_of_office_ends_at
  * @property string|null $pronouns_id
  * @property bool $are_pronouns_visible_on_profile
  * @property bool $default_assistant_chat_folders_created
@@ -312,6 +318,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
  * @method static \Illuminate\Database\Eloquent\Builder|User role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereAppointmentsAreRestrictedToExistingStudents($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereArePronounsVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAreTeamsVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAvatarUrl($value)
@@ -328,6 +335,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHoursAreEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHoursDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeIsEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeStartsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePronounsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
@@ -1296,10 +1308,22 @@ namespace Assist\Engagement\Models{
 /**
  * Assist\Engagement\Models\SmsTemplate
  *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property string $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Assist\Engagement\Database\Factories\SmsTemplateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

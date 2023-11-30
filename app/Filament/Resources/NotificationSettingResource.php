@@ -50,7 +50,7 @@ class NotificationSettingResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 110;
 
     protected static bool $shouldRegisterNavigation = false;
 

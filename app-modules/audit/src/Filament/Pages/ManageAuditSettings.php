@@ -52,7 +52,7 @@ class ManageAuditSettings extends SettingsPage
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 30;
 
     protected static string $settings = AuditSettings::class;
 

@@ -51,7 +51,7 @@ class AssistantConfiguration extends Page
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $modelLabel = 'Artificial Intelligence';
 

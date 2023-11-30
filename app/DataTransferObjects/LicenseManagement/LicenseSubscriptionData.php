@@ -34,36 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources;
+namespace App\DataTransferObjects\LicenseManagement;
 
-use Filament\Resources\Resource;
-use Assist\Engagement\Models\SmsTemplate;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
+use Carbon\Carbon;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Attributes\MapInputName;
+use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
-class SmsTemplateResource extends Resource
+#[MapInputName(SnakeCaseMapper::class)]
+class LicenseSubscriptionData extends Data
 {
-    protected static ?string $model = SmsTemplate::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?string $navigationLabel = 'Text Message Templates';
-
-    protected static ?string $modelLabel = 'text message template';
-
-    protected static ?int $navigationSort = 130;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListSmsTemplates::route('/'),
-            'create' => CreateSmsTemplate::route('/create'),
-            'edit' => EditSmsTemplate::route('/{record}/edit'),
-        ];
-    }
+    public function __construct(
+        public string $clientName,
+        public string $partnerName,
+        public string $clientPo,
+        public string $partnerPo,
+        public Carbon $startDate,
+        public Carbon $endDate,
+    ) {}
 }
