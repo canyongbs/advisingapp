@@ -3,37 +3,45 @@
 /*
 <COPYRIGHT>
 
-Copyright © 2022-2023, Canyon GBS LLC
+    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
 
-All rights reserved.
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
-This file is part of a project developed using Laravel, which is an open-source framework for PHP.
-Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
-projects used in the development of this solution.
+    Notice:
 
-This project is licensed under the Affero General Public License (AGPL) 3.0.
-For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
 
-Notice:
-- The copyright notice in this file and across all files and applications in this
- repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
-- The software solution, including services, infrastructure, and code, is offered as a
- Software as a Service (SaaS) by Canyon GBS LLC.
-- Use of this software implies agreement to the license terms and conditions as stated
- in the AGPL 3.0 License.
-
-For more information or inquiries please visit our website at
-https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 */
 
 namespace App\Filament\Pages;
 
-use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
+use Symfony\Component\HttpFoundation\Response;
+use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
 use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
 
 class EmailConfiguration extends Page
 {
@@ -45,61 +53,62 @@ class EmailConfiguration extends Page
 
     protected static string $view = 'filament.pages.email-configuration';
 
-    protected static bool $shouldRegisterNavigation = false;
+    public function getBreadcrumbs(): array
+    {
+        return [
+            $this::getUrl() => 'Email Configuration',
+        ];
+    }
 
-    // public function getBreadcrumbs(): array
-    // {
-    //     return [
-    //         $this::getUrl() => 'Email Configuration',
-    //     ];
-    // }
-    //
-    // public static function shouldRegisterNavigation(): bool
-    // {
-    //     /** @var User $user */
-    //     $user = auth()->user();
-    //
-    //     return $user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation();
-    // }
-    //
-    // public function mount(): void
-    // {
-    //     /** @var User $user */
-    //     $user = auth()->user();
-    //
-    //     abort_unless($user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation(), 403);
-    //
-    //     /** @var NavigationItem $firstNavItem */
-    //     $firstNavItem = collect($this->getSubNavigation())->first(function (NavigationItem $item) {
-    //         return $item->isVisible();
-    //     });
-    //
-    //     if (is_null($firstNavItem)) {
-    //         abort(403);
-    //     }
-    //
-    //     abort_unless($firstNavItem, Response);
-    //
-    //     redirect($firstNavItem->getUrl());
-    // }
-    //
-    // public function getSubNavigation(): array
-    // {
-    //     $navigationItems = $this->generateNavigationItems(
-    //         [
-    //             ListNotificationSettings::class,
-    //         ]
-    //     );
-    //
-    //     /** @var User $user */
-    //     $user = auth()->user();
-    //
-    //     if ($user->can(['assistant.access_ai_settings'])) {
-    //         $navigationItems = [
-    //             ...$navigationItems,
-    //         ];
-    //     }
-    //
-    //     return $navigationItems;
-    // }
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var NavigationItem $firstNavItem */
+        $firstNavItem = collect((new EmailConfiguration())->getSubNavigation())
+            ->first(function (NavigationItem $item) {
+                return $item->isVisible();
+            });
+
+        return ! is_null($firstNavItem);
+    }
+
+    public function mount(): void
+    {
+        /** @var NavigationItem $firstNavItem */
+        $firstNavItem = collect($this->getSubNavigation())
+            ->first(function (NavigationItem $item) {
+                return $item->isVisible();
+            });
+
+        abort_if(is_null($firstNavItem), Response::HTTP_FORBIDDEN);
+
+        redirect($firstNavItem->getUrl());
+    }
+
+    public static function getNavigationItems(): array
+    {
+        $item = parent::getNavigationItems()[0];
+
+        $item->isActiveWhen(function (): bool {
+            $subItems = (new EmailConfiguration())->getSubNavigation();
+
+            foreach ($subItems as $subItem) {
+                if (str(request()->fullUrl())->contains(str($subItem->getUrl())->after('/'))) {
+                    return true;
+                }
+            }
+
+            return request()->routeIs(static::getRouteName());
+        });
+
+        return [$item];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return $this->generateNavigationItems([
+            ListNotificationSettings::class,
+            ListEmailTemplates::class,
+            ListSmsTemplates::class,
+        ]);
+    }
 }
