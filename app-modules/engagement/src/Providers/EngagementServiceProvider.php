@@ -36,7 +36,6 @@
 
 namespace Assist\Engagement\Providers;
 
-use Assist\Engagement\Observers\EmailTemplateObserver;
 use Filament\Panel;
 use Assist\Engagement\EngagementPlugin;
 use Illuminate\Support\ServiceProvider;
@@ -53,6 +52,7 @@ use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Observers\EngagementObserver;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Engagement\Observers\EmailTemplateObserver;
 use Assist\Engagement\Observers\EngagementBatchObserver;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\Engagement\Observers\EngagementFileEntitiesObserver;

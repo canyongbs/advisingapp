@@ -36,33 +36,31 @@
 
 namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
-use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\Engagement\Models\EmailTemplate;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Assist\AssistDataModel\Models\Student;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Filament\Pages\Page;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Components\DateTimePicker;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Actions\CreateEngagementDeliverable;
-use Assist\Engagement\Filament\Resources\EngagementResource;
-use Assist\Engagement\Actions\CreateDeliverablesForEngagement;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Assist\AssistDataModel\Models\Student;
+use Filament\Resources\Pages\CreateRecord;
+use Assist\Engagement\Models\EmailTemplate;
+use Filament\Forms\Components\MorphToSelect;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Assist\Engagement\Enums\EngagementDeliveryMethod;
+use Assist\Engagement\Actions\CreateEngagementDeliverable;
+use App\Filament\Resources\RelationManagers\RelationManager;
+use Assist\Engagement\Filament\Resources\EngagementResource;
 
 class CreateEngagement extends CreateRecord
 {
@@ -125,7 +123,7 @@ class CreateEngagement extends CreateRecord
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
                                         ->live()
-                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null))
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                 ])
                                 ->action(function (array $data) use ($component) {
                                     $template = EmailTemplate::find($data['emailTemplate']);

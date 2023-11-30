@@ -36,8 +36,8 @@
 
 namespace Assist\Engagement\Models;
 
-use App\Models\BaseModel;
 use App\Models\User;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

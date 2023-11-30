@@ -3,7 +3,6 @@
 namespace Assist\Engagement\Observers;
 
 use Assist\Engagement\Models\EmailTemplate;
-use Assist\Engagement\Models\Engagement;
 
 class EmailTemplateObserver
 {

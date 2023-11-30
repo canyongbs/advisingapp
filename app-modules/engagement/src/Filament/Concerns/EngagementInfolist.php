@@ -36,7 +36,6 @@
 
 namespace Assist\Engagement\Filament\Concerns;
 
-use Assist\Engagement\Actions\GenerateEmailMarkdownContent;
 use Assist\Engagement\Models\Engagement;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;

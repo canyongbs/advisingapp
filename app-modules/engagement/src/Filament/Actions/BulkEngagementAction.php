@@ -36,21 +36,21 @@
 
 namespace Assist\Engagement\Filament\Actions;
 
-use Assist\Engagement\Models\EmailTemplate;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\TiptapEditor;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Filament\Forms\Components\Wizard\Step;
+use Assist\Engagement\Models\EmailTemplate;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Forms\Components\Actions\Action;
 use Assist\Engagement\Actions\CreateEngagementBatch;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
@@ -123,7 +123,7 @@ class BulkEngagementAction
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
                                         ->live()
-                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null))
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                 ])
                                 ->action(function (array $data) use ($component) {
                                     $template = EmailTemplate::find($data['emailTemplate']);

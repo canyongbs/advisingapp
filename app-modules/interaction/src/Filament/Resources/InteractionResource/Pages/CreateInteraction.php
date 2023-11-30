@@ -36,7 +36,6 @@
 
 namespace Assist\Interaction\Filament\Resources\InteractionResource\Pages;
 
-use App\Filament\Resources\RelationManagers\RelationManager;
 use Filament\Forms\Form;
 use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
@@ -54,9 +53,10 @@ use Assist\Interaction\Models\InteractionStatus;
 use Assist\Interaction\Models\InteractionOutcome;
 use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Interaction\Models\InteractionRelation;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Interaction\Filament\Resources\InteractionResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Assist\ServiceManagement\Models\ServiceRequest;
+use App\Filament\Resources\RelationManagers\RelationManager;
+use Assist\Interaction\Filament\Resources\InteractionResource;
 
 class CreateInteraction extends CreateRecord
 {

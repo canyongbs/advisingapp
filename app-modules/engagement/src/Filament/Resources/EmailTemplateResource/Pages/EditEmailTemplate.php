@@ -43,8 +43,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Pages\EmailConfiguration;
-use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 use FilamentTiptapEditor\Enums\TiptapOutput;
+use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 
 class EditEmailTemplate extends EditRecord
 {

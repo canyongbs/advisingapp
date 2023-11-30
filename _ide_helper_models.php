@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -243,6 +209,12 @@ namespace App\Models{
  * @property bool $are_teams_visible_on_profile
  * @property bool $is_division_visible_on_profile
  * @property string $timezone
+ * @property bool $office_hours_are_enabled
+ * @property bool $appointments_are_restricted_to_existing_students
+ * @property mixed|null $office_hours_days
+ * @property bool $out_of_office_is_enabled
+ * @property \Illuminate\Support\Carbon|null $out_of_office_starts_at
+ * @property \Illuminate\Support\Carbon|null $out_of_office_ends_at
  * @property string|null $pronouns_id
  * @property bool $are_pronouns_visible_on_profile
  * @property bool $default_assistant_chat_folders_created
@@ -312,6 +284,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
  * @method static \Illuminate\Database\Eloquent\Builder|User role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereAppointmentsAreRestrictedToExistingStudents($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereArePronounsVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAreTeamsVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAvatarUrl($value)
@@ -328,6 +301,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHoursAreEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHoursDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeIsEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeStartsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePronounsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
@@ -1065,8 +1043,10 @@ namespace Assist\Engagement\Models{
  * @property string $name
  * @property string|null $description
  * @property array $content
+ * @property string|null $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $user
  * @method static \Assist\Engagement\Database\Factories\EmailTemplateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newQuery()
@@ -1077,6 +1057,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1095,6 +1076,7 @@ namespace Assist\Engagement\Models{
  * @property string|null $recipient_type
  * @property string|null $subject
  * @property string|null $body
+ * @property array|null $body_json
  * @property bool $scheduled
  * @property \Illuminate\Support\Carbon $deliver_at
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -1103,11 +1085,9 @@ namespace Assist\Engagement\Models{
  * @property-read int|null $audits_count
  * @property-read \Assist\Engagement\Models\EngagementBatch|null $batch
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $deliverables
- * @property-read int|null $deliverables_count
+ * @property-read \Assist\Engagement\Models\EngagementDeliverable|null $deliverable
  * @property-read \Assist\Engagement\Models\EngagementBatch|null $engagementBatch
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementDeliverable> $engagementDeliverables
- * @property-read int|null $engagement_deliverables_count
+ * @property-read \Assist\Engagement\Models\EngagementDeliverable|null $engagementDeliverable
  * @property-read \Assist\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
  * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
@@ -1121,6 +1101,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement sentToProspect()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement sentToStudent()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBodyJson($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDeliverAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereEngagementBatchId($value)
@@ -1296,10 +1277,22 @@ namespace Assist\Engagement\Models{
 /**
  * Assist\Engagement\Models\SmsTemplate
  *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property string $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Assist\Engagement\Database\Factories\SmsTemplateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

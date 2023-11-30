@@ -36,33 +36,31 @@
 
 namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Models\EmailTemplate;
-use Assist\Engagement\Models\Engagement;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
-use Filament\Actions\DeleteAction;
-use Assist\Prospect\Models\Prospect;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Pages\Page;
-use Filament\Resources\Pages\EditRecord;
-use Assist\AssistDataModel\Models\Student;
-use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Components\DateTimePicker;
-use Assist\Engagement\Filament\Resources\EngagementResource;
-use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Assist\Prospect\Models\Prospect;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Textarea;
+use Assist\Engagement\Models\Engagement;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Assist\AssistDataModel\Models\Student;
+use Assist\Engagement\Models\EmailTemplate;
+use Filament\Forms\Components\MorphToSelect;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
+use Assist\Engagement\Filament\Resources\EngagementResource;
 
 class EditEngagement extends EditRecord
 {
@@ -116,7 +114,7 @@ class EditEngagement extends EditRecord
                             Checkbox::make('onlyMyTemplates')
                                 ->label('Only show my templates')
                                 ->live()
-                                ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null))
+                                ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                         ])
                         ->action(function (array $data) use ($component) {
                             $template = EmailTemplate::find($data['emailTemplate']);

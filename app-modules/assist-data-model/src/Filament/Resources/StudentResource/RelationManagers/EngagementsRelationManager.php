@@ -36,23 +36,17 @@
 
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
-use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Assist\Engagement\Models\Engagement;
-use Filament\Forms\Components\Component;
 use Filament\Tables\Actions\CreateAction;
-use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\Fieldset;
-use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Assist\Engagement\Actions\CreateEngagementDeliverable;
 use App\Filament\Resources\RelationManagers\RelationManager;
@@ -116,8 +110,8 @@ class EngagementsRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('subject'),
-                    TextColumn::make('deliverable.channel')
-                        ->label('Delivery Channel'),
+                TextColumn::make('deliverable.channel')
+                    ->label('Delivery Channel'),
                 TextColumn::make('created_at')
                     ->dateTime(),
             ])

@@ -37,12 +37,12 @@
 namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
 use Filament\Forms\Form;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Pages\EmailConfiguration;
 use Filament\Resources\Pages\CreateRecord;
+use FilamentTiptapEditor\Enums\TiptapOutput;
 use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 
 class CreateEmailTemplate extends CreateRecord

@@ -38,7 +38,6 @@ namespace Assist\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use Assist\Engagement\Actions\GenerateEmailMarkdownContent;
 use Illuminate\Support\Collection;
 use Assist\Prospect\Models\Prospect;
 use Assist\Timeline\Models\Timeline;
@@ -54,6 +53,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Timeline\Models\Contracts\ProvidesATimeline;
+use Assist\Engagement\Actions\GenerateEmailMarkdownContent;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
