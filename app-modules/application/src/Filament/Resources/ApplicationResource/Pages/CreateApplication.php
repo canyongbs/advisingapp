@@ -34,21 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace Assist\Application\Filament\Resources\ApplicationResource\Pages;
 
-use Assist\Form\Models\Form;
-use Illuminate\Support\Facades\URL;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
+use Assist\Application\Filament\Resources\ApplicationResource;
+use Assist\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
 
-class GenerateFormEmbedCode
+class CreateApplication extends CreateRecord
 {
-    public function handle(Form $form): string
-    {
-        $scriptUrl = url('js/widgets/form/assist-form-widget.js?');
-        $formDefinitionUrl = URL::signedRoute('forms.define', ['form' => $form]);
+    use HasSharedFormConfiguration;
 
-        return <<<EOD
-        <form-embed url="{$formDefinitionUrl}"></form-embed>
-        <script src="{$scriptUrl}"></script>
-        EOD;
+    protected static string $resource = ApplicationResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema($this->fields());
     }
 }

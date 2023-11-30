@@ -49,7 +49,7 @@ class InboundWebhookResource extends Resource
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 70;
 
     public static function getPages(): array
     {

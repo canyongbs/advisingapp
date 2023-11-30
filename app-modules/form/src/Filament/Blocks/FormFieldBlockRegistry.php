@@ -65,6 +65,7 @@ class FormFieldBlockRegistry
      */
     public static function keyByType(): array
     {
+        /** @var FormFieldBlock $block */
         return collect(static::get())
             ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
             ->all();

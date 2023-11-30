@@ -1,0 +1,98 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace Assist\Form\Models;
+
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
+
+/**
+ * @property string $name
+ * @property ?array $content
+ * @property bool $embed_enabled
+ * @property bool $is_wizard
+ * @property ?array $allowed_domains
+ * @property-read Collection<int, SubmissibleStep> $steps
+ * @property-read Collection<int, SubmissibleField> $fields
+ */
+abstract class Submissible extends Model
+{
+    use HasFactory;
+    use DefinesPermissions;
+    use HasUuids;
+
+    abstract public function fields(): HasMany;
+
+    abstract public function steps(): HasMany;
+
+    abstract public function submissions(): HasMany;
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => $this->hasCast('name') ? $this->castAttribute('name', $value) : $value);
+    }
+
+    protected function content(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => $this->hasCast('content') ? $this->castAttribute('content', $value) : $value);
+    }
+
+    protected function embedEnabled(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => $this->hasCast('embed_enabled') ? $this->castAttribute('embed_enabled', $value) : $value);
+    }
+
+    protected function allowedDomains(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => $this->hasCast('allowed_domains') ? $this->castAttribute('allowed_domains', $value) : $value);
+    }
+
+    protected function isWizard(): Attribute
+    {
+        return Attribute::make(get: fn ($value) => $this->hasCast('is_wizard') ? $this->castAttribute('is_wizard', $value) : $value);
+    }
+
+    protected function serializeDate(DateTimeInterface $date): string
+    {
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+    }
+}

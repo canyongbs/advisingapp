@@ -36,13 +36,12 @@
 
 namespace Assist\Form\Models;
 
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperFormField
  */
-class FormField extends BaseModel
+class FormField extends SubmissibleField
 {
     protected $fillable = [
         'config',
@@ -57,10 +56,10 @@ class FormField extends BaseModel
         'is_required' => 'bool',
     ];
 
-    public function form(): BelongsTo
+    public function submissible(): BelongsTo
     {
         return $this
-            ->belongsTo(Form::class);
+            ->belongsTo(Form::class, 'form_id');
     }
 
     public function step(): BelongsTo

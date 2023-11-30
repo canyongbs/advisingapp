@@ -36,14 +36,13 @@
 
 namespace Assist\Form\Models;
 
-use App\Models\BaseModel;
 use Assist\Form\Enums\Rounding;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperForm
  */
-class Form extends BaseModel
+class Form extends Submissible
 {
     protected $fillable = [
         'name',

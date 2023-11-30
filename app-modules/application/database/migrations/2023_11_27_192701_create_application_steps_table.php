@@ -34,57 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Support\Arr;
-use Assist\Form\Models\Form;
-use Assist\Form\Models\FormField;
-use Illuminate\Database\Eloquent\Collection;
-use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
-
-class GenerateFormValidation
-{
-    public function __invoke(Form $form): array
+return new class () extends Migration {
+    public function up(): void
     {
-        if ($form->is_wizard) {
-            return $this->wizardRules($form);
-        }
+        Schema::create('application_steps', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-        return $this->fields($form->fields);
+            $table->text('label');
+            $table->json('content')->nullable();
+            $table->foreignUuid('application_id')->constrained()->on('applications')->cascadeOnDelete();
+            $table->integer('sort');
+
+            $table->timestamps();
+        });
     }
-
-    public function fields(Collection $fields): array
-    {
-        $blocks = FormFieldBlockRegistry::keyByType();
-
-        return $fields
-            ->mapWithKeys(function (FormField $field) use ($blocks) {
-                $rules = collect();
-
-                if ($field->is_required) {
-                    $rules->push('required');
-                }
-
-                return [$field->id => $rules
-                    ->merge($blocks[$field->type]::getValidationRules($field))
-                    ->all()];
-            })
-            ->all();
-    }
-
-    public function wizardRules(Form $form): array
-    {
-        $rules = collect();
-
-        foreach ($form->steps as $step) {
-            $rules = $rules->merge(
-                Arr::prependKeysWith(
-                    $this->fields($step->fields),
-                    prependWith: "{$step->label}.",
-                ),
-            );
-        }
-
-        return $rules->all();
-    }
-}
+};

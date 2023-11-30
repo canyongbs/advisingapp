@@ -35,10 +35,10 @@
 */
 
 use Assist\Form\Http\Controllers\FormWidgetController;
-use Assist\Form\Http\Middleware\EnsureFormIsEmbeddableAndAuthorized;
+use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 
 Route::prefix('api')
-    ->middleware(['api', EnsureFormIsEmbeddableAndAuthorized::class])
+    ->middleware(['api', EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form'])
     ->group(function () {
         Route::prefix('forms')
             ->name('forms.')

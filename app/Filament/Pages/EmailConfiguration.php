@@ -49,7 +49,7 @@ class EmailConfiguration extends Page
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 110;
 
     protected static string $view = 'filament.pages.email-configuration';
 

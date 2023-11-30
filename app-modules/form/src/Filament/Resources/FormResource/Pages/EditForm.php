@@ -42,8 +42,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Form\Actions\GenerateFormEmbedCode;
 use Assist\Form\Filament\Resources\FormResource;
+use Assist\Form\Actions\GenerateSubmissibleEmbedCode;
 use Assist\Form\Filament\Resources\FormResource\Pages\Concerns\HasSharedFormConfiguration;
 
 class EditForm extends EditRecord
@@ -74,7 +74,7 @@ class EditForm extends EditRecord
                         TextEntry::make('snippet')
                             ->label('Click to Copy')
                             ->state(function (Form $form) {
-                                $code = resolve(GenerateFormEmbedCode::class)->handle($form);
+                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($form);
 
                                 return <<<EOD
                                 ```
@@ -84,7 +84,7 @@ class EditForm extends EditRecord
                             })
                             ->markdown()
                             ->copyable()
-                            ->copyableState(fn (Form $form) => resolve(GenerateFormEmbedCode::class)->handle($form))
+                            ->copyableState(fn (Form $form) => resolve(GenerateSubmissibleEmbedCode::class)->handle($form))
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500),
                     ]

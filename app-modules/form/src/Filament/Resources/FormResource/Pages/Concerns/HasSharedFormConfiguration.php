@@ -71,7 +71,7 @@ trait HasSharedFormConfiguration
             Textarea::make('description')
                 ->string()
                 ->columnSpanFull(),
-            Grid::make(2)
+            Grid::make()
                 ->schema([
                     Toggle::make('embed_enabled')
                         ->label('Embed Enabled')
@@ -128,7 +128,7 @@ trait HasSharedFormConfiguration
                     Select::make('rounding')
                         ->options(Rounding::class),
                 ])
-                ->columns(2),
+                ->columns(),
         ];
     }
 
@@ -145,11 +145,11 @@ trait HasSharedFormConfiguration
                     return;
                 }
 
-                $form = $record instanceof Form ? $record : $record->form;
+                $form = $record instanceof Form ? $record : $record->submissible;
                 $formStep = $record instanceof FormStep ? $record : null;
 
                 FormField::query()
-                    ->whereBelongsTo($form)
+                    ->whereBelongsTo($form, 'submissible')
                     ->when($formStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($formStep, 'step'))
                     ->delete();
 
@@ -198,6 +198,7 @@ trait HasSharedFormConfiguration
                 unset($componentAttributes['data']['isRequired']);
             }
 
+            /** @var FormField $field */
             $field = $form->fields()->findOrNew($id ?? null);
             $field->step()->associate($formStep);
             $field->label = $label ?? $componentAttributes['type'];
@@ -224,13 +225,16 @@ trait HasSharedFormConfiguration
 
     protected function clearFormContentForWizard(): void
     {
-        if ($this->record->is_wizard) {
-            $this->record->content = null;
-            $this->record->save();
+        /** @var Form $record */
+        $record = $this->record;
+
+        if ($record->is_wizard) {
+            $record->content = null;
+            $record->save();
 
             return;
         }
 
-        $this->record->steps()->delete();
+        $record->steps()->delete();
     }
 }

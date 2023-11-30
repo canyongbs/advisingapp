@@ -34,19 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Filament\Pages;
+namespace Assist\Form\Models;
 
-use Filament\Pages\Page;
+use App\Models\BaseModel;
+use Assist\Prospect\Models\Prospect;
+use Assist\AssistDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class ManageAdmissions extends Page
+/**
+ * @property-read Submissible $submissible
+ * @property-read Collection<int, SubmissibleField> $fields
+ * @property-read Student|Prospect|null $author
+ */
+abstract class Submission extends BaseModel
 {
-    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
+    abstract public function submissible(): BelongsTo;
 
-    protected static string $view = 'assist.filament.pages.coming-soon';
+    abstract public function fields(): BelongsToMany;
 
-    protected static ?string $navigationGroup = 'Forms and Surveys';
-
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $navigationLabel = 'Manage Admissions';
+    public function author(): MorphTo
+    {
+        return $this
+            ->morphTo('author');
+    }
 }

@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -30,27 +32,42 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+*/
 
-<head>
-    <meta charset="utf-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1"
-    >
+namespace Assist\Application\Database\Factories;
 
-    <title>Form Test</title>
-</head>
+use Assist\Prospect\Models\Prospect;
+use Assist\Application\Models\Application;
+use Assist\AssistDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Assist\Application\Models\ApplicationSubmission;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-<body class="antialiased">
-    <div>
-        <form-embed></form-embed>
-        <script
-            src="{{ url('js/widgets/form/assist-form-widget.js?') . \Illuminate\Support\Arr::query(['form' => '9a66d901-2e2a-44f6-9ce6-df70240ea66c']) }}"
-        ></script>
-    </div>
-</body>
+/**
+ * @extends Factory<ApplicationSubmission>
+ */
+class ApplicationSubmissionFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'application_id' => Application::factory(),
+            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
+            'author_id' => function (array $attributes) {
+                $authorClass = Relation::getMorphedModel($attributes['author_type']);
 
-</html>
+                /** @var Student|Prospect $authorModel */
+                $authorModel = new $authorClass();
+
+                $author = $authorClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $authorModel::factory()->create();
+
+                return $author->getKey();
+            },
+        ];
+    }
+}

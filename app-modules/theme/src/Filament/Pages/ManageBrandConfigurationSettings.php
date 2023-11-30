@@ -55,7 +55,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 40;
 
     protected static string $settings = ThemeSettings::class;
 

@@ -56,7 +56,7 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 60;
 
     public static function shouldRegisterNavigation(): bool
     {

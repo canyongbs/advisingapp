@@ -54,7 +54,7 @@ class SmsTemplateResource extends Resource
 
     protected static ?string $modelLabel = 'text message template';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 130;
 
     protected static bool $shouldRegisterNavigation = false;
 
