@@ -58,8 +58,8 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
+use Filament\Resources\RelationManagers\RelationManager;
 use Assist\Engagement\Actions\CreateEngagementDeliverable;
-use App\Filament\Resources\RelationManagers\RelationManager;
 use Assist\Engagement\Filament\Resources\EngagementResource;
 
 class CreateEngagement extends CreateRecord
@@ -90,6 +90,7 @@ class CreateEngagement extends CreateRecord
                                 'student full name',
                                 'student email',
                             ])
+                            ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
                             ->profile('email')
                             ->output(TiptapOutput::Json)
                             ->required()

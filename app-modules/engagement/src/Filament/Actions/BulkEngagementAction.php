@@ -90,6 +90,7 @@ class BulkEngagementAction
                                 'student full name',
                                 'student email',
                             ])
+                            ->showMergeTagsInBlocksPanel(false)
                             ->profile('email')
                             ->output(TiptapOutput::Json)
                             ->required()
