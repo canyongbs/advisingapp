@@ -57,7 +57,7 @@ class CreateSmsTemplate extends CreateRecord
                         'redo',
                         'undo',
                     ])
-                    ->maxLength(320)
+                    ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
                     ->required(),
             ]);
     }

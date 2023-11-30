@@ -40,5 +40,7 @@ interface Educatable extends Identifiable
 {
     public static function displayNameKey(): string;
 
+    public static function displayEmailKey(): string;
+
     public function careTeam(): MorphToMany;
 }

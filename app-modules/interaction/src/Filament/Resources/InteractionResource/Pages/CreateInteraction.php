@@ -30,6 +30,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Interaction\Filament\Resources\InteractionResource\Pages;
 
+use App\Filament\Resources\RelationManagers\RelationManager;
 use Filament\Forms\Form;
 use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
@@ -49,6 +50,7 @@ use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Interaction\Models\InteractionRelation;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Assist\Interaction\Filament\Resources\InteractionResource;
+use Filament\Resources\Pages\ManageRelatedRecords;
 
 class CreateInteraction extends CreateRecord
 {
@@ -71,7 +73,8 @@ class CreateInteraction extends CreateRecord
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),
-                    ]),
+                    ])
+                    ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                 Fieldset::make('Details')
                     ->schema([
                         Select::make('interaction_campaign_id')

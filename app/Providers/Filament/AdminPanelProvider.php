@@ -42,6 +42,7 @@ use App\Filament\Actions\ImportAction;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Assist\Authorization\Filament\Pages\Auth\Login;
@@ -65,6 +66,13 @@ class AdminPanelProvider extends PanelProvider
         Entry::configureUsing(fn ($entry) => $entry->translateLabel());
         Column::configureUsing(fn ($column) => $column->translateLabel());
         ImportAction::configureUsing(fn (ImportAction $action) => $action->max(100000));
+        TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->gridLayouts([
+            'two-columns',
+            'three-columns',
+            'four-columns',
+            'asymmetric-left-thirds',
+            'asymmetric-right-thirds',
+        ]));
     }
 
     public function panel(Panel $panel): Panel

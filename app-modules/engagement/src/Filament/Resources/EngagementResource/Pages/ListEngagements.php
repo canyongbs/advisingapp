@@ -53,10 +53,11 @@ class ListEngagements extends ListRecords
                 TextColumn::make('user.name')
                     ->label('Created By'),
                 TextColumn::make('subject'),
-                TextColumn::make('body'),
                 TextColumn::make('recipient.display_name')
                     ->label('Recipient')
                     ->getStateUsing(fn (Engagement $record) => $record->recipient->{$record->recipient::displayNameKey()}),
+                TextColumn::make('created_at')
+                    ->dateTime(),
             ])
             ->filters([
             ])

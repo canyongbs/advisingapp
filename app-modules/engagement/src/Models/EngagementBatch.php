@@ -64,6 +64,7 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
                 'records' => $action->campaign->caseload->retrieveRecords(),
                 'subject' => $action->data['subject'],
                 'body' => $action->data['body'],
+                'body_json' => $action->data['body_json'],
                 'deliveryMethod' => $action->data['delivery_method'],
             ]));
 

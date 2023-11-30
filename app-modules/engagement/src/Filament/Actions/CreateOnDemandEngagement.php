@@ -39,8 +39,9 @@ class CreateOnDemandEngagement
     public function __invoke(Model $educatable, array $data): void
     {
         $engagement = $educatable->engagements()->create([
-            'subject' => $data['subject'],
-            'body' => $data['body'],
+            'subject' => $data['subject'] ?? null,
+            'body' => $data['body'] ?? null,
+            'body_json' => $data['body_json'] ?? null,
             'scheduled' => false,
         ]);
 

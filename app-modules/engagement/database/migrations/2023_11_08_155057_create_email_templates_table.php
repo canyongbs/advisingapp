@@ -40,6 +40,7 @@ return new class () extends Migration {
             $table->string('name');
             $table->text('description')->nullable();
             $table->json('content');
+            $table->foreignUuid('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -54,7 +54,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
                                     EngagementDeliveryStatus::Successful => 'text-green-500',
                                     EngagementDeliveryStatus::Failed => 'text-red-500',
                                 };
-                                
+
                                 $emailStatusIcon = match ($deliverable->delivery_status) {
                                     EngagementDeliveryStatus::Awaiting => 'heroicon-s-clock',
                                     EngagementDeliveryStatus::Successful => 'heroicon-s-check-circle',
@@ -79,7 +79,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
                                     EngagementDeliveryStatus::Successful => 'text-green-500',
                                     EngagementDeliveryStatus::Failed => 'text-red-500',
                                 };
-                                
+
                                 $smsStatusIcon = match ($deliverable->delivery_status) {
                                     EngagementDeliveryStatus::Awaiting => 'heroicon-s-clock',
                                     EngagementDeliveryStatus::Successful => 'heroicon-s-check-circle',
@@ -115,7 +115,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
         @endif
         <div class="flex flex-col">
             <p class="text-xs text-gray-400 dark:text-gray-500">Body:</p>
-            <p>{{ $record->body }}</p>
+            <p>{{ $record->getBody() }}</p>
         </div>
     </div>
 </div>

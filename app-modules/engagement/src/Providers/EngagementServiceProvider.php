@@ -30,6 +30,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Engagement\Providers;
 
+use Assist\Engagement\Observers\EmailTemplateObserver;
 use Filament\Panel;
 use Assist\Engagement\EngagementPlugin;
 use Illuminate\Support\ServiceProvider;
@@ -83,6 +84,7 @@ class EngagementServiceProvider extends ServiceProvider
 
     public function registerObservers(): void
     {
+        EmailTemplate::observe(EmailTemplateObserver::class);
         EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
         Engagement::observe(EngagementObserver::class);
         EngagementBatch::observe(EngagementBatchObserver::class);

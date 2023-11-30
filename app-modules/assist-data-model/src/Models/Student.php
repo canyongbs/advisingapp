@@ -108,6 +108,11 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
         return 'full_name';
     }
 
+    public static function displayEmailKey(): string
+    {
+        return 'email';
+    }
+
     public function serviceRequests(): MorphMany
     {
         return $this->morphMany(

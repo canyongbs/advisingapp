@@ -32,6 +32,7 @@ namespace Assist\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Assist\Engagement\Actions\GenerateEmailMarkdownContent;
 use Illuminate\Support\Collection;
 use Assist\Prospect\Models\Prospect;
 use Assist\Timeline\Models\Timeline;
@@ -64,6 +65,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'engagement_batch_id',
         'subject',
         'body',
+        'body_json',
         'recipient_id',
         'recipient_type',
         'scheduled',
@@ -71,6 +73,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     ];
 
     protected $casts = [
+        'body_json' => 'array',
         'deliver_at' => 'datetime',
         'scheduled' => 'boolean',
     ];
@@ -172,5 +175,25 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function getSubscribable(): ?Subscribable
     {
         return $this->recipient instanceof Subscribable ? $this->recipient : null;
+    }
+
+    public function getBody(): string
+    {
+        if (blank($this->body_json)) {
+            return $this->body;
+        }
+
+        return app(GenerateEmailMarkdownContent::class)(
+            [$this->body_json],
+            $this->getMergeData(),
+        );
+    }
+
+    public function getMergeData(): array
+    {
+        return [
+            'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
+            'student email' => $this->recipient->getAttribute($this->recipient->displayEmailKey()),
+        ];
     }
 }

@@ -30,6 +30,15 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Engagement\Filament\Actions;
 
+use Assist\Engagement\Models\EmailTemplate;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -55,47 +64,89 @@ class BulkEngagementAction
                     ->schema([
                         Select::make('delivery_method')
                             ->label('How would you like to send this engagement?')
-                            ->translateLabel()
                             ->options(EngagementDeliveryMethod::class)
-                            ->validationAttribute('Delivery Method')
-                            ->required(),
+                            ->default(EngagementDeliveryMethod::Email->value)
+                            ->selectablePlaceholder(false)
+                            ->live(),
                     ]),
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
                         TextInput::make('subject')
                             ->autofocus()
-                            ->translateLabel()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (callable $get) => collect($get('delivery_method'))->doesntContain(EngagementDeliveryMethod::Email->value)),
-                        // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                        Textarea::make('body')
-                            ->translateLabel()
-                            ->placeholder(__('Body'))
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->columnSpanFull(),
+                        TiptapEditor::make('body_json')
+                            ->label('Body')
+                            ->mergeTags([
+                                'student full name',
+                                'student email',
+                            ])
+                            ->profile('email')
+                            ->output(TiptapOutput::Json)
                             ->required()
-                            ->maxLength(function (callable $get) {
-                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                    return 320;
-                                }
+                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                                ->form([
+                                    Select::make('emailTemplate')
+                                        ->searchable()
+                                        ->options(function (Get $get): array {
+                                            return EmailTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                )
+                                                ->orderBy('name')
+                                                ->limit(50)
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        })
+                                        ->getSearchResultsUsing(function (Get $get, string $search): array {
+                                            return EmailTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                )
+                                                ->where(new Expression('lower(name)'), 'like', "%{$search}%")
+                                                ->orderBy('name')
+                                                ->limit(50)
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        }),
+                                    Checkbox::make('onlyMyTemplates')
+                                        ->label('Only show my templates')
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null))
+                                ])
+                                ->action(function (array $data) use ($component) {
+                                    $template = EmailTemplate::find($data['emailTemplate']);
 
-                                return 65535;
-                            })
-                            ->helperText(function (callable $get) {
-                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                    return 'The body of your message can be up to 320 characters long.';
-                                }
+                                    if (! $template) {
+                                        return;
+                                    }
 
-                                return 'The body of your message can be up to 65,535 characters long.';
-                            }),
+                                    $component->state($template->content);
+                                }))
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
+                            ->columnSpanFull(),
+                        Textarea::make('body')
+                            ->placeholder('Body')
+                            ->required()
+                            ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
+                            ->helperText('The body of your message can be up to 320 characters long.')
+                            ->visible(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->columnSpanFull(),
                     ]),
             ])
             ->action(function (Collection $records, array $data) {
                 CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                     'user' => auth()->user(),
                     'records' => $records,
-                    'subject' => $data['subject'],
-                    'body' => $data['body'],
+                    'subject' => $data['subject'] ?? null,
+                    'body' => $data['body'] ?? null,
+                    'body_json' => $data['body_json'] ?? null,
                     'deliveryMethod' => $data['delivery_method'],
                 ]));
             })

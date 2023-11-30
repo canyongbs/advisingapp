@@ -30,6 +30,7 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 namespace Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
+use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
@@ -57,22 +58,7 @@ class EngagementsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        $createEngagementForm = (resolve(CreateEngagement::class))->form($form);
-
-        $formComponents = collect($createEngagementForm->getComponents())->filter(function (Component $component) {
-            if (! $component instanceof MorphToSelect) {
-                return true;
-            }
-        })->toArray();
-
-        return $createEngagementForm
-            ->schema([
-                Hidden::make('recipient_id')
-                    ->default($this->getOwnerRecord()->identifier()),
-                Hidden::make('recipient_type')
-                    ->default(resolve(Prospect::class)->getMorphClass()),
-                ...$formComponents,
-            ]);
+        return (resolve(CreateEngagement::class))->form($form);
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -83,8 +69,12 @@ class EngagementsRelationManager extends RelationManager
                     ->label('Created By'),
                 Fieldset::make('Content')
                     ->schema([
-                        TextEntry::make('subject'),
-                        TextEntry::make('body'),
+                        TextEntry::make('subject')
+                            ->columnSpanFull(),
+                        TextEntry::make('body')
+                            ->getStateUsing(fn (Engagement $engagement): string => $engagement->getBody())
+                            ->markdown()
+                            ->columnSpanFull(),
                     ]),
                 RepeatableEntry::make('deliverables')
                     ->columnSpanFull()
@@ -115,14 +105,10 @@ class EngagementsRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('subject'),
-                TextColumn::make('body'),
-                TextColumn::make('channels')
-                    ->label('Delivery Channels')
-                    ->state(function (Engagement $record) {
-                        return $record->deliverables->pluck('channel')->map(function ($channel) {
-                            return $channel->name;
-                        })->implode(', ');
-                    }),
+                TextColumn::make('deliverables.channel')
+                    ->label('Delivery Channels'),
+                TextColumn::make('created_at')
+                    ->dateTime(),
             ])
             ->filters([
             ])

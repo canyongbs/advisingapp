@@ -71,6 +71,7 @@ class CreateEngagementBatch implements ShouldQueue
                 'recipient_type' => $record->getMorphClass(),
                 'subject' => $this->data->subject,
                 'body' => $this->data->body,
+                'body_json' => $this->data->body_json,
                 'scheduled' => false,
             ]);
 

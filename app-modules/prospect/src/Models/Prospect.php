@@ -220,6 +220,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
         return 'full_name';
     }
 
+    public static function displayEmailKey(): string
+    {
+        return 'email';
+    }
+
     public function getWebPermissions(): Collection
     {
         return collect(['import', ...$this->webPermissions()]);

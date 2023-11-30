@@ -25,6 +25,11 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 --}}
+@if (isset($content))
+<x-mail::layout :settings="$settings ?? null">
+{{ str($content)->sanitizeHtml()->toHtmlString() }}
+</x-mail::layout>
+@else
 <x-mail::message :settings="$settings ?? null">
 {{-- Greeting --}}
 @if (! empty($greeting))
@@ -83,3 +88,4 @@ https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 </x-slot:subcopy>
 @endisset
 </x-mail::message>
+@endif
