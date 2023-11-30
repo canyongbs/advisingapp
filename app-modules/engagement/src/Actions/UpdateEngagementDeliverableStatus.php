@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\Actions;
+namespace Assist\Engagement\Actions;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -42,9 +42,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Assist\Engagement\Models\EngagementDeliverable;
-use Assist\Engagement\Actions\UpdateEngagementDeliverableStatus;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class StatusCallback implements ShouldQueue
+class UpdateEngagementDeliverableStatus implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -52,26 +52,21 @@ class StatusCallback implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
+        public EngagementDeliverable $deliverable,
         public array $data
     ) {}
 
     public function handle(): void
     {
-        $deliverable = EngagementDeliverable::where('external_reference_id', $this->data['MessageSid'])->first();
+        $this->deliverable->driver()->updateDeliveryStatus($this->data);
+    }
 
-        if (is_null($deliverable)) {
-            // TODO Potentially trigger a notification to an admin that a message was received for a non-existent deliverable
-            return;
-        }
-
-        // TODO We should implement some sort of process that checks to see if a deliverable has been updated to the "delivered" or "undelivered"
-        // status after a certain period of time. This is to handle an edge case where the webhook is not received for some reason, and in this
-        // situation we can simply poll Twilio for the data related to this deliverable. It can be a simple process implemented through the Kernel
-
-        // TODO In order to potentially reduce the amount of noise from jobs, we might want to introduce a "screener" that eliminates certain jobs based on their status
-        // And only run the update if it's a status that we want to run some type of update against. For instance, we will receive callbacks for
-        // queued, sending, sent, etc... but we don't actually want/need to do anything during these lifecycle hooks. We only really care about
-        // delivered, undelivered, failed, etc... statuses.
-        UpdateEngagementDeliverableStatus::dispatch($deliverable, $this->data);
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping($this->deliverable->id))
+                ->releaseAfter(30)
+                ->expireAfter(300),
+        ];
     }
 }

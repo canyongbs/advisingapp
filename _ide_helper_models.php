@@ -1186,6 +1186,7 @@ namespace Assist\Engagement\Models{
  * @property string $id
  * @property string $engagement_id
  * @property \Assist\Engagement\Enums\EngagementDeliveryMethod $channel
+ * @property string|null $external_reference_id
  * @property \Assist\Engagement\Enums\EngagementDeliveryStatus $delivery_status
  * @property \Illuminate\Support\Carbon|null $delivered_at
  * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
@@ -1207,6 +1208,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryResponse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereEngagementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereExternalReferenceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereLastDeliveryAttempt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
