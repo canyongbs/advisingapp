@@ -3,27 +3,33 @@
 /*
 <COPYRIGHT>
 
-Copyright © 2022-2023, Canyon GBS LLC
+    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
 
-All rights reserved.
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
-This file is part of a project developed using Laravel, which is an open-source framework for PHP.
-Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
-projects used in the development of this solution.
+    Notice:
 
-This project is licensed under the Affero General Public License (AGPL) 3.0.
-For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
 
-Notice:
-- The copyright notice in this file and across all files and applications in this
- repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
-- The software solution, including services, infrastructure, and code, is offered as a
- Software as a Service (SaaS) by Canyon GBS LLC.
-- Use of this software implies agreement to the license terms and conditions as stated
- in the AGPL 3.0 License.
-
-For more information or inquiries please visit our website at
-https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 */
@@ -41,6 +47,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Filament\Forms\Components\Actions;
@@ -51,8 +58,10 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TimePicker;
 use Illuminate\Validation\Rules\Password;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Assist\MeetingCenter\Managers\CalendarManager;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -75,6 +84,7 @@ class EditProfile extends Page
 
     public ?array $data = [];
 
+    //TODO: I feel like a lot of these could be refactored into a settings file instead of adding them directly to the user migration.
     public function form(Form $form): Form
     {
         /** @var User $user */
@@ -131,8 +141,57 @@ class EditProfile extends Page
                 }),
         ])->filter(fn (Component $component) => $component->isVisible());
 
+        $officeHoursDays = collect([
+            'sunday',
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+        ])->map(
+            fn ($day) => Grid::make(3)
+                ->schema([
+                    Toggle::make("office_hours.{$day}.enabled")
+                        ->label(str($day)->ucfirst())
+                        ->inline(false)
+                        ->live(),
+                    TimePicker::make("office_hours.{$day}.starts_at")
+                        ->required()
+                        ->visible(fn (Get $get) => $get("office_hours.{$day}.enabled")),
+                    TimePicker::make("office_hours.{$day}.ends_at")
+                        ->required()
+                        ->visible(fn (Get $get) => $get("office_hours.{$day}.enabled")),
+                ])
+        )->toArray();
+
         return $form
             ->schema([
+                Section::make('Public Profile')
+                    ->aside()
+                    ->schema([
+                        Toggle::make('has_enabled_public_profile')
+                            ->label('Enable public profile')
+                            ->live(),
+                        TextInput::make('public_profile_slug')
+                            ->label('Url')
+                            ->visible(fn (Get $get) => $get('has_enabled_public_profile'))
+                            //TODO: default doesn't work for some reason
+                            ->afterStateHydrated(fn (TextInput $component, $state) => $component->state($state ?? str($user->name)->lower()->slug('')))
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255)
+                            ->required()
+                            //The id doesn't matter because we're just using it to generate a piece of a url
+                            ->prefix(str(route('users.profile.view.public', ['user' => -1]))->beforeLast('/')->append('/'))
+                            ->suffixAction(
+                                FormAction::make('viewPublicProfile')
+                                    ->url(fn () => route('users.profile.view.public', ['user' => $user->public_profile_slug]))
+                                    ->icon('heroicon-m-arrow-top-right-on-square')
+                                    ->openUrlInNewTab()
+                                    ->visible(fn () => $user->public_profile_slug),
+                            )
+                            ->live(),
+                    ]),
                 Section::make('Profile Information')
                     ->description('This information is visible to other users on your profile page, if you choose to make it visible.')
                     ->aside()
@@ -144,6 +203,10 @@ class EditProfile extends Page
                             ->collection('avatar')
                             ->hidden($user->is_external)
                             ->avatar(),
+                        Placeholder::make('external_avatar')
+                            ->label('Avatar')
+                            ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
+                            ->visible($user->is_external),
                         $this->getNameFormComponent()
                             ->disabled($user->is_external),
                         RichEditor::make('bio')
@@ -164,25 +227,23 @@ class EditProfile extends Page
                             ->content($user->teams->pluck('name')->join(', ', ' and '))
                             ->hidden($user->teams->isEmpty())
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        //TODO: Right now this is not passed to the frontend
                         Checkbox::make('are_teams_visible_on_profile')
-                            ->label('Show ' . str('team')->plural($user->teams->count()) . ' on profile')
+                            ->label('Show ' . str('team')->plural($user->teams->count())->ucfirst() . ' on profile')
                             ->hidden($user->teams->isEmpty())
                             ->live(),
                         Placeholder::make('division')
                             ->content($user->teams->first()?->division?->name)
                             ->hidden(! $user->teams?->first()?->division()->exists())
                             ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        //TODO: Right now this is not passed to the frontend
                         Checkbox::make('is_division_visible_on_profile')
-                            ->label('Show division on profile')
+                            ->label('Show Division on profile')
                             ->hidden(! $user->teams?->first()?->division()->exists())
                             ->live(),
-                        Placeholder::make('external_avatar')
-                            ->label('Avatar')
-                            ->content('Your authentication into this application is managed through single sign on (SSO). Please update your profile picture in your source authentication system and then logout and login here to persist that update into this application.')
-                            ->visible($user->is_external),
                     ]),
                 Section::make('Account Information')
-                    ->description('Update your account\'s information.')
+                    ->description("Update your account's information.")
                     ->aside()
                     ->schema([
                         $this->getEmailFormComponent()
@@ -200,6 +261,35 @@ class EditProfile extends Page
                     ->aside()
                     ->schema($connectedAccounts->toArray())
                     ->visible($connectedAccounts->count()),
+                Section::make('Office Hours')
+                    ->aside()
+                    ->schema([
+                        Toggle::make('office_hours_are_enabled')
+                            ->label('Enable office hours')
+                            ->live(),
+                        Toggle::make('appointments_are_restricted_to_existing_students')
+                            ->label('Restrict appointments to existing students')
+                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                        Section::make('Days')
+                            ->schema($officeHoursDays)
+                            ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('out_of_office_is_enabled')
+                                    ->label('Out of office')
+                                    ->inline(false)
+                                    ->live()
+                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                                DateTimePicker::make('out_of_office_starts_at')
+                                    ->label('Start')
+                                    ->required()
+                                    ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                                DateTimePicker::make('out_of_office_ends_at')
+                                    ->label('End')
+                                    ->required()
+                                    ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
+                            ]),
+                    ]),
             ]);
     }
 

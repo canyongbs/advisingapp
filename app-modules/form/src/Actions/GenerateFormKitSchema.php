@@ -3,57 +3,63 @@
 /*
 <COPYRIGHT>
 
-Copyright © 2022-2023, Canyon GBS LLC
+    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
 
-All rights reserved.
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
-This file is part of a project developed using Laravel, which is an open-source framework for PHP.
-Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
-projects used in the development of this solution.
+    Notice:
 
-This project is licensed under the Affero General Public License (AGPL) 3.0.
-For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
 
-Notice:
-- The copyright notice in this file and across all files and applications in this
- repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
-- The software solution, including services, infrastructure, and code, is offered as a
- Software as a Service (SaaS) by Canyon GBS LLC.
-- Use of this software implies agreement to the license terms and conditions as stated
- in the AGPL 3.0 License.
-
-For more information or inquiries please visit our website at
-https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 */
 
 namespace Assist\Form\Actions;
 
-use Assist\Form\Models\Form;
-use Assist\Form\Models\FormStep;
+use Assist\Form\Models\Submissible;
+use Assist\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\Collection;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class GenerateFormKitSchema
 {
-    public function __invoke(Form $form): array
+    public function __invoke(Submissible $submissible): array
     {
-        if ($form->is_wizard) {
-            $form->loadMissing([
+        if ($submissible->is_wizard) {
+            $submissible->loadMissing([
                 'steps' => [
                     'fields',
                 ],
             ]);
 
-            $content = $this->wizardContent($form);
+            $content = $this->wizardContent($submissible);
         } else {
-            $form->loadMissing([
+            $submissible->loadMissing([
                 'fields',
             ]);
 
             $content = [
-                ...$this->content($form->content['content'] ?? [], $form->fields->keyBy('id')),
+                ...$this->content($submissible->content['content'] ?? [], $submissible->fields->keyBy('id')),
                 [
                     '$formkit' => 'submit',
                     'label' => 'Submit',
@@ -154,7 +160,7 @@ class GenerateFormKitSchema
         return $component['text'];
     }
 
-    public function wizardContent(Form $form): array
+    public function wizardContent(Submissible $submissible): array
     {
         return [
             [
@@ -199,7 +205,7 @@ class GenerateFormKitSchema
                     'class' => 'form-body',
                 ],
                 'children' => [
-                    ...$form->steps->map(fn (FormStep $step): array => [
+                    ...$submissible->steps->map(fn (SubmissibleStep $step): array => [
                         '$el' => 'section',
                         'attrs' => [
                             'style' => [
@@ -224,7 +230,7 @@ class GenerateFormKitSchema
                         'children' => [
                             [
                                 '$formkit' => 'button',
-                                'disabled' => '$activeStep === "' . $form->steps->first()->label . '"',
+                                'disabled' => '$activeStep === "' . $submissible->steps->first()->label . '"',
                                 'onClick' => '$setStep(-1)',
                                 'children' => 'Previous Step',
                             ],
@@ -232,7 +238,7 @@ class GenerateFormKitSchema
                                 '$el' => 'div',
                                 'attrs' => [
                                     'style' => [
-                                        'if' => '$activeStep === "' . $form->steps->last()->label . '"',
+                                        'if' => '$activeStep === "' . $submissible->steps->last()->label . '"',
                                         'then' => 'display: none;',
                                     ],
                                 ],
@@ -248,7 +254,7 @@ class GenerateFormKitSchema
                                 '$el' => 'div',
                                 'attrs' => [
                                     'style' => [
-                                        'if' => '$activeStep !== "' . $form->steps->last()->label . '"',
+                                        'if' => '$activeStep !== "' . $submissible->steps->last()->label . '"',
                                         'then' => 'display: none;',
                                     ],
                                 ],

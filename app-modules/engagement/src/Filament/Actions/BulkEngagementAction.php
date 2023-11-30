@@ -3,39 +3,54 @@
 /*
 <COPYRIGHT>
 
-Copyright © 2022-2023, Canyon GBS LLC
+    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
 
-All rights reserved.
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
-This file is part of a project developed using Laravel, which is an open-source framework for PHP.
-Canyon GBS LLC acknowledges and respects the copyright of Laravel and other open-source
-projects used in the development of this solution.
+    Notice:
 
-This project is licensed under the Affero General Public License (AGPL) 3.0.
-For more details, see https://github.com/canyongbs/assistbycanyongbs/blob/main/LICENSE.
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
 
-Notice:
-- The copyright notice in this file and across all files and applications in this
- repository cannot be removed or altered without violating the terms of the AGPL 3.0 License.
-- The software solution, including services, infrastructure, and code, is offered as a
- Software as a Service (SaaS) by Canyon GBS LLC.
-- Use of this software implies agreement to the license terms and conditions as stated
- in the AGPL 3.0 License.
-
-For more information or inquiries please visit our website at
-https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
 */
 
 namespace Assist\Engagement\Filament\Actions;
 
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Filament\Forms\Components\Wizard\Step;
+use Assist\Engagement\Models\EmailTemplate;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Forms\Components\Actions\Action;
 use Assist\Engagement\Actions\CreateEngagementBatch;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
@@ -50,66 +65,96 @@ class BulkEngagementAction
             ->modalHeading('Send Bulk Engagement')
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to engage.")
             ->steps([
-                Step::make('Choose your delivery methods')
-                    ->description('Select email, sms, or both.')
+                Step::make('Choose your delivery method')
+                    ->description('Select email or sms.')
                     ->schema([
-                        Select::make('delivery_methods')
+                        Select::make('delivery_method')
                             ->label('How would you like to send this engagement?')
-                            ->translateLabel()
                             ->options(EngagementDeliveryMethod::class)
-                            ->multiple()
-                            ->minItems(1)
-                            ->validationAttribute('Delivery Method')
-                            ->required(),
+                            ->default(EngagementDeliveryMethod::Email->value)
+                            ->selectablePlaceholder(false)
+                            ->live(),
                     ]),
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
                         TextInput::make('subject')
                             ->autofocus()
-                            ->translateLabel()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (callable $get) => collect($get('delivery_methods'))->doesntContain(EngagementDeliveryMethod::Email->value))
-                            ->helperText('The subject will only be used for the email delivery method.'),
-                        // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                        Textarea::make('body')
-                            ->translateLabel()
-                            ->placeholder(__('Body'))
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->columnSpanFull(),
+                        TiptapEditor::make('body_json')
+                            ->label('Body')
+                            ->mergeTags([
+                                'student full name',
+                                'student email',
+                            ])
+                            ->showMergeTagsInBlocksPanel(false)
+                            ->profile('email')
+                            ->output(TiptapOutput::Json)
                             ->required()
-                            ->maxLength(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                    return 320;
-                                }
+                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                                ->form([
+                                    Select::make('emailTemplate')
+                                        ->searchable()
+                                        ->options(function (Get $get): array {
+                                            return EmailTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                )
+                                                ->orderBy('name')
+                                                ->limit(50)
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        })
+                                        ->getSearchResultsUsing(function (Get $get, string $search): array {
+                                            return EmailTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                )
+                                                ->where(new Expression('lower(name)'), 'like', "%{$search}%")
+                                                ->orderBy('name')
+                                                ->limit(50)
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        }),
+                                    Checkbox::make('onlyMyTemplates')
+                                        ->label('Only show my templates')
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                ])
+                                ->action(function (array $data) use ($component) {
+                                    $template = EmailTemplate::find($data['emailTemplate']);
 
-                                return 65535;
-                            })
-                            ->helperText(function (callable $get) {
-                                if (collect($get('delivery_methods'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                    return 'The body of your message can be up to 320 characters long.';
-                                }
+                                    if (! $template) {
+                                        return;
+                                    }
 
-                                return 'The body of your message can be up to 65,535 characters long.';
-                            }),
-                        // TODO Potentially re-enable this later...
-                        // Fieldset::make('Send your engagement')
-                        //     ->schema([
-                        //         Toggle::make('send_later')
-                        //             ->reactive()
-                        //             ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
-                        //         DateTimePicker::make('deliver_at')
-                        //             ->required()
-                        //             ->visible(fn (callable $get) => $get('send_later')),
-                        //     ]),
+                                    $component->state($template->content);
+                                }))
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
+                            ->columnSpanFull(),
+                        Textarea::make('body')
+                            ->placeholder('Body')
+                            ->required()
+                            ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
+                            ->helperText('The body of your message can be up to 320 characters long.')
+                            ->visible(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->columnSpanFull(),
                     ]),
             ])
             ->action(function (Collection $records, array $data) {
                 CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                     'user' => auth()->user(),
                     'records' => $records,
-                    'subject' => $data['subject'],
-                    'body' => $data['body'],
-                    'deliveryMethods' => $data['delivery_methods'],
+                    'deliveryMethod' => $data['delivery_method'],
+                    'subject' => $data['subject'] ?? null,
+                    'body' => $data['body'] ?? null,
+                    'bodyJson' => $data['bodyJson'] ?? null,
                 ]));
             })
             ->modalSubmitActionLabel('Send')
