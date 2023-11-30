@@ -151,10 +151,10 @@ class BulkEngagementAction
                 CreateEngagementBatch::dispatch(EngagementBatchCreationData::from([
                     'user' => auth()->user(),
                     'records' => $records,
+                    'deliveryMethod' => $data['delivery_method'],
                     'subject' => $data['subject'] ?? null,
                     'body' => $data['body'] ?? null,
-                    'body_json' => $data['body_json'] ?? null,
-                    'deliveryMethod' => $data['delivery_method'],
+                    'bodyJson' => $data['bodyJson'] ?? null,
                 ]));
             })
             ->modalSubmitActionLabel('Send')
