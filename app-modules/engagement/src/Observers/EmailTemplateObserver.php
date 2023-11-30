@@ -34,29 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Models;
+namespace Assist\Engagement\Observers;
 
-use App\Models\User;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Engagement\Models\EmailTemplate;
 
-/**
- * @mixin IdeHelperEmailTemplate
- */
-class EmailTemplate extends BaseModel
+class EmailTemplateObserver
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'content',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-    ];
-
-    public function user(): BelongsTo
+    public function creating(EmailTemplate $emailTemplate): void
     {
-        return $this->belongsTo(User::class);
+        if (is_null($emailTemplate->user_id) && ! is_null(auth()->user())) {
+            $emailTemplate->user_id = auth()->user()->id;
+        }
     }
 }

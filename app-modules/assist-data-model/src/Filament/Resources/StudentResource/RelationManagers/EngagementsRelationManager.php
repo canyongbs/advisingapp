@@ -40,18 +40,13 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
-use Filament\Forms\Components\Hidden;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Assist\Engagement\Models\Engagement;
-use Filament\Forms\Components\Component;
 use Filament\Tables\Actions\CreateAction;
-use Assist\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\Fieldset;
-use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;
 use Assist\Engagement\Actions\CreateEngagementDeliverable;
 use App\Filament\Resources\RelationManagers\RelationManager;
@@ -63,22 +58,7 @@ class EngagementsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        $createEngagementForm = (resolve(CreateEngagement::class))->form($form);
-
-        $formComponents = collect($createEngagementForm->getComponents())->filter(function (Component $component) {
-            if (! $component instanceof MorphToSelect) {
-                return true;
-            }
-        })->toArray();
-
-        return $createEngagementForm
-            ->schema([
-                Hidden::make('recipient_id')
-                    ->default($this->getOwnerRecord()->identifier()),
-                Hidden::make('recipient_type')
-                    ->default(resolve(Student::class)->getMorphClass()),
-                ...$formComponents,
-            ]);
+        return (resolve(CreateEngagement::class))->form($form);
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -90,8 +70,11 @@ class EngagementsRelationManager extends RelationManager
                 Fieldset::make('Content')
                     ->schema([
                         TextEntry::make('subject')
-                            ->hidden(fn (Engagement $engagement): bool => $engagement->deliverable->channel === EngagementDeliveryMethod::Sms),
-                        TextEntry::make('body'),
+                            ->columnSpanFull(),
+                        TextEntry::make('body')
+                            ->getStateUsing(fn (Engagement $engagement): string => $engagement->getBody())
+                            ->markdown()
+                            ->columnSpanFull(),
                     ]),
                 Fieldset::make('deliverable')
                     ->label('Delivery Information')
@@ -127,9 +110,10 @@ class EngagementsRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('subject'),
-                TextColumn::make('body'),
                 TextColumn::make('deliverable.channel')
                     ->label('Delivery Channel'),
+                TextColumn::make('created_at')
+                    ->dateTime(),
             ])
             ->filters([
             ])

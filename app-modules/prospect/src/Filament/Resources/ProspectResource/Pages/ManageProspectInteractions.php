@@ -39,10 +39,6 @@ namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
-use Assist\Prospect\Models\Prospect;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\MorphToSelect;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
@@ -64,22 +60,7 @@ class ManageProspectInteractions extends ManageRelatedRecords
 
     public function form(Form $form): Form
     {
-        $createInteractionForm = (resolve(CreateInteraction::class))->form($form);
-
-        $formComponents = collect($createInteractionForm->getComponents())->filter(function (Component $component) {
-            if (! $component instanceof MorphToSelect) {
-                return true;
-            }
-        })->toArray();
-
-        return $createInteractionForm
-            ->schema([
-                Hidden::make('interactable_id')
-                    ->default($this->getOwnerRecord()->identifier()),
-                Hidden::make('interactable_type')
-                    ->default(resolve(Prospect::class)->getMorphClass()),
-                ...$formComponents,
-            ]);
+        return (resolve(CreateInteraction::class))->form($form);
     }
 
     public function infolist(Infolist $infolist): Infolist

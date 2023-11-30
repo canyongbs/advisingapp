@@ -52,6 +52,7 @@ use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Observers\EngagementObserver;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Assist\Engagement\Observers\EmailTemplateObserver;
 use Assist\Engagement\Observers\EngagementBatchObserver;
 use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\Engagement\Observers\EngagementFileEntitiesObserver;
@@ -89,6 +90,7 @@ class EngagementServiceProvider extends ServiceProvider
 
     public function registerObservers(): void
     {
+        EmailTemplate::observe(EmailTemplateObserver::class);
         EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
         Engagement::observe(EngagementObserver::class);
         EngagementBatch::observe(EngagementBatchObserver::class);

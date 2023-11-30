@@ -42,6 +42,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Pages\EmailConfiguration;
 use Filament\Resources\Pages\CreateRecord;
+use FilamentTiptapEditor\Enums\TiptapOutput;
 use Assist\Engagement\Filament\Resources\EmailTemplateResource;
 
 class CreateEmailTemplate extends CreateRecord
@@ -68,6 +69,13 @@ class CreateEmailTemplate extends CreateRecord
                 Textarea::make('description')
                     ->string(),
                 TiptapEditor::make('content')
+                    ->mergeTags([
+                        'student full name',
+                        'student email',
+                    ])
+                    ->profile('email')
+                    ->output(TiptapOutput::Json)
+                    ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
             ]);

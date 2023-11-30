@@ -53,7 +53,9 @@ use Assist\Interaction\Models\InteractionStatus;
 use Assist\Interaction\Models\InteractionOutcome;
 use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Interaction\Models\InteractionRelation;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\ServiceManagement\Models\ServiceRequest;
+use App\Filament\Resources\RelationManagers\RelationManager;
 use Assist\Interaction\Filament\Resources\InteractionResource;
 
 class CreateInteraction extends CreateRecord
@@ -77,7 +79,8 @@ class CreateInteraction extends CreateRecord
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),
-                    ]),
+                    ])
+                    ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                 Fieldset::make('Details')
                     ->schema([
                         Select::make('interaction_campaign_id')

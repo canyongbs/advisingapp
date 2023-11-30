@@ -46,11 +46,22 @@ class MailMessage extends BaseMailMessage
         return app(static::class);
     }
 
+    public function content(string $content): static
+    {
+        $this->viewData = [
+            $this->viewData,
+            'content' => $content,
+        ];
+
+        return $this;
+    }
+
     public function settings(?NotificationSetting $setting): static
     {
-        $this->markdown('vendor.notifications.email', [
+        $this->viewData = [
+            $this->viewData,
             'settings' => $setting,
-        ]);
+        ];
 
         return $this;
     }

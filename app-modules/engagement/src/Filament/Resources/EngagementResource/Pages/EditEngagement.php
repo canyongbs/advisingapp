@@ -36,17 +36,29 @@
 
 namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
+use Filament\Pages\Page;
+use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Assist\Prospect\Models\Prospect;
-use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
+use Assist\Engagement\Models\Engagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Assist\AssistDataModel\Models\Student;
+use Assist\Engagement\Models\EmailTemplate;
 use Filament\Forms\Components\MorphToSelect;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Assist\Engagement\Filament\Resources\EngagementResource;
 
@@ -58,15 +70,71 @@ class EditEngagement extends EditRecord
     {
         return $form
             ->schema([
-                Hidden::make('user_id')
-                    ->default(auth()->user()->id),
                 TextInput::make('subject')
                     ->autofocus()
                     ->required()
-                    ->placeholder(__('Subject')),
+                    ->placeholder(__('Subject'))
+                    ->columnSpanFull(),
+                TiptapEditor::make('body_json')
+                    ->label('Body')
+                    ->mergeTags([
+                        'student full name',
+                        'student email',
+                    ])
+                    ->profile('email')
+                    ->output(TiptapOutput::Json)
+                    ->required()
+                    ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                        ->form([
+                            Select::make('emailTemplate')
+                                ->searchable()
+                                ->options(function (Get $get): array {
+                                    return EmailTemplate::query()
+                                        ->when(
+                                            $get('onlyMyTemplates'),
+                                            fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                        )
+                                        ->orderBy('name')
+                                        ->limit(50)
+                                        ->pluck('name', 'id')
+                                        ->toArray();
+                                })
+                                ->getSearchResultsUsing(function (Get $get, string $search): array {
+                                    return EmailTemplate::query()
+                                        ->when(
+                                            $get('onlyMyTemplates'),
+                                            fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                        )
+                                        ->where(new Expression('lower(name)'), 'like', "%{$search}%")
+                                        ->orderBy('name')
+                                        ->limit(50)
+                                        ->pluck('name', 'id')
+                                        ->toArray();
+                                }),
+                            Checkbox::make('onlyMyTemplates')
+                                ->label('Only show my templates')
+                                ->live()
+                                ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                        ])
+                        ->action(function (array $data) use ($component) {
+                            $template = EmailTemplate::find($data['emailTemplate']);
+
+                            if (! $template) {
+                                return;
+                            }
+
+                            $component->state($template->content);
+                        }))
+                    ->visible(fn (Engagement $record): bool => filled($record->body_json))
+                    ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
+                    ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
+                    ->columnSpanFull(),
                 Textarea::make('body')
-                    ->autofocus()
-                    ->placeholder(__('Body'))
+                    ->placeholder('Body')
+                    ->required()
+                    ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
+                    ->helperText('The body of your message can be up to 320 characters long.')
+                    ->visible(fn (Engagement $record): bool => blank($record->body_json))
                     ->columnSpanFull(),
                 MorphToSelect::make('recipient')
                     ->label('Recipient')
@@ -93,6 +161,7 @@ class EditEngagement extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ViewAction::make(),
             DeleteAction::make(),
         ];
     }

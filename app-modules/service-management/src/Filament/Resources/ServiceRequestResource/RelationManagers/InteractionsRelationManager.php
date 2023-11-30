@@ -39,10 +39,6 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Rel
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\MorphToSelect;
-use Assist\ServiceManagement\Models\ServiceRequest;
 use App\Filament\Resources\RelationManagers\RelationManager;
 use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
 use Assist\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
@@ -53,22 +49,7 @@ class InteractionsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        $createInteractionForm = (resolve(CreateInteraction::class))->form($form);
-
-        $formComponents = collect($createInteractionForm->getComponents())->filter(function (Component $component) {
-            if (! $component instanceof MorphToSelect) {
-                return true;
-            }
-        })->toArray();
-
-        return $createInteractionForm
-            ->schema([
-                Hidden::make('interactable_id')
-                    ->default($this->ownerRecord->identifier()),
-                Hidden::make('interactable_type')
-                    ->default(resolve(ServiceRequest::class)->getMorphClass()),
-                ...$formComponents,
-            ]);
+        return (resolve(CreateInteraction::class))->form($form);
     }
 
     public function infolist(Infolist $infolist): Infolist

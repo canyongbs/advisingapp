@@ -50,7 +50,7 @@ class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
                 ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->deliverable->engagement->recipient->mobile,
                 [
                     'from' => config('services.twilio.from_number'),
-                    'body' => $this->deliverable->engagement->body,
+                    'body' => $this->deliverable->engagement->getBody(),
                     'statusCallback' => route('inbound.webhook.twilio', ['event' => 'status_callback']),
                 ]
             );

@@ -71,6 +71,7 @@ class EngagementFactory extends Factory
             },
             'subject' => fake()->sentence,
             'body' => fake()->paragraph,
+            'body_json' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
             'deliver_at' => fake()->dateTimeBetween('-1 year', '-1 day'),
             'scheduled' => true,
         ];

@@ -91,9 +91,12 @@ class ViewEngagement extends ViewRecord
                         Fieldset::make('Content')
                             ->schema([
                                 TextEntry::make('subject')
-                                    ->translateLabel(),
+                                    ->hidden(fn ($state): bool => blank($state))
+                                    ->columnSpanFull(),
                                 TextEntry::make('body')
-                                    ->translateLabel(),
+                                    ->getStateUsing(fn (Engagement $engagement): string => $engagement->getBody())
+                                    ->markdown()
+                                    ->columnSpanFull(),
                             ]),
                     ])
                     ->columns(),

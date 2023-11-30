@@ -36,18 +36,29 @@
 
 namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
 
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Assist\AssistDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
+use Assist\Engagement\Models\EmailTemplate;
 use Filament\Forms\Components\MorphToSelect;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
+use Filament\Resources\RelationManagers\RelationManager;
 use Assist\Engagement\Actions\CreateEngagementDeliverable;
 use Assist\Engagement\Filament\Resources\EngagementResource;
 
@@ -59,43 +70,84 @@ class CreateEngagement extends CreateRecord
     {
         return $form
             ->schema([
-                // TODO Better validation error messages here, "You must select at least 1 delivery method"
                 Select::make('delivery_method')
                     ->label('How would you like to send this engagement?')
-                    ->translateLabel()
                     ->options(EngagementDeliveryMethod::class)
-                    ->validationAttribute('Delivery Method')
-                    ->reactive(),
+                    ->default(EngagementDeliveryMethod::Email->value)
+                    ->selectablePlaceholder(false)
+                    ->live(),
                 Fieldset::make('Content')
                     ->schema([
                         TextInput::make('subject')
                             ->autofocus()
-                            ->translateLabel()
                             ->required()
                             ->placeholder(__('Subject'))
-                            ->hidden(fn (callable $get) => collect($get('delivery_method'))->doesntContain(EngagementDeliveryMethod::Email->value)),
-                        Textarea::make('body')
-                            ->translateLabel()
-                            ->placeholder(__('Body'))
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->columnSpanFull(),
+                        TiptapEditor::make('body_json')
+                            ->label('Body')
+                            ->mergeTags([
+                                'student full name',
+                                'student email',
+                            ])
+                            ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
+                            ->profile('email')
+                            ->output(TiptapOutput::Json)
                             ->required()
-                            ->maxLength(function (callable $get) {
-                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                    return 320;
-                                }
+                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                                ->form([
+                                    Select::make('emailTemplate')
+                                        ->searchable()
+                                        ->options(function (Get $get): array {
+                                            return EmailTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                )
+                                                ->orderBy('name')
+                                                ->limit(50)
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        })
+                                        ->getSearchResultsUsing(function (Get $get, string $search): array {
+                                            return EmailTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                )
+                                                ->where(new Expression('lower(name)'), 'like', "%{$search}%")
+                                                ->orderBy('name')
+                                                ->limit(50)
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        }),
+                                    Checkbox::make('onlyMyTemplates')
+                                        ->label('Only show my templates')
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                ])
+                                ->action(function (array $data) use ($component) {
+                                    $template = EmailTemplate::find($data['emailTemplate']);
 
-                                return 65535;
-                            })
-                            ->helperText(function (callable $get) {
-                                if (collect($get('delivery_method'))->contains(EngagementDeliveryMethod::Sms->value)) {
-                                    return 'The body of your message can be up to 320 characters long.';
-                                }
+                                    if (! $template) {
+                                        return;
+                                    }
 
-                                return 'The body of your message can be up to 65,535 characters long.';
-                            }),
+                                    $component->state($template->content);
+                                }))
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
+                            ->columnSpanFull(),
+                        Textarea::make('body')
+                            ->placeholder('Body')
+                            ->required()
+                            ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
+                            ->helperText('The body of your message can be up to 320 characters long.')
+                            ->visible(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->columnSpanFull(),
                     ]),
                 MorphToSelect::make('recipient')
                     ->label('Recipient')
-                    ->translateLabel()
                     ->searchable()
                     ->required()
                     ->types([
@@ -103,7 +155,8 @@ class CreateEngagement extends CreateRecord
                             ->titleAttribute(Student::displayNameKey()),
                         MorphToSelect\Type::make(Prospect::class)
                             ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
+                    ])
+                    ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                 Fieldset::make('Send your engagement')
                     ->schema([
                         Toggle::make('send_later')

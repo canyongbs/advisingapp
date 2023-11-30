@@ -60,7 +60,7 @@ class EngagementNotification extends Notification implements ShouldQueue
         return MailMessage::make()
             ->subject($this->deliverable->engagement->subject)
             ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
-            ->line($this->deliverable->engagement->body)
+            ->content($this->deliverable->engagement->getBody())
             ->salutation("Regards, {$this->deliverable->engagement->user->name}");
     }
 }

@@ -36,6 +36,7 @@
 
 namespace Assist\Engagement\Filament\Concerns;
 
+use Assist\Engagement\Models\Engagement;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -51,8 +52,13 @@ trait EngagementInfolist
                 ->label('Created By'),
             Fieldset::make('Content')
                 ->schema([
-                    TextEntry::make('subject'),
-                    TextEntry::make('body'),
+                    TextEntry::make('subject')
+                        ->hidden(fn ($state): bool => blank($state))
+                        ->columnSpanFull(),
+                    TextEntry::make('body')
+                        ->getStateUsing(fn (Engagement $engagement): string => $engagement->getBody())
+                        ->markdown()
+                        ->columnSpanFull(),
                 ]),
             Fieldset::make('deliverable')
                 ->label('Delivery Information')

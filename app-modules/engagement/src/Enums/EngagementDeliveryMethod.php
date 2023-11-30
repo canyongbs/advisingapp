@@ -36,8 +36,18 @@
 
 namespace Assist\Engagement\Enums;
 
-enum EngagementDeliveryMethod: string
+use Filament\Support\Contracts\HasLabel;
+
+enum EngagementDeliveryMethod: string implements HasLabel
 {
     case Email = 'email';
     case Sms = 'sms';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            static::Email => 'Email',
+            static::Sms => 'SMS',
+        };
+    }
 }
