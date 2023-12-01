@@ -185,15 +185,13 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     {
         return $this->hasOne(ServiceRequestAssignment::class)
             ->latest('assigned_at')
-            ->where('status', ServiceRequestAssignmentStatus::Active)
-            ->limit(1);
+            ->where('status', ServiceRequestAssignmentStatus::Active);
     }
 
     public function initialAssignment(): HasOne
     {
         return $this->hasOne(ServiceRequestAssignment::class)
-            ->oldest('assigned_at')
-            ->limit(1);
+            ->oldest('assigned_at');
     }
 
     public function createdBy(): BelongsTo
