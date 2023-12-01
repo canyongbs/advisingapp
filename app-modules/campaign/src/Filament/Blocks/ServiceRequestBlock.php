@@ -92,7 +92,7 @@ class ServiceRequestBlock extends CampaignActionBlock
                 ->required()
                 ->exists((new ServiceRequestType())->getTable(), 'id'),
             Select::make($fieldPrefix . 'assigned_to_id')
-                ->relationship('assignedTo', 'name')
+                ->relationship('assignedTo.user', 'name')
                 ->searchable()
                 ->label('Assign Service Request to')
                 ->nullable()
