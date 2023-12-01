@@ -16,6 +16,9 @@ use Assist\Timeline\Timelines\ServiceRequestAssignmentTimeline;
 use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
+/**
+ * @mixin IdeHelperServiceRequestAssignment
+ */
 class ServiceRequestAssignment extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use HasUuids;
