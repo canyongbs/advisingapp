@@ -44,8 +44,8 @@ use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\Vie
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ListServiceRequests;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ServiceRequestTimeline;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestUser;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestUpdate;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestAssignment;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestInteraction;
 
 class ServiceRequestResource extends Resource
@@ -69,7 +69,7 @@ class ServiceRequestResource extends Resource
         return $page->generateNavigationItems([
             ViewServiceRequest::class,
             EditServiceRequest::class,
-            ManageServiceRequestUser::class,
+            ManageServiceRequestAssignment::class,
             ManageServiceRequestUpdate::class,
             ManageServiceRequestInteraction::class,
             ServiceRequestTimeline::class,
@@ -80,7 +80,7 @@ class ServiceRequestResource extends Resource
     {
         return [
             'index' => ListServiceRequests::route('/'),
-            'manage-users' => ManageServiceRequestUser::route('/{record}/users'),
+            'manage-assignments' => ManageServiceRequestAssignment::route('/{record}/users'),
             'manage-service-request-updates' => ManageServiceRequestUpdate::route('/{record}/updates'),
             'manage-interactions' => ManageServiceRequestInteraction::route('/{record}/interactions'),
             'create' => CreateServiceRequest::route('/create'),

@@ -49,16 +49,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
@@ -77,6 +80,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use AuditableTrait;
     use HasUuids;
     use HasManyMorphedInteractions;
+    use HasRelationships;
 
     protected $fillable = [
         'respondent_type',
@@ -172,9 +176,24 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return $this->belongsTo(ServiceRequestPriority::class);
     }
 
-    public function assignedTo(): BelongsTo
+    public function assignments(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(ServiceRequestAssignment::class);
+    }
+
+    public function assignedTo(): HasOne
+    {
+        return $this->hasOne(ServiceRequestAssignment::class)
+            ->latest('assigned_at')
+            ->where('status', ServiceRequestAssignmentStatus::Active)
+            ->limit(1);
+    }
+
+    public function initialAssignment(): HasOne
+    {
+        return $this->hasOne(ServiceRequestAssignment::class)
+            ->oldest('assigned_at')
+            ->limit(1);
     }
 
     public function createdBy(): BelongsTo

@@ -34,44 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
+namespace Assist\ServiceManagement\Observers;
 
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\CreatedByRelationManager;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\AssignedToRelationManager;
+use Assist\Timeline\Events\TimelineableRecordCreated;
+use Assist\Timeline\Events\TimelineableRecordDeleted;
+use Assist\Notifications\Events\TriggeredAutoSubscription;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
-class ManageServiceRequestUser extends ManageRelatedRecords
+class ServiceRequestAssignmentObserver
 {
-    protected static string $resource = ServiceRequestResource::class;
-
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'assignedTo';
-
-    protected static ?string $navigationLabel = 'Related Users';
-
-    protected static ?string $breadcrumb = 'Related Users';
-
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-
-    public static function canAccess(?Model $record = null): bool
+    public function created(ServiceRequestAssignment $serviceRequestAssignment): void
     {
-        return (bool) count(static::managers($record));
+        if ($user = auth()->user()) {
+            TriggeredAutoSubscription::dispatch($user, $serviceRequestAssignment);
+        }
+
+        $serviceRequestAssignment->serviceRequest->assignments()->where('id', '!=', $serviceRequestAssignment->id)->update([
+            'status' => ServiceRequestAssignmentStatus::Inactive,
+        ]);
+
+        TimelineableRecordCreated::dispatch($serviceRequestAssignment->serviceRequest, $serviceRequestAssignment);
     }
 
-    public function getRelationManagers(): array
+    public function deleted(ServiceRequestAssignment $serviceRequestAssignment): void
     {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(Model $record): array
-    {
-        return collect([
-            AssignedToRelationManager::class,
-            CreatedByRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
-            ->toArray();
+        TimelineableRecordDeleted::dispatch($serviceRequestAssignment->serviceRequest, $serviceRequestAssignment);
     }
 }

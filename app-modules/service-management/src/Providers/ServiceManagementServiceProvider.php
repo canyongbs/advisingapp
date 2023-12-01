@@ -47,8 +47,10 @@ use Assist\Authorization\AuthorizationPermissionRegistry;
 use Assist\ServiceManagement\Models\ServiceRequestStatus;
 use Assist\ServiceManagement\Models\ServiceRequestUpdate;
 use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
 use Assist\ServiceManagement\Observers\ServiceRequestObserver;
 use Assist\ServiceManagement\Observers\ServiceRequestUpdateObserver;
+use Assist\ServiceManagement\Observers\ServiceRequestAssignmentObserver;
 use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 use Assist\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServiceRequestNumberGenerator;
 
@@ -65,6 +67,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'service_request' => ServiceRequest::class,
+            'service_request_assignment' => ServiceRequestAssignment::class,
             'service_request_priority' => ServiceRequestPriority::class,
             'service_request_status' => ServiceRequestStatus::class,
             'service_request_type' => ServiceRequestType::class,
@@ -79,6 +82,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
     {
         ServiceRequest::observe(ServiceRequestObserver::class);
         ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
+        ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);
     }
 
     protected function registerRolesAndPermissions()

@@ -36,14 +36,23 @@
 
 namespace Assist\ServiceManagement\Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Assist\ServiceManagement\Models\ServiceRequest;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
 
 class ServiceRequestSeeder extends Seeder
 {
     public function run(): void
     {
         ServiceRequest::factory()
+            ->has(
+                factory: ServiceRequestAssignment::factory()
+                    ->for(User::where('email', 'sampleadmin@advising.app')->first())
+                    ->count(1)
+                    ->active(),
+                relationship: 'assignments'
+            )
             ->count(30)
             ->create();
     }

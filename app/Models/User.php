@@ -80,10 +80,13 @@ use Assist\Engagement\Models\Concerns\HasManyEngagements;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
 use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
  * @mixin IdeHelperUser
@@ -263,12 +266,22 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
-    public function serviceRequests(): HasMany
+    public function serviceRequestAssignments(): HasMany
     {
-        return $this->hasMany(
-            related: ServiceRequest::class,
-            foreignKey: 'assigned_to_id',
-        );
+        return $this->hasMany(ServiceRequestAssignment::class)
+            ->where('status', ServiceRequestAssignmentStatus::Active);
+    }
+
+    public function serviceRequests(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            ServiceRequest::class,
+            ServiceRequestAssignment::class,
+            'user_id',
+            'id',
+            'id',
+            'service_request_id'
+        )->where('status', ServiceRequestAssignmentStatus::Active);
     }
 
     public function getIsAdminAttribute()
