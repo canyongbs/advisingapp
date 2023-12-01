@@ -34,15 +34,15 @@
 <div class="flex justify-evenly">
     <a href="{{ route('calendar.google.login') }}">
         <x-filament::icon
-            icon="icon-google"
             class="h-16 w-16"
+            icon="icon-google"
         />
     </a>
 
     <a href="{{ route('calendar.outlook.login') }}">
         <x-filament::icon
-            icon="icon-outlook"
             class="h-16 w-16"
+            icon="icon-outlook"
         />
     </a>
 </div>
