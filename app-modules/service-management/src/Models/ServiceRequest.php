@@ -211,7 +211,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     {
         try {
             $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
-                ServiceRequest::create([
+                $request = ServiceRequest::create([
                     'respondent_type' => $educatable->getMorphClass(),
                     'respondent_id' => $educatable->getKey(),
                     'close_details' => $action->data['close_details'],
@@ -220,9 +220,16 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                     'status_id' => $action->data['status_id'],
                     'type_id' => $action->data['type_id'],
                     'priority_id' => $action->data['priority_id'],
-                    'assigned_to_id' => $action->data['assigned_to_id'] ?? null,
                     'created_by_id' => $action->campaign->user->id,
                 ]);
+
+                if ($action->data['assigned_to_id']) {
+                    $request->assignments()->create([
+                        'user_id' => $action->data['assigned_to_id'],
+                        'assigned_at' => now(),
+                        'status' => ServiceRequestAssignmentStatus::Active,
+                    ]);
+                }
             });
 
             return true;
