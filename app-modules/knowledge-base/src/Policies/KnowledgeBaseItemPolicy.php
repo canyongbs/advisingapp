@@ -37,17 +37,15 @@
 namespace Assist\KnowledgeBase\Policies;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\Gate;
-use App\Support\FeatureAccessResponse;
 use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
-class KnowledgeBaseItemPolicy
+class KnowledgeBaseItemPolicy implements FeatureAccessEnforcedPolicy
 {
-    public function before(): FeatureAccessResponse | null | bool
-    {
-        return Gate::denies('knowledge-management') ? FeatureAccessResponse::deny() : null;
-    }
+    use FeatureAccessEnforcedPolicyBefore;
 
     public function viewAny(User $user): Response
     {
@@ -103,5 +101,10 @@ class KnowledgeBaseItemPolicy
             abilities: ['knowledge_base_item.*.force-delete', "knowledge_base_item.{$knowledgeBaseItem->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this knowledge base item.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::KnowledgeManagement];
     }
 }

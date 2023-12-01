@@ -37,6 +37,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
@@ -64,5 +65,8 @@ class AuthServiceProvider extends ServiceProvider
                     ? true
                     : $result;
         });
+
+        collect(Feature::cases())
+            ->each(fn (Feature $feature) => $feature->generateGate());
     }
 }
