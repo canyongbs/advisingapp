@@ -1,7 +1,8 @@
 <?php
 
-return [
+use App\JsonApi\V1\Server;
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Root Namespace
@@ -27,6 +28,6 @@ return [
     | class name of the server class.
     */
     'servers' => [
-//        'v1' => \App\JsonApi\V1\Server::class,
+        'v1' => Server::class,
     ],
 ];
