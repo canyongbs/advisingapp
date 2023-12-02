@@ -154,7 +154,7 @@ class BulkEngagementAction
                     'deliveryMethod' => $data['delivery_method'],
                     'subject' => $data['subject'] ?? null,
                     'body' => $data['body'] ?? null,
-                    'bodyJson' => $data['bodyJson'] ?? null,
+                    'bodyJson' => $data['body_json'] ?? null,
                 ]));
             })
             ->modalSubmitActionLabel('Send')
