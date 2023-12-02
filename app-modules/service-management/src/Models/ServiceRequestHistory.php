@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Timeline\Models\Contracts\ProvidesATimeline;
 use Assist\Timeline\Timelines\ServiceRequestHistoryTimeline;
 
-// I think auditability on this model is redundant...
 class ServiceRequestHistory extends BaseModel implements ProvidesATimeline
 {
     protected $casts = [
