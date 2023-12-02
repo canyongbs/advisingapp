@@ -41,7 +41,6 @@
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
 
             <span class="ml-2 flex space-x-2">
-                {{-- TODO How do we want to determine whether or not this was the "first" assignment or a reassignment??? --}}
                 @if ($record->id === $record->serviceRequest->initialAssignment->id)
                     Service Request Assigned
                 @else
