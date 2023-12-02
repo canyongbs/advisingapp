@@ -41,7 +41,6 @@ use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Timeline\Models\Contracts\ProvidesATimeline;
@@ -55,7 +54,6 @@ use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
  */
 class ServiceRequestAssignment extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
-    use HasUuids;
     use AuditableTrait;
 
     protected $casts = [
