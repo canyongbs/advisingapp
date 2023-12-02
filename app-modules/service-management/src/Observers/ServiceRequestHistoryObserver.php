@@ -36,50 +36,19 @@
 
 namespace Assist\ServiceManagement\Observers;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use Assist\Timeline\Events\TimelineableRecordCreated;
+use Assist\Timeline\Events\TimelineableRecordDeleted;
+use Assist\ServiceManagement\Models\ServiceRequestHistory;
 
-class ServiceRequestObserver
+class ServiceRequestHistoryObserver
 {
-    public function creating(ServiceRequest $serviceRequest): void
+    public function created(ServiceRequestHistory $serviceRequestHistory): void
     {
-        $serviceRequest->service_request_number ??= app(ServiceRequestNumberGenerator::class)->generate();
+        TimelineableRecordCreated::dispatch($serviceRequestHistory->serviceRequest, $serviceRequestHistory);
     }
 
-    public function created(ServiceRequest $serviceRequest): void
+    public function deleted(ServiceRequestHistory $serviceRequestHistory): void
     {
-        if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
-        }
-    }
-
-    public function updating(ServiceRequest $serviceRequest): void
-    {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
-    }
-
-    public function saved(ServiceRequest $serviceRequest): void
-    {
-        $changes = $serviceRequest->getChanges();
-        $original = $serviceRequest->getOriginal();
-
-        $originalValues = [];
-        $newValues = [];
-
-        foreach ($changes as $key => $value) {
-            if ($key != 'updated_at') {
-                $originalValues[$key] = $original[$key] ?? null;
-                $newValues[$key] = $value;
-            }
-        }
-
-        if (! blank($newValues)) {
-            $serviceRequest->histories()->create([
-                'original_values' => $originalValues,
-                'new_values' => $newValues,
-            ]);
-        }
+        TimelineableRecordDeleted::dispatch($serviceRequestHistory->serviceRequest, $serviceRequestHistory);
     }
 }

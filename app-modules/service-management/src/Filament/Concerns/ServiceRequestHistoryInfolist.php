@@ -34,27 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
+namespace Assist\ServiceManagement\Filament\Concerns;
 
-use Assist\Timeline\Filament\Pages\TimelinePage;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
+use Filament\Infolists\Components\TextEntry;
 use Assist\ServiceManagement\Models\ServiceRequestHistory;
-use Assist\ServiceManagement\Models\ServiceRequestAssignment;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
-class ServiceRequestTimeline extends TimelinePage
+// TODO Re-use this trait across other places where infolist is rendered
+trait ServiceRequestHistoryInfolist
 {
-    protected static string $resource = ServiceRequestResource::class;
-
-    protected static ?string $navigationLabel = 'Timeline';
-
-    public string $emptyStateMessage = 'There are is no timeline available for this Service Request.';
-
-    public string $noMoreRecordsMessage = "You have reached the end of this service request's timeline.";
-
-    public array $modelsToTimeline = [
-        ServiceRequestUpdate::class,
-        ServiceRequestAssignment::class,
-        ServiceRequestHistory::class,
-    ];
+    public function serviceRequestHistoryInfolist(): array
+    {
+        return [
+            TextEntry::make('serviceRequest.service_request_number')
+                ->label('Service Request')
+                ->translateLabel()
+                ->url(fn (ServiceRequestHistory $serviceRequestHistory): string => ServiceRequestResource::getUrl('view', ['record' => $serviceRequestHistory->serviceRequest]))
+                ->color('primary'),
+        ];
+    }
 }

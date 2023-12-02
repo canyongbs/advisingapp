@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,29 +30,41 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
+@php
+    use App\Filament\Resources\UserResource;
+@endphp
 
-use Assist\Timeline\Filament\Pages\TimelinePage;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Models\ServiceRequestHistory;
-use Assist\ServiceManagement\Models\ServiceRequestAssignment;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
+<div>
+    <div class="flex flex-row justify-between">
+        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
 
-class ServiceRequestTimeline extends TimelinePage
-{
-    protected static string $resource = ServiceRequestResource::class;
+            <span class="ml-2 flex space-x-2">
+                Service Request Data Changed
+            </span>
+        </h3>
 
-    protected static ?string $navigationLabel = 'Timeline';
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-    public string $emptyStateMessage = 'There are is no timeline available for this Service Request.';
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        {{ $record->created_at->diffForHumans() }}
+    </time>
 
-    public string $noMoreRecordsMessage = "You have reached the end of this service request's timeline.";
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+        Here's what changed:
 
-    public array $modelsToTimeline = [
-        ServiceRequestUpdate::class,
-        ServiceRequestAssignment::class,
-        ServiceRequestHistory::class,
-    ];
-}
+        <ul class="list-inside list-disc">
+            @foreach ($record->new_values_formatted as $key => $value)
+                <li>
+                    <span class="font-semibold">{{ $key }}</span> changed from
+                    <span class="font-semibold">{{ $record->original_values_formatted[$key] }}</span> to
+                    <span class="font-semibold">{{ $value }}</span>
+                </li>
+            @endforeach
+    </div>
+</div>

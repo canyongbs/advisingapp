@@ -194,6 +194,11 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
             ->oldest('assigned_at');
     }
 
+    public function histories(): HasMany
+    {
+        return $this->hasMany(ServiceRequestHistory::class);
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class);
