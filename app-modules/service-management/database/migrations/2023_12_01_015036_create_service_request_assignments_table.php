@@ -46,7 +46,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->foreignUuid('service_request_id')->constrained('service_requests');
             $table->foreignUuid('user_id')->constrained('users');
-            $table->timestamp('assigned_at')->nullable();
+            $table->timestamp('assigned_at');
             $table->string('status')->default(ServiceRequestAssignmentStatus::Active);
             $table->timestamps();
         });
