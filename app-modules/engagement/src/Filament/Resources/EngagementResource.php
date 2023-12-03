@@ -48,7 +48,7 @@ class EngagementResource extends Resource
 {
     protected static ?string $model = Engagement::class;
 
-    protected static ?string $navigationLabel = 'Emails and Texts';
+    protected static ?string $navigationLabel = 'Email and Texts';
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
