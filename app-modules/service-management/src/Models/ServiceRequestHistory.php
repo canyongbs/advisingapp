@@ -42,6 +42,21 @@ class ServiceRequestHistory extends BaseModel implements ProvidesATimeline
         return $forModel->histories()->get();
     }
 
+    public function getUpdates(): array
+    {
+        $updates = [];
+
+        foreach ($this->new_values as $key => $value) {
+            $updates[] = [
+                'key' => $key,
+                'old' => $this->original_values[$key],
+                'new' => $value,
+            ];
+        }
+
+        return $updates;
+    }
+
     protected function newValuesFormatted(): Attribute
     {
         return Attribute::make(

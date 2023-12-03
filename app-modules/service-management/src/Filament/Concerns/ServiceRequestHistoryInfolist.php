@@ -51,9 +51,13 @@ trait ServiceRequestHistoryInfolist
                 ->translateLabel()
                 ->url(fn (ServiceRequestHistory $serviceRequestHistory): string => ServiceRequestResource::getUrl('view', ['record' => $serviceRequestHistory->serviceRequest]))
                 ->color('primary'),
-            // TODO Utilize a custom entry here - reference change_entry blade component
-            TextEntry::make('original_values'),
-            TextEntry::make('new_values'),
+            TextEntry::make('getUpdates')
+                ->label('Updates')
+                ->columnSpanFull()
+                ->state(function (ServiceRequestHistory $record) {
+                    return $record->getUpdates();
+                })
+                ->view('filament.infolists.entries.update-entry'),
         ];
     }
 }
