@@ -34,35 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+namespace Assist\ServiceManagement\Actions;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Actions\CreateServiceRequestHistory;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
-class ServiceRequestObserver
+class CreateServiceRequestHistory implements ShouldQueue
 {
-    public function creating(ServiceRequest $serviceRequest): void
-    {
-        $serviceRequest->service_request_number ??= app(ServiceRequestNumberGenerator::class)->generate();
-    }
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function created(ServiceRequest $serviceRequest): void
+    public function __construct(
+        public ServiceRequest $serviceRequest
+    ) {}
+
+    public function handle(): void
     {
-        if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
+        $changes = $this->serviceRequest->getChanges();
+        $original = $this->serviceRequest->getOriginal();
+
+        $originalValues = [];
+        $newValues = [];
+
+        foreach ($changes as $key => $value) {
+            if ($key != 'updated_at') {
+                $originalValues[$key] = $original[$key] ?? null;
+                $newValues[$key] = $value;
+            }
         }
-    }
 
-    public function updating(ServiceRequest $serviceRequest): void
-    {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
-    }
-
-    public function saved(ServiceRequest $serviceRequest): void
-    {
-        CreateServiceRequestHistory::dispatch($serviceRequest);
+        if (! blank($newValues)) {
+            $this->serviceRequest->histories()->create([
+                'original_values' => $originalValues,
+                'new_values' => $newValues,
+            ]);
+        }
     }
 }
