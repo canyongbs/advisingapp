@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Timeline\Models\Contracts\ProvidesATimeline;
 use Assist\Timeline\Timelines\ServiceRequestHistoryTimeline;
 
+/**
+ * @mixin IdeHelperServiceRequestHistory
+ */
 class ServiceRequestHistory extends BaseModel implements ProvidesATimeline
 {
     protected $casts = [
