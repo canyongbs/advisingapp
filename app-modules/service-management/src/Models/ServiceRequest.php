@@ -231,6 +231,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                 if ($action->data['assigned_to_id']) {
                     $request->assignments()->create([
                         'user_id' => $action->data['assigned_to_id'],
+                        'assigned_by_id' => $action->campaign->user->id,
                         'assigned_at' => now(),
                         'status' => ServiceRequestAssignmentStatus::Active,
                     ]);

@@ -86,6 +86,7 @@ class AssignedToRelationManager extends RelationManager
 
                         $serviceRequest->assignments()->create([
                             'user_id' => $data['userId'],
+                            'assigned_by_id' => auth()->user()?->id ?? null,
                             'assigned_at' => now(),
                             'status' => ServiceRequestAssignmentStatus::Active,
                         ]);

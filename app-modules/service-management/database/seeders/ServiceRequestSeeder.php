@@ -45,10 +45,12 @@ class ServiceRequestSeeder extends Seeder
 {
     public function run(): void
     {
+        $superAdmin = User::where('email', 'sampleadmin@advising.app')->first();
+
         ServiceRequest::factory()
             ->has(
                 factory: ServiceRequestAssignment::factory()
-                    ->for(User::where('email', 'sampleadmin@advising.app')->first())
+                    ->for($superAdmin, 'user')
                     ->count(1)
                     ->active(),
                 relationship: 'assignments'
