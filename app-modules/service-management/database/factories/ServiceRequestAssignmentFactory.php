@@ -51,6 +51,7 @@ class ServiceRequestAssignmentFactory extends Factory
         return [
             'service_request_id' => ServiceRequest::factory(),
             'user_id' => User::factory(),
+            'assigned_by_id' => User::factory(),
             'assigned_at' => fake()->dateTimeBetween('-1 year', now()),
         ];
     }

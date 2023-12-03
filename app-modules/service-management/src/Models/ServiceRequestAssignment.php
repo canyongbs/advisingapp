@@ -63,6 +63,7 @@ class ServiceRequestAssignment extends BaseModel implements Auditable, CanTrigge
 
     protected $fillable = [
         'user_id',
+        'assigned_by_id',
         'assigned_at',
         'status',
     ];
@@ -70,6 +71,11 @@ class ServiceRequestAssignment extends BaseModel implements Auditable, CanTrigge
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function assignedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_by_id');
     }
 
     public function serviceRequest(): BelongsTo
