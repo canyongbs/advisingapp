@@ -32,10 +32,6 @@
 </COPYRIGHT>
 --}}
 
-@php
-    use App\Filament\Resources\UserResource;
-@endphp
-
 <div>
     <div class="flex flex-row justify-between">
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">

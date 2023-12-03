@@ -134,7 +134,6 @@ class ServiceRequestHistory extends BaseModel implements ProvidesATimeline
                         try {
                             $found = $educatableClass::find($value[$key]);
                         } catch (Exception $e) {
-                            // TODO We might want to do *something* here...
                         }
 
                         if (! is_null($found)) {
