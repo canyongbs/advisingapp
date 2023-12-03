@@ -51,20 +51,19 @@ class CreateServiceRequestHistory implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public ServiceRequest $serviceRequest
+        public ServiceRequest $serviceRequest,
+        public array $changes,
+        public array $original,
     ) {}
 
     public function handle(): void
     {
-        $changes = $this->serviceRequest->getChanges();
-        $original = $this->serviceRequest->getOriginal();
-
         $originalValues = [];
         $newValues = [];
 
-        foreach ($changes as $key => $value) {
+        foreach ($this->changes as $key => $value) {
             if ($key != 'updated_at') {
-                $originalValues[$key] = $original[$key] ?? null;
+                $originalValues[$key] = $this->original[$key] ?? null;
                 $newValues[$key] = $value;
             }
         }

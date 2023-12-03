@@ -63,6 +63,6 @@ class ServiceRequestObserver
 
     public function saved(ServiceRequest $serviceRequest): void
     {
-        CreateServiceRequestHistory::dispatch($serviceRequest);
+        CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
     }
 }
