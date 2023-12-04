@@ -34,20 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\DataTransferObjects\LicenseManagement;
+namespace App\Concerns;
 
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use App\Enums\Feature;
+use Illuminate\Support\Facades\Gate;
+use App\Support\FeatureAccessResponse;
 
-#[MapInputName(SnakeCaseMapper::class)]
-class LicenseLimitsData extends Data
+trait FeatureAccessEnforcedPolicyBefore
 {
-    public function __construct(
-        public int $crmSeats,
-        public int $analyticsSeats,
-        public int $emails,
-        public int $sms,
-        public string $resetDate,
-    ) {}
+    public function before(): FeatureAccessResponse | null | bool
+    {
+        return Gate::check(
+            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->value)
+        )
+            ? null
+            : FeatureAccessResponse::deny();
+    }
+
+    /**
+     * @return array<Feature>
+     */
+    abstract protected function requiredFeatures(): array;
 }

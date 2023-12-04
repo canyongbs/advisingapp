@@ -34,20 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\DataTransferObjects\LicenseManagement;
+namespace App\Support;
 
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use Illuminate\Auth\Access\Response;
 
-#[MapInputName(SnakeCaseMapper::class)]
-class LicenseLimitsData extends Data
+class FeatureAccessResponse extends Response
 {
-    public function __construct(
-        public int $crmSeats,
-        public int $analyticsSeats,
-        public int $emails,
-        public int $sms,
-        public string $resetDate,
-    ) {}
+    protected $message = 'Feature Access Denied';
+
+    final public function __construct($allowed, $message = '', $code = null)
+    {
+        parent::__construct($allowed, $message, $code);
+    }
+
+    public static function deny($message = null, $code = null): FeatureAccessResponse|static
+    {
+        return new static(false, $message, $code);
+    }
+
+    public static function allow($message = null, $code = null): FeatureAccessResponse|static
+    {
+        return new static(true, $message, $code);
+    }
 }

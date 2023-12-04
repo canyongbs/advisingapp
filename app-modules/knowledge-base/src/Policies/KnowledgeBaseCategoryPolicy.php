@@ -37,11 +37,16 @@
 namespace Assist\KnowledgeBase\Policies;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
 use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
-class KnowledgeBaseCategoryPolicy
+class KnowledgeBaseCategoryPolicy implements FeatureAccessEnforcedPolicy
 {
+    use FeatureAccessEnforcedPolicyBefore;
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(
@@ -96,5 +101,10 @@ class KnowledgeBaseCategoryPolicy
             abilities: ['knowledge_base_category.*.force-delete', "knowledge_base_category.{$knowledgeBaseCategory->id}.force-delete"],
             denyResponse: 'You do not have permissions to permanently delete this knowledge base category.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::KnowledgeManagement];
     }
 }

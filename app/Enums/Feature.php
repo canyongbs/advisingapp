@@ -34,20 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace App\DataTransferObjects\LicenseManagement;
+namespace App\Enums;
 
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\Gate;
 
-#[MapInputName(SnakeCaseMapper::class)]
-class LicenseLimitsData extends Data
+enum Feature: string
 {
-    public function __construct(
-        public int $crmSeats,
-        public int $analyticsSeats,
-        public int $emails,
-        public int $sms,
-        public string $resetDate,
-    ) {}
+    case OnlineAdmissions = 'online-admissions';
+
+    case RealtimeChat = 'realtime-chat';
+
+    case DynamicForms = 'dynamic-forms';
+
+    case ConductSurveys = 'conduct-surveys';
+
+    case PersonalAssistant = 'personal-assistant';
+
+    case ServiceManagement = 'service-management';
+
+    case KnowledgeManagement = 'knowledge-management';
+
+    case StudentAndProspectPortal = 'student-and-prospect-portal';
+
+    public function generateGate(): void
+    {
+        // If features are added that are not based on a License Addon we will need to update this
+        Gate::define(
+            $this->value,
+            fn () => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
+        );
+    }
 }

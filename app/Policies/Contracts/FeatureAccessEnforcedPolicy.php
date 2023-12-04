@@ -34,20 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\DataTransferObjects\LicenseManagement;
+namespace App\Policies\Contracts;
 
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use App\Support\FeatureAccessResponse;
 
-#[MapInputName(SnakeCaseMapper::class)]
-class LicenseLimitsData extends Data
+interface FeatureAccessEnforcedPolicy
 {
-    public function __construct(
-        public int $crmSeats,
-        public int $analyticsSeats,
-        public int $emails,
-        public int $sms,
-        public string $resetDate,
-    ) {}
+    public function before(): FeatureAccessResponse | null | bool;
 }

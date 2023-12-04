@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -70,6 +71,55 @@ test('EditKnowledgeBaseCategory is gated with proper access control', function (
 
     $user->givePermissionTo('knowledge_base_category.view-any');
     $user->givePermissionTo('knowledge_base_category.*.update');
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseCategoryResource::getUrl('edit', [
+                'record' => $knowledgeBaseCategory,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditKnowledgeBaseCategoryRequestFactory::new()->create());
+
+    livewire(KnowledgeBaseCategoryResource\Pages\EditKnowledgeBaseCategory::class, [
+        'record' => $knowledgeBaseCategory->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertEquals($request['name'], $knowledgeBaseCategory->fresh()->name);
+});
+
+test('EditKnowledgeBaseCategory is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->knowledgeManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('knowledge_base_category.view-any');
+    $user->givePermissionTo('knowledge_base_category.*.update');
+
+    $knowledgeBaseCategory = KnowledgeBaseCategory::factory()->create();
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseCategoryResource::getUrl('edit', [
+                'record' => $knowledgeBaseCategory,
+            ])
+        )->assertForbidden();
+
+    livewire(KnowledgeBaseCategoryResource\Pages\EditKnowledgeBaseCategory::class, [
+        'record' => $knowledgeBaseCategory->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $settings->data->addons->knowledgeManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(
