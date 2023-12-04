@@ -39,6 +39,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\CreateAction;
+use Illuminate\Support\HtmlString;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Support\Htmlable;
@@ -52,7 +53,17 @@ class ListUsers extends ListRecords
         $count = User::count();
         $max = app(LicenseSettings::class)->data->limits->crmSeats;
 
-        return "{$count}/{$max} CRM Seats Used";
+        $colorClass = 'text-green-500';
+
+        if ($count > $max) {
+            $colorClass = 'text-red-500';
+        } elseif ($count === $max) {
+            $colorClass = 'text-yellow-500';
+        }
+
+        return new HtmlString(
+            "<span class='{$colorClass}'>{$count}/{$max}</span> CRM Seats Used"
+        );
     }
 
     protected function getHeaderActions(): array
