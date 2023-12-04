@@ -34,36 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Factories;
+namespace Assist\ServiceManagement\Observers;
 
-use App\Models\User;
-use Assist\Division\Models\Division;
-use Assist\AssistDataModel\Models\Student;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use Assist\Timeline\Events\TimelineableRecordCreated;
+use Assist\Timeline\Events\TimelineableRecordDeleted;
+use Assist\Notifications\Events\TriggeredAutoSubscription;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
-/**
- * @extends Factory<ServiceRequest>
- */
-class ServiceRequestFactory extends Factory
+class ServiceRequestAssignmentObserver
 {
-    public function definition(): array
+    public function created(ServiceRequestAssignment $serviceRequestAssignment): void
     {
-        return [
-            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
-            'respondent_type' => function (array $attributes) {
-                return Student::find($attributes['respondent_id'])->getMorphClass();
-            },
-            'close_details' => $this->faker->sentence(),
-            'res_details' => $this->faker->sentence(),
-            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
-            'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
-            'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
-            'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
-            'created_by_id' => User::factory(),
-        ];
+        if ($user = auth()->user()) {
+            TriggeredAutoSubscription::dispatch($user, $serviceRequestAssignment);
+        }
+
+        $serviceRequestAssignment->serviceRequest->assignments()->where('id', '!=', $serviceRequestAssignment->id)->update([
+            'status' => ServiceRequestAssignmentStatus::Inactive,
+        ]);
+
+        TimelineableRecordCreated::dispatch($serviceRequestAssignment->serviceRequest, $serviceRequestAssignment);
+    }
+
+    public function deleted(ServiceRequestAssignment $serviceRequestAssignment): void
+    {
+        TimelineableRecordDeleted::dispatch($serviceRequestAssignment->serviceRequest, $serviceRequestAssignment);
     }
 }

@@ -64,7 +64,6 @@ use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\Assistant\Models\AssistantChatFolder;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Assistant\Models\AssistantChatMessageLog;
@@ -83,7 +82,9 @@ use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
 use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
 use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
  * @mixin IdeHelperUser
@@ -263,12 +264,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
-    public function serviceRequests(): HasMany
+    public function serviceRequestAssignments(): HasMany
     {
-        return $this->hasMany(
-            related: ServiceRequest::class,
-            foreignKey: 'assigned_to_id',
-        );
+        return $this->hasMany(ServiceRequestAssignment::class)
+            ->where('status', ServiceRequestAssignmentStatus::Active);
+    }
+
+    public function serviceRequests(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->serviceRequestAssignments(), (new ServiceRequestAssignment())->serviceRequest());
     }
 
     public function getIsAdminAttribute()

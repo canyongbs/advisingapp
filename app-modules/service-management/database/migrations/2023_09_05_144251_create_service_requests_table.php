@@ -54,7 +54,6 @@ return new class () extends Migration {
             $table->foreignUuid('status_id')->nullable()->constrained('service_request_statuses');
             $table->foreignUuid('type_id')->nullable()->constrained('service_request_types');
             $table->foreignUuid('priority_id')->nullable()->constrained('service_request_priorities');
-            $table->foreignUuid('assigned_to_id')->nullable()->constrained('users');
             $table->foreignUuid('created_by_id')->nullable()->constrained('users');
 
             $table->timestamps();

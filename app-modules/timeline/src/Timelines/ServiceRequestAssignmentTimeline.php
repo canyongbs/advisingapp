@@ -34,36 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Factories;
+namespace Assist\Timeline\Timelines;
 
-use App\Models\User;
-use Assist\Division\Models\Division;
-use Assist\AssistDataModel\Models\Student;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use Filament\Actions\ViewAction;
+use Assist\Timeline\Models\CustomTimeline;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Components\ServiceRequestAssignmentViewAction;
 
-/**
- * @extends Factory<ServiceRequest>
- */
-class ServiceRequestFactory extends Factory
+// TODO Decide where these belong - might want to keep these in the context of the original module
+class ServiceRequestAssignmentTimeline extends CustomTimeline
 {
-    public function definition(): array
+    public function __construct(
+        public ServiceRequestAssignment $serviceRequestAssignment
+    ) {}
+
+    public function icon(): string
     {
-        return [
-            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
-            'respondent_type' => function (array $attributes) {
-                return Student::find($attributes['respondent_id'])->getMorphClass();
-            },
-            'close_details' => $this->faker->sentence(),
-            'res_details' => $this->faker->sentence(),
-            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
-            'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
-            'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
-            'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
-            'created_by_id' => User::factory(),
-        ];
+        return 'heroicon-o-arrows-right-left';
+    }
+
+    public function sortableBy(): string
+    {
+        return $this->serviceRequestAssignment->assigned_at;
+    }
+
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return 'service-management::service-request-assignment-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return ServiceRequestAssignmentViewAction::make()->record($this->serviceRequestAssignment);
     }
 }

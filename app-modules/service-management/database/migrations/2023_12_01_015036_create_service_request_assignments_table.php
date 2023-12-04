@@ -34,36 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Factories;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
-use App\Models\User;
-use Assist\Division\Models\Division;
-use Assist\AssistDataModel\Models\Student;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-
-/**
- * @extends Factory<ServiceRequest>
- */
-class ServiceRequestFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
-            'respondent_type' => function (array $attributes) {
-                return Student::find($attributes['respondent_id'])->getMorphClass();
-            },
-            'close_details' => $this->faker->sentence(),
-            'res_details' => $this->faker->sentence(),
-            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
-            'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
-            'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
-            'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
-            'created_by_id' => User::factory(),
-        ];
+        Schema::create('service_request_assignments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('service_request_id')->constrained('service_requests');
+            $table->foreignUuid('user_id')->constrained('users');
+            $table->foreignUuid('assigned_by_id')->nullable()->constrained('users');
+            $table->timestamp('assigned_at');
+            $table->string('status')->default(ServiceRequestAssignmentStatus::Active);
+            $table->timestamps();
+        });
     }
-}
+};

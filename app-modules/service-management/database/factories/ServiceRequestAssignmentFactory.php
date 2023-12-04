@@ -37,33 +37,29 @@
 namespace Assist\ServiceManagement\Database\Factories;
 
 use App\Models\User;
-use Assist\Division\Models\Division;
-use Assist\AssistDataModel\Models\Student;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
- * @extends Factory<ServiceRequest>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\ServiceManagement\Models\ServiceRequestAssignment>
  */
-class ServiceRequestFactory extends Factory
+class ServiceRequestAssignmentFactory extends Factory
 {
     public function definition(): array
     {
         return [
-            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
-            'respondent_type' => function (array $attributes) {
-                return Student::find($attributes['respondent_id'])->getMorphClass();
-            },
-            'close_details' => $this->faker->sentence(),
-            'res_details' => $this->faker->sentence(),
-            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
-            'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
-            'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
-            'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
-            'created_by_id' => User::factory(),
+            'service_request_id' => ServiceRequest::factory(),
+            'user_id' => User::factory(),
+            'assigned_by_id' => User::factory(),
+            'assigned_at' => fake()->dateTimeBetween('-1 year', now()),
         ];
+    }
+
+    public function active(): self
+    {
+        return $this->state([
+            'status' => ServiceRequestAssignmentStatus::Active,
+        ]);
     }
 }

@@ -34,36 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Factories;
+namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
-use App\Models\User;
-use Assist\Division\Models\Division;
-use Assist\AssistDataModel\Models\Student;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\CreatedByRelationManager;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\AssignedToRelationManager;
 
-/**
- * @extends Factory<ServiceRequest>
- */
-class ServiceRequestFactory extends Factory
+class ManageServiceRequestAssignment extends ManageRelatedRecords
 {
-    public function definition(): array
+    protected static string $resource = ServiceRequestResource::class;
+
+    // TODO: Obsolete when there is no table, remove from Filament
+    protected static string $relationship = 'assignedTo';
+
+    protected static ?string $navigationLabel = 'Service Request Assignments';
+
+    protected static ?string $breadcrumb = 'Assignments';
+
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    public static function canAccess(?Model $record = null): bool
     {
-        return [
-            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
-            'respondent_type' => function (array $attributes) {
-                return Student::find($attributes['respondent_id'])->getMorphClass();
-            },
-            'close_details' => $this->faker->sentence(),
-            'res_details' => $this->faker->sentence(),
-            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
-            'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
-            'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
-            'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
-            'created_by_id' => User::factory(),
-        ];
+        return (bool) count(static::managers($record));
+    }
+
+    public function getRelationManagers(): array
+    {
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(Model $record): array
+    {
+        return collect([
+            AssignedToRelationManager::class,
+            CreatedByRelationManager::class,
+        ])
+            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
+            ->toArray();
     }
 }
