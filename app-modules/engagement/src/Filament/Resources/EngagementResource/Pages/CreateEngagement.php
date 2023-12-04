@@ -71,7 +71,7 @@ class CreateEngagement extends CreateRecord
         return $form
             ->schema([
                 Select::make('delivery_method')
-                    ->label('How would you like to send this engagement?')
+                    ->label('What would you like to send?')
                     ->options(EngagementDeliveryMethod::class)
                     ->default(EngagementDeliveryMethod::Email->value)
                     ->selectablePlaceholder(false)
@@ -157,11 +157,11 @@ class CreateEngagement extends CreateRecord
                             ->titleAttribute(Prospect::displayNameKey()),
                     ])
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
-                Fieldset::make('Send your engagement')
+                Fieldset::make('Send your email or text')
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()
-                            ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
+                            ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('deliver_at')
                             ->required()
                             ->visible(fn (callable $get) => $get('send_later')),

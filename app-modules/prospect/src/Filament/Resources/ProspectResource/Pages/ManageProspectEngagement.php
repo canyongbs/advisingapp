@@ -37,6 +37,7 @@
 namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\Prospect\Filament\Resources\ProspectResource;
 use Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers\EngagementsRelationManager;
@@ -49,11 +50,16 @@ class ManageProspectEngagement extends ManageRelatedRecords
     // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'engagements';
 
-    protected static ?string $navigationLabel = 'Engagements';
+    protected static ?string $navigationLabel = 'Email and Texts';
 
-    protected static ?string $breadcrumb = 'Engagements';
+    protected static ?string $breadcrumb = 'Email and Texts';
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Manage Prospect Email and Texts';
+    }
 
     public static function canAccess(?Model $record = null): bool
     {

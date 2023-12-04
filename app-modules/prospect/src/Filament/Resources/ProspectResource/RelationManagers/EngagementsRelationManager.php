@@ -42,6 +42,7 @@ use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Assist\Engagement\Models\Engagement;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Infolists\Components\Fieldset;
@@ -55,6 +56,11 @@ use Assist\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngageme
 class EngagementsRelationManager extends RelationManager
 {
     protected static string $relationship = 'engagements';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Outbound';
+    }
 
     public function form(Form $form): Form
     {
@@ -108,6 +114,7 @@ class EngagementsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->heading('Email and Text Messages')
             ->recordTitleAttribute('id')
             ->columns([
                 IdColumn::make(),
@@ -121,6 +128,8 @@ class EngagementsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->label('New Email or Text')
+                    ->modalHeading('Create new email or text')
                     ->after(function (Engagement $engagement, array $data) {
                         $this->afterCreate($engagement, $data['delivery_method']);
                     }),
