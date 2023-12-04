@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
-use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
-use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
-use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 use LaravelJsonApi\Laravel\Routing\Relationships;
 use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
+use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
+use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
+use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
+use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
 
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
 
