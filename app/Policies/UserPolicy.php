@@ -37,7 +37,9 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Illuminate\Auth\Access\Response;
+use App\Support\FeatureAccessResponse;
 
 class UserPolicy
 {
@@ -59,6 +61,10 @@ class UserPolicy
 
     public function create(User $user): Response
     {
+        if (User::count() >= app(LicenseSettings::class)->data->limits->crmSeats) {
+            return FeatureAccessResponse::deny('You have reached the maximum number of users allowed by your license.');
+        }
+
         return $user->canOrElse(
             abilities: 'user.create',
             denyResponse: 'You do not have permission to create users.'
@@ -83,6 +89,10 @@ class UserPolicy
 
     public function restore(User $user, User $model): Response
     {
+        if (User::count() >= app(LicenseSettings::class)->data->limits->crmSeats) {
+            return FeatureAccessResponse::deny('You have reached the maximum number of users allowed by your license.');
+        }
+
         return $user->canOrElse(
             abilities: ['user.*.restore', "user.{$model->id}.restore"],
             denyResponse: 'You do not have permission to restore this user.'
