@@ -34,35 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+namespace Assist\ServiceManagement\Filament\Concerns;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Actions\CreateServiceRequestHistory;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use Filament\Infolists\Components\TextEntry;
+use Assist\ServiceManagement\Models\ServiceRequestHistory;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
-class ServiceRequestObserver
+// TODO Re-use this trait across other places where infolist is rendered
+trait ServiceRequestHistoryInfolist
 {
-    public function creating(ServiceRequest $serviceRequest): void
+    public function serviceRequestHistoryInfolist(): array
     {
-        $serviceRequest->service_request_number ??= app(ServiceRequestNumberGenerator::class)->generate();
-    }
-
-    public function created(ServiceRequest $serviceRequest): void
-    {
-        if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
-        }
-    }
-
-    public function updating(ServiceRequest $serviceRequest): void
-    {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
-    }
-
-    public function saved(ServiceRequest $serviceRequest): void
-    {
-        CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
+        return [
+            TextEntry::make('serviceRequest.service_request_number')
+                ->label('Service Request')
+                ->translateLabel()
+                ->url(fn (ServiceRequestHistory $serviceRequestHistory): string => ServiceRequestResource::getUrl('view', ['record' => $serviceRequestHistory->serviceRequest]))
+                ->color('primary'),
+            TextEntry::make('getUpdates')
+                ->label('Updates')
+                ->columnSpanFull()
+                ->state(function (ServiceRequestHistory $record) {
+                    return $record->getUpdates();
+                })
+                ->view('filament.infolists.entries.update-entry'),
+        ];
     }
 }

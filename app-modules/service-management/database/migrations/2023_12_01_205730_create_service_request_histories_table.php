@@ -34,35 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Actions\CreateServiceRequestHistory;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
-
-class ServiceRequestObserver
-{
-    public function creating(ServiceRequest $serviceRequest): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $serviceRequest->service_request_number ??= app(ServiceRequestNumberGenerator::class)->generate();
+        Schema::create('service_request_histories', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('service_request_id')->constrained('service_requests');
+            $table->json('original_values');
+            $table->json('new_values');
+            $table->timestamps();
+        });
     }
-
-    public function created(ServiceRequest $serviceRequest): void
-    {
-        if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
-        }
-    }
-
-    public function updating(ServiceRequest $serviceRequest): void
-    {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
-    }
-
-    public function saved(ServiceRequest $serviceRequest): void
-    {
-        CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
-    }
-}
+};

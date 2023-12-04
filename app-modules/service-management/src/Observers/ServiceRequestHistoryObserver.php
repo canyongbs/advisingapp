@@ -36,33 +36,19 @@
 
 namespace Assist\ServiceManagement\Observers;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Actions\CreateServiceRequestHistory;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use Assist\Timeline\Events\TimelineableRecordCreated;
+use Assist\Timeline\Events\TimelineableRecordDeleted;
+use Assist\ServiceManagement\Models\ServiceRequestHistory;
 
-class ServiceRequestObserver
+class ServiceRequestHistoryObserver
 {
-    public function creating(ServiceRequest $serviceRequest): void
+    public function created(ServiceRequestHistory $serviceRequestHistory): void
     {
-        $serviceRequest->service_request_number ??= app(ServiceRequestNumberGenerator::class)->generate();
+        TimelineableRecordCreated::dispatch($serviceRequestHistory->serviceRequest, $serviceRequestHistory);
     }
 
-    public function created(ServiceRequest $serviceRequest): void
+    public function deleted(ServiceRequestHistory $serviceRequestHistory): void
     {
-        if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
-        }
-    }
-
-    public function updating(ServiceRequest $serviceRequest): void
-    {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
-    }
-
-    public function saved(ServiceRequest $serviceRequest): void
-    {
-        CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
+        TimelineableRecordDeleted::dispatch($serviceRequestHistory->serviceRequest, $serviceRequestHistory);
     }
 }

@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,37 +30,37 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace Assist\ServiceManagement\Observers;
+<div>
+    <div class="flex flex-row justify-between">
+        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Actions\CreateServiceRequestHistory;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+            <span class="ml-2 flex space-x-2">
+                Service Request Data Changed
+            </span>
+        </h3>
 
-class ServiceRequestObserver
-{
-    public function creating(ServiceRequest $serviceRequest): void
-    {
-        $serviceRequest->service_request_number ??= app(ServiceRequestNumberGenerator::class)->generate();
-    }
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-    public function created(ServiceRequest $serviceRequest): void
-    {
-        if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
-        }
-    }
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        {{ $record->created_at->diffForHumans() }}
+    </time>
 
-    public function updating(ServiceRequest $serviceRequest): void
-    {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
-    }
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+        Here's what changed:
 
-    public function saved(ServiceRequest $serviceRequest): void
-    {
-        CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
-    }
-}
+        <ul class="list-inside list-disc">
+            @foreach ($record->new_values_formatted as $key => $value)
+                <li>
+                    <span class="font-semibold">{{ $key }}</span> changed from
+                    <span class="font-semibold">{{ $record->original_values_formatted[$key] }}</span> to
+                    <span class="font-semibold">{{ $value }}</span>
+                </li>
+            @endforeach
+    </div>
+</div>

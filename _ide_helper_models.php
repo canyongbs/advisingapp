@@ -2379,6 +2379,8 @@ namespace Assist\ServiceManagement\Models{
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
  * @property-read \Assist\Division\Models\Division|null $division
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequestHistory> $histories
+ * @property-read int|null $histories_count
  * @property-read \Assist\ServiceManagement\Models\ServiceRequestAssignment|null $initialAssignment
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
@@ -2422,10 +2424,12 @@ namespace Assist\ServiceManagement\Models{
  * @property string $id
  * @property string $service_request_id
  * @property string $user_id
- * @property \Illuminate\Support\Carbon|null $assigned_at
+ * @property string|null $assigned_by_id
+ * @property \Illuminate\Support\Carbon $assigned_at
  * @property \Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $assignedBy
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Assist\ServiceManagement\Models\ServiceRequest $serviceRequest
@@ -2435,6 +2439,7 @@ namespace Assist\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment query()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereAssignedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereAssignedById($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment whereServiceRequestId($value)
@@ -2445,6 +2450,33 @@ namespace Assist\ServiceManagement\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperServiceRequestAssignment {}
+}
+
+namespace Assist\ServiceManagement\Models{
+/**
+ * Assist\ServiceManagement\Models\ServiceRequestHistory
+ *
+ * @property string $id
+ * @property string|null $service_request_id
+ * @property array $original_values
+ * @property array $new_values
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\ServiceManagement\Models\ServiceRequest|null $serviceRequest
+ * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestHistoryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereNewValues($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereOriginalValues($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereServiceRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestHistory {}
 }
 
 namespace Assist\ServiceManagement\Models{

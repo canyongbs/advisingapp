@@ -34,35 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+namespace Assist\Timeline\Timelines;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Actions\CreateServiceRequestHistory;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use Filament\Actions\ViewAction;
+use Assist\Timeline\Models\CustomTimeline;
+use Assist\ServiceManagement\Models\ServiceRequestHistory;
+use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Components\ServiceRequestHistoryViewAction;
 
-class ServiceRequestObserver
+// TODO Decide where these belong - might want to keep these in the context of the original module
+class ServiceRequestHistoryTimeline extends CustomTimeline
 {
-    public function creating(ServiceRequest $serviceRequest): void
+    public function __construct(
+        public ServiceRequestHistory $serviceRequestHistory
+    ) {}
+
+    public function icon(): string
     {
-        $serviceRequest->service_request_number ??= app(ServiceRequestNumberGenerator::class)->generate();
+        return 'heroicon-o-pencil';
     }
 
-    public function created(ServiceRequest $serviceRequest): void
+    public function sortableBy(): string
     {
-        if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
-        }
+        return $this->serviceRequestHistory->created_at;
     }
 
-    public function updating(ServiceRequest $serviceRequest): void
+    public function providesCustomView(): bool
     {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
+        return true;
     }
 
-    public function saved(ServiceRequest $serviceRequest): void
+    public function renderCustomView(): string
     {
-        CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
+        return 'service-management::service-request-history-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return ServiceRequestHistoryViewAction::make()->record($this->serviceRequestHistory);
     }
 }

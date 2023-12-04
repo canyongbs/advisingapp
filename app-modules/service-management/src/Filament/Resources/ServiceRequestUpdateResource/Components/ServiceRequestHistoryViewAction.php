@@ -34,35 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Components;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Actions\CreateServiceRequestHistory;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use Filament\Actions\ViewAction;
+use Assist\ServiceManagement\Filament\Concerns\ServiceRequestHistoryInfolist;
 
-class ServiceRequestObserver
+class ServiceRequestHistoryViewAction extends ViewAction
 {
-    public function creating(ServiceRequest $serviceRequest): void
-    {
-        $serviceRequest->service_request_number ??= app(ServiceRequestNumberGenerator::class)->generate();
-    }
+    use ServiceRequestHistoryInfolist;
 
-    public function created(ServiceRequest $serviceRequest): void
+    protected function setUp(): void
     {
-        if ($user = auth()->user()) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequest);
-        }
-    }
+        parent::setUp();
 
-    public function updating(ServiceRequest $serviceRequest): void
-    {
-        throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
-    }
-
-    public function saved(ServiceRequest $serviceRequest): void
-    {
-        CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());
+        $this->infolist($this->serviceRequestHistoryInfolist());
     }
 }
