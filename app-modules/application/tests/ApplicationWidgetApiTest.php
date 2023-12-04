@@ -96,3 +96,38 @@ test('authenticate is protected with proper feature access control', function ()
     post(URL::signedRoute('applications.authenticate', ['application' => $application, 'authentication' => $authorization, 'code' => $code]))
         ->assertSuccessful();
 });
+
+test('submit is protected with proper feature access control', function () {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->onlineAdmissions = false;
+
+    $settings->save();
+
+    $application = Application::factory()->create();
+
+    $application->content = [];
+
+    $application->save();
+
+    $application->fields()->delete();
+
+    $authorization = ApplicationAuthentication::factory()->create([
+        'application_id' => $application->id,
+    ]);
+
+    post(URL::signedRoute('applications.submit', ['application' => $application, 'authentication' => $authorization]))
+        ->assertForbidden()
+        ->assertJson([
+            'error' => 'Online Admissions is not enabled.',
+        ]);
+
+    $settings->data->addons->onlineAdmissions = true;
+
+    $settings->save();
+
+    post(URL::signedRoute('applications.submit', ['application' => $application, 'authentication' => $authorization]))
+        ->assertSuccessful();
+});
