@@ -2,9 +2,10 @@
 
 namespace App\JsonApi\V1;
 
-use Assist\Prospect\JsonApi\V1\Prospects\ProspectStatusSchema;
-use LaravelJsonApi\Core\Server\Server as BaseServer;
 use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
+use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
+use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
+use LaravelJsonApi\Core\Server\Server as BaseServer;
 
 class Server extends BaseServer
 {
@@ -41,6 +42,7 @@ class Server extends BaseServer
         return [
             ProspectSchema::class,
             ProspectStatusSchema::class,
+            ProspectSourceSchema::class,
         ];
     }
 }

@@ -11,71 +11,60 @@ use LaravelJsonApi\Eloquent\Fields\Boolean;
 use LaravelJsonApi\Eloquent\Fields\DateTime;
 use LaravelJsonApi\Eloquent\Fields\SoftDelete;
 use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
-use LaravelJsonApi\Eloquent\Resources\Relation;
 use LaravelJsonApi\Eloquent\Contracts\Paginator;
+use LaravelJsonApi\Eloquent\Filters\OnlyTrashed;
+use LaravelJsonApi\Eloquent\Filters\WithTrashed;
 use LaravelJsonApi\Eloquent\Pagination\PagePagination;
 use LaravelJsonApi\Eloquent\Fields\Relations\BelongsTo;
+use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
+use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
 
 class ProspectSchema extends Schema
 {
-    /**
-     * The model the schema corresponds to.
-     *
-     * @var string
-     */
     public static string $model = Prospect::class;
 
-    /**
-     * Get the resource fields.
-     *
-     * @return array
-     */
+    protected ?array $defaultPagination = ['number' => 1];
+
     public function fields(): array
     {
         return [
             ID::make()->uuid(),
-            Str::make('first_name'),
-            Str::make('last_name'),
-            Str::make('full_name'),
+            Str::make('firstName'),
+            Str::make('lastName'),
+            Str::make('fullName'),
             Str::make('preferred'),
             Str::make('description'),
             Str::make('email'),
-            Str::make('email_2'),
+            Str::make('email2', 'email_2'),
             Str::make('mobile'),
-            Boolean::make('sms_opt_out'),
-            Boolean::make('email_bounce'),
+            Boolean::make('smsOptOut'),
+            Boolean::make('emailBounce'),
             Str::make('phone'),
             Str::make('address'),
-            Str::make('address_2'),
+            Str::make('address2', 'address_2'),
             DateTime::make('birthdate'),
             Str::make('hsgrad'),
-            DateTime::make('created_at')->sortable()->readOnly(),
-            DateTime::make('updated_at')->sortable()->readOnly(),
-            SoftDelete::make('deleted_at')->sortable()->readOnly(),
-            BelongsTo::make('status', 'status')->type(ProspectStatusSchema::type()),
-                // ->serializeUsing(fn (Relation $relation) => $relation->alwaysShowData()),
-            // Str::make('classification')->on('status'),
+            DateTime::make('createdAt')->sortable()->readOnly(),
+            DateTime::make('updatedAt')->sortable()->readOnly(),
+            SoftDelete::make('deletedAt')->sortable()->readOnly(),
+            BelongsTo::make('status')->type(ProspectStatusSchema::type()),
+            BelongsTo::make('source')->type(ProspectSourceSchema::type()),
+            //TODO: 'assignedToId' needs User Schema
+            //TODO: 'createdById' needs User Schema
         ];
     }
 
-    /**
-     * Get the resource filters.
-     *
-     * @return array
-     */
     public function filters(): array
     {
         return [
             WhereIdIn::make($this),
             Where::make('status', 'status_id'),
+            Where::make('source', 'source_id'),
+            WithTrashed::make('with-trashed'),
+            OnlyTrashed::make('trashed'),
         ];
     }
 
-    /**
-     * Get the resource paginator.
-     *
-     * @return Paginator|null
-     */
     public function pagination(): ?Paginator
     {
         return PagePagination::make();

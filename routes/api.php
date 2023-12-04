@@ -34,10 +34,12 @@
 </COPYRIGHT>
 */
 
+use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
+use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
+use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
+use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 use LaravelJsonApi\Laravel\Routing\Relationships;
 use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
-use Assist\Prospect\JsonApi\V1\Prospects\ProspectStatusSchema;
-use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
 
@@ -45,12 +47,15 @@ JsonApiRoute::server('v1')
     ->prefix('v1')
     ->name('api.v1.')
     ->resources(function (ResourceRegistrar $server) {
-        $server->resource('prospects', JsonApiController::class)
-        ->readOnly()
-        ->relationships(function (Relationships $relations) {
-            $relations->hasOne('status')->readOnly();
-        });
+        $server->resource(ProspectSchema::type(), JsonApiController::class)
+            ->relationships(function (Relationships $relations) {
+                $relations->hasOne('status')->readOnly();
+                $relations->hasOne('source')->readOnly();
+            });
 
-        // $server->resource(ProspectStatusSchema::type(), JsonApiController::class)
-        //     ->readOnly();
+        $server->resource(ProspectStatusSchema::type(), JsonApiController::class)
+            ->readOnly();
+
+        $server->resource(ProspectSourceSchema::type(), JsonApiController::class)
+            ->readOnly();
     });
