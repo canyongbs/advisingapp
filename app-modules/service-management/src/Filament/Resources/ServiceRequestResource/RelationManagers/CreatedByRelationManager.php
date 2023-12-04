@@ -36,13 +36,14 @@
 
 namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
 
-use Filament\Forms;
 use App\Models\User;
-use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
+use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class CreatedByRelationManager extends RelationManager
@@ -55,7 +56,7 @@ class CreatedByRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('full')
+                TextInput::make('full')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -66,12 +67,12 @@ class CreatedByRelationManager extends RelationManager
         return $table
             ->columns([
                 IdColumn::make(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Name'),
             ])
             ->paginated(false)
             ->actions([
-                Tables\Actions\ViewAction::make()
+                ViewAction::make()
                     ->url(fn (User $user) => UserResource::getUrl('view', ['record' => $user])),
             ]);
     }

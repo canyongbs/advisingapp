@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -69,6 +70,57 @@ test('EditKnowledgeBaseItem is gated with proper access control', function () {
 
     $user->givePermissionTo('knowledge_base_item.view-any');
     $user->givePermissionTo('knowledge_base_item.*.update');
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseItemResource::getUrl('edit', [
+                'record' => $knowledgeBaseItem,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditKnowledgeBaseItemRequestFactory::new()->create());
+
+    livewire(KnowledgeBaseItemResource\Pages\EditKnowledgeBaseItem::class, [
+        'record' => $knowledgeBaseItem->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($knowledgeBaseItem->fresh()->only($request->except('division')->keys()->toArray()))
+        ->toEqual($request->except('division')->toArray())
+        ->and($knowledgeBaseItem->fresh()->division->pluck('id')->toArray())->toEqual($request['division']);
+});
+
+test('EditKnowledgeBaseItem is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->knowledgeManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('knowledge_base_item.view-any');
+    $user->givePermissionTo('knowledge_base_item.*.update');
+
+    $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseItemResource::getUrl('edit', [
+                'record' => $knowledgeBaseItem,
+            ])
+        )->assertForbidden();
+
+    livewire(KnowledgeBaseItemResource\Pages\EditKnowledgeBaseItem::class, [
+        'record' => $knowledgeBaseItem->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $settings->data->addons->knowledgeManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(

@@ -32,21 +32,17 @@
 </COPYRIGHT>
 --}}
 <div class="flex justify-evenly">
-    <x-filament::icon-button
-        icon="icon-google"
-        size="xl"
-        :href="route('calendar.google.login')"
-        tag="a"
-    >
-        Google
-    </x-filament::icon-button>
+    <a href="{{ route('calendar.google.login') }}">
+        <x-filament::icon
+            class="h-16 w-16"
+            icon="icon-google"
+        />
+    </a>
 
-    <x-filament::icon-button
-        icon="icon-outlook"
-        size="xl"
-        :href="route('calendar.outlook.login')"
-        tag="a"
-    >
-        Outlook
-    </x-filament::icon-button>
+    <a href="{{ route('calendar.outlook.login') }}">
+        <x-filament::icon
+            class="h-16 w-16"
+            icon="icon-outlook"
+        />
+    </a>
 </div>

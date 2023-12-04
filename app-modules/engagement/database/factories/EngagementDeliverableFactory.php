@@ -94,7 +94,7 @@ class EngagementDeliverableFactory extends Factory
         return $this->state([
             'delivery_status' => EngagementDeliveryStatus::Failed,
             'delivered_at' => null,
-            'delivery_response' => 'The deliverable was not successfully delivered.',
+            'delivery_response' => 'Something went wrong when trying to deliver the engagement.',
         ]);
     }
 

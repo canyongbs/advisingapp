@@ -63,7 +63,6 @@ class ServiceRequestFactory extends Factory
             'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
             'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
             'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
-            'assigned_to_id' => User::factory(),
             'created_by_id' => User::factory(),
         ];
     }

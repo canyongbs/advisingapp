@@ -51,5 +51,8 @@ return [
         'service_request_update' => [
             '*',
         ],
+        'service_request_assignment' => [
+            '*',
+        ],
     ],
 ];

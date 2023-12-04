@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -65,6 +66,47 @@ test('CreateKnowledgeBaseCategory is gated with proper access control', function
 
     $user->givePermissionTo('knowledge_base_category.view-any');
     $user->givePermissionTo('knowledge_base_category.create');
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseCategoryResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateKnowledgeBaseCategoryRequestFactory::new()->create());
+
+    livewire(KnowledgeBaseCategoryResource\Pages\CreateKnowledgeBaseCategory::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, KnowledgeBaseCategory::all());
+
+    assertDatabaseHas(KnowledgeBaseCategory::class, $request->toArray());
+});
+
+test('CreateKnowledgeBaseCategory is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->knowledgeManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('knowledge_base_category.view-any');
+    $user->givePermissionTo('knowledge_base_category.create');
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseCategoryResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(KnowledgeBaseCategoryResource\Pages\CreateKnowledgeBaseCategory::class)
+        ->assertForbidden();
+
+    $settings->data->addons->knowledgeManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(

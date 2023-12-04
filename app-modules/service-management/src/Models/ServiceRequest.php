@@ -49,16 +49,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Assist\AssistDataModel\Models\Contracts\Educatable;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
@@ -77,6 +80,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use AuditableTrait;
     use HasUuids;
     use HasManyMorphedInteractions;
+    use HasRelationships;
 
     protected $fillable = [
         'respondent_type',
@@ -172,9 +176,27 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return $this->belongsTo(ServiceRequestPriority::class);
     }
 
-    public function assignedTo(): BelongsTo
+    public function assignments(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(ServiceRequestAssignment::class);
+    }
+
+    public function assignedTo(): HasOne
+    {
+        return $this->hasOne(ServiceRequestAssignment::class)
+            ->latest('assigned_at')
+            ->where('status', ServiceRequestAssignmentStatus::Active);
+    }
+
+    public function initialAssignment(): HasOne
+    {
+        return $this->hasOne(ServiceRequestAssignment::class)
+            ->oldest('assigned_at');
+    }
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(ServiceRequestHistory::class);
     }
 
     public function createdBy(): BelongsTo
@@ -194,7 +216,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     {
         try {
             $action->campaign->caseload->retrieveRecords()->each(function (Educatable $educatable) use ($action) {
-                ServiceRequest::create([
+                $request = ServiceRequest::create([
                     'respondent_type' => $educatable->getMorphClass(),
                     'respondent_id' => $educatable->getKey(),
                     'close_details' => $action->data['close_details'],
@@ -203,9 +225,17 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                     'status_id' => $action->data['status_id'],
                     'type_id' => $action->data['type_id'],
                     'priority_id' => $action->data['priority_id'],
-                    'assigned_to_id' => $action->data['assigned_to_id'] ?? null,
                     'created_by_id' => $action->campaign->user->id,
                 ]);
+
+                if ($action->data['assigned_to_id']) {
+                    $request->assignments()->create([
+                        'user_id' => $action->data['assigned_to_id'],
+                        'assigned_by_id' => $action->campaign->user->id,
+                        'assigned_at' => now(),
+                        'status' => ServiceRequestAssignmentStatus::Active,
+                    ]);
+                }
             });
 
             return true;
