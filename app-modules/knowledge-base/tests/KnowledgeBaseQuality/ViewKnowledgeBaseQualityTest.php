@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
@@ -60,6 +61,39 @@ test('ViewKnowledgeBaseQuality is gated with proper access control', function ()
 
     $user->givePermissionTo('knowledge_base_quality.view-any');
     $user->givePermissionTo('knowledge_base_quality.*.view');
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseQualityResource::getUrl('view', [
+                'record' => $knowledgeBaseQuality,
+            ])
+        )->assertSuccessful();
+});
+
+test('ViewKnowledgeBaseQuality is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->knowledgeManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('knowledge_base_quality.view-any');
+    $user->givePermissionTo('knowledge_base_quality.*.view');
+
+    $knowledgeBaseQuality = KnowledgeBaseQuality::factory()->create();
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseQualityResource::getUrl('view', [
+                'record' => $knowledgeBaseQuality,
+            ])
+        )->assertForbidden();
+
+    $settings->data->addons->knowledgeManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(

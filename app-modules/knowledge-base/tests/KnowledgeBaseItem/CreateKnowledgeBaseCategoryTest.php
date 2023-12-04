@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -65,6 +66,51 @@ test('CreateKnowledgeBaseItem is gated with proper access control', function () 
 
     $user->givePermissionTo('knowledge_base_item.view-any');
     $user->givePermissionTo('knowledge_base_item.create');
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseItemResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateKnowledgeBaseItemRequestFactory::new()->create());
+
+    livewire(KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, KnowledgeBaseItem::all());
+
+    assertDatabaseHas(KnowledgeBaseItem::class, $request->except('division')->toArray());
+
+    $knowledgeBaseItem = KnowledgeBaseItem::first();
+
+    expect($knowledgeBaseItem->division->pluck('id')->toArray())->toEqual($request['division']);
+});
+
+test('CreateKnowledgeBaseItem is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->knowledgeManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseItemResource::getUrl('create')
+        )->assertForbidden();
+
+    $user->givePermissionTo('knowledge_base_item.view-any');
+    $user->givePermissionTo('knowledge_base_item.create');
+
+    livewire(KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem::class)
+        ->assertForbidden();
+
+    $settings->data->addons->knowledgeManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(
