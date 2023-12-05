@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f9fdc709420534ac3d5a75bf1fbf318",
+    "content-hash": "9e99b232ceb88dd01320f3b94bdc85a7",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -1249,6 +1249,41 @@
                     "Assist\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
                     "Assist\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
                     "Assist\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/integration-google-recaptcha",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/integration-google-recaptcha",
+                "reference": "385106eef57170f07bc0b426cd5008b585e0fa9a"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Assist\\IntegrationGoogleRecaptcha\\Providers\\IntegrationGoogleRecaptchaServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Assist\\IntegrationGoogleRecaptcha\\": "src/",
+                    "Assist\\IntegrationGoogleRecaptcha\\Tests\\": "tests/",
+                    "Assist\\IntegrationGoogleRecaptcha\\Database\\Factories\\": "database/factories/",
+                    "Assist\\IntegrationGoogleRecaptcha\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -19862,5 +19897,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

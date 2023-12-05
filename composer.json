@@ -35,6 +35,7 @@
         "canyon-gbs/integration-ai": "^1.0",
         "canyon-gbs/integration-aws-ses-event-handling": "*",
         "canyon-gbs/integration-google-analytics": "*",
+        "canyon-gbs/integration-google-recaptcha": "*",
         "canyon-gbs/integration-microsoft-clarity": "*",
         "canyon-gbs/integration-twilio": "*",
         "canyon-gbs/interaction": "*",
