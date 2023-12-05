@@ -34,54 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Form\Notifications;
 
-use Assist\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Bus\Queueable;
+use App\Notifications\MailMessage;
+use Assist\Form\Models\FormRequest;
+use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+class FormRequestNotification extends Notification implements ShouldQueue
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-    ];
+    use Queueable;
 
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
+    public function __construct(
+        public FormRequest $request
+    ) {}
 
-    public function fields(): HasMany
+    public function via(object $notifiable): array
     {
-        return $this->hasMany(FormField::class);
+        return ['mail'];
     }
 
-    public function steps(): HasMany
+    public function toMail(object $notifiable): MailMessage
     {
-        return $this->hasMany(FormStep::class);
-    }
+        $divisionName = $this->request->user->team?->division?->name;
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
-
-    public function requests(): HasMany
-    {
-        return $this->hasMany(FormRequest::class);
+        return MailMessage::make()
+            ->subject("Request to Complete: {$this->request->form->name}" . (filled($divisionName) ? " | {$divisionName}" : ''))
+            ->greeting('Hello ' . $this->request->recipient->display_name . '!')
+            ->line("Please complete the attached form: {$this->request->form->name}")
+            ->lineIf(filled($this->request->note), $this->request->note)
+            ->action('Complete Form', route('forms.show', ['form' => $this->request->form]))
+            ->salutation("Regards, {$this->request->user->name}");
     }
 }

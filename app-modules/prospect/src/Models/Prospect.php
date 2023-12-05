@@ -42,6 +42,7 @@ use App\Models\BaseModel;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
+use Assist\Form\Models\FormRequest;
 use Assist\CareTeam\Models\CareTeam;
 use Assist\Form\Models\FormSubmission;
 use Illuminate\Notifications\Notifiable;
@@ -219,6 +220,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     public function formSubmissions(): MorphMany
     {
         return $this->morphMany(FormSubmission::class, 'author');
+    }
+
+    public function formRequests(): MorphMany
+    {
+        return $this->morphMany(FormRequest::class, 'recipient');
     }
 
     public static function displayNameKey(): string

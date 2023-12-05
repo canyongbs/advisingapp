@@ -40,6 +40,7 @@ use App\Models\User;
 use Assist\Task\Models\Task;
 use Assist\Alert\Models\Alert;
 use Illuminate\Support\Collection;
+use Assist\Form\Models\FormRequest;
 use Assist\CareTeam\Models\CareTeam;
 use Assist\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\Model;
@@ -172,6 +173,11 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public function formSubmissions(): MorphMany
     {
         return $this->morphMany(FormSubmission::class, 'author');
+    }
+
+    public function formRequests(): MorphMany
+    {
+        return $this->morphMany(FormRequest::class, 'recipient');
     }
 
     public function careTeam(): MorphToMany

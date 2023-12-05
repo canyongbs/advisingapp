@@ -36,52 +36,57 @@
 
 namespace Assist\Form\Models;
 
-use Assist\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\User;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
+use Assist\Form\Enums\FormRequestDeliveryMethod;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperForm
+ * @mixin IdeHelperFormRequest
  */
-class Form extends Submissible
+class FormRequest extends BaseModel
 {
     protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
+        'canceled_at',
+        'form_id',
+        'method',
+        'note',
     ];
 
     protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
+        'canceled_at' => 'timestamp',
+        'method' => FormRequestDeliveryMethod::class,
     ];
 
-    public function fields(): HasMany
+    public function form(): BelongsTo
     {
-        return $this->hasMany(FormField::class);
+        return $this->belongsTo(Form::class, 'form_id');
     }
 
-    public function steps(): HasMany
+    public function recipient(): MorphTo
     {
-        return $this->hasMany(FormStep::class);
+        return $this->morphTo();
     }
 
-    public function submissions(): HasMany
+    public function submission(): BelongsTo
     {
-        return $this->hasMany(FormSubmission::class);
+        return $this->belongsTo(FormSubmission::class, 'submission_id');
     }
 
-    public function requests(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(FormRequest::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function deliver(): void
+    {
+        $this->method->deliver($this);
+    }
+
+    public function scopeNotCanceled(Builder $query): Builder
+    {
+        return $query->whereNull('canceled_at');
     }
 }

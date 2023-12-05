@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -243,9 +209,11 @@ namespace App\Models{
  * @property bool $are_teams_visible_on_profile
  * @property bool $is_division_visible_on_profile
  * @property string $timezone
+ * @property bool $has_enabled_public_profile
+ * @property string|null $public_profile_slug
  * @property bool $office_hours_are_enabled
  * @property bool $appointments_are_restricted_to_existing_students
- * @property mixed|null $office_hours_days
+ * @property array|null $office_hours
  * @property bool $out_of_office_is_enabled
  * @property \Illuminate\Support\Carbon|null $out_of_office_starts_at
  * @property \Illuminate\Support\Carbon|null $out_of_office_ends_at
@@ -329,19 +297,21 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmplid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereHasEnabledPublicProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsBioVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsDivisionVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHours($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHoursAreEnabled($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHoursDays($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeEndsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeIsEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeStartsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePronounsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePublicProfileSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereType($value)
@@ -393,6 +363,175 @@ namespace Assist\Alert\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperAlert {}
+}
+
+namespace Assist\Application\Models{
+/**
+ * Assist\Application\Models\Application
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property bool $embed_enabled
+ * @property array|null $allowed_domains
+ * @property string|null $primary_color
+ * @property \Assist\Form\Enums\Rounding|null $rounding
+ * @property bool $is_wizard
+ * @property array|null $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationStep> $steps
+ * @property-read int|null $steps_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationSubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @method static \Assist\Application\Database\Factories\ApplicationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Application newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Application newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Application query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereAllowedDomains($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereEmbedEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereIsWizard($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereRounding($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperApplication {}
+}
+
+namespace Assist\Application\Models{
+/**
+ * Assist\Application\Models\ApplicationAuthentication
+ *
+ * @property string $id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property string|null $code
+ * @property string $application_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
+ * @property-read \Assist\Application\Models\Application $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication whereApplicationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperApplicationAuthentication {}
+}
+
+namespace Assist\Application\Models{
+/**
+ * Assist\Application\Models\ApplicationField
+ *
+ * @property string $id
+ * @property string $label
+ * @property string $type
+ * @property bool $is_required
+ * @property array $config
+ * @property string $application_id
+ * @property string|null $step_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Assist\Application\Models\ApplicationStep|null $step
+ * @property-read \Assist\Application\Models\Application $submissible
+ * @method static \Assist\Application\Database\Factories\ApplicationFieldFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereApplicationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereConfig($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereIsRequired($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereStepId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperApplicationField {}
+}
+
+namespace Assist\Application\Models{
+/**
+ * Assist\Application\Models\ApplicationStep
+ *
+ * @property string $id
+ * @property string $label
+ * @property array|null $content
+ * @property string $application_id
+ * @property int $sort
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Assist\Application\Models\Application $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep whereApplicationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep whereSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperApplicationStep {}
+}
+
+namespace Assist\Application\Models{
+/**
+ * Assist\Application\Models\ApplicationSubmission
+ *
+ * @property string $id
+ * @property string $application_id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Assist\Application\Models\Application $submissible
+ * @method static \Assist\Application\Database\Factories\ApplicationSubmissionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereApplicationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperApplicationSubmission {}
 }
 
 namespace Assist\AssistDataModel\Models{
@@ -457,6 +596,8 @@ namespace Assist\AssistDataModel\Models{
  * @property-read int|null $engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Enrollment> $enrollments
  * @property-read int|null $enrollments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $formRequests
+ * @property-read int|null $form_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
@@ -1187,6 +1328,7 @@ namespace Assist\Engagement\Models{
  * @property string $engagement_id
  * @property \Assist\Engagement\Enums\EngagementDeliveryMethod $channel
  * @property string|null $external_reference_id
+ * @property string|null $external_status
  * @property \Assist\Engagement\Enums\EngagementDeliveryStatus $delivery_status
  * @property \Illuminate\Support\Carbon|null $delivered_at
  * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
@@ -1209,6 +1351,7 @@ namespace Assist\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereDeliveryStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereEngagementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereExternalReferenceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereExternalStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereLastDeliveryAttempt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable whereUpdatedAt($value)
@@ -1354,6 +1497,8 @@ namespace Assist\Form\Models{
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $requests
+ * @property-read int|null $requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormStep> $steps
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $submissions
@@ -1393,7 +1538,7 @@ namespace Assist\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
- * @property-read \Assist\Form\Models\Form $form
+ * @property-read \Assist\Form\Models\Form $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication query()
@@ -1423,8 +1568,8 @@ namespace Assist\Form\Models{
  * @property string|null $step_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Form\Models\Form $form
  * @property-read \Assist\Form\Models\FormStep|null $step
+ * @property-read \Assist\Form\Models\Form $submissible
  * @method static \Assist\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newQuery()
@@ -1446,6 +1591,48 @@ namespace Assist\Form\Models{
 
 namespace Assist\Form\Models{
 /**
+ * Assist\Form\Models\FormRequest
+ *
+ * @property string $id
+ * @property string $form_id
+ * @property \Assist\Form\Enums\FormRequestDeliveryMethod $method
+ * @property string|null $recipient_id
+ * @property string|null $recipient_type
+ * @property string|null $submission_id
+ * @property string $user_id
+ * @property string|null $note
+ * @property int|null $canceled_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Assist\Form\Models\Form $form
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $recipient
+ * @property-read \Assist\Form\Models\FormSubmission|null $submission
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest notCanceled()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereRecipientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereRecipientType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereSubmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormRequest {}
+}
+
+namespace Assist\Form\Models{
+/**
  * Assist\Form\Models\FormStep
  *
  * @property string $id
@@ -1457,7 +1644,7 @@ namespace Assist\Form\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
- * @property-read \Assist\Form\Models\Form $form
+ * @property-read \Assist\Form\Models\Form $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep query()
@@ -1488,7 +1675,7 @@ namespace Assist\Form\Models{
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
- * @property-read \Assist\Form\Models\Form $form
+ * @property-read \Assist\Form\Models\Form $submissible
  * @method static \Assist\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newQuery()
@@ -2056,6 +2243,8 @@ namespace Assist\Prospect\Models{
  * @property-read int|null $engagement_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $formRequests
+ * @property-read int|null $form_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions

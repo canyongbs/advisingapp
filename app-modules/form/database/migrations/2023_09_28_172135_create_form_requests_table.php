@@ -34,54 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Assist\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
-{
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
-
-    public function fields(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(FormField::class);
-    }
+        Schema::create('form_requests', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function steps(): HasMany
-    {
-        return $this->hasMany(FormStep::class);
-    }
+            $table->foreignUuid('form_id')->constrained('forms')->cascadeOnDelete();
+            $table->string('method');
+            $table->string('recipient_id')->nullable();
+            $table->string('recipient_type')->nullable();
+            $table->foreignUuid('submission_id')->nullable()->constrained('form_submissions')->nullOnDelete();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->text('note')->nullable();
+            $table->timestamp('canceled_at')->nullable();
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
+            $table->timestamps();
+            $table->softDeletes();
 
-    public function requests(): HasMany
-    {
-        return $this->hasMany(FormRequest::class);
+            $table->index(['recipient_type', 'recipient_id']);
+        });
     }
-}
+};
