@@ -68,6 +68,8 @@ class CreateSmsTemplate extends CreateRecord
                     ->autocomplete(false),
                 Textarea::make('description')
                     ->string(),
+                // TODO Implement length validation (320 characters max)
+                // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
                 TiptapEditor::make('content')
                     ->mergeTags([
                         'student full name',
