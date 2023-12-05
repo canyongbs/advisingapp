@@ -63,7 +63,7 @@ class CreateUsersTable extends Migration
             $table->string('public_profile_slug')->nullable()->unique();
             $table->boolean('office_hours_are_enabled')->default(false);
             $table->boolean('appointments_are_restricted_to_existing_students')->default(false);
-            $table->json('office_hours')->nullable();
+            $table->jsonb('office_hours')->nullable();
             $table->boolean('out_of_office_is_enabled')->default(false);
             $table->datetime('out_of_office_starts_at')->nullable();
             $table->datetime('out_of_office_ends_at')->nullable();
