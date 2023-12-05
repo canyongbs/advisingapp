@@ -37,6 +37,7 @@
 namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Assist\AssistDataModel\Filament\Resources\StudentResource;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EngagementsRelationManager;
@@ -49,11 +50,16 @@ class ManageStudentEngagement extends ManageRelatedRecords
     // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'engagements';
 
-    protected static ?string $navigationLabel = 'Engagements';
+    protected static ?string $navigationLabel = 'Email and Texts';
 
-    protected static ?string $breadcrumb = 'Engagements';
+    protected static ?string $breadcrumb = 'Email and Texts';
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Manage Student Email and Texts';
+    }
 
     public static function canAccess(?Model $record = null): bool
     {

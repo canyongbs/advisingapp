@@ -41,12 +41,18 @@ use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Infolists\Components\TextEntry;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class EngagementResponsesRelationManager extends RelationManager
 {
     protected static string $relationship = 'engagementResponses';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Inbound';
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -62,6 +68,7 @@ class EngagementResponsesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->heading('Email and Text Messages')
             ->recordTitleAttribute('id')
             ->columns([
                 IdColumn::make(),

@@ -73,8 +73,7 @@ class ListCalendarEvents extends ListRecords
     {
         return Action::make('setupCalendarProviderAction')
             ->modalHeading('Choose a provider')
-            ->modalDescription('This feature requires synchronization with Google or Outlook. Please select the service you would like
-        to synchronize with below to continue.')
+            ->modalDescription('This feature requires synchronization with Google Calendar or Outlook Calendar. Please select the service you would like to connect to by selecting the appropriate icon below.')
             ->modalContent(view('meeting-center::filament.components.calendar-setup-modal'))
             ->modalSubmitAction(false)
             ->modalCancelAction(Action::make('cancel')->color('gray')->url(Filament::getUrl()))

@@ -43,6 +43,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use App\DataTransferObjects\LicenseManagement\LicenseData;
 
 class ManageLicenseSettings extends SettingsPage
 {
@@ -63,7 +64,8 @@ class ManageLicenseSettings extends SettingsPage
                 TextInput::make('license_key')
                     ->label('License Key')
                     ->required()
-                    ->disabled(),
+                    ->disabled()
+                    ->dehydrated(),
                 Section::make('Subscription Information')
                     ->columns()
                     ->schema(
@@ -82,10 +84,12 @@ class ManageLicenseSettings extends SettingsPage
                                 ->required(),
                             DatePicker::make('data.subscription.startDate')
                                 ->label('Start Date')
-                                ->required(),
+                                ->required()
+                                ->format('Y-m-d\TH:i:sP'),
                             DatePicker::make('data.subscription.endDate')
                                 ->label('End Date')
-                                ->required(),
+                                ->required()
+                                ->format('Y-m-d\TH:i:sP'),
                         ]
                     ),
                 Section::make('Limits Configuration')
@@ -108,11 +112,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('SMS')
                                 ->numeric()
                                 ->required(),
-                            DatePicker::make('data.limits.resetDate')
+                            TextInput::make('data.limits.resetDate')
                                 ->label('Reset Date')
-                                ->native(false)
-                                ->format('m-d')
-                                ->displayFormat('m-d')
                                 ->required(),
                         ]
                     ),
@@ -139,5 +140,17 @@ class ManageLicenseSettings extends SettingsPage
                         ]
                     ),
             ]);
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return [
+            'data' => Licensedata::from(
+                [
+                    'updatedAt' => now(),
+                    ...$data['data'],
+                ]
+            ),
+        ];
     }
 }

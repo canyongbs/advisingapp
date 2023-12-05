@@ -105,6 +105,10 @@ class EditEngagement extends EditRecord
                                             $get('onlyMyTemplates'),
                                             fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                         )
+                                        ->when(
+                                            $get('onlyMyTeamTemplates'),
+                                            fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                        )
                                         ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                         ->orderBy('name')
                                         ->limit(50)
@@ -113,6 +117,10 @@ class EditEngagement extends EditRecord
                                 }),
                             Checkbox::make('onlyMyTemplates')
                                 ->label('Only show my templates')
+                                ->live()
+                                ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                            Checkbox::make('onlyMyTeamTemplates')
+                                ->label("Only show my team's templates")
                                 ->live()
                                 ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                         ])

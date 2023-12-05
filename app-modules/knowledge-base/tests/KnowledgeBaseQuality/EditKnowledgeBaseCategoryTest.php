@@ -35,6 +35,7 @@
 */
 
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -70,6 +71,55 @@ test('EditKnowledgeBaseQuality is gated with proper access control', function ()
 
     $user->givePermissionTo('knowledge_base_quality.view-any');
     $user->givePermissionTo('knowledge_base_quality.*.update');
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseQualityResource::getUrl('edit', [
+                'record' => $knowledgeBaseQuality,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditKnowledgeBaseQualityRequestFactory::new()->create());
+
+    livewire(KnowledgeBaseQualityResource\Pages\EditKnowledgeBaseQuality::class, [
+        'record' => $knowledgeBaseQuality->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertEquals($request['name'], $knowledgeBaseQuality->fresh()->name);
+});
+
+test('EditKnowledgeBaseQuality is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->knowledgeManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('knowledge_base_quality.view-any');
+    $user->givePermissionTo('knowledge_base_quality.*.update');
+
+    $knowledgeBaseQuality = KnowledgeBaseQuality::factory()->create();
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseQualityResource::getUrl('edit', [
+                'record' => $knowledgeBaseQuality,
+            ])
+        )->assertForbidden();
+
+    livewire(KnowledgeBaseQualityResource\Pages\EditKnowledgeBaseQuality::class, [
+        'record' => $knowledgeBaseQuality->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $settings->data->addons->knowledgeManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(

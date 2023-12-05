@@ -115,6 +115,10 @@ class BulkEngagementAction
                                                     $get('onlyMyTemplates'),
                                                     fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                                 )
+                                                ->when(
+                                                    $get('onlyMyTeamTemplates'),
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                                )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
                                                 ->limit(50)
@@ -123,6 +127,10 @@ class BulkEngagementAction
                                         }),
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                    Checkbox::make('onlyMyTeamTemplates')
+                                        ->label("Only show my team's templates")
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                 ])
@@ -154,7 +162,7 @@ class BulkEngagementAction
                     'deliveryMethod' => $data['delivery_method'],
                     'subject' => $data['subject'] ?? null,
                     'body' => $data['body'] ?? null,
-                    'bodyJson' => $data['bodyJson'] ?? null,
+                    'bodyJson' => $data['body_json'] ?? null,
                 ]));
             })
             ->modalSubmitActionLabel('Send')

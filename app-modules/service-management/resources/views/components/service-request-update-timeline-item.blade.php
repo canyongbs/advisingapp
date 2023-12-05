@@ -44,7 +44,7 @@
                 class="font-medium underline"
                 href="{{ ServiceRequestUpdateResource::getUrl('view', ['record' => $record]) }}"
             >
-                Service Request Update
+                Service Request Update Created
             </a>
             <span class="ml-2 flex space-x-2">
                 <x-filament::badge>

@@ -36,15 +36,20 @@
 
 namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
 
-use Filament\Forms;
 use App\Models\User;
-use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
+use Filament\Forms\Components\TextInput;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use App\Filament\Resources\RelationManagers\RelationManager;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 class AssignedToRelationManager extends RelationManager
 {
@@ -56,7 +61,7 @@ class AssignedToRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('full')
+                TextInput::make('user.full')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -67,24 +72,28 @@ class AssignedToRelationManager extends RelationManager
         return $table
             ->columns([
                 IdColumn::make(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('user.name')
                     ->label('Name'),
             ])
             ->paginated(false)
             ->headerActions([
-                // TODO: Figure out how to make it so this only displays on the edit page
-                Tables\Actions\Action::make('reassign-service-request')
+                Action::make('reassign-service-request')
                     ->label('Reassign Service Request')
                     ->color('gray')
                     ->action(function (array $data): void {
                         /** @var ServiceRequest $serviceRequest */
                         $serviceRequest = $this->ownerRecord;
 
-                        $serviceRequest->assignedTo()->associate($data['userId'])->save();
+                        $serviceRequest->assignments()->create([
+                            'user_id' => $data['userId'],
+                            'assigned_by_id' => auth()->user()?->id ?? null,
+                            'assigned_at' => now(),
+                            'status' => ServiceRequestAssignmentStatus::Active,
+                        ]);
                     })
                     ->form([
-                        Forms\Components\Select::make('userId')
-                            ->label('Assigned User')
+                        Select::make('userId')
+                            ->label('Reassign Service Request To')
                             ->searchable()
                             ->getSearchResultsUsing(fn (string $search): array => User::whereRaw('LOWER(name) LIKE ? ', ['%' . str($search)->lower() . '%'])->pluck('name', 'id')->toArray())
                             ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)
@@ -93,8 +102,8 @@ class AssignedToRelationManager extends RelationManager
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->url(fn (User $user) => UserResource::getUrl('view', ['record' => $user])),
+                ViewAction::make()
+                    ->url(fn (ServiceRequestAssignment $assignment) => UserResource::getUrl('view', ['record' => $assignment->user])),
             ]);
     }
 }

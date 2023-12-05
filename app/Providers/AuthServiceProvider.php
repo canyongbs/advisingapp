@@ -36,7 +36,11 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Enums\Feature;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
+use App\Support\FeatureAccessResponse;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -46,9 +50,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @var array<class-string, class-string>
      */
-    protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-    ];
+    protected $policies = [];
 
     /**
      * Register any authentication / authorization services.
@@ -57,9 +59,14 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::before(function ($user, $ability) {
-            // TODO Determine if we want to break convention for the super admin as far as naming goes...
-            return $user->hasRole('authorization.super_admin') ? true : null;
+        Gate::after(function (User $user, string $ability, bool|null|Response $result, mixed $arguments) {
+            return
+                $user->hasRole('authorization.super_admin') && ! $result instanceof FeatureAccessResponse
+                    ? true
+                    : $result;
         });
+
+        collect(Feature::cases())
+            ->each(fn (Feature $feature) => $feature->generateGate());
     }
 }

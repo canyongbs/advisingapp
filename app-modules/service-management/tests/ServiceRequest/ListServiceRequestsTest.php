@@ -41,10 +41,17 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Assist\ServiceManagement\Models\ServiceRequest;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 test('The correct details are displayed on the ListServiceRequests page', function () {
     $serviceRequests = ServiceRequest::factory()
+        ->has(
+            factory: ServiceRequestAssignment::factory()
+                ->count(1)
+                ->active(),
+            relationship: 'assignments'
+        )
         ->count(10)
         ->create();
 
@@ -84,8 +91,8 @@ test('The correct details are displayed on the ListServiceRequests page', functi
                 $serviceRequest
             )
             ->assertTableColumnStateSet(
-                'assignedTo.name',
-                $serviceRequest->assignedTo->name,
+                'assignedTo.user.name',
+                $serviceRequest->assignedTo->user->name,
                 $serviceRequest
             )
     );

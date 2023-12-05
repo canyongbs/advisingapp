@@ -71,7 +71,7 @@ class CreateEngagement extends CreateRecord
         return $form
             ->schema([
                 Select::make('delivery_method')
-                    ->label('How would you like to send this engagement?')
+                    ->label('What would you like to send?')
                     ->options(EngagementDeliveryMethod::class)
                     ->default(EngagementDeliveryMethod::Email->value)
                     ->selectablePlaceholder(false)
@@ -115,6 +115,10 @@ class CreateEngagement extends CreateRecord
                                                     $get('onlyMyTemplates'),
                                                     fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                                 )
+                                                ->when(
+                                                    $get('onlyMyTeamTemplates'),
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                                )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
                                                 ->limit(50)
@@ -123,6 +127,10 @@ class CreateEngagement extends CreateRecord
                                         }),
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                    Checkbox::make('onlyMyTeamTemplates')
+                                        ->label("Only show my team's templates")
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                 ])
@@ -157,11 +165,11 @@ class CreateEngagement extends CreateRecord
                             ->titleAttribute(Prospect::displayNameKey()),
                     ])
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
-                Fieldset::make('Send your engagement')
+                Fieldset::make('Send your email or text')
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()
-                            ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
+                            ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('deliver_at')
                             ->required()
                             ->visible(fn (callable $get) => $get('send_later')),
