@@ -37,6 +37,7 @@
 namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
 use Filament\Forms\Form;
+use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\RichEditor;
@@ -76,5 +77,13 @@ class CreateSmsTemplate extends CreateRecord
                     ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
                     ->required(),
             ]);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        /** @var class-string<Resource> $resource */
+        $resource = $this->getResource();
+
+        return $resource::getUrl();
     }
 }
