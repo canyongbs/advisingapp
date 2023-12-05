@@ -71,7 +71,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'engagement_batch_id',
         'subject',
         'body',
-        'body_json',
         'recipient_id',
         'recipient_type',
         'scheduled',
@@ -79,7 +78,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     ];
 
     protected $casts = [
-        'body_json' => 'array',
+        'body' => 'array',
         'deliver_at' => 'datetime',
         'scheduled' => 'boolean',
     ];
@@ -185,12 +184,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function getBody(): string
     {
-        if (blank($this->body_json)) {
-            return $this->body;
-        }
-
         return app(GenerateEmailMarkdownContent::class)(
-            [$this->body_json],
+            [$this->body],
             $this->getMergeData(),
         );
     }
