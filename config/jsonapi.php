@@ -34,28 +34,34 @@
 </COPYRIGHT>
 */
 
-use LaravelJsonApi\Laravel\Routing\Relationships;
-use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
-use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
-use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
-use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
-use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
+use App\JsonApi\V1\Server;
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Root Namespace
+    |--------------------------------------------------------------------------
+    |
+    | The root JSON:API namespace, within your application's namespace.
+    | This is used when generating any class that does not sit *within*
+    | a server's namespace. For example, new servers and filters.
+    |
+    | By default this is set to `JsonApi` which means the root namespace
+    | will be `\App\JsonApi`, if your application's namespace is `App`.
+    */
+    'namespace' => 'JsonApi',
 
-JsonApiRoute::server('v1')
-    ->prefix('v1')
-    ->name('api.v1.')
-    ->resources(function (ResourceRegistrar $server) {
-        $server->resource(ProspectSchema::type(), JsonApiController::class)
-            ->relationships(function (Relationships $relations) {
-                $relations->hasOne('status')->readOnly();
-                $relations->hasOne('source')->readOnly();
-            });
-
-        $server->resource(ProspectStatusSchema::type(), JsonApiController::class)
-            ->readOnly();
-
-        $server->resource(ProspectSourceSchema::type(), JsonApiController::class)
-            ->readOnly();
-    });
+    /*
+    |--------------------------------------------------------------------------
+    | Servers
+    |--------------------------------------------------------------------------
+    |
+    | A list of the JSON:API compliant APIs in your application, referred to
+    | as "servers". They must be listed below, with the array key being the
+    | unique name for each server, and the value being the fully-qualified
+    | class name of the server class.
+    */
+    'servers' => [
+        'v1' => Server::class,
+    ],
+];

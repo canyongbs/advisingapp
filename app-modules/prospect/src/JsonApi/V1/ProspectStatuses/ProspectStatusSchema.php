@@ -34,28 +34,46 @@
 </COPYRIGHT>
 */
 
-use LaravelJsonApi\Laravel\Routing\Relationships;
-use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
-use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
-use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
-use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
-use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
+namespace Assist\Prospect\JsonApi\V1\ProspectStatuses;
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
+use LaravelJsonApi\Eloquent\Schema;
+use LaravelJsonApi\Eloquent\Fields\ID;
+use LaravelJsonApi\Eloquent\Fields\Str;
+use Assist\Prospect\Models\ProspectStatus;
+use LaravelJsonApi\Eloquent\Fields\DateTime;
+use LaravelJsonApi\Eloquent\Fields\SoftDelete;
+use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
+use LaravelJsonApi\Eloquent\Contracts\Paginator;
+use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
+use LaravelJsonApi\Eloquent\Pagination\PagePagination;
 
-JsonApiRoute::server('v1')
-    ->prefix('v1')
-    ->name('api.v1.')
-    ->resources(function (ResourceRegistrar $server) {
-        $server->resource(ProspectSchema::type(), JsonApiController::class)
-            ->relationships(function (Relationships $relations) {
-                $relations->hasOne('status')->readOnly();
-                $relations->hasOne('source')->readOnly();
-            });
+class ProspectStatusSchema extends Schema
+{
+    public static string $model = ProspectStatus::class;
 
-        $server->resource(ProspectStatusSchema::type(), JsonApiController::class)
-            ->readOnly();
+    public function fields(): array
+    {
+        return [
+            ID::make()->uuid(),
+            Str::make('classification'),
+            Str::make('name'),
+            Str::make('color'),
+            DateTime::make('createdAt')->sortable()->readOnly(),
+            DateTime::make('updatedAt')->sortable()->readOnly(),
+            SoftDelete::make('deletedAt')->sortable()->readOnly(),
+            HasMany::make('prospects'),
+        ];
+    }
 
-        $server->resource(ProspectSourceSchema::type(), JsonApiController::class)
-            ->readOnly();
-    });
+    public function filters(): array
+    {
+        return [
+            WhereIdIn::make($this),
+        ];
+    }
+
+    public function pagination(): ?Paginator
+    {
+        return PagePagination::make();
+    }
+}

@@ -34,28 +34,49 @@
 </COPYRIGHT>
 */
 
-use LaravelJsonApi\Laravel\Routing\Relationships;
-use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
+namespace App\JsonApi\V1;
+
+use LaravelJsonApi\Core\Server\Server as BaseServer;
 use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
-use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
 use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
+class Server extends BaseServer
+{
+    /**
+     * The base URI namespace for this server.
+     *
+     * @var string
+     */
+    protected string $baseUri = '/api/v1';
 
-JsonApiRoute::server('v1')
-    ->prefix('v1')
-    ->name('api.v1.')
-    ->resources(function (ResourceRegistrar $server) {
-        $server->resource(ProspectSchema::type(), JsonApiController::class)
-            ->relationships(function (Relationships $relations) {
-                $relations->hasOne('status')->readOnly();
-                $relations->hasOne('source')->readOnly();
-            });
+    /**
+     * Bootstrap the server when it is handling an HTTP request.
+     *
+     * @return void
+     */
+    public function serving(): void
+    {
+        // no-op
+    }
 
-        $server->resource(ProspectStatusSchema::type(), JsonApiController::class)
-            ->readOnly();
+    public function authorizable(): bool
+    {
+        //TODO: use real auth
+        return false;
+    }
 
-        $server->resource(ProspectSourceSchema::type(), JsonApiController::class)
-            ->readOnly();
-    });
+    /**
+     * Get the server's list of schemas.
+     *
+     * @return array
+     */
+    protected function allSchemas(): array
+    {
+        return [
+            ProspectSchema::class,
+            ProspectStatusSchema::class,
+            ProspectSourceSchema::class,
+        ];
+    }
+}

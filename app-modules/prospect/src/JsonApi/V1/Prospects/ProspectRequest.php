@@ -34,28 +34,35 @@
 </COPYRIGHT>
 */
 
-use LaravelJsonApi\Laravel\Routing\Relationships;
-use LaravelJsonApi\Laravel\Routing\ResourceRegistrar;
-use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
-use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
-use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
-use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
+namespace Assist\Prospect\JsonApi\V1\Prospects;
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
+use LaravelJsonApi\Validation\Rule as JsonApiRule;
+use LaravelJsonApi\Laravel\Http\Requests\ResourceRequest;
 
-JsonApiRoute::server('v1')
-    ->prefix('v1')
-    ->name('api.v1.')
-    ->resources(function (ResourceRegistrar $server) {
-        $server->resource(ProspectSchema::type(), JsonApiController::class)
-            ->relationships(function (Relationships $relations) {
-                $relations->hasOne('status')->readOnly();
-                $relations->hasOne('source')->readOnly();
-            });
-
-        $server->resource(ProspectStatusSchema::type(), JsonApiController::class)
-            ->readOnly();
-
-        $server->resource(ProspectSourceSchema::type(), JsonApiController::class)
-            ->readOnly();
-    });
+class ProspectRequest extends ResourceRequest
+{
+    public function rules(): array
+    {
+        return [
+            'firstName' => ['required', 'string'],
+            'lastName' => ['required', 'string'],
+            'fullName' => ['required', 'string'],
+            'preferred' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+            'email' => ['required', 'email'],
+            'email2' => ['nullable', 'email'],
+            'mobile' => ['nullable', 'string'],
+            'smsOptOut' => ['nullable', JsonApiRule::boolean()],
+            'emailBounce' => ['nullable', JsonApiRule::boolean()],
+            'phone' => ['nullable', 'string'],
+            'address' => ['nullable', 'string'],
+            'address2' => ['nullable', 'string'],
+            'birthdate' => ['nullable', 'date_format:Y-m-d'],
+            'hsgrad' => ['nullable', 'date_format:Y'],
+            'status' => ['required', JsonApiRule::toOne()],
+            'source' => ['required', JsonApiRule::toOne()],
+            //TODO: 'assignedToId' needs User Schema
+            //TODO: 'createdById' needs User Schema
+        ];
+    }
+}
