@@ -36,6 +36,7 @@
 
 namespace Assist\Form\Observers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Assist\Form\Models\FormSubmission;
 use Assist\Form\Events\FormSubmissionCreated;
@@ -47,5 +48,10 @@ class FormSubmissionObserver
         Event::dispatch(
             event: new FormSubmissionCreated(submission: $submission)
         );
+
+        Cache::tags('form-submission-count')
+            ->forget(
+                "form-submission-count-{$submission->author->getKey()}"
+            );
     }
 }
