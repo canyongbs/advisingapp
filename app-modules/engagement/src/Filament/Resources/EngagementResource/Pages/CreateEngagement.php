@@ -45,8 +45,8 @@ use Filament\Forms\Components\Toggle;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Assist\Engagement\Models\SmsTemplate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Assist\AssistDataModel\Models\Student;
@@ -84,7 +84,7 @@ class CreateEngagement extends CreateRecord
                             ->placeholder(__('Subject'))
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->columnSpanFull(),
-                        TiptapEditor::make('body_json')
+                        TiptapEditor::make('body')
                             ->label('Body')
                             ->mergeTags([
                                 'student full name',
@@ -146,12 +146,67 @@ class CreateEngagement extends CreateRecord
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
                             ->columnSpanFull(),
-                        Textarea::make('body')
-                            ->placeholder('Body')
+                        TiptapEditor::make('body')
+                            ->label('Body')
+                            ->mergeTags([
+                                'student full name',
+                                'student email',
+                            ])
+                            ->showMergeTagsInBlocksPanel(! ($form->getLivewire() instanceof RelationManager))
+                            ->profile('sms')
+                            ->output(TiptapOutput::Json)
                             ->required()
-                            ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                            ->helperText('The body of your message can be up to 320 characters long.')
-                            ->visible(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
+                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
+                                ->form([
+                                    Select::make('smsTemplate')
+                                        ->searchable()
+                                        ->options(function (Get $get): array {
+                                            return SmsTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                )
+                                                ->orderBy('name')
+                                                ->limit(50)
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        })
+                                        ->getSearchResultsUsing(function (Get $get, string $search): array {
+                                            return SmsTemplate::query()
+                                                ->when(
+                                                    $get('onlyMyTemplates'),
+                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                                )
+                                                ->when(
+                                                    $get('onlyMyTeamTemplates'),
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                                )
+                                                ->where(new Expression('lower(name)'), 'like', "%{$search}%")
+                                                ->orderBy('name')
+                                                ->limit(50)
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        }),
+                                    Checkbox::make('onlyMyTemplates')
+                                        ->label('Only show my templates')
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('smsTemplate', null)),
+                                    Checkbox::make('onlyMyTeamTemplates')
+                                        ->label("Only show my team's templates")
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('smsTemplate', null)),
+                                ])
+                                ->action(function (array $data) use ($component) {
+                                    $template = SmsTemplate::find($data['smsTemplate']);
+
+                                    if (! $template) {
+                                        return;
+                                    }
+
+                                    $component->state($template->content);
+                                }))
+                            ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Email->value)
+                            ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
                             ->columnSpanFull(),
                     ]),
                 MorphToSelect::make('recipient')

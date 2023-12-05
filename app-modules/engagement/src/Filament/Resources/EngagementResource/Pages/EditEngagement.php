@@ -48,10 +48,10 @@ use Filament\Forms\Components\Toggle;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
 use Assist\Engagement\Models\Engagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Assist\Engagement\Models\SmsTemplate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Assist\AssistDataModel\Models\Student;
@@ -60,6 +60,7 @@ use Filament\Forms\Components\MorphToSelect;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
+use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Filament\Resources\EngagementResource;
 
 class EditEngagement extends EditRecord
@@ -75,7 +76,7 @@ class EditEngagement extends EditRecord
                     ->required()
                     ->placeholder(__('Subject'))
                     ->columnSpanFull(),
-                TiptapEditor::make('body_json')
+                TiptapEditor::make('body')
                     ->label('Body')
                     ->mergeTags([
                         'student full name',
@@ -133,16 +134,71 @@ class EditEngagement extends EditRecord
 
                             $component->state($template->content);
                         }))
-                    ->visible(fn (Engagement $record): bool => filled($record->body_json))
+                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email)
                     ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
                     ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
                     ->columnSpanFull(),
-                Textarea::make('body')
-                    ->placeholder('Body')
+                TiptapEditor::make('body')
+                    ->label('Body')
+                    ->mergeTags([
+                        'student full name',
+                        'student email',
+                    ])
+                    ->profile('sms')
+                    ->output(TiptapOutput::Json)
                     ->required()
-                    ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                    ->helperText('The body of your message can be up to 320 characters long.')
-                    ->visible(fn (Engagement $record): bool => blank($record->body_json))
+                    ->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
+                        ->form([
+                            Select::make('smsTemplate')
+                                ->searchable()
+                                ->options(function (Get $get): array {
+                                    return SmsTemplate::query()
+                                        ->when(
+                                            $get('onlyMyTemplates'),
+                                            fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                        )
+                                        ->orderBy('name')
+                                        ->limit(50)
+                                        ->pluck('name', 'id')
+                                        ->toArray();
+                                })
+                                ->getSearchResultsUsing(function (Get $get, string $search): array {
+                                    return SmsTemplate::query()
+                                        ->when(
+                                            $get('onlyMyTemplates'),
+                                            fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+                                        )
+                                        ->when(
+                                            $get('onlyMyTeamTemplates'),
+                                            fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                        )
+                                        ->where(new Expression('lower(name)'), 'like', "%{$search}%")
+                                        ->orderBy('name')
+                                        ->limit(50)
+                                        ->pluck('name', 'id')
+                                        ->toArray();
+                                }),
+                            Checkbox::make('onlyMyTemplates')
+                                ->label('Only show my templates')
+                                ->live()
+                                ->afterStateUpdated(fn (Set $set) => $set('smsTemplate', null)),
+                            Checkbox::make('onlyMyTeamTemplates')
+                                ->label("Only show my team's templates")
+                                ->live()
+                                ->afterStateUpdated(fn (Set $set) => $set('smsTemplate', null)),
+                        ])
+                        ->action(function (array $data) use ($component) {
+                            $template = SmsTemplate::find($data['smsTemplate']);
+
+                            if (! $template) {
+                                return;
+                            }
+
+                            $component->state($template->content);
+                        }))
+                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Sms)
+                    ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
+                    ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
                     ->columnSpanFull(),
                 MorphToSelect::make('recipient')
                     ->label('Recipient')

@@ -34,50 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace Assist\Engagement\Observers;
 
-use Filament\Forms\Form;
-use FilamentTiptapEditor\TiptapEditor;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\EmailConfiguration;
-use Filament\Resources\Pages\CreateRecord;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource;
+use Assist\Engagement\Models\SmsTemplate;
 
-class CreateSmsTemplate extends CreateRecord
+class SmsTemplateObserver
 {
-    protected static string $resource = SmsTemplateResource::class;
-
-    public function getBreadcrumbs(): array
+    public function creating(SmsTemplate $smsTemplate): void
     {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                Textarea::make('description')
-                    ->string(),
-                TiptapEditor::make('content')
-                    ->mergeTags([
-                        'student full name',
-                        'student email',
-                    ])
-                    ->profile('sms')
-                    ->output(TiptapOutput::Json)
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->required(),
-            ]);
+        if (is_null($smsTemplate->user_id) && ! is_null(auth()->user())) {
+            $smsTemplate->user_id = auth()->user()->id;
+        }
     }
 }

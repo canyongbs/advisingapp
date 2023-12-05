@@ -51,6 +51,7 @@ use Assist\Authorization\AuthorizationRoleRegistry;
 use Assist\Engagement\Models\EngagementDeliverable;
 use Assist\Engagement\Observers\EngagementObserver;
 use Assist\Engagement\Models\EngagementFileEntities;
+use Assist\Engagement\Observers\SmsTemplateObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Engagement\Observers\EmailTemplateObserver;
 use Assist\Engagement\Observers\EngagementBatchObserver;
@@ -67,12 +68,12 @@ class EngagementServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'engagement' => Engagement::class,
-            'engagement_deliverable' => EngagementDeliverable::class,
-            'engagement_batch' => EngagementBatch::class,
-            'engagement_response' => EngagementResponse::class,
-            'engagement_file' => EngagementFile::class,
             'email_template' => EmailTemplate::class,
+            'engagement_batch' => EngagementBatch::class,
+            'engagement_deliverable' => EngagementDeliverable::class,
+            'engagement_file' => EngagementFile::class,
+            'engagement_response' => EngagementResponse::class,
+            'engagement' => Engagement::class,
             'sms_template' => SmsTemplate::class,
         ]);
 
@@ -91,9 +92,10 @@ class EngagementServiceProvider extends ServiceProvider
     public function registerObservers(): void
     {
         EmailTemplate::observe(EmailTemplateObserver::class);
-        EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
         Engagement::observe(EngagementObserver::class);
         EngagementBatch::observe(EngagementBatchObserver::class);
+        EngagementFileEntities::observe(EngagementFileEntitiesObserver::class);
+        SmsTemplate::observe(SmsTemplateObserver::class);
     }
 
     protected function registerRolesAndPermissions()
