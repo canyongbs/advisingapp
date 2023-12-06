@@ -41,6 +41,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Console\Application as Artisan;
 use Lomkit\Rest\Console\Commands\ResourceCommand;
 use Lomkit\Rest\Console\Commands\ControllerCommand;
+use Lomkit\Rest\Console\Commands\DocumentationCommand;
 use OpenSearch\Migrations\Filesystem\MigrationStorage;
 
 class AppServiceProvider extends ServiceProvider
@@ -54,6 +55,8 @@ class AppServiceProvider extends ServiceProvider
             Artisan::starting(function (Application $artisan) {
                 $this->app->singleton(ResourceCommand::class, \App\Console\Commands\ResourceCommand::class);
                 $this->app->singleton(ControllerCommand::class, \App\Console\Commands\ControllerCommand::class);
+                // TODO: This one can be deleted if ___ gets merged in
+                $this->app->singleton(DocumentationCommand::class, \App\Console\Commands\DocumentationCommand::class);
             });
         });
     }

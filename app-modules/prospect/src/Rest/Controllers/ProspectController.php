@@ -3,9 +3,17 @@
 namespace Assist\Prospect\Rest\Controllers;
 
 use App\Rest\Controller as RestController;
+use Lomkit\Rest\Documentation\Schemas\Operation;
 use Assist\Prospect\Rest\Resources\ProspectResource;
 
 class ProspectController extends RestController
 {
     public static $resource = ProspectResource::class;
+
+    public function generateDocumentationSearchOperation(Operation $operation): Operation
+    {
+        ray($operation->requestBody());
+
+        return $operation;
+    }
 }
