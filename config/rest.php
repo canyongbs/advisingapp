@@ -83,10 +83,10 @@ return [
         ],
         // See https://spec.openapis.org/oas/v3.1.0#server-object
         'servers' => [
-            [
-                'url' => env('APP_URL'), // Relative to current
-                'description' => 'The current server',
-            ],
+            //[
+            //    'url' => env('APP_URL'), // Relative to current
+            //    'description' => '',
+            //],
             //  [
             //      'url' => '"https://my-server.com:{port}/{basePath}"',
             //      'description' => 'Production server',
