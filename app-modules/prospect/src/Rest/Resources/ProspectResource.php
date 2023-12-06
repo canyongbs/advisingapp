@@ -14,6 +14,23 @@ class ProspectResource extends RestResource
     {
         return [
             'id',
+            'first_name',
+            'last_name',
+            'full_name',
+            'preferred',
+            'description',
+            'email',
+            'email_2',
+            'mobile',
+            'sms_opt_out',
+            'email_bounce',
+            'phone',
+            'address',
+            'address_2',
+            'birthdate',
+            'hsgrad',
+            'created_at',
+            'updated_at',
         ];
     }
 
