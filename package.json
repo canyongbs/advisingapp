@@ -28,7 +28,7 @@
         "select2": "^4.0.13",
         "tailwindcss": "^3.3.3",
         "tippy.js": "^6.3.7",
-        "vite": "^4.4.3",
+        "vite": "^4.4.12",
         "vue-signature-pad": "^3.0.2"
     },
     "type": "module",
