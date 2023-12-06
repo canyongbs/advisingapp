@@ -44,6 +44,7 @@ use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
 
 JsonApiRoute::server('v1')
+    ->middleware('auth:sanctum')
     ->prefix('v1')
     ->name('api.v1.')
     ->resources(function (ResourceRegistrar $server) {

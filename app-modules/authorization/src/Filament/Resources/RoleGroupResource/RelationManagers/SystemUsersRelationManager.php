@@ -34,20 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\DetachAction;
+use App\Filament\Resources\RelationManagers\RelationManager;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Authorization\Models\RoleGroup>
- */
-class RoleGroupFactory extends Factory
+class SystemUsersRelationManager extends RelationManager
 {
-    public function definition(): array
+    protected static string $relationship = 'systemUsers';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public function form(Form $form): Form
     {
-        return [
-            'name' => fake()->word(),
-            'guard_name' => fake()->randomElement(['web', 'api']),
-        ];
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+            ])
+            ->filters([
+            ])
+            ->headerActions([
+                AttachAction::make(),
+            ])
+            ->actions([
+                DetachAction::make(),
+            ])
+            ->bulkActions([
+            ]);
     }
 }

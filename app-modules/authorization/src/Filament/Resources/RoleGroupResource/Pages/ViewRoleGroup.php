@@ -36,13 +36,34 @@
 
 namespace Assist\Authorization\Filament\Resources\RoleGroupResource\Pages;
 
+use Illuminate\Support\Carbon;
 use Filament\Actions\EditAction;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Assist\Authorization\Filament\Resources\RoleGroupResource;
 
 class ViewRoleGroup extends ViewRecord
 {
     protected static string $resource = RoleGroupResource::class;
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('guard_name'),
+                        TextEntry::make('created_at')
+                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s')),
+                        TextEntry::make('updated_at')
+                            ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s')),
+                    ]),
+            ]);
+    }
 
     protected function getHeaderActions(): array
     {

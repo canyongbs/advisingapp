@@ -38,16 +38,18 @@ namespace Assist\Authorization\Filament\Resources\RoleGroupResource\RelationMana
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
+use Illuminate\Database\Eloquent\Builder;
+use Assist\Authorization\Models\RoleGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use App\Filament\Resources\RelationManagers\RelationManager;
+use Illuminate\Support\Str;
 
 class RolesRelationManager extends RelationManager
 {
@@ -61,10 +63,10 @@ class RolesRelationManager extends RelationManager
             ->schema([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(125),
                 TextInput::make('guard_name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(125),
             ]);
     }
 
@@ -74,14 +76,17 @@ class RolesRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-                TextColumn::make('guard_name'),
             ])
             ->filters([
             ])
             ->headerActions([
-                AttachAction::make()->recordTitle(function ($record) {
-                    return Str::of($record->name)->append(' | ')->append($record->guard_name);
-                }),
+                AttachAction::make()
+                    ->recordSelectOptionsQuery(function (Builder $query) {
+                        /** @var RoleGroup $roleGroup */
+                        $roleGroup = $this->getOwnerRecord();
+
+                        return $query->where('guard_name', $roleGroup->guard_name);
+                    }),
             ])
             ->actions([
                 EditAction::make(),

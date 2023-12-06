@@ -36,10 +36,32 @@
 
 namespace Assist\Authorization\Filament\Resources\RoleGroupResource\Pages;
 
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Authorization\Filament\Resources\RoleGroupResource;
+use Illuminate\Support\Carbon;
 
 class CreateRoleGroup extends CreateRecord
 {
     protected static string $resource = RoleGroupResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(125),
+                Select::make('guard_name')
+                    ->required()
+                    ->options([
+                        'web' => 'web',
+                        'api' => 'api',
+                    ])
+                    ->default('web')
+                    ->selectablePlaceholder(false),
+            ]);
+    }
 }

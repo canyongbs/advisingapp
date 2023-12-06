@@ -47,6 +47,12 @@ return new class () extends Migration {
             $table->timestamps();
         });
 
+        Schema::create('role_group_system_user', function (Blueprint $table) {
+            $table->foreignUuid('system_user_id')->references('id')->on('system_users');
+            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
+            $table->timestamps();
+        });
+
         Schema::create('role_role_group', function (Blueprint $table) {
             $table->foreignUuid('role_id')->references('id')->on('roles');
             $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
