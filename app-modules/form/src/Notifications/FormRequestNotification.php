@@ -36,7 +36,6 @@
 
 namespace Assist\Form\Notifications;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use App\Models\NotificationSetting;
