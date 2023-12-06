@@ -48,7 +48,7 @@ class RoleFactory extends Factory
     {
         return [
             'name' => fake()->text(25),
-            'guard_name' => fake()->randomElement(['web', 'api']),
+            'guard_name' => 'web',
         ];
     }
 }

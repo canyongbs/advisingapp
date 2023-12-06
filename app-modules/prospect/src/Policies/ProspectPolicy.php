@@ -44,8 +44,6 @@ class ProspectPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        ray($authenticatable);
-
         return $authenticatable->canOrElse(
             abilities: 'prospect.view-any',
             denyResponse: 'You do not have permission to view prospects.'
