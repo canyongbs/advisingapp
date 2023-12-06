@@ -21,6 +21,26 @@ class ProspectSourceResource extends RestResource
         ];
     }
 
+    public function createRules(RestRequest $request): array
+    {
+        return [
+            'id' => ['missing'],
+            'name' => ['required', 'string', 'unique:prospect_sources,name', 'max:255'],
+            'created_at' => ['missing'],
+            'updated_at' => ['missing'],
+        ];
+    }
+
+    public function updateRules(RestRequest $request): array
+    {
+        return [
+            'id' => ['missing'],
+            'name' => ['string', 'unique:prospect_sources,name', 'max:255'],
+            'created_at' => ['missing'],
+            'updated_at' => ['missing'],
+        ];
+    }
+
     public function relations(RestRequest $request): array
     {
         return [
