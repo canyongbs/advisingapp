@@ -34,31 +34,21 @@
 </COPYRIGHT>
 */
 
-use Assist\Application\Http\Controllers\ApplicationWidgetController;
-use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use Assist\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
+namespace Assist\Application\Http\Middleware;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureOnlineAdmissionsFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
-    ])
-    ->group(function () {
-        Route::prefix('applications')
-            ->name('applications.')
-            ->group(function () {
-                Route::get('/{application}', [ApplicationWidgetController::class, 'view'])
-                    ->middleware(['signed'])
-                    ->name('define');
-                Route::post('/{application}/authenticate/request', [ApplicationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
-                    ->name('request-authentication');
-                Route::post('/{application}/authenticate/{authentication}', [ApplicationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
-                    ->name('authenticate');
-                Route::post('/{application}/submit', [ApplicationWidgetController::class, 'store'])
-                    ->middleware(['signed'])
-                    ->name('submit');
-            });
-    });
+use Closure;
+use Illuminate\Http\Request;
+use App\Settings\LicenseSettings;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureOnlineAdmissionsFeatureIsActive
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (! app(LicenseSettings::class)->data->addons->onlineAdmissions) {
+            return response()->json(['error' => 'Online Admissions is not enabled.'], 403);
+        }
+
+        return $next($request);
+    }
+}

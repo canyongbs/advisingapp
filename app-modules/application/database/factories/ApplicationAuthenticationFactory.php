@@ -34,31 +34,41 @@
 </COPYRIGHT>
 */
 
-use Assist\Application\Http\Controllers\ApplicationWidgetController;
-use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use Assist\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
+namespace Assist\Application\Database\Factories;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureOnlineAdmissionsFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
-    ])
-    ->group(function () {
-        Route::prefix('applications')
-            ->name('applications.')
-            ->group(function () {
-                Route::get('/{application}', [ApplicationWidgetController::class, 'view'])
-                    ->middleware(['signed'])
-                    ->name('define');
-                Route::post('/{application}/authenticate/request', [ApplicationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
-                    ->name('request-authentication');
-                Route::post('/{application}/authenticate/{authentication}', [ApplicationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
-                    ->name('authenticate');
-                Route::post('/{application}/submit', [ApplicationWidgetController::class, 'store'])
-                    ->middleware(['signed'])
-                    ->name('submit');
-            });
-    });
+use Assist\Prospect\Models\Prospect;
+use Illuminate\Support\Facades\Hash;
+use Assist\Application\Models\Application;
+use Assist\AssistDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
+
+/**
+ * @extends Factory<Application>
+ */
+class ApplicationAuthenticationFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'author_type' => fake()->randomElement([
+                (new Student())->getMorphClass(),
+                (new Prospect())->getMorphClass(),
+            ]),
+            'author_id' => function (array $attributes) {
+                $senderClass = Relation::getMorphedModel($attributes['author_type']);
+
+                /** @var Student|Prospect $senderModel */
+                $senderModel = new $senderClass();
+
+                $sender = $senderClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $senderModel::factory()->create();
+
+                return $sender->getKey();
+            },
+            'code' => Hash::make(random_int(100000, 999999)),
+            'application_id' => Application::factory(),
+        ];
+    }
+}

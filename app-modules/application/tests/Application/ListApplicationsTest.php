@@ -34,31 +34,58 @@
 </COPYRIGHT>
 */
 
-use Assist\Application\Http\Controllers\ApplicationWidgetController;
-use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use Assist\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
+use App\Models\User;
+use App\Settings\LicenseSettings;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureOnlineAdmissionsFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
-    ])
-    ->group(function () {
-        Route::prefix('applications')
-            ->name('applications.')
-            ->group(function () {
-                Route::get('/{application}', [ApplicationWidgetController::class, 'view'])
-                    ->middleware(['signed'])
-                    ->name('define');
-                Route::post('/{application}/authenticate/request', [ApplicationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
-                    ->name('request-authentication');
-                Route::post('/{application}/authenticate/{authentication}', [ApplicationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
-                    ->name('authenticate');
-                Route::post('/{application}/submit', [ApplicationWidgetController::class, 'store'])
-                    ->middleware(['signed'])
-                    ->name('submit');
-            });
-    });
+use function Pest\Laravel\actingAs;
+
+use Assist\Application\Filament\Resources\ApplicationResource;
+
+// TODO: Write ListApplications tests
+//test('The correct details are displayed on the ListApplications page', function () {});
+
+// TODO: Sorting and Searching tests
+
+// Permission Tests
+
+test('ListApplications is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('application.view-any');
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('index')
+        )->assertSuccessful();
+});
+
+test('ListApplications is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->onlineAdmissions = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('application.view-any');
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('index')
+        )->assertForbidden();
+
+    $settings->data->addons->onlineAdmissions = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('index')
+        )->assertSuccessful();
+});
