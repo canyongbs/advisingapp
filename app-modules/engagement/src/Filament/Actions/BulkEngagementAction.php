@@ -144,7 +144,7 @@ class BulkEngagementAction
                                     $component->state($template->content);
                                 }))
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
-                            ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
+                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         Textarea::make('body')
                             ->placeholder('Body')
