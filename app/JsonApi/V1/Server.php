@@ -34,37 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace App\JsonApi\V1;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
-use Assist\AssistDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Application\Models\ApplicationSubmission;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use LaravelJsonApi\Core\Server\Server as BaseServer;
+use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
+use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
+use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+class Server extends BaseServer
 {
-    public function definition(): array
+    /**
+     * The base URI namespace for this server.
+     *
+     * @var string
+     */
+    protected string $baseUri = '/api/v1';
+
+    /**
+     * Bootstrap the server when it is handling an HTTP request.
+     *
+     * @return void
+     */
+    public function serving(): void
+    {
+        // no-op
+    }
+
+    public function authorizable(): bool
+    {
+        //TODO: use real auth
+        return false;
+    }
+
+    /**
+     * Get the server's list of schemas.
+     *
+     * @return array
+     */
+    protected function allSchemas(): array
     {
         return [
-            'application_id' => Application::factory(),
-            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                $authorClass = Relation::getMorphedModel($attributes['author_type']);
-
-                /** @var Student|Prospect $authorModel */
-                $authorModel = new $authorClass();
-
-                $author = $authorClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $authorModel::factory()->create();
-
-                return $author->getKey();
-            },
+            ProspectSchema::class,
+            ProspectStatusSchema::class,
+            ProspectSourceSchema::class,
         ];
     }
 }

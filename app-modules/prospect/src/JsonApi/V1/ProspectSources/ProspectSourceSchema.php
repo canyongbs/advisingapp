@@ -34,37 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace Assist\Prospect\JsonApi\V1\ProspectSources;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
-use Assist\AssistDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Application\Models\ApplicationSubmission;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use LaravelJsonApi\Eloquent\Schema;
+use LaravelJsonApi\Eloquent\Fields\ID;
+use LaravelJsonApi\Eloquent\Fields\Str;
+use Assist\Prospect\Models\ProspectSource;
+use LaravelJsonApi\Eloquent\Fields\DateTime;
+use LaravelJsonApi\Eloquent\Fields\SoftDelete;
+use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
+use LaravelJsonApi\Eloquent\Contracts\Paginator;
+use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
+use LaravelJsonApi\Eloquent\Pagination\PagePagination;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+class ProspectSourceSchema extends Schema
 {
-    public function definition(): array
+    public static string $model = ProspectSource::class;
+
+    public function fields(): array
     {
         return [
-            'application_id' => Application::factory(),
-            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                $authorClass = Relation::getMorphedModel($attributes['author_type']);
-
-                /** @var Student|Prospect $authorModel */
-                $authorModel = new $authorClass();
-
-                $author = $authorClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $authorModel::factory()->create();
-
-                return $author->getKey();
-            },
+            ID::make()->uuid(),
+            Str::make('name'),
+            DateTime::make('createdAt')->sortable()->readOnly(),
+            DateTime::make('updatedAt')->sortable()->readOnly(),
+            SoftDelete::make('deletedAt')->sortable()->readOnly(),
+            HasMany::make('prospects'),
         ];
+    }
+
+    public function filters(): array
+    {
+        return [
+            WhereIdIn::make($this),
+        ];
+    }
+
+    public function pagination(): ?Paginator
+    {
+        return PagePagination::make();
     }
 }

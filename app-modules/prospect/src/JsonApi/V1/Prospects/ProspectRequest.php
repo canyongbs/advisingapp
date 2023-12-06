@@ -34,37 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace Assist\Prospect\JsonApi\V1\Prospects;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
-use Assist\AssistDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Application\Models\ApplicationSubmission;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use LaravelJsonApi\Validation\Rule as JsonApiRule;
+use LaravelJsonApi\Laravel\Http\Requests\ResourceRequest;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+class ProspectRequest extends ResourceRequest
 {
-    public function definition(): array
+    public function rules(): array
     {
         return [
-            'application_id' => Application::factory(),
-            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                $authorClass = Relation::getMorphedModel($attributes['author_type']);
-
-                /** @var Student|Prospect $authorModel */
-                $authorModel = new $authorClass();
-
-                $author = $authorClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $authorModel::factory()->create();
-
-                return $author->getKey();
-            },
+            'firstName' => ['required', 'string'],
+            'lastName' => ['required', 'string'],
+            'fullName' => ['required', 'string'],
+            'preferred' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+            'email' => ['required', 'email'],
+            'email2' => ['nullable', 'email'],
+            'mobile' => ['nullable', 'string'],
+            'smsOptOut' => ['nullable', JsonApiRule::boolean()],
+            'emailBounce' => ['nullable', JsonApiRule::boolean()],
+            'phone' => ['nullable', 'string'],
+            'address' => ['nullable', 'string'],
+            'address2' => ['nullable', 'string'],
+            'birthdate' => ['nullable', 'date_format:Y-m-d'],
+            'hsgrad' => ['nullable', 'date_format:Y'],
+            'status' => ['required', JsonApiRule::toOne()],
+            'source' => ['required', JsonApiRule::toOne()],
+            //TODO: 'assignedToId' needs User Schema
+            //TODO: 'createdById' needs User Schema
         ];
     }
 }

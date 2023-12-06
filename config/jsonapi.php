@@ -34,37 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+use App\JsonApi\V1\Server;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
-use Assist\AssistDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Application\Models\ApplicationSubmission;
-use Illuminate\Database\Eloquent\Relations\Relation;
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Root Namespace
+    |--------------------------------------------------------------------------
+    |
+    | The root JSON:API namespace, within your application's namespace.
+    | This is used when generating any class that does not sit *within*
+    | a server's namespace. For example, new servers and filters.
+    |
+    | By default this is set to `JsonApi` which means the root namespace
+    | will be `\App\JsonApi`, if your application's namespace is `App`.
+    */
+    'namespace' => 'JsonApi',
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
-{
-    public function definition(): array
-    {
-        return [
-            'application_id' => Application::factory(),
-            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                $authorClass = Relation::getMorphedModel($attributes['author_type']);
-
-                /** @var Student|Prospect $authorModel */
-                $authorModel = new $authorClass();
-
-                $author = $authorClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $authorModel::factory()->create();
-
-                return $author->getKey();
-            },
-        ];
-    }
-}
+    /*
+    |--------------------------------------------------------------------------
+    | Servers
+    |--------------------------------------------------------------------------
+    |
+    | A list of the JSON:API compliant APIs in your application, referred to
+    | as "servers". They must be listed below, with the array key being the
+    | unique name for each server, and the value being the fully-qualified
+    | class name of the server class.
+    */
+    'servers' => [
+        'v1' => Server::class,
+    ],
+];

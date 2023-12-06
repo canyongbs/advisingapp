@@ -50,6 +50,7 @@ use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Application\Models\ApplicationSubmission;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -174,6 +175,11 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
         return $this->morphMany(FormSubmission::class, 'author');
     }
 
+    public function applicationSubmissions(): MorphMany
+    {
+        return $this->morphMany(ApplicationSubmission::class, 'author');
+    }
+
     public function careTeam(): MorphToMany
     {
         return $this->morphToMany(
@@ -182,6 +188,18 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
             table: 'care_teams',
         )
             ->using(CareTeam::class)
+            ->withPivot('id')
+            ->withTimestamps();
+    }
+
+    public function subscribedUsers(): MorphToMany
+    {
+        return $this->morphToMany(
+            related: User::class,
+            name: 'subscribable',
+            table: 'subscriptions',
+        )
+            ->using(Subscription::class)
             ->withPivot('id')
             ->withTimestamps();
     }
@@ -199,18 +217,6 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public function getApiPermissions(): Collection
     {
         return collect([]);
-    }
-
-    public function subscribedUsers(): MorphToMany
-    {
-        return $this->morphToMany(
-            related: User::class,
-            name: 'subscribable',
-            table: 'subscriptions',
-        )
-            ->using(Subscription::class)
-            ->withPivot('id')
-            ->withTimestamps();
     }
 
     protected function displayName(): Attribute

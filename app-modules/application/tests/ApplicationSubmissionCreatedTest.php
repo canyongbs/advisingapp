@@ -34,26 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Observers;
-
-use Illuminate\Support\Facades\Cache;
+use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Assist\Application\Models\ApplicationSubmission;
 use Assist\Application\Events\ApplicationSubmissionCreated;
+use Assist\Application\Listeners\NotifySubscribersOfApplicationSubmission;
+use Assist\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
 
-class ApplicationSubmissionObserver
-{
-    public function created(ApplicationSubmission $submission): void
-    {
-        Event::dispatch(
-            event: new ApplicationSubmissionCreated(submission: $submission)
-        );
+it('dispatches ApplicationSubmissionCreated Event when a ApplicationSubmission is created', function () {
+    Event::fake(ApplicationSubmissionCreated::class);
 
-        if (! is_null($submission->author)) {
-            Cache::tags('application-submission-count')
-                ->forget(
-                    "application-submission-count-{$submission->author->getKey()}"
-                );
-        }
-    }
-}
+    $submission = ApplicationSubmission::factory()->create();
+
+    Event::assertDispatched(
+        event: ApplicationSubmissionCreated::class,
+        callback: fn (ApplicationSubmissionCreated $event) => $event->submission->is($submission)
+    );
+});
+
+test('ApplicationSubmissionCreated Event has the proper listeners', function () {
+    Event::fake();
+
+    Event::assertListening(
+        expectedEvent: ApplicationSubmissionCreated::class,
+        expectedListener: NotifySubscribersOfApplicationSubmission::class
+    );
+});
+
+test('NotifySubscribersOfApplicationSubmission dispatches the correct Notification', function () {
+    Notification::fake();
+
+    /** @var ApplicationSubmission $submission */
+    $submission = ApplicationSubmission::factory()->make();
+
+    $user = User::factory()->create();
+
+    $user->subscriptions()->create([
+        'subscribable_id' => $submission->author->getKey(),
+        'subscribable_type' => $submission->author->getMorphClass(),
+    ]);
+
+    $submission->save();
+
+    $submission->author->subscriptions->map(fn ($subscription) => $subscription->user)->each(function (User $user) {
+        Notification::assertSentTo(notifiable: $user, notification: AuthorLinkedApplicationSubmissionCreatedNotification::class);
+    });
+});
