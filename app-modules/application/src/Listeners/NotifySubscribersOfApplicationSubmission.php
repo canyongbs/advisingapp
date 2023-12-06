@@ -34,37 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace Assist\Application\Listeners;
 
 use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
 use Assist\AssistDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Application\Models\ApplicationSubmission;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Assist\Notifications\Models\Subscription;
+use Assist\Application\Events\ApplicationSubmissionCreated;
+use Assist\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+class NotifySubscribersOfApplicationSubmission implements ShouldQueue
 {
-    public function definition(): array
+    public function handle(ApplicationSubmissionCreated $event): void
     {
-        return [
-            'application_id' => Application::factory(),
-            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                $authorClass = Relation::getMorphedModel($attributes['author_type']);
+        /** @var Student|Prospect|null $author */
+        $author = $event->submission->author;
 
-                /** @var Student|Prospect $authorModel */
-                $authorModel = new $authorClass();
-
-                $author = $authorClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $authorModel::factory()->create();
-
-                return $author->getKey();
-            },
-        ];
+        $author?->subscriptions?->each(function (Subscription $subscription) use ($event) {
+            $subscription->user->notify(new AuthorLinkedApplicationSubmissionCreatedNotification(submission: $event->submission));
+        });
     }
 }

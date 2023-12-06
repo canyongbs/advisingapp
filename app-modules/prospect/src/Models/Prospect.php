@@ -53,6 +53,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\Application\Models\ApplicationSubmission;
 use Assist\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -219,6 +220,11 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     public function formSubmissions(): MorphMany
     {
         return $this->morphMany(FormSubmission::class, 'author');
+    }
+
+    public function applicationSubmissions(): MorphMany
+    {
+        return $this->morphMany(ApplicationSubmission::class, 'author');
     }
 
     public static function displayNameKey(): string
