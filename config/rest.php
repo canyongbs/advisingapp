@@ -66,13 +66,13 @@ return [
         ],
         'info' => [
             'title' => 'Advising App™ REST API',
-            'summary' => 'Advising App™ created by Canyon GBS™ API Documentation',
+            'summary' => '',
             'description' => 'Advising App™ created by Canyon GBS™ API Documentation',
             'termsOfService' => null, // (Optional) Url to terms of services
             'contact' => [
-                'name' => 'My Company',
-                'email' => 'email@company.com',
-                'url' => 'https://company.com',
+                'name' => '',
+                'email' => '',
+                'url' => '',
             ],
             'license' => [
                 'url' => null,
@@ -84,7 +84,7 @@ return [
         // See https://spec.openapis.org/oas/v3.1.0#server-object
         'servers' => [
             [
-                'url' => '/', // Relative to current
+                'url' => env('APP_URL'), // Relative to current
                 'description' => 'The current server',
             ],
             //  [
