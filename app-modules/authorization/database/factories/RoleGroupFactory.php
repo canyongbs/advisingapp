@@ -36,10 +36,11 @@
 
 namespace Assist\Authorization\Database\Factories;
 
+use Assist\Authorization\Models\RoleGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Authorization\Models\RoleGroup>
+ * @extends Factory<RoleGroup>
  */
 class RoleGroupFactory extends Factory
 {
@@ -47,7 +48,7 @@ class RoleGroupFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'guard_name' => fake()->randomElement(['web', 'api']),
+            'guard_name' => 'web',
         ];
     }
 }

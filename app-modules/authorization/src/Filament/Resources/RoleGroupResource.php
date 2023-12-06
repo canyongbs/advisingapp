@@ -47,7 +47,6 @@ use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\CreateRoleGr
 use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\RolesRelationManager;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\UsersRelationManager;
 use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\PermissionsRelationManager;
-use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\SystemUsersRelationManager;
 
 class RoleGroupResource extends Resource
 {
@@ -66,7 +65,6 @@ class RoleGroupResource extends Resource
         return [
             RolesRelationManager::class,
             UsersRelationManager::class,
-            // SystemUsersRelationManager::class,
             PermissionsRelationManager::class,
         ];
     }
