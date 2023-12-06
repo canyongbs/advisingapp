@@ -50,20 +50,10 @@ class ListUsers extends ListRecords
 
     public function getSubheading(): string | Htmlable | null
     {
-        $count = User::count();
-        $max = app(LicenseSettings::class)->data->limits->crmSeats;
-
-        $colorClass = 'text-green-500';
-
-        if ($count > $max) {
-            $colorClass = 'text-red-500';
-        } elseif ($count === $max) {
-            $colorClass = 'text-yellow-500';
-        }
-
-        return new HtmlString(
-            "<span class='{$colorClass}'>{$count}/{$max}</span> CRM Seats Used"
-        );
+        return new HtmlString(view('crm-seats', [
+            'count' => User::count(),
+            'max' => app(LicenseSettings::class)->data->limits->crmSeats,
+        ])->render());
     }
 
     protected function getHeaderActions(): array
