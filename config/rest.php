@@ -65,7 +65,7 @@ return [
             ],
         ],
         'info' => [
-            'title' => config('app.name'),
+            'title' => 'Advising App™ REST API',
             'summary' => 'Advising App™ created by Canyon GBS™ API Documentation',
             'description' => 'Advising App™ created by Canyon GBS™ API Documentation',
             'termsOfService' => null, // (Optional) Url to terms of services
