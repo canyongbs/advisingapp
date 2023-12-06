@@ -66,8 +66,8 @@ return [
         ],
         'info' => [
             'title' => config('app.name'),
-            'summary' => 'This is my projet\'s documentation',
-            'description' => 'Find out all about my projet\'s API',
+            'summary' => 'Advising App™ created by Canyon GBS™ API Documentation',
+            'description' => 'Advising App™ created by Canyon GBS™ API Documentation',
             'termsOfService' => null, // (Optional) Url to terms of services
             'contact' => [
                 'name' => 'My Company',
@@ -76,10 +76,10 @@ return [
             ],
             'license' => [
                 'url' => null,
-                'name' => 'Apache 2.0',
-                'identifier' => 'Apache-2.0',
+                'name' => 'Elastic License 2.0',
+                'identifier' => 'Elastic-2.0',
             ],
-            'version' => '1.0.0',
+            'version' => '0.1.0',
         ],
         // See https://spec.openapis.org/oas/v3.1.0#server-object
         'servers' => [
