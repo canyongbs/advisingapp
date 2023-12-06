@@ -3,6 +3,7 @@
 namespace Assist\Prospect\Rest\Resources;
 
 use Assist\Prospect\Models\Prospect;
+use Lomkit\Rest\Relations\BelongsTo;
 use App\Rest\Resource as RestResource;
 use Lomkit\Rest\Http\Requests\RestRequest;
 
@@ -34,25 +35,14 @@ class ProspectResource extends RestResource
         ];
     }
 
-    /**
-     * The exposed relations that could be provided
-     *
-     * @param RestRequest $request
-     *
-     * @return array
-     */
     public function relations(RestRequest $request): array
     {
-        return [];
+        return [
+            BelongsTo::make('status', ProspectStatusResource::class),
+            BelongsTo::make('source', ProspectSourceResource::class),
+        ];
     }
 
-    /**
-     * The exposed scopes that could be provided
-     *
-     * @param RestRequest $request
-     *
-     * @return array
-     */
     public function scopes(RestRequest $request): array
     {
         return [];
