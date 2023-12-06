@@ -36,8 +36,8 @@
 
 namespace Assist\Authorization\Models;
 
-use App\Models\SystemUser;
 use App\Models\User;
+use App\Models\SystemUser;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;

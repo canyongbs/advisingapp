@@ -49,7 +49,6 @@ use Assist\Authorization\Models\RoleGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use Illuminate\Support\Str;
 
 class RolesRelationManager extends RelationManager
 {

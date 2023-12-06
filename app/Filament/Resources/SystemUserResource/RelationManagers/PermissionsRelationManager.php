@@ -36,15 +36,14 @@
 
 namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 
-use App\Filament\Columns\IdColumn;
-use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\Authorization\Models\RoleGroup;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\AttachAction;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\RelationManagers\RelationManager;
 
 class PermissionsRelationManager extends RelationManager
 {

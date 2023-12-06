@@ -36,18 +36,18 @@
 
 namespace Assist\Authorization\Filament\Resources\RoleGroupResource\Pages;
 
+use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Assist\Authorization\Filament\Resources\RoleGroupResource;
 
 class ListRoleGroups extends ListRecords

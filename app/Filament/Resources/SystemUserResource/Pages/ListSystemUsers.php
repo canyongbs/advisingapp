@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
