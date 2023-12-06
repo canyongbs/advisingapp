@@ -37,6 +37,7 @@
 namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
 use Filament\Forms\Form;
+use Filament\Resources\Resource;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -79,5 +80,13 @@ class CreateEmailTemplate extends CreateRecord
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
             ]);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        /** @var class-string<Resource> $resource */
+        $resource = $this->getResource();
+
+        return $resource::getUrl();
     }
 }

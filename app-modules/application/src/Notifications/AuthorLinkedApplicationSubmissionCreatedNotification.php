@@ -34,37 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace Assist\Application\Notifications;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
-use Assist\AssistDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Filament\Facades\Filament;
+use Illuminate\Support\HtmlString;
+use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Assist\Application\Models\ApplicationSubmission;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Filament\Notifications\Notification as FilamentNotification;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+class AuthorLinkedApplicationSubmissionCreatedNotification extends Notification implements ShouldQueue
 {
-    public function definition(): array
+    use Queueable;
+
+    public function __construct(public ApplicationSubmission $submission) {}
+
+    public function via(User $notifiable): array
     {
-        return [
-            'application_id' => Application::factory(),
-            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                $authorClass = Relation::getMorphedModel($attributes['author_type']);
+        return ['database'];
+    }
 
-                /** @var Student|Prospect $authorModel */
-                $authorModel = new $authorClass();
+    public function toDatabase(User $notifiable): array
+    {
+        $author = $this->submission->author;
 
-                $author = $authorClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $authorModel::factory()->create();
+        $name = $author->{$author->displayNameKey()};
 
-                return $author->getKey();
-            },
-        ];
+        $target = resolve(Filament::getModelResource($author));
+
+        $applicationSubmissionUrl = $target::getUrl('manage-application-submissions', ['record' => $author]);
+
+        $applicationSubmissionLink = new HtmlString("<a href='{$applicationSubmissionUrl}' target='_blank' class='underline'>application submission</a>");
+
+        $morph = str($author->getMorphClass());
+
+        $morphUrl = $target::getUrl('view', ['record' => $author]);
+
+        $morphLink = new HtmlString("<a href='{$morphUrl}' target='_blank' class='underline'>{$name}</a>");
+
+        return FilamentNotification::make()
+            ->warning()
+            ->title("An {$applicationSubmissionLink} has been submitted by {$morph} {$morphLink}")
+            ->getDatabaseMessage();
     }
 }

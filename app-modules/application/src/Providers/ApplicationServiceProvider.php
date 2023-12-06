@@ -37,6 +37,7 @@
 namespace Assist\Application\Providers;
 
 use Filament\Panel;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Assist\Application\ApplicationPlugin;
 use Assist\Application\Models\Application;
@@ -47,7 +48,9 @@ use Assist\Application\Models\ApplicationSubmission;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Assist\Application\Models\ApplicationAuthentication;
 use Assist\Authorization\AuthorizationPermissionRegistry;
+use Assist\Application\Events\ApplicationSubmissionCreated;
 use Assist\Application\Observers\ApplicationSubmissionObserver;
+use Assist\Application\Listeners\NotifySubscribersOfApplicationSubmission;
 
 class ApplicationServiceProvider extends ServiceProvider
 {
@@ -78,11 +81,10 @@ class ApplicationServiceProvider extends ServiceProvider
 
     public function registerEvents(): void
     {
-        //Event::listen(
-        //    events: ApplicationSubmissionCreated::class,
-        //    // TODO: Swap out for the correct listener
-        //    listener: NotifySubscribersOfFormSubmission::class
-        //);
+        Event::listen(
+            events: ApplicationSubmissionCreated::class,
+            listener: NotifySubscribersOfApplicationSubmission::class
+        );
     }
 
     protected function registerRolesAndPermissions()
