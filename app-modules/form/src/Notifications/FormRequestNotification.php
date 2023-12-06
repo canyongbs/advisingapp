@@ -36,8 +36,10 @@
 
 namespace Assist\Form\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
+use App\Models\NotificationSetting;
 use Assist\Form\Models\FormRequest;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -57,14 +59,20 @@ class FormRequestNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $divisionName = $this->request->user->team?->division?->name;
+        $divisionName = $this->request->user->teams()->first()?->division?->name;
 
         return MailMessage::make()
+            ->settings($this->resolveNotificationSetting())
             ->subject("Request to Complete: {$this->request->form->name}" . (filled($divisionName) ? " | {$divisionName}" : ''))
             ->greeting('Hello ' . $this->request->recipient->display_name . '!')
             ->line("Please complete the attached form: {$this->request->form->name}")
             ->lineIf(filled($this->request->note), $this->request->note)
             ->action('Complete Form', route('forms.show', ['form' => $this->request->form]))
             ->salutation("Regards, {$this->request->user->name}");
+    }
+
+    private function resolveNotificationSetting(): ?NotificationSetting
+    {
+        return $this->request->user->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

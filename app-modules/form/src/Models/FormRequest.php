@@ -38,16 +38,20 @@ namespace Assist\Form\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Form\Enums\FormRequestDeliveryMethod;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperFormRequest
  */
-class FormRequest extends BaseModel
+class FormRequest extends BaseModel implements Auditable
 {
+    use AuditableTrait;
+
     protected $fillable = [
         'canceled_at',
         'form_id',

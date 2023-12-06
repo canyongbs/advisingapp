@@ -56,7 +56,6 @@ class DeliverFormRequestBySms extends DeliverFormRequest
                 ],
             );
         } catch (TwilioException $e) {
-            dd($e);
             // TODO Notify someone of the failure
         }
     }
