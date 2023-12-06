@@ -36,7 +36,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Console\Application;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Console\Application as Artisan;
+use Lomkit\Rest\Console\Commands\ResourceCommand;
 use OpenSearch\Migrations\Filesystem\MigrationStorage;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,7 +47,14 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->app->booted(function () {
+            Artisan::starting(function (Application $artisan) {
+                $this->app->singleton(ResourceCommand::class, \App\Console\Commands\ResourceCommand::class);
+            });
+        });
+    }
 
     /**
      * Bootstrap any application services.
