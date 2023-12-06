@@ -51,7 +51,6 @@ use Filament\Forms\Components\Fieldset;
 use Assist\Engagement\Models\Engagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Engagement\Models\SmsTemplate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Assist\AssistDataModel\Models\Student;
@@ -62,6 +61,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Filament\Resources\EngagementResource;
+use Assist\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
 class EditEngagement extends EditRecord
 {
@@ -75,7 +75,8 @@ class EditEngagement extends EditRecord
                     ->autofocus()
                     ->required()
                     ->placeholder(__('Subject'))
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email),
                 TiptapEditor::make('body')
                     ->label('Body')
                     ->mergeTags([
@@ -138,70 +139,7 @@ class EditEngagement extends EditRecord
                     ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
                     ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
                     ->columnSpanFull(),
-                // TODO Implement length validation (320 characters max)
-                // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                TiptapEditor::make('body')
-                    ->label('Body')
-                    ->mergeTags([
-                        'student full name',
-                        'student email',
-                    ])
-                    ->profile('sms')
-                    ->output(TiptapOutput::Json)
-                    ->required()
-                    ->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
-                        ->form([
-                            Select::make('smsTemplate')
-                                ->searchable()
-                                ->options(function (Get $get): array {
-                                    return SmsTemplate::query()
-                                        ->when(
-                                            $get('onlyMyTemplates'),
-                                            fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                        )
-                                        ->orderBy('name')
-                                        ->limit(50)
-                                        ->pluck('name', 'id')
-                                        ->toArray();
-                                })
-                                ->getSearchResultsUsing(function (Get $get, string $search): array {
-                                    return SmsTemplate::query()
-                                        ->when(
-                                            $get('onlyMyTemplates'),
-                                            fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                        )
-                                        ->when(
-                                            $get('onlyMyTeamTemplates'),
-                                            fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
-                                        )
-                                        ->where(new Expression('lower(name)'), 'like', "%{$search}%")
-                                        ->orderBy('name')
-                                        ->limit(50)
-                                        ->pluck('name', 'id')
-                                        ->toArray();
-                                }),
-                            Checkbox::make('onlyMyTemplates')
-                                ->label('Only show my templates')
-                                ->live()
-                                ->afterStateUpdated(fn (Set $set) => $set('smsTemplate', null)),
-                            Checkbox::make('onlyMyTeamTemplates')
-                                ->label("Only show my team's templates")
-                                ->live()
-                                ->afterStateUpdated(fn (Set $set) => $set('smsTemplate', null)),
-                        ])
-                        ->action(function (array $data) use ($component) {
-                            $template = SmsTemplate::find($data['smsTemplate']);
-
-                            if (! $template) {
-                                return;
-                            }
-
-                            $component->state($template->content);
-                        }))
-                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Sms)
-                    ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
-                    ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
-                    ->columnSpanFull(),
+                EngagementSmsBodyField::make(context: 'edit', form: $form),
                 MorphToSelect::make('recipient')
                     ->label('Recipient')
                     ->searchable()
