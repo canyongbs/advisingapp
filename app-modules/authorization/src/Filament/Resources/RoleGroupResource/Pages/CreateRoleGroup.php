@@ -36,12 +36,11 @@
 
 namespace Assist\Authorization\Filament\Resources\RoleGroupResource\Pages;
 
+use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Assist\Authorization\Filament\Resources\RoleGroupResource;
-use Illuminate\Support\Carbon;
 
 class CreateRoleGroup extends CreateRecord
 {
@@ -54,14 +53,21 @@ class CreateRoleGroup extends CreateRecord
                 TextInput::make('name')
                     ->required()
                     ->maxLength(125),
-                Select::make('guard_name')
-                    ->required()
-                    ->options([
-                        'web' => 'web',
-                        'api' => 'api',
-                    ])
-                    ->default('web')
-                    ->selectablePlaceholder(false),
+                // Select::make('guard_name')
+                //     ->required()
+                //     ->options([
+                //         'web' => 'web',
+                //         'api' => 'api',
+                //     ])
+                //     ->default('web')
+                //     ->selectablePlaceholder(false),
             ]);
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['guard_name'] = 'web';
+
+        return $data;
     }
 }

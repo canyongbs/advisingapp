@@ -34,23 +34,54 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Filament\Columns\IdColumn;
+use App\Filament\Resources\RelationManagers\RelationManager;
+use Assist\Authorization\Models\RoleGroup;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
+class PermissionsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'permissions';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public function form(Form $form): Form
     {
-        Schema::create('role_group_user', function (Blueprint $table) {
-            $table->foreignUuid('user_id')->references('id')->on('users');
-            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
-            $table->timestamps();
-        });
-
-        Schema::create('role_role_group', function (Blueprint $table) {
-            $table->foreignUuid('role_id')->references('id')->on('roles');
-            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
-            $table->timestamps();
-        });
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(125),
+                TextInput::make('guard_name')
+                    ->required()
+                    ->maxLength(125),
+            ]);
     }
-};
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+            ])
+            ->filters([
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('guard_name', 'api'))
+                    ->attachAnother(),
+            ])
+            ->actions([
+            ])
+            ->bulkActions([
+            ]);
+    }
+}

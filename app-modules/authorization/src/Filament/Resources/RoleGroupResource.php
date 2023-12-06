@@ -66,7 +66,7 @@ class RoleGroupResource extends Resource
         return [
             RolesRelationManager::class,
             UsersRelationManager::class,
-            SystemUsersRelationManager::class,
+            // SystemUsersRelationManager::class,
             PermissionsRelationManager::class,
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\SystemUserResource\RelationManagers\PermissionsRelationManager;
 use App\Models\SystemUser;
 use Filament\Resources\Resource;
 use App\Filament\Resources\SystemUserResource\Pages\EditSystemUser;
@@ -20,7 +21,9 @@ class SystemUserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            PermissionsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
