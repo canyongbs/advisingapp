@@ -36,15 +36,18 @@
 
 namespace Assist\Timeline\Events;
 
+use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
 
-class TimelineableRecordCreated
+class TimelineableRecordCreated implements ShouldQueue
 {
     use Dispatchable;
-    use InteractsWithSockets;
+    use InteractsWithQueue;
+    use Queueable;
     use SerializesModels;
 
     public function __construct(

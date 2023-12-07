@@ -41,7 +41,7 @@ use Illuminate\Support\Collection;
 use App\Models\Attributes\NoPermissions;
 use App\Actions\Finders\ApplicationModules;
 
-// This trait is used to define specific permissions for a model
+// This trait is used to define specific permissions for a model.
 // A model that needs to break typical conventions can either extend
 // Or override the functionality provided here.
 trait DefinesPermissions

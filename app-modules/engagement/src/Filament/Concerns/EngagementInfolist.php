@@ -79,9 +79,11 @@ trait EngagementInfolist
                         })
                         ->label('Status'),
                     TextEntry::make('deliverable.delivered_at')
-                        ->label('Delivered At'),
+                        ->label('Delivered At')
+                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivered_at)),
                     TextEntry::make('deliverable.delivery_response')
-                        ->label('Response'),
+                        ->label('Error Details')
+                        ->hidden(fn (Engagement $engagement): bool => is_null($engagement->deliverable->delivery_response)),
                 ])
                 ->columns(2),
         ];

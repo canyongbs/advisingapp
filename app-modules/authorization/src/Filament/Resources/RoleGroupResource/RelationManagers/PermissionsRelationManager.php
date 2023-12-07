@@ -55,10 +55,10 @@ class PermissionsRelationManager extends RelationManager
             ->schema([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(125),
                 TextInput::make('guard_name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(125),
             ]);
     }
 
@@ -68,7 +68,6 @@ class PermissionsRelationManager extends RelationManager
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-                TextColumn::make('guard_name'),
             ])
             ->filters([
             ])

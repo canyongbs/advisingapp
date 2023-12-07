@@ -45,14 +45,19 @@ class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
     {
         $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
 
+        $messageContent = [
+            'from' => config('services.twilio.from_number'),
+            'body' => $this->deliverable->engagement->getBody(),
+        ];
+
+        if (! app()->environment('local')) {
+            $messageContent['statusCallback'] = route('inbound.webhook.twilio', ['event' => 'status_callback']);
+        }
+
         try {
             $message = $client->messages->create(
                 ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->deliverable->engagement->recipient->mobile,
-                [
-                    'from' => config('services.twilio.from_number'),
-                    'body' => $this->deliverable->engagement->getBody(),
-                    'statusCallback' => route('inbound.webhook.twilio', ['event' => 'status_callback']),
-                ]
+                $messageContent
             );
 
             $this->deliverable->update([

@@ -121,7 +121,32 @@ source .env ; gunzip < resources/sql/assist-adm-data.gz | PGPASSWORD=$SIS_DB_PAS
 ### Minio (S3 Compatible Storage)
 Minio is a S3 compatible storage solution that is used for storing files locally.
 
-When first setting up you will need to create a bucket. This can be done by going to `localhost:8900` in your browser and logging in with `sail` as the username and `password` as the password. Once logged in, you can create a bucket and set access to `public`.
+When first setting up you will need to create a bucket. This can be done by going to `localhost:8900` in your browser and logging in with `sail` as the username and `password` as the password. Once logged in, you can create a bucket.
+
+By default, the application is set up in the `.env.example` to reference a bucket named `local`. Create a bucket with this name in Minio. Then change its access policy to "Custom" with the following policy configuration:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowPublicRead",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "*"
+                ]
+            },
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::local/PUBLIC/*"
+            ]
+        }
+    ]
+}
+```
 
 In order to facilitate proper file upload with Livewire you will need to set the following in your local etc/hosts file:
 ```

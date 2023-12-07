@@ -36,6 +36,7 @@
 
 namespace Assist\Application\Observers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Assist\Application\Models\ApplicationSubmission;
 use Assist\Application\Events\ApplicationSubmissionCreated;
@@ -47,5 +48,12 @@ class ApplicationSubmissionObserver
         Event::dispatch(
             event: new ApplicationSubmissionCreated(submission: $submission)
         );
+
+        if (! is_null($submission->author)) {
+            Cache::tags('application-submission-count')
+                ->forget(
+                    "application-submission-count-{$submission->author->getKey()}"
+                );
+        }
     }
 }

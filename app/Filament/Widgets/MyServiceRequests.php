@@ -65,7 +65,7 @@ class MyServiceRequests extends BaseWidget
                 auth()->user()
                     ->serviceRequests()
                     ->getQuery()
-                    ->latest()
+                    ->latest('service_requests.created_at')
                     ->limit(5)
             )
             ->columns([
@@ -102,10 +102,10 @@ class MyServiceRequests extends BaseWidget
             ])
             ->actions([
                 ViewAction::make()
-                    ->url(fn (ServiceRequest $record): string => ServiceRequestResource::getUrl(name: 'view', parameters: ['record' => $record])),
+                    ->url(fn (ServiceRequest $record): string => ServiceRequestResource::getUrl(name: 'view', parameters: ['record' => $record->service_request_id])),
             ])
             ->recordUrl(
-                fn (ServiceRequest $record): string => ServiceRequestResource::getUrl(name: 'view', parameters: ['record' => $record]),
+                fn (ServiceRequest $record): string => ServiceRequestResource::getUrl(name: 'view', parameters: ['record' => $record->service_request_id]),
             )
             ->paginated([5]);
     }

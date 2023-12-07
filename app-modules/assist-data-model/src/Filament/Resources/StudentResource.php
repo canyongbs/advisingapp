@@ -52,6 +52,7 @@ use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStuden
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFormSubmissions;
+use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentApplicationSubmissions;
 
 class StudentResource extends Resource
 {
@@ -79,6 +80,7 @@ class StudentResource extends Resource
             StudentEngagementTimeline::class,
             ManageStudentCareTeam::class,
             ManageStudentFormSubmissions::class,
+            ManageStudentApplicationSubmissions::class,
         ]);
     }
 
@@ -106,6 +108,7 @@ class StudentResource extends Resource
             'manage-engagement' => ManageStudentEngagement::route('/{record}/engagement'),
             'manage-files' => ManageStudentFiles::route('/{record}/files'),
             'manage-form-submissions' => ManageStudentFormSubmissions::route('/{record}/form-submissions'),
+            'manage-application-submissions' => ManageStudentApplicationSubmissions::route('/{record}/application-submissions'),
             'manage-information' => ManageStudentInformation::route('/{record}/information'),
             'manage-interactions' => ManageStudentInteractions::route('/{record}/interactions'),
             'manage-subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),

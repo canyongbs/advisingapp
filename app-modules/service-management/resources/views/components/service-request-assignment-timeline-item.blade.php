@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,46 +30,40 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
+@php
+    use App\Filament\Resources\UserResource;
+@endphp
 
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\CreatedByRelationManager;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers\AssignedToRelationManager;
+<div>
+    <div class="flex flex-row justify-between">
+        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
 
-class ManageServiceRequestUser extends ManageRelatedRecords
-{
-    protected static string $resource = ServiceRequestResource::class;
+            <span class="ml-2 flex space-x-2">
+                @if ($record->id === $record->serviceRequest->initialAssignment->id)
+                    Service Request Assigned
+                @else
+                    Service Request Reassigned
+                @endif
+            </span>
+        </h3>
 
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'assignedTo';
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-    protected static ?string $navigationLabel = 'Related Users';
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        {{ $record->created_at->diffForHumans() }}
+    </time>
 
-    protected static ?string $breadcrumb = 'Related Users';
-
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-
-    public static function canAccess(?Model $record = null): bool
-    {
-        return (bool) count(static::managers($record));
-    }
-
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(Model $record): array
-    {
-        return collect([
-            AssignedToRelationManager::class,
-            CreatedByRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
-            ->toArray();
-    }
-}
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+        Assigned to:
+        <a
+            class="primary underline"
+            href="{{ UserResource::getUrl('view', ['record' => $record->user]) }}"
+        >{{ $record->user->name }}</a>
+    </div>
+</div>

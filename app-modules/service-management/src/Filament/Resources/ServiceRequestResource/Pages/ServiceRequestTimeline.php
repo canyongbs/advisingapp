@@ -38,6 +38,8 @@ namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pag
 
 use Assist\Timeline\Filament\Pages\TimelinePage;
 use Assist\ServiceManagement\Models\ServiceRequestUpdate;
+use Assist\ServiceManagement\Models\ServiceRequestHistory;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
 use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ServiceRequestTimeline extends TimelinePage
@@ -52,5 +54,7 @@ class ServiceRequestTimeline extends TimelinePage
 
     public array $modelsToTimeline = [
         ServiceRequestUpdate::class,
+        ServiceRequestAssignment::class,
+        ServiceRequestHistory::class,
     ];
 }

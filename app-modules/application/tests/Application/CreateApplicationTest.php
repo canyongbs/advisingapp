@@ -35,54 +35,70 @@
 */
 
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
-use function PHPUnit\Framework\assertCount;
-use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
-use Assist\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories\CreateKnowledgeBaseItemRequestFactory;
+use Assist\Application\Filament\Resources\ApplicationResource;
 
-// TODO: Write CreateKnowledgeBaseItem tests
-//test('A successful action on the CreateKnowledgeBaseItem page', function () {});
+// TODO: Write CreateApplication tests
+//test('A successful action on the CreateApplication page', function () {});
 //
-//test('CreateKnowledgeBaseItem requires valid data', function ($data, $errors) {})->with([]);
+//test('CreateApplication requires valid data', function ($data, $errors) {})->with([]);
 
 // Permission Tests
 
-test('CreateKnowledgeBaseItem is gated with proper access control', function () {
+test('CreateApplication is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)
         ->get(
-            KnowledgeBaseItemResource::getUrl('create')
+            ApplicationResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem::class)
+    livewire(ApplicationResource\Pages\CreateApplication::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('knowledge_base_item.view-any');
-    $user->givePermissionTo('knowledge_base_item.create');
+    $user->givePermissionTo('application.view-any');
+    $user->givePermissionTo('application.create');
 
     actingAs($user)
         ->get(
-            KnowledgeBaseItemResource::getUrl('create')
+            ApplicationResource::getUrl('create')
         )->assertSuccessful();
 
-    $request = collect(CreateKnowledgeBaseItemRequestFactory::new()->create());
+    // TODO: Finish the test by adding the request factory CreateApplicationRequestFactory
+});
 
-    livewire(KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem::class)
-        ->fillForm($request->toArray())
-        ->call('create')
-        ->assertHasNoFormErrors();
+test('CreateApplication is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
 
-    assertCount(1, KnowledgeBaseItem::all());
+    $settings->data->addons->onlineAdmissions = false;
 
-    assertDatabaseHas(KnowledgeBaseItem::class, $request->except('division')->toArray());
+    $settings->save();
 
-    $knowledgeBaseItem = KnowledgeBaseItem::first();
+    $user = User::factory()->create();
 
-    expect($knowledgeBaseItem->division->pluck('id')->toArray())->toEqual($request['division']);
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('create')
+        )->assertForbidden();
+
+    $user->givePermissionTo('application.view-any');
+    $user->givePermissionTo('application.create');
+
+    livewire(ApplicationResource\Pages\CreateApplication::class)
+        ->assertForbidden();
+
+    $settings->data->addons->onlineAdmissions = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('create')
+        )->assertSuccessful();
+
+    // TODO: Finish the test by adding the request factory CreateApplicationRequestFactory
 });

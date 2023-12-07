@@ -48,8 +48,7 @@ return new class () extends Migration {
             $table->string('recipient_id')->nullable();
             $table->string('recipient_type')->nullable();
             $table->string('subject')->nullable();
-            $table->longText('body')->nullable();
-            $table->json('body_json')->nullable();
+            $table->json('body')->nullable();
             $table->boolean('scheduled')->default(true);
             $table->timestamp('deliver_at');
             $table->timestamps();

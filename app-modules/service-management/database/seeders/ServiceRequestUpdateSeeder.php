@@ -42,9 +42,6 @@ use Assist\ServiceManagement\Models\ServiceRequestUpdate;
 
 class ServiceRequestUpdateSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         ServiceRequest::each(function (ServiceRequest $serviceRequest) {

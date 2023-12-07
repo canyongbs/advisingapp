@@ -36,9 +36,9 @@
 
 namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
-use Filament\Actions;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -95,7 +95,7 @@ class ListServiceRequests extends ListRecords
                     ->label('Division')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('assignedTo.name')
+                TextColumn::make('assignedTo.user.name')
                     ->label('Assigned to')
                     ->searchable()
                     ->sortable(),
@@ -124,7 +124,7 @@ class ListServiceRequests extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->label('Add Service Request'),
         ];
     }

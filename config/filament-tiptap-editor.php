@@ -73,7 +73,8 @@ return [
         ],
         'simple' => ['heading', 'hr', 'bullet-list', 'ordered-list', 'checked-list', '|', 'bold', 'italic', 'lead', 'small', '|', 'link', 'media'],
         'minimal' => ['bold', 'italic', 'link', 'bullet-list', 'ordered-list'],
-        'email' => ['bold', 'italic', 'small', 'link', '|', 'heading', 'bullet-list', 'ordered-list', 'hr'],
+        'email' => ['bold', 'italic', 'small', 'link', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media'],
+        'sms' => [],
     ],
 
     /*
@@ -111,13 +112,14 @@ return [
     */
     'accepted_file_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf'],
     'disk' => 's3',
-    'directory' => 'kb-images',
+    'directory' => 'editor-images',
     'visibility' => 'private',
     'preserve_file_names' => false,
     'max_file_size' => 2042,
     'image_crop_aspect_ratio' => null,
     'image_resize_target_width' => null,
     'image_resize_target_height' => null,
+    'use_relative_paths' => false,
 
     /*
     |--------------------------------------------------------------------------

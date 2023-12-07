@@ -48,9 +48,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  */
 class ApplicationSubmissionFactory extends Factory
 {
-    /**
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [

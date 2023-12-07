@@ -45,7 +45,6 @@ use Filament\Forms\Components\Toggle;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
@@ -61,6 +60,7 @@ use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Filament\Resources\RelationManagers\RelationManager;
 use Assist\Engagement\Actions\CreateEngagementDeliverable;
 use Assist\Engagement\Filament\Resources\EngagementResource;
+use Assist\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
 class CreateEngagement extends CreateRecord
 {
@@ -71,7 +71,7 @@ class CreateEngagement extends CreateRecord
         return $form
             ->schema([
                 Select::make('delivery_method')
-                    ->label('How would you like to send this engagement?')
+                    ->label('What would you like to send?')
                     ->options(EngagementDeliveryMethod::class)
                     ->default(EngagementDeliveryMethod::Email->value)
                     ->selectablePlaceholder(false)
@@ -84,7 +84,10 @@ class CreateEngagement extends CreateRecord
                             ->placeholder(__('Subject'))
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->columnSpanFull(),
-                        TiptapEditor::make('body_json')
+                        TiptapEditor::make('body')
+                            ->disk('s3-public')
+                            ->visibility('public')
+                            ->directory('editor-images/engagements')
                             ->label('Body')
                             ->mergeTags([
                                 'student full name',
@@ -115,6 +118,10 @@ class CreateEngagement extends CreateRecord
                                                     $get('onlyMyTemplates'),
                                                     fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                                 )
+                                                ->when(
+                                                    $get('onlyMyTeamTemplates'),
+                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->teams->users->pluck('id'))
+                                                )
                                                 ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                                 ->orderBy('name')
                                                 ->limit(50)
@@ -123,6 +130,10 @@ class CreateEngagement extends CreateRecord
                                         }),
                                     Checkbox::make('onlyMyTemplates')
                                         ->label('Only show my templates')
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
+                                    Checkbox::make('onlyMyTeamTemplates')
+                                        ->label("Only show my team's templates")
                                         ->live()
                                         ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                                 ])
@@ -136,15 +147,9 @@ class CreateEngagement extends CreateRecord
                                     $component->state($template->content);
                                 }))
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
-                            ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
+                            ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
-                        Textarea::make('body')
-                            ->placeholder('Body')
-                            ->required()
-                            ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                            ->helperText('The body of your message can be up to 320 characters long.')
-                            ->visible(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
-                            ->columnSpanFull(),
+                        EngagementSmsBodyField::make(context: 'create', form: $form),
                     ]),
                 MorphToSelect::make('recipient')
                     ->label('Recipient')
@@ -157,11 +162,11 @@ class CreateEngagement extends CreateRecord
                             ->titleAttribute(Prospect::displayNameKey()),
                     ])
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
-                Fieldset::make('Send your engagement')
+                Fieldset::make('Send your email or text')
                     ->schema([
                         Toggle::make('send_later')
                             ->reactive()
-                            ->helperText('By default, this engagement will send as soon as it is created unless you schedule it to send later.'),
+                            ->helperText('By default, this email or text will send as soon as it is created unless you schedule it to send later.'),
                         DateTimePicker::make('deliver_at')
                             ->required()
                             ->visible(fn (callable $get) => $get('send_later')),

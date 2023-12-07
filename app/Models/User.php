@@ -42,7 +42,6 @@ use Assist\Task\Models\Task;
 use Assist\Team\Models\Team;
 use Assist\Team\Models\TeamUser;
 use Spatie\MediaLibrary\HasMedia;
-use App\Models\Concerns\CanOrElse;
 use App\Support\HasAdvancedFilter;
 use Assist\CareTeam\Models\CareTeam;
 use Assist\Prospect\Models\Prospect;
@@ -64,7 +63,6 @@ use Assist\MeetingCenter\Models\CalendarEvent;
 use Assist\Assistant\Models\AssistantChatFolder;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Assistant\Models\AssistantChatMessageLog;
@@ -72,18 +70,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Assist\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Assist\InAppCommunication\Models\TwilioConversation;
 use Assist\Engagement\Models\Concerns\HasManyEngagements;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
-use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Assist\ServiceManagement\Models\ServiceRequestAssignment;
 use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
+use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
  * @mixin IdeHelperUser
@@ -94,17 +90,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasAdvancedFilter;
     use Notifiable;
     use SoftDeletes;
-    use HasRoleGroups {
-        HasRoleGroups::roleGroups as traitRoleGroups;
-    }
-    use HasRolesWithPivot;
-    use DefinesPermissions;
     use HasRelationships;
     use HasUuids;
     use AuditableTrait;
     use HasManyEngagements;
     use HasManyEngagementBatches;
-    use CanOrElse;
     use CanConsent;
     use Impersonate;
     use InteractsWithMedia;
@@ -263,12 +253,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
-    public function serviceRequests(): HasMany
+    public function serviceRequestAssignments(): HasMany
     {
-        return $this->hasMany(
-            related: ServiceRequest::class,
-            foreignKey: 'assigned_to_id',
-        );
+        return $this->hasMany(ServiceRequestAssignment::class)
+            ->where('status', ServiceRequestAssignmentStatus::Active);
+    }
+
+    public function serviceRequests(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->serviceRequestAssignments(), (new ServiceRequestAssignment())->serviceRequest());
     }
 
     public function getIsAdminAttribute()

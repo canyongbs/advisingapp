@@ -37,11 +37,16 @@
 namespace Assist\Application\Policies;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
 use Assist\Application\Models\Application;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
-class ApplicationPolicy
+class ApplicationPolicy implements FeatureAccessEnforcedPolicy
 {
+    use FeatureAccessEnforcedPolicyBefore;
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(
@@ -96,5 +101,10 @@ class ApplicationPolicy
             abilities: ['application.*.force-delete', "application.{$application->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this application.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::OnlineAdmissions];
     }
 }
