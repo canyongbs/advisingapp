@@ -70,6 +70,9 @@ class EditEmailTemplate extends EditRecord
                 Textarea::make('description')
                     ->string(),
                 TiptapEditor::make('content')
+                    ->disk('s3-public')
+                    ->visibility('public')
+                    ->directory('editor-images/email-templates')
                     ->mergeTags([
                         'student full name',
                         'student email',
