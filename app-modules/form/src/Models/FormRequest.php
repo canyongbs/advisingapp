@@ -38,6 +38,7 @@ namespace Assist\Form\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use Assist\Form\Enums\FormRequestStatus;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\Form\Enums\FormRequestDeliveryMethod;
@@ -92,5 +93,18 @@ class FormRequest extends BaseModel implements Auditable
     public function scopeNotCanceled(Builder $query): Builder
     {
         return $query->whereNull('canceled_at');
+    }
+
+    public function getStatus(): FormRequestStatus
+    {
+        if ($this->submission) {
+            return FormRequestStatus::Submitted;
+        }
+
+        if ($this->canceled_at) {
+            return FormRequestStatus::Canceled;
+        }
+
+        return FormRequestStatus::Open;
     }
 }
