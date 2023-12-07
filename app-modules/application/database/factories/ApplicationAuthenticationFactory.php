@@ -34,32 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace Assist\Application\Database\Factories;
 
-use App\Models\User;
-use App\Settings\LicenseSettings;
-use Filament\Actions\CreateAction;
-use Illuminate\Support\HtmlString;
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\ListRecords;
-use Illuminate\Contracts\Support\Htmlable;
+use Assist\Prospect\Models\Prospect;
+use Illuminate\Support\Facades\Hash;
+use Assist\Application\Models\Application;
+use Assist\AssistDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class ListUsers extends ListRecords
+/**
+ * @extends Factory<Application>
+ */
+class ApplicationAuthenticationFactory extends Factory
 {
-    protected static string $resource = UserResource::class;
-
-    public function getSubheading(): string | Htmlable | null
-    {
-        return new HtmlString(view('crm-seats', [
-            'count' => User::count(),
-            'max' => app(LicenseSettings::class)->data->limits->crmSeats,
-        ])->render());
-    }
-
-    protected function getHeaderActions(): array
+    public function definition(): array
     {
         return [
-            CreateAction::make(),
+            'author_type' => fake()->randomElement([
+                (new Student())->getMorphClass(),
+                (new Prospect())->getMorphClass(),
+            ]),
+            'author_id' => function (array $attributes) {
+                $senderClass = Relation::getMorphedModel($attributes['author_type']);
+
+                /** @var Student|Prospect $senderModel */
+                $senderModel = new $senderClass();
+
+                $sender = $senderClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $senderModel::factory()->create();
+
+                return $sender->getKey();
+            },
+            'code' => Hash::make(random_int(100000, 999999)),
+            'application_id' => Application::factory(),
         ];
     }
 }

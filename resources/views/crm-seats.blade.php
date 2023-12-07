@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,34 +30,17 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@props(['count', 'max'])
 
-namespace App\Filament\Resources\UserResource\Pages;
+<?php
+$colorClass = 'text-green-500';
 
-use App\Models\User;
-use App\Settings\LicenseSettings;
-use Filament\Actions\CreateAction;
-use Illuminate\Support\HtmlString;
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\ListRecords;
-use Illuminate\Contracts\Support\Htmlable;
-
-class ListUsers extends ListRecords
-{
-    protected static string $resource = UserResource::class;
-
-    public function getSubheading(): string | Htmlable | null
-    {
-        return new HtmlString(view('crm-seats', [
-            'count' => User::count(),
-            'max' => app(LicenseSettings::class)->data->limits->crmSeats,
-        ])->render());
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
+if ($count > $max) {
+    $colorClass = 'text-red-500';
+} elseif ($count === $max) {
+    $colorClass = 'text-yellow-500';
 }
+?>
+
+<span class='{{ $colorClass }}'>{{ $count }}/{{ $max }}</span> CRM Seats Used
