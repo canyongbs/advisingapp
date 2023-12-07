@@ -78,6 +78,9 @@ class EditEngagement extends EditRecord
                     ->columnSpanFull()
                     ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email),
                 TiptapEditor::make('body')
+                    ->disk('s3-public')
+                    ->visibility('public')
+                    ->directory('editor-images/engagements')
                     ->label('Body')
                     ->mergeTags([
                         'student full name',
