@@ -47,7 +47,7 @@ class RoleGroupFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => fake()->catchPhrase(),
             'guard_name' => 'web',
         ];
     }

@@ -63,7 +63,14 @@ class EditSystemUser extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['token'] = session()->pull('apiToken');
+        /** @var SystemUser $systemUser */
+        $systemUser = $this->getRecord();
+
+        if (! $systemUser->tokens()->where('name', 'api')->first()) {
+            $token = str($systemUser->createToken('api')->plainTextToken)->after('|')->toString();
+
+            $data['token'] = $token;
+        }
 
         return $data;
     }

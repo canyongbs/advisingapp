@@ -54,14 +54,4 @@ class CreateSystemUser extends CreateRecord
                 ->string(),
         ]);
     }
-
-    public function afterCreate(): void
-    {
-        /** @var SystemUser $systemUser */
-        $systemUser = $this->getRecord();
-
-        $token = str($systemUser->createToken('api')->plainTextToken)->after('|')->toString();
-
-        session()->put('apiToken', $token);
-    }
 }
