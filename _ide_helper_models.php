@@ -456,6 +456,7 @@ namespace Assist\Application\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
  * @property-read \Assist\Application\Models\Application $submissible
+ * @method static \Assist\Application\Database\Factories\ApplicationAuthenticationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication query()
@@ -2457,12 +2458,12 @@ namespace Assist\ServiceManagement\Models{
  * Assist\ServiceManagement\Models\ServiceRequestHistory
  *
  * @property string $id
- * @property string|null $service_request_id
+ * @property string $service_request_id
  * @property array $original_values
  * @property array $new_values
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\ServiceManagement\Models\ServiceRequest|null $serviceRequest
+ * @property-read \Assist\ServiceManagement\Models\ServiceRequest $serviceRequest
  * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestHistoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory newQuery()

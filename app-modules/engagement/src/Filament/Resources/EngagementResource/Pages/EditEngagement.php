@@ -135,7 +135,7 @@ class EditEngagement extends EditRecord
                         }))
                     ->visible(fn (Engagement $record): bool => filled($record->body_json))
                     ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
-                    ->helperText('You can insert student information by typing {{ and choosing a tag to insert.')
+                    ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),
                 Textarea::make('body')
                     ->placeholder('Body')

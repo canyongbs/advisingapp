@@ -36,9 +36,14 @@
 
 use Assist\Application\Http\Controllers\ApplicationWidgetController;
 use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use Assist\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
 
 Route::prefix('api')
-    ->middleware(['api', EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application'])
+    ->middleware([
+        'api',
+        EnsureOnlineAdmissionsFeatureIsActive::class,
+        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':application',
+    ])
     ->group(function () {
         Route::prefix('applications')
             ->name('applications.')

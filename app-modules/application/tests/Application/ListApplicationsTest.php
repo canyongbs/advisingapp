@@ -34,32 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\UserResource\Pages;
-
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Filament\Actions\CreateAction;
-use Illuminate\Support\HtmlString;
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\ListRecords;
-use Illuminate\Contracts\Support\Htmlable;
 
-class ListUsers extends ListRecords
-{
-    protected static string $resource = UserResource::class;
+use function Pest\Laravel\actingAs;
 
-    public function getSubheading(): string | Htmlable | null
-    {
-        return new HtmlString(view('crm-seats', [
-            'count' => User::count(),
-            'max' => app(LicenseSettings::class)->data->limits->crmSeats,
-        ])->render());
-    }
+use Assist\Application\Filament\Resources\ApplicationResource;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
-}
+// TODO: Write ListApplications tests
+//test('The correct details are displayed on the ListApplications page', function () {});
+
+// TODO: Sorting and Searching tests
+
+// Permission Tests
+
+test('ListApplications is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->givePermissionTo('application.view-any');
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('index')
+        )->assertSuccessful();
+});
+
+test('ListApplications is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->onlineAdmissions = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('application.view-any');
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('index')
+        )->assertForbidden();
+
+    $settings->data->addons->onlineAdmissions = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ApplicationResource::getUrl('index')
+        )->assertSuccessful();
+});

@@ -34,32 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace Assist\Application\Http\Middleware;
 
-use App\Models\User;
+use Closure;
+use Illuminate\Http\Request;
 use App\Settings\LicenseSettings;
-use Filament\Actions\CreateAction;
-use Illuminate\Support\HtmlString;
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\ListRecords;
-use Illuminate\Contracts\Support\Htmlable;
+use Symfony\Component\HttpFoundation\Response;
 
-class ListUsers extends ListRecords
+class EnsureOnlineAdmissionsFeatureIsActive
 {
-    protected static string $resource = UserResource::class;
-
-    public function getSubheading(): string | Htmlable | null
+    public function handle(Request $request, Closure $next): Response
     {
-        return new HtmlString(view('crm-seats', [
-            'count' => User::count(),
-            'max' => app(LicenseSettings::class)->data->limits->crmSeats,
-        ])->render());
-    }
+        if (! app(LicenseSettings::class)->data->addons->onlineAdmissions) {
+            return response()->json(['error' => 'Online Admissions is not enabled.'], 403);
+        }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
+        return $next($request);
     }
 }

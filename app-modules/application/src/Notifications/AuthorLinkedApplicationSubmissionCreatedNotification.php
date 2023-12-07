@@ -34,32 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace Assist\Application\Notifications;
 
 use App\Models\User;
-use App\Settings\LicenseSettings;
-use Filament\Actions\CreateAction;
+use Illuminate\Bus\Queueable;
+use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\ListRecords;
-use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Assist\Application\Models\ApplicationSubmission;
+use Filament\Notifications\Notification as FilamentNotification;
 
-class ListUsers extends ListRecords
+class AuthorLinkedApplicationSubmissionCreatedNotification extends Notification implements ShouldQueue
 {
-    protected static string $resource = UserResource::class;
+    use Queueable;
 
-    public function getSubheading(): string | Htmlable | null
+    public function __construct(public ApplicationSubmission $submission) {}
+
+    public function via(User $notifiable): array
     {
-        return new HtmlString(view('crm-seats', [
-            'count' => User::count(),
-            'max' => app(LicenseSettings::class)->data->limits->crmSeats,
-        ])->render());
+        return ['database'];
     }
 
-    protected function getHeaderActions(): array
+    public function toDatabase(User $notifiable): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        $author = $this->submission->author;
+
+        $name = $author->{$author->displayNameKey()};
+
+        $target = resolve(Filament::getModelResource($author));
+
+        $applicationSubmissionUrl = $target::getUrl('manage-application-submissions', ['record' => $author]);
+
+        $applicationSubmissionLink = new HtmlString("<a href='{$applicationSubmissionUrl}' target='_blank' class='underline'>application submission</a>");
+
+        $morph = str($author->getMorphClass());
+
+        $morphUrl = $target::getUrl('view', ['record' => $author]);
+
+        $morphLink = new HtmlString("<a href='{$morphUrl}' target='_blank' class='underline'>{$name}</a>");
+
+        return FilamentNotification::make()
+            ->warning()
+            ->title("An {$applicationSubmissionLink} has been submitted by {$morph} {$morphLink}")
+            ->getDatabaseMessage();
     }
 }

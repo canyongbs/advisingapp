@@ -53,6 +53,7 @@ use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInte
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
 use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFormSubmissions;
+use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectApplicationSubmissions;
 
 class ProspectResource extends Resource
 {
@@ -80,6 +81,7 @@ class ProspectResource extends Resource
             ProspectEngagementTimeline::class,
             ManageProspectCareTeam::class,
             ManageProspectFormSubmissions::class,
+            ManageProspectApplicationSubmissions::class,
         ]);
     }
 
@@ -108,6 +110,7 @@ class ProspectResource extends Resource
             'manage-engagement' => ManageProspectEngagement::route('/{record}/engagement'),
             'manage-files' => ManageProspectFiles::route('/{record}/files'),
             'manage-form-submissions' => ManageProspectFormSubmissions::route('/{record}/form-submissions'),
+            'manage-application-submissions' => ManageProspectApplicationSubmissions::route('/{record}/application-submissions'),
             'manage-interactions' => ManageProspectInteractions::route('/{record}/interactions'),
             'manage-subscriptions' => ManageProspectSubscriptions::route('/{record}/subscriptions'),
             'manage-tasks' => ManageProspectTasks::route('/{record}/tasks'),
