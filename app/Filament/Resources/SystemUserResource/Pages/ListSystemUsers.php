@@ -36,6 +36,7 @@
 
 namespace App\Filament\Resources\SystemUserResource\Pages;
 
+use App\Models\SystemUser;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
@@ -54,6 +55,9 @@ class ListSystemUsers extends ListRecords
         return $table
             ->columns([
                 TextColumn::make('name'),
+                TextColumn::make('last_used_at')
+                    ->state(fn (?SystemUser $record) => $record?->tokens()->where('name', 'api')->first()?->last_used_at)
+                    ->dateTime(),
             ])
             ->filters([
             ])
