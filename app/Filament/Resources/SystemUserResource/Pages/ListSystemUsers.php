@@ -34,21 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use Assist\Authorization\Models\Role;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\SystemUser;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Resources\SystemUserResource;
 
-/**
- * @extends Factory<Role>
- */
-class RoleFactory extends Factory
+class ListSystemUsers extends ListRecords
 {
-    public function definition(): array
+    protected static string $resource = SystemUserResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('last_used_at')
+                    ->state(fn (?SystemUser $record) => $record?->tokens()->where('name', 'api')->first()?->last_used_at)
+                    ->dateTime(),
+            ])
+            ->filters([
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
     {
         return [
-            'name' => fake()->text(25),
-            'guard_name' => 'web',
+            CreateAction::make(),
         ];
     }
 }

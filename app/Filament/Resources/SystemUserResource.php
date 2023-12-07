@@ -34,21 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace App\Filament\Resources;
 
-use Assist\Authorization\Models\Role;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\SystemUser;
+use Filament\Resources\Resource;
+use App\Filament\Resources\SystemUserResource\Pages\EditSystemUser;
+use App\Filament\Resources\SystemUserResource\Pages\ListSystemUsers;
+use App\Filament\Resources\SystemUserResource\Pages\CreateSystemUser;
+use App\Filament\Resources\SystemUserResource\RelationManagers\PermissionsRelationManager;
 
-/**
- * @extends Factory<Role>
- */
-class RoleFactory extends Factory
+class SystemUserResource extends Resource
 {
-    public function definition(): array
+    protected static ?string $model = SystemUser::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Users and Permissions';
+
+    protected static ?int $navigationSort = 7;
+
+    public static function getRelations(): array
     {
         return [
-            'name' => fake()->text(25),
-            'guard_name' => 'web',
+            PermissionsRelationManager::class,
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListSystemUsers::route('/'),
+            'create' => CreateSystemUser::route('/create'),
+            'edit' => EditSystemUser::route('/{record}/edit'),
         ];
     }
 }

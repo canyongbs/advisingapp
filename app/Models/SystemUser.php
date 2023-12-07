@@ -34,21 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace App\Models;
 
-use Assist\Authorization\Models\Role;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Laravel\Sanctum\HasApiTokens;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-/**
- * @extends Factory<Role>
- */
-class RoleFactory extends Factory
+class SystemUser extends Authenticatable implements Auditable
 {
-    public function definition(): array
-    {
-        return [
-            'name' => fake()->text(25),
-            'guard_name' => 'web',
-        ];
-    }
+    use HasFactory;
+    use SoftDeletes;
+    use HasUuids;
+    use AuditableTrait;
+    use HasApiTokens;
+
+    protected $fillable = [
+        'name',
+    ];
 }

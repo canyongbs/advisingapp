@@ -60,12 +60,6 @@ class Server extends BaseServer
         // no-op
     }
 
-    public function authorizable(): bool
-    {
-        //TODO: use real auth
-        return false;
-    }
-
     /**
      * Get the server's list of schemas.
      *

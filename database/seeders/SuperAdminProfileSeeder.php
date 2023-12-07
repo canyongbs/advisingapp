@@ -47,8 +47,14 @@ class SuperAdminProfileSeeder extends Seeder
         /** @var RoleGroup $roleGroup */
         $roleGroup = RoleGroup::create([
             'name' => 'Super Administrator',
+            'guard_name' => 'web',
         ]);
 
-        $roleGroup->roles()->sync(Role::where('name', 'authorization.super_admin')->get());
+        $roles = Role::query()
+            ->where('name', 'authorization.super_admin')
+            ->where('guard_name', 'web')
+            ->get();
+
+        $roleGroup->roles()->sync($roles);
     }
 }

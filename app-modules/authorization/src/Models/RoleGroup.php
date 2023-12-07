@@ -37,6 +37,7 @@
 namespace Assist\Authorization\Models;
 
 use App\Models\User;
+use App\Models\SystemUser;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -64,6 +65,7 @@ class RoleGroup extends Model implements Auditable
 
     protected $fillable = [
         'name',
+        'guard_name',
         'slug',
     ];
 
@@ -72,6 +74,12 @@ class RoleGroup extends Model implements Auditable
         return $this
             ->belongsToMany(User::class)
             ->using(RoleGroupUserPivot::class);
+    }
+
+    public function systemUsers(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(SystemUser::class);
     }
 
     public function roles(): BelongsToMany

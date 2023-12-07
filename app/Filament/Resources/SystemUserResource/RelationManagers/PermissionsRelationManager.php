@@ -34,21 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 
-use Assist\Authorization\Models\Role;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\RelationManagers\RelationManager;
 
-/**
- * @extends Factory<Role>
- */
-class RoleFactory extends Factory
+class PermissionsRelationManager extends RelationManager
 {
-    public function definition(): array
+    protected static string $relationship = 'permissions';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public function form(Form $form): Form
     {
-        return [
-            'name' => fake()->text(25),
-            'guard_name' => 'web',
-        ];
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(125),
+                TextInput::make('guard_name')
+                    ->required()
+                    ->maxLength(125),
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+            ])
+            ->filters([
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('guard_name', 'api'))
+                    ->attachAnother(),
+            ])
+            ->actions([
+            ])
+            ->bulkActions([
+            ]);
     }
 }

@@ -34,51 +34,59 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Models\Concerns;
+namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use ReflectionClass;
-use Illuminate\Support\Collection;
-use App\Models\Attributes\NoPermissions;
-use App\Actions\Finders\ApplicationModules;
+use Filament\Forms\Form;
+use App\Models\SystemUser;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\SystemUserResource;
 
-// This trait is used to define specific permissions for a model.
-// A model that needs to break typical conventions can either extend
-// Or override the functionality provided here.
-trait DefinesPermissions
+class EditSystemUser extends EditRecord
 {
-    public function getWebPermissions(): Collection
+    protected static string $resource = SystemUserResource::class;
+
+    public function form(Form $form): Form
     {
-        return collect($this->webPermissions());
+        return $form->schema([
+            TextInput::make('name')
+                ->required()
+                ->string(),
+            TextInput::make('token')
+                ->hint('Please copy the token, it will only be shown once.')
+                ->dehydrated(false)
+                ->visible(fn (?string $state) => filled($state)),
+        ]);
     }
 
-    public function getApiPermissions(): Collection
+    protected function mutateFormDataBeforeFill(array $data): array
     {
-        return collect($this->apiPermissions());
-    }
+        /** @var SystemUser $systemUser */
+        $systemUser = $this->getRecord();
 
-    protected function webPermissions(): array
-    {
-        if ((new ReflectionClass($this))->getAttributes(NoPermissions::class)) {
-            return [];
+        if (! $systemUser->tokens()->where('name', 'api')->first()) {
+            $token = str($systemUser->createToken('api')->plainTextToken)->after('|')->toString();
+
+            $data['token'] = $token;
         }
 
-        return resolve(ApplicationModules::class)
-            ->moduleConfig(
-                module: 'authorization',
-                path: 'permissions/web/model'
-            );
+        return $data;
     }
 
-    protected function apiPermissions(): array
+    protected function getHeaderActions(): array
     {
-        if ((new ReflectionClass($this))->getAttributes(NoPermissions::class)) {
-            return [];
-        }
+        return [
+            Action::make('Reset Token')
+                ->action(function (SystemUser $record) {
+                    $record->tokens()->where('name', 'api')->delete();
 
-        return resolve(ApplicationModules::class)
-            ->moduleConfig(
-                module: 'authorization',
-                path: 'permissions/api/model'
-            );
+                    $token = str($record->createToken('api')->plainTextToken)->after('|')->toString();
+
+                    $this->data['token'] = $token;
+                }),
+            DeleteAction::make(),
+        ];
     }
 }
