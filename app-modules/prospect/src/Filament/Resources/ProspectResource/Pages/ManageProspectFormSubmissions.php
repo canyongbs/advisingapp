@@ -70,9 +70,9 @@ class ManageProspectFormSubmissions extends ManageRelatedRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('form.name')
+                TextColumn::make('submissible.name')
                     ->searchable()
-                    ->url(fn (FormSubmission $record): string => FormResource::getUrl('edit', ['record' => $record->form])),
+                    ->url(fn (FormSubmission $record): string => FormResource::getUrl('edit', ['record' => $record->submissible])),
                 TextColumn::make('created_at')
                     ->sortable(),
             ])

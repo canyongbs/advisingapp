@@ -64,6 +64,7 @@ class FormServiceProvider extends ServiceProvider
         Relation::morphMap([
             'form' => Form::class,
             'form_field' => FormField::class,
+            'form_request' => FormRequest::class,
             'form_submission' => FormSubmission::class,
         ]);
 
