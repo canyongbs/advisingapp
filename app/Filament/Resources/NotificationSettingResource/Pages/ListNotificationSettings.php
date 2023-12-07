@@ -36,10 +36,10 @@
 
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
-use App\Models\NotificationSetting;
 use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use App\Models\NotificationSetting;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Pages\EmailConfiguration;

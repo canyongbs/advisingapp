@@ -3,8 +3,8 @@
 namespace Assist\Engagement\Policies;
 
 use App\Models\User;
-use Assist\Engagement\Models\EmailTemplate;
 use Illuminate\Auth\Access\Response;
+use Assist\Engagement\Models\EmailTemplate;
 
 class EmailTemplatePolicy
 {

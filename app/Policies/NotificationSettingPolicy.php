@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\NotificationSetting;
 use App\Models\User;
+use App\Models\NotificationSetting;
 use Illuminate\Auth\Access\Response;
 
 class NotificationSettingPolicy
