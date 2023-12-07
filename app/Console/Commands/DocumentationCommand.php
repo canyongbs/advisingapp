@@ -34,43 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\JsonApi\V1;
+namespace App\Console\Commands;
 
-use LaravelJsonApi\Core\Server\Server as BaseServer;
-use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
-use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
-use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
+use App\Rest\OpenApi;
+use Lomkit\Rest\Console\Commands\DocumentationCommand as BaseDocumentationCommand;
 
-class Server extends BaseServer
+class DocumentationCommand extends BaseDocumentationCommand
 {
-    /**
-     * The base URI namespace for this server.
-     *
-     * @var string
-     */
-    protected string $baseUri = '/api/v1';
-
-    /**
-     * Bootstrap the server when it is handling an HTTP request.
-     *
-     * @return void
-     */
-    public function serving(): void
+    // TODO: We can delete this when ___ is merged in
+    public function handle()
     {
-        // no-op
-    }
+        $openApi = (new OpenApi())
+            ->generate();
 
-    /**
-     * Get the server's list of schemas.
-     *
-     * @return array
-     */
-    protected function allSchemas(): array
-    {
-        return [
-            ProspectSchema::class,
-            ProspectStatusSchema::class,
-            ProspectSourceSchema::class,
-        ];
+        $path = $this->getPath('openapi');
+
+        $this->makeDirectory($path);
+
+        $this->files->put(
+            $path,
+            json_encode($openApi->jsonSerialize())
+        );
+
+        $this->info('The documentation was generated successfully!');
+        $this->info('Open ' . url(config('rest.documentation.routing.path')) . ' in a web browser.');
     }
 }

@@ -34,46 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\JsonApi\V1\ProspectStatuses;
+namespace Assist\Prospect\Rest\Resources;
 
-use LaravelJsonApi\Eloquent\Schema;
-use LaravelJsonApi\Eloquent\Fields\ID;
-use LaravelJsonApi\Eloquent\Fields\Str;
+use Illuminate\Validation\Rule;
+use Lomkit\Rest\Relations\HasMany;
+use App\Rest\Resource as RestResource;
 use Assist\Prospect\Models\ProspectStatus;
-use LaravelJsonApi\Eloquent\Fields\DateTime;
-use LaravelJsonApi\Eloquent\Fields\SoftDelete;
-use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
-use LaravelJsonApi\Eloquent\Contracts\Paginator;
-use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
-use LaravelJsonApi\Eloquent\Pagination\PagePagination;
+use Lomkit\Rest\Http\Requests\RestRequest;
+use Assist\Prospect\Enums\ProspectStatusColorOptions;
+use Assist\Prospect\Enums\SystemProspectClassification;
 
-class ProspectStatusSchema extends Schema
+class ProspectStatusResource extends RestResource
 {
-    public static string $model = ProspectStatus::class;
+    public static $model = ProspectStatus::class;
 
-    public function fields(): array
+    public function fields(RestRequest $request): array
     {
         return [
-            ID::make()->uuid(),
-            Str::make('classification'),
-            Str::make('name'),
-            Str::make('color'),
-            DateTime::make('createdAt')->sortable()->readOnly(),
-            DateTime::make('updatedAt')->sortable()->readOnly(),
-            SoftDelete::make('deletedAt')->sortable()->readOnly(),
-            HasMany::make('prospects'),
+            'id',
+            'classification',
+            'name',
+            'color',
+            'created_at',
+            'updated_at',
         ];
     }
 
-    public function filters(): array
+    public function createRules(RestRequest $request): array
     {
         return [
-            WhereIdIn::make($this),
+            'id' => ['missing'],
+            'classification' => ['required', Rule::enum(SystemProspectClassification::class)],
+            'name' => ['required', 'string', 'unique:prospect_statuses,name', 'max:255'],
+            'color' => ['required', Rule::enum(ProspectStatusColorOptions::class)],
+            'created_at' => ['missing'],
+            'updated_at' => ['missing'],
         ];
     }
 
-    public function pagination(): ?Paginator
+    public function updateRules(RestRequest $request): array
     {
-        return PagePagination::make();
+        return [
+            'id' => ['missing'],
+            'classification' => [Rule::enum(SystemProspectClassification::class)],
+            'name' => ['string', 'unique:prospect_statuses,name', 'max:255'],
+            'color' => [Rule::enum(ProspectStatusColorOptions::class)],
+            'created_at' => ['missing'],
+            'updated_at' => ['missing'],
+        ];
+    }
+
+    public function relations(RestRequest $request): array
+    {
+        return [
+            HasMany::make('prospects', ProspectResource::class),
+        ];
     }
 }

@@ -34,52 +34,76 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+namespace App\Rest;
 
-use Throwable;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Lomkit\Rest\Http\Requests\RestRequest;
+use Lomkit\Rest\Http\Resource as RestResource;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
-class Handler extends ExceptionHandler
+abstract class Resource extends RestResource
 {
     /**
-     * A list of exception types with their corresponding custom log levels.
+     * Build a "search" query for fetching resource.
      *
-     * @var array<class-string<Throwable>, \Psr\Log\LogLevel::*>
-     */
-    protected $levels = [
-    ];
-
-    /**
-     * A list of the exception types that are not reported.
+     * @param  RestRequest  $request
+     * @param  Builder  $query
      *
-     * @var array<int, class-string<Throwable>>
+     * @return Builder
      */
-    protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+    public function searchQuery(RestRequest $request, Builder $query): Builder
     {
-        $this->reportable(function (Throwable $e) {});
+        return $query;
     }
 
-    protected function unauthenticated($request, AuthenticationException $exception)
+    /**
+     * Build a query for mutating resource.
+     *
+     * @param  RestRequest  $request
+     * @param  Builder  $query
+     *
+     * @return Builder
+     */
+    public function mutateQuery(RestRequest $request, Builder $query): Builder
     {
-        return $this->shouldReturnJson($request, $exception)
-            ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest($exception->redirectTo() ?? url('/'));
+        return $query;
+    }
+
+    /**
+     * Build a "destroy" query for the given resource.
+     *
+     * @param  RestRequest  $request
+     * @param  Builder  $query
+     *
+     * @return Builder
+     */
+    public function destroyQuery(RestRequest $request, Builder $query): Builder
+    {
+        return $query;
+    }
+
+    /**
+     * Build a "restore" query for the given resource.
+     *
+     * @param  RestRequest  $request
+     * @param  Builder  $query
+     *
+     * @return Builder
+     */
+    public function restoreQuery(RestRequest $request, Builder $query): Builder
+    {
+        return $query;
+    }
+
+    /**
+     * Build a "forceDelete" query for the given resource.
+     *
+     * @param  RestRequest  $request
+     * @param  Builder  $query
+     *
+     * @return Builder
+     */
+    public function forceDeleteQuery(RestRequest $request, Builder $query): Builder
+    {
+        return $query;
     }
 }
