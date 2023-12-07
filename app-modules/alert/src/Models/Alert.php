@@ -41,7 +41,7 @@ use App\Models\BaseModel;
 use Assist\Alert\Enums\AlertStatus;
 use Assist\Prospect\Models\Prospect;
 use Assist\Alert\Enums\AlertSeverity;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Campaign\Models\CampaignAction;

@@ -38,7 +38,7 @@ namespace Assist\Authorization\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;

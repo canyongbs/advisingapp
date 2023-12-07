@@ -40,7 +40,7 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use Spatie\MediaLibrary\HasMedia;
 use Assist\Division\Models\Division;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

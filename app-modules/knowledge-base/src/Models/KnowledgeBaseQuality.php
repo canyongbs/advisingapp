@@ -38,7 +38,7 @@ namespace Assist\KnowledgeBase\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;

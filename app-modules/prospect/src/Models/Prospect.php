@@ -45,7 +45,7 @@ use Illuminate\Support\Collection;
 use Assist\CareTeam\Models\CareTeam;
 use Assist\Form\Models\FormSubmission;
 use Illuminate\Notifications\Notifiable;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use OpenSearch\ScoutDriverPlus\Searchable;
 use Assist\Engagement\Models\EngagementFile;
 use Assist\Notifications\Models\Subscription;

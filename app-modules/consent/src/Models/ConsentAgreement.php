@@ -38,7 +38,7 @@ namespace Assist\Consent\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Assist\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;

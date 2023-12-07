@@ -40,7 +40,7 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Assist\Team\Models\Team;
 use App\Models\NotificationSettingPivot;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;

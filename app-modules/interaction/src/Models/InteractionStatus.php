@@ -37,7 +37,7 @@
 namespace Assist\Interaction\Models;
 
 use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\Interaction\Enums\InteractionStatusColorOptions;
 use Assist\Interaction\Models\Concerns\HasManyInteractions;

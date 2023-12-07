@@ -1,0 +1,32 @@
+{
+    "name": "canyon-gbs/laravel-auditing",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2",
+        "illuminate/console": "^10.0",
+        "illuminate/database": "^10.0",
+        "illuminate/filesystem": "^10.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0",
+        "laravel/legacy-factories": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Assist\\Auditing\\": "src/",
+            "Assist\\Auditing\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Assist\\Auditing\\AuditingServiceProvider"
+            ]
+        }
+    }
+}

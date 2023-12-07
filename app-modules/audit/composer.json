@@ -7,7 +7,7 @@
   "require": {
     "filament/filament": "^3.0",
     "filament/spatie-laravel-settings-plugin": "^3.0",
-    "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
+    "canyon-gbs/laravel-auditing": "*",
     "spatie/laravel-settings": "^3.2"
   },
   "autoload": {
@@ -25,11 +25,5 @@
         "Assist\\Audit\\Providers\\AuditServiceProvider"
       ]
     }
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/canyongbs/laravel-auditing"
-    }
-  ]
+  }
 }

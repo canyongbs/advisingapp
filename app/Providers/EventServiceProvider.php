@@ -36,7 +36,7 @@
 
 namespace App\Providers;
 
-use OwenIt\Auditing\Events\Auditing;
+use Assist\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
 use Assist\Audit\Listeners\AuditingListener;
 use Assist\Authorization\Events\RoleRemovedFromUser;

@@ -22,7 +22,7 @@
         "canyon-gbs/application": "*",
         "canyon-gbs/assist-data-model": "*",
         "canyon-gbs/assistant": "*",
-        "canyon-gbs/audit": "*@dev",
+        "canyon-gbs/audit": "*",
         "canyon-gbs/authorization": "*",
         "canyon-gbs/campaign": "*",
         "canyon-gbs/care-team": "*",
@@ -39,6 +39,7 @@
         "canyon-gbs/integration-twilio": "*",
         "canyon-gbs/interaction": "*",
         "canyon-gbs/knowledge-base": "*",
+        "canyon-gbs/laravel-auditing": "*",
         "canyon-gbs/meeting-center": "*",
         "canyon-gbs/notifications": "*",
         "canyon-gbs/prospect": "*",
@@ -72,7 +73,6 @@
         "livewire/livewire": "^3.0",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.109",
-        "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
         "saade/filament-fullcalendar": "^3.0",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
         "socialiteproviders/google": "^4.1",
@@ -95,9 +95,11 @@
         "friendsofphp/php-cs-fixer": "^3.21",
         "larastan/larastan": "^2.7",
         "laravel-json-api/testing": "^2.1",
+        "laravel/legacy-factories": "*",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
+        "orchestra/testbench": "^8.0",
         "pestphp/pest": "^2.11",
         "pestphp/pest-plugin-faker": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.1",
@@ -231,10 +233,6 @@
             "options": {
                 "symlink": true
             }
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/canyongbs/laravel-auditing"
         }
     ]
 }

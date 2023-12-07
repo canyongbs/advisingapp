@@ -38,7 +38,7 @@ namespace Assist\Audit\Filament\Actions;
 
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Filament\Tables\Actions\DetachAction;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 

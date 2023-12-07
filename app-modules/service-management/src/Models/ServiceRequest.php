@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\DB;
 use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
 use Kirschbaum\PowerJoins\PowerJoins;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Campaign\Models\CampaignAction;

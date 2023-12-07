@@ -36,10 +36,10 @@
 
 namespace Assist\Audit\Models\Concerns;
 
-use OwenIt\Auditing\Auditable as OwenItAuditable;
+use Assist\Auditing\Auditable as BaseAuditable;
 
 trait Auditable
 {
-    use OwenItAuditable;
+    use BaseAuditable;
     use AuditableManyToMany;
 }

@@ -44,7 +44,7 @@ use Assist\CareTeam\Models\CareTeam;
 use Assist\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Assist\Engagement\Models\EngagementFile;
 use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\Casts\Attribute;

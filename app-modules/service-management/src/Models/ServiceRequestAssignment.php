@@ -40,7 +40,7 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Notifications\Models\Contracts\Subscribable;
 use Assist\Timeline\Models\Contracts\ProvidesATimeline;

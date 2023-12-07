@@ -40,7 +40,7 @@ use Exception;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Assist\Division\Models\Division;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Assist\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

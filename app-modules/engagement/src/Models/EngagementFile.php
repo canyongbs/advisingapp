@@ -39,7 +39,7 @@ namespace Assist\Engagement\Models;
 use App\Models\BaseModel;
 use Spatie\MediaLibrary\HasMedia;
 use Assist\Prospect\Models\Prospect;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Prunable;

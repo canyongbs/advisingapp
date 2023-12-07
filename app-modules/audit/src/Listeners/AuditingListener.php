@@ -36,7 +36,7 @@
 
 namespace Assist\Audit\Listeners;
 
-use OwenIt\Auditing\Events\Auditing;
+use Assist\Auditing\Events\Auditing;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Audit\Settings\AuditSettings;
 

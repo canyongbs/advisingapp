@@ -37,7 +37,7 @@
 namespace Assist\Campaign\Models;
 
 use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Assist\Campaign\Enums\CampaignActionType;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Database\Eloquent\Builder;

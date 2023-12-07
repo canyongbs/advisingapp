@@ -37,7 +37,7 @@
 namespace Assist\Authorization\Models;
 
 use Illuminate\Support\Collection;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Role as SpatieRole;

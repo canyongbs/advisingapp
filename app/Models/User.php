@@ -49,7 +49,7 @@ use Assist\Prospect\Models\Prospect;
 use Assist\Authorization\Models\Role;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Assist\MeetingCenter\Models\Calendar;
 use Assist\Assistant\Models\AssistantChat;
 use Assist\AssistDataModel\Models\Student;

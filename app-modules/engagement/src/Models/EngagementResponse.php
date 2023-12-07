@@ -41,7 +41,7 @@ use Illuminate\Support\Collection;
 use Assist\Prospect\Models\Prospect;
 use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\Auditable;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
