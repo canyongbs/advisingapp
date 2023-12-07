@@ -37,7 +37,6 @@
 namespace App\Filament\Resources\SystemUserResource\Pages;
 
 use Filament\Forms\Form;
-use App\Models\SystemUser;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\SystemUserResource;
