@@ -1407,7 +1407,7 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/laravel-auditing",
-                "reference": "050cefddb8dea58cdff112f6320d87bb87f7c4cd"
+                "reference": "472de48bf5a9e84d4b6fd680f96854694d7588fd"
             },
             "require": {
                 "ext-json": "*",
