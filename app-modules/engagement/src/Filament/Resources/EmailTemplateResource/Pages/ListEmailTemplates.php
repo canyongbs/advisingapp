@@ -36,6 +36,8 @@
 
 namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
+use App\Models\User;
+use Assist\Engagement\Models\EmailTemplate;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
@@ -53,6 +55,14 @@ class ListEmailTemplates extends ListRecords
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
 
     protected static ?string $navigationLabel = 'Email Templates';
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('viewAny', EmailTemplate::class);
+    }
 
     public function getBreadcrumbs(): array
     {

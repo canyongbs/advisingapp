@@ -36,10 +36,12 @@
 
 namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Assist\Engagement\Models\SmsTemplate;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Pages\EmailConfiguration;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -53,6 +55,14 @@ class ListSmsTemplates extends ListRecords
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-oval-left-ellipsis';
 
     protected static ?string $navigationLabel = 'Text Message Templates';
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('viewAny', SmsTemplate::class);
+    }
 
     public function getBreadcrumbs(): array
     {

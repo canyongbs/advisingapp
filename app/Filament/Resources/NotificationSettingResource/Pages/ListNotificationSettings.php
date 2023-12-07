@@ -36,6 +36,8 @@
 
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
+use App\Models\NotificationSetting;
+use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
@@ -55,6 +57,14 @@ class ListNotificationSettings extends ListRecords
     protected static ?string $title = 'Notification Settings';
 
     protected static ?string $navigationIcon = 'heroicon-o-bell';
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can('viewAny', NotificationSetting::class);
+    }
 
     public function getBreadcrumbs(): array
     {
