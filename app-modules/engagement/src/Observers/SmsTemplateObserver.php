@@ -34,24 +34,16 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace Assist\Engagement\Observers;
 
-return new class () extends Migration {
-    public function up(): void
+use Assist\Engagement\Models\SmsTemplate;
+
+class SmsTemplateObserver
+{
+    public function creating(SmsTemplate $smsTemplate): void
     {
-        Schema::create('engagements', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->nullable()->constrained('users');
-            $table->foreignUuid('engagement_batch_id')->nullable()->constrained('engagement_batches');
-            $table->string('recipient_id')->nullable();
-            $table->string('recipient_type')->nullable();
-            $table->string('subject')->nullable();
-            $table->json('body')->nullable();
-            $table->boolean('scheduled')->default(true);
-            $table->timestamp('deliver_at');
-            $table->timestamps();
-        });
+        if (is_null($smsTemplate->user_id) && ! is_null(auth()->user())) {
+            $smsTemplate->user_id = auth()->user()->id;
+        }
     }
-};
+}

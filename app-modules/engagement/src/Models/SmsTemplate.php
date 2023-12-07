@@ -36,7 +36,9 @@
 
 namespace Assist\Engagement\Models;
 
+use App\Models\User;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperSmsTemplate
@@ -48,4 +50,13 @@ class SmsTemplate extends BaseModel
         'description',
         'content',
     ];
+
+    protected $casts = [
+        'content' => 'array',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

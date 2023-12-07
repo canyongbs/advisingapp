@@ -42,7 +42,6 @@ use Illuminate\Support\Collection;
 use Filament\Forms\Components\Select;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,6 +54,7 @@ use Assist\Engagement\Actions\CreateEngagementBatch;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
 use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
+use Assist\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
 class BulkEngagementAction
 {
@@ -84,7 +84,7 @@ class BulkEngagementAction
                             ->placeholder(__('Subject'))
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->columnSpanFull(),
-                        TiptapEditor::make('body_json')
+                        TiptapEditor::make('body')
                             ->label('Body')
                             ->mergeTags([
                                 'student full name',
@@ -146,13 +146,7 @@ class BulkEngagementAction
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
-                        Textarea::make('body')
-                            ->placeholder('Body')
-                            ->required()
-                            ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                            ->helperText('The body of your message can be up to 320 characters long.')
-                            ->visible(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
-                            ->columnSpanFull(),
+                        EngagementSmsBodyField::make(context: 'create'),
                     ]),
             ])
             ->action(function (Collection $records, array $data) {
@@ -162,7 +156,6 @@ class BulkEngagementAction
                     'deliveryMethod' => $data['delivery_method'],
                     'subject' => $data['subject'] ?? null,
                     'body' => $data['body'] ?? null,
-                    'bodyJson' => $data['body_json'] ?? null,
                 ]));
             })
             ->modalSubmitActionLabel('Send')
