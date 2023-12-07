@@ -34,21 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace Assist\Engagement\Observers;
 
-use Assist\Authorization\Models\Role;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Assist\Engagement\Models\SmsTemplate;
 
-/**
- * @extends Factory<Role>
- */
-class RoleFactory extends Factory
+class SmsTemplateObserver
 {
-    public function definition(): array
+    public function creating(SmsTemplate $smsTemplate): void
     {
-        return [
-            'name' => fake()->text(25),
-            'guard_name' => 'web',
-        ];
+        if (is_null($smsTemplate->user_id) && ! is_null(auth()->user())) {
+            $smsTemplate->user_id = auth()->user()->id;
+        }
     }
 }

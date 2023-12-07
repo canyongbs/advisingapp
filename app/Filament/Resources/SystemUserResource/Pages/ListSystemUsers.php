@@ -34,58 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use Filament\Forms\Form;
-use Filament\Actions\DeleteAction;
-use App\Filament\Fields\TiptapEditor;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use App\Filament\Pages\EmailConfiguration;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource;
+use App\Models\SystemUser;
+use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Resources\SystemUserResource;
 
-class EditSmsTemplate extends EditRecord
+class ListSystemUsers extends ListRecords
 {
-    protected static string $resource = SmsTemplateResource::class;
+    protected static string $resource = SystemUserResource::class;
 
-    public function getBreadcrumbs(): array
+    public function table(Table $table): Table
     {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                Textarea::make('description')
-                    ->string(),
-                TiptapEditor::make('content')
-                    ->mergeTags([
-                        'student full name',
-                        'student email',
-                    ])
-                    ->profile('sms')
-                    ->output(TiptapOutput::Json)
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->required(),
+        return $table
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('last_used_at')
+                    ->state(fn (?SystemUser $record) => $record?->tokens()->where('name', 'api')->first()?->last_used_at)
+                    ->dateTime(),
+            ])
+            ->filters([
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            CreateAction::make(),
         ];
     }
 }

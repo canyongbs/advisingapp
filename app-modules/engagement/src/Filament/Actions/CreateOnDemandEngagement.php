@@ -46,7 +46,6 @@ class CreateOnDemandEngagement
         $engagement = $educatable->engagements()->create([
             'subject' => $data['subject'] ?? null,
             'body' => $data['body'] ?? null,
-            'body_json' => $data['body_json'] ?? null,
             'scheduled' => false,
         ]);
 

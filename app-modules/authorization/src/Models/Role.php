@@ -101,6 +101,8 @@ class Role extends SpatieRole implements Auditable
 
     public function scopeSuperAdmin(Builder $query): void
     {
-        $query->where('name', 'authorization.super_admin');
+        $query
+            ->where('name', 'authorization.super_admin')
+            ->where('guard_name', 'web');
     }
 }

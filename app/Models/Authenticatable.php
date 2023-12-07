@@ -34,21 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace App\Models;
 
-use Assist\Authorization\Models\Role;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Concerns\CanOrElse;
+use Assist\Authorization\Models\Concerns\HasRoleGroups;
+use Assist\Authorization\Models\Concerns\HasRolesWithPivot;
+use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
+use Assist\Authorization\Models\Concerns\DefinesPermissions;
 
-/**
- * @extends Factory<Role>
- */
-class RoleFactory extends Factory
+abstract class Authenticatable extends BaseAuthenticatable
 {
-    public function definition(): array
-    {
-        return [
-            'name' => fake()->text(25),
-            'guard_name' => 'web',
-        ];
+    use HasRoleGroups {
+        HasRoleGroups::roleGroups as traitRoleGroups;
     }
+    use HasRolesWithPivot;
+    use DefinesPermissions;
+    use CanOrElse;
 }

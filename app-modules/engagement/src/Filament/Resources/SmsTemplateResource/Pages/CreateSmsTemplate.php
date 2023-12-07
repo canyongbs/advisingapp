@@ -38,11 +38,12 @@ namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\RichEditor;
 use App\Filament\Pages\EmailConfiguration;
 use Filament\Resources\Pages\CreateRecord;
+use FilamentTiptapEditor\Enums\TiptapOutput;
 use Assist\Engagement\Filament\Resources\SmsTemplateResource;
 
 class CreateSmsTemplate extends CreateRecord
@@ -68,13 +69,17 @@ class CreateSmsTemplate extends CreateRecord
                     ->autocomplete(false),
                 Textarea::make('description')
                     ->string(),
-                RichEditor::make('content')
-                    ->toolbarButtons([
-                        'link',
-                        'redo',
-                        'undo',
+                // TODO Implement length validation (320 characters max)
+                // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
+                TiptapEditor::make('content')
+                    ->mergeTags([
+                        'student full name',
+                        'student email',
                     ])
-                    ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
+                    ->profile('sms')
+                    ->output(TiptapOutput::Json)
+                    ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->required(),
             ]);
     }

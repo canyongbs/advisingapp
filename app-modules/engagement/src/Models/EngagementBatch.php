@@ -71,7 +71,6 @@ class EngagementBatch extends BaseModel implements ExecutableFromACampaignAction
                 'deliveryMethod' => $action->data['delivery_method'],
                 'subject' => $action->data['subject'] ?? null,
                 'body' => $action->data['body'] ?? null,
-                'bodyJson' => $action->data['bodyJson'] ?? null,
             ]));
 
             return true;

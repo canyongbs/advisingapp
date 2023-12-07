@@ -34,57 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace App\Filament\Resources\SystemUserResource\Pages;
 
 use Filament\Forms\Form;
+use App\Models\SystemUser;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use App\Filament\Fields\TiptapEditor;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Pages\EmailConfiguration;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource;
+use App\Filament\Resources\SystemUserResource;
 
-class EditSmsTemplate extends EditRecord
+class EditSystemUser extends EditRecord
 {
-    protected static string $resource = SmsTemplateResource::class;
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
+    protected static string $resource = SystemUserResource::class;
 
     public function form(Form $form): Form
     {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                Textarea::make('description')
-                    ->string(),
-                TiptapEditor::make('content')
-                    ->mergeTags([
-                        'student full name',
-                        'student email',
-                    ])
-                    ->profile('sms')
-                    ->output(TiptapOutput::Json)
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->required(),
-            ]);
+        return $form->schema([
+            TextInput::make('name')
+                ->required()
+                ->string(),
+            TextInput::make('token')
+                ->hint('Please copy the token, it will only be shown once.')
+                ->dehydrated(false)
+                ->visible(fn (?string $state) => filled($state)),
+        ]);
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        /** @var SystemUser $systemUser */
+        $systemUser = $this->getRecord();
+
+        if (! $systemUser->tokens()->where('name', 'api')->first()) {
+            $token = str($systemUser->createToken('api')->plainTextToken)->after('|')->toString();
+
+            $data['token'] = $token;
+        }
+
+        return $data;
     }
 
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('Reset Token')
+                ->action(function (SystemUser $record) {
+                    $record->tokens()->where('name', 'api')->delete();
+
+                    $token = str($record->createToken('api')->plainTextToken)->after('|')->toString();
+
+                    $this->data['token'] = $token;
+                }),
             DeleteAction::make(),
         ];
     }

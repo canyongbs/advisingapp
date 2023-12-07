@@ -76,7 +76,7 @@ return [
 
         'api' => [
             'driver' => 'token',
-            'provider' => 'users',
+            'provider' => 'system-users',
             'hash' => false,
         ],
     ],
@@ -102,6 +102,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'system-users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SystemUser::class,
         ],
 
         // 'users' => [

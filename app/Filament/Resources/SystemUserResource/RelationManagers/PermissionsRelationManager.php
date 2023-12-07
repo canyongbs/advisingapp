@@ -34,58 +34,53 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 
 use Filament\Forms\Form;
-use Filament\Actions\DeleteAction;
-use App\Filament\Fields\TiptapEditor;
-use Filament\Forms\Components\Textarea;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use App\Filament\Pages\EmailConfiguration;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource;
+use Filament\Tables\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\RelationManagers\RelationManager;
 
-class EditSmsTemplate extends EditRecord
+class PermissionsRelationManager extends RelationManager
 {
-    protected static string $resource = SmsTemplateResource::class;
+    protected static string $relationship = 'permissions';
 
-    public function getBreadcrumbs(): array
-    {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
+    protected static ?string $recordTitleAttribute = 'name';
 
     public function form(Form $form): Form
     {
         return $form
-            ->columns(1)
             ->schema([
                 TextInput::make('name')
-                    ->string()
                     ->required()
-                    ->autocomplete(false),
-                Textarea::make('description')
-                    ->string(),
-                TiptapEditor::make('content')
-                    ->mergeTags([
-                        'student full name',
-                        'student email',
-                    ])
-                    ->profile('sms')
-                    ->output(TiptapOutput::Json)
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->required(),
+                    ->maxLength(125),
+                TextInput::make('guard_name')
+                    ->required()
+                    ->maxLength(125),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    public function table(Table $table): Table
     {
-        return [
-            DeleteAction::make(),
-        ];
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+            ])
+            ->filters([
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('guard_name', 'api'))
+                    ->attachAnother(),
+            ])
+            ->actions([
+            ])
+            ->bulkActions([
+            ]);
     }
 }

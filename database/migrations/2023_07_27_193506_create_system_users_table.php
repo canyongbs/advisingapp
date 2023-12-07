@@ -34,21 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Assist\Authorization\Models\Role;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<Role>
- */
-class RoleFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'name' => fake()->text(25),
-            'guard_name' => 'web',
-        ];
+        Schema::create('system_users', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->string('name')->unique();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-}
+};

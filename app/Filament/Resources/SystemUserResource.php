@@ -34,58 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace App\Filament\Resources;
 
-use Filament\Forms\Form;
-use Filament\Actions\DeleteAction;
-use App\Filament\Fields\TiptapEditor;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use App\Filament\Pages\EmailConfiguration;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource;
+use App\Models\SystemUser;
+use Filament\Resources\Resource;
+use App\Filament\Resources\SystemUserResource\Pages\EditSystemUser;
+use App\Filament\Resources\SystemUserResource\Pages\ListSystemUsers;
+use App\Filament\Resources\SystemUserResource\Pages\CreateSystemUser;
+use App\Filament\Resources\SystemUserResource\RelationManagers\PermissionsRelationManager;
 
-class EditSmsTemplate extends EditRecord
+class SystemUserResource extends Resource
 {
-    protected static string $resource = SmsTemplateResource::class;
+    protected static ?string $model = SystemUser::class;
 
-    public function getBreadcrumbs(): array
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Users and Permissions';
+
+    protected static ?int $navigationSort = 7;
+
+    public static function getRelations(): array
     {
         return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
+            PermissionsRelationManager::class,
         ];
     }
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->columns(1)
-            ->schema([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                Textarea::make('description')
-                    ->string(),
-                TiptapEditor::make('content')
-                    ->mergeTags([
-                        'student full name',
-                        'student email',
-                    ])
-                    ->profile('sms')
-                    ->output(TiptapOutput::Json)
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                    ->required(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
+    public static function getPages(): array
     {
         return [
-            DeleteAction::make(),
+            'index' => ListSystemUsers::route('/'),
+            'create' => CreateSystemUser::route('/create'),
+            'edit' => EditSystemUser::route('/{record}/edit'),
         ];
     }
 }
