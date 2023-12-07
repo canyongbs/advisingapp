@@ -2,9 +2,9 @@
 
 namespace Assist\Auditing\Resolvers;
 
+use Assist\Auditing\Contracts\Resolver;
 use Illuminate\Support\Facades\Request;
 use Assist\Auditing\Contracts\Auditable;
-use Assist\Auditing\Contracts\Resolver;
 
 class IpAddressResolver implements Resolver
 {

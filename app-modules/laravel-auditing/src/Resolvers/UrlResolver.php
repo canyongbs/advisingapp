@@ -27,6 +27,7 @@ class UrlResolver implements \Assist\Auditing\Contracts\Resolver
     public static function resolveCommandLine(): string
     {
         $command = \Request::server('argv', null);
+
         if (is_array($command)) {
             return implode(' ', $command);
         }

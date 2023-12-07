@@ -38,8 +38,8 @@ namespace Assist\Audit\Models;
 
 use Assist\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
 use Assist\Auditing\Models\Audit as BaseAudit;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;

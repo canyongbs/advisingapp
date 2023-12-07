@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'enabled' => env('AUDITING_ENABLED', true),
 
     /*
@@ -24,13 +23,13 @@ return [
     |
     */
 
-    'user'      => [
+    'user' => [
         'morph_prefix' => 'user',
-        'guards'       => [
+        'guards' => [
             'web',
-            'api'
+            'api',
         ],
-        'resolver'     => Assist\Auditing\Resolvers\UserResolver::class
+        'resolver' => Assist\Auditing\Resolvers\UserResolver::class,
     ],
 
     /*
@@ -44,7 +43,7 @@ return [
     'resolvers' => [
         'ip_address' => Assist\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => Assist\Auditing\Resolvers\UserAgentResolver::class,
-        'url'        => Assist\Auditing\Resolvers\UrlResolver::class,
+        'url' => Assist\Auditing\Resolvers\UrlResolver::class,
     ],
 
     /*
@@ -60,7 +59,7 @@ return [
         'created',
         'updated',
         'deleted',
-        'restored'
+        'restored',
     ],
 
     /*
@@ -101,9 +100,9 @@ return [
     |
     */
 
-    'empty_values'         => true,
+    'empty_values' => true,
     'allowed_empty_values' => [
-        'retrieved'
+        'retrieved',
     ],
 
     /*
@@ -151,7 +150,7 @@ return [
 
     'drivers' => [
         'database' => [
-            'table'      => 'audits',
+            'table' => 'audits',
             'connection' => null,
         ],
     ],
@@ -167,8 +166,8 @@ return [
 
     'queue' => [
         'connection' => 'sync',
-        'queue'      => 'default',
-        'delay'      => 0,
+        'queue' => 'default',
+        'delay' => 0,
     ],
 
     /*

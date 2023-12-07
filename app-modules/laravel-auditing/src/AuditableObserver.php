@@ -49,7 +49,7 @@ class AuditableObserver
     public function updated(Auditable $model)
     {
         // Ignore the updated event when restoring
-        if (!static::$restoring) {
+        if (! static::$restoring) {
             $this->dispatchAudit($model->setAuditEvent('updated'));
         }
     }
@@ -99,7 +99,7 @@ class AuditableObserver
 
     protected function dispatchAudit(Auditable $model)
     {
-        if (!$model->readyForAuditing() || !$this->fireDispatchingAuditEvent($model)) {
+        if (! $model->readyForAuditing() || ! $this->fireDispatchingAuditEvent($model)) {
             return;
         }
 
@@ -117,6 +117,6 @@ class AuditableObserver
     protected function fireDispatchingAuditEvent(Auditable $model): bool
     {
         return app()->make('events')
-                ->until(new DispatchingAudit($model)) !== false;
+            ->until(new DispatchingAudit($model)) !== false;
     }
 }

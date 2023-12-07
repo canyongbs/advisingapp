@@ -2,8 +2,8 @@
 
 namespace Assist\Auditing\Resolvers;
 
-use Assist\Auditing\Contracts\Auditable;
 use Assist\Auditing\Contracts\Resolver;
+use Assist\Auditing\Contracts\Auditable;
 
 class DumpResolver implements Resolver
 {

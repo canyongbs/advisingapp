@@ -2,12 +2,11 @@
 
 namespace Assist\Auditing;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
+use Assist\Auditing\Contracts\Auditor;
 use Illuminate\Support\ServiceProvider;
+use Assist\Auditing\Console\InstallCommand;
 use Assist\Auditing\Console\AuditDriverCommand;
 use Assist\Auditing\Console\AuditResolverCommand;
-use Assist\Auditing\Console\InstallCommand;
-use Assist\Auditing\Contracts\Auditor;
 
 class AuditingServiceProvider extends ServiceProvider
 {
@@ -50,12 +49,11 @@ class AuditingServiceProvider extends ServiceProvider
     private function registerPublishing()
     {
         if ($this->app->runningInConsole()) {
-            // Lumen lacks a config_path() helper, so we use base_path()
             $this->publishes([
-                __DIR__ . '/../config/audit.php' => base_path('config/audit.php'),
+                __DIR__ . '/../config/audit.php' => config_path('audit.php'),
             ], 'config');
 
-            if (!class_exists('CreateAuditsTable')) {
+            if (! class_exists('CreateAuditsTable')) {
                 $this->publishes([
                     __DIR__ . '/../database/migrations/audits.stub' => database_path(
                         sprintf('migrations/%s_create_audits_table.php', date('Y_m_d_His'))

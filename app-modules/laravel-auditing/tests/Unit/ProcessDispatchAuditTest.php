@@ -17,10 +17,6 @@ class ProcessDispatchAuditTest extends AuditingTestCase
      */
     public function itIsListeningToTheCorrectEvent()
     {
-        if (version_compare($this->app->version(), '8.0.0', '<')) {
-            $this->markTestSkipped('This test is only for Laravel 8.0.0+');
-        }
-
         Event::fake();
 
         Event::assertListening(
@@ -63,7 +59,7 @@ class ProcessDispatchAuditTest extends AuditingTestCase
         DispatchAudit::dispatch($model);
 
         Queue::assertPushedOn('audits', CallQueuedListener::class, function ($job) use ($model) {
-            $instantiatedJob = new $job->class;
+            $instantiatedJob = new $job->class();
 
             return $job->class == ProcessDispatchAudit::class
                 && $job->data[0] instanceof DispatchAudit

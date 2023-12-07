@@ -2,7 +2,4 @@
 
 namespace Assist\Auditing\Contracts;
 
-interface AttributeModifier
-{
-    //
-}
+interface AttributeModifier {}

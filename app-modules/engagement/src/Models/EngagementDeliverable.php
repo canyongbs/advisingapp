@@ -37,8 +37,8 @@
 namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
-use Assist\Engagement\Drivers\SmsDriver;
 use Assist\Auditing\Contracts\Auditable;
+use Assist\Engagement\Drivers\SmsDriver;
 use Assist\Engagement\Drivers\EmailDriver;
 use Assist\Engagement\Drivers\DeliverableDriver;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;

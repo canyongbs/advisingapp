@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -311,6 +277,10 @@ namespace App\Models{
  * @property-read int|null $teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
  * @property-read int|null $trait_role_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Assist\Authorization\Models\Permission[] $permissionsFromRoles
+ * @property-read int|null $permissions_from_roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Assist\ServiceManagement\Models\ServiceRequest[] $serviceRequests
+ * @property-read int|null $service_requests_count
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -619,6 +589,8 @@ namespace Assist\AssistDataModel\Models{
  * @property string $display_name
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationSubmission> $applicationSubmissions
+ * @property-read int|null $application_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
@@ -934,6 +906,8 @@ namespace Assist\Authorization\Models{
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Assist\Authorization\Models\Permission[] $permissions
+ * @property-read int|null $permissions_count
  * @method static \Assist\Authorization\Database\Factories\RoleGroupFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup newQuery()
@@ -2089,6 +2063,50 @@ namespace Assist\KnowledgeBase\Models{
  class IdeHelperKnowledgeBaseStatus {}
 }
 
+namespace Assist\Auditing\Models{
+/**
+ * Assist\Auditing\Models\Audit
+ *
+ * @property string $tags
+ * @property string $event
+ * @property array $new_values
+ * @property array $old_values
+ * @property mixed $user
+ * @property mixed $auditable.
+ * @property int $id
+ * @property string|null $change_agent_type
+ * @property string|null $change_agent_id
+ * @property string $auditable_type
+ * @property string $auditable_id
+ * @property string|null $url
+ * @property string|null $ip_address
+ * @property string|null $user_agent
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $auditable
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereAuditableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereAuditableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereChangeAgentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereChangeAgentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereEvent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereIpAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereNewValues($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereOldValues($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereTags($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Audit whereUserAgent($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAudit {}
+}
+
 namespace Assist\MeetingCenter\Models{
 /**
  * Assist\MeetingCenter\Models\Calendar
@@ -2220,6 +2238,8 @@ namespace Assist\Prospect\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationSubmission> $applicationSubmissions
+ * @property-read int|null $application_submissions_count
  * @property-read \App\Models\User|null $assignedTo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count

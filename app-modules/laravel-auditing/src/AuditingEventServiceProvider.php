@@ -2,14 +2,8 @@
 
 namespace Assist\Auditing;
 
-if (app() instanceof \Illuminate\Foundation\Application) {
-    class_alias(\Illuminate\Foundation\Support\Providers\EventServiceProvider::class, '\Assist\Auditing\ServiceProvider');
-} else {
-    class_alias(\Laravel\Lumen\Providers\EventServiceProvider::class, '\Assist\Auditing\ServiceProvider');
-}
+class_alias(\Illuminate\Foundation\Support\Providers\EventServiceProvider::class, '\Assist\Auditing\ServiceProvider');
 
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Config;
 use Assist\Auditing\Events\AuditCustom;
 use Assist\Auditing\Events\DispatchAudit;
 use Assist\Auditing\Listeners\RecordCustomAudit;

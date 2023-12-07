@@ -2,8 +2,8 @@
 
 namespace Assist\Auditing\Drivers;
 
-use Illuminate\Support\Facades\Config;
 use Assist\Auditing\Contracts\Audit;
+use Illuminate\Support\Facades\Config;
 use Assist\Auditing\Contracts\Auditable;
 use Assist\Auditing\Contracts\AuditDriver;
 
@@ -25,13 +25,13 @@ class Database implements AuditDriver
     public function prune(Auditable $model): bool
     {
         if (($threshold = $model->getAuditThreshold()) > 0) {
-            $forRemoval = $model->audits()
+            $forRemoval = $model->audits() /** @phpstan-ignore-line */
                 ->latest()
                 ->get()
                 ->slice($threshold)
                 ->pluck('id');
 
-            if (!$forRemoval->isEmpty()) {
+            if (! $forRemoval->isEmpty()) {
                 return $model->audits()
                     ->whereIn('id', $forRemoval)
                     ->delete() > 0;

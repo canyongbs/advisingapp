@@ -2,8 +2,8 @@
 
 namespace Assist\Auditing\Tests\fixtures;
 
-use Assist\Auditing\Contracts\Auditable;
 use Assist\Auditing\Contracts\Resolver;
+use Assist\Auditing\Contracts\Auditable;
 
 class TenantResolver implements Resolver
 {

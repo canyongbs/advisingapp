@@ -18,7 +18,7 @@ class UserResolver implements \Assist\Auditing\Contracts\UserResolver
         }
 
         $guards = Config::get('audit.user.guards', [
-            \config('auth.defaults.guard')
+            \config('auth.defaults.guard'),
         ]);
 
         foreach ($guards as $guard) {

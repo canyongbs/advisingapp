@@ -2,14 +2,14 @@
 
 namespace Assist\Auditing;
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Manager;
 use InvalidArgumentException;
-use Assist\Auditing\Contracts\Auditable;
-use Assist\Auditing\Contracts\AuditDriver;
-use Assist\Auditing\Drivers\Database;
+use Illuminate\Support\Manager;
 use Assist\Auditing\Events\Audited;
 use Assist\Auditing\Events\Auditing;
+use Assist\Auditing\Drivers\Database;
+use Illuminate\Support\Facades\Config;
+use Assist\Auditing\Contracts\Auditable;
+use Assist\Auditing\Contracts\AuditDriver;
 use Assist\Auditing\Exceptions\AuditingException;
 
 class Auditor extends Manager implements Contracts\Auditor
@@ -20,6 +20,61 @@ class Auditor extends Manager implements Contracts\Auditor
     public function getDefaultDriver()
     {
         return 'database';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function auditDriver(Auditable $model): AuditDriver
+    {
+        $driver = $this->driver($model->getAuditDriver());
+
+        if (! $driver instanceof AuditDriver) {
+            throw new AuditingException('The driver must implement the AuditDriver contract');
+        }
+
+        return $driver;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute(Auditable $model): void
+    {
+        if (! $model->readyForAuditing()) {
+            return;
+        }
+
+        $driver = $this->auditDriver($model);
+
+        if (! $this->fireAuditingEvent($model, $driver)) {
+            return;
+        }
+
+        // Check if we want to avoid storing empty values
+        $allowEmpty = Config::get('audit.empty_values');
+        $explicitAllowEmpty = in_array($model->getAuditEvent(), Config::get('audit.allowed_empty_values', []));
+
+        if (! $allowEmpty && ! $explicitAllowEmpty) {
+            if (
+                empty($model->toAudit()['new_values']) &&
+                empty($model->toAudit()['old_values'])
+            ) {
+                return;
+            }
+        }
+
+        $audit = $driver->audit($model);
+
+        if (! $audit) {
+            return;
+        }
+
+        $driver->prune($model);
+
+        $this->container->make('events')->dispatch(
+            new Audited($model, $driver, $audit)
+        );
     }
 
     /**
@@ -36,60 +91,6 @@ class Auditor extends Manager implements Contracts\Auditor
 
             throw $exception;
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function auditDriver(Auditable $model): AuditDriver
-    {
-        $driver = $this->driver($model->getAuditDriver());
-
-        if (!$driver instanceof AuditDriver) {
-            throw new AuditingException('The driver must implement the AuditDriver contract');
-        }
-
-        return $driver;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function execute(Auditable $model): void
-    {
-        if (!$model->readyForAuditing()) {
-            return;
-        }
-
-        $driver = $this->auditDriver($model);
-
-        if (!$this->fireAuditingEvent($model, $driver)) {
-            return;
-        }
-
-        // Check if we want to avoid storing empty values
-        $allowEmpty = Config::get('audit.empty_values');
-        $explicitAllowEmpty = in_array($model->getAuditEvent(), Config::get('audit.allowed_empty_values', []));
-
-        if (!$allowEmpty && !$explicitAllowEmpty) {
-            if (
-                empty($model->toAudit()['new_values']) &&
-                empty($model->toAudit()['old_values'])
-            ) {
-                return;
-            }
-        }
-
-        $audit = $driver->audit($model);
-        if (!$audit) {
-            return;
-        }
-
-        $driver->prune($model);
-
-        $this->container->make('events')->dispatch(
-            new Audited($model, $driver, $audit)
-        );
     }
 
     /**
@@ -113,8 +114,8 @@ class Auditor extends Manager implements Contracts\Auditor
     protected function fireAuditingEvent(Auditable $model, AuditDriver $driver): bool
     {
         return $this
-                ->container
-                ->make('events')
-                ->until(new Auditing($model, $driver)) !== false;
+            ->container
+            ->make('events')
+            ->until(new Auditing($model, $driver)) !== false;
     }
 }

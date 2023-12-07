@@ -5,8 +5,8 @@ namespace Assist\Auditing\Tests;
 use Assist\Auditing\Models\Audit;
 use Illuminate\Support\Facades\Event;
 use Assist\Auditing\AuditableObserver;
-use Assist\Auditing\Tests\Models\Article;
 use Assist\Auditing\Events\DispatchAudit;
+use Assist\Auditing\Tests\Models\Article;
 use Assist\Auditing\Events\DispatchingAudit;
 
 class AuditableObserverTest extends AuditingTestCase
@@ -15,6 +15,8 @@ class AuditableObserverTest extends AuditingTestCase
      * @test
      *
      * @dataProvider auditableObserverDispatchTestProvider
+     *
+     * @param mixed $eventMethod
      */
     public function itWillCancelTheAuditDispatchingFromAnEventListener($eventMethod)
     {
@@ -68,6 +70,7 @@ class AuditableObserverTest extends AuditingTestCase
      * @group AuditableObserver::deleted
      * @group AuditableObserver::restoring
      * @group AuditableObserver::restored
+     *
      * @test
      *
      * @dataProvider auditableObserverTestProvider

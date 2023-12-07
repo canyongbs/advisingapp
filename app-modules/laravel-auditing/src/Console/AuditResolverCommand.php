@@ -21,6 +21,13 @@ class AuditResolverCommand extends GeneratorCommand
      */
     protected $type = 'AuditResolver';
 
+    public function handle()
+    {
+        $this->info('Add your new resolver to the resolvers array in audit.php config file.');
+
+        return parent::handle();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -35,11 +42,5 @@ class AuditResolverCommand extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace)
     {
         return $rootNamespace . '\AuditResolvers';
-    }
-
-    public function handle()
-    {
-        $this->info('Add your new resolver to the resolvers array in audit.php config file.');
-        return parent::handle();
     }
 }

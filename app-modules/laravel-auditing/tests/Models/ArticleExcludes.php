@@ -3,8 +3,8 @@
 namespace Assist\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ArticleExcludes extends Model implements Auditable
 {
@@ -18,7 +18,7 @@ class ArticleExcludes extends Model implements Auditable
      */
     protected $casts = [
         'reviewed' => 'bool',
-        'config'   => 'json'
+        'config' => 'json',
     ];
 
     public $auditExclude = ['title'];
@@ -39,7 +39,6 @@ class ArticleExcludes extends Model implements Auditable
         'published_at',
         'reviewed',
     ];
-
 
     public function __construct(array $attributes = [])
     {

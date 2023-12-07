@@ -2,8 +2,8 @@
 
 use Faker\Generator as Faker;
 use Assist\Auditing\Models\Audit;
-use Assist\Auditing\Tests\Models\Article;
 use Assist\Auditing\Tests\Models\User;
+use Assist\Auditing\Tests\Models\Article;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,24 +12,24 @@ use Assist\Auditing\Tests\Models\User;
 |
 */
 
-$factory->define(Audit::class, function (Faker $faker) {
+($factory ?? null)?->define(Audit::class, function (Faker $faker) {
     $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
 
     return [
         $morphPrefix . '_id' => function () {
             return factory(User::class)->create()->id;
         },
-        $morphPrefix . '_type'    => User::class,
-        'event'        => 'updated',
+        $morphPrefix . '_type' => User::class,
+        'event' => 'updated',
         'auditable_id' => function () {
             return factory(Article::class)->create()->id;
         },
         'auditable_type' => Article::class,
-        'old_values'     => [],
-        'new_values'     => [],
-        'url'            => $faker->url,
-        'ip_address'     => $faker->ipv4,
-        'user_agent'     => $faker->userAgent,
-        'tags'           => implode(',', $faker->words(4)),
+        'old_values' => [],
+        'new_values' => [],
+        'url' => $faker->url,
+        'ip_address' => $faker->ipv4,
+        'user_agent' => $faker->userAgent,
+        'tags' => implode(',', $faker->words(4)),
     ];
 });

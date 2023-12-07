@@ -2,9 +2,9 @@
 
 namespace Assist\Auditing\Tests\Models;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Auditing\Contracts\Auditable;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class User extends Model implements Auditable, Authenticatable
 {

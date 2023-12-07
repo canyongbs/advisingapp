@@ -3,8 +3,8 @@
 namespace Assist\Auditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Assist\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ApiModel extends Model implements Auditable
 {

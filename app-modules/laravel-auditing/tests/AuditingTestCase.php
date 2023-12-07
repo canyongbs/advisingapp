@@ -3,14 +3,41 @@
 namespace Assist\Auditing\Tests;
 
 use Orchestra\Testbench\TestCase;
+use Assist\Auditing\Resolvers\UrlResolver;
+use Assist\Auditing\Resolvers\UserResolver;
 use Assist\Auditing\AuditingServiceProvider;
 use Assist\Auditing\Resolvers\IpAddressResolver;
-use Assist\Auditing\Resolvers\UrlResolver;
 use Assist\Auditing\Resolvers\UserAgentResolver;
-use Assist\Auditing\Resolvers\UserResolver;
 
 class AuditingTestCase extends TestCase
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+        $this->withFactories(__DIR__ . '/database/factories');
+    }
+
+    /**
+     * Locate the Illuminate testing class. It changed namespace with v7
+     *
+     * @see https://readouble.com/laravel/7.x/en/upgrade.html
+     *
+     * @return class-string<\Illuminate\Foundation\Testing\Assert|\Illuminate\Testing\Assert>
+     */
+    public static function Assert(): string
+    {
+        if (class_exists('Illuminate\Foundation\Testing\Assert')) {
+            return '\Illuminate\Foundation\Testing\Assert';
+        }
+
+        return '\Illuminate\Testing\Assert';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -19,9 +46,9 @@ class AuditingTestCase extends TestCase
         // Database
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         // Audit
@@ -34,7 +61,7 @@ class AuditingTestCase extends TestCase
             'api',
         ]);
         $app['config']->set('auth.guards.api', [
-            'driver'   => 'session',
+            'driver' => 'session',
             'provider' => 'users',
         ]);
 
@@ -48,34 +75,10 @@ class AuditingTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
-        $this->withFactories(__DIR__ . '/database/factories');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getPackageProviders($app)
     {
         return [
             AuditingServiceProvider::class,
         ];
-    }
-
-    /**
-     * Locate the Illuminate testing class. It changed namespace with v7
-     * @see https://readouble.com/laravel/7.x/en/upgrade.html
-     * @return class-string<\Illuminate\Foundation\Testing\Assert|\Illuminate\Testing\Assert>
-     */
-    public static function Assert(): string
-    {
-        if (class_exists('Illuminate\Foundation\Testing\Assert')) {
-            return '\Illuminate\Foundation\Testing\Assert';
-        }
-        return '\Illuminate\Testing\Assert';
     }
 }

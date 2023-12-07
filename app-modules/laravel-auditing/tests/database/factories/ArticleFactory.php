@@ -10,11 +10,11 @@ use Assist\Auditing\Tests\Models\Article;
 |
 */
 
-$factory->define(Article::class, function (Faker $faker) {
+($factory ?? null)?->define(Article::class, function (Faker $faker) {
     return [
-        'title'        => $faker->unique()->sentence,
-        'content'      => $faker->unique()->paragraph(6),
+        'title' => $faker->unique()->sentence,
+        'content' => $faker->unique()->paragraph(6),
         'published_at' => null,
-        'reviewed'     => $faker->randomElement([0, 1]),
+        'reviewed' => $faker->randomElement([0, 1]),
     ];
 });

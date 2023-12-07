@@ -2,11 +2,11 @@
 
 namespace Assist\Auditing\Tests\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Assist\Auditing\Contracts\Auditable;
 use Assist\Auditing\Tests\Casts\Money;
+use Illuminate\Database\Eloquent\Model;
+use Assist\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Article extends Model implements Auditable
 {
@@ -20,7 +20,7 @@ class Article extends Model implements Auditable
      */
     protected $casts = [
         'reviewed' => 'bool',
-        'config'   => 'json',
+        'config' => 'json',
         'published_at' => 'datetime',
         'price' => Money::class,
     ];
