@@ -38,11 +38,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Notifications\DemoNotification;
 use App\Http\Controllers\ViewPublicUserProfileController;
-use App\Http\Controllers\Imports\DownloadImportFailureCsv;
-
-Route::get('/imports/{import}/failed-rows/download', DownloadImportFailureCsv::class)
-    ->name('imports.failed-rows.download')
-    ->middleware(['auth']);
 
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
     ->name('users.profile.view.public');

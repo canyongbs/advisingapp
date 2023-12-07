@@ -36,12 +36,12 @@
 
 namespace Assist\CaseloadManagement\Importers;
 
-use App\Models\Import;
-use App\Imports\Importer;
 use Illuminate\Support\Str;
+use Filament\Actions\Imports\Importer;
 use Illuminate\Database\Eloquent\Model;
 use Assist\AssistDataModel\Models\Student;
-use App\Filament\Actions\ImportAction\ImportColumn;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Actions\Imports\Models\Import;
 use Assist\CaseloadManagement\Models\CaseloadSubject;
 
 class StudentCaseloadSubjectImporter extends Importer
@@ -71,7 +71,10 @@ class StudentCaseloadSubjectImporter extends Importer
 
     public function beforeCreate(): void
     {
-        $this->record->caseload()->associate($this->getOptions()['caseload_id']);
+        /** @var CaseloadSubject $record */
+        $record = $this->record;
+
+        $record->caseload()->associate($this->getOptions()['caseload_id']);
     }
 
     public static function getCompletedNotificationBody(Import $import): string

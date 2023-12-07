@@ -36,21 +36,22 @@
 
 namespace Assist\Interaction\Imports;
 
-use App\Models\Import;
-use App\Imports\Importer;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Assist\Division\Models\Division;
 use Assist\Prospect\Models\Prospect;
+use Filament\Actions\Imports\Importer;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Assist\Interaction\Models\Interaction;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Actions\Imports\Models\Import;
 use Assist\Interaction\Models\InteractionType;
 use Assist\Interaction\Models\InteractionDriver;
 use Assist\Interaction\Models\InteractionStatus;
 use Assist\Interaction\Models\InteractionOutcome;
 use Assist\Interaction\Models\InteractionCampaign;
 use Assist\Interaction\Models\InteractionRelation;
-use App\Filament\Actions\ImportAction\ImportColumn;
 
 class InteractionsImporter extends Importer
 {
@@ -220,7 +221,10 @@ class InteractionsImporter extends Importer
         /** @var Interaction $record */
         $record = $this->record;
 
-        $record['user_id'] = $this->import->user->id;
+        /** @var User $user */
+        $user = $this->import->user;
+
+        $record['user_id'] = $user->id;
     }
 
     public static function getCompletedNotificationBody(Import $import): string
