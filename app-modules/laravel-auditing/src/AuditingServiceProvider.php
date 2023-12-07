@@ -1,12 +1,12 @@
 <?php
 
-namespace Assist\Auditing;
+namespace Assist\LaravelAuditing;
 
-use Assist\Auditing\Contracts\Auditor;
 use Illuminate\Support\ServiceProvider;
-use Assist\Auditing\Console\InstallCommand;
-use Assist\Auditing\Console\AuditDriverCommand;
-use Assist\Auditing\Console\AuditResolverCommand;
+use Assist\LaravelAuditing\Contracts\Auditor;
+use Assist\LaravelAuditing\Console\InstallCommand;
+use Assist\LaravelAuditing\Console\AuditDriverCommand;
+use Assist\LaravelAuditing\Console\AuditResolverCommand;
 
 class AuditingServiceProvider extends ServiceProvider
 {
@@ -35,7 +35,7 @@ class AuditingServiceProvider extends ServiceProvider
         ]);
 
         $this->app->singleton(Auditor::class, function ($app) {
-            return new \Assist\Auditing\Auditor($app);
+            return new \Assist\LaravelAuditing\Auditor($app);
         });
 
         $this->app->register(AuditingEventServiceProvider::class);

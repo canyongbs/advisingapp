@@ -38,8 +38,8 @@ namespace Assist\Audit\Overrides\Concerns;
 
 use ReflectionClass;
 use Illuminate\Support\Facades\Event;
-use Assist\Auditing\Events\AuditCustom;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Events\AuditCustom;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 trait AttachOverrides
 {

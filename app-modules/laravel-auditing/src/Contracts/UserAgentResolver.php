@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Auditing\Contracts;
+namespace Assist\LaravelAuditing\Contracts;
 
 /**
  * @deprecated

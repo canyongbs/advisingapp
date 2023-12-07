@@ -1,31 +1,31 @@
 <?php
 
-namespace Assist\Auditing\Events;
+namespace Assist\LaravelAuditing\Events;
 
-use Assist\Auditing\Contracts\Auditable;
-use Assist\Auditing\Contracts\AuditDriver;
+use Assist\LaravelAuditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\AuditDriver;
 
 class Auditing
 {
     /**
      * The Auditable model.
      *
-     * @var \Assist\Auditing\Contracts\Auditable
+     * @var \Assist\LaravelAuditing\Contracts\Auditable
      */
     public $model;
 
     /**
      * Audit driver.
      *
-     * @var \Assist\Auditing\Contracts\AuditDriver
+     * @var \Assist\LaravelAuditing\Contracts\AuditDriver
      */
     public $driver;
 
     /**
      * Create a new Auditing event instance.
      *
-     * @param \Assist\Auditing\Contracts\Auditable   $model
-     * @param \Assist\Auditing\Contracts\AuditDriver $driver
+     * @param \Assist\LaravelAuditing\Contracts\Auditable   $model
+     * @param \Assist\LaravelAuditing\Contracts\AuditDriver $driver
      */
     public function __construct(Auditable $model, AuditDriver $driver)
     {

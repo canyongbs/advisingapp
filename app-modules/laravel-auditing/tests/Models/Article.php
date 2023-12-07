@@ -1,16 +1,16 @@
 <?php
 
-namespace Assist\Auditing\Tests\Models;
+namespace Assist\LaravelAuditing\Tests\Models;
 
-use Assist\Auditing\Tests\Casts\Money;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Tests\Casts\Money;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Article extends Model implements Auditable
 {
-    use \Assist\Auditing\Auditable;
+    use \Assist\LaravelAuditing\Auditable;
     use SoftDeletes;
 
     protected $laravel_version;

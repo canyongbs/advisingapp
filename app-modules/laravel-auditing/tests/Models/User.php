@@ -1,15 +1,15 @@
 <?php
 
-namespace Assist\Auditing\Tests\Models;
+namespace Assist\LaravelAuditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 class User extends Model implements Auditable, Authenticatable
 {
     use \Illuminate\Auth\Authenticatable;
-    use \Assist\Auditing\Auditable;
+    use \Assist\LaravelAuditing\Auditable;
 
     /**
      * {@inheritdoc}

@@ -2,7 +2,7 @@
 
 use Ramsey\Uuid\Uuid;
 use Faker\Generator as Faker;
-use Assist\Auditing\Tests\Models\ApiModel;
+use Assist\LaravelAuditing\Tests\Models\ApiModel;
 
 /*
 |--------------------------------------------------------------------------

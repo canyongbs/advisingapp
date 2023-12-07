@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Auditing\Tests\Models;
+namespace Assist\LaravelAuditing\Tests\Models;
 
 use NumberFormatter;
 

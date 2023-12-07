@@ -1424,14 +1424,14 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Auditing\\AuditingServiceProvider"
+                        "Assist\\LaravelAuditing\\AuditingServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Auditing\\": "src/",
-                    "Assist\\Auditing\\Tests\\": "tests/"
+                    "Assist\\LaravelAuditing\\": "src/",
+                    "Assist\\LaravelAuditing\\Tests\\": "tests/"
                 }
             },
             "license": [

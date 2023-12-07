@@ -37,7 +37,7 @@
 namespace Assist\Authorization\Models;
 
 use Illuminate\Support\Collection;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

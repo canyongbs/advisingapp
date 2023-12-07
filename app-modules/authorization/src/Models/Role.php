@@ -37,9 +37,9 @@
 namespace Assist\Authorization\Models;
 
 use Illuminate\Support\Collection;
-use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\PermissionRegistrar;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

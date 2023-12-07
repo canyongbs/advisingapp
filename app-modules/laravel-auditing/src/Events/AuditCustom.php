@@ -1,22 +1,22 @@
 <?php
 
-namespace Assist\Auditing\Events;
+namespace Assist\LaravelAuditing\Events;
 
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 class AuditCustom
 {
     /**
      * The Auditable model.
      *
-     * @var \Assist\Auditing\Contracts\Auditable
+     * @var \Assist\LaravelAuditing\Contracts\Auditable
      */
     public $model;
 
     /**
      * Create a new Auditing event instance.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      */
     public function __construct(Auditable $model)
     {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Assist\Auditing\Resolvers;
+namespace Assist\LaravelAuditing\Resolvers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
-class UserResolver implements \Assist\Auditing\Contracts\UserResolver
+class UserResolver implements \Assist\LaravelAuditing\Contracts\UserResolver
 {
     /**
      * @return \Illuminate\Contracts\Auth\Authenticatable|null

@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Auditing\Models;
+namespace Assist\LaravelAuditing\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,9 +14,9 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @mixin IdeHelperAudit
  */
-class Audit extends Model implements \Assist\Auditing\Contracts\Audit
+class Audit extends Model implements \Assist\LaravelAuditing\Contracts\Audit
 {
-    use \Assist\Auditing\Audit;
+    use \Assist\LaravelAuditing\Audit;
 
     /**
      * {@inheritdoc}

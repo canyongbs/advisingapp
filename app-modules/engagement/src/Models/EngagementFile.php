@@ -39,11 +39,11 @@ namespace Assist\Engagement\Models;
 use App\Models\BaseModel;
 use Spatie\MediaLibrary\HasMedia;
 use Assist\Prospect\Models\Prospect;
-use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
 use Assist\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Prunable;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 

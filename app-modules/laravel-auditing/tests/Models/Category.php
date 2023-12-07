@@ -1,5 +1,5 @@
 <?php
 
-namespace Assist\Auditing\Tests\Models;
+namespace Assist\LaravelAuditing\Tests\Models;
 
 class Category extends \Illuminate\Database\Eloquent\Model {}

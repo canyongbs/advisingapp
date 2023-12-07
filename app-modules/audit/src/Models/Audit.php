@@ -38,9 +38,9 @@ namespace Assist\Audit\Models;
 
 use Assist\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Auditing\Models\Audit as BaseAudit;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Assist\LaravelAuditing\Models\Audit as BaseAudit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Assist\Authorization\Models\Concerns\DefinesPermissions;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Assist\Auditing\Contracts;
+namespace Assist\LaravelAuditing\Contracts;
 
 /**
- * @mixin \Assist\Auditing\Models\Audit
+ * @mixin \Assist\LaravelAuditing\Models\Audit
  */
 interface Audit
 {

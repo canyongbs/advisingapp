@@ -1,22 +1,22 @@
 <?php
 
-namespace Assist\Auditing\Contracts;
+namespace Assist\LaravelAuditing\Contracts;
 
 interface AuditDriver
 {
     /**
      * Perform an audit.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
-     * @return \Assist\Auditing\Contracts\Audit
+     * @return \Assist\LaravelAuditing\Contracts\Audit
      */
     public function audit(Auditable $model): ?Audit;
 
     /**
      * Remove older audits that go over the threshold.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return bool
      */

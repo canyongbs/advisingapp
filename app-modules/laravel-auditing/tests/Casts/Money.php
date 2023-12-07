@@ -1,9 +1,9 @@
 <?php
 
-namespace Assist\Auditing\Tests\Casts;
+namespace Assist\LaravelAuditing\Tests\Casts;
 
-use Assist\Auditing\Tests\Models\Money as MoneyValueObject;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Assist\LaravelAuditing\Tests\Models\Money as MoneyValueObject;
 
 class Money implements CastsAttributes
 {

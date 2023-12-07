@@ -1,10 +1,10 @@
 <?php
 
-namespace Assist\Auditing\Resolvers;
+namespace Assist\LaravelAuditing\Resolvers;
 
-use Assist\Auditing\Contracts\Resolver;
 use Illuminate\Support\Facades\Request;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Resolver;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 class UserAgentResolver implements Resolver
 {

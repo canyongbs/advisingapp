@@ -1,10 +1,10 @@
 <?php
 
-namespace Assist\Auditing;
+namespace Assist\LaravelAuditing;
 
-use Assist\Auditing\Contracts\Auditable;
-use Assist\Auditing\Events\DispatchAudit;
-use Assist\Auditing\Events\DispatchingAudit;
+use Assist\LaravelAuditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Events\DispatchAudit;
+use Assist\LaravelAuditing\Events\DispatchingAudit;
 
 class AuditableObserver
 {
@@ -18,7 +18,7 @@ class AuditableObserver
     /**
      * Handle the retrieved event.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -30,7 +30,7 @@ class AuditableObserver
     /**
      * Handle the created event.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -42,7 +42,7 @@ class AuditableObserver
     /**
      * Handle the updated event.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -57,7 +57,7 @@ class AuditableObserver
     /**
      * Handle the deleted event.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -69,7 +69,7 @@ class AuditableObserver
     /**
      * Handle the restoring event.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -84,7 +84,7 @@ class AuditableObserver
     /**
      * Handle the restored event.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return void
      */
@@ -110,7 +110,7 @@ class AuditableObserver
     /**
      * Fire the Auditing event.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return bool
      */

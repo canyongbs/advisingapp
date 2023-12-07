@@ -37,9 +37,9 @@
 namespace Assist\Engagement\Models;
 
 use App\Models\BaseModel;
-use Assist\Auditing\Contracts\Auditable;
 use Assist\Engagement\Drivers\SmsDriver;
 use Assist\Engagement\Drivers\EmailDriver;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Assist\Engagement\Drivers\DeliverableDriver;
 use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Enums\EngagementDeliveryStatus;

@@ -36,8 +36,8 @@
 
 namespace App\Models;
 
-use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**

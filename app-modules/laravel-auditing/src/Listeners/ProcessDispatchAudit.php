@@ -1,11 +1,11 @@
 <?php
 
-namespace Assist\Auditing\Listeners;
+namespace Assist\LaravelAuditing\Listeners;
 
-use Assist\Auditing\Facades\Auditor;
 use Illuminate\Support\Facades\Config;
-use Assist\Auditing\Events\DispatchAudit;
+use Assist\LaravelAuditing\Facades\Auditor;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Assist\LaravelAuditing\Events\DispatchAudit;
 
 class ProcessDispatchAudit implements ShouldQueue
 {

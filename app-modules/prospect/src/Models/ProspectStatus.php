@@ -38,8 +38,8 @@ namespace Assist\Prospect\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
-use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Assist\Prospect\Enums\ProspectStatusColorOptions;
 use Assist\Prospect\Enums\SystemProspectClassification;

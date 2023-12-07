@@ -37,8 +37,8 @@
 namespace Assist\Consent\Models;
 
 use App\Models\BaseModel;
-use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
 

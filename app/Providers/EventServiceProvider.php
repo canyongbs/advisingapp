@@ -36,8 +36,8 @@
 
 namespace App\Providers;
 
-use Assist\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
+use Assist\LaravelAuditing\Events\Auditing;
 use Assist\Audit\Listeners\AuditingListener;
 use Assist\Authorization\Events\RoleRemovedFromUser;
 use Illuminate\Notifications\Events\NotificationSent;

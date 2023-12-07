@@ -38,8 +38,8 @@ namespace Assist\Authorization\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;

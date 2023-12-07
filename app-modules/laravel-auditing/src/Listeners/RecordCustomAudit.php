@@ -1,12 +1,12 @@
 <?php
 
-namespace Assist\Auditing\Listeners;
+namespace Assist\LaravelAuditing\Listeners;
 
-use Assist\Auditing\Facades\Auditor;
+use Assist\LaravelAuditing\Facades\Auditor;
 
 class RecordCustomAudit
 {
-    public function handle(\Assist\Auditing\Contracts\Auditable $model)
+    public function handle(\Assist\LaravelAuditing\Contracts\Auditable $model)
     {
         Auditor::execute($model);
     }

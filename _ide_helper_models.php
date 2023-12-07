@@ -2063,9 +2063,9 @@ namespace Assist\KnowledgeBase\Models{
  class IdeHelperKnowledgeBaseStatus {}
 }
 
-namespace Assist\Auditing\Models{
+namespace Assist\LaravelAuditing\Models{
 /**
- * Assist\Auditing\Models\Audit
+ * Assist\LaravelAuditing\Models\Audit
  *
  * @property string $tags
  * @property string $event

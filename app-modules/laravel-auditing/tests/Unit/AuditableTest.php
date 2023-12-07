@@ -1,25 +1,25 @@
 <?php
 
-namespace Assist\Auditing\Tests;
+namespace Assist\LaravelAuditing\Tests;
 
 use Carbon\Carbon;
 use ReflectionClass;
 use Illuminate\Support\Str;
-use Assist\Auditing\Models\Audit;
 use Illuminate\Support\Facades\App;
-use Assist\Auditing\Tests\Models\User;
-use Assist\Auditing\Contracts\Auditable;
-use Assist\Auditing\Tests\Models\Article;
-use Assist\Auditing\Resolvers\UrlResolver;
-use Assist\Auditing\Tests\Models\ApiModel;
-use Assist\Auditing\Encoders\Base64Encoder;
-use Assist\Auditing\Redactors\LeftRedactor;
-use Assist\Auditing\Redactors\RightRedactor;
+use Assist\LaravelAuditing\Models\Audit;
 use Illuminate\Foundation\Testing\WithFaker;
-use Assist\Auditing\Exceptions\AuditingException;
-use Assist\Auditing\Tests\Models\ArticleExcludes;
+use Assist\LaravelAuditing\Tests\Models\User;
+use Assist\LaravelAuditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Tests\Models\Article;
+use Assist\LaravelAuditing\Resolvers\UrlResolver;
+use Assist\LaravelAuditing\Tests\Models\ApiModel;
+use Assist\LaravelAuditing\Encoders\Base64Encoder;
+use Assist\LaravelAuditing\Redactors\LeftRedactor;
+use Assist\LaravelAuditing\Redactors\RightRedactor;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Auditing\Exceptions\AuditableTransitionException;
+use Assist\LaravelAuditing\Exceptions\AuditingException;
+use Assist\LaravelAuditing\Tests\Models\ArticleExcludes;
+use Assist\LaravelAuditing\Exceptions\AuditableTransitionException;
 
 class AuditableTest extends AuditingTestCase
 {
@@ -982,7 +982,7 @@ class AuditableTest extends AuditingTestCase
     public function itFailsToTransitionWhenTheAuditAuditableTypeDoesNotMatchTheModelType()
     {
         $this->expectException(AuditableTransitionException::class);
-        $this->expectExceptionMessage('Expected Auditable type Assist\Auditing\Tests\Models\Article, got Assist\Auditing\Tests\Models\User instead');
+        $this->expectExceptionMessage('Expected Auditable type Assist\LaravelAuditing\Tests\Models\Article, got Assist\LaravelAuditing\Tests\Models\User instead');
 
         $audit = factory(Audit::class)->make([
             'auditable_type' => User::class,
@@ -1171,7 +1171,7 @@ class AuditableTest extends AuditingTestCase
             $model->transitionTo($incompatibleAudit);
         } catch (AuditableTransitionException $e) {
             $this->assertSame(
-                'Incompatibility between [Assist\Auditing\Tests\Models\Article:1] and [Assist\Auditing\Models\Audit:3]',
+                'Incompatibility between [Assist\LaravelAuditing\Tests\Models\Article:1] and [Assist\LaravelAuditing\Models\Audit:3]',
                 $e->getMessage()
             );
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace Assist\Auditing\Tests;
+namespace Assist\LaravelAuditing\Tests;
 
 use Carbon\Carbon;
 use DateTimeInterface;
-use Assist\Auditing\Models\Audit;
-use Assist\Auditing\Tests\Models\User;
-use Assist\Auditing\Tests\Models\Money;
-use Assist\Auditing\Tests\Models\Article;
-use Assist\Auditing\Resolvers\UrlResolver;
-use Assist\Auditing\Encoders\Base64Encoder;
-use Assist\Auditing\Redactors\LeftRedactor;
+use Assist\LaravelAuditing\Models\Audit;
+use Assist\LaravelAuditing\Tests\Models\User;
+use Assist\LaravelAuditing\Tests\Models\Money;
+use Assist\LaravelAuditing\Tests\Models\Article;
+use Assist\LaravelAuditing\Resolvers\UrlResolver;
+use Assist\LaravelAuditing\Encoders\Base64Encoder;
+use Assist\LaravelAuditing\Redactors\LeftRedactor;
 
 class AuditTest extends AuditingTestCase
 {
@@ -313,7 +313,7 @@ class AuditTest extends AuditingTestCase
             'audit_created_at' => $created_at,
             'audit_updated_at' => $updated_at,
             'user_id' => 1,
-            'user_type' => 'Assist\\Auditing\\Tests\\Models\\User',
+            'user_type' => 'Assist\\LaravelAuditing\\Tests\\Models\\User',
             'audit_url' => UrlResolver::resolveCommandLine(),
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',

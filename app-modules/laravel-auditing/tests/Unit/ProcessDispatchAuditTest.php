@@ -1,14 +1,14 @@
 <?php
 
-namespace Assist\Auditing\Tests\Unit;
+namespace Assist\LaravelAuditing\Tests\Unit;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
-use Assist\Auditing\Events\DispatchAudit;
-use Assist\Auditing\Tests\Models\Article;
 use Illuminate\Events\CallQueuedListener;
-use Assist\Auditing\Tests\AuditingTestCase;
-use Assist\Auditing\Listeners\ProcessDispatchAudit;
+use Assist\LaravelAuditing\Events\DispatchAudit;
+use Assist\LaravelAuditing\Tests\Models\Article;
+use Assist\LaravelAuditing\Tests\AuditingTestCase;
+use Assist\LaravelAuditing\Listeners\ProcessDispatchAudit;
 
 class ProcessDispatchAuditTest extends AuditingTestCase
 {

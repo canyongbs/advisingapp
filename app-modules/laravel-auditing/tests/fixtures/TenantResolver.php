@@ -1,9 +1,9 @@
 <?php
 
-namespace Assist\Auditing\Tests\fixtures;
+namespace Assist\LaravelAuditing\Tests\fixtures;
 
-use Assist\Auditing\Contracts\Resolver;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Resolver;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 class TenantResolver implements Resolver
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Assist\Auditing\Contracts;
+namespace Assist\LaravelAuditing\Contracts;
 
 interface Auditor
 {
     /**
      * Get an audit driver instance.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return AuditDriver
      */
@@ -16,7 +16,7 @@ interface Auditor
     /**
      * Perform an audit.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
      *
      * @return void
      */

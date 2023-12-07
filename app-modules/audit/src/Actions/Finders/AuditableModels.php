@@ -38,7 +38,7 @@ namespace Assist\Audit\Actions\Finders;
 
 use ReflectionClass;
 use Illuminate\Support\Collection;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AuditableModels

@@ -1,8 +1,8 @@
 <?php
 
-namespace Assist\Auditing\Tests\Functional;
+namespace Assist\LaravelAuditing\Tests\Functional;
 
-use Assist\Auditing\Tests\AuditingTestCase;
+use Assist\LaravelAuditing\Tests\AuditingTestCase;
 
 class CommandTest extends AuditingTestCase
 {

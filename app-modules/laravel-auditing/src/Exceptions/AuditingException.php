@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Auditing\Exceptions;
+namespace Assist\LaravelAuditing\Exceptions;
 
 use Exception;
 

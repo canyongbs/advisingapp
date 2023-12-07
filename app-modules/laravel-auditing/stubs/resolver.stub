@@ -2,8 +2,8 @@
 
 namespace DummyNamespace;
 
-use Assist\Auditing\Contracts\Resolver;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Resolver;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 class DummyClass implements Resolver
 {

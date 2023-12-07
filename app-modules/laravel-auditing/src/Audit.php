@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Auditing;
+namespace Assist\LaravelAuditing;
 
 use DateTimeInterface;
 use Illuminate\Support\Str;
@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Auditing\Contracts\AttributeEncoder;
+use Assist\LaravelAuditing\Contracts\AttributeEncoder;
 
 trait Audit
 {

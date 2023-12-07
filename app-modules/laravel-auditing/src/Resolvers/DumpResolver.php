@@ -1,9 +1,9 @@
 <?php
 
-namespace Assist\Auditing\Resolvers;
+namespace Assist\LaravelAuditing\Resolvers;
 
-use Assist\Auditing\Contracts\Resolver;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Resolver;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 class DumpResolver implements Resolver
 {

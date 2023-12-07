@@ -1,7 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
-use Assist\Auditing\Tests\Models\User;
+use Assist\LaravelAuditing\Tests\Models\User;
 
 /*
 |--------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Auditing\Console;
+namespace Assist\LaravelAuditing\Console;
 
 use Illuminate\Console\GeneratorCommand;
 

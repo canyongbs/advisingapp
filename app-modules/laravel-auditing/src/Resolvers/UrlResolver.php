@@ -1,12 +1,12 @@
 <?php
 
-namespace Assist\Auditing\Resolvers;
+namespace Assist\LaravelAuditing\Resolvers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
-class UrlResolver implements \Assist\Auditing\Contracts\Resolver
+class UrlResolver implements \Assist\LaravelAuditing\Contracts\Resolver
 {
     /**
      * @return string

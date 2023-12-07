@@ -1,11 +1,11 @@
 <?php
 
-namespace Assist\Auditing\Drivers;
+namespace Assist\LaravelAuditing\Drivers;
 
-use Assist\Auditing\Contracts\Audit;
 use Illuminate\Support\Facades\Config;
-use Assist\Auditing\Contracts\Auditable;
-use Assist\Auditing\Contracts\AuditDriver;
+use Assist\LaravelAuditing\Contracts\Audit;
+use Assist\LaravelAuditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\AuditDriver;
 
 class Database implements AuditDriver
 {
@@ -14,7 +14,7 @@ class Database implements AuditDriver
      */
     public function audit(Auditable $model): ?Audit
     {
-        $implementation = Config::get('audit.implementation', \Assist\Auditing\Models\Audit::class);
+        $implementation = Config::get('audit.implementation', \Assist\LaravelAuditing\Models\Audit::class);
 
         return call_user_func([$implementation, 'create'], $model->toAudit());
     }

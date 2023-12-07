@@ -1,18 +1,18 @@
 <?php
 
-namespace Assist\Auditing;
+namespace Assist\LaravelAuditing;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Config;
-use Assist\Auditing\Contracts\Resolver;
-use Assist\Auditing\Events\AuditCustom;
-use Assist\Auditing\Contracts\AttributeEncoder;
-use Assist\Auditing\Contracts\AttributeRedactor;
-use Assist\Auditing\Exceptions\AuditingException;
+use Assist\LaravelAuditing\Contracts\Resolver;
+use Assist\LaravelAuditing\Events\AuditCustom;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Assist\Auditing\Exceptions\AuditableTransitionException;
+use Assist\LaravelAuditing\Contracts\AttributeEncoder;
+use Assist\LaravelAuditing\Contracts\AttributeRedactor;
+use Assist\LaravelAuditing\Exceptions\AuditingException;
+use Assist\LaravelAuditing\Exceptions\AuditableTransitionException;
 
 trait Auditable
 {
@@ -665,7 +665,7 @@ trait Auditable
             $userResolver = Config::get('audit.resolver.user');
         }
 
-        if (is_subclass_of($userResolver, \Assist\Auditing\Contracts\UserResolver::class)) {
+        if (is_subclass_of($userResolver, \Assist\LaravelAuditing\Contracts\UserResolver::class)) {
             return call_user_func([$userResolver, 'resolve'], $this);
         }
 

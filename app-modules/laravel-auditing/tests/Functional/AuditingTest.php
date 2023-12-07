@@ -1,21 +1,21 @@
 <?php
 
-namespace Assist\Auditing\Tests\Functional;
+namespace Assist\LaravelAuditing\Tests\Functional;
 
 use Carbon\Carbon;
 use InvalidArgumentException;
-use Assist\Auditing\Models\Audit;
 use Illuminate\Support\Facades\App;
-use Assist\Auditing\Events\Auditing;
 use Illuminate\Support\Facades\Event;
-use Assist\Auditing\Tests\Models\User;
-use Assist\Auditing\Events\AuditCustom;
-use Assist\Auditing\Tests\Models\Article;
-use Assist\Auditing\Tests\Models\Category;
-use Assist\Auditing\Tests\AuditingTestCase;
+use Assist\LaravelAuditing\Models\Audit;
+use Assist\LaravelAuditing\Events\Auditing;
 use Illuminate\Foundation\Testing\WithFaker;
-use Assist\Auditing\Tests\Models\ArticleExcludes;
-use Assist\Auditing\Tests\fixtures\TenantResolver;
+use Assist\LaravelAuditing\Tests\Models\User;
+use Assist\LaravelAuditing\Events\AuditCustom;
+use Assist\LaravelAuditing\Tests\Models\Article;
+use Assist\LaravelAuditing\Tests\Models\Category;
+use Assist\LaravelAuditing\Tests\AuditingTestCase;
+use Assist\LaravelAuditing\Tests\Models\ArticleExcludes;
+use Assist\LaravelAuditing\Tests\fixtures\TenantResolver;
 
 class AuditingTest extends AuditingTestCase
 {

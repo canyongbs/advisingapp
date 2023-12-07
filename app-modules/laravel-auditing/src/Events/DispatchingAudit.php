@@ -1,8 +1,8 @@
 <?php
 
-namespace Assist\Auditing\Events;
+namespace Assist\LaravelAuditing\Events;
 
-use Assist\Auditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 class DispatchingAudit
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Assist\Auditing\Facades;
+namespace Assist\LaravelAuditing\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \Assist\Auditing\Contracts\AuditDriver auditDriver(\Assist\Auditing\Contracts\Auditable $model);
- * @method static void execute(\Assist\Auditing\Contracts\Auditable $model);
+ * @method static \Assist\LaravelAuditing\Contracts\AuditDriver auditDriver(\Assist\LaravelAuditing\Contracts\Auditable $model);
+ * @method static void execute(\Assist\LaravelAuditing\Contracts\Auditable $model);
  */
 class Auditor extends Facade
 {
@@ -15,6 +15,6 @@ class Auditor extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return \Assist\Auditing\Contracts\Auditor::class;
+        return \Assist\LaravelAuditing\Contracts\Auditor::class;
     }
 }

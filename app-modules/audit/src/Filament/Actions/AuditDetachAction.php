@@ -38,8 +38,8 @@ namespace Assist\Audit\Filament\Actions;
 
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Auditing\Contracts\Auditable;
 use Filament\Tables\Actions\DetachAction;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AuditDetachAction extends DetachAction

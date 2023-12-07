@@ -1,6 +1,6 @@
 <?php
 
-namespace Assist\Auditing\Contracts;
+namespace Assist\LaravelAuditing\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -9,7 +9,7 @@ interface Auditable
     /**
      * Auditable Model audits.
      *
-     * @return MorphMany<\Assist\Auditing\Models\Audit>
+     * @return MorphMany<\Assist\LaravelAuditing\Models\Audit>
      */
     public function audits(): MorphMany;
 
@@ -46,7 +46,7 @@ interface Auditable
     /**
      * Return data for an Audit.
      *
-     * @throws \Assist\Auditing\Exceptions\AuditingException
+     * @throws \Assist\LaravelAuditing\Exceptions\AuditingException
      *
      * @return array
      */
@@ -123,7 +123,7 @@ interface Auditable
      * @param Audit $audit
      * @param bool  $old
      *
-     * @throws \Assist\Auditing\Exceptions\AuditableTransitionException
+     * @throws \Assist\LaravelAuditing\Exceptions\AuditableTransitionException
      *
      * @return Auditable
      */

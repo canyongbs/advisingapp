@@ -1,8 +1,8 @@
 <?php
 
-namespace Assist\Auditing\Encoders;
+namespace Assist\LaravelAuditing\Encoders;
 
-class Base64Encoder implements \Assist\Auditing\Contracts\AttributeEncoder
+class Base64Encoder implements \Assist\LaravelAuditing\Contracts\AttributeEncoder
 {
     /**
      * {@inheritdoc}

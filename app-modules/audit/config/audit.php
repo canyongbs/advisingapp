@@ -35,7 +35,7 @@
 */
 
 use Assist\Audit\Models\Audit;
-use Assist\Auditing\Listeners\ProcessDispatchAudit;
+use Assist\LaravelAuditing\Listeners\ProcessDispatchAudit;
 
 return [
     'enabled' => env('AUDITING_ENABLED', true),
@@ -66,7 +66,7 @@ return [
             'web',
             'api',
         ],
-        'resolver' => Assist\Auditing\Resolvers\UserResolver::class,
+        'resolver' => Assist\LaravelAuditing\Resolvers\UserResolver::class,
     ],
 
     /*
@@ -78,9 +78,9 @@ return [
     |
     */
     'resolvers' => [
-        'ip_address' => Assist\Auditing\Resolvers\IpAddressResolver::class,
-        'user_agent' => Assist\Auditing\Resolvers\UserAgentResolver::class,
-        'url' => Assist\Auditing\Resolvers\UrlResolver::class,
+        'ip_address' => Assist\LaravelAuditing\Resolvers\IpAddressResolver::class,
+        'user_agent' => Assist\LaravelAuditing\Resolvers\UserAgentResolver::class,
+        'url' => Assist\LaravelAuditing\Resolvers\UrlResolver::class,
     ],
 
     /*

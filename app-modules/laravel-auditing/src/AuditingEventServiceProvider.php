@@ -1,13 +1,13 @@
 <?php
 
-namespace Assist\Auditing;
+namespace Assist\LaravelAuditing;
 
-class_alias(\Illuminate\Foundation\Support\Providers\EventServiceProvider::class, '\Assist\Auditing\ServiceProvider');
+class_alias(\Illuminate\Foundation\Support\Providers\EventServiceProvider::class, '\Assist\LaravelAuditing\ServiceProvider');
 
-use Assist\Auditing\Events\AuditCustom;
-use Assist\Auditing\Events\DispatchAudit;
-use Assist\Auditing\Listeners\RecordCustomAudit;
-use Assist\Auditing\Listeners\ProcessDispatchAudit;
+use Assist\LaravelAuditing\Events\AuditCustom;
+use Assist\LaravelAuditing\Events\DispatchAudit;
+use Assist\LaravelAuditing\Listeners\RecordCustomAudit;
+use Assist\LaravelAuditing\Listeners\ProcessDispatchAudit;
 
 class AuditingEventServiceProvider extends ServiceProvider
 {

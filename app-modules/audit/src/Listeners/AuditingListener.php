@@ -36,9 +36,9 @@
 
 namespace Assist\Audit\Listeners;
 
-use Assist\Auditing\Events\Auditing;
 use Illuminate\Database\Eloquent\Model;
 use Assist\Audit\Settings\AuditSettings;
+use Assist\LaravelAuditing\Events\Auditing;
 
 class AuditingListener
 {

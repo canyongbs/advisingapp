@@ -9,7 +9,7 @@ use Faker\Generator as Faker;
 |
 */
 
-($factory ?? null)?->define(\Assist\Auditing\Tests\Models\Category::class, function (Faker $faker) {
+($factory ?? null)?->define(\Assist\LaravelAuditing\Tests\Models\Category::class, function (Faker $faker) {
     return [
         'name' => $faker->unique()->colorName(),
     ];

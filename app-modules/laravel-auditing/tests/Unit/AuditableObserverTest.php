@@ -1,13 +1,13 @@
 <?php
 
-namespace Assist\Auditing\Tests;
+namespace Assist\LaravelAuditing\Tests;
 
-use Assist\Auditing\Models\Audit;
 use Illuminate\Support\Facades\Event;
-use Assist\Auditing\AuditableObserver;
-use Assist\Auditing\Events\DispatchAudit;
-use Assist\Auditing\Tests\Models\Article;
-use Assist\Auditing\Events\DispatchingAudit;
+use Assist\LaravelAuditing\Models\Audit;
+use Assist\LaravelAuditing\AuditableObserver;
+use Assist\LaravelAuditing\Events\DispatchAudit;
+use Assist\LaravelAuditing\Tests\Models\Article;
+use Assist\LaravelAuditing\Events\DispatchingAudit;
 
 class AuditableObserverTest extends AuditingTestCase
 {

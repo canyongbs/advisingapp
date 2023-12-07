@@ -1,9 +1,9 @@
 <?php
 
 use Faker\Generator as Faker;
-use Assist\Auditing\Models\Audit;
-use Assist\Auditing\Tests\Models\User;
-use Assist\Auditing\Tests\Models\Article;
+use Assist\LaravelAuditing\Models\Audit;
+use Assist\LaravelAuditing\Tests\Models\User;
+use Assist\LaravelAuditing\Tests\Models\Article;
 
 /*
 |--------------------------------------------------------------------------

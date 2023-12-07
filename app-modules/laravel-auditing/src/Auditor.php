@@ -1,16 +1,16 @@
 <?php
 
-namespace Assist\Auditing;
+namespace Assist\LaravelAuditing;
 
 use InvalidArgumentException;
 use Illuminate\Support\Manager;
-use Assist\Auditing\Events\Audited;
-use Assist\Auditing\Events\Auditing;
-use Assist\Auditing\Drivers\Database;
 use Illuminate\Support\Facades\Config;
-use Assist\Auditing\Contracts\Auditable;
-use Assist\Auditing\Contracts\AuditDriver;
-use Assist\Auditing\Exceptions\AuditingException;
+use Assist\LaravelAuditing\Events\Audited;
+use Assist\LaravelAuditing\Events\Auditing;
+use Assist\LaravelAuditing\Drivers\Database;
+use Assist\LaravelAuditing\Contracts\Auditable;
+use Assist\LaravelAuditing\Contracts\AuditDriver;
+use Assist\LaravelAuditing\Exceptions\AuditingException;
 
 class Auditor extends Manager implements Contracts\Auditor
 {
@@ -96,7 +96,7 @@ class Auditor extends Manager implements Contracts\Auditor
     /**
      * Create an instance of the Database audit driver.
      *
-     * @return \Assist\Auditing\Drivers\Database
+     * @return \Assist\LaravelAuditing\Drivers\Database
      */
     protected function createDatabaseDriver(): Database
     {
@@ -106,8 +106,8 @@ class Auditor extends Manager implements Contracts\Auditor
     /**
      * Fire the Auditing event.
      *
-     * @param \Assist\Auditing\Contracts\Auditable $model
-     * @param \Assist\Auditing\Contracts\AuditDriver $driver
+     * @param \Assist\LaravelAuditing\Contracts\Auditable $model
+     * @param \Assist\LaravelAuditing\Contracts\AuditDriver $driver
      *
      * @return bool
      */

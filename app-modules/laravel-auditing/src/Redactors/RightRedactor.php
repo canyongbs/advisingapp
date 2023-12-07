@@ -1,8 +1,8 @@
 <?php
 
-namespace Assist\Auditing\Redactors;
+namespace Assist\LaravelAuditing\Redactors;
 
-class RightRedactor implements \Assist\Auditing\Contracts\AttributeRedactor
+class RightRedactor implements \Assist\LaravelAuditing\Contracts\AttributeRedactor
 {
     /**
      * {@inheritdoc}

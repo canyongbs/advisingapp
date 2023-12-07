@@ -37,9 +37,9 @@
 namespace Assist\Campaign\Models;
 
 use App\Models\BaseModel;
-use Assist\Auditing\Contracts\Auditable;
 use Assist\Campaign\Enums\CampaignActionType;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;

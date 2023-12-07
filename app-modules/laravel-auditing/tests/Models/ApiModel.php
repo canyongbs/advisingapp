@@ -1,14 +1,14 @@
 <?php
 
-namespace Assist\Auditing\Tests\Models;
+namespace Assist\LaravelAuditing\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Assist\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Assist\LaravelAuditing\Contracts\Auditable;
 
 class ApiModel extends Model implements Auditable
 {
-    use \Assist\Auditing\Auditable;
+    use \Assist\LaravelAuditing\Auditable;
     use SoftDeletes;
 
     /**

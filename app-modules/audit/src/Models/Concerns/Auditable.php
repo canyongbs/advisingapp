@@ -36,7 +36,7 @@
 
 namespace Assist\Audit\Models\Concerns;
 
-use Assist\Auditing\Auditable as BaseAuditable;
+use Assist\LaravelAuditing\Auditable as BaseAuditable;
 
 trait Auditable
 {

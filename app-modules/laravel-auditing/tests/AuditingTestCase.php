@@ -1,13 +1,13 @@
 <?php
 
-namespace Assist\Auditing\Tests;
+namespace Assist\LaravelAuditing\Tests;
 
 use Orchestra\Testbench\TestCase;
-use Assist\Auditing\Resolvers\UrlResolver;
-use Assist\Auditing\Resolvers\UserResolver;
-use Assist\Auditing\AuditingServiceProvider;
-use Assist\Auditing\Resolvers\IpAddressResolver;
-use Assist\Auditing\Resolvers\UserAgentResolver;
+use Assist\LaravelAuditing\Resolvers\UrlResolver;
+use Assist\LaravelAuditing\Resolvers\UserResolver;
+use Assist\LaravelAuditing\AuditingServiceProvider;
+use Assist\LaravelAuditing\Resolvers\IpAddressResolver;
+use Assist\LaravelAuditing\Resolvers\UserAgentResolver;
 
 class AuditingTestCase extends TestCase
 {

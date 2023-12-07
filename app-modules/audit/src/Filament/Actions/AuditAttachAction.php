@@ -36,8 +36,8 @@
 
 namespace Assist\Audit\Filament\Actions;
 
-use Assist\Auditing\Contracts\Auditable;
 use Filament\Tables\Actions\AttachAction;
+use Assist\LaravelAuditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AuditAttachAction extends AttachAction
