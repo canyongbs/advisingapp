@@ -34,54 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Form\Actions;
 
-use Assist\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Bus\Queueable;
+use Assist\Form\Models\FormRequest;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+abstract class DeliverFormRequest implements ShouldQueue
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-    ];
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
+    public function __construct(
+        public FormRequest $request
+    ) {}
 
-    public function fields(): HasMany
-    {
-        return $this->hasMany(FormField::class);
-    }
-
-    public function steps(): HasMany
-    {
-        return $this->hasMany(FormStep::class);
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
-
-    public function requests(): HasMany
-    {
-        return $this->hasMany(FormRequest::class);
-    }
+    abstract public function handle(): void;
 }

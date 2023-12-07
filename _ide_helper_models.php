@@ -631,6 +631,8 @@ namespace Assist\AssistDataModel\Models{
  * @property-read int|null $engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Enrollment> $enrollments
  * @property-read int|null $enrollments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $formRequests
+ * @property-read int|null $form_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
@@ -1530,6 +1532,8 @@ namespace Assist\Form\Models{
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $requests
+ * @property-read int|null $requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormStep> $steps
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $submissions
@@ -1618,6 +1622,48 @@ namespace Assist\Form\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperFormField {}
+}
+
+namespace Assist\Form\Models{
+/**
+ * Assist\Form\Models\FormRequest
+ *
+ * @property string $id
+ * @property string $form_id
+ * @property \Assist\Form\Enums\FormRequestDeliveryMethod $method
+ * @property string|null $recipient_id
+ * @property string|null $recipient_type
+ * @property string|null $submission_id
+ * @property string $user_id
+ * @property string|null $note
+ * @property int|null $canceled_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Assist\Form\Models\Form $form
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $recipient
+ * @property-read \Assist\Form\Models\FormSubmission|null $submission
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest notCanceled()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereRecipientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereRecipientType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereSubmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormRequest {}
 }
 
 namespace Assist\Form\Models{
@@ -2232,6 +2278,8 @@ namespace Assist\Prospect\Models{
  * @property-read int|null $engagement_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $formRequests
+ * @property-read int|null $form_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions

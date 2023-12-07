@@ -45,6 +45,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Assist\Form\Filament\Actions\RequestForm;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Assist\Form\Filament\Resources\FormResource;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -76,6 +77,9 @@ class ManageProspectFormSubmissions extends ManageRelatedRecords
                     ->sortable(),
             ])
             ->filters([
+            ])
+            ->headerActions([
+                RequestForm::make(),
             ])
             ->actions([
                 ViewAction::make()

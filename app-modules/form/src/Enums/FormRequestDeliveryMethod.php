@@ -34,54 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Form\Enums;
 
-use Assist\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Form\Models\FormRequest;
+use Filament\Support\Contracts\HasLabel;
+use Assist\Form\Actions\DeliverFormRequestBySms;
+use Assist\Form\Actions\DeliverFormRequestByEmail;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+enum FormRequestDeliveryMethod: string implements HasLabel
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-    ];
+    case Email = 'email';
+    case Sms = 'sms';
 
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
-
-    public function fields(): HasMany
+    public function getLabel(): ?string
     {
-        return $this->hasMany(FormField::class);
+        return match ($this) {
+            static::Email => 'Email',
+            static::Sms => 'SMS',
+        };
     }
 
-    public function steps(): HasMany
+    public function deliver(FormRequest $request): void
     {
-        return $this->hasMany(FormStep::class);
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
-
-    public function requests(): HasMany
-    {
-        return $this->hasMany(FormRequest::class);
+        match ($this) {
+            static::Email => DeliverFormRequestByEmail::dispatch($request),
+            static::Sms => DeliverFormRequestBySms::dispatch($request),
+        };
     }
 }

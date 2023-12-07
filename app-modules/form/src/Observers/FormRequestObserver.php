@@ -34,54 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Form\Observers;
 
-use Assist\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Assist\Form\Models\FormRequest;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+class FormRequestObserver
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
-
-    public function fields(): HasMany
+    public function creating(FormRequest $request): void
     {
-        return $this->hasMany(FormField::class);
+        $request->user()->associate(auth()->user());
     }
 
-    public function steps(): HasMany
+    public function created(FormRequest $request): void
     {
-        return $this->hasMany(FormStep::class);
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
-
-    public function requests(): HasMany
-    {
-        return $this->hasMany(FormRequest::class);
+        $request->deliver();
     }
 }

@@ -34,54 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace Assist\Form\Actions;
 
-use Assist\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Twilio\Rest\Client;
+use Twilio\Exceptions\TwilioException;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+class DeliverFormRequestBySms extends DeliverFormRequest
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'primary_color',
-        'rounding',
-        'content',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
-
-    public function fields(): HasMany
+    public function handle(): void
     {
-        return $this->hasMany(FormField::class);
-    }
+        $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
 
-    public function steps(): HasMany
-    {
-        return $this->hasMany(FormStep::class);
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
-
-    public function requests(): HasMany
-    {
-        return $this->hasMany(FormRequest::class);
+        try {
+            $client->messages->create(
+                ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->request->recipient->mobile,
+                [
+                    'from' => config('services.twilio.from_number'),
+                    'body' => "You have been sent a request to complete {$this->request->form->name} by {$this->request->user->name}." .
+                        (filled($this->request->note) ? " {$this->request->note}" : '') .
+                        ' ' . route('forms.show', ['form' => $this->request->form]),
+                ],
+            );
+        } catch (TwilioException $e) {
+            // TODO Notify someone of the failure
+        }
     }
 }
