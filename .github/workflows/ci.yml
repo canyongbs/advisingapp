@@ -168,10 +168,13 @@ jobs:
           --health-retries 5
 
     steps:
+      - name: Install git
+        run: sudo apt-get install -y git zip unzip
+        
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: gd, gmp, redis, zip
+          extensions: gd, gmp, redis
 
       - uses: actions/checkout@v4
         with:
