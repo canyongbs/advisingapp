@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/consent",
+  "name": "canyon-gbs/advising-app-consent",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Consent\\": "src/",
-      "Assist\\Consent\\Tests\\": "tests/",
-      "Assist\\Consent\\Database\\Factories\\": "database/factories/",
-      "Assist\\Consent\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Consent\\": "src/",
+      "AdvisingApp\\Consent\\Tests\\": "tests/",
+      "AdvisingApp\\Consent\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Consent\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Consent\\Providers\\ConsentServiceProvider"
+        "AdvisingApp\\Consent\\Providers\\ConsentServiceProvider"
       ]
     }
   }

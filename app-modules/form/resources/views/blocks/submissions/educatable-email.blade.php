@@ -32,8 +32,8 @@
 </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\AssistDataModel\Models\Student;
-    use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
+    use AdvisingApp\StudentDataModel\Models\Student;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
     use AdvisingApp\Prospect\Models\Prospect;
     use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 @endphp

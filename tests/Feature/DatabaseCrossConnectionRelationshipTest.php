@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
 test('relationships work cross connections', function () {

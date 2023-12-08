@@ -54,7 +54,7 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -62,10 +62,10 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use Filament\Forms\Components\MorphToSelect\Type;
 use AdvisingApp\Alert\Filament\Resources\AlertResource;
-use AdvisingApp\AssistDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
-use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 
 class ListAlerts extends ListRecords
 {

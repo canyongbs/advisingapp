@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\ServiceManagement\Models\ServiceRequestAssignment>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment>
  */
 class ServiceRequestAssignmentFactory extends Factory
 {

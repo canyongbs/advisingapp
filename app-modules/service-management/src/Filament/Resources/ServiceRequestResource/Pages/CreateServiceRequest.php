@@ -42,7 +42,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\MorphToSelect;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;

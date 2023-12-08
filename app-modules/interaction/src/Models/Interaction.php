@@ -44,7 +44,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\AssistDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Notifications\Models\Contracts\Subscribable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;

@@ -1,27 +1,27 @@
 {
-    "name": "canyon-gbs/integration-twilio",
+    "name": "canyon-gbs/advising-app-integration-twilio",
     "description": "",
     "type": "library",
     "version": "1.0",
     "license": "proprietary",
     "require": {
         "filament/filament": "^3.0",
-        "canyon-gbs/engagement": "*",
-        "canyon-gbs/webhook": "*"
+        "canyon-gbs/advising-app-engagement": "*",
+        "canyon-gbs/advising-app-webhook": "*"
     },
     "autoload": {
         "psr-4": {
-            "Assist\\IntegrationTwilio\\": "src/",
-            "Assist\\IntegrationTwilio\\Tests\\": "tests/",
-            "Assist\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
-            "Assist\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
+            "AdvisingApp\\IntegrationTwilio\\": "src/",
+            "AdvisingApp\\IntegrationTwilio\\Tests\\": "tests/",
+            "AdvisingApp\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
-                "Assist\\IntegrationTwilio\\Providers\\IntegrationTwilioServiceProvider"
+                "AdvisingApp\\IntegrationTwilio\\Providers\\IntegrationTwilioServiceProvider"
             ]
         }
     }

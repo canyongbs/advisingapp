@@ -1,5 +1,5 @@
 {
-    "name": "canyon-gbs/engagement",
+    "name": "canyon-gbs/advising-app-engagement",
     "description": "",
     "type": "library",
     "version": "1.0",
@@ -10,17 +10,17 @@
     },
     "autoload": {
         "psr-4": {
-            "Assist\\Engagement\\": "src/",
-            "Assist\\Engagement\\Tests\\": "tests/",
-            "Assist\\Engagement\\Database\\Factories\\": "database/factories/",
-            "Assist\\Engagement\\Database\\Seeders\\": "database/seeders/"
+            "AdvisingApp\\Engagement\\": "src/",
+            "AdvisingApp\\Engagement\\Tests\\": "tests/",
+            "AdvisingApp\\Engagement\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Engagement\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
-                "Assist\\Engagement\\Providers\\EngagementServiceProvider"
+                "AdvisingApp\\Engagement\\Providers\\EngagementServiceProvider"
             ]
         }
     }

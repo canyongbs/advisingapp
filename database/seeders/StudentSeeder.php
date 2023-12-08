@@ -37,7 +37,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentSeeder extends Seeder
 {

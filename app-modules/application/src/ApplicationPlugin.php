@@ -50,7 +50,7 @@ class ApplicationPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Application\\Filament\\Resources'
+            for: 'AdvisingApp\\Application\\Filament\\Resources'
         );
     }
 

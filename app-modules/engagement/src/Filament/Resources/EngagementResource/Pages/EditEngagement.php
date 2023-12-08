@@ -53,7 +53,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use Filament\Forms\Components\MorphToSelect;
 use FilamentTiptapEditor\Enums\TiptapOutput;

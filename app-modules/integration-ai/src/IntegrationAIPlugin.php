@@ -50,7 +50,7 @@ class IntegrationAIPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\IntegrationAI\\Filament\\Resources'
+            for: 'AdvisingApp\\IntegrationAI\\Filament\\Resources'
         );
     }
 

@@ -38,7 +38,7 @@ namespace AdvisingApp\Application\Database\Factories;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use Illuminate\Database\Eloquent\Relations\Relation;

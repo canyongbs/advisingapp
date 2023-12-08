@@ -40,7 +40,7 @@ use App\Models\Import;
 use App\Imports\Importer;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Actions\ImportAction\ImportColumn;
 use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
 

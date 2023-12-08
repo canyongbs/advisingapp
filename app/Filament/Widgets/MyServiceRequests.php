@@ -45,8 +45,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Filament\Widgets\TableWidget as BaseWidget;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use AdvisingApp\AssistDataModel\Models\Scopes\EducatableSort;
-use AdvisingApp\AssistDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class MyServiceRequests extends BaseWidget

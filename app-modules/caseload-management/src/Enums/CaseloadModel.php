@@ -40,7 +40,7 @@ use App\Imports\Importer;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
 use AdvisingApp\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
 

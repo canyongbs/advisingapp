@@ -50,13 +50,13 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Engagement\Models\Engagement;
 use App\Actions\GetRecordFromMorphAndKey;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use AdvisingApp\AssistDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Filament\Actions\EngagementCreateAction;
 use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
 

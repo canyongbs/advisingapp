@@ -50,7 +50,7 @@ class IntegrationAwsSesEventHandlingPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\IntegrationAwsSesEventHandling\\Filament\\Resources'
+            for: 'AdvisingApp\\IntegrationAwsSesEventHandling\\Filament\\Resources'
         );
     }
 

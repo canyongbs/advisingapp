@@ -46,7 +46,7 @@ use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Actions\ImportAction\ImportColumn;
 
 /**

@@ -39,7 +39,7 @@ use AdvisingApp\Alert\Models\Alert;
 
 use function Pest\Laravel\actingAs;
 
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Notification;
 use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 

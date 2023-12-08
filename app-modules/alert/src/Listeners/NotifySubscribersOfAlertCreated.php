@@ -38,7 +38,7 @@ namespace AdvisingApp\Alert\Listeners;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Events\AlertCreated;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Notifications\Models\Subscription;
 use AdvisingApp\Alert\Notifications\AlertCreatedNotification;

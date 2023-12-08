@@ -45,7 +45,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use AdvisingApp\AssistDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 

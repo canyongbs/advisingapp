@@ -37,7 +37,7 @@
 namespace AdvisingApp\IntegrationTwilio\Actions\Playground;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 
 class FindEngagementResponseSender implements EngagementResponseSenderFinder

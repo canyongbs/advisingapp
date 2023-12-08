@@ -40,7 +40,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Engagement\Models\EngagementBatch>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Engagement\Models\EngagementBatch>
  */
 class EngagementBatchFactory extends Factory
 {

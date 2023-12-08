@@ -40,7 +40,7 @@ use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Assist\Consent\Models\ConsentAgreement>
+ * @extends \AdvisingApp\Consent\Models\ConsentAgreement>
  */
 class ConsentAgreementFactory extends Factory
 {

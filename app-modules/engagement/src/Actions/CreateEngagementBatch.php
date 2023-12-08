@@ -43,7 +43,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Queue\SerializesModels;
 use AdvisingApp\Engagement\Models\Engagement;
 use Illuminate\Queue\InteractsWithQueue;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Engagement\Models\EngagementBatch;

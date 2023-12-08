@@ -50,11 +50,11 @@ class TaskPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Task\\Filament\\Resources'
+            for: 'AdvisingApp\\Task\\Filament\\Resources'
         )
             ->discoverPages(
                 in: __DIR__ . '/Filament/Pages',
-                for: 'Assist\\Task\\Filament\\Pages'
+                for: 'AdvisingApp\\Task\\Filament\\Pages'
             );
     }
 

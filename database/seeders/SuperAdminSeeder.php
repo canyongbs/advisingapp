@@ -40,7 +40,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 

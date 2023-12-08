@@ -1,5 +1,5 @@
 {
-    "name": "canyon-gbs/webhook",
+    "name": "canyon-gbs/advising-app-webhook",
     "description": "",
     "type": "library",
     "version": "1.0",
@@ -9,17 +9,17 @@
     },
     "autoload": {
         "psr-4": {
-            "Assist\\Webhook\\": "src/",
-            "Assist\\Webhook\\Tests\\": "tests/",
-            "Assist\\Webhook\\Database\\Factories\\": "database/factories/",
-            "Assist\\Webhook\\Database\\Seeders\\": "database/seeders/"
+            "AdvisingApp\\Webhook\\": "src/",
+            "AdvisingApp\\Webhook\\Tests\\": "tests/",
+            "AdvisingApp\\Webhook\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Webhook\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
-                "Assist\\Webhook\\Providers\\WebhookServiceProvider"
+                "AdvisingApp\\Webhook\\Providers\\WebhookServiceProvider"
             ]
         }
     }

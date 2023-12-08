@@ -50,7 +50,7 @@ class ServiceManagementPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\ServiceManagement\\Filament\\Resources'
+            for: 'AdvisingApp\\ServiceManagement\\Filament\\Resources'
         );
     }
 

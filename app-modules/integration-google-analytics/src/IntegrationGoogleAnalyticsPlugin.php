@@ -53,7 +53,7 @@ class IntegrationGoogleAnalyticsPlugin implements Plugin
     {
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
-            for: 'Assist\\IntegrationGoogleAnalytics\\Filament\\Pages'
+            for: 'AdvisingApp\\IntegrationGoogleAnalytics\\Filament\\Pages'
         );
     }
 

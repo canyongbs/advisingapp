@@ -56,14 +56,14 @@ use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\AssistDataModel\Models\Scopes\EducatableSearch;
-use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 class ListTasks extends ListRecords

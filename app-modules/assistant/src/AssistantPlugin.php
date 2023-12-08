@@ -51,11 +51,11 @@ class AssistantPlugin implements Plugin
         $panel
             ->discoverResources(
                 in: __DIR__ . '/Filament/Resources',
-                for: 'Assist\\Assistant\\Filament\\Resources'
+                for: 'AdvisingApp\\Assistant\\Filament\\Resources'
             )
             ->discoverPages(
                 in: __DIR__ . '/Filament/Pages',
-                for: 'Assist\\Assistant\\Filament\\Pages'
+                for: 'AdvisingApp\\Assistant\\Filament\\Pages'
             );
     }
 

@@ -39,7 +39,7 @@ namespace AdvisingApp\Engagement\Database\Factories;
 use App\Models\User;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;

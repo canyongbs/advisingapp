@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Interaction\Models\InteractionStatus>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Interaction\Models\InteractionStatus>
  */
 class InteractionStatusFactory extends Factory
 {

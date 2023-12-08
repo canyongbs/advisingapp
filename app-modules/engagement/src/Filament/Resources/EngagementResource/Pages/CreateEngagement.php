@@ -48,7 +48,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use Filament\Forms\Components\MorphToSelect;

@@ -50,12 +50,12 @@ class CaseloadManagementPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\CaseloadManagement\\Filament\\Resources'
+            for: 'AdvisingApp\\CaseloadManagement\\Filament\\Resources'
         );
 
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
-            for: 'Assist\\CaseloadManagement\\Filament\\Pages'
+            for: 'AdvisingApp\\CaseloadManagement\\Filament\\Pages'
         );
     }
 

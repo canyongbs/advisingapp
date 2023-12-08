@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/caseload-management",
+  "name": "canyon-gbs/advising-app-caseload-management",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\CaseloadManagement\\": "src/",
-      "Assist\\CaseloadManagement\\Tests\\": "tests/",
-      "Assist\\CaseloadManagement\\Database\\Factories\\": "database/factories/",
-      "Assist\\CaseloadManagement\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\CaseloadManagement\\": "src/",
+      "AdvisingApp\\CaseloadManagement\\Tests\\": "tests/",
+      "AdvisingApp\\CaseloadManagement\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\CaseloadManagement\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\CaseloadManagement\\Providers\\CaseloadManagementServiceProvider"
+        "AdvisingApp\\CaseloadManagement\\Providers\\CaseloadManagementServiceProvider"
       ]
     }
   }

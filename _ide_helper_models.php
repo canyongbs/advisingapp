@@ -301,9 +301,9 @@ namespace App\Models{
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequestAssignment> $serviceRequestAssignments
  * @property-read int|null $service_request_assignments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Student> $studentCareTeams
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Student> $studentCareTeams
  * @property-read int|null $student_care_teams_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Student> $studentSubscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Student> $studentSubscriptions
  * @property-read int|null $student_subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
@@ -569,11 +569,11 @@ namespace AdvisingApp\Application\Models{
  class IdeHelperApplicationSubmission {}
 }
 
-namespace AdvisingApp\AssistDataModel\Models{
+namespace AdvisingApp\StudentDataModel\Models{
 /**
- * Assist\AssistDataModel\Models\Enrollment
+ * Assist\StudentDataModel\Models\Enrollment
  *
- * @method static \Assist\AssistDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
+ * @method static \Assist\StudentDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Enrollment query()
@@ -583,12 +583,12 @@ namespace AdvisingApp\AssistDataModel\Models{
  class IdeHelperEnrollment {}
 }
 
-namespace AdvisingApp\AssistDataModel\Models{
+namespace AdvisingApp\StudentDataModel\Models{
 /**
- * Assist\AssistDataModel\Models\Performance
+ * Assist\StudentDataModel\Models\Performance
  *
- * @property-read \Assist\AssistDataModel\Models\Student|null $student
- * @method static \Assist\AssistDataModel\Database\Factories\PerformanceFactory factory($count = null, $state = [])
+ * @property-read \Assist\StudentDataModel\Models\Student|null $student
+ * @method static \Assist\StudentDataModel\Database\Factories\PerformanceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Performance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Performance query()
@@ -598,11 +598,11 @@ namespace AdvisingApp\AssistDataModel\Models{
  class IdeHelperPerformance {}
 }
 
-namespace AdvisingApp\AssistDataModel\Models{
+namespace AdvisingApp\StudentDataModel\Models{
 /**
- * Assist\AssistDataModel\Models\Program
+ * Assist\StudentDataModel\Models\Program
  *
- * @method static \Assist\AssistDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
+ * @method static \Assist\StudentDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Program newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Program newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Program query()
@@ -612,9 +612,9 @@ namespace AdvisingApp\AssistDataModel\Models{
  class IdeHelperProgram {}
 }
 
-namespace AdvisingApp\AssistDataModel\Models{
+namespace AdvisingApp\StudentDataModel\Models{
 /**
- * Assist\AssistDataModel\Models\Student
+ * Assist\StudentDataModel\Models\Student
  *
  * @property string $display_name
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Alert\Models\Alert> $alerts
@@ -629,7 +629,7 @@ namespace AdvisingApp\AssistDataModel\Models{
  * @property-read int|null $engagement_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Enrollment> $enrollments
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Enrollment> $enrollments
  * @property-read int|null $enrollments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $formRequests
  * @property-read int|null $form_requests_count
@@ -643,9 +643,9 @@ namespace AdvisingApp\AssistDataModel\Models{
  * @property-read int|null $ordered_engagement_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $orderedEngagements
  * @property-read int|null $ordered_engagements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Performance> $performances
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Performance> $performances
  * @property-read int|null $performances_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Program> $programs
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Program> $programs
  * @property-read int|null $programs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
@@ -655,7 +655,7 @@ namespace AdvisingApp\AssistDataModel\Models{
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
- * @method static \Assist\AssistDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
+ * @method static \Assist\StudentDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Student query()
@@ -1411,7 +1411,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospects
  * @property-read int|null $prospects_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\AssistDataModel\Models\Student> $students
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Student> $students
  * @property-read int|null $students_count
  * @method static \Assist\Engagement\Database\Factories\EngagementFileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile newModelQuery()

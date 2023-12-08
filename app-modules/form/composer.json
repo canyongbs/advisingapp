@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/form",
+  "name": "canyon-gbs/advising-app-form",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Form\\": "src/",
-      "Assist\\Form\\Tests\\": "tests/",
-      "Assist\\Form\\Database\\Factories\\": "database/factories/",
-      "Assist\\Form\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Form\\": "src/",
+      "AdvisingApp\\Form\\Tests\\": "tests/",
+      "AdvisingApp\\Form\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Form\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Form\\Providers\\FormServiceProvider"
+        "AdvisingApp\\Form\\Providers\\FormServiceProvider"
       ]
     }
   }

@@ -53,7 +53,7 @@ class IntegrationMicrosoftClarityPlugin implements Plugin
     {
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
-            for: 'Assist\\IntegrationMicrosoftClarity\\Filament\\Pages'
+            for: 'AdvisingApp\\IntegrationMicrosoftClarity\\Filament\\Pages'
         );
     }
 

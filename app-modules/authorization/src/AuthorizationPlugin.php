@@ -56,7 +56,7 @@ class AuthorizationPlugin implements Plugin
         $panel
             ->discoverResources(
                 in: __DIR__ . '/Filament/Resources',
-                for: 'Assist\\Authorization\\Filament\\Resources'
+                for: 'AdvisingApp\\Authorization\\Filament\\Resources'
             )
             ->databaseNotifications()
             ->databaseNotificationsPolling('10s')

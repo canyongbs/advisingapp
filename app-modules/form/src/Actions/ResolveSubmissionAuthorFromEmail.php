@@ -37,7 +37,7 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class ResolveSubmissionAuthorFromEmail
 {

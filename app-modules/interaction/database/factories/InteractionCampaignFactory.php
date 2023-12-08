@@ -39,7 +39,7 @@ namespace AdvisingApp\Interaction\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Interaction\Models\InteractionCampaign>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Interaction\Models\InteractionCampaign>
  */
 class InteractionCampaignFactory extends Factory
 {

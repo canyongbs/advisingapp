@@ -36,7 +36,7 @@
 
 namespace App\Filament\Widgets;
 
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class MyStudents extends StatsOverviewWidget

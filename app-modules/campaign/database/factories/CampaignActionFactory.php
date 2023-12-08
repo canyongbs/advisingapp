@@ -42,7 +42,7 @@ use AdvisingApp\Campaign\Enums\CampaignActionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Campaign\Models\CampaignAction>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\CampaignAction>
  */
 class CampaignActionFactory extends Factory
 {

@@ -50,7 +50,7 @@ class ThemePlugin implements Plugin
     {
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
-            for: 'Assist\\Theme\\Filament\\Pages'
+            for: 'AdvisingApp\\Theme\\Filament\\Pages'
         );
     }
 

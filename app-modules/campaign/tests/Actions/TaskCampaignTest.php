@@ -38,13 +38,13 @@ use App\Models\User;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\AssistDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 it('will create the task records for educatables in the caseload', function (Collection $educatables) {
     expect(Task::count())->toBe(0);

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Form\Listeners;
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Notifications\Models\Subscription;

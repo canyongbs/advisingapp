@@ -49,8 +49,8 @@ use Illuminate\Database\Query\JoinClause;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use AdvisingApp\AssistDataModel\Models\Scopes\EducatableSort;
-use AdvisingApp\AssistDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ListServiceRequests extends ListRecords

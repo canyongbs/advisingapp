@@ -50,7 +50,7 @@ class ProspectPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Prospect\\Filament\\Resources'
+            for: 'AdvisingApp\\Prospect\\Filament\\Resources'
         );
     }
 
