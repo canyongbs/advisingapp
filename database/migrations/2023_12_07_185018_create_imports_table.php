@@ -42,7 +42,8 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('imports', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
             $table->timestamp('completed_at')->nullable();
             $table->string('file_name');
             $table->string('file_path');
@@ -50,7 +51,8 @@ return new class () extends Migration {
             $table->unsignedInteger('processed_rows')->default(0);
             $table->unsignedInteger('total_rows');
             $table->unsignedInteger('successful_rows')->default(0);
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

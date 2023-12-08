@@ -36,22 +36,30 @@
 
 namespace App\Providers;
 
+use App\Models\Import;
 use Illuminate\View\View;
+use App\Models\FailedImportRow;
 use App\Models\SettingsProperty;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
 use Assist\Theme\Settings\ThemeSettings;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Actions\Imports\Models\Import as BaseImport;
+use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 
 class FilamentServiceProvider extends ServiceProvider
 {
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->app->bind(BaseImport::class, Import::class);
+        $this->app->bind(BaseFailedImportRow::class, FailedImportRow::class);
+    }
 
     public function boot(): void
     {
         //to get around database connection missing setup during tests
-        if (! app()->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             $themeSettings = app(ThemeSettings::class);
             $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
             $favicon = $settingsProperty->getFirstMedia('favicon');
