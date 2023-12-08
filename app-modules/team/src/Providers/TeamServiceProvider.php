@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Providers;
+namespace AdvisingApp\Team\Providers;
 
 use Filament\Panel;
-use Assist\Team\TeamPlugin;
-use Assist\Team\Models\Team;
-use Assist\Team\Models\TeamUser;
+use AdvisingApp\Team\TeamPlugin;
+use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\TeamUser;
 use Illuminate\Support\ServiceProvider;
-use Assist\Team\Observers\TeamUserObserver;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Team\Observers\TeamUserObserver;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TeamServiceProvider extends ServiceProvider
 {

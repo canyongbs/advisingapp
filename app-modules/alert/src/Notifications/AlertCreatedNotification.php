@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Notifications;
+namespace AdvisingApp\Alert\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Assist\Alert\Models\Alert;
+use AdvisingApp\Alert\Models\Alert;
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
 use Illuminate\Notifications\Notification;

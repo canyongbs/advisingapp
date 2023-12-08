@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Models;
+namespace AdvisingApp\AssistDataModel\Models;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * @mixin IdeHelperProgram

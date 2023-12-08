@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Tests;
+namespace AdvisingApp\Authorization\Tests;
 
 use Illuminate\Support\Facades\DB;
 

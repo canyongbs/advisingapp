@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement;
+namespace AdvisingApp\Engagement;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

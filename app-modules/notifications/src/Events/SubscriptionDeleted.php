@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Events;
+namespace AdvisingApp\Notifications\Events;
 
-use Assist\Notifications\Models\Subscription;
+use AdvisingApp\Notifications\Models\Subscription;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 

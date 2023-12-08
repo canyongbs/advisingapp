@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Providers;
+namespace AdvisingApp\Notifications\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Assist\Notifications\Models\Subscription;
-use Assist\Authorization\AuthorizationRoleRegistry;
-use Assist\Notifications\Events\SubscriptionCreated;
-use Assist\Notifications\Events\SubscriptionDeleted;
+use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Notifications\Events\SubscriptionCreated;
+use AdvisingApp\Notifications\Events\SubscriptionDeleted;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Notifications\Observers\SubscriptionObserver;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\Notifications\Listeners\CreateAutoSubscription;
-use Assist\Notifications\Listeners\NotifyUserOfSubscriptionCreated;
-use Assist\Notifications\Listeners\NotifyUserOfSubscriptionDeleted;
+use AdvisingApp\Notifications\Observers\SubscriptionObserver;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notifications\Listeners\CreateAutoSubscription;
+use AdvisingApp\Notifications\Listeners\NotifyUserOfSubscriptionCreated;
+use AdvisingApp\Notifications\Listeners\NotifyUserOfSubscriptionDeleted;
 
 class NotificationsServiceProvider extends ServiceProvider
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
 
 use Filament\Tables;
 use Filament\Forms\Form;
@@ -45,10 +45,10 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\ServiceManagement\Enums\ServiceRequestUpdateDirection;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
 class ServiceRequestUpdatesRelationManager extends RelationManager
 {

@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Filament\Concerns;
+namespace AdvisingApp\Task\Filament\Concerns;
 
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MorphToSelect\Type;

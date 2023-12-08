@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Actions;
+namespace AdvisingApp\Notifications\Actions;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Assist\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\UniqueConstraintViolationException;
-use Assist\Notifications\Exceptions\SubscriptionAlreadyExistsException;
+use AdvisingApp\Notifications\Exceptions\SubscriptionAlreadyExistsException;
 
 class SubscriptionCreate
 {

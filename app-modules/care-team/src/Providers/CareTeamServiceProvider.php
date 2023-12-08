@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CareTeam\Providers;
+namespace AdvisingApp\CareTeam\Providers;
 
 use Filament\Panel;
-use Assist\CareTeam\CareTeamPlugin;
-use Assist\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\CareTeamPlugin;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use Illuminate\Support\ServiceProvider;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class CareTeamServiceProvider extends ServiceProvider
 {

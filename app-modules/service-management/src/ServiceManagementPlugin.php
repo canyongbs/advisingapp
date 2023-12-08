@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement;
+namespace AdvisingApp\ServiceManagement;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

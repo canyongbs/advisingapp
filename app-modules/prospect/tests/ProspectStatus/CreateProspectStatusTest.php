@@ -41,14 +41,14 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
-use Assist\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\Prospect\Filament\Resources\ProspectStatusResource;
-use Assist\Prospect\Tests\ProspectStatus\RequestFactories\CreateProspectStatusRequestFactory;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Tests\ProspectStatus\RequestFactories\CreateProspectStatusRequestFactory;
 
 test('A successful action on the CreateProspectStatus page', function () {
     asSuperAdmin()

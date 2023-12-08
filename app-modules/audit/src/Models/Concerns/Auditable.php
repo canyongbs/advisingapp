@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Models\Concerns;
+namespace AdvisingApp\Audit\Models\Concerns;
 
 use OwenIt\Auditing\Auditable as OwenItAuditable;
 

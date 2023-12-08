@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Database\Factories;
+namespace AdvisingApp\Alert\Database\Factories;
 
-use Assist\Alert\Models\Alert;
-use Assist\Alert\Enums\AlertStatus;
-use Assist\Prospect\Models\Prospect;
-use Assist\Alert\Enums\AlertSeverity;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 

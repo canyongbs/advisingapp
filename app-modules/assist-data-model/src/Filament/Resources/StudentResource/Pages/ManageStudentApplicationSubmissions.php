@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -42,13 +42,13 @@ use Illuminate\Support\Facades\Cache;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\DeleteAction;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\Application\Models\ApplicationSubmission;
-use Assist\Application\Filament\Resources\ApplicationResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
 
 class ManageStudentApplicationSubmissions extends ManageRelatedRecords
 {

@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\InAppCommunication\Providers;
+namespace AdvisingApp\InAppCommunication\Providers;
 
 use Filament\Panel;
 use Filament\Support\Assets\Js;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\InAppCommunication\InAppCommunicationPlugin;
-use Assist\InAppCommunication\Models\TwilioConversation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\InAppCommunication\InAppCommunicationPlugin;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class InAppCommunicationServiceProvider extends ServiceProvider
 {

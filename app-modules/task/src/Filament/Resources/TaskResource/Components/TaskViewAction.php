@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Filament\Resources\TaskResource\Components;
+namespace AdvisingApp\Task\Filament\Resources\TaskResource\Components;
 
-use Assist\Task\Models\Task;
-use Assist\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ViewAction;
-use Assist\Task\Filament\Concerns\TaskViewActionInfoList;
+use AdvisingApp\Task\Filament\Concerns\TaskViewActionInfoList;
 
 class TaskViewAction extends ViewAction
 {

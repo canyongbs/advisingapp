@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Division\Observers;
+namespace AdvisingApp\Division\Observers;
 
-use Assist\Division\Models\Division;
+use AdvisingApp\Division\Models\Division;
 
 class DivisionObserver
 {

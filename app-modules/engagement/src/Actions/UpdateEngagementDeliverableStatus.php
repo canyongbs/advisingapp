@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Actions;
+namespace AdvisingApp\Engagement\Actions;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Assist\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 
 class UpdateEngagementDeliverableStatus implements ShouldQueue

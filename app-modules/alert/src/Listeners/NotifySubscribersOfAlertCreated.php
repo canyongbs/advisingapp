@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Listeners;
+namespace AdvisingApp\Alert\Listeners;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\Alert\Events\AlertCreated;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Alert\Events\AlertCreated;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\Notifications\Models\Subscription;
-use Assist\Alert\Notifications\AlertCreatedNotification;
+use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 
 class NotifySubscribersOfAlertCreated implements ShouldQueue
 {

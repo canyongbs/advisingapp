@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
-use Assist\Alert\Enums\AlertStatus;
-use Assist\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Components\Textarea;
@@ -51,12 +51,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
 
 class ManageStudentAlerts extends ManageRelatedRecords
 {

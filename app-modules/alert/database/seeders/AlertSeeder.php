@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Database\Seeders;
+namespace AdvisingApp\Alert\Database\Seeders;
 
-use Assist\Alert\Models\Alert;
+use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Database\Seeder;
 
 class AlertSeeder extends Seeder

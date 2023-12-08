@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Filament\Resources\TeamResource\Pages;
+namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Team\Filament\Resources\TeamResource;
+use AdvisingApp\Team\Filament\Resources\TeamResource;
 
 class ViewTeam extends ViewRecord
 {

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\Task\Filament\RelationManagers\BaseTaskRelationManager;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
 
 class ManageStudentTasks extends BaseTaskRelationManager
 {

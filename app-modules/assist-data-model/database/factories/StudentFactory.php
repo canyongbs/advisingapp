@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Database\Factories;
+namespace AdvisingApp\AssistDataModel\Database\Factories;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Webhook\Http\Middleware;
+namespace AdvisingApp\Webhook\Http\Middleware;
 
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
-use Assist\Webhook\Enums\InboundWebhookSource;
+use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 use Symfony\Component\HttpFoundation\Response;
-use Assist\Webhook\Actions\StoreInboundWebhook;
-use Assist\Webhook\DataTransferObjects\SnsMessage;
+use AdvisingApp\Webhook\Actions\StoreInboundWebhook;
+use AdvisingApp\Webhook\DataTransferObjects\SnsMessage;
 
 class HandleAwsSnsRequest
 {

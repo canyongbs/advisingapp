@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Database\Factories;
+namespace AdvisingApp\Interaction\Database\Factories;
 
 use App\Models\User;
-use Assist\Division\Models\Division;
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Interaction\Models\Interaction;
-use Assist\Interaction\Models\InteractionType;
-use Assist\Interaction\Models\InteractionDriver;
-use Assist\Interaction\Models\InteractionStatus;
-use Assist\Interaction\Models\InteractionOutcome;
-use Assist\Interaction\Models\InteractionCampaign;
-use Assist\Interaction\Models\InteractionRelation;
-use Assist\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

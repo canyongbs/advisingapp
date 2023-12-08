@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Providers;
+namespace AdvisingApp\AssistDataModel\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Assist\AssistDataModel\Models\Program;
-use Assist\AssistDataModel\Models\Student;
-use Assist\AssistDataModel\Models\Enrollment;
-use Assist\AssistDataModel\Models\Performance;
-use Assist\AssistDataModel\AssistDataModelPlugin;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\AssistDataModel\Models\Program;
+use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Enrollment;
+use AdvisingApp\AssistDataModel\Models\Performance;
+use AdvisingApp\AssistDataModel\AssistDataModelPlugin;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AssistDataModelServiceProvider extends ServiceProvider
 {

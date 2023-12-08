@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Database\Factories;
+namespace AdvisingApp\Engagement\Database\Factories;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Engagement\Models\EngagementResponse;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 

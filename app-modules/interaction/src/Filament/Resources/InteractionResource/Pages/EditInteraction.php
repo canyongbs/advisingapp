@@ -34,28 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Filament\Resources\InteractionResource\Pages;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
-use Assist\Division\Models\Division;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
-use Assist\Interaction\Models\InteractionType;
-use Assist\Interaction\Models\InteractionDriver;
-use Assist\Interaction\Models\InteractionStatus;
-use Assist\Interaction\Models\InteractionOutcome;
-use Assist\Interaction\Models\InteractionCampaign;
-use Assist\Interaction\Models\InteractionRelation;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Interaction\Filament\Resources\InteractionResource;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
 
 class EditInteraction extends EditRecord
 {

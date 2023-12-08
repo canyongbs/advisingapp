@@ -34,24 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAI\Client;
+namespace AdvisingApp\IntegrationAI\Client;
 
 use Closure;
 use OpenAI\Client;
 use Illuminate\Support\Arr;
 use OpenAI\Testing\ClientFake;
 use OpenAI\Responses\StreamResponse;
-use Assist\IntegrationAI\Settings\AISettings;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
-use Assist\IntegrationAI\Events\AIPromptInitiated;
-use Assist\IntegrationAI\DataTransferObjects\AIPrompt;
-use Assist\IntegrationAI\Client\Contracts\AIChatClient;
-use Assist\IntegrationAI\Client\Concerns\InitializesClient;
-use Assist\IntegrationAI\Exceptions\ContentFilterException;
-use Assist\IntegrationAI\DataTransferObjects\DynamicContext;
-use Assist\IntegrationAI\Exceptions\TokensExceededException;
-use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
-use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
+use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
+use AdvisingApp\IntegrationAI\DataTransferObjects\AIPrompt;
+use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
+use AdvisingApp\IntegrationAI\Client\Concerns\InitializesClient;
+use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
+use AdvisingApp\IntegrationAI\DataTransferObjects\DynamicContext;
+use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
+use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
+use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 abstract class BaseAIChatClient implements AIChatClient
 {

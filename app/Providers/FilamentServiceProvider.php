@@ -40,7 +40,7 @@ use Illuminate\View\View;
 use App\Models\SettingsProperty;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
-use Assist\Theme\Settings\ThemeSettings;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
 

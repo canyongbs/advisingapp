@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -43,15 +43,15 @@ use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Engagement\Enums\EngagementDeliveryStatus;
-use Assist\Engagement\Actions\CreateEngagementDeliverable;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages\CreateEngagement;
 
 class EngagementsRelationManager extends RelationManager
 {

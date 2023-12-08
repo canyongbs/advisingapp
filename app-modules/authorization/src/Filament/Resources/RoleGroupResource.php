@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Filament\Resources;
+namespace AdvisingApp\Authorization\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Models\RoleGroup;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\EditRoleGroup;
-use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\ViewRoleGroup;
-use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\ListRoleGroups;
-use Assist\Authorization\Filament\Resources\RoleGroupResource\Pages\CreateRoleGroup;
-use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\RolesRelationManager;
-use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\UsersRelationManager;
-use Assist\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\PermissionsRelationManager;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\Pages\EditRoleGroup;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\Pages\ViewRoleGroup;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\Pages\ListRoleGroups;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\Pages\CreateRoleGroup;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\RolesRelationManager;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\UsersRelationManager;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\RelationManagers\PermissionsRelationManager;
 
 class RoleGroupResource extends Resource
 {

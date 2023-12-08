@@ -35,6 +35,6 @@
 */
 
 use Lomkit\Rest\Facades\Rest;
-use Assist\Prospect\Rest\Controllers\ProspectController;
+use AdvisingApp\Prospect\Rest\Controllers\ProspectController;
 
 Rest::resource('prospects', ProspectController::class);

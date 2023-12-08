@@ -39,14 +39,14 @@ use Mockery\MockInterface;
 
 use function Pest\Laravel\partialMock;
 
-use Assist\Authorization\Tests\Helpers;
+use AdvisingApp\Authorization\Tests\Helpers;
 use App\Actions\Finders\ApplicationModules;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\Actions\CreatePermissionsForModel;
+use AdvisingApp\Authorization\Actions\CreatePermissionsForModel;
 
 beforeEach(function () {
     Relation::morphMap([

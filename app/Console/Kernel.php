@@ -36,15 +36,15 @@
 
 namespace App\Console;
 
-use Assist\Audit\Models\Audit;
+use AdvisingApp\Audit\Models\Audit;
 use App\Models\FailedImportRow;
-use Assist\Form\Models\FormAuthentication;
+use AdvisingApp\Form\Models\FormAuthentication;
 use Illuminate\Console\Scheduling\Schedule;
-use Assist\Engagement\Models\EngagementFile;
+use AdvisingApp\Engagement\Models\EngagementFile;
 use Illuminate\Database\Console\PruneCommand;
 use Spatie\Health\Commands\RunHealthChecksCommand;
 use App\Console\Commands\RefreshAdmMaterializedView;
-use Assist\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;

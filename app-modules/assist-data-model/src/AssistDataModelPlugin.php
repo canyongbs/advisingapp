@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel;
+namespace AdvisingApp\AssistDataModel;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

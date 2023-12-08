@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Notifications;
+namespace AdvisingApp\Engagement\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use App\Models\NotificationSetting;
-use Assist\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\Engagement;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Filament\Notifications\Notification as FilamentNotification;

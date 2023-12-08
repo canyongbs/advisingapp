@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Tests\RequestFactories;
+namespace AdvisingApp\Task\Tests\RequestFactories;
 
 use App\Models\User;
-use Assist\Task\Enums\TaskStatus;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Worksome\RequestFactories\RequestFactory;
 
 class EditTaskRequestFactory extends RequestFactory

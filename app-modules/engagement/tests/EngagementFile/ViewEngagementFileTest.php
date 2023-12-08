@@ -38,8 +38,8 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Engagement\Models\EngagementFile;
-use Assist\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 
 // TODO: Add tests for the ViewEngagementFile
 //test('The correct details are displayed on the ViewEngagementFile page', function () {});

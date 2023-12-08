@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Models;
+namespace AdvisingApp\Engagement\Models;
 
 use App\Models\BaseModel;
-use Assist\Engagement\Drivers\SmsDriver;
+use AdvisingApp\Engagement\Drivers\SmsDriver;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Engagement\Drivers\EmailDriver;
-use Assist\Engagement\Drivers\DeliverableDriver;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Engagement\Drivers\EmailDriver;
+use AdvisingApp\Engagement\Drivers\DeliverableDriver;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Engagement\Actions\QueuedEngagementDelivery;
-use Assist\Engagement\Actions\EngagementSmsChannelDelivery;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Engagement\Actions\EngagementEmailChannelDelivery;
-use Assist\Engagement\Exceptions\UnknownDeliveryMethodException;
+use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
+use AdvisingApp\Engagement\Exceptions\UnknownDeliveryMethodException;
 
 /**
  * @mixin IdeHelperEngagementDeliverable

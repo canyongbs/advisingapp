@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Filament\Resources\InteractionResource\Pages;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
@@ -44,11 +44,11 @@ use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use Assist\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Interaction\Imports\InteractionsImporter;
-use Assist\Interaction\Filament\Resources\InteractionResource;
+use AdvisingApp\Interaction\Imports\InteractionsImporter;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
 
 class ListInteractions extends ListRecords
 {

@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
-use Assist\Timeline\Filament\Pages\TimelinePage;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Models\ServiceRequestHistory;
-use Assist\ServiceManagement\Models\ServiceRequestAssignment;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ServiceRequestTimeline extends TimelinePage
 {

@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace AdvisingApp\Application\Database\Factories;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**

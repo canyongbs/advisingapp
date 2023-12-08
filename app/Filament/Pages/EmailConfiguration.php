@@ -39,9 +39,9 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
 use Symfony\Component\HttpFoundation\Response;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
 use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
-use Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
 
 class EmailConfiguration extends Page
 {

@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use Assist\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 
 class ManageStudentInteractions extends ManageRelatedRecords
 {

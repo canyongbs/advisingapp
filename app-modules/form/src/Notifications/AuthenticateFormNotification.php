@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Notifications;
+namespace AdvisingApp\Form\Notifications;
 
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
-use Assist\Form\Models\SubmissibleAuthentication;
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
 use Illuminate\Notifications\AnonymousNotifiable;
 
 class AuthenticateFormNotification extends Notification

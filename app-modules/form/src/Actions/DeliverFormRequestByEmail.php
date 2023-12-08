@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace AdvisingApp\Form\Actions;
 
-use Assist\Form\Notifications\FormRequestNotification;
+use AdvisingApp\Form\Notifications\FormRequestNotification;
 
 class DeliverFormRequestByEmail extends DeliverFormRequest
 {

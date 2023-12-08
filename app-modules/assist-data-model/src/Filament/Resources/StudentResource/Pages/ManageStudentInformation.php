@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\PerformanceRelationManager;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\ProgramsRelationManager;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\EnrollmentsRelationManager;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\RelationManagers\PerformanceRelationManager;
 
 class ManageStudentInformation extends ManageRelatedRecords
 {

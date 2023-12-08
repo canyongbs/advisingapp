@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
-use Assist\Engagement\Models\Engagement;
-use Assist\Engagement\Models\EngagementResponse;
-use Assist\Timeline\Filament\Pages\TimelinePage;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
 
 class StudentEngagementTimeline extends TimelinePage
 {

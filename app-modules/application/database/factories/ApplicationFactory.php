@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace AdvisingApp\Application\Database\Factories;
 
 use Illuminate\Support\Str;
-use Assist\Application\Models\Application;
-use Assist\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

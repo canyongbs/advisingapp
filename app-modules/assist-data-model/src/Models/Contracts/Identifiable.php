@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Models\Contracts;
+namespace AdvisingApp\AssistDataModel\Models\Contracts;
 
 interface Identifiable
 {

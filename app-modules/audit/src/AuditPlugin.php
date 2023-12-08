@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit;
+namespace AdvisingApp\Audit;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
-use Assist\Audit\Filament\Pages\ManageAuditSettings;
+use AdvisingApp\Audit\Filament\Pages\ManageAuditSettings;
 
 class AuditPlugin implements Plugin
 {

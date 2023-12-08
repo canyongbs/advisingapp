@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Filament\RelationManagers;
+namespace AdvisingApp\Task\Filament\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Assist\Task\Models\Task;
-use Assist\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Enums\TaskStatus;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Filters\Filter;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -52,14 +52,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Filters\SelectFilter;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 abstract class BaseTaskRelationManager extends ManageRelatedRecords
 {

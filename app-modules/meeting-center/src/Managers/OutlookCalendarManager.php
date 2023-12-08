@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Managers;
+namespace AdvisingApp\MeetingCenter\Managers;
 
 use DateTime;
 use Carbon\Carbon;
@@ -47,13 +47,13 @@ use Microsoft\Graph\Model\ItemBody;
 use Illuminate\Support\Facades\Http;
 use Microsoft\Graph\Model\EmailAddress;
 use Microsoft\Graph\Core\GraphConstants;
-use Assist\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use GuzzleHttp\Exception\ClientException;
 use Microsoft\Graph\Model\DateTimeTimeZone;
-use Assist\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
-use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class OutlookCalendarManager implements CalendarInterface
 {

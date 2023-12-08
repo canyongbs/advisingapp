@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
@@ -44,12 +44,12 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\Timeline\Models\Contracts\ProvidesATimeline;
-use Assist\Timeline\Timelines\ServiceRequestUpdateTimeline;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\ServiceManagement\Enums\ServiceRequestUpdateDirection;
-use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Timelines\ServiceRequestUpdateTimeline;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
+use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @mixin IdeHelperServiceRequestUpdate

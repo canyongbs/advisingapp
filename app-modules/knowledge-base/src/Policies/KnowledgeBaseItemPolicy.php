@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Policies;
+namespace AdvisingApp\KnowledgeBase\Policies;
 
 use App\Models\User;
 use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
-use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 

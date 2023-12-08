@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect;
+namespace AdvisingApp\Prospect;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\DataTransferObjects;
+namespace AdvisingApp\Campaign\DataTransferObjects;
 
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\DataCollection;

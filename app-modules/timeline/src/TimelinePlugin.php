@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline;
+namespace AdvisingApp\Timeline;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

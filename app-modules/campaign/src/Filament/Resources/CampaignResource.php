@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Resources;
+namespace AdvisingApp\Campaign\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\Campaign\Models\Campaign;
-use Assist\Campaign\Filament\Resources\CampaignResource\Pages\EditCampaign;
-use Assist\Campaign\Filament\Resources\CampaignResource\Pages\ViewCampaign;
-use Assist\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
-use Assist\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
-use Assist\Campaign\Filament\Resources\CampaignResource\RelationManagers\CampaignActionsRelationManager;
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\EditCampaign;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ViewCampaign;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\CreateCampaign;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManagers\CampaignActionsRelationManager;
 
 class CampaignResource extends Resource
 {

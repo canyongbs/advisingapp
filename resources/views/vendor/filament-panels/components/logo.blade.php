@@ -33,7 +33,7 @@
 --}}
 @php
     use App\Models\SettingsProperty;
-    use Assist\Theme\Settings\ThemeSettings;
+    use AdvisingApp\Theme\Settings\ThemeSettings;
     use Illuminate\Support\Facades\Vite;
 
     $themeSettings = app(ThemeSettings::class);

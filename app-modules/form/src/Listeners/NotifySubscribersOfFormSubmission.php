@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Listeners;
+namespace AdvisingApp\Form\Listeners;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\Form\Events\FormSubmissionCreated;
-use Assist\Notifications\Models\Subscription;
-use Assist\Form\Notifications\AuthorLinkedFormSubmissionCreatedNotification;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
+use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Form\Notifications\AuthorLinkedFormSubmissionCreatedNotification;
 
 class NotifySubscribersOfFormSubmission implements ShouldQueue
 {

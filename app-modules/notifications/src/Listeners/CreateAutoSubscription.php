@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Listeners;
+namespace AdvisingApp\Notifications\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\Notifications\Actions\SubscriptionCreate;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notifications\Actions\SubscriptionCreate;
+use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 
 class CreateAutoSubscription implements ShouldQueue
 {

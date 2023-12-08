@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form;
+namespace AdvisingApp\Form;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

@@ -34,22 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Models;
+namespace AdvisingApp\Notifications\Models;
 
 use Exception;
 use App\Models\User;
 use DateTimeInterface;
 use Illuminate\Support\Facades\DB;
-use Assist\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Assist\Notifications\Actions\SubscriptionCreate;
+use AdvisingApp\Notifications\Actions\SubscriptionCreate;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
-use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 
 /**
  * @mixin IdeHelperSubscription

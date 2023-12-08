@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Division\Policies;
+namespace AdvisingApp\Division\Policies;
 
 use App\Models\User;
-use Assist\Division\Models\Division;
+use AdvisingApp\Division\Models\Division;
 use Illuminate\Auth\Access\Response;
 
 class DivisionPolicy

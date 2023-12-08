@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase;
+namespace AdvisingApp\KnowledgeBase;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

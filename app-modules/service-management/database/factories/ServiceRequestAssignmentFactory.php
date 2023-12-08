@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Factories;
+namespace AdvisingApp\ServiceManagement\Database\Factories;
 
 use App\Models\User;
-use Assist\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\ServiceManagement\Models\ServiceRequestAssignment>

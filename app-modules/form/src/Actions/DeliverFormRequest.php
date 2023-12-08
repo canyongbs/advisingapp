@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace AdvisingApp\Form\Actions;
 
 use Illuminate\Bus\Queueable;
-use Assist\Form\Models\FormRequest;
+use AdvisingApp\Form\Models\FormRequest;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Observers;
+namespace AdvisingApp\Engagement\Observers;
 
-use Assist\Engagement\Models\EngagementFileEntities;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Engagement\Models\EngagementFileEntities;
+use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 
 class EngagementFileEntitiesObserver
 {

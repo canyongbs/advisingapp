@@ -40,13 +40,13 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectSource;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\Prospect\Filament\Resources\ProspectSourceResource;
-use Assist\Prospect\Tests\ProspectSource\RequestFactories\EditProspectSourceRequestFactory;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Tests\ProspectSource\RequestFactories\EditProspectSourceRequestFactory;
 
 test('A successful action on the EditProspectSource page', function () {
     $prospectSource = ProspectSource::factory()->create();

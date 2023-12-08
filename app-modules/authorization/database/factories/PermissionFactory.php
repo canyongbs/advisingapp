@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace AdvisingApp\Authorization\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

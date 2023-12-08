@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace AdvisingApp\Application\Database\Factories;
 
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Support\Facades\Hash;
-use Assist\Application\Models\Application;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 

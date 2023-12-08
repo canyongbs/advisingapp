@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Pages;
+namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
-use Assist\Team\Models\Team;
+use AdvisingApp\Team\Models\Team;
 use Filament\Actions\Action;
 use Livewire\Attributes\Rule;
 use App\Filament\Pages\Dashboard;
@@ -53,21 +53,21 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
-use Assist\Assistant\Models\AssistantChat;
-use Assist\Consent\Models\ConsentAgreement;
-use Assist\Consent\Enums\ConsentAgreementType;
-use Assist\Assistant\Models\AssistantChatFolder;
-use Assist\Assistant\Enums\AssistantChatShareVia;
-use Assist\Assistant\Jobs\ShareAssistantChatsJob;
-use Assist\Assistant\Enums\AssistantChatShareWith;
+use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Assistant\Models\AssistantChatFolder;
+use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
+use AdvisingApp\Assistant\Jobs\ShareAssistantChatsJob;
+use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\IntegrationAI\Client\Contracts\AIChatClient;
-use Assist\IntegrationAI\Exceptions\ContentFilterException;
-use Assist\IntegrationAI\Exceptions\TokensExceededException;
-use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
+use AdvisingApp\IntegrationAI\Exceptions\ContentFilterException;
+use AdvisingApp\IntegrationAI\Exceptions\TokensExceededException;
+use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
-use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
+use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
+use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 /**
  * @property EloquentCollection $chats

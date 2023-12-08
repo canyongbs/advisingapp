@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EmailTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -44,7 +44,7 @@ use Filament\Forms\Components\TextInput;
 use App\Filament\Pages\EmailConfiguration;
 use Filament\Resources\Pages\CreateRecord;
 use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Engagement\Filament\Resources\EmailTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 
 class CreateEmailTemplate extends CreateRecord
 {

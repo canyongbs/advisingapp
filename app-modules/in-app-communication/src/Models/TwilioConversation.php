@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\InAppCommunication\Models;
+namespace AdvisingApp\InAppCommunication\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Assist\InAppCommunication\Enums\ConversationType;
+use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**

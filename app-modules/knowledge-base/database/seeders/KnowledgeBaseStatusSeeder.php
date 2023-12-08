@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Database\Seeders;
+namespace AdvisingApp\KnowledgeBase\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 
 class KnowledgeBaseStatusSeeder extends Seeder
 {

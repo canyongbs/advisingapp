@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Policies;
+namespace AdvisingApp\KnowledgeBase\Policies;
 
 use App\Models\User;
 use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
-use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
 class KnowledgeBaseCategoryPolicy implements FeatureAccessEnforcedPolicy

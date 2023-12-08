@@ -34,25 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources;
+namespace AdvisingApp\AssistDataModel\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
-use Assist\AssistDataModel\Models\Student;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFormSubmissions;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentApplicationSubmissions;
+use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ViewStudent;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ListStudents;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFormSubmissions;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentApplicationSubmissions;
 
 class StudentResource extends Resource
 {

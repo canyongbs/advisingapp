@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Listeners;
+namespace AdvisingApp\Application\Listeners;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\Notifications\Models\Subscription;
-use Assist\Application\Events\ApplicationSubmissionCreated;
-use Assist\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
+use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
 
 class NotifySubscribersOfApplicationSubmission implements ShouldQueue
 {

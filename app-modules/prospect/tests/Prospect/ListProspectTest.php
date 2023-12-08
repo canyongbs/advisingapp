@@ -38,13 +38,13 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 
 use function Pest\Livewire\livewire;
 
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Models\ProspectStatus;
-use Assist\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 // TODO: Write ListProspects page test
 //test('The correct details are displayed on the ListProspects page', function () {});

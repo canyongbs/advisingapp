@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Webhook\Policies;
+namespace AdvisingApp\Webhook\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\Webhook\Models\InboundWebhook;
+use AdvisingApp\Webhook\Models\InboundWebhook;
 
 class InboundWebhookPolicy
 {

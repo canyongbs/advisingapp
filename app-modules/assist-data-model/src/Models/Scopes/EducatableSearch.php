@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Models\Scopes;
+namespace AdvisingApp\AssistDataModel\Models\Scopes;
 
 use Illuminate\Support\Facades\DB;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 
 class EducatableSearch
 {

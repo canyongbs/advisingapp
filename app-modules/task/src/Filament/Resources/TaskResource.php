@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Filament\Resources;
+namespace AdvisingApp\Task\Filament\Resources;
 
-use Assist\Task\Models\Task;
+use AdvisingApp\Task\Models\Task;
 use Filament\Resources\Resource;
-use Assist\Task\Filament\Resources\TaskResource\Pages;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
 class TaskResource extends Resource
 {

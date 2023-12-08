@@ -34,24 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Enums;
+namespace AdvisingApp\Campaign\Enums;
 
-use Assist\Task\Models\Task;
-use Assist\Alert\Models\Alert;
-use Assist\CareTeam\Models\CareTeam;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use Filament\Support\Contracts\HasLabel;
-use Assist\Campaign\Models\CampaignAction;
-use Assist\Interaction\Models\Interaction;
-use Assist\Engagement\Models\EngagementBatch;
-use Assist\Notifications\Models\Subscription;
-use Assist\Campaign\Filament\Blocks\TaskBlock;
-use Assist\Campaign\Filament\Blocks\CareTeamBlock;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Campaign\Filament\Blocks\InteractionBlock;
-use Assist\Campaign\Filament\Blocks\SubscriptionBlock;
-use Assist\Campaign\Filament\Blocks\ProactiveAlertBlock;
-use Assist\Campaign\Filament\Blocks\ServiceRequestBlock;
-use Assist\Campaign\Filament\Blocks\EngagementBatchBlock;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
+use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Campaign\Filament\Blocks\InteractionBlock;
+use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
+use AdvisingApp\Campaign\Filament\Blocks\ProactiveAlertBlock;
+use AdvisingApp\Campaign\Filament\Blocks\ServiceRequestBlock;
+use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchBlock;
 
 enum CampaignActionType: string implements HasLabel
 {

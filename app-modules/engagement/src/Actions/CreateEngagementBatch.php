@@ -34,23 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Actions;
+namespace AdvisingApp\Engagement\Actions;
 
 use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Bus;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Queue\SerializesModels;
-use Assist\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\Engagement;
 use Illuminate\Queue\InteractsWithQueue;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Assist\Engagement\Models\EngagementBatch;
-use Assist\Engagement\Models\EngagementDeliverable;
-use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use Assist\Engagement\Notifications\EngagementBatchStartedNotification;
-use Assist\Engagement\Notifications\EngagementBatchFinishedNotification;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
+use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 
 class CreateEngagementBatch implements ShouldQueue
 {

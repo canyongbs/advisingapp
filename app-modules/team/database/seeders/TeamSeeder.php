@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Database\Seeders;
+namespace AdvisingApp\Team\Database\Seeders;
 
 use App\Models\User;
-use Assist\Team\Models\Team;
+use AdvisingApp\Team\Models\Team;
 use Illuminate\Database\Seeder;
 
 class TeamSeeder extends Seeder

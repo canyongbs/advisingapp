@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Database\Factories;
+namespace AdvisingApp\Interaction\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

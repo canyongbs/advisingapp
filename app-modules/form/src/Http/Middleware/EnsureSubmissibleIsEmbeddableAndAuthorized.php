@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Http\Middleware;
+namespace AdvisingApp\Form\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Assist\Form\Models\Submissible;
+use AdvisingApp\Form\Models\Submissible;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureSubmissibleIsEmbeddableAndAuthorized

@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Models;
+namespace AdvisingApp\CaseloadManagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\CaseloadManagement\Enums\CaseloadType;
-use Assist\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
+use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 
 /**
  * @mixin IdeHelperCaseload

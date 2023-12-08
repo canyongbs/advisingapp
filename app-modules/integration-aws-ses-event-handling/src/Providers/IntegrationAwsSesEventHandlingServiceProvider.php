@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAwsSesEventHandling\Providers;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
-use Assist\IntegrationAwsSesEventHandling\Listeners\AddSesConfigurationSetToEmailHeaders;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\AddSesConfigurationSetToEmailHeaders;
 
 class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
 {

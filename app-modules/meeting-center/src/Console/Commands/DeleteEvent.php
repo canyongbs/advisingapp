@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Console\Commands;
+namespace AdvisingApp\MeetingCenter\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 
 class DeleteEvent extends Command
 {

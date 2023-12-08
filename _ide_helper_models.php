@@ -358,7 +358,7 @@ namespace App\Models{
  class IdeHelperUser {}
 }
 
-namespace Assist\Alert\Models{
+namespace AdvisingApp\Alert\Models{
 /**
  * Assist\Alert\Models\Alert
  *
@@ -399,7 +399,7 @@ namespace Assist\Alert\Models{
  class IdeHelperAlert {}
 }
 
-namespace Assist\Application\Models{
+namespace AdvisingApp\Application\Models{
 /**
  * Assist\Application\Models\Application
  *
@@ -443,7 +443,7 @@ namespace Assist\Application\Models{
  class IdeHelperApplication {}
 }
 
-namespace Assist\Application\Models{
+namespace AdvisingApp\Application\Models{
 /**
  * Assist\Application\Models\ApplicationAuthentication
  *
@@ -473,7 +473,7 @@ namespace Assist\Application\Models{
  class IdeHelperApplicationAuthentication {}
 }
 
-namespace Assist\Application\Models{
+namespace AdvisingApp\Application\Models{
 /**
  * Assist\Application\Models\ApplicationField
  *
@@ -507,7 +507,7 @@ namespace Assist\Application\Models{
  class IdeHelperApplicationField {}
 }
 
-namespace Assist\Application\Models{
+namespace AdvisingApp\Application\Models{
 /**
  * Assist\Application\Models\ApplicationStep
  *
@@ -537,7 +537,7 @@ namespace Assist\Application\Models{
  class IdeHelperApplicationStep {}
 }
 
-namespace Assist\Application\Models{
+namespace AdvisingApp\Application\Models{
 /**
  * Assist\Application\Models\ApplicationSubmission
  *
@@ -569,7 +569,7 @@ namespace Assist\Application\Models{
  class IdeHelperApplicationSubmission {}
 }
 
-namespace Assist\AssistDataModel\Models{
+namespace AdvisingApp\AssistDataModel\Models{
 /**
  * Assist\AssistDataModel\Models\Enrollment
  *
@@ -583,7 +583,7 @@ namespace Assist\AssistDataModel\Models{
  class IdeHelperEnrollment {}
 }
 
-namespace Assist\AssistDataModel\Models{
+namespace AdvisingApp\AssistDataModel\Models{
 /**
  * Assist\AssistDataModel\Models\Performance
  *
@@ -598,7 +598,7 @@ namespace Assist\AssistDataModel\Models{
  class IdeHelperPerformance {}
 }
 
-namespace Assist\AssistDataModel\Models{
+namespace AdvisingApp\AssistDataModel\Models{
 /**
  * Assist\AssistDataModel\Models\Program
  *
@@ -612,7 +612,7 @@ namespace Assist\AssistDataModel\Models{
  class IdeHelperProgram {}
 }
 
-namespace Assist\AssistDataModel\Models{
+namespace AdvisingApp\AssistDataModel\Models{
 /**
  * Assist\AssistDataModel\Models\Student
  *
@@ -665,7 +665,7 @@ namespace Assist\AssistDataModel\Models{
  class IdeHelperStudent {}
 }
 
-namespace Assist\Assistant\Models{
+namespace AdvisingApp\Assistant\Models{
 /**
  * Assist\Assistant\Models\AssistantChat
  *
@@ -694,7 +694,7 @@ namespace Assist\Assistant\Models{
  class IdeHelperAssistantChat {}
 }
 
-namespace Assist\Assistant\Models{
+namespace AdvisingApp\Assistant\Models{
 /**
  * Assist\Assistant\Models\AssistantChatFolder
  *
@@ -720,7 +720,7 @@ namespace Assist\Assistant\Models{
  class IdeHelperAssistantChatFolder {}
 }
 
-namespace Assist\Assistant\Models{
+namespace AdvisingApp\Assistant\Models{
 /**
  * Assist\Assistant\Models\AssistantChatMessage
  *
@@ -746,7 +746,7 @@ namespace Assist\Assistant\Models{
  class IdeHelperAssistantChatMessage {}
 }
 
-namespace Assist\Assistant\Models{
+namespace AdvisingApp\Assistant\Models{
 /**
  * Assist\Assistant\Models\AssistantChatMessageLog
  *
@@ -776,7 +776,7 @@ namespace Assist\Assistant\Models{
  class IdeHelperAssistantChatMessageLog {}
 }
 
-namespace Assist\Audit\Models{
+namespace AdvisingApp\Audit\Models{
 /**
  * Assist\Audit\Models\Audit
  *
@@ -820,7 +820,7 @@ namespace Assist\Audit\Models{
  class IdeHelperAudit {}
 }
 
-namespace Assist\Authorization\Models{
+namespace AdvisingApp\Authorization\Models{
 /**
  * Assist\Authorization\Models\Permission
  *
@@ -856,7 +856,7 @@ namespace Assist\Authorization\Models{
  class IdeHelperPermission {}
 }
 
-namespace Assist\Authorization\Models\Pivots{
+namespace AdvisingApp\Authorization\Models\Pivots{
 /**
  * Assist\Authorization\Models\Pivots\RoleGroupRolePivot
  *
@@ -869,7 +869,7 @@ namespace Assist\Authorization\Models\Pivots{
  class IdeHelperRoleGroupRolePivot {}
 }
 
-namespace Assist\Authorization\Models\Pivots{
+namespace AdvisingApp\Authorization\Models\Pivots{
 /**
  * Assist\Authorization\Models\Pivots\RoleGroupUserPivot
  *
@@ -882,7 +882,7 @@ namespace Assist\Authorization\Models\Pivots{
  class IdeHelperRoleGroupUserPivot {}
 }
 
-namespace Assist\Authorization\Models{
+namespace AdvisingApp\Authorization\Models{
 /**
  * Assist\Authorization\Models\Role
  *
@@ -920,7 +920,7 @@ namespace Assist\Authorization\Models{
  class IdeHelperRole {}
 }
 
-namespace Assist\Authorization\Models{
+namespace AdvisingApp\Authorization\Models{
 /**
  * Assist\Authorization\Models\RoleGroup
  *
@@ -955,7 +955,7 @@ namespace Assist\Authorization\Models{
  class IdeHelperRoleGroup {}
 }
 
-namespace Assist\Campaign\Models{
+namespace AdvisingApp\Campaign\Models{
 /**
  * Assist\Campaign\Models\Campaign
  *
@@ -995,7 +995,7 @@ namespace Assist\Campaign\Models{
  class IdeHelperCampaign {}
 }
 
-namespace Assist\Campaign\Models{
+namespace AdvisingApp\Campaign\Models{
 /**
  * Assist\Campaign\Models\CampaignAction
  *
@@ -1039,7 +1039,7 @@ namespace Assist\Campaign\Models{
  class IdeHelperCampaignAction {}
 }
 
-namespace Assist\CareTeam\Models{
+namespace AdvisingApp\CareTeam\Models{
 /**
  * Assist\CareTeam\Models\CareTeam
  *
@@ -1065,7 +1065,7 @@ namespace Assist\CareTeam\Models{
  class IdeHelperCareTeam {}
 }
 
-namespace Assist\CaseloadManagement\Models{
+namespace AdvisingApp\CaseloadManagement\Models{
 /**
  * Assist\CaseloadManagement\Models\Caseload
  *
@@ -1102,7 +1102,7 @@ namespace Assist\CaseloadManagement\Models{
  class IdeHelperCaseload {}
 }
 
-namespace Assist\CaseloadManagement\Models{
+namespace AdvisingApp\CaseloadManagement\Models{
 /**
  * Assist\CaseloadManagement\Models\CaseloadSubject
  *
@@ -1129,7 +1129,7 @@ namespace Assist\CaseloadManagement\Models{
  class IdeHelperCaseloadSubject {}
 }
 
-namespace Assist\Consent\Models{
+namespace AdvisingApp\Consent\Models{
 /**
  * Assist\Consent\Models\ConsentAgreement
  *
@@ -1165,7 +1165,7 @@ namespace Assist\Consent\Models{
  class IdeHelperConsentAgreement {}
 }
 
-namespace Assist\Consent\Models{
+namespace AdvisingApp\Consent\Models{
 /**
  * Assist\Consent\Models\UserConsentAgreement
  *
@@ -1197,7 +1197,7 @@ namespace Assist\Consent\Models{
  class IdeHelperUserConsentAgreement {}
 }
 
-namespace Assist\Division\Models{
+namespace AdvisingApp\Division\Models{
 /**
  * Assist\Division\Models\Division
  *
@@ -1245,7 +1245,7 @@ namespace Assist\Division\Models{
  class IdeHelperDivision {}
 }
 
-namespace Assist\Engagement\Models{
+namespace AdvisingApp\Engagement\Models{
 /**
  * Assist\Engagement\Models\EmailTemplate
  *
@@ -1274,7 +1274,7 @@ namespace Assist\Engagement\Models{
  class IdeHelperEmailTemplate {}
 }
 
-namespace Assist\Engagement\Models{
+namespace AdvisingApp\Engagement\Models{
 /**
  * Assist\Engagement\Models\Engagement
  *
@@ -1328,7 +1328,7 @@ namespace Assist\Engagement\Models{
  class IdeHelperEngagement {}
 }
 
-namespace Assist\Engagement\Models{
+namespace AdvisingApp\Engagement\Models{
 /**
  * Assist\Engagement\Models\EngagementBatch
  *
@@ -1355,7 +1355,7 @@ namespace Assist\Engagement\Models{
  class IdeHelperEngagementBatch {}
 }
 
-namespace Assist\Engagement\Models{
+namespace AdvisingApp\Engagement\Models{
 /**
  * Assist\Engagement\Models\EngagementDeliverable
  *
@@ -1396,7 +1396,7 @@ namespace Assist\Engagement\Models{
  class IdeHelperEngagementDeliverable {}
 }
 
-namespace Assist\Engagement\Models{
+namespace AdvisingApp\Engagement\Models{
 /**
  * Assist\Engagement\Models\EngagementFile
  *
@@ -1428,7 +1428,7 @@ namespace Assist\Engagement\Models{
  class IdeHelperEngagementFile {}
 }
 
-namespace Assist\Engagement\Models{
+namespace AdvisingApp\Engagement\Models{
 /**
  * Assist\Engagement\Models\EngagementFileEntities
  *
@@ -1453,7 +1453,7 @@ namespace Assist\Engagement\Models{
  class IdeHelperEngagementFileEntities {}
 }
 
-namespace Assist\Engagement\Models{
+namespace AdvisingApp\Engagement\Models{
 /**
  * Assist\Engagement\Models\EngagementResponse
  *
@@ -1487,7 +1487,7 @@ namespace Assist\Engagement\Models{
  class IdeHelperEngagementResponse {}
 }
 
-namespace Assist\Engagement\Models{
+namespace AdvisingApp\Engagement\Models{
 /**
  * Assist\Engagement\Models\SmsTemplate
  *
@@ -1513,7 +1513,7 @@ namespace Assist\Engagement\Models{
  class IdeHelperSmsTemplate {}
 }
 
-namespace Assist\Form\Models{
+namespace AdvisingApp\Form\Models{
 /**
  * Assist\Form\Models\Form
  *
@@ -1561,7 +1561,7 @@ namespace Assist\Form\Models{
  class IdeHelperForm {}
 }
 
-namespace Assist\Form\Models{
+namespace AdvisingApp\Form\Models{
 /**
  * Assist\Form\Models\FormAuthentication
  *
@@ -1590,7 +1590,7 @@ namespace Assist\Form\Models{
  class IdeHelperFormAuthentication {}
 }
 
-namespace Assist\Form\Models{
+namespace AdvisingApp\Form\Models{
 /**
  * Assist\Form\Models\FormField
  *
@@ -1624,7 +1624,7 @@ namespace Assist\Form\Models{
  class IdeHelperFormField {}
 }
 
-namespace Assist\Form\Models{
+namespace AdvisingApp\Form\Models{
 /**
  * Assist\Form\Models\FormRequest
  *
@@ -1666,7 +1666,7 @@ namespace Assist\Form\Models{
  class IdeHelperFormRequest {}
 }
 
-namespace Assist\Form\Models{
+namespace AdvisingApp\Form\Models{
 /**
  * Assist\Form\Models\FormStep
  *
@@ -1696,7 +1696,7 @@ namespace Assist\Form\Models{
  class IdeHelperFormStep {}
 }
 
-namespace Assist\Form\Models{
+namespace AdvisingApp\Form\Models{
 /**
  * Assist\Form\Models\FormSubmission
  *
@@ -1728,7 +1728,7 @@ namespace Assist\Form\Models{
  class IdeHelperFormSubmission {}
 }
 
-namespace Assist\InAppCommunication\Models{
+namespace AdvisingApp\InAppCommunication\Models{
 /**
  * Assist\InAppCommunication\Models\TwilioConversation
  *
@@ -1753,7 +1753,7 @@ namespace Assist\InAppCommunication\Models{
  class IdeHelperTwilioConversation {}
 }
 
-namespace Assist\Interaction\Models{
+namespace AdvisingApp\Interaction\Models{
 /**
  * Assist\Interaction\Models\Interaction
  *
@@ -1811,7 +1811,7 @@ namespace Assist\Interaction\Models{
  class IdeHelperInteraction {}
 }
 
-namespace Assist\Interaction\Models{
+namespace AdvisingApp\Interaction\Models{
 /**
  * Assist\Interaction\Models\InteractionCampaign
  *
@@ -1842,7 +1842,7 @@ namespace Assist\Interaction\Models{
  class IdeHelperInteractionCampaign {}
 }
 
-namespace Assist\Interaction\Models{
+namespace AdvisingApp\Interaction\Models{
 /**
  * Assist\Interaction\Models\InteractionDriver
  *
@@ -1873,7 +1873,7 @@ namespace Assist\Interaction\Models{
  class IdeHelperInteractionDriver {}
 }
 
-namespace Assist\Interaction\Models{
+namespace AdvisingApp\Interaction\Models{
 /**
  * Assist\Interaction\Models\InteractionOutcome
  *
@@ -1904,7 +1904,7 @@ namespace Assist\Interaction\Models{
  class IdeHelperInteractionOutcome {}
 }
 
-namespace Assist\Interaction\Models{
+namespace AdvisingApp\Interaction\Models{
 /**
  * Assist\Interaction\Models\InteractionRelation
  *
@@ -1935,7 +1935,7 @@ namespace Assist\Interaction\Models{
  class IdeHelperInteractionRelation {}
 }
 
-namespace Assist\Interaction\Models{
+namespace AdvisingApp\Interaction\Models{
 /**
  * Assist\Interaction\Models\InteractionStatus
  *
@@ -1968,7 +1968,7 @@ namespace Assist\Interaction\Models{
  class IdeHelperInteractionStatus {}
 }
 
-namespace Assist\Interaction\Models{
+namespace AdvisingApp\Interaction\Models{
 /**
  * Assist\Interaction\Models\InteractionType
  *
@@ -1999,7 +1999,7 @@ namespace Assist\Interaction\Models{
  class IdeHelperInteractionType {}
 }
 
-namespace Assist\KnowledgeBase\Models{
+namespace AdvisingApp\KnowledgeBase\Models{
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseCategory
  *
@@ -2030,7 +2030,7 @@ namespace Assist\KnowledgeBase\Models{
  class IdeHelperKnowledgeBaseCategory {}
 }
 
-namespace Assist\KnowledgeBase\Models{
+namespace AdvisingApp\KnowledgeBase\Models{
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseItem
  *
@@ -2073,7 +2073,7 @@ namespace Assist\KnowledgeBase\Models{
  class IdeHelperKnowledgeBaseItem {}
 }
 
-namespace Assist\KnowledgeBase\Models{
+namespace AdvisingApp\KnowledgeBase\Models{
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseQuality
  *
@@ -2104,7 +2104,7 @@ namespace Assist\KnowledgeBase\Models{
  class IdeHelperKnowledgeBaseQuality {}
 }
 
-namespace Assist\KnowledgeBase\Models{
+namespace AdvisingApp\KnowledgeBase\Models{
 /**
  * Assist\KnowledgeBase\Models\KnowledgeBaseStatus
  *
@@ -2135,7 +2135,7 @@ namespace Assist\KnowledgeBase\Models{
  class IdeHelperKnowledgeBaseStatus {}
 }
 
-namespace Assist\MeetingCenter\Models{
+namespace AdvisingApp\MeetingCenter\Models{
 /**
  * Assist\MeetingCenter\Models\Calendar
  *
@@ -2174,7 +2174,7 @@ namespace Assist\MeetingCenter\Models{
  class IdeHelperCalendar {}
 }
 
-namespace Assist\MeetingCenter\Models{
+namespace AdvisingApp\MeetingCenter\Models{
 /**
  * Assist\MeetingCenter\Models\CalendarEvent
  *
@@ -2209,7 +2209,7 @@ namespace Assist\MeetingCenter\Models{
  class IdeHelperCalendarEvent {}
 }
 
-namespace Assist\Notifications\Models{
+namespace AdvisingApp\Notifications\Models{
 /**
  * Assist\Notifications\Models\Subscription
  *
@@ -2236,7 +2236,7 @@ namespace Assist\Notifications\Models{
  class IdeHelperSubscription {}
 }
 
-namespace Assist\Prospect\Models{
+namespace AdvisingApp\Prospect\Models{
 /**
  * Assist\Prospect\Models\Prospect
  *
@@ -2336,7 +2336,7 @@ namespace Assist\Prospect\Models{
  class IdeHelperProspect {}
 }
 
-namespace Assist\Prospect\Models{
+namespace AdvisingApp\Prospect\Models{
 /**
  * Assist\Prospect\Models\ProspectSource
  *
@@ -2367,7 +2367,7 @@ namespace Assist\Prospect\Models{
  class IdeHelperProspectSource {}
 }
 
-namespace Assist\Prospect\Models{
+namespace AdvisingApp\Prospect\Models{
 /**
  * Assist\Prospect\Models\ProspectStatus
  *
@@ -2402,7 +2402,7 @@ namespace Assist\Prospect\Models{
  class IdeHelperProspectStatus {}
 }
 
-namespace Assist\ServiceManagement\Models{
+namespace AdvisingApp\ServiceManagement\Models{
 /**
  * Assist\ServiceManagement\Models\ServiceRequest
  *
@@ -2466,7 +2466,7 @@ namespace Assist\ServiceManagement\Models{
  class IdeHelperServiceRequest {}
 }
 
-namespace Assist\ServiceManagement\Models{
+namespace AdvisingApp\ServiceManagement\Models{
 /**
  * Assist\ServiceManagement\Models\ServiceRequestAssignment
  *
@@ -2501,7 +2501,7 @@ namespace Assist\ServiceManagement\Models{
  class IdeHelperServiceRequestAssignment {}
 }
 
-namespace Assist\ServiceManagement\Models{
+namespace AdvisingApp\ServiceManagement\Models{
 /**
  * Assist\ServiceManagement\Models\ServiceRequestHistory
  *
@@ -2528,7 +2528,7 @@ namespace Assist\ServiceManagement\Models{
  class IdeHelperServiceRequestHistory {}
 }
 
-namespace Assist\ServiceManagement\Models{
+namespace AdvisingApp\ServiceManagement\Models{
 /**
  * Assist\ServiceManagement\Models\ServiceRequestPriority
  *
@@ -2561,7 +2561,7 @@ namespace Assist\ServiceManagement\Models{
  class IdeHelperServiceRequestPriority {}
 }
 
-namespace Assist\ServiceManagement\Models{
+namespace AdvisingApp\ServiceManagement\Models{
 /**
  * Assist\ServiceManagement\Models\ServiceRequestStatus
  *
@@ -2596,7 +2596,7 @@ namespace Assist\ServiceManagement\Models{
  class IdeHelperServiceRequestStatus {}
 }
 
-namespace Assist\ServiceManagement\Models{
+namespace AdvisingApp\ServiceManagement\Models{
 /**
  * Assist\ServiceManagement\Models\ServiceRequestType
  *
@@ -2627,7 +2627,7 @@ namespace Assist\ServiceManagement\Models{
  class IdeHelperServiceRequestType {}
 }
 
-namespace Assist\ServiceManagement\Models{
+namespace AdvisingApp\ServiceManagement\Models{
 /**
  * Assist\ServiceManagement\Models\ServiceRequestUpdate
  *
@@ -2663,7 +2663,7 @@ namespace Assist\ServiceManagement\Models{
  class IdeHelperServiceRequestUpdate {}
 }
 
-namespace Assist\Task\Models{
+namespace AdvisingApp\Task\Models{
 /**
  * Assist\Task\Models\Task
  *
@@ -2711,7 +2711,7 @@ namespace Assist\Task\Models{
  class IdeHelperTask {}
 }
 
-namespace Assist\Team\Models{
+namespace AdvisingApp\Team\Models{
 /**
  * Assist\Team\Models\Team
  *
@@ -2742,7 +2742,7 @@ namespace Assist\Team\Models{
  class IdeHelperTeam {}
 }
 
-namespace Assist\Team\Models{
+namespace AdvisingApp\Team\Models{
 /**
  * Assist\Team\Models\TeamUser
  *
@@ -2767,7 +2767,7 @@ namespace Assist\Team\Models{
  class IdeHelperTeamUser {}
 }
 
-namespace Assist\Timeline\Models{
+namespace AdvisingApp\Timeline\Models{
 /**
  * Assist\Timeline\Models\Timeline
  *
@@ -2798,7 +2798,7 @@ namespace Assist\Timeline\Models{
  class IdeHelperTimeline {}
 }
 
-namespace Assist\Webhook\Models{
+namespace AdvisingApp\Webhook\Models{
 /**
  * Assist\Webhook\Models\InboundWebhook
  *

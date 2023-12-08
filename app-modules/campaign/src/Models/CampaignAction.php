@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Models;
+namespace AdvisingApp\Campaign\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperCampaignAction

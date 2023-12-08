@@ -38,9 +38,9 @@ namespace StubModuleNamespace\StubClassNamePrefix\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use StubModuleNamespace\StubClassNamePrefix\StubClassNamePrefixPlugin;
 
 class StubClassNamePrefixServiceProvider extends ServiceProvider

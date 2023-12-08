@@ -34,22 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Filament\Resources;
+namespace AdvisingApp\Authorization\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use App\Filament\Columns\IdColumn;
-use Assist\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\Role;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Authorization\Filament\Resources\RoleResource\Pages\EditRole;
-use Assist\Authorization\Filament\Resources\RoleResource\Pages\ViewRole;
-use Assist\Authorization\Filament\Resources\RoleResource\Pages\ListRoles;
-use Assist\Authorization\Filament\Resources\RoleResource\Pages\CreateRole;
-use Assist\Authorization\Filament\Resources\RoleResource\RelationManagers\PermissionsRelationManager;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\EditRole;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ViewRole;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\ListRoles;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages\CreateRole;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource\RelationManagers\PermissionsRelationManager;
 
 class RoleResource extends Resource
 {

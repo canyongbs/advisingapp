@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Database\Factories;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Policies;
+namespace AdvisingApp\AssistDataModel\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 
 class StudentPolicy
 {

@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Models;
 
 use Exception;
 use App\Models\BaseModel;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Assist\Division\Models\Division;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Timeline\Models\Contracts\ProvidesATimeline;
-use Assist\Timeline\Timelines\ServiceRequestHistoryTimeline;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Timelines\ServiceRequestHistoryTimeline;
 
 /**
  * @mixin IdeHelperServiceRequestHistory

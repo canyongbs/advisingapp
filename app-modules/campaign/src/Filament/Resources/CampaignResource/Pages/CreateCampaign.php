@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
+namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use App\Models\User;
 use Illuminate\Support\HtmlString;
-use Assist\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
@@ -47,12 +47,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Campaign\Enums\CampaignActionType;
-use Assist\Campaign\Actions\CreateActionsForCampaign;
-use Assist\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Campaign\Actions\CreateActionsForCampaign;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
-use Assist\Campaign\DataTransferObjects\CampaignActionCreationData;
-use Assist\Campaign\DataTransferObjects\CampaignActionsCreationData;
+use AdvisingApp\Campaign\DataTransferObjects\CampaignActionCreationData;
+use AdvisingApp\Campaign\DataTransferObjects\CampaignActionsCreationData;
 
 class CreateCampaign extends CreateRecord
 {

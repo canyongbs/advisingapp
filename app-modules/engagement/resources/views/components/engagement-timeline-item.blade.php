@@ -33,8 +33,8 @@
 --}}
 @php
     use App\Filament\Resources\UserResource;
-    use Assist\Engagement\Enums\EngagementDeliveryMethod;
-    use Assist\Engagement\Enums\EngagementDeliveryStatus;
+    use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+    use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 @endphp
 
 <div>
@@ -63,7 +63,7 @@
                                 EngagementDeliveryStatus::Successful => 'text-green-500',
                                 EngagementDeliveryStatus::Failed => 'text-red-500',
                             };
-                            
+
                             $emailStatusIcon = match ($deliverable->delivery_status) {
                                 EngagementDeliveryStatus::Awaiting => 'heroicon-s-clock',
                                 EngagementDeliveryStatus::Successful => 'heroicon-s-check-circle',
@@ -88,7 +88,7 @@
                                 EngagementDeliveryStatus::Successful => 'text-green-500',
                                 EngagementDeliveryStatus::Failed => 'text-red-500',
                             };
-                            
+
                             $smsStatusIcon = match ($deliverable->delivery_status) {
                                 EngagementDeliveryStatus::Awaiting => 'heroicon-s-clock',
                                 EngagementDeliveryStatus::Successful => 'heroicon-s-check-circle',

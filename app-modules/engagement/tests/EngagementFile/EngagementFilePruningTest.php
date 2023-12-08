@@ -37,7 +37,7 @@
 use function Pest\Laravel\artisan;
 
 use Illuminate\Console\Scheduling\Schedule;
-use Assist\Engagement\Models\EngagementFile;
+use AdvisingApp\Engagement\Models\EngagementFile;
 
 use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\assertModelMissing;

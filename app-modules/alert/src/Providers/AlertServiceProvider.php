@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Providers;
+namespace AdvisingApp\Alert\Providers;
 
 use Filament\Panel;
-use Assist\Alert\AlertPlugin;
-use Assist\Alert\Models\Alert;
-use Assist\Alert\Events\AlertCreated;
+use AdvisingApp\Alert\AlertPlugin;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Alert\Events\AlertCreated;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Assist\Alert\Observers\AlertObserver;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Alert\Observers\AlertObserver;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Alert\Listeners\NotifySubscribersOfAlertCreated;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
 class AlertServiceProvider extends ServiceProvider
 {

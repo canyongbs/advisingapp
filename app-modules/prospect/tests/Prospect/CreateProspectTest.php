@@ -38,14 +38,14 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Prospect\Tests\Prospect\RequestFactories\CreateProspectRequestFactory;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\CreateProspectRequestFactory;
 
 // TODO: Write CreateProspect page tests
 //test('A successful action on the CreateProspect page', function () {});

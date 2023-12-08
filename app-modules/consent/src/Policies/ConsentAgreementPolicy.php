@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Policies;
+namespace AdvisingApp\Consent\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\Consent\Models\ConsentAgreement;
+use AdvisingApp\Consent\Models\ConsentAgreement;
 
 class ConsentAgreementPolicy
 {

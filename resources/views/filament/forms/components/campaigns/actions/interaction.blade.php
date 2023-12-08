@@ -33,13 +33,13 @@
 --}}
 @php
     use Carbon\Carbon;
-    use Assist\Division\Models\Division;
-    use Assist\Interaction\Models\InteractionType;
-    use Assist\Interaction\Models\InteractionStatus;
-    use Assist\Interaction\Models\InteractionDriver;
-    use Assist\Interaction\Models\InteractionOutcome;
-    use Assist\Interaction\Models\InteractionCampaign;
-    use Assist\Interaction\Models\InteractionRelation;
+    use AdvisingApp\Division\Models\Division;
+    use AdvisingApp\Interaction\Models\InteractionType;
+    use AdvisingApp\Interaction\Models\InteractionStatus;
+    use AdvisingApp\Interaction\Models\InteractionDriver;
+    use AdvisingApp\Interaction\Models\InteractionOutcome;
+    use AdvisingApp\Interaction\Models\InteractionCampaign;
+    use AdvisingApp\Interaction\Models\InteractionRelation;
 @endphp
 
 <x-filament::fieldset>

@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Providers;
+namespace AdvisingApp\Task\Providers;
 
 use Filament\Panel;
-use Assist\Task\TaskPlugin;
-use Assist\Task\Models\Task;
+use AdvisingApp\Task\TaskPlugin;
+use AdvisingApp\Task\Models\Task;
 use Filament\Support\Assets\Js;
-use Assist\Task\Observers\TaskObserver;
+use AdvisingApp\Task\Observers\TaskObserver;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TaskServiceProvider extends ServiceProvider
 {

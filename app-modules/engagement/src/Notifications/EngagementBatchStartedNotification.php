@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Notifications;
+namespace AdvisingApp\Engagement\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -42,7 +42,7 @@ use App\Notifications\MailMessage;
 use App\Models\NotificationSetting;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\Engagement\Models\EngagementBatch;
+use AdvisingApp\Engagement\Models\EngagementBatch;
 use Filament\Notifications\Notification as FilamentNotification;
 
 class EngagementBatchStartedNotification extends Notification implements ShouldQueue

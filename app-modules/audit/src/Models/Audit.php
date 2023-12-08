@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Models;
+namespace AdvisingApp\Audit\Models;
 
-use Assist\Audit\Settings\AuditSettings;
+use AdvisingApp\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
 use OwenIt\Auditing\Models\Audit as BaseAudit;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
  * @mixin IdeHelperAudit

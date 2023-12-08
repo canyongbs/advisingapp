@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Pages;
+namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
-use Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 
 class AssistantConfiguration extends Page
 {

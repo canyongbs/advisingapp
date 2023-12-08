@@ -35,13 +35,13 @@
 */
 
 use App\Models\User;
-use Assist\Alert\Models\Alert;
+use AdvisingApp\Alert\Models\Alert;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Support\Facades\Notification;
-use Assist\Alert\Notifications\AlertCreatedNotification;
+use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 
 it('creates a subscription for the user that created the Alert', function () {
     $user = User::factory()->create();

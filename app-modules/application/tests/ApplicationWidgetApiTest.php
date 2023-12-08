@@ -39,13 +39,13 @@ use function Pest\Laravel\post;
 
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\URL;
-use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Application\Models\Application;
 
 use function Pest\Laravel\withoutMiddleware;
 
-use Assist\Application\Models\ApplicationAuthentication;
-use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 
 test('define is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);

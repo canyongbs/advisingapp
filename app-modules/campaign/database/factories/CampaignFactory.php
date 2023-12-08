@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Database\Factories;
+namespace AdvisingApp\Campaign\Database\Factories;
 
 use App\Models\User;
-use Assist\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Database\Factories;
+namespace AdvisingApp\Task\Database\Factories;
 
 use App\Models\User;
-use Assist\Task\Models\Task;
-use Assist\Task\Enums\TaskStatus;
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

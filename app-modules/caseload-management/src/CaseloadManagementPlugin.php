@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement;
+namespace AdvisingApp\CaseloadManagement;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAI;
+namespace AdvisingApp\IntegrationAI;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Observers;
+namespace AdvisingApp\Engagement\Observers;
 
-use Assist\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\EmailTemplate;
 
 class EmailTemplateObserver
 {

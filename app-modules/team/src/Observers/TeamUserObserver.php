@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Observers;
+namespace AdvisingApp\Team\Observers;
 
-use Assist\Team\Models\TeamUser;
+use AdvisingApp\Team\Models\TeamUser;
 
 class TeamUserObserver
 {

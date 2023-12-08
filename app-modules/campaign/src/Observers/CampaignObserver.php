@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Observers;
+namespace AdvisingApp\Campaign\Observers;
 
-use Assist\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\Campaign;
 
 class CampaignObserver
 {

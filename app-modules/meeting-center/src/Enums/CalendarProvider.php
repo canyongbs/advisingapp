@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Enums;
+namespace AdvisingApp\MeetingCenter\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 

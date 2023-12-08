@@ -1,7 +1,7 @@
 {
-    "name": "canyongbs/assistforhighered-2",
+    "name": "canyongbs/advisingapp",
     "type": "project",
-    "description": "ASSIST stands for Academic & Student Success Integrated Support Technology. This code represents the ASSIST 2.0 CRM, a product within the ASSIST For Higher Ed platform offering.",
+    "description": "Advising App™ by Canyon GBS™ is a Conversational AI and CRM ecosystem solution built specifically for postsecondary education use, adding features, functionality, and sector capabilities.",
     "keywords": [
         "higher",
         "education",

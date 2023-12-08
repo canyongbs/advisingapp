@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Rest\Resources;
+namespace AdvisingApp\Prospect\Rest\Resources;
 
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 use Lomkit\Rest\Relations\BelongsTo;
 use App\Rest\Resource as RestResource;
 use Lomkit\Rest\Http\Requests\RestRequest;

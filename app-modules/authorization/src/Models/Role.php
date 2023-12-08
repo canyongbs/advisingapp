@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Models;
+namespace AdvisingApp\Authorization\Models;
 
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -43,11 +43,11 @@ use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Assist\Authorization\Models\Concerns\HasRoleGroups;
+use AdvisingApp\Authorization\Models\Concerns\HasRoleGroups;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Authorization\Models\Pivots\RoleGroupRolePivot;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperRole

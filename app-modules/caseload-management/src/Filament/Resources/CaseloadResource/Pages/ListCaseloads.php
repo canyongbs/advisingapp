@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
+namespace AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -44,7 +44,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class ListCaseloads extends ListRecords
 {

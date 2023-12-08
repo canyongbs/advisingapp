@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace AdvisingApp\Form\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use Assist\Form\Enums\FormRequestStatus;
+use AdvisingApp\Form\Enums\FormRequestStatus;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Form\Enums\FormRequestDeliveryMethod;
+use AdvisingApp\Form\Enums\FormRequestDeliveryMethod;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperFormRequest

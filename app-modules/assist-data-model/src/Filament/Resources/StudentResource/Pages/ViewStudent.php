@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\Notifications\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Notifications\Filament\Actions\SubscribeHeaderAction;
 
 class ViewStudent extends ViewRecord
 {

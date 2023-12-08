@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAwsSesEventHandling;
+namespace AdvisingApp\IntegrationAwsSesEventHandling;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

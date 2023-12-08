@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Webhook;
+namespace AdvisingApp\Webhook;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

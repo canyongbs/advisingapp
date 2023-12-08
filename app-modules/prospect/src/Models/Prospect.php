@@ -34,40 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Models;
+namespace AdvisingApp\Prospect\Models;
 
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
-use Assist\Task\Models\Task;
-use Assist\Alert\Models\Alert;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Collection;
-use Assist\Form\Models\FormRequest;
-use Assist\CareTeam\Models\CareTeam;
-use Assist\Form\Models\FormSubmission;
+use AdvisingApp\Form\Models\FormRequest;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use OpenSearch\ScoutDriverPlus\Searchable;
-use Assist\Engagement\Models\EngagementFile;
-use Assist\Notifications\Models\Subscription;
+use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Assist\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Assist\Application\Models\ApplicationSubmission;
-use Assist\Engagement\Models\EngagementFileEntities;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
-use Assist\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\AssistDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Timeline\Models\Contracts\HasFilamentResource;
-use Assist\Notifications\Models\Concerns\HasSubscriptions;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Engagement\Models\Concerns\HasManyMorphedEngagements;
-use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
-use Assist\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
+use AdvisingApp\Notifications\Models\Concerns\HasSubscriptions;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
+use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
+use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
  * @property string $display_name

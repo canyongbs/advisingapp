@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Models\Concerns;
+namespace AdvisingApp\Authorization\Models\Concerns;
 
-use Assist\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
-use Assist\Authorization\Enums\ModelHasRolesViaEnum;
+use AdvisingApp\Authorization\Enums\ModelHasRolesViaEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasRolesWithPivot

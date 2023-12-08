@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CareTeam\Policies;
+namespace AdvisingApp\CareTeam\Policies;
 
 use App\Models\User;
-use Assist\CareTeam\Models\CareTeam;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use Illuminate\Auth\Access\Response;
 
 class CareTeamPolicy

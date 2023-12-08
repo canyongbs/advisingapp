@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Policies;
+namespace AdvisingApp\Interaction\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
 
 class InteractionCampaignPolicy
 {

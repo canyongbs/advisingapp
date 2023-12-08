@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Tables\Filters\Filter;
@@ -44,20 +44,20 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\AssistDataModel\Models\Student;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Enums\CaseloadModel;
-use Assist\Engagement\Filament\Actions\BulkEngagementAction;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
-use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
-use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
-use Assist\Notifications\Filament\Actions\SubscribeTableAction;
-use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
-use Assist\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
+use AdvisingApp\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
+use AdvisingApp\Notifications\Filament\Actions\SubscribeBulkAction;
+use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
+use AdvisingApp\Notifications\Filament\Actions\SubscribeTableAction;
+use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
 
 class ListStudents extends ListRecords implements HasBulkEngagementAction
 {

@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Division\Providers;
+namespace AdvisingApp\Division\Providers;
 
 use Filament\Panel;
-use Assist\Division\DivisionPlugin;
-use Assist\Division\Models\Division;
+use AdvisingApp\Division\DivisionPlugin;
+use AdvisingApp\Division\Models\Division;
 use Illuminate\Support\ServiceProvider;
-use Assist\Division\Observers\DivisionObserver;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Division\Observers\DivisionObserver;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class DivisionServiceProvider extends ServiceProvider
 {

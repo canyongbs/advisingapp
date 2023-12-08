@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Database\Factories;
+namespace AdvisingApp\Consent\Database\Factories;
 
-use Assist\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

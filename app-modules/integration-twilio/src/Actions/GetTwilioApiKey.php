@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\Actions;
+namespace AdvisingApp\IntegrationTwilio\Actions;
 
 use Twilio\Rest\Client;
-use Assist\IntegrationTwilio\Settings\TwilioSettings;
-use Assist\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
 
 class GetTwilioApiKey
 {

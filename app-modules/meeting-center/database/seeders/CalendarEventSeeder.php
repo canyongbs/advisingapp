@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\MeetingCenter\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 

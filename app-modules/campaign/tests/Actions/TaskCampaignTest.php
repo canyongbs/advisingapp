@@ -35,16 +35,16 @@
 */
 
 use App\Models\User;
-use Assist\Task\Models\Task;
-use Assist\Campaign\Models\Campaign;
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Campaign\Models\CampaignAction;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Collection;
-use Assist\Campaign\Enums\CampaignActionType;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Enums\CaseloadType;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
+use AdvisingApp\AssistDataModel\Models\Contracts\Educatable;
 
 it('will create the task records for educatables in the caseload', function (Collection $educatables) {
     expect(Task::count())->toBe(0);

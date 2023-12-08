@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign;
+namespace AdvisingApp\Campaign;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

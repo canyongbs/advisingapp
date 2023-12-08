@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Filament\Pages;
+namespace AdvisingApp\Form\Filament\Pages;
 
 use Filament\Pages\Page;
 

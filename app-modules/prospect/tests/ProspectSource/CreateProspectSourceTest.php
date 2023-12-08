@@ -40,14 +40,14 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectSource;
 
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\Prospect\Filament\Resources\ProspectSourceResource;
-use Assist\Prospect\Tests\ProspectSource\RequestFactories\CreateProspectSourceRequestFactory;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Tests\ProspectSource\RequestFactories\CreateProspectSourceRequestFactory;
 
 test('A successful action on the CreateProspectSource page', function () {
     asSuperAdmin()

@@ -63,7 +63,7 @@ use Illuminate\Validation\Rules\Password;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Assist\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Http\Controllers;
+namespace AdvisingApp\Application\Http\Controllers;
 
 use Closure;
 use Illuminate\Support\Str;
@@ -45,17 +45,17 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Assist\Application\Models\Application;
+use AdvisingApp\Application\Models\Application;
 use Illuminate\Support\Facades\Notification;
-use Assist\Form\Actions\GenerateFormKitSchema;
+use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Assist\Application\Models\ApplicationSubmission;
-use Assist\Form\Actions\GenerateSubmissibleValidation;
-use Assist\Application\Models\ApplicationAuthentication;
-use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
-use Assist\Form\Notifications\AuthenticateFormNotification;
-use Assist\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
+use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
+use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
 class ApplicationWidgetController extends Controller
 {

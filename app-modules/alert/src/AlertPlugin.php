@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert;
+namespace AdvisingApp\Alert;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

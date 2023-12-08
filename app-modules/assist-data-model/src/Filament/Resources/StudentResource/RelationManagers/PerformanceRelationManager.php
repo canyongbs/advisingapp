@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
+namespace AdvisingApp\AssistDataModel\Filament\Resources\StudentResource\RelationManagers;
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;

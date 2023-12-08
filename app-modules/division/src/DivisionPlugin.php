@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Division;
+namespace AdvisingApp\Division;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAI\Settings;
+namespace AdvisingApp\IntegrationAI\Settings;
 
 use Spatie\LaravelSettings\Settings;
 

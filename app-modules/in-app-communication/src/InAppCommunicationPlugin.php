@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\InAppCommunication;
+namespace AdvisingApp\InAppCommunication;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

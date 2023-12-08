@@ -38,22 +38,22 @@ namespace App\Providers;
 
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
-use Assist\Audit\Listeners\AuditingListener;
-use Assist\Authorization\Events\RoleRemovedFromUser;
+use AdvisingApp\Audit\Listeners\AuditingListener;
+use AdvisingApp\Authorization\Events\RoleRemovedFromUser;
 use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Notifications\Events\NotificationFailed;
-use Assist\Authorization\Events\RoleAttachedToRoleGroup;
-use Assist\Authorization\Events\UserAttachedToRoleGroup;
-use Assist\Authorization\Events\RoleRemovedFromRoleGroup;
-use Assist\Authorization\Events\UserRemovedFromRoleGroup;
-use Assist\Authorization\Listeners\HandleRoleRemovedFromUser;
+use AdvisingApp\Authorization\Events\RoleAttachedToRoleGroup;
+use AdvisingApp\Authorization\Events\UserAttachedToRoleGroup;
+use AdvisingApp\Authorization\Events\RoleRemovedFromRoleGroup;
+use AdvisingApp\Authorization\Events\UserRemovedFromRoleGroup;
+use AdvisingApp\Authorization\Listeners\HandleRoleRemovedFromUser;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
-use Assist\Authorization\Listeners\HandleRoleAttachedToRoleGroup;
-use Assist\Authorization\Listeners\HandleUserAttachedToRoleGroup;
-use Assist\Engagement\Listeners\HandleEngagementNotificationSent;
-use Assist\Authorization\Listeners\HandleRoleRemovedFromRoleGroup;
-use Assist\Authorization\Listeners\HandleUserRemovedFromRoleGroup;
-use Assist\Engagement\Listeners\HandleEngagementNotificationFailed;
+use AdvisingApp\Authorization\Listeners\HandleRoleAttachedToRoleGroup;
+use AdvisingApp\Authorization\Listeners\HandleUserAttachedToRoleGroup;
+use AdvisingApp\Engagement\Listeners\HandleEngagementNotificationSent;
+use AdvisingApp\Authorization\Listeners\HandleRoleRemovedFromRoleGroup;
+use AdvisingApp\Authorization\Listeners\HandleUserRemovedFromRoleGroup;
+use AdvisingApp\Engagement\Listeners\HandleEngagementNotificationFailed;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider

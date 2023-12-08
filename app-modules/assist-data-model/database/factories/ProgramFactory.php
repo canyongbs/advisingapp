@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\AssistDataModel\Database\Factories;
+namespace AdvisingApp\AssistDataModel\Database\Factories;
 
-use Assist\AssistDataModel\Models\Program;
+use AdvisingApp\AssistDataModel\Models\Program;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

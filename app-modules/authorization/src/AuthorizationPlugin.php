@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization;
+namespace AdvisingApp\Authorization;
 
 use Filament\Panel;
 use Livewire\Livewire;
 use Filament\Contracts\Plugin;
 use Filament\Navigation\MenuItem;
 use Livewire\Mechanisms\ComponentRegistry;
-use Assist\Authorization\Filament\Pages\Auth\SetPassword;
-use Assist\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
+use AdvisingApp\Authorization\Filament\Pages\Auth\SetPassword;
+use AdvisingApp\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
 
 class AuthorizationPlugin implements Plugin
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant;
+namespace AdvisingApp\Assistant;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

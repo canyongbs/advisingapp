@@ -41,13 +41,13 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
-use Assist\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\Prospect\Filament\Resources\ProspectStatusResource;
-use Assist\Prospect\Tests\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Tests\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
 
 test('A successful action on the EditProspectStatus page', function () {
     $prospectStatus = ProspectStatus::factory()->create();

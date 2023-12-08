@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Models\Pivots;
+namespace AdvisingApp\Authorization\Models\Pivots;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Assist\Authorization\Events\UserAttachedToRoleGroup;
-use Assist\Authorization\Events\UserRemovedFromRoleGroup;
+use AdvisingApp\Authorization\Events\UserAttachedToRoleGroup;
+use AdvisingApp\Authorization\Events\UserRemovedFromRoleGroup;
 
 /**
  * Assist\Authorization\Models\Pivots\RoleGroupUserPivot

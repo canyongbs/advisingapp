@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Filament\Resources;
+namespace AdvisingApp\MeetingCenter\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\MeetingCenter\Models\CalendarEvent;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\EditCalendarEvent;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ViewCalendarEvent;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\CreateCalendarEvent;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\EditCalendarEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ViewCalendarEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\CreateCalendarEvent;
 
 class CalendarEventResource extends Resource
 {

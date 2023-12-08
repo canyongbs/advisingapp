@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Get;
@@ -42,7 +42,7 @@ use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use App\Filament\Actions\ImportAction;
@@ -56,25 +56,25 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\Collection;
-use Assist\Prospect\Imports\ProspectImporter;
+use AdvisingApp\Prospect\Imports\ProspectImporter;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Enums\CaseloadModel;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Engagement\Filament\Actions\BulkEngagementAction;
-use Assist\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
-use Assist\Notifications\Filament\Actions\SubscribeBulkAction;
-use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
-use Assist\Notifications\Filament\Actions\SubscribeTableAction;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Engagement\Filament\Actions\BulkEngagementAction;
+use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
+use AdvisingApp\Notifications\Filament\Actions\SubscribeBulkAction;
+use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
+use AdvisingApp\Notifications\Filament\Actions\SubscribeTableAction;
 use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
-use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
-use Assist\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
 
 class ListProspects extends ListRecords implements HasBulkEngagementAction
 {

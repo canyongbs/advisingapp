@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task;
+namespace AdvisingApp\Task;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;

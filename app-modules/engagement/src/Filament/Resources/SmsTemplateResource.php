@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\Engagement\Models\SmsTemplate;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
+use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\EditSmsTemplate;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\ListSmsTemplates;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages\CreateSmsTemplate;
 
 class SmsTemplateResource extends Resource
 {

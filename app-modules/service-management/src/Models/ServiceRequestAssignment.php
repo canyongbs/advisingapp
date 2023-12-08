@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
@@ -42,12 +42,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\Timeline\Models\Contracts\ProvidesATimeline;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Timeline\Timelines\ServiceRequestAssignmentTimeline;
-use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
-use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Timeline\Timelines\ServiceRequestAssignmentTimeline;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @mixin IdeHelperServiceRequestAssignment

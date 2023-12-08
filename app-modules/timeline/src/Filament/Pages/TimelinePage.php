@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline\Filament\Pages;
+namespace AdvisingApp\Timeline\Filament\Pages;
 
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
-use Assist\Timeline\Models\Timeline;
+use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use App\Actions\GetRecordFromMorphAndKey;
-use Assist\Timeline\Actions\SyncTimelineData;
+use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Symfony\Component\HttpFoundation\Response;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
-use Assist\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
+use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
 
 abstract class TimelinePage extends Page
 {

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Actions;
+namespace AdvisingApp\Campaign\Actions;
 
-use Assist\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
