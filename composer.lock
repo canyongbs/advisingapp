@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f9fdc709420534ac3d5a75bf1fbf318",
+    "content-hash": "b1fb2c1a500f350c78e0614638cc4d2f",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -5423,556 +5423,6 @@
             "time": "2023-01-25T16:56:05+00:00"
         },
         {
-            "name": "laravel-json-api/core",
-            "version": "v3.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/core.git",
-                "reference": "7cccc6abaa8907cc8dbca66fd6f378dd237e9191"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/core/zipball/7cccc6abaa8907cc8dbca66fd6f378dd237e9191",
-                "reference": "7cccc6abaa8907cc8dbca66fd6f378dd237e9191",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^10.0",
-                "illuminate/http": "^10.0",
-                "illuminate/support": "^10.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.5.28"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelJsonApi\\Core\\": "src/Core",
-                    "LaravelJsonApi\\Contracts\\": "src/Contracts"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "Contracts and support classes for Laravel JSON:API packages.",
-            "homepage": "https://github.com/laravel-json-api/core",
-            "keywords": [
-                "JSON-API",
-                "jsonapi",
-                "jsonapi.org",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel-json-api/core/issues",
-                "source": "https://github.com/laravel-json-api/core/tree/v3.3.0"
-            },
-            "time": "2023-11-08T17:57:40+00:00"
-        },
-        {
-            "name": "laravel-json-api/eloquent",
-            "version": "v3.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/eloquent.git",
-                "reference": "5398cf60925343a58b1267194f7d821bf1b40855"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/eloquent/zipball/5398cf60925343a58b1267194f7d821bf1b40855",
-                "reference": "5398cf60925343a58b1267194f7d821bf1b40855",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/database": "^10.0",
-                "illuminate/support": "^10.0",
-                "laravel-json-api/core": "^3.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^8.0",
-                "phpunit/phpunit": "^9.5.28"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelJsonApi\\Eloquent\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "Serialize Eloquent models as JSON:API resources.",
-            "homepage": "https://github.com/laravel-json-api/eloquent",
-            "keywords": [
-                "JSON-API",
-                "jsonapi",
-                "jsonapi.org",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel-json-api/eloquent/issues",
-                "source": "https://github.com/laravel-json-api/eloquent/tree/v3.1.0"
-            },
-            "time": "2023-10-29T13:58:22+00:00"
-        },
-        {
-            "name": "laravel-json-api/encoder-neomerx",
-            "version": "v3.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/encoder-neomerx.git",
-                "reference": "30dbfe08be6680408334e6e6dcdeabf0114418bf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/encoder-neomerx/zipball/30dbfe08be6680408334e6e6dcdeabf0114418bf",
-                "reference": "30dbfe08be6680408334e6e6dcdeabf0114418bf",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^10.0",
-                "illuminate/support": "^10.0",
-                "laravel-json-api/core": "^3.0",
-                "laravel-json-api/neomerx-json-api": "^5.0.1",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.5.28"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "3.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "LaravelJsonApi\\Encoder\\Neomerx\\ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelJsonApi\\Encoder\\Neomerx\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "Encode JSON:API resources using the neomerx/json-api package.",
-            "homepage": "https://github.com/laravel-json-api/encoder-neomerx",
-            "keywords": [
-                "JSON-API",
-                "jsonapi",
-                "jsonapi.org",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel-json-api/encoder-neomerx/issues",
-                "source": "https://github.com/laravel-json-api/encoder-neomerx/tree/v3.1.1"
-            },
-            "time": "2023-11-20T18:29:23+00:00"
-        },
-        {
-            "name": "laravel-json-api/exceptions",
-            "version": "v2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/exceptions.git",
-                "reference": "417bc8a73460532982abdb2abe5f7a51bba23483"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/exceptions/zipball/417bc8a73460532982abdb2abe5f7a51bba23483",
-                "reference": "417bc8a73460532982abdb2abe5f7a51bba23483",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^10.0",
-                "illuminate/pipeline": "^10.0",
-                "laravel-json-api/core": "^3.0",
-                "laravel-json-api/validation": "^3.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "laravel-json-api/testing": "^2.0",
-                "orchestra/testbench": "^8.0",
-                "phpunit/phpunit": "^9.5.28"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelJsonApi\\Exceptions\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "JSON:API exception parsing for Laravel applications.",
-            "homepage": "https://github.com/laravel-json-api/exceptions",
-            "keywords": [
-                "JSON-API",
-                "jsonapi",
-                "jsonapi.org",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel-json-api/exceptions/issues",
-                "source": "https://github.com/laravel-json-api/exceptions/tree/v2.1.0"
-            },
-            "time": "2023-11-08T18:04:39+00:00"
-        },
-        {
-            "name": "laravel-json-api/laravel",
-            "version": "v3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/laravel.git",
-                "reference": "6a0281d5ba375407a4d82f83e273a399a0c553c4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/laravel/zipball/6a0281d5ba375407a4d82f83e273a399a0c553c4",
-                "reference": "6a0281d5ba375407a4d82f83e273a399a0c553c4",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "laravel-json-api/core": "^3.3",
-                "laravel-json-api/eloquent": "^3.1",
-                "laravel-json-api/encoder-neomerx": "^3.1",
-                "laravel-json-api/exceptions": "^2.1",
-                "laravel-json-api/spec": "^2.0",
-                "laravel-json-api/validation": "^3.0",
-                "laravel/framework": "^10.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "laravel-json-api/testing": "^2.1",
-                "orchestra/testbench": "^8.0",
-                "phpunit/phpunit": "^10.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "3.x-dev"
-                },
-                "laravel": {
-                    "aliases": {
-                        "JsonApi": "LaravelJsonApi\\Core\\Facades\\JsonApi",
-                        "JsonApiRoute": "LaravelJsonApi\\Laravel\\Facades\\JsonApiRoute"
-                    },
-                    "providers": [
-                        "LaravelJsonApi\\Laravel\\ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelJsonApi\\Laravel\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "JSON:API for Laravel applications.",
-            "homepage": "https://github.com/laravel-json-api/laravel",
-            "keywords": [
-                "JSON-API",
-                "jsonapi",
-                "jsonapi.org",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel-json-api/laravel/issues",
-                "source": "https://github.com/laravel-json-api/laravel/tree/v3.2.0"
-            },
-            "time": "2023-11-08T18:08:44+00:00"
-        },
-        {
-            "name": "laravel-json-api/neomerx-json-api",
-            "version": "v5.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/neomerx-json-api.git",
-                "reference": "00841feae83ab95f4490c6f2086f02f298293381"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/neomerx-json-api/zipball/00841feae83ab95f4490c6f2086f02f298293381",
-                "reference": "00841feae83ab95f4490c6f2086f02f298293381",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.4|^8.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.17",
-                "mockery/mockery": "^1.4.4",
-                "phpmd/phpmd": "^2.11.1",
-                "phpunit/phpunit": "^9.5.10",
-                "scrutinizer/ocular": "^1.8",
-                "squizlabs/php_codesniffer": "^3.6.2"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "5.x-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/I18n/format.php"
-                ],
-                "psr-4": {
-                    "Neomerx\\JsonApi\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "neomerx",
-                    "email": "info@neomerx.com"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "Framework agnostic JSON API (jsonapi.org) implementation",
-            "homepage": "https://github.com/neomerx/json-api",
-            "keywords": [
-                "JSON-API",
-                "api",
-                "json",
-                "jsonapi",
-                "jsonapi.org",
-                "neomerx"
-            ],
-            "support": {
-                "issues": "https://github.com/neomerx/json-api/issues",
-                "source": "https://github.com/laravel-json-api/neomerx-json-api/tree/v5.0.2"
-            },
-            "time": "2023-05-29T14:50:09+00:00"
-        },
-        {
-            "name": "laravel-json-api/spec",
-            "version": "v2.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/spec.git",
-                "reference": "8357dda47642593ffefa07c8fd801cc4cfa1452e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/spec/zipball/8357dda47642593ffefa07c8fd801cc4cfa1452e",
-                "reference": "8357dda47642593ffefa07c8fd801cc4cfa1452e",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^10.0",
-                "illuminate/pipeline": "^10.0",
-                "illuminate/support": "^10.0",
-                "laravel-json-api/core": "^3.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^8.0",
-                "phpunit/phpunit": "^9.5.28"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "2.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "LaravelJsonApi\\Spec\\ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelJsonApi\\Spec\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "Validate JSON documents for compliance with the JSON:API specification.",
-            "homepage": "https://github.com/laravel-json-api/spec",
-            "keywords": [
-                "JSON-API",
-                "jsonapi",
-                "jsonapi.org",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel-json-api/spec/issues",
-                "source": "https://github.com/laravel-json-api/spec/tree/v2.0.1"
-            },
-            "time": "2023-10-29T14:14:31+00:00"
-        },
-        {
-            "name": "laravel-json-api/validation",
-            "version": "v3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/validation.git",
-                "reference": "d28eed0c1658a905abe65cca9e5624aca8139f29"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/validation/zipball/d28eed0c1658a905abe65cca9e5624aca8139f29",
-                "reference": "d28eed0c1658a905abe65cca9e5624aca8139f29",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^10.0",
-                "illuminate/support": "^10.0",
-                "laravel-json-api/core": "^3.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^8.0",
-                "phpunit/phpunit": "^9.5.28"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "3.x-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "LaravelJsonApi\\Validation\\ServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelJsonApi\\Validation\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "Laravel validation for JSON:API resources.",
-            "homepage": "https://github.com/laravel-json-api/validation",
-            "keywords": [
-                "JSON-API",
-                "jsonapi",
-                "jsonapi.org",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel-json-api/validation/issues",
-                "source": "https://github.com/laravel-json-api/validation/tree/v3.0.0"
-            },
-            "time": "2023-02-14T19:18:31+00:00"
-        },
-        {
             "name": "laravel/framework",
             "version": "v10.35.0",
             "source": {
@@ -7639,6 +7089,75 @@
                 }
             ],
             "time": "2023-12-04T21:20:19+00:00"
+        },
+        {
+            "name": "lomkit/laravel-rest-api",
+            "version": "v2.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Lomkit/laravel-rest-api.git",
+                "reference": "6f631445a8a2dbc449cdc6c80590c1585a42a476"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Lomkit/laravel-rest-api/zipball/6f631445a8a2dbc449cdc6c80590c1585a42a476",
+                "reference": "6f631445a8a2dbc449cdc6c80590c1585a42a476",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/contracts": "^10.0",
+                "illuminate/http": "^10.0",
+                "illuminate/support": "^10.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "orchestra/testbench": "^8.5",
+                "phpunit/phpunit": "^8.0|^9.0|^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Lomkit\\Rest\\RestServiceProvider"
+                    ],
+                    "aliases": {
+                        "Rest": "Lomkit\\Rest\\Facades\\Rest"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Lomkit\\Rest\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gautier Deleglise",
+                    "email": "gautier@lomkit.com"
+                }
+            ],
+            "description": "A package to build quick and robust rest api for the Laravel framework.",
+            "keywords": [
+                "api",
+                "graphql",
+                "laravel",
+                "lomkit",
+                "rest"
+            ],
+            "support": {
+                "issues": "https://github.com/Lomkit/laravel-rest-api/issues",
+                "source": "https://github.com/Lomkit/laravel-rest-api/tree/v2.3.3"
+            },
+            "time": "2023-11-29T12:00:56+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -15605,64 +15124,6 @@
             "time": "2023-10-31T09:24:17+00:00"
         },
         {
-            "name": "cloudcreativity/json-api-testing",
-            "version": "v5.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cloudcreativity/json-api-testing.git",
-                "reference": "31920b5260c909deae5eda5cc7c4a999bcad59f2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cloudcreativity/json-api-testing/zipball/31920b5260c909deae5eda5cc7c4a999bcad59f2",
-                "reference": "31920b5260c909deae5eda5cc7c4a999bcad59f2",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^9.0|^10.0",
-                "illuminate/support": "^9.0|^10.0",
-                "php": "^8.1",
-                "phpunit/phpunit": "^9.5.10|^10.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "5.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "CloudCreativity\\JsonApi\\Testing\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                }
-            ],
-            "description": "PHPUnit test helpers to check JSON API documents.",
-            "homepage": "https://github.com/cloudcreativity/json-api",
-            "keywords": [
-                "JSON-API",
-                "api",
-                "cloudcreativity",
-                "json",
-                "jsonapi",
-                "jsonapi.org"
-            ],
-            "support": {
-                "issues": "https://github.com/cloudcreativity/json-api/issues",
-                "source": "https://github.com/cloudcreativity/json-api-testing/tree/v5.0.0"
-            },
-            "time": "2023-02-18T15:01:32+00:00"
-        },
-        {
             "name": "fakerphp/faker",
             "version": "v1.23.0",
             "source": {
@@ -16165,71 +15626,6 @@
                 }
             ],
             "time": "2023-12-04T19:21:38+00:00"
-        },
-        {
-            "name": "laravel-json-api/testing",
-            "version": "v2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel-json-api/testing.git",
-                "reference": "0f3412591e539b3e6ece7a611734bf9dfd42be1a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel-json-api/testing/zipball/0f3412591e539b3e6ece7a611734bf9dfd42be1a",
-                "reference": "0f3412591e539b3e6ece7a611734bf9dfd42be1a",
-                "shasum": ""
-            },
-            "require": {
-                "cloudcreativity/json-api-testing": "^4.1|^5.0",
-                "ext-json": "*",
-                "illuminate/http": "^10.0",
-                "illuminate/support": "^10.0",
-                "illuminate/testing": "^10.0",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "laravel/framework": "^10.0",
-                "phpunit/phpunit": "^9.5.28|^10.0.7"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LaravelJsonApi\\Testing\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Cloud Creativity Ltd",
-                    "email": "info@cloudcreativity.co.uk"
-                },
-                {
-                    "name": "Christopher Gammie",
-                    "email": "contact@gammie.co.uk"
-                }
-            ],
-            "description": "Test helpers for JSON:API compliant APIs.",
-            "homepage": "https://github.com/laravel-json-api/testing",
-            "keywords": [
-                "JSON-API",
-                "jsonapi",
-                "jsonapi.org",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel-json-api/testing/issues",
-                "source": "https://github.com/laravel-json-api/testing/tree/v2.1.0"
-            },
-            "time": "2023-02-18T15:04:12+00:00"
         },
         {
             "name": "laravel/sail",

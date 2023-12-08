@@ -34,4 +34,10 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'model' => [
+        'prospect' => [
+            '*',
+        ],
+    ],
+];

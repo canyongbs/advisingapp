@@ -40,10 +40,12 @@ use Filament\Panel;
 use Assist\Form\FormPlugin;
 use Assist\Form\Models\Form;
 use Assist\Form\Models\FormField;
+use Assist\Form\Models\FormRequest;
 use Illuminate\Support\Facades\Event;
 use Assist\Form\Models\FormSubmission;
 use Illuminate\Support\ServiceProvider;
 use Assist\Form\Events\FormSubmissionCreated;
+use Assist\Form\Observers\FormRequestObserver;
 use Assist\Form\Observers\FormSubmissionObserver;
 use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -72,6 +74,7 @@ class FormServiceProvider extends ServiceProvider
 
     public function registerObservers(): void
     {
+        FormRequest::observe(FormRequestObserver::class);
         FormSubmission::observe(FormSubmissionObserver::class);
     }
 

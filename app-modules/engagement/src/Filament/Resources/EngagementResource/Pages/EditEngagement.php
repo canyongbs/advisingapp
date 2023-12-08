@@ -48,7 +48,6 @@ use Filament\Forms\Components\Toggle;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
 use Assist\Engagement\Models\Engagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
@@ -60,7 +59,9 @@ use Filament\Forms\Components\MorphToSelect;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
+use Assist\Engagement\Enums\EngagementDeliveryMethod;
 use Assist\Engagement\Filament\Resources\EngagementResource;
+use Assist\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
 class EditEngagement extends EditRecord
 {
@@ -74,8 +75,12 @@ class EditEngagement extends EditRecord
                     ->autofocus()
                     ->required()
                     ->placeholder(__('Subject'))
-                    ->columnSpanFull(),
-                TiptapEditor::make('body_json')
+                    ->columnSpanFull()
+                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email),
+                TiptapEditor::make('body')
+                    ->disk('s3-public')
+                    ->visibility('public')
+                    ->directory('editor-images/engagements')
                     ->label('Body')
                     ->mergeTags([
                         'student full name',
@@ -133,17 +138,11 @@ class EditEngagement extends EditRecord
 
                             $component->state($template->content);
                         }))
-                    ->visible(fn (Engagement $record): bool => filled($record->body_json))
+                    ->visible(fn (Engagement $record): bool => $record->deliverable->channel === EngagementDeliveryMethod::Email)
                     ->showMergeTagsInBlocksPanel($form->getLivewire() instanceof Page)
                     ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),
-                Textarea::make('body')
-                    ->placeholder('Body')
-                    ->required()
-                    ->maxLength(320) // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-                    ->helperText('The body of your message can be up to 320 characters long.')
-                    ->visible(fn (Engagement $record): bool => blank($record->body_json))
-                    ->columnSpanFull(),
+                EngagementSmsBodyField::make(context: 'edit', form: $form),
                 MorphToSelect::make('recipient')
                     ->label('Recipient')
                     ->searchable()

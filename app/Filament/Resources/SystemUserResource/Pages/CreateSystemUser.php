@@ -34,35 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\JsonApi\V1\Prospects;
+namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use LaravelJsonApi\Validation\Rule as JsonApiRule;
-use LaravelJsonApi\Laravel\Http\Requests\ResourceRequest;
+use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\SystemUserResource;
 
-class ProspectRequest extends ResourceRequest
+class CreateSystemUser extends CreateRecord
 {
-    public function rules(): array
+    protected static string $resource = SystemUserResource::class;
+
+    public function form(Form $form): Form
     {
-        return [
-            'firstName' => ['required', 'string'],
-            'lastName' => ['required', 'string'],
-            'fullName' => ['required', 'string'],
-            'preferred' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
-            'email' => ['required', 'email'],
-            'email2' => ['nullable', 'email'],
-            'mobile' => ['nullable', 'string'],
-            'smsOptOut' => ['nullable', JsonApiRule::boolean()],
-            'emailBounce' => ['nullable', JsonApiRule::boolean()],
-            'phone' => ['nullable', 'string'],
-            'address' => ['nullable', 'string'],
-            'address2' => ['nullable', 'string'],
-            'birthdate' => ['nullable', 'date_format:Y-m-d'],
-            'hsgrad' => ['nullable', 'date_format:Y'],
-            'status' => ['required', JsonApiRule::toOne()],
-            'source' => ['required', JsonApiRule::toOne()],
-            //TODO: 'assignedToId' needs User Schema
-            //TODO: 'createdById' needs User Schema
-        ];
+        return $form->schema([
+            TextInput::make('name')
+                ->required()
+                ->string(),
+        ]);
     }
 }

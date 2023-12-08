@@ -34,46 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\JsonApi\V1\ProspectStatuses;
+namespace App\Console\Commands;
 
-use LaravelJsonApi\Eloquent\Schema;
-use LaravelJsonApi\Eloquent\Fields\ID;
-use LaravelJsonApi\Eloquent\Fields\Str;
-use Assist\Prospect\Models\ProspectStatus;
-use LaravelJsonApi\Eloquent\Fields\DateTime;
-use LaravelJsonApi\Eloquent\Fields\SoftDelete;
-use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
-use LaravelJsonApi\Eloquent\Contracts\Paginator;
-use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
-use LaravelJsonApi\Eloquent\Pagination\PagePagination;
+use App\Rest\OpenApi;
+use Lomkit\Rest\Console\Commands\DocumentationCommand as BaseDocumentationCommand;
 
-class ProspectStatusSchema extends Schema
+class DocumentationCommand extends BaseDocumentationCommand
 {
-    public static string $model = ProspectStatus::class;
-
-    public function fields(): array
+    // TODO: We can delete this when ___ is merged in
+    public function handle()
     {
-        return [
-            ID::make()->uuid(),
-            Str::make('classification'),
-            Str::make('name'),
-            Str::make('color'),
-            DateTime::make('createdAt')->sortable()->readOnly(),
-            DateTime::make('updatedAt')->sortable()->readOnly(),
-            SoftDelete::make('deletedAt')->sortable()->readOnly(),
-            HasMany::make('prospects'),
-        ];
-    }
+        $openApi = (new OpenApi())
+            ->generate();
 
-    public function filters(): array
-    {
-        return [
-            WhereIdIn::make($this),
-        ];
-    }
+        $path = $this->getPath('openapi');
 
-    public function pagination(): ?Paginator
-    {
-        return PagePagination::make();
+        $this->makeDirectory($path);
+
+        $this->files->put(
+            $path,
+            json_encode($openApi->jsonSerialize())
+        );
+
+        $this->info('The documentation was generated successfully!');
+        $this->info('Open ' . url(config('rest.documentation.routing.path')) . ' in a web browser.');
     }
 }

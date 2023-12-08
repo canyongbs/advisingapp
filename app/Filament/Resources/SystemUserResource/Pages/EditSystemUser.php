@@ -34,49 +34,59 @@
 </COPYRIGHT>
 */
 
-namespace App\JsonApi\V1;
+namespace App\Filament\Resources\SystemUserResource\Pages;
 
-use LaravelJsonApi\Core\Server\Server as BaseServer;
-use Assist\Prospect\JsonApi\V1\Prospects\ProspectSchema;
-use Assist\Prospect\JsonApi\V1\ProspectSources\ProspectSourceSchema;
-use Assist\Prospect\JsonApi\V1\ProspectStatuses\ProspectStatusSchema;
+use Filament\Forms\Form;
+use App\Models\SystemUser;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\SystemUserResource;
 
-class Server extends BaseServer
+class EditSystemUser extends EditRecord
 {
-    /**
-     * The base URI namespace for this server.
-     *
-     * @var string
-     */
-    protected string $baseUri = '/api/v1';
+    protected static string $resource = SystemUserResource::class;
 
-    /**
-     * Bootstrap the server when it is handling an HTTP request.
-     *
-     * @return void
-     */
-    public function serving(): void
+    public function form(Form $form): Form
     {
-        // no-op
+        return $form->schema([
+            TextInput::make('name')
+                ->required()
+                ->string(),
+            TextInput::make('token')
+                ->hint('Please copy the token, it will only be shown once.')
+                ->dehydrated(false)
+                ->visible(fn (?string $state) => filled($state)),
+        ]);
     }
 
-    public function authorizable(): bool
+    protected function mutateFormDataBeforeFill(array $data): array
     {
-        //TODO: use real auth
-        return false;
+        /** @var SystemUser $systemUser */
+        $systemUser = $this->getRecord();
+
+        if (! $systemUser->tokens()->where('name', 'api')->first()) {
+            $token = str($systemUser->createToken('api')->plainTextToken)->after('|')->toString();
+
+            $data['token'] = $token;
+        }
+
+        return $data;
     }
 
-    /**
-     * Get the server's list of schemas.
-     *
-     * @return array
-     */
-    protected function allSchemas(): array
+    protected function getHeaderActions(): array
     {
         return [
-            ProspectSchema::class,
-            ProspectStatusSchema::class,
-            ProspectSourceSchema::class,
+            Action::make('Reset Token')
+                ->action(function (SystemUser $record) {
+                    $record->tokens()->where('name', 'api')->delete();
+
+                    $token = str($record->createToken('api')->plainTextToken)->after('|')->toString();
+
+                    $this->data['token'] = $token;
+                }),
+            DeleteAction::make(),
         ];
     }
 }

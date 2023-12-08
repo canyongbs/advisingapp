@@ -59,7 +59,6 @@
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^3.0",
-        "laravel-json-api/laravel": "^3.2",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
         "laravel/scout": "^10.2",
@@ -70,6 +69,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/oauth2-client": "^2.7",
         "livewire/livewire": "^3.0",
+        "lomkit/laravel-rest-api": "^2.3",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.109",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
@@ -94,7 +94,6 @@
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.21",
         "larastan/larastan": "^2.7",
-        "laravel-json-api/testing": "^2.1",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
@@ -233,7 +232,7 @@
             }
         },
         {
-            "type": "vcs",
+            "type": "git",
             "url": "https://github.com/canyongbs/laravel-auditing"
         }
     ]

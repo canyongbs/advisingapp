@@ -34,34 +34,31 @@
 </COPYRIGHT>
 */
 
-use App\JsonApi\V1\Server;
+namespace Assist\Form\Enums;
 
-return [
-    /*
-    |--------------------------------------------------------------------------
-    | Root Namespace
-    |--------------------------------------------------------------------------
-    |
-    | The root JSON:API namespace, within your application's namespace.
-    | This is used when generating any class that does not sit *within*
-    | a server's namespace. For example, new servers and filters.
-    |
-    | By default this is set to `JsonApi` which means the root namespace
-    | will be `\App\JsonApi`, if your application's namespace is `App`.
-    */
-    'namespace' => 'JsonApi',
+use Assist\Form\Models\FormRequest;
+use Filament\Support\Contracts\HasLabel;
+use Assist\Form\Actions\DeliverFormRequestBySms;
+use Assist\Form\Actions\DeliverFormRequestByEmail;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Servers
-    |--------------------------------------------------------------------------
-    |
-    | A list of the JSON:API compliant APIs in your application, referred to
-    | as "servers". They must be listed below, with the array key being the
-    | unique name for each server, and the value being the fully-qualified
-    | class name of the server class.
-    */
-    'servers' => [
-        'v1' => Server::class,
-    ],
-];
+enum FormRequestDeliveryMethod: string implements HasLabel
+{
+    case Email = 'email';
+    case Sms = 'sms';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            static::Email => 'Email',
+            static::Sms => 'SMS',
+        };
+    }
+
+    public function deliver(FormRequest $request): void
+    {
+        match ($this) {
+            static::Email => DeliverFormRequestByEmail::dispatch($request),
+            static::Sms => DeliverFormRequestBySms::dispatch($request),
+        };
+    }
+}

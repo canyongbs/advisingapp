@@ -36,6 +36,7 @@
 
 namespace Assist\Authorization\Models;
 
+use App\Models\SystemUser;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -63,6 +64,11 @@ class Permission extends SpatiePermission implements Auditable
     public function getApiPermissions(): Collection
     {
         return collect([]);
+    }
+
+    public function systemUsers()
+    {
+        return $this->belongsToMany(SystemUser::class);
     }
 
     public function scopeApi(Builder $query): void

@@ -36,8 +36,8 @@
 
 namespace App\Providers;
 
-use App\Models\User;
 use App\Enums\Feature;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
@@ -59,9 +59,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::after(function (User $user, string $ability, bool|null|Response $result, mixed $arguments) {
-            return
-                $user->hasRole('authorization.super_admin') && ! $result instanceof FeatureAccessResponse
+        Gate::after(function (Authenticatable $authenticatable, string $ability, bool|null|Response $result, mixed $arguments) {
+            return $authenticatable->hasRole('authorization.super_admin') && ! $result instanceof FeatureAccessResponse
                     ? true
                     : $result;
         });
