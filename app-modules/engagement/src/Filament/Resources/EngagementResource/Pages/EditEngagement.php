@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -42,26 +42,26 @@ use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
-use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
-use Assist\Engagement\Models\Engagement;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Engagement\Models\EmailTemplate;
 use Filament\Forms\Components\MorphToSelect;
 use FilamentTiptapEditor\Enums\TiptapOutput;
+use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Filament\Resources\EngagementResource;
-use Assist\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
 class EditEngagement extends EditRecord
 {

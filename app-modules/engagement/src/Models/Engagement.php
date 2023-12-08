@@ -34,28 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Models;
+namespace AdvisingApp\Engagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
-use Assist\Prospect\Models\Prospect;
-use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Timeline\Timelines\EngagementTimeline;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Timeline\Models\Timeline;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
-use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\Timeline\Models\Contracts\ProvidesATimeline;
-use Assist\Engagement\Actions\GenerateEmailMarkdownContent;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @property-read Educatable $recipient

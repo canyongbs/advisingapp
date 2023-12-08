@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Managers\Contracts;
+namespace AdvisingApp\MeetingCenter\Managers\Contracts;
 
 use DateTime;
-use Assist\MeetingCenter\Models\Calendar;
-use Assist\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 
 interface CalendarInterface
 {

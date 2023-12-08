@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Listeners;
+namespace AdvisingApp\Engagement\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationSent;
-use Assist\Engagement\Notifications\EngagementNotification;
-use Assist\Engagement\Notifications\EngagementEmailSentNotification;
+use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Engagement\Notifications\EngagementEmailSentNotification;
 
 // TODO Turn this into a queued job once generic listener is in place
 class HandleEngagementNotificationSent implements ShouldQueue

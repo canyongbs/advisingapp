@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Database\Factories;
+namespace AdvisingApp\Engagement\Database\Factories;
 
-use Assist\Engagement\Models\Engagement;
-use Assist\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\Engagement;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 
 /**
  * @extends Factory<EngagementDeliverable>

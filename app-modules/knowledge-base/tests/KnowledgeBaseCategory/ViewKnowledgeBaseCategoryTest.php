@@ -39,8 +39,8 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
 // TODO: Write ViewKnowledgeBaseCategory tests
 //test('The correct details are displayed on the ViewKnowledgeBaseCategory page', function () {});

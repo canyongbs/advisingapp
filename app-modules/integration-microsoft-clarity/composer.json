@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/integration-microsoft-clarity",
+  "name": "canyon-gbs/advising-app-integration-microsoft-clarity",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\IntegrationMicrosoftClarity\\": "src/",
-      "Assist\\IntegrationMicrosoftClarity\\Tests\\": "tests/",
-      "Assist\\IntegrationMicrosoftClarity\\Database\\Factories\\": "database/factories/",
-      "Assist\\IntegrationMicrosoftClarity\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\IntegrationMicrosoftClarity\\": "src/",
+      "AdvisingApp\\IntegrationMicrosoftClarity\\Tests\\": "tests/",
+      "AdvisingApp\\IntegrationMicrosoftClarity\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\IntegrationMicrosoftClarity\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\IntegrationMicrosoftClarity\\Providers\\IntegrationMicrosoftClarityServiceProvider"
+        "AdvisingApp\\IntegrationMicrosoftClarity\\Providers\\IntegrationMicrosoftClarityServiceProvider"
       ]
     }
   }

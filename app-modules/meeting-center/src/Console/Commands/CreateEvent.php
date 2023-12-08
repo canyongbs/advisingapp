@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Console\Commands;
+namespace AdvisingApp\MeetingCenter\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Assist\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 
 class CreateEvent extends Command
 {

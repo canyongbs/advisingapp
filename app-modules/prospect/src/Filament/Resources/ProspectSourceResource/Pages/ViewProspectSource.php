@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectSourceResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
 use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 
 class ViewProspectSource extends ViewRecord
 {

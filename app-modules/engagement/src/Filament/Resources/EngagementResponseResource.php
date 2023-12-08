@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\Engagement\Models\EngagementResponse;
-use Assist\Engagement\Filament\Resources\EngagementResponseResource\Pages\ViewEngagementResponse;
-use Assist\Engagement\Filament\Resources\EngagementResponseResource\Pages\ListEngagementResponses;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages\ViewEngagementResponse;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages\ListEngagementResponses;
 
 class EngagementResponseResource extends Resource
 {

@@ -45,9 +45,9 @@ use Illuminate\Validation\Rules\Enum;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestStatusRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestStatusRequestFactory;
 
 test('A successful action on the EditServiceRequestStatus page', function () {
     $serviceRequestStatus = ServiceRequestStatus::factory()->create();

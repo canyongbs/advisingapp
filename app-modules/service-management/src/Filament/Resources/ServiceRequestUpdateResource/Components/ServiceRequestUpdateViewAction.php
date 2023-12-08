@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Components;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Components;
 
 use Filament\Actions\ViewAction;
-use Assist\ServiceManagement\Filament\Concerns\ServiceRequestUpdateInfolist;
+use AdvisingApp\ServiceManagement\Filament\Concerns\ServiceRequestUpdateInfolist;
 
 class ServiceRequestUpdateViewAction extends ViewAction
 {

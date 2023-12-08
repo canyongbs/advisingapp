@@ -40,9 +40,9 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
-use Assist\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories\EditKnowledgeBaseItemRequestFactory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories\EditKnowledgeBaseItemRequestFactory;
 
 // TODO: Write EditKnowledgeBaseItem tests
 //test('A successful action on the EditKnowledgeBaseItem page', function () {});

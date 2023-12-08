@@ -38,7 +38,7 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Team\Filament\Resources\TeamResource;
+use AdvisingApp\Team\Filament\Resources\TeamResource;
 
 // Permission Tests
 

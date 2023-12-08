@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace AdvisingApp\Form\Actions;
 
 use Twilio\Rest\Client;
 use Twilio\Exceptions\TwilioException;

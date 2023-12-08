@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Exports;
+namespace AdvisingApp\Form\Exports;
 
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithMapping;

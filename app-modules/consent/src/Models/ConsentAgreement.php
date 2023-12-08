@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Models;
+namespace AdvisingApp\Consent\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperConsentAgreement

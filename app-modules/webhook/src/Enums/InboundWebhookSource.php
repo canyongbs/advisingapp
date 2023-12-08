@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Webhook\Enums;
+namespace AdvisingApp\Webhook\Enums;
 
 enum InboundWebhookSource: string
 {

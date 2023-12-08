@@ -34,29 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Providers;
+namespace AdvisingApp\Engagement\Providers;
 
 use Filament\Panel;
-use Assist\Engagement\EngagementPlugin;
 use Illuminate\Support\ServiceProvider;
-use Assist\Engagement\Models\Engagement;
-use Assist\Engagement\Models\SmsTemplate;
-use Assist\Engagement\Models\EmailTemplate;
 use Illuminate\Console\Scheduling\Schedule;
-use Assist\Engagement\Models\EngagementFile;
-use Assist\Engagement\Models\EngagementBatch;
-use Assist\Engagement\Models\EngagementResponse;
-use Assist\Engagement\Actions\DeliverEngagements;
-use Assist\Authorization\AuthorizationRoleRegistry;
-use Assist\Engagement\Models\EngagementDeliverable;
-use Assist\Engagement\Observers\EngagementObserver;
-use Assist\Engagement\Models\EngagementFileEntities;
-use Assist\Engagement\Observers\SmsTemplateObserver;
+use AdvisingApp\Engagement\EngagementPlugin;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\Engagement\Models\EngagementBatch;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Engagement\Observers\EmailTemplateObserver;
-use Assist\Engagement\Observers\EngagementBatchObserver;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Engagement\Observers\EngagementFileEntitiesObserver;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Actions\DeliverEngagements;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Observers\EngagementObserver;
+use AdvisingApp\Engagement\Models\EngagementFileEntities;
+use AdvisingApp\Engagement\Observers\SmsTemplateObserver;
+use AdvisingApp\Engagement\Observers\EmailTemplateObserver;
+use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Engagement\Observers\EngagementFileEntitiesObserver;
 
 class EngagementServiceProvider extends ServiceProvider
 {

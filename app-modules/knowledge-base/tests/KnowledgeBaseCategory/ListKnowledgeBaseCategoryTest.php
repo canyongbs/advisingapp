@@ -39,7 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
 // TODO: Write ListKnowledgeBaseCategory tests
 //test('The correct details are displayed on the ListKnowledgeBaseCategory page', function () {});

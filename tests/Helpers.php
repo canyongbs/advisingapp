@@ -38,7 +38,7 @@ namespace Tests;
 
 use App\Models\User;
 use App\Actions\Paths\ModulePath;
-use Assist\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\Role;
 
 function asSuperAdmin(?User $user = null): TestCase
 {

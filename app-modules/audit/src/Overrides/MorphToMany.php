@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Overrides;
+namespace AdvisingApp\Audit\Overrides;
 
-use Assist\Audit\Overrides\Concerns\AttachOverrides;
+use AdvisingApp\Audit\Overrides\Concerns\AttachOverrides;
 use Illuminate\Database\Eloquent\Relations\MorphToMany as IlluminateMorphToMany;
 
 class MorphToMany extends IlluminateMorphToMany

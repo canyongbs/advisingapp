@@ -35,9 +35,9 @@
 */
 
 use App\Models\User;
-use Assist\Authorization\Models\Role;
-use Assist\Authorization\Models\RoleGroup;
-use Assist\Authorization\Events\RoleRemovedFromUser;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Events\RoleRemovedFromUser;
 
 it('will remove a user from any role group the role belonged to', function () {
     // Given that we have a user

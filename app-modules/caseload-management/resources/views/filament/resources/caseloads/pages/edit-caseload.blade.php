@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
-    use Assist\CaseloadManagement\Enums\CaseloadType;
+    use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 @endphp
 
 <x-filament-panels::page @class([

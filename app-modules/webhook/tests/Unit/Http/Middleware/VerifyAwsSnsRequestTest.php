@@ -41,7 +41,7 @@ use Aws\Sns\MessageValidator;
 use function Pest\Laravel\mock;
 use function Tests\loadFixtureFromModule;
 
-use Assist\Webhook\Http\Middleware\VerifyAwsSnsRequest;
+use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 it('will abort the request if the request cannot be verified to have originated from AWS SNS', function () {

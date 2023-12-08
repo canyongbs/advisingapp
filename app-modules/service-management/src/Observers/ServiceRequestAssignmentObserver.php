@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+namespace AdvisingApp\ServiceManagement\Observers;
 
-use Assist\Timeline\Events\TimelineableRecordCreated;
-use Assist\Timeline\Events\TimelineableRecordDeleted;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Models\ServiceRequestAssignment;
-use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 class ServiceRequestAssignmentObserver
 {

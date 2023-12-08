@@ -41,8 +41,8 @@ export default defineConfig({
         manifest: true,
         lib: {
             entry: resolve(__dirname, 'src/widget.js'),
-            name: 'AssistFormWidget',
-            fileName: 'assist-form-widget',
+            name: 'AdvisingAppFormWidget',
+            fileName: 'advising-app-form-widget',
             formats: ['es'],
         },
         outDir: resolve(__dirname, '../../public/js/widgets/form'),

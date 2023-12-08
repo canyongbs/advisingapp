@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAwsSesEventHandling\Events;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
 
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Assist\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 
 class SesBounceEvent
 {

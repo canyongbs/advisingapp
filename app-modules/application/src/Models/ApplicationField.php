@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Models;
+namespace AdvisingApp\Application\Models;
 
-use Assist\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\SubmissibleField;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

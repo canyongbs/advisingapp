@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\Http\Middleware;
+namespace AdvisingApp\IntegrationTwilio\Http\Middleware;
 
 use Closure;
 use Twilio\Security\RequestValidator;

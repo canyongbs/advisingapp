@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Models;
+namespace AdvisingApp\Team\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Pivot;

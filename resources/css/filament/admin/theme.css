@@ -62,7 +62,7 @@
 }
 
 /* .fi-sidebar-item {
-    @apply text-assist-black-950 dark:text-assist-white-50  !important;
+    @apply text-advising-app-black-950 dark:text-advising-app-white-50  !important;
 }
 
 .fi-sidebar-item-active {
@@ -72,7 +72,7 @@
 }
 
 .fi-theme-switcher button {
-    @apply text-assist-black-900 hover:text-assist-black-950 focus:text-assist-black-950 dark:text-assist-white-50 dark:hover:text-assist-white-100 dark:focus:text-assist-white-100;
+    @apply text-advising-app-black-900 hover:text-advising-app-black-950 focus:text-advising-app-black-950 dark:text-advising-app-white-50 dark:hover:text-advising-app-white-100 dark:focus:text-advising-app-white-100;
 }
 
 .fi-input-wrp {
@@ -84,11 +84,11 @@
 }
 
 .fi-ac > .fi-btn-color-primary   {
-    @apply bg-trout-700 dark:bg-bright-sun-300 ring-trout-700 dark:ring-bright-sun-300 text-assist-white-50 dark:text-assist-black-950 !important;
+    @apply bg-trout-700 dark:bg-bright-sun-300 ring-trout-700 dark:ring-bright-sun-300 text-advising-app-white-50 dark:text-advising-app-black-950 !important;
 }
 
 .fi-btn-color-gray > .fi-btn-label {
-    @apply text-assist-black-950 dark:text-assist-white-50 !important;
+    @apply text-advising-app-black-950 dark:text-advising-app-white-50 !important;
 }
 
 .fi-btn-color-primary {
@@ -96,7 +96,7 @@
 }
 
 .fi-btn-label {
-    @apply text-assist-white-50 dark:text-assist-black-950 !important;
+    @apply text-advising-app-white-50 dark:text-advising-app-black-950 !important;
 }
 
 .fi-fo-radio input:checked {
@@ -120,7 +120,7 @@
 }
 
 .fi-btn-icon {
-    @apply text-assist-white-50 dark:text-assist-black-950 !important;
+    @apply text-advising-app-white-50 dark:text-advising-app-black-950 !important;
 }
 
 .fi-color-custom > .fi-link-icon {

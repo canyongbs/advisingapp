@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Models;
+namespace AdvisingApp\Application\Models;
 
 use App\Models\Attributes\NoPermissions;
-use Assist\Form\Models\SubmissibleAuthentication;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
 
 #[NoPermissions]
 /**

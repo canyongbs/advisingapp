@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Enums;
+namespace AdvisingApp\Form\Enums;
 
 enum FormRequestStatus
 {

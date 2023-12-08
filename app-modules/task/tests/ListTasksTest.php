@@ -35,17 +35,17 @@
 */
 
 use App\Models\User;
-use Assist\Task\Models\Task;
 
 use function Tests\asSuperAdmin;
 
-use Assist\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Task\Filament\Resources\TaskResource;
-use Assist\Task\Filament\Resources\TaskResource\Pages\ListTasks;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Filament\Resources\TaskResource;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 
 test('ListTasks page displays the correct details for available my tasks', function () {
     asSuperAdmin();

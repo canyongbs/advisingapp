@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EngagementResource\RelationManagers;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;

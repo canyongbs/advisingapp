@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Tests\RequestFactories;
+namespace AdvisingApp\ServiceManagement\Tests\RequestFactories;
 
-use Assist\Division\Models\Division;
+use AdvisingApp\Division\Models\Division;
 use Worksome\RequestFactories\RequestFactory;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 
 class CreateServiceRequestRequestFactory extends RequestFactory
 {

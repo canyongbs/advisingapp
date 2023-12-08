@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Actions;
+namespace AdvisingApp\Authorization\Actions;
 
-use Assist\Authorization\Models\Role;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 
 class CreateRoles
 {

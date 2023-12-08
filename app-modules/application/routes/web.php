@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use Assist\Application\Livewire\RenderApplication;
+use AdvisingApp\Application\Livewire\RenderApplication;
 
 Route::middleware('web')
     ->prefix('applications')

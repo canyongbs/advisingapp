@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
+namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
 
-use Assist\Division\Models\Division;
+use AdvisingApp\Division\Models\Division;
 use Worksome\RequestFactories\RequestFactory;
-use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
-use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
-use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 
 class EditKnowledgeBaseItemRequestFactory extends RequestFactory
 {

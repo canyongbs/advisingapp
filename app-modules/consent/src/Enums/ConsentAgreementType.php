@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Enums;
+namespace AdvisingApp\Consent\Enums;
 
 enum ConsentAgreementType: string
 {

@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Tests\Prospect\RequestFactories;
+namespace AdvisingApp\Prospect\Tests\Prospect\RequestFactories;
 
 use App\Models\User;
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Models\ProspectStatus;
 use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 
 class CreateProspectRequestFactory extends RequestFactory
 {

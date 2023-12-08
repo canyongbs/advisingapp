@@ -39,7 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 // TODO: Write ListKnowledgeBaseItems tests
 //test('The correct details are displayed on the ListKnowledgeBaseItems page', function () {});

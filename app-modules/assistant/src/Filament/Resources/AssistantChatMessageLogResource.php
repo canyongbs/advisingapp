@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Resources;
+namespace AdvisingApp\Assistant\Filament\Resources;
 
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -42,8 +42,8 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use App\Infolists\Components\CodeEntry;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Assistant\Models\AssistantChatMessageLog;
-use Assist\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages;
+use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages;
 
 class AssistantChatMessageLogResource extends Resource
 {

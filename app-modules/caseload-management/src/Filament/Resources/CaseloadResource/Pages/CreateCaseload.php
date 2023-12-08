@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
+namespace AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
 use Iterator;
 use App\Models\User;
@@ -60,11 +60,11 @@ use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Tables\Concerns\InteractsWithTable;
-use Assist\CaseloadManagement\Enums\CaseloadType;
-use Assist\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Filament\Notifications\Actions\Action as NotificationAction;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class CreateCaseload extends CreateRecord implements HasTable
 {

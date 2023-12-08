@@ -37,8 +37,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Authorization\Models\Role;
-use Assist\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\RoleGroup;
 
 class SuperAdminProfileSeeder extends Seeder
 {

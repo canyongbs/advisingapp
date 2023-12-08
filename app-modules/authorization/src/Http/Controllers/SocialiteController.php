@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Http\Controllers;
+namespace AdvisingApp\Authorization\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -44,7 +44,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
-use Assist\Authorization\Enums\SocialiteProvider;
+use AdvisingApp\Authorization\Enums\SocialiteProvider;
 
 class SocialiteController extends Controller
 {

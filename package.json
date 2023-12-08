@@ -1,5 +1,5 @@
 {
-    "name": "advisingapp",
+    "name": "advising-app",
     "private": true,
     "scripts": {
         "dev": "vite",

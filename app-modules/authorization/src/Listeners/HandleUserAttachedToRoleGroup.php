@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Listeners;
+namespace AdvisingApp\Authorization\Listeners;
 
-use Assist\Authorization\Actions\AddRolesFromRoleGroupToUser;
+use AdvisingApp\Authorization\Actions\AddRolesFromRoleGroupToUser;
 
 class HandleUserAttachedToRoleGroup
 {

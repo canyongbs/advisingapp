@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Policies;
+namespace AdvisingApp\Alert\Policies;
 
 use App\Models\User;
-use Assist\Alert\Models\Alert;
+use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Auth\Access\Response;
 
 class AlertPolicy

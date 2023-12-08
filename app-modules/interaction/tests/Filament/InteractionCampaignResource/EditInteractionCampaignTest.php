@@ -38,8 +38,8 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Interaction\Models\InteractionCampaign;
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
 
 test('EditInteractionCampaign is gated with proper access control', function () {
     $user = User::factory()->create();

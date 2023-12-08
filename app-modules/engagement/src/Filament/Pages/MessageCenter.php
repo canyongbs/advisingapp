@@ -34,31 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Pages;
+namespace AdvisingApp\Engagement\Filament\Pages;
 
 use Carbon\Carbon;
 use App\Models\User;
 use Filament\Pages\Page;
-use Assist\Task\Models\Task;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Filament\Actions\ViewAction;
+use AdvisingApp\Task\Models\Task;
 use Filament\Actions\CreateAction;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Models\Engagement;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Actions\GetRecordFromMorphAndKey;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Timeline\Actions\SyncTimelineData;
-use Assist\Engagement\Models\EngagementResponse;
-use Assist\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
-use Assist\Engagement\Filament\Actions\EngagementCreateAction;
-use Assist\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Engagement\Filament\Actions\EngagementCreateAction;
+use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
 
 class MessageCenter extends Page
 {

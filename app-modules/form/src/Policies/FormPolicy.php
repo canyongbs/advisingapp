@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Policies;
+namespace AdvisingApp\Form\Policies;
 
 use App\Models\User;
-use Assist\Form\Models\Form;
+use AdvisingApp\Form\Models\Form;
 use Illuminate\Auth\Access\Response;
 
 class FormPolicy

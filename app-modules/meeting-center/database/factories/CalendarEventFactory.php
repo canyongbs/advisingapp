@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Database\Factories;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
 use Illuminate\Support\Carbon;
-use Assist\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

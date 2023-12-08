@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Database\Factories;
+namespace AdvisingApp\Interaction\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Enums\ColumnColorOptions;
+use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Interaction\Models\InteractionStatus>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Interaction\Models\InteractionStatus>
  */
 class InteractionStatusFactory extends Factory
 {

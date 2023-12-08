@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use Assist\Authorization\Models\Role;
 use Illuminate\Support\Facades\Config;
-use Assist\Authorization\Tests\Helpers;
 use Illuminate\Support\Facades\Artisan;
-use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Tests\Helpers;
+use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 
 beforeEach(function () {
     (new Helpers())->truncateTables();

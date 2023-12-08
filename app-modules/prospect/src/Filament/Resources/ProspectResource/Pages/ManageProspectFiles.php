@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\RelationManagers\EngagementFilesRelationManager;
 
 class ManageProspectFiles extends ManageRelatedRecords
 {

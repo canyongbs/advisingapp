@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\Actions\Playground;
+namespace AdvisingApp\IntegrationTwilio\Actions\Playground;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 
 class FindEngagementResponseSender implements EngagementResponseSenderFinder
 {

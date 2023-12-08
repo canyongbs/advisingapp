@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectSourceResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 
 class EditProspectSource extends EditRecord
 {

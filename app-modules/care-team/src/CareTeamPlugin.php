@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CareTeam;
+namespace AdvisingApp\CareTeam;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,7 +50,7 @@ class CareTeamPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\CareTeam\\Filament\\Resources'
+            for: 'AdvisingApp\\CareTeam\\Filament\\Resources'
         );
     }
 

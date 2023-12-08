@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline\Timelines;
+namespace AdvisingApp\Timeline\Timelines;
 
 use Filament\Actions\ViewAction;
-use Assist\Timeline\Models\CustomTimeline;
-use Assist\Engagement\Models\EngagementResponse;
-use Assist\Engagement\Filament\Resources\EngagementResponseResource\Components\EngagementResponseViewAction;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Components\EngagementResponseViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
 class EngagementResponseTimeline extends CustomTimeline

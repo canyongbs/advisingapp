@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Concerns;
+namespace AdvisingApp\Engagement\Filament\Concerns;
 
 use Filament\Infolists\Components\TextEntry;
 

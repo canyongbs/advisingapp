@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationGoogleAnalytics;
+namespace AdvisingApp\IntegrationGoogleAnalytics;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Illuminate\Support\Facades\Blade;
 use Filament\Support\Facades\FilamentView;
-use Assist\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
+use AdvisingApp\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
 
 class IntegrationGoogleAnalyticsPlugin implements Plugin
 {
@@ -53,7 +53,7 @@ class IntegrationGoogleAnalyticsPlugin implements Plugin
     {
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
-            for: 'Assist\\IntegrationGoogleAnalytics\\Filament\\Pages'
+            for: 'AdvisingApp\\IntegrationGoogleAnalytics\\Filament\\Pages'
         );
     }
 

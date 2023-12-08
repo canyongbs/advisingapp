@@ -38,9 +38,9 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Assistant\Filament\Pages\ManageAiSettings;
-use Assist\Assistant\Filament\Pages\AssistantConfiguration;
-use Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Assistant\Filament\Pages\ManageAiSettings;
+use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 
 it('does not load if you do not have any permissions to access', function () {
     $user = User::factory()->create();

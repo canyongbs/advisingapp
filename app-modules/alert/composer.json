@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/alert",
+  "name": "canyon-gbs/advising-app-alert",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Alert\\": "src/",
-      "Assist\\Alert\\Tests\\": "tests/",
-      "Assist\\Alert\\Database\\Factories\\": "database/factories/",
-      "Assist\\Alert\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Alert\\": "src/",
+      "AdvisingApp\\Alert\\Tests\\": "tests/",
+      "AdvisingApp\\Alert\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Alert\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Alert\\Providers\\AlertServiceProvider"
+        "AdvisingApp\\Alert\\Providers\\AlertServiceProvider"
       ]
     }
   }

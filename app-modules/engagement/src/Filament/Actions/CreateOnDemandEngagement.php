@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions;
+namespace AdvisingApp\Engagement\Filament\Actions;
 
 use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Actions\CreateEngagementDeliverable;
+use AdvisingApp\Engagement\Actions\CreateEngagementDeliverable;
 
 class CreateOnDemandEngagement
 {

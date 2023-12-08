@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Filament\Actions;
+namespace AdvisingApp\Audit\Filament\Actions;
 
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;

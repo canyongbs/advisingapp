@@ -34,10 +34,10 @@
 @php
     use Carbon\Carbon;
     use App\Models\User;
-    use Assist\Division\Models\Division;
-    use Assist\ServiceManagement\Models\ServiceRequestType;
-    use Assist\ServiceManagement\Models\ServiceRequestStatus;
-    use Assist\ServiceManagement\Models\ServiceRequestPriority;
+    use AdvisingApp\Division\Models\Division;
+    use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+    use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+    use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 @endphp
 
 <x-filament::fieldset>

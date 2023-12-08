@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions\Contracts;
+namespace AdvisingApp\Engagement\Filament\Actions\Contracts;
 
 use Filament\Actions\Action;
 

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages;
+namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
-use Assist\Consent\Filament\Resources\ConsentAgreementResource;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 
 class EditConsentAgreement extends EditRecord
 {

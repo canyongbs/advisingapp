@@ -38,7 +38,7 @@ namespace App\Filament\Widgets;
 
 use Illuminate\Support\Carbon;
 use Filament\Widgets\ChartWidget;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 
 class ProspectGrowthChart extends ChartWidget
 {

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Database\Factories;
+namespace AdvisingApp\Form\Database\Factories;
 
-use Assist\Form\Models\FormField;
+use AdvisingApp\Form\Models\FormField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

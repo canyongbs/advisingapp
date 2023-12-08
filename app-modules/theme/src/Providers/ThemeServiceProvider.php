@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Theme\Providers;
+namespace AdvisingApp\Theme\Providers;
 
 use Filament\Panel;
-use Assist\Theme\ThemePlugin;
+use AdvisingApp\Theme\ThemePlugin;
 use Illuminate\Support\ServiceProvider;
-use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class ThemeServiceProvider extends ServiceProvider
 {

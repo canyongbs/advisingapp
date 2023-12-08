@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Policies;
+namespace AdvisingApp\Notifications\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\Notifications\Models\Subscription;
+use AdvisingApp\Notifications\Models\Subscription;
 
 class SubscriptionPolicy
 {

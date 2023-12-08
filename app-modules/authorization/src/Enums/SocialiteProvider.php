@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Enums;
+namespace AdvisingApp\Authorization\Enums;
 
 use Exception;
 use Mockery\MockInterface;

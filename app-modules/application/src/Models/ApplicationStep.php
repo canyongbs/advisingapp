@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Models;
+namespace AdvisingApp\Application\Models;
 
-use Assist\Form\Models\SubmissibleStep;
 use App\Models\Attributes\NoPermissions;
+use AdvisingApp\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Actions;
+namespace AdvisingApp\CaseloadManagement\Actions;
 
 use function Livewire\trigger;
 
 use Illuminate\Database\Eloquent\Builder;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\GetCaseloadQuery;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\GetCaseloadQuery;
 
 class TranslateCaseloadFilters
 {

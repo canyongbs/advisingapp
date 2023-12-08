@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 
 class EditServiceRequestPriority extends EditRecord
 {

@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Rest\Resources;
+namespace AdvisingApp\Prospect\Rest\Resources;
 
 use Lomkit\Rest\Relations\HasMany;
 use App\Rest\Resource as RestResource;
-use Assist\Prospect\Models\ProspectSource;
 use Lomkit\Rest\Http\Requests\RestRequest;
+use AdvisingApp\Prospect\Models\ProspectSource;
 
 class ProspectSourceResource extends RestResource
 {

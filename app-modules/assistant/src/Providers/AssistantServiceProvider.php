@@ -34,23 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Providers;
+namespace AdvisingApp\Assistant\Providers;
 
 use Filament\Panel;
 use Filament\Support\Assets\Js;
-use Assist\Assistant\AssistantPlugin;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Assist\Assistant\Models\AssistantChat;
+use AdvisingApp\Assistant\AssistantPlugin;
 use Filament\Support\Facades\FilamentAsset;
-use Assist\Assistant\Models\AssistantChatFolder;
-use Assist\Assistant\Models\AssistantChatMessage;
-use Assist\IntegrationAI\Events\AIPromptInitiated;
-use Assist\Authorization\AuthorizationRoleRegistry;
-use Assist\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Models\AssistantChat;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Assistant\Listeners\LogAssistantChatMessage;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Assistant\Models\AssistantChatFolder;
+use AdvisingApp\Assistant\Models\AssistantChatMessage;
+use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AssistantServiceProvider extends ServiceProvider
 {

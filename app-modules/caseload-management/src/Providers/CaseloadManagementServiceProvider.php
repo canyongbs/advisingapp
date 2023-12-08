@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Providers;
+namespace AdvisingApp\CaseloadManagement\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\CaseloadManagement\Models\CaseloadSubject;
-use Assist\CaseloadManagement\CaseloadManagementPlugin;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\CaseloadManagement\Observers\CaseloadObserver;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
+use AdvisingApp\CaseloadManagement\CaseloadManagementPlugin;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\CaseloadManagement\Observers\CaseloadObserver;
 
 class CaseloadManagementServiceProvider extends ServiceProvider
 {

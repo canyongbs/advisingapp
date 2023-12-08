@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Database\Factories;
+namespace AdvisingApp\KnowledgeBase\Database\Factories;
 
-use Assist\Division\Models\Division;
-use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\Division\Models\Division;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
-use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
-use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 
 /**
  * @extends Factory<KnowledgeBaseItem>
