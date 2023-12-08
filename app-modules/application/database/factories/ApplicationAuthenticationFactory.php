@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Application\Database\Factories;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Support\Facades\Hash;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;

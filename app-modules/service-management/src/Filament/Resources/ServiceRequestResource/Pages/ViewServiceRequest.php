@@ -38,11 +38,11 @@ namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResourc
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;

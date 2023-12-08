@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Task\Filament\Concerns;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect\Type;
 
 trait TaskEditForm

@@ -40,8 +40,8 @@ use Filament\Panel;
 use AdvisingApp\Audit\AuditPlugin;
 use AdvisingApp\Audit\Models\Audit;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuditServiceProvider extends ServiceProvider

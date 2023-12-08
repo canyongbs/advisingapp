@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Models\Role;
 use Illuminate\Support\Facades\Event;
+use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\RoleGroup;
 use AdvisingApp\Authorization\Events\RoleAttachedToRoleGroup;
 use AdvisingApp\Authorization\Events\UserAttachedToRoleGroup;

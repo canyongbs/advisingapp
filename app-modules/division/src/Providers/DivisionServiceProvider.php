@@ -37,12 +37,12 @@
 namespace AdvisingApp\Division\Providers;
 
 use Filament\Panel;
+use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Division\DivisionPlugin;
 use AdvisingApp\Division\Models\Division;
-use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Division\Observers\DivisionObserver;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class DivisionServiceProvider extends ServiceProvider

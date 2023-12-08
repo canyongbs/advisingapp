@@ -35,10 +35,10 @@
 */
 
 use Illuminate\Http\Request;
-use AdvisingApp\Webhook\Models\InboundWebhook;
 
 use function Tests\loadFixtureFromModule;
 
+use AdvisingApp\Webhook\Models\InboundWebhook;
 use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 use AdvisingApp\Webhook\Http\Middleware\HandleAwsSnsRequest;
 

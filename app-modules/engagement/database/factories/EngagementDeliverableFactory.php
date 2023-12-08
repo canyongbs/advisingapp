@@ -37,8 +37,8 @@
 namespace AdvisingApp\Engagement\Database\Factories;
 
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 

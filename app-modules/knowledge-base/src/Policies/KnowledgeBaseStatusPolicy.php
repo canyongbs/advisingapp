@@ -40,8 +40,8 @@ use App\Models\User;
 use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 
 class KnowledgeBaseStatusPolicy implements FeatureAccessEnforcedPolicy
 {

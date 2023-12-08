@@ -37,11 +37,11 @@
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResponseResource\Pages;
 
 use Filament\Infolists\Infolist;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;

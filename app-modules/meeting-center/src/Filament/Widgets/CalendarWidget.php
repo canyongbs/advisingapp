@@ -38,8 +38,8 @@ namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 
 use App\Models\User;
 use Livewire\Attributes\On;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Saade\FilamentFullCalendar\Data\EventData;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 

@@ -41,13 +41,13 @@ use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Interaction\InteractionPlugin;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 

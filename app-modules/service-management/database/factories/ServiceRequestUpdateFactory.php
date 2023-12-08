@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ServiceManagement\Database\Factories;
 
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
 

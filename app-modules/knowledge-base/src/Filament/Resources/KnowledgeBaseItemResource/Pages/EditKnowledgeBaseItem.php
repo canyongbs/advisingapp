@@ -38,12 +38,12 @@ namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource
 
 use Filament\Actions;
 use Filament\Forms\Form;
-use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\Radio;
 use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Division\Models\Division;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;

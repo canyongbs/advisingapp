@@ -37,14 +37,14 @@
 namespace AdvisingApp\Task\Providers;
 
 use Filament\Panel;
+use Filament\Support\Assets\Js;
 use AdvisingApp\Task\TaskPlugin;
 use AdvisingApp\Task\Models\Task;
-use Filament\Support\Assets\Js;
-use AdvisingApp\Task\Observers\TaskObserver;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentAsset;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Task\Observers\TaskObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TaskServiceProvider extends ServiceProvider

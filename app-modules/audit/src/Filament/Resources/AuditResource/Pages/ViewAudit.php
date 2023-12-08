@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
-use AdvisingApp\Audit\Models\Audit;
 use Filament\Infolists\Infolist;
+use AdvisingApp\Audit\Models\Audit;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;

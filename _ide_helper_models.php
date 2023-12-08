@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -118,7 +84,7 @@ namespace App\Models{
  * @property string|null $description
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Division\Models\Division> $divisions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $divisions
  * @property-read int|null $divisions_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
@@ -175,7 +141,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @method static \Database\Factories\PronounsFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Pronouns newModelQuery()
@@ -226,6 +192,46 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\SystemUser
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $roleGroups
+ * @property-read int|null $role_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
+ * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
+ * @property-read int|null $tokens_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $traitRoleGroups
+ * @property-read int|null $trait_role_groups_count
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|SystemUser withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSystemUser {}
+}
+
+namespace App\Models{
+/**
  * App\Models\User
  *
  * @property string $id
@@ -258,68 +264,72 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $assignedTasks
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $assignedTasks
  * @property-read int|null $assigned_tasks_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChatFolder> $assistantChatFolders
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatFolder> $assistantChatFolders
  * @property-read int|null $assistant_chat_folders_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChatMessageLog> $assistantChatMessageLogs
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatMessageLog> $assistantChatMessageLogs
  * @property-read int|null $assistant_chat_message_logs_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChat> $assistantChats
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $assistantChats
  * @property-read int|null $assistant_chats_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\MeetingCenter\Models\Calendar|null $calendar
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CareTeam\Models\CareTeam> $careTeams
+ * @property-read \AdvisingApp\MeetingCenter\Models\Calendar|null $calendar
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CareTeam\Models\CareTeam> $careTeams
  * @property-read int|null $care_teams_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\Caseload> $caseloads
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseloadManagement\Models\Caseload> $caseloads
  * @property-read int|null $caseloads_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\ConsentAgreement> $consentAgreements
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Consent\Models\ConsentAgreement> $consentAgreements
  * @property-read int|null $consent_agreements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\InAppCommunication\Models\TwilioConversation> $conversations
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InAppCommunication\Models\TwilioConversation> $conversations
  * @property-read int|null $conversations_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementBatch> $engagementBatches
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementBatch> $engagementBatches
  * @property-read int|null $engagement_batches_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\MeetingCenter\Models\CalendarEvent> $events
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\CalendarEvent> $events
  * @property-read int|null $events_count
  * @property-read mixed $is_admin
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Permission> $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \App\Models\Pronouns|null $pronouns
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospectCareTeams
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospectCareTeams
  * @property-read int|null $prospect_care_teams_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospectSubscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospectSubscriptions
  * @property-read int|null $prospect_subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $roleGroups
  * @property-read int|null $role_groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Role> $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequestAssignment> $serviceRequestAssignments
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment> $serviceRequestAssignments
  * @property-read int|null $service_request_assignments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Student> $studentCareTeams
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $studentCareTeams
  * @property-read int|null $student_care_teams_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Student> $studentSubscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $studentSubscriptions
  * @property-read int|null $student_subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Team\Models\Team> $teams
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $teams
  * @property-read int|null $teams_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $traitRoleGroups
  * @property-read int|null $trait_role_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Authorization\Models\Permission[] $permissionsFromRoles
+ * @property-read int|null $permissions_from_roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\ServiceManagement\Models\ServiceRequest[] $serviceRequests
+ * @property-read int|null $service_requests_count
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|User permission($permissions)
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable permission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
- * @method static \Illuminate\Database\Eloquent\Builder|User role($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|Authenticatable role($roles, $guard = null)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAppointmentsAreRestrictedToExistingStudents($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereArePronounsVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAreTeamsVisibleOnProfile($value)
@@ -360,27 +370,27 @@ namespace App\Models{
 
 namespace AdvisingApp\Alert\Models{
 /**
- * Assist\Alert\Models\Alert
+ * AdvisingApp\Alert\Models\Alert
  *
  * @property-read Student|Prospect $concern
  * @property string $id
  * @property string $concern_type
  * @property string $concern_id
  * @property string $description
- * @property \Assist\Alert\Enums\AlertSeverity $severity
- * @property \Assist\Alert\Enums\AlertStatus $status
+ * @property \AdvisingApp\Alert\Enums\AlertSeverity $severity
+ * @property \AdvisingApp\Alert\Enums\AlertStatus $status
  * @property string $suggested_intervention
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @method static \Assist\Alert\Database\Factories\AlertFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Alert\Database\Factories\AlertFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert query()
- * @method static \Illuminate\Database\Eloquent\Builder|Alert status(\Assist\Alert\Enums\AlertStatus $status)
+ * @method static \Illuminate\Database\Eloquent\Builder|Alert status(\AdvisingApp\Alert\Enums\AlertStatus $status)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereConcernId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereConcernType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert whereCreatedAt($value)
@@ -401,7 +411,7 @@ namespace AdvisingApp\Alert\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * Assist\Application\Models\Application
+ * AdvisingApp\Application\Models\Application
  *
  * @property string $id
  * @property string $name
@@ -409,19 +419,19 @@ namespace AdvisingApp\Application\Models{
  * @property bool $embed_enabled
  * @property array|null $allowed_domains
  * @property string|null $primary_color
- * @property \Assist\Form\Enums\Rounding|null $rounding
+ * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
  * @property bool $is_wizard
  * @property array|null $content
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationField> $fields
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationField> $fields
  * @property-read int|null $fields_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationStep> $steps
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationStep> $steps
  * @property-read int|null $steps_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationSubmission> $submissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $submissions
  * @property-read int|null $submissions_count
- * @method static \Assist\Application\Database\Factories\ApplicationFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Application\Database\Factories\ApplicationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Application newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Application newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Application query()
@@ -445,7 +455,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * Assist\Application\Models\ApplicationAuthentication
+ * AdvisingApp\Application\Models\ApplicationAuthentication
  *
  * @property string $id
  * @property string|null $author_id
@@ -455,8 +465,8 @@ namespace AdvisingApp\Application\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
- * @property-read \Assist\Application\Models\Application $submissible
- * @method static \Assist\Application\Database\Factories\ApplicationAuthenticationFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\Application\Models\Application $submissible
+ * @method static \AdvisingApp\Application\Database\Factories\ApplicationAuthenticationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationAuthentication query()
@@ -475,7 +485,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * Assist\Application\Models\ApplicationField
+ * AdvisingApp\Application\Models\ApplicationField
  *
  * @property string $id
  * @property string $label
@@ -486,9 +496,9 @@ namespace AdvisingApp\Application\Models{
  * @property string|null $step_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Application\Models\ApplicationStep|null $step
- * @property-read \Assist\Application\Models\Application $submissible
- * @method static \Assist\Application\Database\Factories\ApplicationFieldFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\Application\Models\ApplicationStep|null $step
+ * @property-read \AdvisingApp\Application\Models\Application $submissible
+ * @method static \AdvisingApp\Application\Database\Factories\ApplicationFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationField query()
@@ -509,7 +519,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * Assist\Application\Models\ApplicationStep
+ * AdvisingApp\Application\Models\ApplicationStep
  *
  * @property string $id
  * @property string $label
@@ -518,9 +528,9 @@ namespace AdvisingApp\Application\Models{
  * @property int $sort
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationField> $fields
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationField> $fields
  * @property-read int|null $fields_count
- * @property-read \Assist\Application\Models\Application $submissible
+ * @property-read \AdvisingApp\Application\Models\Application $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationStep query()
@@ -539,7 +549,7 @@ namespace AdvisingApp\Application\Models{
 
 namespace AdvisingApp\Application\Models{
 /**
- * Assist\Application\Models\ApplicationSubmission
+ * AdvisingApp\Application\Models\ApplicationSubmission
  *
  * @property string $id
  * @property string $application_id
@@ -549,10 +559,10 @@ namespace AdvisingApp\Application\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Application\Models\ApplicationField> $fields
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationField> $fields
  * @property-read int|null $fields_count
- * @property-read \Assist\Application\Models\Application $submissible
- * @method static \Assist\Application\Database\Factories\ApplicationSubmissionFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\Application\Models\Application $submissible
+ * @method static \AdvisingApp\Application\Database\Factories\ApplicationSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission query()
@@ -569,105 +579,9 @@ namespace AdvisingApp\Application\Models{
  class IdeHelperApplicationSubmission {}
 }
 
-namespace AdvisingApp\StudentDataModel\Models{
-/**
- * Assist\StudentDataModel\Models\Enrollment
- *
- * @method static \Assist\StudentDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Enrollment query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperEnrollment {}
-}
-
-namespace AdvisingApp\StudentDataModel\Models{
-/**
- * Assist\StudentDataModel\Models\Performance
- *
- * @property-read \Assist\StudentDataModel\Models\Student|null $student
- * @method static \Assist\StudentDataModel\Database\Factories\PerformanceFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Performance newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Performance newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Performance query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperPerformance {}
-}
-
-namespace AdvisingApp\StudentDataModel\Models{
-/**
- * Assist\StudentDataModel\Models\Program
- *
- * @method static \Assist\StudentDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Program newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Program newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Program query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperProgram {}
-}
-
-namespace AdvisingApp\StudentDataModel\Models{
-/**
- * Assist\StudentDataModel\Models\Student
- *
- * @property string $display_name
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Alert\Models\Alert> $alerts
- * @property-read int|null $alerts_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
- * @property-read int|null $care_team_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementFile> $engagementFiles
- * @property-read int|null $engagement_files_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $engagementResponses
- * @property-read int|null $engagement_responses_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
- * @property-read int|null $engagements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Enrollment> $enrollments
- * @property-read int|null $enrollments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $formRequests
- * @property-read int|null $form_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $formSubmissions
- * @property-read int|null $form_submissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
- * @property-read int|null $interactions_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $orderedEngagementResponses
- * @property-read int|null $ordered_engagement_responses_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $orderedEngagements
- * @property-read int|null $ordered_engagements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Performance> $performances
- * @property-read int|null $performances_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Program> $programs
- * @property-read int|null $programs_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
- * @property-read int|null $service_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
- * @property-read int|null $subscribed_users_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
- * @property-read int|null $subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $tasks
- * @property-read int|null $tasks_count
- * @method static \Assist\StudentDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Student query()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperStudent {}
-}
-
 namespace AdvisingApp\Assistant\Models{
 /**
- * Assist\Assistant\Models\AssistantChat
+ * AdvisingApp\Assistant\Models\AssistantChat
  *
  * @property string $id
  * @property string $name
@@ -675,8 +589,8 @@ namespace AdvisingApp\Assistant\Models{
  * @property string|null $assistant_chat_folder_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Assistant\Models\AssistantChatFolder|null $folder
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChatMessage> $messages
+ * @property-read \AdvisingApp\Assistant\Models\AssistantChatFolder|null $folder
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChatMessage> $messages
  * @property-read int|null $messages_count
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChat newModelQuery()
@@ -696,14 +610,14 @@ namespace AdvisingApp\Assistant\Models{
 
 namespace AdvisingApp\Assistant\Models{
 /**
- * Assist\Assistant\Models\AssistantChatFolder
+ * AdvisingApp\Assistant\Models\AssistantChatFolder
  *
  * @property string $id
  * @property string $name
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Assistant\Models\AssistantChat> $chats
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\AssistantChat> $chats
  * @property-read int|null $chats_count
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatFolder newModelQuery()
@@ -722,15 +636,15 @@ namespace AdvisingApp\Assistant\Models{
 
 namespace AdvisingApp\Assistant\Models{
 /**
- * Assist\Assistant\Models\AssistantChatMessage
+ * AdvisingApp\Assistant\Models\AssistantChatMessage
  *
  * @property string $id
  * @property string $assistant_chat_id
  * @property string $message
- * @property \Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom $from
+ * @property \AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom $from
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Assistant\Models\AssistantChat $chat
+ * @property-read \AdvisingApp\Assistant\Models\AssistantChat $chat
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssistantChatMessage query()
@@ -748,7 +662,7 @@ namespace AdvisingApp\Assistant\Models{
 
 namespace AdvisingApp\Assistant\Models{
 /**
- * Assist\Assistant\Models\AssistantChatMessageLog
+ * AdvisingApp\Assistant\Models\AssistantChatMessageLog
  *
  * @property string $id
  * @property string $message
@@ -778,7 +692,7 @@ namespace AdvisingApp\Assistant\Models{
 
 namespace AdvisingApp\Audit\Models{
 /**
- * Assist\Audit\Models\Audit
+ * AdvisingApp\Audit\Models\Audit
  *
  * @property string $id
  * @property string|null $change_agent_type
@@ -796,7 +710,7 @@ namespace AdvisingApp\Audit\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $auditable
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
- * @method static \Assist\Audit\Database\Factories\AuditFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Audit\Database\Factories\AuditFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Audit newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Audit newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Audit query()
@@ -822,23 +736,25 @@ namespace AdvisingApp\Audit\Models{
 
 namespace AdvisingApp\Authorization\Models{
 /**
- * Assist\Authorization\Models\Permission
+ * AdvisingApp\Authorization\Models\Permission
  *
  * @property string $id
  * @property string $name
  * @property string $guard_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Role> $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUser> $systemUsers
+ * @property-read int|null $system_users_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder|Permission api()
- * @method static \Assist\Authorization\Database\Factories\PermissionFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Authorization\Database\Factories\PermissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Permission permission($permissions)
@@ -858,7 +774,7 @@ namespace AdvisingApp\Authorization\Models{
 
 namespace AdvisingApp\Authorization\Models\Pivots{
 /**
- * Assist\Authorization\Models\Pivots\RoleGroupRolePivot
+ * AdvisingApp\Authorization\Models\Pivots\RoleGroupRolePivot
  *
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupRolePivot newQuery()
@@ -871,7 +787,7 @@ namespace AdvisingApp\Authorization\Models\Pivots{
 
 namespace AdvisingApp\Authorization\Models\Pivots{
 /**
- * Assist\Authorization\Models\Pivots\RoleGroupUserPivot
+ * AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot
  *
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroupUserPivot newQuery()
@@ -884,25 +800,25 @@ namespace AdvisingApp\Authorization\Models\Pivots{
 
 namespace AdvisingApp\Authorization\Models{
 /**
- * Assist\Authorization\Models\Role
+ * AdvisingApp\Authorization\Models\Role
  *
  * @property string $id
  * @property string $name
  * @property string $guard_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Permission> $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Permission> $permissions
  * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $roleGroups
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $roleGroups
  * @property-read int|null $role_groups_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\RoleGroup> $traitRoleGroups
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $traitRoleGroups
  * @property-read int|null $trait_role_groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder|Role api()
- * @method static \Assist\Authorization\Database\Factories\RoleFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Authorization\Database\Factories\RoleFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Role permission($permissions)
@@ -922,27 +838,33 @@ namespace AdvisingApp\Authorization\Models{
 
 namespace AdvisingApp\Authorization\Models{
 /**
- * Assist\Authorization\Models\RoleGroup
+ * AdvisingApp\Authorization\Models\RoleGroup
  *
  * @property string $id
  * @property string $name
+ * @property string $guard_name
  * @property string|null $slug
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Authorization\Models\Role> $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\Role> $roles
  * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SystemUser> $systemUsers
+ * @property-read int|null $system_users_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
- * @method static \Assist\Authorization\Database\Factories\RoleGroupFactory factory($count = null, $state = [])
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Authorization\Models\Permission[] $permissions
+ * @property-read int|null $permissions_count
+ * @method static \AdvisingApp\Authorization\Database\Factories\RoleGroupFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup query()
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereGuardName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|RoleGroup whereSlug($value)
@@ -957,7 +879,7 @@ namespace AdvisingApp\Authorization\Models{
 
 namespace AdvisingApp\Campaign\Models{
 /**
- * Assist\Campaign\Models\Campaign
+ * AdvisingApp\Campaign\Models\Campaign
  *
  * @property string $id
  * @property string $user_id
@@ -967,13 +889,13 @@ namespace AdvisingApp\Campaign\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Campaign\Models\CampaignAction> $actions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Campaign\Models\CampaignAction> $actions
  * @property-read int|null $actions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\CaseloadManagement\Models\Caseload $caseload
+ * @property-read \AdvisingApp\CaseloadManagement\Models\Caseload $caseload
  * @property-read \App\Models\User $user
- * @method static \Assist\Campaign\Database\Factories\CampaignFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Campaign\Database\Factories\CampaignFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign hasNotBeenExecuted()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Campaign newQuery()
@@ -997,11 +919,11 @@ namespace AdvisingApp\Campaign\Models{
 
 namespace AdvisingApp\Campaign\Models{
 /**
- * Assist\Campaign\Models\CampaignAction
+ * AdvisingApp\Campaign\Models\CampaignAction
  *
  * @property string $id
  * @property string $campaign_id
- * @property \Assist\Campaign\Enums\CampaignActionType $type
+ * @property \AdvisingApp\Campaign\Enums\CampaignActionType $type
  * @property array $data
  * @property string $execute_at
  * @property string|null $last_execution_attempt_at
@@ -1010,11 +932,11 @@ namespace AdvisingApp\Campaign\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\Campaign\Models\Campaign $campaign
+ * @property-read \AdvisingApp\Campaign\Models\Campaign $campaign
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction campaignEnabled()
- * @method static \Assist\Campaign\Database\Factories\CampaignActionFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Campaign\Database\Factories\CampaignActionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction hasNotBeenExecuted()
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CampaignAction newQuery()
@@ -1041,7 +963,7 @@ namespace AdvisingApp\Campaign\Models{
 
 namespace AdvisingApp\CareTeam\Models{
 /**
- * Assist\CareTeam\Models\CareTeam
+ * AdvisingApp\CareTeam\Models\CareTeam
  *
  * @property string $id
  * @property string $user_id
@@ -1067,22 +989,22 @@ namespace AdvisingApp\CareTeam\Models{
 
 namespace AdvisingApp\CaseloadManagement\Models{
 /**
- * Assist\CaseloadManagement\Models\Caseload
+ * AdvisingApp\CaseloadManagement\Models\Caseload
  *
  * @property string $id
  * @property string $name
  * @property string|null $description
  * @property array|null $filters
- * @property \Assist\CaseloadManagement\Enums\CaseloadModel $model
- * @property \Assist\CaseloadManagement\Enums\CaseloadType $type
+ * @property \AdvisingApp\CaseloadManagement\Enums\CaseloadModel $model
+ * @property \AdvisingApp\CaseloadManagement\Enums\CaseloadType $type
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\CaseloadManagement\Models\CaseloadSubject> $subjects
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseloadManagement\Models\CaseloadSubject> $subjects
  * @property-read int|null $subjects_count
  * @property-read \App\Models\User $user
- * @method static \Assist\CaseloadManagement\Database\Factories\CaseloadFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\CaseloadManagement\Database\Factories\CaseloadFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload query()
@@ -1104,7 +1026,7 @@ namespace AdvisingApp\CaseloadManagement\Models{
 
 namespace AdvisingApp\CaseloadManagement\Models{
 /**
- * Assist\CaseloadManagement\Models\CaseloadSubject
+ * AdvisingApp\CaseloadManagement\Models\CaseloadSubject
  *
  * @property string $id
  * @property string $subject_id
@@ -1112,7 +1034,7 @@ namespace AdvisingApp\CaseloadManagement\Models{
  * @property string $caseload_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\CaseloadManagement\Models\Caseload $caseload
+ * @property-read \AdvisingApp\CaseloadManagement\Models\Caseload $caseload
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CaseloadSubject newQuery()
@@ -1131,23 +1053,23 @@ namespace AdvisingApp\CaseloadManagement\Models{
 
 namespace AdvisingApp\Consent\Models{
 /**
- * Assist\Consent\Models\ConsentAgreement
+ * AdvisingApp\Consent\Models\ConsentAgreement
  *
  * @property string $id
- * @property \Assist\Consent\Enums\ConsentAgreementType $type
+ * @property \AdvisingApp\Consent\Enums\ConsentAgreementType $type
  * @property string $title
  * @property string $description
  * @property string $body
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Consent\Models\UserConsentAgreement> $userConsentAgreements
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Consent\Models\UserConsentAgreement> $userConsentAgreements
  * @property-read int|null $user_consent_agreements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
- * @method static \Assist\Consent\Database\Factories\ConsentAgreementFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Consent\Database\Factories\ConsentAgreementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ConsentAgreement query()
@@ -1167,7 +1089,7 @@ namespace AdvisingApp\Consent\Models{
 
 namespace AdvisingApp\Consent\Models{
 /**
- * Assist\Consent\Models\UserConsentAgreement
+ * AdvisingApp\Consent\Models\UserConsentAgreement
  *
  * @property string $id
  * @property string $user_id
@@ -1176,7 +1098,7 @@ namespace AdvisingApp\Consent\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|UserConsentAgreement newQuery()
@@ -1199,7 +1121,7 @@ namespace AdvisingApp\Consent\Models{
 
 namespace AdvisingApp\Division\Models{
 /**
- * Assist\Division\Models\Division
+ * AdvisingApp\Division\Models\Division
  *
  * @property string $id
  * @property string $name
@@ -1212,16 +1134,16 @@ namespace AdvisingApp\Division\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \App\Models\User|null $lastUpdatedBy
  * @property-read \App\Models\NotificationSettingPivot|null $notificationSetting
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Team\Models\Team> $teams
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $teams
  * @property-read int|null $teams_count
- * @method static \Assist\Division\Database\Factories\DivisionFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Division\Database\Factories\DivisionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Division newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Division newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Division onlyTrashed()
@@ -1247,7 +1169,7 @@ namespace AdvisingApp\Division\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * Assist\Engagement\Models\EmailTemplate
+ * AdvisingApp\Engagement\Models\EmailTemplate
  *
  * @property string $id
  * @property string $name
@@ -1257,7 +1179,7 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $user
- * @method static \Assist\Engagement\Database\Factories\EmailTemplateFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Engagement\Database\Factories\EmailTemplateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EmailTemplate query()
@@ -1276,7 +1198,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * Assist\Engagement\Models\Engagement
+ * AdvisingApp\Engagement\Models\Engagement
  *
  * @property-read Educatable $recipient
  * @property string $id
@@ -1285,22 +1207,21 @@ namespace AdvisingApp\Engagement\Models{
  * @property string|null $recipient_id
  * @property string|null $recipient_type
  * @property string|null $subject
- * @property string|null $body
- * @property array|null $body_json
+ * @property array|null $body
  * @property bool $scheduled
  * @property \Illuminate\Support\Carbon $deliver_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\Engagement\Models\EngagementBatch|null $batch
+ * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $batch
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Assist\Engagement\Models\EngagementDeliverable|null $deliverable
- * @property-read \Assist\Engagement\Models\EngagementBatch|null $engagementBatch
- * @property-read \Assist\Engagement\Models\EngagementDeliverable|null $engagementDeliverable
- * @property-read \Assist\Timeline\Models\Timeline|null $timelineRecord
+ * @property-read \AdvisingApp\Engagement\Models\EngagementDeliverable|null $deliverable
+ * @property-read \AdvisingApp\Engagement\Models\EngagementBatch|null $engagementBatch
+ * @property-read \AdvisingApp\Engagement\Models\EngagementDeliverable|null $engagementDeliverable
+ * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @property-read \App\Models\User|null $user
- * @method static \Assist\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
@@ -1311,7 +1232,6 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement sentToProspect()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement sentToStudent()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereBodyJson($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereDeliverAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement whereEngagementBatchId($value)
@@ -1330,17 +1250,17 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * Assist\Engagement\Models\EngagementBatch
+ * AdvisingApp\Engagement\Models\EngagementBatch
  *
  * @property string $id
  * @property string|null $identifier
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
  * @property-read \App\Models\User $user
- * @method static \Assist\Engagement\Database\Factories\EngagementBatchFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Engagement\Database\Factories\EngagementBatchFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementBatch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementBatch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementBatch query()
@@ -1357,24 +1277,24 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * Assist\Engagement\Models\EngagementDeliverable
+ * AdvisingApp\Engagement\Models\EngagementDeliverable
  *
  * @property string $id
  * @property string $engagement_id
- * @property \Assist\Engagement\Enums\EngagementDeliveryMethod $channel
+ * @property \AdvisingApp\Engagement\Enums\EngagementDeliveryMethod $channel
  * @property string|null $external_reference_id
  * @property string|null $external_status
- * @property \Assist\Engagement\Enums\EngagementDeliveryStatus $delivery_status
+ * @property \AdvisingApp\Engagement\Enums\EngagementDeliveryStatus $delivery_status
  * @property \Illuminate\Support\Carbon|null $delivered_at
  * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
  * @property string|null $delivery_response
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\Engagement\Models\Engagement $engagement
- * @method static \Assist\Engagement\Database\Factories\EngagementDeliverableFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\Engagement\Models\Engagement $engagement
+ * @method static \AdvisingApp\Engagement\Database\Factories\EngagementDeliverableFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementDeliverable query()
@@ -1398,22 +1318,22 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * Assist\Engagement\Models\EngagementFile
+ * AdvisingApp\Engagement\Models\EngagementFile
  *
  * @property string $id
  * @property string $description
  * @property string|null $retention_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospects
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
  * @property-read int|null $prospects_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\StudentDataModel\Models\Student> $students
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $students
  * @property-read int|null $students_count
- * @method static \Assist\Engagement\Database\Factories\EngagementFileFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Engagement\Database\Factories\EngagementFileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFile query()
@@ -1430,14 +1350,14 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * Assist\Engagement\Models\EngagementFileEntities
+ * AdvisingApp\Engagement\Models\EngagementFileEntities
  *
  * @property string $engagement_file_id
  * @property string $entity_id
  * @property string $entity_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Engagement\Models\EngagementFile $engagementFile
+ * @property-read \AdvisingApp\Engagement\Models\EngagementFile $engagementFile
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $entity
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementFileEntities newQuery()
@@ -1455,7 +1375,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * Assist\Engagement\Models\EngagementResponse
+ * AdvisingApp\Engagement\Models\EngagementResponse
  *
  * @property string $id
  * @property string|null $sender_id
@@ -1464,11 +1384,11 @@ namespace AdvisingApp\Engagement\Models{
  * @property \Illuminate\Support\Carbon|null $sent_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $sender
- * @property-read \Assist\Timeline\Models\Timeline|null $timelineRecord
- * @method static \Assist\Engagement\Database\Factories\EngagementResponseFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
+ * @method static \AdvisingApp\Engagement\Database\Factories\EngagementResponseFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngagementResponse query()
@@ -1489,15 +1409,17 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Engagement\Models{
 /**
- * Assist\Engagement\Models\SmsTemplate
+ * AdvisingApp\Engagement\Models\SmsTemplate
  *
  * @property string $id
  * @property string $name
  * @property string|null $description
- * @property string $content
+ * @property array $content
+ * @property string|null $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Assist\Engagement\Database\Factories\SmsTemplateFactory factory($count = null, $state = [])
+ * @property-read \App\Models\User|null $user
+ * @method static \AdvisingApp\Engagement\Database\Factories\SmsTemplateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate query()
@@ -1507,6 +1429,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SmsTemplate whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -1515,7 +1438,7 @@ namespace AdvisingApp\Engagement\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * Assist\Form\Models\Form
+ * AdvisingApp\Form\Models\Form
  *
  * @property string $id
  * @property string $name
@@ -1523,22 +1446,22 @@ namespace AdvisingApp\Form\Models{
  * @property bool $embed_enabled
  * @property array|null $allowed_domains
  * @property string|null $primary_color
- * @property \Assist\Form\Enums\Rounding|null $rounding
+ * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
  * @property bool $is_authenticated
  * @property bool $is_wizard
  * @property array|null $content
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $requests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormRequest> $requests
  * @property-read int|null $requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormStep> $steps
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormStep> $steps
  * @property-read int|null $steps_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $submissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $submissions
  * @property-read int|null $submissions_count
- * @method static \Assist\Form\Database\Factories\FormFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Form\Database\Factories\FormFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Form newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Form query()
@@ -1563,7 +1486,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * Assist\Form\Models\FormAuthentication
+ * AdvisingApp\Form\Models\FormAuthentication
  *
  * @property string $id
  * @property string|null $author_id
@@ -1573,7 +1496,7 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
- * @property-read \Assist\Form\Models\Form $submissible
+ * @property-read \AdvisingApp\Form\Models\Form $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormAuthentication query()
@@ -1592,7 +1515,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * Assist\Form\Models\FormField
+ * AdvisingApp\Form\Models\FormField
  *
  * @property string $id
  * @property string $label
@@ -1603,9 +1526,9 @@ namespace AdvisingApp\Form\Models{
  * @property string|null $step_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Form\Models\FormStep|null $step
- * @property-read \Assist\Form\Models\Form $submissible
- * @method static \Assist\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\Form\Models\FormStep|null $step
+ * @property-read \AdvisingApp\Form\Models\Form $submissible
+ * @method static \AdvisingApp\Form\Database\Factories\FormFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormField query()
@@ -1626,11 +1549,11 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * Assist\Form\Models\FormRequest
+ * AdvisingApp\Form\Models\FormRequest
  *
  * @property string $id
  * @property string $form_id
- * @property \Assist\Form\Enums\FormRequestDeliveryMethod $method
+ * @property \AdvisingApp\Form\Enums\FormRequestDeliveryMethod $method
  * @property string|null $recipient_id
  * @property string|null $recipient_type
  * @property string|null $submission_id
@@ -1640,9 +1563,9 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Assist\Form\Models\Form $form
+ * @property-read \AdvisingApp\Form\Models\Form $form
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $recipient
- * @property-read \Assist\Form\Models\FormSubmission|null $submission
+ * @property-read \AdvisingApp\Form\Models\FormSubmission|null $submission
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|FormRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormRequest newQuery()
@@ -1668,7 +1591,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * Assist\Form\Models\FormStep
+ * AdvisingApp\Form\Models\FormStep
  *
  * @property string $id
  * @property string $label
@@ -1677,9 +1600,9 @@ namespace AdvisingApp\Form\Models{
  * @property int $sort
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
- * @property-read \Assist\Form\Models\Form $submissible
+ * @property-read \AdvisingApp\Form\Models\Form $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormStep query()
@@ -1698,7 +1621,7 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * Assist\Form\Models\FormSubmission
+ * AdvisingApp\Form\Models\FormSubmission
  *
  * @property Student|Prospect|null $author
  * @property string $id
@@ -1708,10 +1631,10 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormField> $fields
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
- * @property-read \Assist\Form\Models\Form $submissible
- * @method static \Assist\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\Form\Models\Form $submissible
+ * @method static \AdvisingApp\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission query()
@@ -1730,11 +1653,11 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\InAppCommunication\Models{
 /**
- * Assist\InAppCommunication\Models\TwilioConversation
+ * AdvisingApp\InAppCommunication\Models\TwilioConversation
  *
  * @property string $sid
  * @property string|null $friendly_name
- * @property \Assist\InAppCommunication\Enums\ConversationType $type
+ * @property \AdvisingApp\InAppCommunication\Enums\ConversationType $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $participants
@@ -1755,7 +1678,7 @@ namespace AdvisingApp\InAppCommunication\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * Assist\Interaction\Models\Interaction
+ * AdvisingApp\Interaction\Models\Interaction
  *
  * @property string $id
  * @property string|null $subject
@@ -1774,17 +1697,17 @@ namespace AdvisingApp\Interaction\Models{
  * @property \Illuminate\Support\Carbon|null $end_datetime
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\Interaction\Models\InteractionCampaign|null $campaign
- * @property-read \Assist\Division\Models\Division|null $division
- * @property-read \Assist\Interaction\Models\InteractionDriver|null $driver
+ * @property-read \AdvisingApp\Interaction\Models\InteractionCampaign|null $campaign
+ * @property-read \AdvisingApp\Division\Models\Division|null $division
+ * @property-read \AdvisingApp\Interaction\Models\InteractionDriver|null $driver
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $interactable
- * @property-read \Assist\Interaction\Models\InteractionOutcome|null $outcome
- * @property-read \Assist\Interaction\Models\InteractionRelation|null $relation
- * @property-read \Assist\Interaction\Models\InteractionStatus|null $status
- * @property-read \Assist\Interaction\Models\InteractionType|null $type
- * @method static \Assist\Interaction\Database\Factories\InteractionFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\Interaction\Models\InteractionOutcome|null $outcome
+ * @property-read \AdvisingApp\Interaction\Models\InteractionRelation|null $relation
+ * @property-read \AdvisingApp\Interaction\Models\InteractionStatus|null $status
+ * @property-read \AdvisingApp\Interaction\Models\InteractionType|null $type
+ * @method static \AdvisingApp\Interaction\Database\Factories\InteractionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction query()
@@ -1813,18 +1736,18 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * Assist\Interaction\Models\InteractionCampaign
+ * AdvisingApp\Interaction\Models\InteractionCampaign
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
- * @method static \Assist\Interaction\Database\Factories\InteractionCampaignFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Interaction\Database\Factories\InteractionCampaignFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionCampaign onlyTrashed()
@@ -1844,18 +1767,18 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * Assist\Interaction\Models\InteractionDriver
+ * AdvisingApp\Interaction\Models\InteractionDriver
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
- * @method static \Assist\Interaction\Database\Factories\InteractionDriverFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Interaction\Database\Factories\InteractionDriverFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionDriver onlyTrashed()
@@ -1875,18 +1798,18 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * Assist\Interaction\Models\InteractionOutcome
+ * AdvisingApp\Interaction\Models\InteractionOutcome
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
- * @method static \Assist\Interaction\Database\Factories\InteractionOutcomeFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Interaction\Database\Factories\InteractionOutcomeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionOutcome onlyTrashed()
@@ -1906,18 +1829,18 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * Assist\Interaction\Models\InteractionRelation
+ * AdvisingApp\Interaction\Models\InteractionRelation
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
- * @method static \Assist\Interaction\Database\Factories\InteractionRelationFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Interaction\Database\Factories\InteractionRelationFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionRelation onlyTrashed()
@@ -1937,19 +1860,19 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * Assist\Interaction\Models\InteractionStatus
+ * AdvisingApp\Interaction\Models\InteractionStatus
  *
  * @property string $id
  * @property string $name
- * @property \Assist\Interaction\Enums\InteractionStatusColorOptions $color
+ * @property \AdvisingApp\Interaction\Enums\InteractionStatusColorOptions $color
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
- * @method static \Assist\Interaction\Database\Factories\InteractionStatusFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Interaction\Database\Factories\InteractionStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionStatus onlyTrashed()
@@ -1970,18 +1893,18 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\Interaction\Models{
 /**
- * Assist\Interaction\Models\InteractionType
+ * AdvisingApp\Interaction\Models\InteractionType
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
- * @method static \Assist\Interaction\Database\Factories\InteractionTypeFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Interaction\Database\Factories\InteractionTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InteractionType onlyTrashed()
@@ -2001,18 +1924,18 @@ namespace AdvisingApp\Interaction\Models{
 
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
- * Assist\KnowledgeBase\Models\KnowledgeBaseCategory
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
  * @property-read int|null $knowledge_base_items_count
- * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseCategoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseCategory onlyTrashed()
@@ -2032,7 +1955,7 @@ namespace AdvisingApp\KnowledgeBase\Models{
 
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
- * Assist\KnowledgeBase\Models\KnowledgeBaseItem
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem
  *
  * @property string $id
  * @property string $question
@@ -2044,16 +1967,16 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property string|null $category_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Division\Models\Division> $division
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory|null $category
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Division\Models\Division> $division
  * @property-read int|null $division_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
- * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
- * @property-read \Assist\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
- * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality|null $quality
+ * @property-read \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus|null $status
+ * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem query()
@@ -2075,18 +1998,18 @@ namespace AdvisingApp\KnowledgeBase\Models{
 
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
- * Assist\KnowledgeBase\Models\KnowledgeBaseQuality
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
  * @property-read int|null $knowledge_base_items_count
- * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseQualityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseQuality onlyTrashed()
@@ -2106,18 +2029,18 @@ namespace AdvisingApp\KnowledgeBase\Models{
 
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
- * Assist\KnowledgeBase\Models\KnowledgeBaseStatus
+ * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem> $knowledgeBaseItems
  * @property-read int|null $knowledge_base_items_count
- * @method static \Assist\KnowledgeBase\Database\Factories\KnowledgeBaseStatusFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\KnowledgeBase\Database\Factories\KnowledgeBaseStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseStatus onlyTrashed()
@@ -2137,11 +2060,11 @@ namespace AdvisingApp\KnowledgeBase\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * Assist\MeetingCenter\Models\Calendar
+ * AdvisingApp\MeetingCenter\Models\Calendar
  *
  * @property string $id
  * @property string|null $name
- * @property \Assist\MeetingCenter\Enums\CalendarProvider $provider_type
+ * @property \AdvisingApp\MeetingCenter\Enums\CalendarProvider $provider_type
  * @property mixed|null $provider_id
  * @property mixed $provider_email
  * @property mixed $oauth_token
@@ -2150,10 +2073,10 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property \Illuminate\Support\Carbon $oauth_token_expires_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\MeetingCenter\Models\CalendarEvent> $events
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\CalendarEvent> $events
  * @property-read int|null $events_count
  * @property-read \App\Models\User $user
- * @method static \Assist\MeetingCenter\Database\Factories\CalendarFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\CalendarFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Calendar query()
@@ -2176,7 +2099,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\MeetingCenter\Models{
 /**
- * Assist\MeetingCenter\Models\CalendarEvent
+ * AdvisingApp\MeetingCenter\Models\CalendarEvent
  *
  * @property string $id
  * @property string $title
@@ -2188,8 +2111,8 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property \Illuminate\Support\Carbon $ends_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\MeetingCenter\Models\Calendar $calendar
- * @method static \Assist\MeetingCenter\Database\Factories\CalendarEventFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\MeetingCenter\Models\Calendar $calendar
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\CalendarEventFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CalendarEvent query()
@@ -2211,7 +2134,7 @@ namespace AdvisingApp\MeetingCenter\Models{
 
 namespace AdvisingApp\Notifications\Models{
 /**
- * Assist\Notifications\Models\Subscription
+ * AdvisingApp\Notifications\Models\Subscription
  *
  * @property string $id
  * @property string $user_id
@@ -2238,7 +2161,7 @@ namespace AdvisingApp\Notifications\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * Assist\Prospect\Models\Prospect
+ * AdvisingApp\Prospect\Models\Prospect
  *
  * @property string $display_name
  * @property string $id
@@ -2264,43 +2187,45 @@ namespace AdvisingApp\Prospect\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Alert\Models\Alert> $alerts
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
+ * @property-read int|null $application_submissions_count
  * @property-read \App\Models\User|null $assignedTo
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
  * @property-read int|null $care_team_count
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementFile> $engagementFiles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementFile> $engagementFiles
  * @property-read int|null $engagement_files_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $engagementResponses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementResponse> $engagementResponses
  * @property-read int|null $engagement_responses_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $engagements
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormRequest> $formRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormRequest> $formRequests
  * @property-read int|null $form_requests_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Form\Models\FormSubmission> $formSubmissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\EngagementResponse> $orderedEngagementResponses
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementResponse> $orderedEngagementResponses
  * @property-read int|null $ordered_engagement_responses_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Engagement\Models\Engagement> $orderedEngagements
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $orderedEngagements
  * @property-read int|null $ordered_engagements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
- * @property-read \Assist\Prospect\Models\ProspectSource $source
- * @property-read \Assist\Prospect\Models\ProspectStatus $status
+ * @property-read \AdvisingApp\Prospect\Models\ProspectSource $source
+ * @property-read \AdvisingApp\Prospect\Models\ProspectStatus $status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
  * @property-read int|null $subscribed_users_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Notifications\Models\Subscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Task\Models\Task> $tasks
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
- * @method static \Assist\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Prospect\Database\Factories\ProspectFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Prospect onlyTrashed()
@@ -2338,18 +2263,18 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * Assist\Prospect\Models\ProspectSource
+ * AdvisingApp\Prospect\Models\ProspectSource
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospects
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
  * @property-read int|null $prospects_count
- * @method static \Assist\Prospect\Database\Factories\ProspectSourceFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Prospect\Database\Factories\ProspectSourceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectSource newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectSource newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectSource onlyTrashed()
@@ -2369,20 +2294,20 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\Prospect\Models{
 /**
- * Assist\Prospect\Models\ProspectStatus
+ * AdvisingApp\Prospect\Models\ProspectStatus
  *
  * @property string $id
- * @property \Assist\Prospect\Enums\SystemProspectClassification $classification
+ * @property \AdvisingApp\Prospect\Enums\SystemProspectClassification $classification
  * @property string $name
- * @property \Assist\Prospect\Enums\ProspectStatusColorOptions $color
+ * @property \AdvisingApp\Prospect\Enums\ProspectStatusColorOptions $color
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Prospect\Models\Prospect> $prospects
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
  * @property-read int|null $prospects_count
- * @method static \Assist\Prospect\Database\Factories\ProspectStatusFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Prospect\Database\Factories\ProspectStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProspectStatus onlyTrashed()
@@ -2404,7 +2329,7 @@ namespace AdvisingApp\Prospect\Models{
 
 namespace AdvisingApp\ServiceManagement\Models{
 /**
- * Assist\ServiceManagement\Models\ServiceRequest
+ * AdvisingApp\ServiceManagement\Models\ServiceRequest
  *
  * @property-read Student|Prospect $respondent
  * @property string $id
@@ -2421,24 +2346,24 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestAssignment|null $assignedTo
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequestAssignment> $assignments
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment|null $assignedTo
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment> $assignments
  * @property-read int|null $assignments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
- * @property-read \Assist\Division\Models\Division|null $division
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequestHistory> $histories
+ * @property-read \AdvisingApp\Division\Models\Division|null $division
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestHistory> $histories
  * @property-read int|null $histories_count
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestAssignment|null $initialAssignment
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Interaction\Models\Interaction> $interactions
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment|null $initialAssignment
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
  * @property-read int|null $interactions_count
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestPriority|null $priority
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority|null $priority
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
  * @property-read int|null $service_request_updates_count
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestStatus|null $status
- * @property-read \Assist\ServiceManagement\Models\ServiceRequestType|null $type
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestStatus|null $status
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestType|null $type
+ * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest onlyTrashed()
@@ -2468,22 +2393,22 @@ namespace AdvisingApp\ServiceManagement\Models{
 
 namespace AdvisingApp\ServiceManagement\Models{
 /**
- * Assist\ServiceManagement\Models\ServiceRequestAssignment
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment
  *
  * @property string $id
  * @property string $service_request_id
  * @property string $user_id
  * @property string|null $assigned_by_id
  * @property \Illuminate\Support\Carbon $assigned_at
- * @property \Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus $status
+ * @property \AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $assignedBy
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\ServiceManagement\Models\ServiceRequest $serviceRequest
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequest $serviceRequest
  * @property-read \App\Models\User $user
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestAssignmentFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestAssignmentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestAssignment query()
@@ -2503,7 +2428,7 @@ namespace AdvisingApp\ServiceManagement\Models{
 
 namespace AdvisingApp\ServiceManagement\Models{
 /**
- * Assist\ServiceManagement\Models\ServiceRequestHistory
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestHistory
  *
  * @property string $id
  * @property string $service_request_id
@@ -2511,8 +2436,8 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property array $new_values
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\ServiceManagement\Models\ServiceRequest $serviceRequest
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestHistoryFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequest $serviceRequest
+ * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestHistoryFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestHistory query()
@@ -2530,7 +2455,7 @@ namespace AdvisingApp\ServiceManagement\Models{
 
 namespace AdvisingApp\ServiceManagement\Models{
 /**
- * Assist\ServiceManagement\Models\ServiceRequestPriority
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestPriority
  *
  * @property string $id
  * @property string $name
@@ -2538,11 +2463,11 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestPriorityFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestPriorityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority onlyTrashed()
@@ -2563,20 +2488,20 @@ namespace AdvisingApp\ServiceManagement\Models{
 
 namespace AdvisingApp\ServiceManagement\Models{
 /**
- * Assist\ServiceManagement\Models\ServiceRequestStatus
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestStatus
  *
  * @property string $id
- * @property \Assist\ServiceManagement\Enums\SystemServiceRequestClassification $classification
+ * @property \AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification $classification
  * @property string $name
- * @property \Assist\ServiceManagement\Enums\ColumnColorOptions $color
+ * @property \AdvisingApp\ServiceManagement\Enums\ColumnColorOptions $color
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestStatusFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestStatus onlyTrashed()
@@ -2598,18 +2523,18 @@ namespace AdvisingApp\ServiceManagement\Models{
 
 namespace AdvisingApp\ServiceManagement\Models{
 /**
- * Assist\ServiceManagement\Models\ServiceRequestType
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestType
  *
  * @property string $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\ServiceManagement\Models\ServiceRequest> $serviceRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestTypeFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestType onlyTrashed()
@@ -2629,20 +2554,20 @@ namespace AdvisingApp\ServiceManagement\Models{
 
 namespace AdvisingApp\ServiceManagement\Models{
 /**
- * Assist\ServiceManagement\Models\ServiceRequestUpdate
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate
  *
  * @property string $id
  * @property string|null $service_request_id
  * @property string $update
  * @property bool $internal
- * @property \Assist\ServiceManagement\Enums\ServiceRequestUpdateDirection $direction
+ * @property \AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection $direction
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Assist\ServiceManagement\Models\ServiceRequest|null $serviceRequest
- * @method static \Assist\ServiceManagement\Database\Factories\ServiceRequestUpdateFactory factory($count = null, $state = [])
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequest|null $serviceRequest
+ * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestUpdateFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestUpdate onlyTrashed()
@@ -2663,15 +2588,113 @@ namespace AdvisingApp\ServiceManagement\Models{
  class IdeHelperServiceRequestUpdate {}
 }
 
+namespace AdvisingApp\StudentDataModel\Models{
+/**
+ * AdvisingApp\StudentDataModel\Models\Enrollment
+ *
+ * @method static \AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Enrollment query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEnrollment {}
+}
+
+namespace AdvisingApp\StudentDataModel\Models{
+/**
+ * AdvisingApp\StudentDataModel\Models\Performance
+ *
+ * @property-read \AdvisingApp\StudentDataModel\Models\Student|null $student
+ * @method static \AdvisingApp\StudentDataModel\Database\Factories\PerformanceFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Performance query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperPerformance {}
+}
+
+namespace AdvisingApp\StudentDataModel\Models{
+/**
+ * AdvisingApp\StudentDataModel\Models\Program
+ *
+ * @method static \AdvisingApp\StudentDataModel\Database\Factories\ProgramFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Program newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Program newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Program query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperProgram {}
+}
+
+namespace AdvisingApp\StudentDataModel\Models{
+/**
+ * AdvisingApp\StudentDataModel\Models\Student
+ *
+ * @property string $display_name
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
+ * @property-read int|null $alerts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
+ * @property-read int|null $application_submissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam
+ * @property-read int|null $care_team_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementFile> $engagementFiles
+ * @property-read int|null $engagement_files_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementResponse> $engagementResponses
+ * @property-read int|null $engagement_responses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $engagements
+ * @property-read int|null $engagements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Enrollment> $enrollments
+ * @property-read int|null $enrollments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormRequest> $formRequests
+ * @property-read int|null $form_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
+ * @property-read int|null $form_submissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
+ * @property-read int|null $interactions_count
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\EngagementResponse> $orderedEngagementResponses
+ * @property-read int|null $ordered_engagement_responses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $orderedEngagements
+ * @property-read int|null $ordered_engagements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Performance> $performances
+ * @property-read int|null $performances_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Program> $programs
+ * @property-read int|null $programs_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
+ * @property-read int|null $service_requests_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
+ * @property-read int|null $subscribed_users_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
+ * @property-read int|null $subscriptions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
+ * @property-read int|null $tasks_count
+ * @method static \AdvisingApp\StudentDataModel\Database\Factories\StudentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Student newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Student query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperStudent {}
+}
+
 namespace AdvisingApp\Task\Models{
 /**
- * Assist\Task\Models\Task
+ * AdvisingApp\Task\Models\Task
  *
  * @property-read Student|Prospect $concern
  * @property string $id
  * @property string $title
  * @property string $description
- * @property \Assist\Task\Enums\TaskStatus $status
+ * @property \AdvisingApp\Task\Enums\TaskStatus $status
  * @property \Illuminate\Support\Carbon|null $due
  * @property string|null $assigned_to
  * @property string|null $created_by
@@ -2681,11 +2704,11 @@ namespace AdvisingApp\Task\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\User|null $assignedTo
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Assist\Audit\Models\Audit> $audits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \App\Models\User|null $createdBy
  * @method static \Illuminate\Database\Eloquent\Builder|Task byNextDue()
- * @method static \Assist\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task onlyTrashed()
@@ -2713,7 +2736,7 @@ namespace AdvisingApp\Task\Models{
 
 namespace AdvisingApp\Team\Models{
 /**
- * Assist\Team\Models\Team
+ * AdvisingApp\Team\Models\Team
  *
  * @property string $id
  * @property string $name
@@ -2722,10 +2745,10 @@ namespace AdvisingApp\Team\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Assist\Division\Models\Division|null $division
+ * @property-read \AdvisingApp\Division\Models\Division|null $division
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
- * @method static \Assist\Team\Database\Factories\TeamFactory factory($count = null, $state = [])
+ * @method static \AdvisingApp\Team\Database\Factories\TeamFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Team newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Team newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Team query()
@@ -2744,14 +2767,14 @@ namespace AdvisingApp\Team\Models{
 
 namespace AdvisingApp\Team\Models{
 /**
- * Assist\Team\Models\TeamUser
+ * AdvisingApp\Team\Models\TeamUser
  *
  * @property string $id
  * @property string $team_id
  * @property string $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Assist\Team\Models\Team $team
+ * @property-read \AdvisingApp\Team\Models\Team $team
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|TeamUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TeamUser newQuery()
@@ -2769,7 +2792,7 @@ namespace AdvisingApp\Team\Models{
 
 namespace AdvisingApp\Timeline\Models{
 /**
- * Assist\Timeline\Models\Timeline
+ * AdvisingApp\Timeline\Models\Timeline
  *
  * @property string $id
  * @property string $entity_type
@@ -2800,10 +2823,10 @@ namespace AdvisingApp\Timeline\Models{
 
 namespace AdvisingApp\Webhook\Models{
 /**
- * Assist\Webhook\Models\InboundWebhook
+ * AdvisingApp\Webhook\Models\InboundWebhook
  *
  * @property string $id
- * @property \Assist\Webhook\Enums\InboundWebhookSource $source
+ * @property \AdvisingApp\Webhook\Enums\InboundWebhookSource $source
  * @property string $event
  * @property string $url
  * @property string $payload

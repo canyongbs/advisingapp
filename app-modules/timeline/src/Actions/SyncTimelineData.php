@@ -37,8 +37,8 @@
 namespace AdvisingApp\Timeline\Actions;
 
 use Illuminate\Support\Carbon;
-use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Exceptions\ModelMustHaveATimeline;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 

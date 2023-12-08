@@ -40,9 +40,9 @@ use Illuminate\View\View;
 use App\Models\SettingsProperty;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 
 class FilamentServiceProvider extends ServiceProvider
 {

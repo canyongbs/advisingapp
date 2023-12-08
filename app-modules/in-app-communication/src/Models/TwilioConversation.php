@@ -38,8 +38,8 @@ namespace AdvisingApp\InAppCommunication\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\InAppCommunication\Enums\ConversationType;
 
 /**
  * @mixin IdeHelperTwilioConversation

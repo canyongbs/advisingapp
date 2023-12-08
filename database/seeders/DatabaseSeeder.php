@@ -38,10 +38,10 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Notification;
 use AdvisingApp\Form\Database\Seeders\FormSeeder;
 use AdvisingApp\Task\Database\Seeders\TaskSeeder;
 use AdvisingApp\Team\Database\Seeders\TeamSeeder;
-use Illuminate\Support\Facades\Notification;
 use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;

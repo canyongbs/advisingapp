@@ -37,8 +37,8 @@
 namespace AdvisingApp\ServiceManagement\Database\Factories;
 
 use App\Models\User;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**

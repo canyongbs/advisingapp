@@ -37,8 +37,8 @@
 namespace AdvisingApp\CaseloadManagement\Enums;
 
 use App\Imports\Importer;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;

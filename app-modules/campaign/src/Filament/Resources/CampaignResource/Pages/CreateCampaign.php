@@ -38,13 +38,13 @@ namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use App\Models\User;
 use Illuminate\Support\HtmlString;
-use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
+use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Campaign\Enums\CampaignActionType;

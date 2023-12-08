@@ -36,8 +36,8 @@
 
 use App\Models\User;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Authorization\Models\Permission;
 use Illuminate\Support\Facades\Notification;
+use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 
 beforeEach(function () {

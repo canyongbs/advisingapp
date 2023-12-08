@@ -44,9 +44,9 @@ use App\Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use AdvisingApp\Interaction\Models\Interaction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Imports\InteractionsImporter;
 use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
 

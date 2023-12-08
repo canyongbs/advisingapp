@@ -36,7 +36,7 @@
 @php
     use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
     use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-
+    
     $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content']);
 @endphp
 

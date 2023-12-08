@@ -39,8 +39,8 @@ namespace AdvisingApp\Assistant\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
-use AdvisingApp\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

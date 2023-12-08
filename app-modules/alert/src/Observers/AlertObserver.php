@@ -37,8 +37,8 @@
 namespace AdvisingApp\Alert\Observers;
 
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Events\AlertCreated;
 use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Notifications\Actions\SubscriptionCreate;
 
 class AlertObserver

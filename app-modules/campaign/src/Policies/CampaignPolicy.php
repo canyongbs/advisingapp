@@ -37,8 +37,8 @@
 namespace AdvisingApp\Campaign\Policies;
 
 use App\Models\User;
-use AdvisingApp\Campaign\Models\Campaign;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Campaign\Models\Campaign;
 
 class CampaignPolicy
 {

@@ -38,10 +38,10 @@ namespace AdvisingApp\Engagement\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;

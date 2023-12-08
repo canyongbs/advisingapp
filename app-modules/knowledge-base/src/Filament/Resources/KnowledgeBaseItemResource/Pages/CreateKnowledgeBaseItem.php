@@ -37,11 +37,11 @@
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
 use Filament\Forms\Form;
-use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\Radio;
 use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Division\Models\Division;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;

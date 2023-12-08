@@ -41,8 +41,8 @@ use Aws\Sns\MessageValidator;
 use AdvisingApp\Webhook\WebhookPlugin;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Webhook\Models\InboundWebhook;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class WebhookServiceProvider extends ServiceProvider

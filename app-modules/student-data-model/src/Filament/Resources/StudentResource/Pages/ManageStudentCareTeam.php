@@ -44,9 +44,9 @@ use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 

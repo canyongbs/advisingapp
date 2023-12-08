@@ -42,10 +42,10 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Pages\EmailConfiguration;
-use AdvisingApp\Engagement\Models\EmailTemplate;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
+use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 
 class ListEmailTemplates extends ListRecords

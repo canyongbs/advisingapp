@@ -39,9 +39,9 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use AdvisingApp\Prospect\Models\ProspectStatus;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
 class ViewProspectStatus extends ViewRecord

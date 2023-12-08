@@ -38,8 +38,8 @@ namespace AdvisingApp\Form\Models;
 
 use App\Models\BaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

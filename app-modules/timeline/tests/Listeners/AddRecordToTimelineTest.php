@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;

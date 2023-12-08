@@ -38,9 +38,9 @@ namespace AdvisingApp\Notifications\Filament\Actions;
 
 use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use AdvisingApp\Notifications\Actions\SubscriptionToggle;
 use AdvisingApp\Notifications\Models\Contracts\Subscribable;
-use Filament\Pages\Concerns\InteractsWithHeaderActions;
 
 class SubscribeHeaderAction extends Action
 {

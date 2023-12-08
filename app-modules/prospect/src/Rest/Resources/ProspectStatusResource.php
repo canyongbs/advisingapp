@@ -39,8 +39,8 @@ namespace AdvisingApp\Prospect\Rest\Resources;
 use Illuminate\Validation\Rule;
 use Lomkit\Rest\Relations\HasMany;
 use App\Rest\Resource as RestResource;
-use AdvisingApp\Prospect\Models\ProspectStatus;
 use Lomkit\Rest\Http\Requests\RestRequest;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 

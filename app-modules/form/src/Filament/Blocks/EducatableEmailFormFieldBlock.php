@@ -38,8 +38,8 @@ namespace AdvisingApp\Form\Filament\Blocks;
 
 use Filament\Forms\Components\Checkbox;
 use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
+use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 
 class EducatableEmailFormFieldBlock extends FormFieldBlock
 {

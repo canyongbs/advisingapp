@@ -42,8 +42,8 @@ use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Team\Models\TeamUser;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Team\Observers\TeamUserObserver;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TeamServiceProvider extends ServiceProvider

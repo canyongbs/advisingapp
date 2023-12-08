@@ -37,13 +37,13 @@
 namespace AdvisingApp\Engagement\Models;
 
 use App\Models\BaseModel;
-use AdvisingApp\Engagement\Drivers\SmsDriver;
 use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Engagement\Drivers\SmsDriver;
 use AdvisingApp\Engagement\Drivers\EmailDriver;
 use AdvisingApp\Engagement\Drivers\DeliverableDriver;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
 use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;

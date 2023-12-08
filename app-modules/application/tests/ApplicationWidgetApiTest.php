@@ -40,10 +40,10 @@ use function Pest\Laravel\post;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\URL;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Application\Models\Application;
 
 use function Pest\Laravel\withoutMiddleware;
 
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 

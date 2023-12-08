@@ -38,8 +38,8 @@ namespace App\Concerns;
 
 use Exception;
 use Filament\Tables\Columns\Column;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Filters\BaseFilter;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use OpenSearch\Adapter\Documents\Document;
 use OpenSearch\ScoutDriverPlus\Support\Query;

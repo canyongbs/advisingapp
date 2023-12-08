@@ -38,8 +38,8 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

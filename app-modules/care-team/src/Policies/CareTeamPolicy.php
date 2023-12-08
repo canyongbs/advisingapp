@@ -37,8 +37,8 @@
 namespace AdvisingApp\CareTeam\Policies;
 
 use App\Models\User;
-use AdvisingApp\CareTeam\Models\CareTeam;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\CareTeam\Models\CareTeam;
 
 class CareTeamPolicy
 {

@@ -38,8 +38,8 @@ namespace AdvisingApp\Prospect\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
-use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ListProspects;

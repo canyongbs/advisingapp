@@ -38,8 +38,8 @@ namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
-use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Resources\Pages\ViewRecord;
+use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;

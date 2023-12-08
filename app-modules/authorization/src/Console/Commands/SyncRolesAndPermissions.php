@@ -37,8 +37,8 @@
 namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
-use AdvisingApp\Authorization\Models\Role;
 use Illuminate\Support\Facades\Artisan;
+use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
 use AdvisingApp\Authorization\Models\Permission;

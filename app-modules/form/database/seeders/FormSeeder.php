@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Form\Database\Seeders;
 
-use AdvisingApp\Form\Models\Form;
 use Illuminate\Database\Seeder;
+use AdvisingApp\Form\Models\Form;
 
 class FormSeeder extends Seeder
 {

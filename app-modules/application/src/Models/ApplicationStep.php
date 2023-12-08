@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Application\Models;
 
-use AdvisingApp\Form\Models\SubmissibleStep;
 use App\Models\Attributes\NoPermissions;
+use AdvisingApp\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

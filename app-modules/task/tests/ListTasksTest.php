@@ -35,15 +35,15 @@
 */
 
 use App\Models\User;
-use AdvisingApp\Task\Models\Task;
 
 use function Tests\asSuperAdmin;
 
-use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 

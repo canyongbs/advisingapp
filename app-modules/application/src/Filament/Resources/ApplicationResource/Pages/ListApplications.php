@@ -43,9 +43,9 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use AdvisingApp\Application\Models\Application;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 class ListApplications extends ListRecords

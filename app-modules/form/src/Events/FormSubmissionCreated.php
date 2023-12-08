@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Form\Events;
 
-use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Queue\SerializesModels;
+use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 

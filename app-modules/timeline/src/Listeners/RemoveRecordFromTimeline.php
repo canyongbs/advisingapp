@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Timeline\Listeners;
 
-use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 
 class RemoveRecordFromTimeline

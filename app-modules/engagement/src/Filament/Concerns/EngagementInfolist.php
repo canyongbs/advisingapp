@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Engagement\Filament\Concerns;
 
-use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 
 // TODO Re-use this trait across other places where infolist is rendered

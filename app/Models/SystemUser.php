@@ -43,6 +43,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperSystemUser
+ */
 class SystemUser extends Authenticatable implements Auditable
 {
     use HasFactory;

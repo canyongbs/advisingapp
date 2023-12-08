@@ -42,8 +42,8 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use Spatie\Permission\Models\Permission as SpatiePermission;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**

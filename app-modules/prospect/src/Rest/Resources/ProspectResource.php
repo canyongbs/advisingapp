@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Prospect\Rest\Resources;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use Lomkit\Rest\Relations\BelongsTo;
 use App\Rest\Resource as RestResource;
+use AdvisingApp\Prospect\Models\Prospect;
 use Lomkit\Rest\Http\Requests\RestRequest;
 
 class ProspectResource extends RestResource

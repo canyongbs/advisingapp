@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Campaign\Actions;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\Campaign\Models\CampaignAction;
 
 class ExecuteCampaignActions implements ShouldQueue
 {

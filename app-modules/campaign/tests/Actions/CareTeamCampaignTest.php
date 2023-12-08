@@ -37,9 +37,9 @@
 use App\Models\User;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;

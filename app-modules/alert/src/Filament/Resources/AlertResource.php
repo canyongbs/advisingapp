@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Alert\Filament\Resources;
 
-use AdvisingApp\Alert\Models\Alert;
 use Filament\Resources\Resource;
+use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Alert\Filament\Resources\AlertResource\Pages;
 
 class AlertResource extends Resource

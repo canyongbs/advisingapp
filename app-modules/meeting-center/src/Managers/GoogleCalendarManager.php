@@ -42,12 +42,12 @@ use DateTimeInterface;
 use Google\Service\Oauth2;
 use Illuminate\Support\Carbon;
 use Google\Service\Calendar\Event;
-use AdvisingApp\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar\EventAttendee;
 use Google\Service\Calendar\EventDateTime;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar as GoogleCalendar;
 use Google\Service\Calendar\CalendarListEntry;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class GoogleCalendarManager implements CalendarInterface

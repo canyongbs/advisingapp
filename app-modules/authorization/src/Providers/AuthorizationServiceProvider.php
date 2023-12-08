@@ -37,17 +37,17 @@
 namespace AdvisingApp\Authorization\Providers;
 
 use Filament\Panel;
-use AdvisingApp\Authorization\Models\Role;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Authorization\Models\RoleGroup;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\AuthorizationPlugin;
 use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use SocialiteProviders\Google\GoogleExtendSocialite;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuthorizationServiceProvider extends ServiceProvider

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use AdvisingApp\StudentDataModel\Models\Performance;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\StudentDataModel\Models\Performance;
 
 /**
  * @extends Factory<Performance>

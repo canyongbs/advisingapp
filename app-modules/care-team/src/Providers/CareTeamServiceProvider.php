@@ -37,11 +37,11 @@
 namespace AdvisingApp\CareTeam\Providers;
 
 use Filament\Panel;
+use Illuminate\Support\ServiceProvider;
 use AdvisingApp\CareTeam\CareTeamPlugin;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class CareTeamServiceProvider extends ServiceProvider

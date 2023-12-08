@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Task\Filament\Pages\Components;
 
-use AdvisingApp\Task\Models\Task;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Concerns\TaskViewActionInfoList;
 

@@ -38,8 +38,8 @@ namespace AdvisingApp\Campaign\Enums;
 
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\CareTeam\Models\CareTeam;
 use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Engagement\Models\EngagementBatch;

@@ -38,8 +38,8 @@ namespace AdvisingApp\Task\Tests\RequestFactories;
 
 use App\Models\User;
 use AdvisingApp\Task\Enums\TaskStatus;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class EditTaskRequestFactory extends RequestFactory
 {

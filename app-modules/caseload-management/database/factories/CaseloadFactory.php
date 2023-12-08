@@ -38,9 +38,9 @@ namespace AdvisingApp\CaseloadManagement\Database\Factories;
 
 use App\Models\User;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Caseload>

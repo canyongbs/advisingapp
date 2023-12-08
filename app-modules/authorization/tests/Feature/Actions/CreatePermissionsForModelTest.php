@@ -39,8 +39,8 @@ use Mockery\MockInterface;
 
 use function Pest\Laravel\partialMock;
 
-use AdvisingApp\Authorization\Tests\Helpers;
 use App\Actions\Finders\ApplicationModules;
+use AdvisingApp\Authorization\Tests\Helpers;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;

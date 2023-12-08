@@ -35,10 +35,10 @@
 */
 
 use function Tests\loadFixtureFromModule;
+use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\StudentDataModel\Models\Student;
 
-use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
 use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;

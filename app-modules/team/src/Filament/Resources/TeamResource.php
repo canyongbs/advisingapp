@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Team\Filament\Resources;
 
-use AdvisingApp\Team\Models\Team;
 use Filament\Resources\Resource;
+use AdvisingApp\Team\Models\Team;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\ListTeams;

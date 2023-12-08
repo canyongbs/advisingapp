@@ -38,8 +38,8 @@ namespace AdvisingApp\Notifications\Actions;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use AdvisingApp\Notifications\Models\Contracts\Subscribable;
 use Illuminate\Database\UniqueConstraintViolationException;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
 use AdvisingApp\Notifications\Exceptions\SubscriptionAlreadyExistsException;
 
 class SubscriptionCreate

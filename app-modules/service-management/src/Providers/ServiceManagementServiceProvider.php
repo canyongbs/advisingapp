@@ -38,9 +38,9 @@ namespace AdvisingApp\ServiceManagement\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\ServiceManagement\ServiceManagementPlugin;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;

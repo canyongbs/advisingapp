@@ -38,8 +38,8 @@ namespace App\Filament\Widgets;
 
 use Filament\Tables\Table;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Task\Enums\TaskStatus;
 use App\Filament\Columns\IdColumn;
+use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Widgets\TableWidget as BaseWidget;

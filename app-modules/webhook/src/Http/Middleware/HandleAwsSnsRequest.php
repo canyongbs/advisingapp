@@ -39,8 +39,8 @@ namespace AdvisingApp\Webhook\Http\Middleware;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
-use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 use AdvisingApp\Webhook\Actions\StoreInboundWebhook;
 use AdvisingApp\Webhook\DataTransferObjects\SnsMessage;
 

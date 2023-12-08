@@ -47,11 +47,11 @@ use Microsoft\Graph\Model\ItemBody;
 use Illuminate\Support\Facades\Http;
 use Microsoft\Graph\Model\EmailAddress;
 use Microsoft\Graph\Core\GraphConstants;
-use AdvisingApp\MeetingCenter\Models\Calendar;
 use GuzzleHttp\Exception\ClientException;
 use Microsoft\Graph\Model\DateTimeTimeZone;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 

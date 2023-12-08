@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Audit\Models\Concerns;
 
-use AdvisingApp\Audit\Overrides\MorphToMany;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Audit\Overrides\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Audit\Overrides\MorphToMany;
+use AdvisingApp\Audit\Overrides\BelongsToMany;
 
 trait AuditableManyToMany
 {

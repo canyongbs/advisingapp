@@ -37,8 +37,8 @@
 namespace AdvisingApp\Task\Database\Seeders;
 
 use App\Models\User;
-use AdvisingApp\Task\Models\Task;
 use Illuminate\Database\Seeder;
+use AdvisingApp\Task\Models\Task;
 
 class TaskSeeder extends Seeder
 {

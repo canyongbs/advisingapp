@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Task\Filament\Resources;
 
-use AdvisingApp\Task\Models\Task;
 use Filament\Resources\Resource;
+use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
 class TaskResource extends Resource

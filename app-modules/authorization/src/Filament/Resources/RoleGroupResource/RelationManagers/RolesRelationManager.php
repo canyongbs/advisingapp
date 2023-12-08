@@ -45,9 +45,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Authorization\Models\RoleGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
+use AdvisingApp\Authorization\Models\RoleGroup;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class RolesRelationManager extends RelationManager

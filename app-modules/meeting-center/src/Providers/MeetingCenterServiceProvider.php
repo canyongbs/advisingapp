@@ -38,13 +38,13 @@ namespace AdvisingApp\MeetingCenter\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\MeetingCenter\Models\Calendar;
 use Illuminate\Console\Scheduling\Schedule;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 

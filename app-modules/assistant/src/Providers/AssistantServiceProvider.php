@@ -38,17 +38,17 @@ namespace AdvisingApp\Assistant\Providers;
 
 use Filament\Panel;
 use Filament\Support\Assets\Js;
-use AdvisingApp\Assistant\AssistantPlugin;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Assistant\AssistantPlugin;
 use Filament\Support\Facades\FilamentAsset;
+use AdvisingApp\Assistant\Models\AssistantChat;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use AdvisingApp\Assistant\Models\AssistantChatMessage;
 use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Assistant\Listeners\LogAssistantChatMessage;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 

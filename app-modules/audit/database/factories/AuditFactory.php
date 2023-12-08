@@ -38,8 +38,8 @@ namespace AdvisingApp\Audit\Database\Factories;
 
 use App\Models\User;
 use AdvisingApp\Audit\Models\Audit;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
 /**
  * @extends Factory<Audit>

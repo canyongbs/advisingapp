@@ -38,11 +38,11 @@ namespace AdvisingApp\Form\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use AdvisingApp\Form\Enums\FormRequestStatus;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Form\Enums\FormRequestDeliveryMethod;
+use AdvisingApp\Form\Enums\FormRequestStatus;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Form\Enums\FormRequestDeliveryMethod;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 

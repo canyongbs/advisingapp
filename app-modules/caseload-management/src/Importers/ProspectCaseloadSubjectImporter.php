@@ -39,8 +39,8 @@ namespace AdvisingApp\CaseloadManagement\Importers;
 use App\Models\Import;
 use App\Imports\Importer;
 use Illuminate\Support\Str;
-use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Actions\ImportAction\ImportColumn;
 use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
 

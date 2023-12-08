@@ -38,20 +38,20 @@ namespace App\Livewire;
 
 use Exception;
 use Livewire\Component;
-use AdvisingApp\Task\Models\Task;
 use Filament\Actions\EditAction;
-use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Actions\Contracts\HasActions;
-use AdvisingApp\Task\Filament\Concerns\TaskEditForm;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
+use AdvisingApp\Task\Filament\Concerns\TaskEditForm;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Bvtterfly\ModelStateMachine\Exceptions\InvalidTransition;
-use AdvisingApp\Task\Filament\Pages\Components\TaskKanbanViewAction;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use AdvisingApp\Task\Filament\Pages\Components\TaskKanbanViewAction;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 
 class TaskKanban extends Component implements HasForms, HasActions

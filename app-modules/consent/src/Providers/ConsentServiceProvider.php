@@ -41,8 +41,8 @@ use AdvisingApp\Consent\ConsentPlugin;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 

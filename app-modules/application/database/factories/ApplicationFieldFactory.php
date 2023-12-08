@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Application\Database\Factories;
 
-use AdvisingApp\Application\Models\ApplicationField;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Application\Models\ApplicationField;
 
 /**
  * @extends Factory<ApplicationField>

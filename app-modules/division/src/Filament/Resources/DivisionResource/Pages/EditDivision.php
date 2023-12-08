@@ -39,12 +39,12 @@ namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use App\Models\NotificationSetting;
-use AdvisingApp\Division\Models\Division;
 use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 class EditDivision extends EditRecord

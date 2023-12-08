@@ -39,12 +39,12 @@ use Mockery\MockInterface;
 
 use function Pest\Laravel\partialMock;
 
-use AdvisingApp\Authorization\Tests\Helpers;
 use App\Actions\Finders\ApplicationModels;
-use AdvisingApp\Authorization\Models\Permission;
+use AdvisingApp\Authorization\Tests\Helpers;
 
 use function Pest\Laravel\assertDatabaseHas;
 
+use AdvisingApp\Authorization\Models\Permission;
 use Spatie\Permission\Commands\CreatePermission;
 use AdvisingApp\Authorization\Actions\CreatePermissions;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;

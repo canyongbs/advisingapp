@@ -37,13 +37,13 @@
 namespace AdvisingApp\Prospect\Providers;
 
 use Filament\Panel;
+use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Prospect\ProspectPlugin;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class ProspectServiceProvider extends ServiceProvider

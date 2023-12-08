@@ -41,11 +41,11 @@ use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use AdvisingApp\Engagement\Models\SmsTemplate;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Pages\EmailConfiguration;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Engagement\Models\SmsTemplate;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 
 class ListSmsTemplates extends ListRecords

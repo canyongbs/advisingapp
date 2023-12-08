@@ -38,8 +38,8 @@ namespace AdvisingApp\IntegrationMicrosoftClarity\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationMicrosoftClarity\IntegrationMicrosoftClarityPlugin;
 

@@ -39,8 +39,8 @@ namespace AdvisingApp\Theme\Providers;
 use Filament\Panel;
 use AdvisingApp\Theme\ThemePlugin;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class ThemeServiceProvider extends ServiceProvider

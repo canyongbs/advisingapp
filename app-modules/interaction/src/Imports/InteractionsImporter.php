@@ -42,15 +42,15 @@ use Illuminate\Support\Str;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Interaction\Models\InteractionType;
+use App\Filament\Actions\ImportAction\ImportColumn;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use App\Filament\Actions\ImportAction\ImportColumn;
 
 class InteractionsImporter extends Importer
 {

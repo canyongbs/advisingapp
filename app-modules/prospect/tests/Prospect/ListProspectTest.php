@@ -37,11 +37,9 @@
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-
-use AdvisingApp\Prospect\Models\Prospect;
-
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;

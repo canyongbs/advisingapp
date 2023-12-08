@@ -42,9 +42,9 @@ use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Performance;
-use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class StudentDataModelServiceProvider extends ServiceProvider

@@ -38,11 +38,11 @@ namespace AdvisingApp\Timeline\Filament\Pages;
 
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
-use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Timeline\Models\Timeline;
 use App\Actions\GetRecordFromMorphAndKey;
-use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
 

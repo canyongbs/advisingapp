@@ -39,12 +39,12 @@ namespace AdvisingApp\Alert\Providers;
 use Filament\Panel;
 use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Alert\Events\AlertCreated;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Observers\AlertObserver;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Authorization\Models\Concerns;
 
-use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
+use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
 use AdvisingApp\Authorization\Enums\ModelHasRolesViaEnum;

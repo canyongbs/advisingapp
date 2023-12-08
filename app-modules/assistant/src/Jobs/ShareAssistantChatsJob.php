@@ -37,15 +37,15 @@
 namespace AdvisingApp\Assistant\Jobs;
 
 use App\Models\User;
-use AdvisingApp\Team\Models\Team;
 use Illuminate\Bus\Queueable;
+use AdvisingApp\Team\Models\Team;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Queue\SerializesModels;
 use Filament\Notifications\Notification;
 use Illuminate\Queue\InteractsWithQueue;
-use AdvisingApp\Assistant\Models\AssistantChat;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use AdvisingApp\Assistant\Enums\AssistantChatShareWith;
 use AdvisingApp\Assistant\Notifications\SendFilamentShareAssistantChatNotification;

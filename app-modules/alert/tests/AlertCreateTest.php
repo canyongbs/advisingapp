@@ -39,8 +39,8 @@ use AdvisingApp\Alert\Models\Alert;
 
 use function Pest\Laravel\actingAs;
 
-use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Notification;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 
 it('creates a subscription for the user that created the Alert', function () {

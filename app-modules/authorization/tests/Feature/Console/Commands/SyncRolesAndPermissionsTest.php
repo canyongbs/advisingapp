@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Models\Role;
 use Illuminate\Support\Facades\Config;
-use AdvisingApp\Authorization\Tests\Helpers;
 use Illuminate\Support\Facades\Artisan;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Tests\Helpers;
 use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 
 beforeEach(function () {

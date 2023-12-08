@@ -37,8 +37,8 @@
 namespace AdvisingApp\KnowledgeBase\Database\Factories;
 
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;

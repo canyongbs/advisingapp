@@ -38,8 +38,8 @@ namespace AdvisingApp\Campaign\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
-use AdvisingApp\Campaign\Enums\CampaignActionType;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;

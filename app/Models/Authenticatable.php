@@ -37,9 +37,9 @@
 namespace App\Models;
 
 use App\Models\Concerns\CanOrElse;
+use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use AdvisingApp\Authorization\Models\Concerns\HasRoleGroups;
 use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
-use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 abstract class Authenticatable extends BaseAuthenticatable

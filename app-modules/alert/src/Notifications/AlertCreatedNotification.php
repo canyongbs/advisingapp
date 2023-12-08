@@ -38,9 +38,9 @@ namespace AdvisingApp\Alert\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use AdvisingApp\Alert\Models\Alert;
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
+use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Filament\Notifications\Notification as FilamentNotification;

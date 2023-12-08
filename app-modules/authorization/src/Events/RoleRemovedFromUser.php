@@ -37,8 +37,8 @@
 namespace AdvisingApp\Authorization\Events;
 
 use App\Models\User;
-use AdvisingApp\Authorization\Models\Role;
 use Illuminate\Queue\SerializesModels;
+use AdvisingApp\Authorization\Models\Role;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 
