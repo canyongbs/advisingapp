@@ -34,34 +34,29 @@
 </COPYRIGHT>
 */
 
-use App\JsonApi\V1\Server;
+namespace Assist\Form\Actions;
 
-return [
-    /*
-    |--------------------------------------------------------------------------
-    | Root Namespace
-    |--------------------------------------------------------------------------
-    |
-    | The root JSON:API namespace, within your application's namespace.
-    | This is used when generating any class that does not sit *within*
-    | a server's namespace. For example, new servers and filters.
-    |
-    | By default this is set to `JsonApi` which means the root namespace
-    | will be `\App\JsonApi`, if your application's namespace is `App`.
-    */
-    'namespace' => 'JsonApi',
+use Twilio\Rest\Client;
+use Twilio\Exceptions\TwilioException;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Servers
-    |--------------------------------------------------------------------------
-    |
-    | A list of the JSON:API compliant APIs in your application, referred to
-    | as "servers". They must be listed below, with the array key being the
-    | unique name for each server, and the value being the fully-qualified
-    | class name of the server class.
-    */
-    'servers' => [
-        'v1' => Server::class,
-    ],
-];
+class DeliverFormRequestBySms extends DeliverFormRequest
+{
+    public function handle(): void
+    {
+        $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+
+        try {
+            $client->messages->create(
+                ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->request->recipient->mobile,
+                [
+                    'from' => config('services.twilio.from_number'),
+                    'body' => "You have been sent a request to complete {$this->request->form->name} by {$this->request->user->name}." .
+                        (filled($this->request->note) ? " {$this->request->note}" : '') .
+                        ' ' . route('forms.show', ['form' => $this->request->form]),
+                ],
+            );
+        } catch (TwilioException $e) {
+            // TODO Notify someone of the failure
+        }
+    }
+}

@@ -85,6 +85,9 @@ class BulkEngagementAction
                             ->hidden(fn (Get $get): bool => $get('delivery_method') === EngagementDeliveryMethod::Sms->value)
                             ->columnSpanFull(),
                         TiptapEditor::make('body')
+                            ->disk('s3-public')
+                            ->visibility('public')
+                            ->directory('editor-images/engagements')
                             ->label('Body')
                             ->mergeTags([
                                 'student full name',

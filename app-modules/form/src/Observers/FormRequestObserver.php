@@ -34,52 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+namespace Assist\Form\Observers;
 
-use Throwable;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Assist\Form\Models\FormRequest;
 
-class Handler extends ExceptionHandler
+class FormRequestObserver
 {
-    /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, \Psr\Log\LogLevel::*>
-     */
-    protected $levels = [
-    ];
-
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+    public function creating(FormRequest $request): void
     {
-        $this->reportable(function (Throwable $e) {});
+        $request->user()->associate(auth()->user());
     }
 
-    protected function unauthenticated($request, AuthenticationException $exception)
+    public function created(FormRequest $request): void
     {
-        return $this->shouldReturnJson($request, $exception)
-            ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest($exception->redirectTo() ?? url('/'));
+        $request->deliver();
     }
 }

@@ -46,6 +46,7 @@ class GenerateEmailMarkdownContent
                 'doc' => $this($component['content'], $mergeData),
                 'heading' => PHP_EOL . PHP_EOL . str_repeat('#', $component['attrs']['level'] ?? 1) . ' ' . $this($component['content'] ?? [], $mergeData),
                 'horizontalRule' => PHP_EOL . PHP_EOL . '---',
+                'image' => ' ' . '![' . ($component['attrs']['alt'] ?? '') . '](' . ($component['attrs']['src'] ?? '') . ')',
                 'listItem' => PHP_EOL . '- ' . $this($component['content'] ?? [], $mergeData),
                 'mergeTag' => ' ' . $this->text($mergeData[$component['attrs']['id'] ?? null] ?? '', $component),
                 'orderedList' => PHP_EOL . PHP_EOL . $this->orderedList($component, $mergeData),

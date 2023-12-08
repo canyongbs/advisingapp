@@ -34,52 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+namespace Assist\Prospect\Rest\Resources;
 
-use Throwable;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Lomkit\Rest\Relations\HasMany;
+use App\Rest\Resource as RestResource;
+use Assist\Prospect\Models\ProspectSource;
+use Lomkit\Rest\Http\Requests\RestRequest;
 
-class Handler extends ExceptionHandler
+class ProspectSourceResource extends RestResource
 {
-    /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, \Psr\Log\LogLevel::*>
-     */
-    protected $levels = [
-    ];
+    public static $model = ProspectSource::class;
 
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+    public function fields(RestRequest $request): array
     {
-        $this->reportable(function (Throwable $e) {});
+        return [
+            'id',
+            'name',
+            'created_at',
+            'updated_at',
+        ];
     }
 
-    protected function unauthenticated($request, AuthenticationException $exception)
+    public function createRules(RestRequest $request): array
     {
-        return $this->shouldReturnJson($request, $exception)
-            ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest($exception->redirectTo() ?? url('/'));
+        return [
+            'id' => ['missing'],
+            'name' => ['required', 'string', 'unique:prospect_sources,name', 'max:255'],
+            'created_at' => ['missing'],
+            'updated_at' => ['missing'],
+        ];
+    }
+
+    public function updateRules(RestRequest $request): array
+    {
+        return [
+            'id' => ['missing'],
+            'name' => ['string', 'unique:prospect_sources,name', 'max:255'],
+            'created_at' => ['missing'],
+            'updated_at' => ['missing'],
+        ];
+    }
+
+    public function relations(RestRequest $request): array
+    {
+        return [
+            HasMany::make('prospects', ProspectResource::class),
+        ];
     }
 }

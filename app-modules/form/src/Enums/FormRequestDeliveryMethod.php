@@ -34,46 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\JsonApi\V1\ProspectStatuses;
+namespace Assist\Form\Enums;
 
-use LaravelJsonApi\Eloquent\Schema;
-use LaravelJsonApi\Eloquent\Fields\ID;
-use LaravelJsonApi\Eloquent\Fields\Str;
-use Assist\Prospect\Models\ProspectStatus;
-use LaravelJsonApi\Eloquent\Fields\DateTime;
-use LaravelJsonApi\Eloquent\Fields\SoftDelete;
-use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
-use LaravelJsonApi\Eloquent\Contracts\Paginator;
-use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
-use LaravelJsonApi\Eloquent\Pagination\PagePagination;
+use Assist\Form\Models\FormRequest;
+use Filament\Support\Contracts\HasLabel;
+use Assist\Form\Actions\DeliverFormRequestBySms;
+use Assist\Form\Actions\DeliverFormRequestByEmail;
 
-class ProspectStatusSchema extends Schema
+enum FormRequestDeliveryMethod: string implements HasLabel
 {
-    public static string $model = ProspectStatus::class;
+    case Email = 'email';
+    case Sms = 'sms';
 
-    public function fields(): array
+    public function getLabel(): ?string
     {
-        return [
-            ID::make()->uuid(),
-            Str::make('classification'),
-            Str::make('name'),
-            Str::make('color'),
-            DateTime::make('createdAt')->sortable()->readOnly(),
-            DateTime::make('updatedAt')->sortable()->readOnly(),
-            SoftDelete::make('deletedAt')->sortable()->readOnly(),
-            HasMany::make('prospects'),
-        ];
+        return match ($this) {
+            static::Email => 'Email',
+            static::Sms => 'SMS',
+        };
     }
 
-    public function filters(): array
+    public function deliver(FormRequest $request): void
     {
-        return [
-            WhereIdIn::make($this),
-        ];
-    }
-
-    public function pagination(): ?Paginator
-    {
-        return PagePagination::make();
+        match ($this) {
+            static::Email => DeliverFormRequestByEmail::dispatch($request),
+            static::Sms => DeliverFormRequestBySms::dispatch($request),
+        };
     }
 }

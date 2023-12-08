@@ -34,52 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace App\Exceptions;
+namespace App\Rest;
 
-use Throwable;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route;
+use Lomkit\Rest\Documentation\Schemas\Path;
+use Lomkit\Rest\Http\Controllers\Controller;
 
-class Handler extends ExceptionHandler
+class OpenApi extends \Lomkit\Rest\Documentation\Schemas\OpenAPI
 {
-    /**
-     * A list of exception types with their corresponding custom log levels.
-     *
-     * @var array<class-string<Throwable>, \Psr\Log\LogLevel::*>
-     */
-    protected $levels = [
-    ];
-
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<Throwable>>
-     */
-    protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
-    protected $dontFlash = [
-        'current_password',
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Register the exception handling callbacks for the application.
-     */
-    public function register(): void
+    public function generatePaths()
     {
-        $this->reportable(function (Throwable $e) {});
-    }
+        $paths = [];
 
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return $this->shouldReturnJson($request, $exception)
-            ? response()->json(['message' => $exception->getMessage()], 401)
-            : redirect()->guest($exception->redirectTo() ?? url('/'));
+        foreach (Route::getRoutes() as $route) {
+            /** @var \Illuminate\Routing\Route $route */
+            if (is_null($route->getName())) {
+                continue;
+            }
+
+            if ($route->getControllerClass()) {
+                $controller = $route->getController();
+
+                if ($controller instanceof Controller) {
+                    $path = match (Str::afterLast($route->getName(), '.')) {
+                        'details' => (new Path())->generateDetailAndDestroy($controller),
+                        'search' => (new Path())->generateSearch($controller),
+                        'mutate' => (new Path())->generateMutate($controller),
+                        'operate' => (new Path())->generateActions($controller),
+                        'restore' => (new Path())->generateRestore($controller),
+                        'forceDelete' => (new Path())->generateForceDelete($controller),
+                        default => null
+                    };
+
+                    if (! is_null($path)) {
+                        $paths['/' . $route->uri()] = $path;
+                    }
+                }
+            }
+        }
+
+        return $paths;
     }
 }

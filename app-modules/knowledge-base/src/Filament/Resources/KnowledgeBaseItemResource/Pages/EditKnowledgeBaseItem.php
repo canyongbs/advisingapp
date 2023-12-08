@@ -96,12 +96,14 @@ class EditKnowledgeBaseItem extends EditRecord
                     ->preload()
                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                 TiptapEditor::make('solution')
+                    ->directory('kb-images')
                     ->label('Solution')
                     ->translateLabel()
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->string(),
                 TiptapEditor::make('notes')
+                    ->directory('kb-images')
                     ->label('Notes')
                     ->translateLabel()
                     ->columnSpanFull()

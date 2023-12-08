@@ -42,6 +42,7 @@ use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
+use Assist\Form\Models\FormRequest;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -240,6 +241,17 @@ class FormWidgetController extends Controller
         }
 
         $submission->save();
+
+        if ($authentication) {
+            $form->requests()
+                ->whereMorphedTo('recipient', $authentication->author)
+                ->whereDoesntHave('submission')
+                ->notCanceled()
+                ->each(function (FormRequest $request) use ($submission) {
+                    $request->submission()->associate($submission);
+                    $request->save();
+                });
+        }
 
         return response()->json(
             [
