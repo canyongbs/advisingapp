@@ -43,7 +43,7 @@ use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListCo
 
 class AssistantConfiguration extends Page
 {
-    protected static string $view = 'assist.assistant.filament.pages.assistant-configuration';
+    protected static string $view = 'assistant::filament.pages.assistant-configuration';
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
 

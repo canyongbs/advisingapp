@@ -177,7 +177,7 @@ class FilamentServiceProvider extends ServiceProvider
 
         FilamentView::registerRenderHook(
             'panels::footer',
-            fn (): View => view('assist.filament.footer'),
+            fn (): View => view('filament.footer'),
         );
     }
 }

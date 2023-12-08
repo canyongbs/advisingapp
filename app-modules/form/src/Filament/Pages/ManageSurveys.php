@@ -42,7 +42,7 @@ class ManageSurveys extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
 
-    protected static string $view = 'assist.filament.pages.coming-soon';
+    protected static string $view = 'filament.pages.coming-soon';
 
     protected static ?string $navigationGroup = 'Forms and Surveys';
 
