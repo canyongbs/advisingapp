@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Filament\Pages\Auth;
+namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
 use Filament\Actions\Action;
 use Filament\Pages\Auth\Login as FilamentLogin;

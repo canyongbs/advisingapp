@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Actions;
+namespace AdvisingApp\Authorization\Actions;
 
 use App\Models\User;
-use Assist\Authorization\Models\Role;
-use Assist\Authorization\Models\RoleGroup;
-use Assist\Authorization\Models\Pivots\RoleGroupRolePivot;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Models\Pivots\RoleGroupRolePivot;
 
 // TODO This should be queued
 class RemoveRoleFromUsersInRoleGroup

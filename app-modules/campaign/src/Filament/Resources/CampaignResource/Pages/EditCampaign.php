@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
+namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
@@ -42,7 +42,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 
 class EditCampaign extends EditRecord
 {

@@ -42,7 +42,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertGuest;
 
-use Assist\Authorization\Filament\Pages\Auth\SetPassword;
+use AdvisingApp\Authorization\Filament\Pages\Auth\SetPassword;
 
 it('sets the user\'s password', function () {
     $user = User::factory()->create([

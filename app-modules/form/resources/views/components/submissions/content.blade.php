@@ -34,8 +34,8 @@
 @props(['content', 'submission'])
 
 @php
-    use Assist\Form\Actions\InjectSubmissionStateIntoTipTapContent;
-    use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
+    use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
+    use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
     
     $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content']);
 @endphp

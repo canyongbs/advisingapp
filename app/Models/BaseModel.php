@@ -40,7 +40,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 abstract class BaseModel extends Model
 {

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Actions\Contracts;
+namespace AdvisingApp\Engagement\Actions\Contracts;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 interface EngagementResponseSenderFinder
 {

@@ -39,8 +39,8 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 
 test('The correct details are displayed on the ViewProspectSource page', function () {
     $prospectSource = ProspectSource::factory()->create();

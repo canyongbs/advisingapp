@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Filament\Resources\ApplicationResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -50,9 +50,9 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Filters\OpenSearch\SelectFilter;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\Application\Models\ApplicationSubmission;
-use Assist\Application\Exports\ApplicationSubmissionExport;
-use Assist\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 class ManageApplicationSubmissions extends ManageRelatedRecords
 {

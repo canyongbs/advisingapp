@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline\Actions;
+namespace AdvisingApp\Timeline\Actions;
 
 use Illuminate\Support\Carbon;
-use Assist\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Timeline\Exceptions\ModelMustHaveATimeline;
-use Assist\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\Timeline\Models\Timeline;
+use AdvisingApp\Timeline\Exceptions\ModelMustHaveATimeline;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 
 class SyncTimelineData
 {

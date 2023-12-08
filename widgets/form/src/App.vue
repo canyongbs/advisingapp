@@ -169,7 +169,7 @@ fetch(props.url)
         display.value = true;
     })
     .catch((error) => {
-        console.error(`ASSIST Embed Form ${error}`);
+        console.error(`Advising App Embed Form ${error}`);
     });
 
 async function authenticate (formData, node) {

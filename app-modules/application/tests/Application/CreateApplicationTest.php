@@ -40,7 +40,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 // TODO: Write CreateApplication tests
 //test('A successful action on the CreateApplication page', function () {});

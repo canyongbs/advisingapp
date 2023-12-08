@@ -41,8 +41,11 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperSystemUser
+ */
 class SystemUser extends Authenticatable implements Auditable
 {
     use HasFactory;

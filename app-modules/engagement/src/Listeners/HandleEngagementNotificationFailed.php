@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Listeners;
+namespace AdvisingApp\Engagement\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Events\NotificationFailed;
-use Assist\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Engagement\Notifications\EngagementNotification;
 
 class HandleEngagementNotificationFailed implements ShouldQueue
 {

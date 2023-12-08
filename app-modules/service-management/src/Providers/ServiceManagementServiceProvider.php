@@ -34,27 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Providers;
+namespace AdvisingApp\ServiceManagement\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Assist\Authorization\AuthorizationRoleRegistry;
-use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\ServiceManagement\ServiceManagementPlugin;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Models\ServiceRequestHistory;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Models\ServiceRequestAssignment;
-use Assist\ServiceManagement\Observers\ServiceRequestObserver;
-use Assist\ServiceManagement\Observers\ServiceRequestUpdateObserver;
-use Assist\ServiceManagement\Observers\ServiceRequestHistoryObserver;
-use Assist\ServiceManagement\Observers\ServiceRequestAssignmentObserver;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServiceRequestNumberGenerator;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\ServiceManagementPlugin;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestAssignmentObserver;
+use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServiceRequestNumberGenerator;
 
 class ServiceManagementServiceProvider extends ServiceProvider
 {

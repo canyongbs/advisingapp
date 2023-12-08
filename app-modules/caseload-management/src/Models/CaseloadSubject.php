@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Models;
+namespace AdvisingApp\CaseloadManagement\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\MorphTo;

@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/assistant",
+  "name": "canyon-gbs/advising-app-assistant",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Assistant\\": "src/",
-      "Assist\\Assistant\\Tests\\": "tests/",
-      "Assist\\Assistant\\Database\\Factories\\": "database/factories/",
-      "Assist\\Assistant\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Assistant\\": "src/",
+      "AdvisingApp\\Assistant\\Tests\\": "tests/",
+      "AdvisingApp\\Assistant\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Assistant\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Assistant\\Providers\\AssistantServiceProvider"
+        "AdvisingApp\\Assistant\\Providers\\AssistantServiceProvider"
       ]
     }
   }

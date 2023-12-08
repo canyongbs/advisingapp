@@ -1,5 +1,5 @@
 # Azure OpenAI
-The ASSIST project provides a simple way to connect with and use Azure OpenAI in order to connect to OpenAI's powerful language models, summoning the power of AI inside of the application in a secure fashion.
+The Advising App project provides a simple way to connect with and use Azure OpenAI in order to connect to OpenAI's powerful language models, summoning the power of AI inside of the application in a secure fashion.
 
 ## Before You Begin
 In order to get started, please ensure you have met all of the prerequisites for this integration. As of writing, documentation for this can be found at the link below, but is subject to change:

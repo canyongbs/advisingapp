@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions;
+namespace AdvisingApp\Engagement\Filament\Actions;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -47,14 +47,14 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Filament\Forms\Components\Wizard\Step;
-use Assist\Engagement\Models\EmailTemplate;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
-use Assist\Engagement\Actions\CreateEngagementBatch;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use Assist\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
-use Assist\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
+use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
 
 class BulkEngagementAction
 {

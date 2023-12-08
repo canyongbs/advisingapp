@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Webhook\Models;
+namespace AdvisingApp\Webhook\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
-use Assist\Webhook\Enums\InboundWebhookSource;
+use AdvisingApp\Webhook\Enums\InboundWebhookSource;
 
 /**
  * @mixin IdeHelperInboundWebhook

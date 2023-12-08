@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Jobs;
+namespace AdvisingApp\MeetingCenter\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use Assist\MeetingCenter\Models\Calendar;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Assist\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 
 class SyncCalendar implements ShouldQueue
 {

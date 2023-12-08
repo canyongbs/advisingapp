@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1fb2c1a500f350c78e0614638cc4d2f",
+    "content-hash": "d82488d7188973ba6f0313ae7edf5250",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.2.5",
+            "version": "v3.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "5113091184d1d1038bf24b488f6cc6b89ad714e3"
+                "reference": "7887ec8b391f3911255a3b0dfae7b59d15034ee3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/5113091184d1d1038bf24b488f6cc6b89ad714e3",
-                "reference": "5113091184d1d1038bf24b488f6cc6b89ad714e3",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/7887ec8b391f3911255a3b0dfae7b59d15034ee3",
+                "reference": "7887ec8b391f3911255a3b0dfae7b59d15034ee3",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +80,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.5"
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.6"
             },
             "funding": [
                 {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-06T14:01:03+00:00"
+            "time": "2023-12-06T18:20:22+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -202,16 +202,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.293.4",
+            "version": "3.293.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "bb62581cb3796dd1866ace52ed0a750bd22936a8"
+                "reference": "1e01734856f8ec2b6d525d1c99c5a34029217598"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bb62581cb3796dd1866ace52ed0a750bd22936a8",
-                "reference": "bb62581cb3796dd1866ace52ed0a750bd22936a8",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1e01734856f8ec2b6d525d1c99c5a34029217598",
+                "reference": "1e01734856f8ec2b6d525d1c99c5a34029217598",
                 "shasum": ""
             },
             "require": {
@@ -291,9 +291,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.293.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.293.6"
             },
-            "time": "2023-12-05T19:07:19+00:00"
+            "time": "2023-12-07T19:29:50+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -656,12 +656,12 @@
             "time": "2023-03-05T21:00:11+00:00"
         },
         {
-            "name": "canyon-gbs/alert",
+            "name": "canyon-gbs/advising-app-alert",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/alert",
-                "reference": "f40dfee554e0a1bf356880093c888a21dcc61805"
+                "reference": "84e8b4b305c41af660291dc0d9588ad364b9897d"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -670,16 +670,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Alert\\Providers\\AlertServiceProvider"
+                        "AdvisingApp\\Alert\\Providers\\AlertServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Alert\\": "src/",
-                    "Assist\\Alert\\Tests\\": "tests/",
-                    "Assist\\Alert\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Alert\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Alert\\": "src/",
+                    "AdvisingApp\\Alert\\Tests\\": "tests/",
+                    "AdvisingApp\\Alert\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Alert\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -691,31 +691,31 @@
             }
         },
         {
-            "name": "canyon-gbs/application",
+            "name": "canyon-gbs/advising-app-application",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/application",
-                "reference": "6c0d1c84c7de3a02ef31a9e916d6d13ad3acdd7b"
+                "reference": "eab99f1452d2c4f3c726d2a0a923f2d09b7a7319"
             },
             "require": {
-                "canyon-gbs/form": "*",
+                "canyon-gbs/advising-app-form": "*",
                 "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Application\\Providers\\ApplicationServiceProvider"
+                        "AdvisingApp\\Application\\Providers\\ApplicationServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Application\\": "src/",
-                    "Assist\\Application\\Tests\\": "tests/",
-                    "Assist\\Application\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Application\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Application\\": "src/",
+                    "AdvisingApp\\Application\\Tests\\": "tests/",
+                    "AdvisingApp\\Application\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Application\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -727,48 +727,12 @@
             }
         },
         {
-            "name": "canyon-gbs/assist-data-model",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/assist-data-model",
-                "reference": "abb025e4f26c881e4c87ab9ffb8f15f0c99b2ad6"
-            },
-            "require": {
-                "canyon-gbs/notifications": "^1.0",
-                "filament/filament": "^3.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Assist\\AssistDataModel\\Providers\\AssistDataModelServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Assist\\AssistDataModel\\": "src/",
-                    "Assist\\AssistDataModel\\Tests\\": "tests/",
-                    "Assist\\AssistDataModel\\Database\\Factories\\": "database/factories/",
-                    "Assist\\AssistDataModel\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/assistant",
+            "name": "canyon-gbs/advising-app-assistant",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/assistant",
-                "reference": "8edd4c205b39560c1dc829bd6d0b93dceb0987af"
+                "reference": "6fe2b0bc737d6deeba86456b791e3ed2ca39f130"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -777,16 +741,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Assistant\\Providers\\AssistantServiceProvider"
+                        "AdvisingApp\\Assistant\\Providers\\AssistantServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Assistant\\": "src/",
-                    "Assist\\Assistant\\Tests\\": "tests/",
-                    "Assist\\Assistant\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Assistant\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Assistant\\": "src/",
+                    "AdvisingApp\\Assistant\\Tests\\": "tests/",
+                    "AdvisingApp\\Assistant\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Assistant\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -798,12 +762,12 @@
             }
         },
         {
-            "name": "canyon-gbs/audit",
+            "name": "canyon-gbs/advising-app-audit",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/audit",
-                "reference": "1563c0342471bc004d6e0397f0cec3f7aeaa3106"
+                "reference": "a2fe1d504e59ad769b314137e3335d96c56aa274"
             },
             "require": {
                 "filament/filament": "^3.0",
@@ -815,16 +779,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Audit\\Providers\\AuditServiceProvider"
+                        "AdvisingApp\\Audit\\Providers\\AuditServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Audit\\": "src/",
-                    "Assist\\Audit\\Tests\\": "tests/",
-                    "Assist\\Audit\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Audit\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Audit\\": "src/",
+                    "AdvisingApp\\Audit\\Tests\\": "tests/",
+                    "AdvisingApp\\Audit\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Audit\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -836,12 +800,12 @@
             }
         },
         {
-            "name": "canyon-gbs/authorization",
+            "name": "canyon-gbs/advising-app-authorization",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/authorization",
-                "reference": "30a3e5dedb38d3f98ef137a93d9d7e8f264e0b1d"
+                "reference": "6db0f58c2382fc703ec93400d8e1d5589da72bf5"
             },
             "require": {
                 "filament/filament": "^3.0",
@@ -851,16 +815,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Authorization\\Providers\\AuthorizationServiceProvider"
+                        "AdvisingApp\\Authorization\\Providers\\AuthorizationServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Authorization\\": "src/",
-                    "Assist\\Authorization\\Tests\\": "tests/",
-                    "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Authorization\\": "src/",
+                    "AdvisingApp\\Authorization\\Tests\\": "tests/",
+                    "AdvisingApp\\Authorization\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Authorization\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -872,12 +836,12 @@
             }
         },
         {
-            "name": "canyon-gbs/campaign",
+            "name": "canyon-gbs/advising-app-campaign",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/campaign",
-                "reference": "fd6823f235e649ce915c47d63aed62d00022fe2f"
+                "reference": "9ed07874a81db2e2eb65ad3d2346612e632e163b"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -886,16 +850,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Campaign\\Providers\\CampaignServiceProvider"
+                        "AdvisingApp\\Campaign\\Providers\\CampaignServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Campaign\\": "src/",
-                    "Assist\\Campaign\\Tests\\": "tests/",
-                    "Assist\\Campaign\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Campaign\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Campaign\\": "src/",
+                    "AdvisingApp\\Campaign\\Tests\\": "tests/",
+                    "AdvisingApp\\Campaign\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Campaign\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -907,12 +871,12 @@
             }
         },
         {
-            "name": "canyon-gbs/care-team",
+            "name": "canyon-gbs/advising-app-care-team",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/care-team",
-                "reference": "e6a5aee66b3bb94c9c9240ee97976f93d4126f26"
+                "reference": "2d9653a84f149b6c5330701a40845780b3f78bab"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -921,16 +885,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\CareTeam\\Providers\\CareTeamServiceProvider"
+                        "AdvisingApp\\CareTeam\\Providers\\CareTeamServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\CareTeam\\": "src/",
-                    "Assist\\CareTeam\\Tests\\": "tests/",
-                    "Assist\\CareTeam\\Database\\Factories\\": "database/factories/",
-                    "Assist\\CareTeam\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\CareTeam\\": "src/",
+                    "AdvisingApp\\CareTeam\\Tests\\": "tests/",
+                    "AdvisingApp\\CareTeam\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\CareTeam\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -942,12 +906,12 @@
             }
         },
         {
-            "name": "canyon-gbs/caseload-management",
+            "name": "canyon-gbs/advising-app-caseload-management",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/caseload-management",
-                "reference": "72067b427669d30ad665acfc253677f2d6d73a92"
+                "reference": "8d0e90d94e710181086fd8087935b2f7370d0505"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -956,16 +920,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\CaseloadManagement\\Providers\\CaseloadManagementServiceProvider"
+                        "AdvisingApp\\CaseloadManagement\\Providers\\CaseloadManagementServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\CaseloadManagement\\": "src/",
-                    "Assist\\CaseloadManagement\\Tests\\": "tests/",
-                    "Assist\\CaseloadManagement\\Database\\Factories\\": "database/factories/",
-                    "Assist\\CaseloadManagement\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\CaseloadManagement\\": "src/",
+                    "AdvisingApp\\CaseloadManagement\\Tests\\": "tests/",
+                    "AdvisingApp\\CaseloadManagement\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\CaseloadManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -977,12 +941,12 @@
             }
         },
         {
-            "name": "canyon-gbs/consent",
+            "name": "canyon-gbs/advising-app-consent",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/consent",
-                "reference": "48a28e0abeb8dddae91988316bb842b971331c6e"
+                "reference": "c0e4ebf86447c7e5cad5737d84c5379c8d346025"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -991,16 +955,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Consent\\Providers\\ConsentServiceProvider"
+                        "AdvisingApp\\Consent\\Providers\\ConsentServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Consent\\": "src/",
-                    "Assist\\Consent\\Tests\\": "tests/",
-                    "Assist\\Consent\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Consent\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Consent\\": "src/",
+                    "AdvisingApp\\Consent\\Tests\\": "tests/",
+                    "AdvisingApp\\Consent\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Consent\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1012,12 +976,12 @@
             }
         },
         {
-            "name": "canyon-gbs/division",
+            "name": "canyon-gbs/advising-app-division",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/division",
-                "reference": "68f84a47f5ba57acc72311d2830d843a225eebd9"
+                "reference": "f0c1b6e2d78ffd807bb21b9e72f719eec4317a20"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1026,16 +990,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Division\\Providers\\DivisionServiceProvider"
+                        "AdvisingApp\\Division\\Providers\\DivisionServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Division\\": "src/",
-                    "Assist\\Division\\Tests\\": "tests/",
-                    "Assist\\Division\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Division\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Division\\": "src/",
+                    "AdvisingApp\\Division\\Tests\\": "tests/",
+                    "AdvisingApp\\Division\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Division\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1047,12 +1011,12 @@
             }
         },
         {
-            "name": "canyon-gbs/engagement",
+            "name": "canyon-gbs/advising-app-engagement",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/engagement",
-                "reference": "ceb0e98a532c971adb1917d97c12e72ea595000c"
+                "reference": "9ccc131a0ab8c7fa8331b2f09702df5e86e43d99"
             },
             "require": {
                 "filament/filament": "^3.0",
@@ -1062,16 +1026,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Engagement\\Providers\\EngagementServiceProvider"
+                        "AdvisingApp\\Engagement\\Providers\\EngagementServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Engagement\\": "src/",
-                    "Assist\\Engagement\\Tests\\": "tests/",
-                    "Assist\\Engagement\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Engagement\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Engagement\\": "src/",
+                    "AdvisingApp\\Engagement\\Tests\\": "tests/",
+                    "AdvisingApp\\Engagement\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Engagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1083,12 +1047,12 @@
             }
         },
         {
-            "name": "canyon-gbs/form",
+            "name": "canyon-gbs/advising-app-form",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/form",
-                "reference": "c0a1880bbd6ab44b7415e00f140c85830122587d"
+                "reference": "916a913c27a7b0e76d8ae109be6b2b1a08e5a851"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1097,16 +1061,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Form\\Providers\\FormServiceProvider"
+                        "AdvisingApp\\Form\\Providers\\FormServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Form\\": "src/",
-                    "Assist\\Form\\Tests\\": "tests/",
-                    "Assist\\Form\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Form\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Form\\": "src/",
+                    "AdvisingApp\\Form\\Tests\\": "tests/",
+                    "AdvisingApp\\Form\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Form\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1118,12 +1082,12 @@
             }
         },
         {
-            "name": "canyon-gbs/in-app-communication",
+            "name": "canyon-gbs/advising-app-in-app-communication",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/in-app-communication",
-                "reference": "543c04e47babcea487c01524130754aa4fbe48a4"
+                "reference": "e2813d35a370b07d31a98fb59d8e936746839eaa"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1132,16 +1096,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\InAppCommunication\\Providers\\InAppCommunicationServiceProvider"
+                        "AdvisingApp\\InAppCommunication\\Providers\\InAppCommunicationServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\InAppCommunication\\": "src/",
-                    "Assist\\InAppCommunication\\Tests\\": "tests/",
-                    "Assist\\InAppCommunication\\Database\\Factories\\": "database/factories/",
-                    "Assist\\InAppCommunication\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\InAppCommunication\\": "src/",
+                    "AdvisingApp\\InAppCommunication\\Tests\\": "tests/",
+                    "AdvisingApp\\InAppCommunication\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\InAppCommunication\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1153,12 +1117,12 @@
             }
         },
         {
-            "name": "canyon-gbs/integration-ai",
+            "name": "canyon-gbs/advising-app-integration-ai",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-ai",
-                "reference": "c8362d509f5faadae903aa66575c00bd0c11c2e9"
+                "reference": "b4618bdcf425db54c7e09b379f42f6b622072a2a"
             },
             "require": {
                 "filament/filament": "^3.0.0",
@@ -1169,16 +1133,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\IntegrationAI\\Providers\\IntegrationAIServiceProvider"
+                        "AdvisingApp\\IntegrationAI\\Providers\\IntegrationAIServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\IntegrationAI\\": "src/",
-                    "Assist\\IntegrationAI\\Tests\\": "tests/",
-                    "Assist\\IntegrationAI\\Database\\Factories\\": "database/factories/",
-                    "Assist\\IntegrationAI\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\IntegrationAI\\": "src/",
+                    "AdvisingApp\\IntegrationAI\\Tests\\": "tests/",
+                    "AdvisingApp\\IntegrationAI\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\IntegrationAI\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1190,12 +1154,12 @@
             }
         },
         {
-            "name": "canyon-gbs/integration-aws-ses-event-handling",
+            "name": "canyon-gbs/advising-app-integration-aws-ses-event-handling",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-aws-ses-event-handling",
-                "reference": "f00e2cc93409f46114ebe7dd46442f989bf36014"
+                "reference": "39158b337a38e25d19e63a64896c5eb894c9ce21"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1204,16 +1168,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\IntegrationAwsSesEventHandling\\Providers\\IntegrationAwsSesEventHandlingServiceProvider"
+                        "AdvisingApp\\IntegrationAwsSesEventHandling\\Providers\\IntegrationAwsSesEventHandlingServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\IntegrationAwsSesEventHandling\\": "src/",
-                    "Assist\\IntegrationAwsSesEventHandling\\Tests\\": "tests/",
-                    "Assist\\IntegrationAwsSesEventHandling\\Database\\Factories\\": "database/factories/",
-                    "Assist\\IntegrationAwsSesEventHandling\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\IntegrationAwsSesEventHandling\\": "src/",
+                    "AdvisingApp\\IntegrationAwsSesEventHandling\\Tests\\": "tests/",
+                    "AdvisingApp\\IntegrationAwsSesEventHandling\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\IntegrationAwsSesEventHandling\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1225,12 +1189,12 @@
             }
         },
         {
-            "name": "canyon-gbs/integration-google-analytics",
+            "name": "canyon-gbs/advising-app-integration-google-analytics",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-google-analytics",
-                "reference": "dec73ef1cd1c2701b4e5b788001482335b47ff8b"
+                "reference": "638f6def3ea231e73b06ee1d34b0b21f17244c17"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1239,16 +1203,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\IntegrationGoogleAnalytics\\Providers\\IntegrationGoogleAnalyticsServiceProvider"
+                        "AdvisingApp\\IntegrationGoogleAnalytics\\Providers\\IntegrationGoogleAnalyticsServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\IntegrationGoogleAnalytics\\": "src/",
-                    "Assist\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
-                    "Assist\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
-                    "Assist\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\IntegrationGoogleAnalytics\\": "src/",
+                    "AdvisingApp\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
+                    "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1260,12 +1224,12 @@
             }
         },
         {
-            "name": "canyon-gbs/integration-microsoft-clarity",
+            "name": "canyon-gbs/advising-app-integration-microsoft-clarity",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-microsoft-clarity",
-                "reference": "8c415fd2877630b6301e0020700e9f8275ba7b45"
+                "reference": "bf1de603a8ea82344bbfd4f69832c3f8d8a78653"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1274,16 +1238,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\IntegrationMicrosoftClarity\\Providers\\IntegrationMicrosoftClarityServiceProvider"
+                        "AdvisingApp\\IntegrationMicrosoftClarity\\Providers\\IntegrationMicrosoftClarityServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\IntegrationMicrosoftClarity\\": "src/",
-                    "Assist\\IntegrationMicrosoftClarity\\Tests\\": "tests/",
-                    "Assist\\IntegrationMicrosoftClarity\\Database\\Factories\\": "database/factories/",
-                    "Assist\\IntegrationMicrosoftClarity\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\IntegrationMicrosoftClarity\\": "src/",
+                    "AdvisingApp\\IntegrationMicrosoftClarity\\Tests\\": "tests/",
+                    "AdvisingApp\\IntegrationMicrosoftClarity\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\IntegrationMicrosoftClarity\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1295,32 +1259,32 @@
             }
         },
         {
-            "name": "canyon-gbs/integration-twilio",
+            "name": "canyon-gbs/advising-app-integration-twilio",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/integration-twilio",
-                "reference": "481e02e2afdf77d51157502358a42057f9b3c00d"
+                "reference": "25c0b4006f6baef740358a233a7abb9315577815"
             },
             "require": {
-                "canyon-gbs/engagement": "*",
-                "canyon-gbs/webhook": "*",
+                "canyon-gbs/advising-app-engagement": "*",
+                "canyon-gbs/advising-app-webhook": "*",
                 "filament/filament": "^3.0"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\IntegrationTwilio\\Providers\\IntegrationTwilioServiceProvider"
+                        "AdvisingApp\\IntegrationTwilio\\Providers\\IntegrationTwilioServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\IntegrationTwilio\\": "src/",
-                    "Assist\\IntegrationTwilio\\Tests\\": "tests/",
-                    "Assist\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
-                    "Assist\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\IntegrationTwilio\\": "src/",
+                    "AdvisingApp\\IntegrationTwilio\\Tests\\": "tests/",
+                    "AdvisingApp\\IntegrationTwilio\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\IntegrationTwilio\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1332,12 +1296,12 @@
             }
         },
         {
-            "name": "canyon-gbs/interaction",
+            "name": "canyon-gbs/advising-app-interaction",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/interaction",
-                "reference": "3af7de8ea9aa204e28cb246f3fd28cb8bae67bb7"
+                "reference": "34a22f9b6fe7cf18c3ed7df373c3113f64510815"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1346,16 +1310,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Interaction\\Providers\\InteractionServiceProvider"
+                        "AdvisingApp\\Interaction\\Providers\\InteractionServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Interaction\\": "src/",
-                    "Assist\\Interaction\\Tests\\": "tests/",
-                    "Assist\\Interaction\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Interaction\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Interaction\\": "src/",
+                    "AdvisingApp\\Interaction\\Tests\\": "tests/",
+                    "AdvisingApp\\Interaction\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Interaction\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1367,12 +1331,12 @@
             }
         },
         {
-            "name": "canyon-gbs/knowledge-base",
+            "name": "canyon-gbs/advising-app-knowledge-base",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/knowledge-base",
-                "reference": "fce41c54c84d4485949faeb6acfe2de011d66815"
+                "reference": "1d3c4d035c81d3fc282c2944d71aa75e80605eb6"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1381,16 +1345,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\KnowledgeBase\\Providers\\KnowledgeBaseServiceProvider"
+                        "AdvisingApp\\KnowledgeBase\\Providers\\KnowledgeBaseServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\KnowledgeBase\\": "src/",
-                    "Assist\\KnowledgeBase\\Tests\\": "tests/",
-                    "Assist\\KnowledgeBase\\Database\\Factories\\": "database/factories/",
-                    "Assist\\KnowledgeBase\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\KnowledgeBase\\": "src/",
+                    "AdvisingApp\\KnowledgeBase\\Tests\\": "tests/",
+                    "AdvisingApp\\KnowledgeBase\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\KnowledgeBase\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1402,12 +1366,12 @@
             }
         },
         {
-            "name": "canyon-gbs/meeting-center",
+            "name": "canyon-gbs/advising-app-meeting-center",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/meeting-center",
-                "reference": "94ad78daa68ed1fc310a4426d828f8e3d11fd75f"
+                "reference": "2c43537fcf2e4bb3642572f5c31f81d7c2714c97"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1416,7 +1380,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\MeetingCenter\\Providers\\MeetingCenterServiceProvider"
+                        "AdvisingApp\\MeetingCenter\\Providers\\MeetingCenterServiceProvider"
                     ]
                 }
             },
@@ -1425,10 +1389,10 @@
                     "src/helpers.php"
                 ],
                 "psr-4": {
-                    "Assist\\MeetingCenter\\": "src/",
-                    "Assist\\MeetingCenter\\Tests\\": "tests/",
-                    "Assist\\MeetingCenter\\Database\\Factories\\": "database/factories/",
-                    "Assist\\MeetingCenter\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\MeetingCenter\\": "src/",
+                    "AdvisingApp\\MeetingCenter\\Tests\\": "tests/",
+                    "AdvisingApp\\MeetingCenter\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\MeetingCenter\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1440,12 +1404,12 @@
             }
         },
         {
-            "name": "canyon-gbs/notifications",
+            "name": "canyon-gbs/advising-app-notifications",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/notifications",
-                "reference": "978e2d0c81c31fff4a820479ecec6444d0c252e7"
+                "reference": "7dbec344f693b6973f93539b31c53d03f5891f3e"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1454,16 +1418,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Notifications\\Providers\\NotificationsServiceProvider"
+                        "AdvisingApp\\Notifications\\Providers\\NotificationsServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Notifications\\": "src/",
-                    "Assist\\Notifications\\Tests\\": "tests/",
-                    "Assist\\Notifications\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Notifications\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Notifications\\": "src/",
+                    "AdvisingApp\\Notifications\\Tests\\": "tests/",
+                    "AdvisingApp\\Notifications\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Notifications\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1475,12 +1439,12 @@
             }
         },
         {
-            "name": "canyon-gbs/prospect",
+            "name": "canyon-gbs/advising-app-prospect",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/prospect",
-                "reference": "364de5d9a7ed51b2839a16a76fc84e3d8ca8b26c"
+                "reference": "8ff61c69bd1972b9597ee0a4238b6362be5116fa"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1489,16 +1453,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Prospect\\Providers\\ProspectServiceProvider"
+                        "AdvisingApp\\Prospect\\Providers\\ProspectServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Prospect\\": "src/",
-                    "Assist\\Prospect\\Tests\\": "tests/",
-                    "Assist\\Prospect\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Prospect\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Prospect\\": "src/",
+                    "AdvisingApp\\Prospect\\Tests\\": "tests/",
+                    "AdvisingApp\\Prospect\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Prospect\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1510,12 +1474,12 @@
             }
         },
         {
-            "name": "canyon-gbs/service-management",
+            "name": "canyon-gbs/advising-app-service-management",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/service-management",
-                "reference": "32bd7e17530527193a014929728674de99d81d50"
+                "reference": "a1161f8e2f12c52ce999f4c31c71730a924471ce"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1524,16 +1488,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
+                        "AdvisingApp\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\ServiceManagement\\": "src/",
-                    "Assist\\ServiceManagement\\Tests\\": "tests/",
-                    "Assist\\ServiceManagement\\Database\\Factories\\": "database/factories/",
-                    "Assist\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\ServiceManagement\\": "src/",
+                    "AdvisingApp\\ServiceManagement\\Tests\\": "tests/",
+                    "AdvisingApp\\ServiceManagement\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1545,12 +1509,48 @@
             }
         },
         {
-            "name": "canyon-gbs/task",
+            "name": "canyon-gbs/advising-app-student-data-model",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/student-data-model",
+                "reference": "bae8ef0016aab67de5ed247f19915690e93cbd21"
+            },
+            "require": {
+                "canyon-gbs/advising-app-notifications": "^1.0",
+                "filament/filament": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\StudentDataModel\\Providers\\StudentDataModelServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\StudentDataModel\\": "src/",
+                    "AdvisingApp\\StudentDataModel\\Tests\\": "tests/",
+                    "AdvisingApp\\StudentDataModel\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\StudentDataModel\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-task",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/task",
-                "reference": "68fa098f66ad09acc4046707d62162497d93078c"
+                "reference": "3fbbfec3c27604cc3e237b9802b9a30e7a97a04a"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1559,16 +1559,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Task\\Providers\\TaskServiceProvider"
+                        "AdvisingApp\\Task\\Providers\\TaskServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Task\\": "src/",
-                    "Assist\\Task\\Tests\\": "tests/",
-                    "Assist\\Task\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Task\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Task\\": "src/",
+                    "AdvisingApp\\Task\\Tests\\": "tests/",
+                    "AdvisingApp\\Task\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Task\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1580,12 +1580,12 @@
             }
         },
         {
-            "name": "canyon-gbs/team",
+            "name": "canyon-gbs/advising-app-team",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/team",
-                "reference": "fcaf4222075803f266df353aed891ed9942fea3f"
+                "reference": "cefb14a6e4b08add73bdb76ad4543baf0d0ae45a"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1594,16 +1594,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Team\\Providers\\TeamServiceProvider"
+                        "AdvisingApp\\Team\\Providers\\TeamServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Team\\": "src/",
-                    "Assist\\Team\\Tests\\": "tests/",
-                    "Assist\\Team\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Team\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Team\\": "src/",
+                    "AdvisingApp\\Team\\Tests\\": "tests/",
+                    "AdvisingApp\\Team\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Team\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1615,12 +1615,12 @@
             }
         },
         {
-            "name": "canyon-gbs/theme",
+            "name": "canyon-gbs/advising-app-theme",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/theme",
-                "reference": "80a853916bad531de9f050e766ee460972ea9cc3"
+                "reference": "e929e1df4e41afd6c454097e39837263c2549908"
             },
             "require": {
                 "filament/filament": "^3.0",
@@ -1631,16 +1631,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Theme\\Providers\\ThemeServiceProvider"
+                        "AdvisingApp\\Theme\\Providers\\ThemeServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Theme\\": "src/",
-                    "Assist\\Theme\\Tests\\": "tests/",
-                    "Assist\\Theme\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Theme\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Theme\\": "src/",
+                    "AdvisingApp\\Theme\\Tests\\": "tests/",
+                    "AdvisingApp\\Theme\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Theme\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1652,12 +1652,12 @@
             }
         },
         {
-            "name": "canyon-gbs/timeline",
+            "name": "canyon-gbs/advising-app-timeline",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/timeline",
-                "reference": "d093c1f588309e2f0f360bbdea08ed252258032b"
+                "reference": "6b40605254b1236a0405a11d586e0f849413f89a"
             },
             "require": {
                 "filament/filament": "^3.0.0"
@@ -1666,16 +1666,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Timeline\\Providers\\TimelineServiceProvider"
+                        "AdvisingApp\\Timeline\\Providers\\TimelineServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Timeline\\": "src/",
-                    "Assist\\Timeline\\Tests\\": "tests/",
-                    "Assist\\Timeline\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Timeline\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Timeline\\": "src/",
+                    "AdvisingApp\\Timeline\\Tests\\": "tests/",
+                    "AdvisingApp\\Timeline\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Timeline\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1687,12 +1687,12 @@
             }
         },
         {
-            "name": "canyon-gbs/webhook",
+            "name": "canyon-gbs/advising-app-webhook",
             "version": "1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/webhook",
-                "reference": "7aec49eb1a4e7982e13a85311468a099b941895f"
+                "reference": "80febab68610ca7576b2f622517fad675eaea598"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1701,16 +1701,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Assist\\Webhook\\Providers\\WebhookServiceProvider"
+                        "AdvisingApp\\Webhook\\Providers\\WebhookServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Assist\\Webhook\\": "src/",
-                    "Assist\\Webhook\\Tests\\": "tests/",
-                    "Assist\\Webhook\\Database\\Factories\\": "database/factories/",
-                    "Assist\\Webhook\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Webhook\\": "src/",
+                    "AdvisingApp\\Webhook\\Tests\\": "tests/",
+                    "AdvisingApp\\Webhook\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Webhook\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1941,16 +1941,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.6.5",
+            "version": "2.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "4b0fe89db9e65b1e64df633a992e70a7a215ab33"
+                "reference": "683557bd2466072777309d039534bb1332d0dda5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/4b0fe89db9e65b1e64df633a992e70a7a215ab33",
-                "reference": "4b0fe89db9e65b1e64df633a992e70a7a215ab33",
+                "url": "https://api.github.com/repos/composer/composer/zipball/683557bd2466072777309d039534bb1332d0dda5",
+                "reference": "683557bd2466072777309d039534bb1332d0dda5",
                 "shasum": ""
             },
             "require": {
@@ -1968,7 +1968,7 @@
                 "seld/jsonlint": "^1.4",
                 "seld/phar-utils": "^1.2",
                 "seld/signal-handler": "^2.0",
-                "symfony/console": "^5.4.11 || ^6.0.11 || ^7",
+                "symfony/console": "^5.4.11 || ^6.0.11",
                 "symfony/filesystem": "^5.4 || ^6.0 || ^7",
                 "symfony/finder": "^5.4 || ^6.0 || ^7",
                 "symfony/polyfill-php73": "^1.24",
@@ -2035,7 +2035,7 @@
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/composer/issues",
                 "security": "https://github.com/composer/composer/security/policy",
-                "source": "https://github.com/composer/composer/tree/2.6.5"
+                "source": "https://github.com/composer/composer/tree/2.6.6"
             },
             "funding": [
                 {
@@ -2051,7 +2051,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-06T08:11:52+00:00"
+            "time": "2023-12-08T17:32:26+00:00"
         },
         {
             "name": "composer/metadata-minifier",
@@ -3413,16 +3413,16 @@
         },
         {
             "name": "filament/actions",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
-                "reference": "9fa7c1d94db998d71dd1c2afc0443dd92de3e29f"
+                "reference": "4da529f7638dbcc4bf5824e61d863790a8b86b37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/actions/zipball/9fa7c1d94db998d71dd1c2afc0443dd92de3e29f",
-                "reference": "9fa7c1d94db998d71dd1c2afc0443dd92de3e29f",
+                "url": "https://api.github.com/repos/filamentphp/actions/zipball/4da529f7638dbcc4bf5824e61d863790a8b86b37",
+                "reference": "4da529f7638dbcc4bf5824e61d863790a8b86b37",
                 "shasum": ""
             },
             "require": {
@@ -3460,20 +3460,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-12-05T13:29:08+00:00"
+            "time": "2023-12-08T13:52:58+00:00"
         },
         {
             "name": "filament/filament",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
-                "reference": "f98febc72564b8d180a345ea919b29601f953229"
+                "reference": "c978aff44795851f23f74a058d82a9d2f88317c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/panels/zipball/f98febc72564b8d180a345ea919b29601f953229",
-                "reference": "f98febc72564b8d180a345ea919b29601f953229",
+                "url": "https://api.github.com/repos/filamentphp/panels/zipball/c978aff44795851f23f74a058d82a9d2f88317c3",
+                "reference": "c978aff44795851f23f74a058d82a9d2f88317c3",
                 "shasum": ""
             },
             "require": {
@@ -3525,20 +3525,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-12-06T13:27:30+00:00"
+            "time": "2023-12-08T13:53:03+00:00"
         },
         {
             "name": "filament/forms",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
-                "reference": "f17e0810499613cb86c5b9359db97651e39445ae"
+                "reference": "0776650652724090f607d3b18a8925af1701888e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/forms/zipball/f17e0810499613cb86c5b9359db97651e39445ae",
-                "reference": "f17e0810499613cb86c5b9359db97651e39445ae",
+                "url": "https://api.github.com/repos/filamentphp/forms/zipball/0776650652724090f607d3b18a8925af1701888e",
+                "reference": "0776650652724090f607d3b18a8925af1701888e",
                 "shasum": ""
             },
             "require": {
@@ -3581,20 +3581,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-12-06T15:58:44+00:00"
+            "time": "2023-12-08T13:53:04+00:00"
         },
         {
             "name": "filament/infolists",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
-                "reference": "719ba0d5995575750dd011185241b1a908295eb6"
+                "reference": "00798e2aa59602e9dc85f56d5d1743d16842125f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/719ba0d5995575750dd011185241b1a908295eb6",
-                "reference": "719ba0d5995575750dd011185241b1a908295eb6",
+                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/00798e2aa59602e9dc85f56d5d1743d16842125f",
+                "reference": "00798e2aa59602e9dc85f56d5d1743d16842125f",
                 "shasum": ""
             },
             "require": {
@@ -3632,20 +3632,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-12-05T13:29:06+00:00"
+            "time": "2023-12-07T12:32:29+00:00"
         },
         {
             "name": "filament/notifications",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
-                "reference": "b0a917a041bee3819a3b58c543d82ba463ffb20c"
+                "reference": "13029b0f257ce9f0f9691b5fe8de933c581d03bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/notifications/zipball/b0a917a041bee3819a3b58c543d82ba463ffb20c",
-                "reference": "b0a917a041bee3819a3b58c543d82ba463ffb20c",
+                "url": "https://api.github.com/repos/filamentphp/notifications/zipball/13029b0f257ce9f0f9691b5fe8de933c581d03bc",
+                "reference": "13029b0f257ce9f0f9691b5fe8de933c581d03bc",
                 "shasum": ""
             },
             "require": {
@@ -3684,11 +3684,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-12-02T22:24:00+00:00"
+            "time": "2023-12-07T12:32:30+00:00"
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -3725,7 +3725,7 @@
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
@@ -3772,7 +3772,7 @@
         },
         {
             "name": "filament/support",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
@@ -3829,16 +3829,16 @@
         },
         {
             "name": "filament/tables",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
-                "reference": "03fa12c2824a0031e02000c3efb3fa01c33df09d"
+                "reference": "9bc21de770982ede0024f12ff86ba69afc67e0f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/tables/zipball/03fa12c2824a0031e02000c3efb3fa01c33df09d",
-                "reference": "03fa12c2824a0031e02000c3efb3fa01c33df09d",
+                "url": "https://api.github.com/repos/filamentphp/tables/zipball/9bc21de770982ede0024f12ff86ba69afc67e0f9",
+                "reference": "9bc21de770982ede0024f12ff86ba69afc67e0f9",
                 "shasum": ""
             },
             "require": {
@@ -3878,11 +3878,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-12-06T15:59:04+00:00"
+            "time": "2023-12-08T13:53:04+00:00"
         },
         {
             "name": "filament/widgets",
-            "version": "v3.1.14",
+            "version": "v3.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
@@ -5294,16 +5294,16 @@
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
-            "version": "3.3.3",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kirschbaum-development/eloquent-power-joins.git",
-                "reference": "e55fa70dfa4a5e897443454825b9d4ce6081786a"
+                "reference": "9238fcb53d777265ee9d8d139810e2cadecde079"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kirschbaum-development/eloquent-power-joins/zipball/e55fa70dfa4a5e897443454825b9d4ce6081786a",
-                "reference": "e55fa70dfa4a5e897443454825b9d4ce6081786a",
+                "url": "https://api.github.com/repos/kirschbaum-development/eloquent-power-joins/zipball/9238fcb53d777265ee9d8d139810e2cadecde079",
+                "reference": "9238fcb53d777265ee9d8d139810e2cadecde079",
                 "shasum": ""
             },
             "require": {
@@ -5350,9 +5350,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kirschbaum-development/eloquent-power-joins/issues",
-                "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/3.3.3"
+                "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/3.4.0"
             },
-            "time": "2023-10-31T18:01:18+00:00"
+            "time": "2023-12-07T10:44:41+00:00"
         },
         {
             "name": "lab404/laravel-impersonate",
@@ -8340,14 +8340,8 @@
             "version": "dev-feature/queued-auditing",
             "source": {
                 "type": "git",
-                "url": "https://github.com/canyongbs/laravel-auditing.git",
-                "reference": "f671328484fcee19214c99a6bce03edf7f0defb3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/laravel-auditing/zipball/f671328484fcee19214c99a6bce03edf7f0defb3",
-                "reference": "f671328484fcee19214c99a6bce03edf7f0defb3",
-                "shasum": ""
+                "url": "https://github.com/canyongbs/laravel-auditing",
+                "reference": "38afe2bd40f3165c7ec267e0d087408b2d0f4e88"
             },
             "require": {
                 "ext-json": "*",
@@ -8425,7 +8419,7 @@
                 "issues": "https://github.com/owen-it/laravel-auditing/issues",
                 "source": "https://github.com/owen-it/laravel-auditing"
             },
-            "time": "2023-08-24T13:36:18+00:00"
+            "time": "2023-12-07T13:41:13+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -10044,16 +10038,16 @@
         },
         {
             "name": "saade/filament-fullcalendar",
-            "version": "v3.1.0",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/saade/filament-fullcalendar.git",
-                "reference": "c3842f2fbc44e700f85e2dfde9748f26bdb1a314"
+                "reference": "525641a46ac0e8cb4a64dfa08c6f6cdfab8224d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/c3842f2fbc44e700f85e2dfde9748f26bdb1a314",
-                "reference": "c3842f2fbc44e700f85e2dfde9748f26bdb1a314",
+                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/525641a46ac0e8cb4a64dfa08c6f6cdfab8224d8",
+                "reference": "525641a46ac0e8cb4a64dfa08c6f6cdfab8224d8",
                 "shasum": ""
             },
             "require": {
@@ -10103,7 +10097,7 @@
             ],
             "support": {
                 "issues": "https://github.com/saade/filament-fullcalendar/issues",
-                "source": "https://github.com/saade/filament-fullcalendar/tree/v3.1.0"
+                "source": "https://github.com/saade/filament-fullcalendar/tree/v3.1.1"
             },
             "funding": [
                 {
@@ -10111,7 +10105,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-24T21:54:25+00:00"
+            "time": "2023-12-07T13:25:16+00:00"
         },
         {
             "name": "scrivo/highlight.php",
@@ -11923,20 +11917,20 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v6.4.0",
+            "version": "v7.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
-                "reference": "d036c6c0d0b09e24a14a35f8292146a658f986e4"
+                "reference": "bb51d46e53ef8d50d523f0c5faedba056a27943e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/css-selector/zipball/d036c6c0d0b09e24a14a35f8292146a658f986e4",
-                "reference": "d036c6c0d0b09e24a14a35f8292146a658f986e4",
+                "url": "https://api.github.com/repos/symfony/css-selector/zipball/bb51d46e53ef8d50d523f0c5faedba056a27943e",
+                "reference": "bb51d46e53ef8d50d523f0c5faedba056a27943e",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1"
+                "php": ">=8.2"
             },
             "type": "library",
             "autoload": {
@@ -11968,7 +11962,7 @@
             "description": "Converts CSS selectors to XPath expressions",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/css-selector/tree/v6.4.0"
+                "source": "https://github.com/symfony/css-selector/tree/v7.0.0"
             },
             "funding": [
                 {
@@ -11984,7 +11978,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-31T08:40:20+00:00"
+            "time": "2023-10-31T17:59:56+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -14430,23 +14424,23 @@
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
-            "version": "2.2.6",
+            "version": "v2.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tijsverkoyen/CssToInlineStyles.git",
-                "reference": "c42125b83a4fa63b187fdf29f9c93cb7733da30c"
+                "reference": "83ee6f38df0a63106a9e4536e3060458b74ccedb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/c42125b83a4fa63b187fdf29f9c93cb7733da30c",
-                "reference": "c42125b83a4fa63b187fdf29f9c93cb7733da30c",
+                "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/83ee6f38df0a63106a9e4536e3060458b74ccedb",
+                "reference": "83ee6f38df0a63106a9e4536e3060458b74ccedb",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "php": "^5.5 || ^7.0 || ^8.0",
-                "symfony/css-selector": "^2.7 || ^3.0 || ^4.0 || ^5.0 || ^6.0"
+                "symfony/css-selector": "^2.7 || ^3.0 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0 || ^7.5 || ^8.5.21 || ^9.5.10"
@@ -14477,9 +14471,9 @@
             "homepage": "https://github.com/tijsverkoyen/CssToInlineStyles",
             "support": {
                 "issues": "https://github.com/tijsverkoyen/CssToInlineStyles/issues",
-                "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/2.2.6"
+                "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.2.7"
             },
-            "time": "2023-01-03T09:29:04+00:00"
+            "time": "2023-12-08T13:03:43+00:00"
         },
         {
             "name": "tpetry/laravel-postgresql-enhanced",
@@ -16638,16 +16632,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.47",
+            "version": "1.10.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "84dbb33b520ea28b6cf5676a3941f4bae1c1ff39"
+                "reference": "087ed4b5f4a7a6e8f3bbdfbfe98ce5c181380bc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/84dbb33b520ea28b6cf5676a3941f4bae1c1ff39",
-                "reference": "84dbb33b520ea28b6cf5676a3941f4bae1c1ff39",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/087ed4b5f4a7a6e8f3bbdfbfe98ce5c181380bc6",
+                "reference": "087ed4b5f4a7a6e8f3bbdfbfe98ce5c181380bc6",
                 "shasum": ""
             },
             "require": {
@@ -16696,7 +16690,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-01T15:19:17+00:00"
+            "time": "2023-12-08T14:34:28+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -19338,7 +19332,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "canyon-gbs/audit": 20,
+        "canyon-gbs/advising-app-audit": 20,
         "owen-it/laravel-auditing": 20
     },
     "prefer-stable": true,

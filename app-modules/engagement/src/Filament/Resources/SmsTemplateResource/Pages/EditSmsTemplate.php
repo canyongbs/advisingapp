@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
@@ -44,7 +44,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Pages\EmailConfiguration;
 use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 
 class EditSmsTemplate extends EditRecord
 {

@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Database\Factories;
+namespace AdvisingApp\CaseloadManagement\Database\Factories;
 
 use App\Models\User;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Enums\CaseloadType;
-use Assist\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
 /**
  * @extends Factory<Caseload>

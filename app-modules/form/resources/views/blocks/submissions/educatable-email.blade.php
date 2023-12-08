@@ -32,10 +32,10 @@
 </COPYRIGHT>
 --}}
 @php
-    use Assist\AssistDataModel\Models\Student;
-    use Assist\AssistDataModel\Filament\Resources\StudentResource;
-    use Assist\Prospect\Models\Prospect;
-    use Assist\Prospect\Filament\Resources\ProspectResource;
+    use AdvisingApp\StudentDataModel\Models\Student;
+    use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+    use AdvisingApp\Prospect\Models\Prospect;
+    use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 @endphp
 
 <x-form::blocks.field-wrapper

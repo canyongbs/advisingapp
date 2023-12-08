@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Policies;
+namespace AdvisingApp\Task\Policies;
 
 use App\Models\User;
-use Assist\Task\Models\Task;
+use AdvisingApp\Task\Models\Task;
 use Illuminate\Auth\Access\Response;
 
 class TaskPolicy

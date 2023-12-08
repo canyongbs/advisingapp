@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Filament\Resources\PermissionResource\Pages;
+namespace AdvisingApp\Authorization\Filament\Resources\PermissionResource\Pages;
 
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Authorization\Filament\Resources\PermissionResource;
+use AdvisingApp\Authorization\Filament\Resources\PermissionResource;
 
 class ListPermissions extends ListRecords
 {

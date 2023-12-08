@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Webhook\Filament\Resources\InboundWebhookResource\Pages;
+namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
-use Assist\Webhook\Filament\Resources\InboundWebhookResource;
+use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
 
 class ListInboundWebhooks extends ListRecords
 {

@@ -37,7 +37,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Assist\Form\Models\Form;
+use AdvisingApp\Form\Models\Form;
 use Illuminate\Contracts\View\View;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;

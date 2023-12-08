@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Task\Filament\RelationManagers\BaseTaskRelationManager;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Task\Filament\RelationManagers\BaseTaskRelationManager;
 
 class ManageProspectTasks extends BaseTaskRelationManager
 {

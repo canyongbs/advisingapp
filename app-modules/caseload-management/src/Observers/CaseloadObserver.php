@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Observers;
+namespace AdvisingApp\CaseloadManagement\Observers;
 
-use Assist\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
 
 class CaseloadObserver
 {

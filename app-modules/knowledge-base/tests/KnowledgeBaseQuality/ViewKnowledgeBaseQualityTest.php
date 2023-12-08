@@ -39,8 +39,8 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
 
 // TODO: Write ViewKnowledgeBaseQuality tests
 //test('The correct details are displayed on the ViewKnowledgeBaseQuality page', function () {});

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Filament\Resources\AuditResource\Pages;
+namespace AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
@@ -44,8 +44,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Audit\Actions\Finders\AuditableModels;
-use Assist\Audit\Filament\Resources\AuditResource;
+use AdvisingApp\Audit\Actions\Finders\AuditableModels;
+use AdvisingApp\Audit\Filament\Resources\AuditResource;
 
 class ListAudits extends ListRecords
 {

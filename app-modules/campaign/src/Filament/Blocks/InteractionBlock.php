@@ -34,23 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Blocks;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Closure;
-use Assist\Division\Models\Division;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
-use Assist\Interaction\Models\Interaction;
+use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\DateTimePicker;
-use Assist\Interaction\Models\InteractionType;
-use Assist\Interaction\Models\InteractionDriver;
-use Assist\Interaction\Models\InteractionStatus;
-use Assist\Interaction\Models\InteractionOutcome;
-use Assist\Interaction\Models\InteractionCampaign;
-use Assist\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionRelation;
 
 class InteractionBlock extends CampaignActionBlock
 {

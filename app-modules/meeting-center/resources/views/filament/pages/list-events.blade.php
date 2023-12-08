@@ -34,7 +34,7 @@
 @php
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\Facades\FilamentAsset;
-    use Assist\MeetingCenter\Filament\Widgets\CalendarWidget;
+    use AdvisingApp\MeetingCenter\Filament\Widgets\CalendarWidget;
 @endphp
 <x-filament-panels::page @class([
     'fi-resource-list-records-page',

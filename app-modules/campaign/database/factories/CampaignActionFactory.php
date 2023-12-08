@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Database\Factories;
+namespace AdvisingApp\Campaign\Database\Factories;
 
 use Carbon\Carbon;
-use Assist\Campaign\Models\Campaign;
-use Assist\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Campaign\Models\CampaignAction>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Campaign\Models\CampaignAction>
  */
 class CampaignActionFactory extends Factory
 {

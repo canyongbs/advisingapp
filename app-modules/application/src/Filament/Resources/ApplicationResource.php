@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Filament\Resources;
+namespace AdvisingApp\Application\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Application\Models\Application;
-use Assist\Application\Filament\Resources\ApplicationResource\Pages\EditApplication;
-use Assist\Application\Filament\Resources\ApplicationResource\Pages\ListApplications;
-use Assist\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
-use Assist\Application\Filament\Resources\ApplicationResource\Pages\ManageApplicationSubmissions;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\EditApplication;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ListApplications;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ManageApplicationSubmissions;
 
 class ApplicationResource extends Resource
 {

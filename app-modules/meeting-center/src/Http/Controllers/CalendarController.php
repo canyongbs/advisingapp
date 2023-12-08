@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Http\Controllers;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

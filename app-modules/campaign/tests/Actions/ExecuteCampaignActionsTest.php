@@ -35,9 +35,9 @@
 */
 
 use Illuminate\Support\Facades\Queue;
-use Assist\Campaign\Models\CampaignAction;
-use Assist\Campaign\Actions\ExecuteCampaignAction;
-use Assist\Campaign\Actions\ExecuteCampaignActions;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Actions\ExecuteCampaignAction;
+use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
 
 it('will only dispatch jobs for actions that are scheduled and have not yet been executed', function () {
     $actionToBeExecuted = CampaignAction::factory()->create([

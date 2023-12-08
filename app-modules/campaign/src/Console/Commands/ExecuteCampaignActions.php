@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Console\Commands;
+namespace AdvisingApp\Campaign\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\Campaign\Actions\ExecuteCampaignActions as ExecuteCampaignActionsJob;
+use AdvisingApp\Campaign\Actions\ExecuteCampaignActions as ExecuteCampaignActionsJob;
 
 class ExecuteCampaignActions extends Command
 {

@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/task",
+  "name": "canyon-gbs/advising-app-task",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Task\\": "src/",
-      "Assist\\Task\\Tests\\": "tests/",
-      "Assist\\Task\\Database\\Factories\\": "database/factories/",
-      "Assist\\Task\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Task\\": "src/",
+      "AdvisingApp\\Task\\Tests\\": "tests/",
+      "AdvisingApp\\Task\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Task\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Task\\Providers\\TaskServiceProvider"
+        "AdvisingApp\\Task\\Providers\\TaskServiceProvider"
       ]
     }
   }

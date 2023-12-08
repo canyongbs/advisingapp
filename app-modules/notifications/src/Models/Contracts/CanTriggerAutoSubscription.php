@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Models\Contracts;
+namespace AdvisingApp\Notifications\Models\Contracts;
 
 interface CanTriggerAutoSubscription
 {

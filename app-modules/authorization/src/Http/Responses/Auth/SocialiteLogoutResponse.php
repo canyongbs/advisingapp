@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Http\Responses\Auth;
+namespace AdvisingApp\Authorization\Http\Responses\Auth;
 
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
-use Assist\Authorization\Enums\SocialiteProvider;
+use AdvisingApp\Authorization\Enums\SocialiteProvider;
 
 class SocialiteLogoutResponse extends LogoutResponse
 {

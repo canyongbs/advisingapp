@@ -38,17 +38,17 @@ use App\Models\User;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
-use Assist\Engagement\Models\Engagement;
-use Assist\AssistDataModel\Models\Student;
 use Illuminate\Support\Facades\Notification;
-use Assist\Engagement\Models\EngagementBatch;
-use Assist\Engagement\Models\EngagementDeliverable;
-use Assist\Engagement\Actions\CreateEngagementBatch;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Actions\EngagementSmsChannelDelivery;
-use Assist\Engagement\Actions\EngagementEmailChannelDelivery;
-use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
-use Assist\Engagement\Notifications\EngagementBatchFinishedNotification;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
+use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 
 it('will create a new engagement batch', function () {
     Queue::fake([EngagementEmailChannelDelivery::class, EngagementSmsChannelDelivery::class]);

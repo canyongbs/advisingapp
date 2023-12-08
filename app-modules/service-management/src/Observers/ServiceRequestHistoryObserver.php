@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+namespace AdvisingApp\ServiceManagement\Observers;
 
-use Assist\Timeline\Events\TimelineableRecordCreated;
-use Assist\Timeline\Events\TimelineableRecordDeleted;
-use Assist\ServiceManagement\Models\ServiceRequestHistory;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
 
 class ServiceRequestHistoryObserver
 {

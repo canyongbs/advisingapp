@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Models;
+namespace AdvisingApp\Assistant\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 /**
  * @mixin IdeHelperAssistantChatMessage

@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Providers;
+namespace AdvisingApp\Consent\Providers;
 
 use Filament\Panel;
-use Assist\Consent\ConsentPlugin;
+use AdvisingApp\Consent\ConsentPlugin;
 use Illuminate\Support\ServiceProvider;
-use Assist\Consent\Models\ConsentAgreement;
-use Assist\Consent\Models\UserConsentAgreement;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Consent\Models\UserConsentAgreement;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Consent\Observers\ConsentAgreementObserver;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Consent\Observers\ConsentAgreementObserver;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class ConsentServiceProvider extends ServiceProvider
 {

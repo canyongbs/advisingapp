@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization;
+namespace AdvisingApp\Authorization;
 
 use App\Actions\Finders\ApplicationModules;
 

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Observers;
+namespace AdvisingApp\Consent\Observers;
 
-use Assist\Consent\Models\ConsentAgreement;
-use Assist\Consent\Models\UserConsentAgreement;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Consent\Models\UserConsentAgreement;
 
 class ConsentAgreementObserver
 {

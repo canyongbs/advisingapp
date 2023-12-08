@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Enums;
+namespace AdvisingApp\Prospect\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 

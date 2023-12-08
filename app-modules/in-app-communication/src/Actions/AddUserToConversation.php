@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\InAppCommunication\Actions;
+namespace AdvisingApp\InAppCommunication\Actions;
 
 use Exception;
 use App\Models\User;
 use Twilio\Rest\Client;
-use Assist\InAppCommunication\Enums\ConversationType;
-use Assist\InAppCommunication\Models\TwilioConversation;
+use AdvisingApp\InAppCommunication\Enums\ConversationType;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
 class AddUserToConversation
 {

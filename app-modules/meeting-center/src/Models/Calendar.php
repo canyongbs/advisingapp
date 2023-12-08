@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Models;
+namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
-use Assist\MeetingCenter\Enums\CalendarProvider;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

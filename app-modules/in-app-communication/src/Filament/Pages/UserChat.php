@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\InAppCommunication\Filament\Pages;
+namespace AdvisingApp\InAppCommunication\Filament\Pages;
 
 use Exception;
 use App\Models\User;
@@ -52,9 +52,9 @@ use Filament\Actions\Contracts\HasActions;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
-use Assist\InAppCommunication\Enums\ConversationType;
-use Assist\IntegrationTwilio\Actions\GetTwilioApiKey;
-use Assist\InAppCommunication\Actions\CreateTwilioConversation;
+use AdvisingApp\InAppCommunication\Enums\ConversationType;
+use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
+use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
 
 class UserChat extends Page implements HasForms, HasActions
 {

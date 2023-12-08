@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Http\Controllers\Auth;
+namespace AdvisingApp\Authorization\Http\Controllers\Auth;
 
 use Filament\Facades\Filament;
-use Assist\Authorization\Enums\SocialiteProvider;
+use AdvisingApp\Authorization\Enums\SocialiteProvider;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
-use Assist\Authorization\Http\Responses\Auth\SocialiteLogoutResponse;
+use AdvisingApp\Authorization\Http\Responses\Auth\SocialiteLogoutResponse;
 use Filament\Http\Controllers\Auth\LogoutController as FilamentLogoutController;
 
 class LogoutController extends FilamentLogoutController

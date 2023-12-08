@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Tests\ProspectStatus\RequestFactories;
+namespace AdvisingApp\Prospect\Tests\ProspectStatus\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
-use Assist\Prospect\Enums\ProspectStatusColorOptions;
-use Assist\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 
 class CreateProspectStatusRequestFactory extends RequestFactory
 {

@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/authorization",
+  "name": "canyon-gbs/advising-app-authorization",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -10,17 +10,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Authorization\\": "src/",
-      "Assist\\Authorization\\Tests\\": "tests/",
-      "Assist\\Authorization\\Database\\Factories\\": "database/factories/",
-      "Assist\\Authorization\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Authorization\\": "src/",
+      "AdvisingApp\\Authorization\\Tests\\": "tests/",
+      "AdvisingApp\\Authorization\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Authorization\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Authorization\\Providers\\AuthorizationServiceProvider"
+        "AdvisingApp\\Authorization\\Providers\\AuthorizationServiceProvider"
       ]
     }
   },

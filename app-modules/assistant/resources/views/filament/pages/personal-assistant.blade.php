@@ -34,7 +34,7 @@
 <?php
 
 use Filament\Support\Facades\FilamentAsset;
-use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 use Illuminate\Support\Facades\Vite;
 
 ?>

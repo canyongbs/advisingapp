@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Drivers;
+namespace AdvisingApp\Engagement\Drivers;
 
 interface DeliverableDriver
 {

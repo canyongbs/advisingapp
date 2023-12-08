@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Filament\Resources;
+namespace AdvisingApp\Form\Filament\Resources;
 
-use Assist\Form\Models\Form;
 use Filament\Resources\Resource;
+use AdvisingApp\Form\Models\Form;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Form\Filament\Resources\FormResource\Pages\EditForm;
-use Assist\Form\Filament\Resources\FormResource\Pages\ListForms;
-use Assist\Form\Filament\Resources\FormResource\Pages\CreateForm;
-use Assist\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
+use AdvisingApp\Form\Filament\Resources\FormResource\Pages\EditForm;
+use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ListForms;
+use AdvisingApp\Form\Filament\Resources\FormResource\Pages\CreateForm;
+use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
 
 class FormResource extends Resource
 {

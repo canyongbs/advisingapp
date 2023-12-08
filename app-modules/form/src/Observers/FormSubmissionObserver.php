@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Observers;
+namespace AdvisingApp\Form\Observers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
-use Assist\Form\Models\FormSubmission;
-use Assist\Form\Events\FormSubmissionCreated;
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
 
 class FormSubmissionObserver
 {

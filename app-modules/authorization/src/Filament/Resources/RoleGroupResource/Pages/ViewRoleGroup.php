@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Filament\Resources\RoleGroupResource\Pages;
+namespace AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\Pages;
 
 use Illuminate\Support\Carbon;
 use Filament\Actions\EditAction;
@@ -42,7 +42,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Authorization\Filament\Resources\RoleGroupResource;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource;
 
 class ViewRoleGroup extends ViewRecord
 {

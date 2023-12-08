@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAI\Client;
+namespace AdvisingApp\IntegrationAI\Client;
 
 use OpenAI;
 

@@ -38,11 +38,11 @@ namespace App\Filament\Widgets;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
-use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Assist\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class RecentProspectsList extends BaseWidget
 {

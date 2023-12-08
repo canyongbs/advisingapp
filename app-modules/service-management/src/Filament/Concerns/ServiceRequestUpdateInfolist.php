@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Concerns;
+namespace AdvisingApp\ServiceManagement\Filament\Concerns;
 
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Enums\ServiceRequestUpdateDirection;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 // TODO Re-use this trait across other places where infolist is rendered
 trait ServiceRequestUpdateInfolist

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Listeners;
+namespace AdvisingApp\Audit\Listeners;
 
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Audit\Settings\AuditSettings;
+use AdvisingApp\Audit\Settings\AuditSettings;
 
 class AuditingListener
 {

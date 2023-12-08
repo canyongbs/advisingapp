@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Console\Commands;
+namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\Authorization\Actions\CreateAndSyncRoleGroups;
+use AdvisingApp\Authorization\Actions\CreateAndSyncRoleGroups;
 
 class SetupRoleGroups extends Command
 {

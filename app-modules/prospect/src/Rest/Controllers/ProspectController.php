@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Rest\Controllers;
+namespace AdvisingApp\Prospect\Rest\Controllers;
 
 use App\Rest\Controller as RestController;
-use Assist\Prospect\Rest\Resources\ProspectResource;
+use AdvisingApp\Prospect\Rest\Resources\ProspectResource;
 
 class ProspectController extends RestController
 {

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Managers;
+namespace AdvisingApp\MeetingCenter\Managers;
 
 use Exception;
 use Illuminate\Support\Manager;
-use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class CalendarManager extends Manager
 {

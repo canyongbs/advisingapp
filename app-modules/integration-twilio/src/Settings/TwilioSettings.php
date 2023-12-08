@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\Settings;
+namespace AdvisingApp\IntegrationTwilio\Settings;
 
 use Spatie\LaravelSettings\Settings;
-use Assist\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
 
 class TwilioSettings extends Settings
 {

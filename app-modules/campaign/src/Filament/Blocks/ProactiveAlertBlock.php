@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Blocks;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use Assist\Alert\Enums\AlertStatus;
-use Assist\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\DateTimePicker;
 
 class ProactiveAlertBlock extends CampaignActionBlock

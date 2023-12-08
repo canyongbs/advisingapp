@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources;
+namespace AdvisingApp\Engagement\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use Assist\Engagement\Models\EngagementFile;
+use AdvisingApp\Engagement\Models\EngagementFile;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Assist\Engagement\Filament\Resources\EngagementFileResource\Pages;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
 
 class EngagementFileResource extends Resource
 {

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
 
 class EditInteractionCampaign extends EditRecord
 {

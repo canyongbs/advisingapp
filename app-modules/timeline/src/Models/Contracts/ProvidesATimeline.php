@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline\Models\Contracts;
+namespace AdvisingApp\Timeline\Models\Contracts;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Timeline\Models\CustomTimeline;
+use AdvisingApp\Timeline\Models\CustomTimeline;
 
 interface ProvidesATimeline
 {

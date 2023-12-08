@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/theme",
+  "name": "canyon-gbs/advising-app-theme",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -11,17 +11,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Theme\\": "src/",
-      "Assist\\Theme\\Tests\\": "tests/",
-      "Assist\\Theme\\Database\\Factories\\": "database/factories/",
-      "Assist\\Theme\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Theme\\": "src/",
+      "AdvisingApp\\Theme\\Tests\\": "tests/",
+      "AdvisingApp\\Theme\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Theme\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Theme\\Providers\\ThemeServiceProvider"
+        "AdvisingApp\\Theme\\Providers\\ThemeServiceProvider"
       ]
     }
   }

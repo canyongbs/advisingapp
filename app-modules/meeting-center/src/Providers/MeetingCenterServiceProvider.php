@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Providers;
+namespace AdvisingApp\MeetingCenter\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Assist\MeetingCenter\Models\Calendar;
 use Illuminate\Console\Scheduling\Schedule;
-use Assist\MeetingCenter\Jobs\SyncCalendars;
-use Assist\MeetingCenter\MeetingCenterPlugin;
-use Assist\MeetingCenter\Models\CalendarEvent;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
+use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\MeetingCenter\Observers\CalendarEventObserver;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 
 class MeetingCenterServiceProvider extends ServiceProvider
 {

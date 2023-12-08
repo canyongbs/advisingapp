@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Filament\Resources\ApplicationResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Application\Filament\Resources\ApplicationResource;
-use Assist\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns\HasSharedFormConfiguration;
 
 class CreateApplication extends CreateRecord
 {

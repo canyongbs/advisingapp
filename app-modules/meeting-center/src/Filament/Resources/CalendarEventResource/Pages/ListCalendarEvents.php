@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
@@ -53,9 +53,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
-use Assist\MeetingCenter\Managers\CalendarManager;
-use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 
 class ListCalendarEvents extends ListRecords
 {

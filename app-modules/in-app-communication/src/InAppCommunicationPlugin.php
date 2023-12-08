@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\InAppCommunication;
+namespace AdvisingApp\InAppCommunication;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,12 +50,12 @@ class InAppCommunicationPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\InAppCommunication\\Filament\\Resources'
+            for: 'AdvisingApp\\InAppCommunication\\Filament\\Resources'
         );
 
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
-            for: 'Assist\\InAppCommunication\\Filament\\Pages'
+            for: 'AdvisingApp\\InAppCommunication\\Filament\\Pages'
         );
     }
 

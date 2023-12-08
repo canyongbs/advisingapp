@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Filament\Resources;
+namespace AdvisingApp\Consent\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\Consent\Models\ConsentAgreement;
-use Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
 class ConsentAgreementResource extends Resource
 {

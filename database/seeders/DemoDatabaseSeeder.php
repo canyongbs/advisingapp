@@ -38,18 +38,18 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
-use Assist\Division\Database\Seeders\DivisionSeeder;
-use Assist\Interaction\Database\Seeders\InteractionSeeder;
-use Assist\Prospect\Database\Seeders\ProspectSourceSeeder;
-use Assist\Prospect\Database\Seeders\ProspectStatusSeeder;
-use Assist\Consent\Database\Seeders\ConsentAgreementSeeder;
-use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
-use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
-use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
-use Assist\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
-use Assist\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
-use Assist\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
-use Assist\ServiceManagement\Database\Seeders\ServiceRequestPrioritySeeder;
+use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
+use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
+use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
+use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
+use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
+use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
+use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
+use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
+use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
+use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
+use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
+use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestPrioritySeeder;
 
 class DemoDatabaseSeeder extends Seeder
 {

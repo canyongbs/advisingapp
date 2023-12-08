@@ -39,8 +39,8 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-use Assist\Prospect\Models\ProspectStatus;
-use Assist\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
 test('The correct details are displayed on the ViewProspectStatus page', function () {
     $prospectStatus = ProspectStatus::factory()->create();

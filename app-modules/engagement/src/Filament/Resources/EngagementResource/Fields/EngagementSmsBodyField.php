@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EngagementResource\Fields;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields;
 
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -43,14 +43,14 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
-use Assist\Engagement\Models\Engagement;
-use Assist\Engagement\Models\SmsTemplate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use FilamentTiptapEditor\Enums\TiptapOutput;
+use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Models\SmsTemplate;
 use Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
 class EngagementSmsBodyField
 {

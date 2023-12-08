@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+namespace AdvisingApp\ServiceManagement\Observers;
 
-use Assist\Timeline\Events\TimelineableRecordCreated;
-use Assist\Timeline\Events\TimelineableRecordDeleted;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 
 class ServiceRequestUpdateObserver
 {
