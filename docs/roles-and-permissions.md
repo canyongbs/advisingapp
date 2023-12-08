@@ -23,7 +23,7 @@ This means that if a Role is removed from a User, but that Role belongs to a Rol
 
 A good example of how Role Groups are used in the application and how they interact with Roles and Permissions can be understood as follows.
 
-The Advising App provides a model called ServiceRequest. This represents service requests opened and managed within the Assist system. Associated with this model are many permissions pertaining to the viewing, creating, updating, and deleting of cases. In order to group these permissions, we may want to create a "Service Request Manager" Role. This Role can be directly applied to a User, but it may also be applied to a User through a Role Group.
+The Advising App provides a model called ServiceRequest. This represents service requests opened and managed within the Advising App system. Associated with this model are many permissions pertaining to the viewing, creating, updating, and deleting of cases. In order to group these permissions, we may want to create a "Service Request Manager" Role. This Role can be directly applied to a User, but it may also be applied to a User through a Role Group.
 
 We can create a Role Group called "Administrator", which could receive the "Service Request Manager" Role, as well as the "Knowledge Base Manager" Role, among others. Then, when a new administrator is added to the system, they can simply be granted the "Administrator" Role Group in order to inherit all of the roles and subsequent permissions that fall into this grouping.
 
