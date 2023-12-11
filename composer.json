@@ -14,7 +14,7 @@
         "ext-gd": "*",
         "ext-pdo": "*",
         "awcodes/filament-tiptap-editor": "^3.2",
-        "aws/aws-php-sns-message-validator": "^1.1",
+        "aws/aws-php-sns-message-validator": "^1.8.0",
         "aws/aws-sdk-php": "^3.285",
         "barryvdh/laravel-debugbar": "^3.9",
         "bvtterfly/model-state-machine": "^0.3.0",
@@ -80,11 +80,11 @@
         "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-settings": "^3.2",
-        "sqids/sqids": "^0.3.1",
+        "sqids/sqids": "^0.4.1",
         "staudenmeir/eloquent-has-many-deep": "^1.18",
         "stechstudio/filament-impersonate": "^3.5",
         "tapp/filament-timezone-field": "^3.0",
-        "tpetry/laravel-postgresql-enhanced": "^0.31.0",
+        "tpetry/laravel-postgresql-enhanced": "^0.33.0",
         "twilio/sdk": "^7.7"
     },
     "require-dev": {
