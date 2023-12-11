@@ -39,9 +39,11 @@ namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\DetachAction;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
@@ -75,10 +77,14 @@ class PermissionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
+                    ->recordSelect(
+                        fn (Select $select) => $select->multiple(),
+                    )
                     ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('guard_name', 'api'))
                     ->attachAnother(),
             ])
             ->actions([
+                DetachAction::make(),
             ])
             ->bulkActions([
             ]);
