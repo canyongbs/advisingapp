@@ -70,8 +70,7 @@ return [
     */
 
     'authorizations' => [
-        // TODO: Update once we have authorization codes setup
-        'enabled' => false,
+        'enabled' => true,
         'cache' => [
             'enabled' => true,
             'default' => 5, // Cache minutes by default

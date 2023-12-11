@@ -77,7 +77,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/api.php'));
 
             $versionedApis = Route::prefix('api/v1')
-                ->middleware('api')
+                ->middleware(['auth:sanctum'])
                 ->namespace($this->namespace)
                 ->name('api.v1.');
 
