@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f89df4de60feee5e8e7901a580944a87",
+    "content-hash": "4c20e4688f513027ea9e2b46b1e4c510",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -14480,16 +14480,16 @@
         },
         {
             "name": "tpetry/laravel-postgresql-enhanced",
-            "version": "0.31.0",
+            "version": "0.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tpetry/laravel-postgresql-enhanced.git",
-                "reference": "b89af5de3ee36ee236525dc207f452629211c0fd"
+                "reference": "a75749e45983ae548d4d85a9ef7c3240710a3384"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/b89af5de3ee36ee236525dc207f452629211c0fd",
-                "reference": "b89af5de3ee36ee236525dc207f452629211c0fd",
+                "url": "https://api.github.com/repos/tpetry/laravel-postgresql-enhanced/zipball/a75749e45983ae548d4d85a9ef7c3240710a3384",
+                "reference": "a75749e45983ae548d4d85a9ef7c3240710a3384",
                 "shasum": ""
             },
             "require": {
@@ -14539,9 +14539,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tpetry/laravel-postgresql-enhanced/issues",
-                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/0.31.0"
+                "source": "https://github.com/tpetry/laravel-postgresql-enhanced/tree/0.33.0"
             },
-            "time": "2023-06-26T10:23:12+00:00"
+            "time": "2023-10-23T15:36:21+00:00"
         },
         {
             "name": "twilio/sdk",
