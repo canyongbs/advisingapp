@@ -40,9 +40,9 @@ use Illuminate\Support\Str;
 use Filament\Actions\Imports\Importer;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Models\Import;
+use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
 
 class ProspectCaseloadSubjectImporter extends Importer
 {

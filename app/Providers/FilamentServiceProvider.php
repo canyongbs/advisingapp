@@ -44,9 +44,9 @@ use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Actions\Imports\Models\Import as BaseImport;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
-use AdvisingApp\Theme\Settings\ThemeSettings;
 
 class FilamentServiceProvider extends ServiceProvider
 {

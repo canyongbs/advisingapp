@@ -38,10 +38,12 @@ namespace AdvisingApp\Interaction\Imports;
 
 use App\Models\User;
 use Illuminate\Support\Str;
+use Filament\Actions\Imports\Importer;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Actions\Imports\Importer;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Actions\Imports\Models\Import;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Interaction\Models\InteractionType;
@@ -50,8 +52,6 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use Filament\Actions\Imports\ImportColumn;
-use Filament\Actions\Imports\Models\Import;
 
 class InteractionsImporter extends Importer
 {
