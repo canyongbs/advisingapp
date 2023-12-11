@@ -37,11 +37,16 @@
 namespace AdvisingApp\Consent\Policies;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Consent\Models\ConsentAgreement;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
-class ConsentAgreementPolicy
+class ConsentAgreementPolicy implements FeatureAccessEnforcedPolicy
 {
+    use FeatureAccessEnforcedPolicyBefore;
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(
@@ -84,5 +89,12 @@ class ConsentAgreementPolicy
     public function forceDelete(User $user, ConsentAgreement $agreement): Response
     {
         return Response::deny('Consent Agreements cannot be permanently deleted.');
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [
+            Feature::PersonalAssistant,
+        ];
     }
 }
