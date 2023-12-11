@@ -37,11 +37,16 @@
 namespace AdvisingApp\Assistant\Policies;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 
-class AssistantChatMessageLogPolicy
+class AssistantChatMessageLogPolicy implements FeatureAccessEnforcedPolicy
 {
+    use FeatureAccessEnforcedPolicyBefore;
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(
@@ -81,5 +86,12 @@ class AssistantChatMessageLogPolicy
     public function forceDelete(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
         return Response::deny('Assistant chat message logs cannot be force deleted.');
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [
+            Feature::PersonalAssistant,
+        ];
     }
 }
