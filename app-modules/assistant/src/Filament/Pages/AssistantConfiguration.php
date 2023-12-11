@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
-use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
@@ -76,9 +75,6 @@ class AssistantConfiguration extends Page
 
     public function mount(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         /** @var NavigationItem $firstNavItem */
         $firstNavItem = collect($this->getSubNavigation())->first(function (NavigationItem $item) {
             return $item->isVisible();
