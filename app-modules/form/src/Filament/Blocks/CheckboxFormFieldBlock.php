@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Filament\Blocks;
+namespace AdvisingApp\Form\Filament\Blocks;
 
-use Assist\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\SubmissibleField;
 
 class CheckboxFormFieldBlock extends FormFieldBlock
 {

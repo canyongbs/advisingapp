@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Theme\Filament\Pages;
+namespace AdvisingApp\Theme\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Get;
@@ -44,7 +44,7 @@ use App\Models\SettingsProperty;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
-use Assist\Theme\Settings\ThemeSettings;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class ManageBrandConfigurationSettings extends SettingsPage

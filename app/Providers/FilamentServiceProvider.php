@@ -42,11 +42,11 @@ use App\Models\FailedImportRow;
 use App\Models\SettingsProperty;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
-use Assist\Theme\Settings\ThemeSettings;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Actions\Imports\Models\Import as BaseImport;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -185,7 +185,7 @@ class FilamentServiceProvider extends ServiceProvider
 
         FilamentView::registerRenderHook(
             'panels::footer',
-            fn (): View => view('assist.filament.footer'),
+            fn (): View => view('filament.footer'),
         );
     }
 }

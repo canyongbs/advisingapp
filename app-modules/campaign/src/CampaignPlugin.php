@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign;
+namespace AdvisingApp\Campaign;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,7 +50,7 @@ class CampaignPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Campaign\\Filament\\Resources'
+            for: 'AdvisingApp\\Campaign\\Filament\\Resources'
         );
     }
 

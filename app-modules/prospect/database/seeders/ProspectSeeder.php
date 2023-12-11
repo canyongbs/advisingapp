@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Database\Seeders;
+namespace AdvisingApp\Prospect\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 
 class ProspectSeeder extends Seeder
 {

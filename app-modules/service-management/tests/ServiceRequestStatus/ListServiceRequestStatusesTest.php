@@ -40,9 +40,9 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 
 test('The correct details are displayed on the ListServiceRequestStatuses page', function () {
     $serviceRequestStatuses = ServiceRequestStatus::factory()

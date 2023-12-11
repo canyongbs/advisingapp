@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Policies;
+namespace AdvisingApp\Campaign\Policies;
 
 use App\Models\User;
-use Assist\Campaign\Models\Campaign;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Campaign\Models\Campaign;
 
 class CampaignPolicy
 {

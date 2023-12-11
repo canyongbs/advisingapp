@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use Assist\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 
 class InteractionsRelationManager extends RelationManager
 {

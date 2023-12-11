@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Factories;
+namespace AdvisingApp\ServiceManagement\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Enums\ColumnColorOptions;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
+use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
 
 /**
  * @extends Factory<ServiceRequestStatus>

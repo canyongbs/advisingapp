@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Notifications;
+namespace AdvisingApp\Form\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
-use Assist\Form\Models\FormSubmission;
 use Illuminate\Notifications\Notification;
+use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Filament\Notifications\Notification as FilamentNotification;
 

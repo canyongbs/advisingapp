@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/in-app-communication",
+  "name": "canyon-gbs/advising-app-in-app-communication",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\InAppCommunication\\": "src/",
-      "Assist\\InAppCommunication\\Tests\\": "tests/",
-      "Assist\\InAppCommunication\\Database\\Factories\\": "database/factories/",
-      "Assist\\InAppCommunication\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\InAppCommunication\\": "src/",
+      "AdvisingApp\\InAppCommunication\\Tests\\": "tests/",
+      "AdvisingApp\\InAppCommunication\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\InAppCommunication\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\InAppCommunication\\Providers\\InAppCommunicationServiceProvider"
+        "AdvisingApp\\InAppCommunication\\Providers\\InAppCommunicationServiceProvider"
       ]
     }
   }

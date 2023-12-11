@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Division\Filament\Resources\DivisionResource\RelationManagers;
+namespace AdvisingApp\Division\Filament\Resources\DivisionResource\RelationManagers;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;

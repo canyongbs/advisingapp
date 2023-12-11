@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use Assist\Application\Http\Controllers\ApplicationWidgetController;
-use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use Assist\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
+use AdvisingApp\Application\Http\Controllers\ApplicationWidgetController;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\Application\Http\Middleware\EnsureOnlineAdmissionsFeatureIsActive;
 
 Route::prefix('api')
     ->middleware([

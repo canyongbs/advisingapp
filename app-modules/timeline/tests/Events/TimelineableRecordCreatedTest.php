@@ -35,8 +35,8 @@
 */
 
 use Illuminate\Support\Facades\Event;
-use Assist\Timeline\Listeners\AddRecordToTimeline;
-use Assist\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 
 it('has a listener prepared to handle it', function () {
     Event::fake();

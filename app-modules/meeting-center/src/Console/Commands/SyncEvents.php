@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Console\Commands;
+namespace AdvisingApp\MeetingCenter\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
-use Assist\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 
 class SyncEvents extends Command
 {

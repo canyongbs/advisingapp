@@ -46,9 +46,9 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestStatusRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestStatusRequestFactory;
 
 test('A successful action on the CreateServiceRequestStatus page', function () {
     asSuperAdmin()

@@ -34,7 +34,7 @@
 <?php
 
 use Filament\Support\Facades\FilamentAsset;
-use Assist\InAppCommunication\Models\TwilioConversation;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
 ?>
 

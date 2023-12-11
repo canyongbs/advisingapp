@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Filament\Resources\TeamResource\RelationManagers;
+namespace AdvisingApp\Team\Filament\Resources\TeamResource\RelationManagers;
 
 use Closure;
 use App\Models\User;

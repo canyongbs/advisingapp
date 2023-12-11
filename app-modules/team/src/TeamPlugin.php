@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team;
+namespace AdvisingApp\Team;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,7 +50,7 @@ class TeamPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Team\\Filament\\Resources'
+            for: 'AdvisingApp\\Team\\Filament\\Resources'
         );
     }
 

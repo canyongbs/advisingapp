@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace AdvisingApp\Form\Actions;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class ResolveSubmissionAuthorFromEmail
 {

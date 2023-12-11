@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -48,10 +48,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\AssistDataModel\Models\Scopes\EducatableSort;
-use Assist\AssistDataModel\Models\Scopes\EducatableSearch;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ListServiceRequests extends ListRecords
 {

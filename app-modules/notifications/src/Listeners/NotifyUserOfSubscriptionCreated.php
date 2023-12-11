@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Listeners;
+namespace AdvisingApp\Notifications\Listeners;
 
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\Notifications\Events\SubscriptionCreated;
+use AdvisingApp\Notifications\Events\SubscriptionCreated;
 
 class NotifyUserOfSubscriptionCreated implements ShouldQueue
 {

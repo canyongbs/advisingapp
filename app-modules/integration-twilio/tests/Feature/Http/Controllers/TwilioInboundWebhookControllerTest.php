@@ -43,7 +43,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\withoutMiddleware;
 use function Pest\Laravel\assertDatabaseMissing;
 
-use Assist\IntegrationTwilio\Actions\MessageReceived;
+use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
 
 it('will create an inbound webhook with the Twilio source and the correct event', function () {
     Queue::fake([MessageReceived::class]);

@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/team",
+  "name": "canyon-gbs/advising-app-team",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Team\\": "src/",
-      "Assist\\Team\\Tests\\": "tests/",
-      "Assist\\Team\\Database\\Factories\\": "database/factories/",
-      "Assist\\Team\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Team\\": "src/",
+      "AdvisingApp\\Team\\Tests\\": "tests/",
+      "AdvisingApp\\Team\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Team\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Team\\Providers\\TeamServiceProvider"
+        "AdvisingApp\\Team\\Providers\\TeamServiceProvider"
       ]
     }
   }

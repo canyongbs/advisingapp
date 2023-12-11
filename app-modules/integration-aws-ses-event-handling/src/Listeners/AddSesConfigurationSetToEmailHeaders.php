@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAwsSesEventHandling\Listeners;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
 use Illuminate\Mail\Events\MessageSending;
 

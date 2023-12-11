@@ -41,9 +41,9 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
 test('The correct details are displayed on the ListServiceRequestUpdates page', function () {
     $serviceRequestUpdates = ServiceRequestUpdate::factory()

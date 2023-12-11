@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\SmsTemplateResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Assist\Engagement\Models\SmsTemplate;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Pages\EmailConfiguration;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Engagement\Filament\Resources\SmsTemplateResource;
+use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 
 class ListSmsTemplates extends ListRecords
 {

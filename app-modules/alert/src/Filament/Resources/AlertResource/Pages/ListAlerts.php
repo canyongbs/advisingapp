@@ -34,38 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Filament\Resources\AlertResource\Pages;
+namespace AdvisingApp\Alert\Filament\Resources\AlertResource\Pages;
 
 use Filament\Tables\Table;
-use Assist\Alert\Models\Alert;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
-use Assist\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Models\Alert;
 use Filament\Tables\Filters\Filter;
-use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Group;
-use Assist\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\CaseloadManagement\Models\Caseload;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect\Type;
-use Assist\Alert\Filament\Resources\AlertResource;
-use Assist\AssistDataModel\Models\Scopes\EducatableSearch;
-use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
-use Assist\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
-use Assist\AssistDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\Alert\Filament\Resources\AlertResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
 
 class ListAlerts extends ListRecords
 {

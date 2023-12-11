@@ -42,7 +42,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 class ApplicationModels
 {

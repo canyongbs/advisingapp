@@ -32,8 +32,8 @@
 </COPYRIGHT>
 --}}
 @php
-    use Assist\ServiceManagement\Enums\ServiceRequestUpdateDirection;
-    use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+    use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
+    use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 @endphp
 
 <div>

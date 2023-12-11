@@ -34,24 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Models;
+namespace AdvisingApp\Alert\Models;
 
 use Exception;
 use App\Models\BaseModel;
-use Assist\Alert\Enums\AlertStatus;
-use Assist\Prospect\Models\Prospect;
-use Assist\Alert\Enums\AlertSeverity;
+use AdvisingApp\Alert\Enums\AlertStatus;
 use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Campaign\Models\CampaignAction;
+use AdvisingApp\Alert\Enums\AlertSeverity;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
-use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @property-read Student|Prospect $concern

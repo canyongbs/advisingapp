@@ -40,7 +40,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Assist\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Models\RoleGroup;
 
 class UsersTableSeeder extends Seeder
 {

@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/campaign",
+  "name": "canyon-gbs/advising-app-campaign",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Campaign\\": "src/",
-      "Assist\\Campaign\\Tests\\": "tests/",
-      "Assist\\Campaign\\Database\\Factories\\": "database/factories/",
-      "Assist\\Campaign\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Campaign\\": "src/",
+      "AdvisingApp\\Campaign\\Tests\\": "tests/",
+      "AdvisingApp\\Campaign\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Campaign\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Campaign\\Providers\\CampaignServiceProvider"
+        "AdvisingApp\\Campaign\\Providers\\CampaignServiceProvider"
       ]
     }
   }

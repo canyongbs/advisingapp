@@ -34,22 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAwsSesEventHandling\Http\Controllers;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Assist\IntegrationAwsSesEventHandling\Events\SesOpenEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesSendEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesClickEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesComplaintEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
-use Assist\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
-use Assist\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesOpenEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSendEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesClickEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesComplaintEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 
 class AwsSesInboundWebhookController extends Controller
 {

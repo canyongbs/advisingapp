@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages;
+namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
@@ -47,8 +47,8 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
-use Assist\Assistant\Filament\Pages\AssistantConfiguration;
-use Assist\Consent\Filament\Resources\ConsentAgreementResource;
+use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 
 class ListConsentAgreements extends ListRecords
 {

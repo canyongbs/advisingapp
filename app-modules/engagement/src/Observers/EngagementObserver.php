@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Observers;
+namespace AdvisingApp\Engagement\Observers;
 
 use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Models\Engagement;
-use Assist\Timeline\Events\TimelineableRecordCreated;
-use Assist\Timeline\Events\TimelineableRecordDeleted;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 
 class EngagementObserver
 {

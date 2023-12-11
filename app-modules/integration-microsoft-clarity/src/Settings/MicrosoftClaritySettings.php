@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationMicrosoftClarity\Settings;
+namespace AdvisingApp\IntegrationMicrosoftClarity\Settings;
 
 use Spatie\LaravelSettings\Settings;
 

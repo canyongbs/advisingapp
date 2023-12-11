@@ -1,5 +1,5 @@
 {
-	"name": "canyon-gbs/service-management",
+	"name": "canyon-gbs/advising-app-service-management",
 	"description": "",
 	"type": "library",
 	"version": "1.0",
@@ -9,17 +9,17 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Assist\\ServiceManagement\\": "src/",
-			"Assist\\ServiceManagement\\Tests\\": "tests/",
-			"Assist\\ServiceManagement\\Database\\Factories\\": "database/factories/",
-			"Assist\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
+			"AdvisingApp\\ServiceManagement\\": "src/",
+			"AdvisingApp\\ServiceManagement\\Tests\\": "tests/",
+			"AdvisingApp\\ServiceManagement\\Database\\Factories\\": "database/factories/",
+			"AdvisingApp\\ServiceManagement\\Database\\Seeders\\": "database/seeders/"
 		}
 	},
 	"minimum-stability": "stable",
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Assist\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
+				"AdvisingApp\\ServiceManagement\\Providers\\ServiceManagementServiceProvider"
 			]
 		}
 	},

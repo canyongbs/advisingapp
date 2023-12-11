@@ -33,8 +33,8 @@
 --}}
 @php
     use App\Filament\Resources\UserResource;
-    use Assist\Engagement\Enums\EngagementDeliveryMethod;
-    use Assist\Engagement\Enums\EngagementDeliveryStatus;
+    use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+    use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 @endphp
 
 <div>

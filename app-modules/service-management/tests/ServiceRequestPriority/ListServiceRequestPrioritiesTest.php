@@ -40,9 +40,9 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 
 test('The correct details are displayed on the ListServiceRequestPriorities page', function () {
     $serviceRequestPriorities = ServiceRequestPriority::factory()

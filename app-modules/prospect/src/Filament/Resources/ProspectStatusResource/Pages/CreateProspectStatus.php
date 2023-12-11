@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectStatusResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Prospect\Enums\ProspectStatusColorOptions;
-use Assist\Prospect\Enums\SystemProspectClassification;
-use Assist\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
 class CreateProspectStatus extends CreateRecord
 {

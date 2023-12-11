@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use Assist\Engagement\Models\Engagement;
-use Assist\Engagement\Models\EngagementResponse;
-use Assist\Timeline\Filament\Pages\TimelinePage;
-use Assist\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ProspectEngagementTimeline extends TimelinePage
 {

@@ -39,7 +39,7 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-use Assist\Assistant\Filament\Pages\ManageAiSettings;
+use AdvisingApp\Assistant\Filament\Pages\ManageAiSettings;
 
 it('renders successfully', function () {
     asSuperAdmin();

@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Filament\Resources;
+namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
-use Assist\Interaction\Models\InteractionCampaign;
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages\EditInteractionCampaign;
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages\ListInteractionCampaigns;
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages\CreateInteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\EditInteractionCampaign;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\ListInteractionCampaigns;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\CreateInteractionCampaign;
 
 class InteractionCampaignResource extends Resource
 {

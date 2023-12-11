@@ -38,8 +38,8 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Interaction\Models\InteractionRelation;
-use Assist\Interaction\Filament\Resources\InteractionRelationResource;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 
 test('EditInteractionRelation is gated with proper access control', function () {
     $user = User::factory()->create();

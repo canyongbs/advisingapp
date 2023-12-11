@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Division\Filament\Resources\DivisionResource\Pages;
+namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -45,7 +45,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 class ListDivisions extends ListRecords
 {

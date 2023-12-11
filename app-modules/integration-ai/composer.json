@@ -1,5 +1,5 @@
 {
-    "name": "canyon-gbs/integration-ai",
+    "name": "canyon-gbs/advising-app-integration-ai",
     "description": "",
     "type": "library",
     "version": "1.0",
@@ -11,17 +11,17 @@
     },
     "autoload": {
         "psr-4": {
-            "Assist\\IntegrationAI\\": "src/",
-            "Assist\\IntegrationAI\\Tests\\": "tests/",
-            "Assist\\IntegrationAI\\Database\\Factories\\": "database/factories/",
-            "Assist\\IntegrationAI\\Database\\Seeders\\": "database/seeders/"
+            "AdvisingApp\\IntegrationAI\\": "src/",
+            "AdvisingApp\\IntegrationAI\\Tests\\": "tests/",
+            "AdvisingApp\\IntegrationAI\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\IntegrationAI\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "minimum-stability": "dev",
     "extra": {
         "laravel": {
             "providers": [
-                "Assist\\IntegrationAI\\Providers\\IntegrationAIServiceProvider"
+                "AdvisingApp\\IntegrationAI\\Providers\\IntegrationAIServiceProvider"
             ]
         }
     },

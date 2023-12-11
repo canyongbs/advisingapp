@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Listeners;
+namespace AdvisingApp\Authorization\Listeners;
 
-use Assist\Authorization\Actions\RemoveRolesForRoleGroupFromUser;
+use AdvisingApp\Authorization\Actions\RemoveRolesForRoleGroupFromUser;
 
 class HandleUserRemovedFromRoleGroup
 {

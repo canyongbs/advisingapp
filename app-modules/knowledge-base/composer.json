@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/knowledge-base",
+  "name": "canyon-gbs/advising-app-knowledge-base",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\KnowledgeBase\\": "src/",
-      "Assist\\KnowledgeBase\\Tests\\": "tests/",
-      "Assist\\KnowledgeBase\\Database\\Factories\\": "database/factories/",
-      "Assist\\KnowledgeBase\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\KnowledgeBase\\": "src/",
+      "AdvisingApp\\KnowledgeBase\\Tests\\": "tests/",
+      "AdvisingApp\\KnowledgeBase\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\KnowledgeBase\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\KnowledgeBase\\Providers\\KnowledgeBaseServiceProvider"
+        "AdvisingApp\\KnowledgeBase\\Providers\\KnowledgeBaseServiceProvider"
       ]
     }
   }

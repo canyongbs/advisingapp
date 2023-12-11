@@ -32,7 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
-    use Assist\Campaign\Enums\CampaignActionType;
+    use AdvisingApp\Campaign\Enums\CampaignActionType;
     
     $actions = collect($getLivewire()->data['actions']);
     

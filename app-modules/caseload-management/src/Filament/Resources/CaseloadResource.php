@@ -34,29 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Filament\Resources;
+namespace AdvisingApp\CaseloadManagement\Filament\Resources;
 
 use Exception;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
-use Assist\Prospect\Models\Prospect;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Filters\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\ListCaseloads;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\CreateCaseload;
+use AdvisingApp\AssistDataModel\Models\Student;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\ListCaseloads;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\CreateCaseload;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 
 class CaseloadResource extends Resource

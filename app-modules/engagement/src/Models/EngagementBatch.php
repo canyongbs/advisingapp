@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Models;
+namespace AdvisingApp\Engagement\Models;
 
 use Exception;
 use App\Models\User;
 use App\Models\BaseModel;
-use Assist\Campaign\Models\CampaignAction;
-use Assist\Engagement\Actions\CreateEngagementBatch;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Assist\Engagement\Models\Concerns\HasManyEngagements;
-use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use Assist\Engagement\DataTransferObjects\EngagementBatchCreationData;
+use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
+use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Engagement\DataTransferObjects\EngagementBatchCreationData;
 
 /**
  * @mixin IdeHelperEngagementBatch

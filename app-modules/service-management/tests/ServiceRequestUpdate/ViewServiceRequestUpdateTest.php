@@ -39,8 +39,8 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
 test('The correct details are displayed on the ViewServiceRequestUpdate page', function () {
     $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();

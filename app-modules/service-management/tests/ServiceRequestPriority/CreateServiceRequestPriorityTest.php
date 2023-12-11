@@ -43,9 +43,9 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestPriorityRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestPriorityRequestFactory;
 
 test('A successful action on the CreateServiceRequestPriority page', function () {
     asSuperAdmin()

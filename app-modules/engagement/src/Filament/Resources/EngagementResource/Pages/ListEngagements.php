@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -42,10 +42,10 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Assist\Engagement\Models\Engagement;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
-use Assist\Engagement\Filament\Resources\EngagementResource;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
 
 class ListEngagements extends ListRecords
 {

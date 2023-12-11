@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.pat-token }}
 
       - name: Set up Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
 
       - name: Run Ruby Script
         run: ruby ./copyright.rb
@@ -168,6 +168,9 @@ jobs:
           --health-retries 5
 
     steps:
+      - name: Install git
+        run: apt-get update ; apt-get install -y git zip unzip
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"

@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/division",
+  "name": "canyon-gbs/advising-app-division",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Division\\": "src/",
-      "Assist\\Division\\Tests\\": "tests/",
-      "Assist\\Division\\Database\\Factories\\": "database/factories/",
-      "Assist\\Division\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Division\\": "src/",
+      "AdvisingApp\\Division\\Tests\\": "tests/",
+      "AdvisingApp\\Division\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Division\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Division\\Providers\\DivisionServiceProvider"
+        "AdvisingApp\\Division\\Providers\\DivisionServiceProvider"
       ]
     }
   }

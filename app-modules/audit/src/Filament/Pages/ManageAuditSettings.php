@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Filament\Pages;
+namespace AdvisingApp\Audit\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Select;
-use Assist\Audit\Settings\AuditSettings;
 use Filament\Forms\Components\TextInput;
-use Assist\Audit\Actions\Finders\AuditableModels;
+use AdvisingApp\Audit\Settings\AuditSettings;
+use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 
 class ManageAuditSettings extends SettingsPage
 {

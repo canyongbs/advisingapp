@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-use Assist\Alert\Models\Alert;
-use Assist\Alert\Enums\AlertStatus;
-use Assist\Campaign\Models\Campaign;
-use Assist\Prospect\Models\Prospect;
-use Assist\Alert\Enums\AlertSeverity;
-use Assist\Campaign\Models\CampaignAction;
-use Assist\Campaign\Enums\CampaignActionType;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Enums\CaseloadType;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Alert\Enums\AlertSeverity;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 
 it('will create the appropriate records for educatables in the caseload', function () {
     // Given we have no proactive alerts

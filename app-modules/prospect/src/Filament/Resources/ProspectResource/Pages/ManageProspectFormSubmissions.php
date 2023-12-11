@@ -34,22 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
-use Assist\Prospect\Models\Prospect;
 use Illuminate\Support\Facades\Cache;
-use Assist\Form\Models\FormSubmission;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Actions\DeleteAction;
+use AdvisingApp\Form\Models\FormSubmission;
 use Filament\Tables\Actions\BulkActionGroup;
-use Assist\Form\Filament\Actions\RequestForm;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Filament\Actions\RequestForm;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ManageProspectFormSubmissions extends ManageRelatedRecords
 {

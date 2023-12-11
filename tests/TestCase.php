@@ -42,7 +42,7 @@ use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Assist\Authorization\Console\Commands\SyncRolesAndPermissions;
+use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use Illuminate\Foundation\Testing\Traits\CanConfigureMigrationCommands;
 
 abstract class TestCase extends BaseTestCase
@@ -67,7 +67,7 @@ abstract class TestCase extends BaseTestCase
 
         $this->artisan('migrate:fresh', [
             '--database' => 'sis',
-            '--path' => 'app-modules/assist-data-model/database/migrations/sis',
+            '--path' => 'app-modules/student-data-model/database/migrations/sis',
             ...$this->migrateFreshUsing(),
         ]);
 

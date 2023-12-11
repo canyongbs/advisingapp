@@ -34,37 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Filament\Resources\TaskResource\Pages;
+namespace AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Set;
 use Filament\Tables\Table;
-use Assist\Task\Models\Task;
 use Filament\Actions\Action;
-use Assist\Task\Enums\TaskStatus;
+use AdvisingApp\Task\Models\Task;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ImportAction;
 use Filament\Tables\Filters\Filter;
-use Assist\Prospect\Models\Prospect;
-use Assist\Task\Imports\TaskImporter;
+use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Forms\Components\Checkbox;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\BaseFilter;
 use App\Filament\Resources\UserResource;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Task\Imports\TaskImporter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Task\Filament\Resources\TaskResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\AssistDataModel\Models\Scopes\EducatableSearch;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
-use Assist\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
+use AdvisingApp\Task\Filament\Resources\TaskResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Components\TaskViewAction;
 
 class ListTasks extends ListRecords
 {

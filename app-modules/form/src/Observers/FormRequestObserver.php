@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Observers;
+namespace AdvisingApp\Form\Observers;
 
-use Assist\Form\Models\FormRequest;
+use AdvisingApp\Form\Models\FormRequest;
 
 class FormRequestObserver
 {

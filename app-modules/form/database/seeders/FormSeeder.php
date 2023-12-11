@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Database\Seeders;
+namespace AdvisingApp\Form\Database\Seeders;
 
-use Assist\Form\Models\Form;
 use Illuminate\Database\Seeder;
+use AdvisingApp\Form\Models\Form;
 
 class FormSeeder extends Seeder
 {

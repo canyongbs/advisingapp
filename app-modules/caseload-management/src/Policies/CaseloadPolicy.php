@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Policies;
+namespace AdvisingApp\CaseloadManagement\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
 
 class CaseloadPolicy
 {

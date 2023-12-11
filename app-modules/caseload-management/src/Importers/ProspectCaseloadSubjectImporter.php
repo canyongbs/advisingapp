@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Importers;
+namespace AdvisingApp\CaseloadManagement\Importers;
 
 use Illuminate\Support\Str;
-use Assist\Prospect\Models\Prospect;
 use Filament\Actions\Imports\Importer;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Models\Import;
-use Assist\CaseloadManagement\Models\CaseloadSubject;
 
 class ProspectCaseloadSubjectImporter extends Importer
 {

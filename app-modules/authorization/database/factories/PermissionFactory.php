@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace AdvisingApp\Authorization\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\Authorization\Models\Permission>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\Authorization\Models\Permission>
  */
 class PermissionFactory extends Factory
 {

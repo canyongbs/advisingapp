@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Providers;
+namespace AdvisingApp\Audit\Providers;
 
 use Filament\Panel;
-use Assist\Audit\AuditPlugin;
-use Assist\Audit\Models\Audit;
+use AdvisingApp\Audit\AuditPlugin;
+use AdvisingApp\Audit\Models\Audit;
 use Illuminate\Support\ServiceProvider;
-use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuditServiceProvider extends ServiceProvider
 {

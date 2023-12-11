@@ -39,8 +39,8 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Engagement\Models\EngagementFile;
-use Assist\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 
 // TODO: Add tests for the EditEngagementFile
 //test('A successful action on the EditEngagementFile page', function () {});

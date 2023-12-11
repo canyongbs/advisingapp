@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Blocks;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Closure;
 use App\Models\User;
-use Assist\Division\Models\Division;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\DateTimePicker;
-use Assist\ServiceManagement\Models\ServiceRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 
 class ServiceRequestBlock extends CampaignActionBlock
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Models\Contracts;
+namespace AdvisingApp\Notifications\Models\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;

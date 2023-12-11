@@ -40,9 +40,9 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
 test('The correct details are displayed on the ListServiceRequestType page', function () {
     $serviceRequestTypes = ServiceRequestType::factory()

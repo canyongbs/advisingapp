@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Enums;
+namespace AdvisingApp\CaseloadManagement\Enums;
 
-use Assist\Prospect\Models\Prospect;
-use Filament\Actions\Imports\Importer;
 use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
-use Assist\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
-use Assist\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
+use AdvisingApp\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
 
 enum CaseloadModel: string implements HasLabel
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline;
+namespace AdvisingApp\Timeline;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,7 +50,7 @@ class TimelinePlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Timeline\\Filament\\Resources'
+            for: 'AdvisingApp\\Timeline\\Filament\\Resources'
         );
     }
 

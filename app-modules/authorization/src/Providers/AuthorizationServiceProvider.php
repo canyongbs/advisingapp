@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Providers;
+namespace AdvisingApp\Authorization\Providers;
 
 use Filament\Panel;
-use Assist\Authorization\Models\Role;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Assist\Authorization\Models\RoleGroup;
-use Assist\Authorization\Models\Permission;
-use Assist\Authorization\AuthorizationPlugin;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Models\Permission;
+use AdvisingApp\Authorization\AuthorizationPlugin;
 use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Manager\SocialiteWasCalled;
-use Assist\Authorization\AuthorizationRoleRegistry;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use SocialiteProviders\Google\GoogleExtendSocialite;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuthorizationServiceProvider extends ServiceProvider
 {

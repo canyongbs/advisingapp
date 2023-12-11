@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Imports;
+namespace AdvisingApp\Task\Imports;
 
 use App\Models\User;
 use AllowDynamicProperties;
 use Illuminate\Support\Str;
-use Assist\Task\Models\Task;
-use Assist\Task\Enums\TaskStatus;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Task\Models\Task;
 use Illuminate\Validation\Rules\Enum;
+use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Actions\Imports\Importer;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Models\Import;
 

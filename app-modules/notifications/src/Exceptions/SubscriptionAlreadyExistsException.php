@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Exceptions;
+namespace AdvisingApp\Notifications\Exceptions;
 
 use Exception;
 

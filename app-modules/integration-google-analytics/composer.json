@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/integration-google-analytics",
+  "name": "canyon-gbs/advising-app-integration-google-analytics",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\IntegrationGoogleAnalytics\\": "src/",
-      "Assist\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
-      "Assist\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
-      "Assist\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\IntegrationGoogleAnalytics\\": "src/",
+      "AdvisingApp\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
+      "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\IntegrationGoogleAnalytics\\Providers\\IntegrationGoogleAnalyticsServiceProvider"
+        "AdvisingApp\\IntegrationGoogleAnalytics\\Providers\\IntegrationGoogleAnalyticsServiceProvider"
       ]
     }
   }

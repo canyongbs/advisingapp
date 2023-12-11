@@ -39,8 +39,8 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
 test('The correct details are displayed on the ViewServiceRequestType page', function () {
     $serviceRequestType = ServiceRequestType::factory()->create();

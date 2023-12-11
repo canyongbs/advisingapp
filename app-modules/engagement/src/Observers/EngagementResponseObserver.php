@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Observers;
+namespace AdvisingApp\Engagement\Observers;
 
 use Illuminate\Database\Eloquent\Model;
-use Assist\Engagement\Models\EngagementResponse;
-use Assist\Timeline\Events\TimelineableRecordCreated;
-use Assist\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 
 class EngagementResponseObserver
 {

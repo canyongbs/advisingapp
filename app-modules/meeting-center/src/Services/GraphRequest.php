@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Services;
+namespace AdvisingApp\MeetingCenter\Services;
 
 class GraphRequest extends \Microsoft\Graph\Http\GraphRequest
 {

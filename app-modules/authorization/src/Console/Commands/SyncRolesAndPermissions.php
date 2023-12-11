@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Console\Commands;
+namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\Authorization\Models\Role;
 use Illuminate\Support\Facades\Artisan;
+use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
-use Assist\Authorization\Models\Permission;
+use AdvisingApp\Authorization\Models\Permission;
 
 class SyncRolesAndPermissions extends Command
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\RelationManagers;
 
 use App\Models\User;
 use Filament\Forms\Form;
@@ -46,10 +46,10 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
-use Assist\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use Assist\ServiceManagement\Models\ServiceRequestAssignment;
-use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 class AssignedToRelationManager extends RelationManager
 {

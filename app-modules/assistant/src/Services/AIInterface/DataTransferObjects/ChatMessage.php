@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Services\AIInterface\DataTransferObjects;
+namespace AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects;
 
 use Livewire\Wireable;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Concerns\WireableData;
-use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
 
 class ChatMessage extends Data implements Wireable
 {

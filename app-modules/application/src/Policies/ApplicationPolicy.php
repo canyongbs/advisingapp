@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Policies;
+namespace AdvisingApp\Application\Policies;
 
 use App\Models\User;
 use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
-use Assist\Application\Models\Application;
+use AdvisingApp\Application\Models\Application;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 

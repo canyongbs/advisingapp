@@ -42,9 +42,9 @@ use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestTypeRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestTypeRequestFactory;
 
 test('A successful action on the EditServiceRequestType page', function () {
     $serviceRequestType = ServiceRequestType::factory()->create();

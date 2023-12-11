@@ -35,13 +35,13 @@
 */
 
 use function Tests\loadFixtureFromModule;
-
-use Assist\AssistDataModel\Models\Student;
-
 use function Pest\Laravel\assertDatabaseHas;
+
+use AdvisingApp\StudentDataModel\Models\Student;
+
 use function Pest\Laravel\assertDatabaseMissing;
 
-use Assist\IntegrationTwilio\Actions\MessageReceived;
+use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
 
 it('will not create an engagement response when it cannot find an associated message sender', function () {
     $messageData = loadFixtureFromModule('integration-twilio', 'MessageReceived/payload');

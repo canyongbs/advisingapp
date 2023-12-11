@@ -38,8 +38,8 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Division\Models\Division;
-use Assist\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 test('EditDivision is gated with proper access control', function () {
     $user = User::factory()->create();

@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationMicrosoftClarity;
+namespace AdvisingApp\IntegrationMicrosoftClarity;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Illuminate\Support\Facades\Blade;
 use Filament\Support\Facades\FilamentView;
-use Assist\IntegrationMicrosoftClarity\Settings\MicrosoftClaritySettings;
+use AdvisingApp\IntegrationMicrosoftClarity\Settings\MicrosoftClaritySettings;
 
 class IntegrationMicrosoftClarityPlugin implements Plugin
 {
@@ -53,7 +53,7 @@ class IntegrationMicrosoftClarityPlugin implements Plugin
     {
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
-            for: 'Assist\\IntegrationMicrosoftClarity\\Filament\\Pages'
+            for: 'AdvisingApp\\IntegrationMicrosoftClarity\\Filament\\Pages'
         );
     }
 

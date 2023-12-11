@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Observers;
+namespace AdvisingApp\Application\Observers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
-use Assist\Application\Models\ApplicationSubmission;
-use Assist\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 
 class ApplicationSubmissionObserver
 {

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Observers;
+namespace AdvisingApp\KnowledgeBase\Observers;
 
-use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use App\Support\MediaEncoding\Concerns\ImplementsEncodedMediaProcessing;
 
 class KnowledgeBaseItemObserver

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Actions\Contracts;
+namespace AdvisingApp\Engagement\Actions\Contracts;
 
 interface EngagementChannel
 {

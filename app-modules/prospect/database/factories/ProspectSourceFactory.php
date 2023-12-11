@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Database\Factories;
+namespace AdvisingApp\Prospect\Database\Factories;
 
-use Assist\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectSource;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

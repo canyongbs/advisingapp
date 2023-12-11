@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Policies;
+namespace AdvisingApp\Prospect\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 
 class ProspectStatusPolicy
 {

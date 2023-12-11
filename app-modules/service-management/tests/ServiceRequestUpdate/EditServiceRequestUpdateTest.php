@@ -44,9 +44,9 @@ use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestUpdateRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestUpdateRequestFactory;
 
 test('A successful action on the EditServiceRequestUpdate page', function () {
     $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();

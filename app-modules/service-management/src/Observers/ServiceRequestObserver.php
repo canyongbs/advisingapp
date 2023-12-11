@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Observers;
+namespace AdvisingApp\ServiceManagement\Observers;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\Notifications\Events\TriggeredAutoSubscription;
-use Assist\ServiceManagement\Actions\CreateServiceRequestHistory;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\ServiceManagement\Actions\CreateServiceRequestHistory;
+use AdvisingApp\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
+use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 class ServiceRequestObserver
 {

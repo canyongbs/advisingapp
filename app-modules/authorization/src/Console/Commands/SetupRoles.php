@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Console\Commands;
+namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\Authorization\Actions\CreateRoles;
+use AdvisingApp\Authorization\Actions\CreateRoles;
 
 class SetupRoles extends Command
 {

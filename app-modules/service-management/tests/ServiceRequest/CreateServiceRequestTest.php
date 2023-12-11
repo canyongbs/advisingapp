@@ -43,9 +43,9 @@ use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestRequestFactory;
 
 test('A successful action on the CreateServiceRequest page', function () {
     asSuperAdmin()

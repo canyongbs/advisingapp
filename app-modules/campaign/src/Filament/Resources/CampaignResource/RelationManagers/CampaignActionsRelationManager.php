@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Resources\CampaignResource\RelationManagers;
+namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -44,10 +44,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
-use Assist\Campaign\Models\CampaignAction;
 use Filament\Tables\Actions\BulkActionGroup;
-use Assist\Campaign\Enums\CampaignActionType;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Enums\CampaignActionType;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class CampaignActionsRelationManager extends RelationManager
