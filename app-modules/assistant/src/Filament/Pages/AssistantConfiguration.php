@@ -37,6 +37,7 @@
 namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
@@ -68,10 +69,10 @@ class AssistantConfiguration extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation();
+        return collect((new AssistantConfiguration())->getSubNavigation())
+            ->filter(function (NavigationItem $item) {
+                return $item->isVisible();
+            })->isNotEmpty();
     }
 
     public function mount(): void
@@ -123,7 +124,7 @@ class AssistantConfiguration extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        if ($user->can(['assistant.access_ai_settings'])) {
+        if ($user->can([Feature::PersonalAssistant->getGateName(), 'assistant.access_ai_settings'])) {
             $navigationItems = [
                 ...$navigationItems,
                 ...ManageAiSettings::getNavigationItems(),
