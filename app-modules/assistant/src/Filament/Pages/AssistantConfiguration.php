@@ -79,8 +79,6 @@ class AssistantConfiguration extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        abort_unless($user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation(), 403);
-
         /** @var NavigationItem $firstNavItem */
         $firstNavItem = collect($this->getSubNavigation())->first(function (NavigationItem $item) {
             return $item->isVisible();
