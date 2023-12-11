@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29afe7afc8415a1f6efcbc301c7fe1c1",
+    "content-hash": "f89df4de60feee5e8e7901a580944a87",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -11620,23 +11620,23 @@
         },
         {
             "name": "sqids/sqids",
-            "version": "0.3.1",
+            "version": "0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sqids/sqids-php.git",
-                "reference": "db0c0002f1e7eeb0a9917dbef365e9f58271229d"
+                "reference": "ff3d1214c0c2119ae4b676cc00f3abb22f61da42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sqids/sqids-php/zipball/db0c0002f1e7eeb0a9917dbef365e9f58271229d",
-                "reference": "db0c0002f1e7eeb0a9917dbef365e9f58271229d",
+                "url": "https://api.github.com/repos/sqids/sqids-php/zipball/ff3d1214c0c2119ae4b676cc00f3abb22f61da42",
+                "reference": "ff3d1214c0c2119ae4b676cc00f3abb22f61da42",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.2"
+                "php": "^8.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.0"
+                "phpunit/phpunit": "^10.3"
             },
             "suggest": {
                 "ext-bcmath": "Required to use BC Math arbitrary precision mathematics (*).",
@@ -11663,14 +11663,15 @@
                 "decode",
                 "encode",
                 "generate",
+                "hashids",
                 "ids",
                 "sqids"
             ],
             "support": {
                 "issues": "https://github.com/sqids/sqids-php/issues",
-                "source": "https://github.com/sqids/sqids-php/tree/0.3.1"
+                "source": "https://github.com/sqids/sqids-php/tree/0.4.1"
             },
-            "time": "2023-08-30T17:12:37+00:00"
+            "time": "2023-09-12T22:30:42+00:00"
         },
         {
             "name": "staudenmeir/eloquent-has-many-deep",

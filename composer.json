@@ -80,7 +80,7 @@
         "spatie/laravel-data": "^3.7",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-settings": "^3.2",
-        "sqids/sqids": "^0.3.1",
+        "sqids/sqids": "^0.4.1",
         "staudenmeir/eloquent-has-many-deep": "^1.18",
         "stechstudio/filament-impersonate": "^3.5",
         "tapp/filament-timezone-field": "^3.0",
