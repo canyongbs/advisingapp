@@ -37,7 +37,6 @@
 namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
-use App\Enums\Feature;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
@@ -115,22 +114,11 @@ class AssistantConfiguration extends Page
 
     public function getSubNavigation(): array
     {
-        $navigationItems = $this->generateNavigationItems(
+        return $this->generateNavigationItems(
             [
                 ListConsentAgreements::class,
+                ManageAiSettings::class,
             ]
         );
-
-        /** @var User $user */
-        $user = auth()->user();
-
-        if ($user->can([Feature::PersonalAssistant->getGateName(), 'assistant.access_ai_settings'])) {
-            $navigationItems = [
-                ...$navigationItems,
-                ...ManageAiSettings::getNavigationItems(),
-            ];
-        }
-
-        return $navigationItems;
     }
 }

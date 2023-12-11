@@ -46,11 +46,20 @@ use AdvisingApp\IntegrationAI\Settings\AISettings;
 
 class ManageAiSettings extends SettingsPage
 {
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static string $settings = AISettings::class;
 
     protected static ?string $title = 'Manage AI Settings';
+
+    // We don't want to register the navigation as we will be using the navigation item in a different page.
+    public static function registerNavigationItems(): void {}
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can([Feature::PersonalAssistant->getGateName(), 'assistant.access_ai_settings']);
+    }
 
     public function mount(): void
     {
