@@ -52,8 +52,6 @@ class ViewPublicUserProfileController extends Controller
 
         $workingHours = $this->formatHours($user->working_hours);
 
-        ray($user->working_hours_are_enabled, $user->are_working_hours_visible_on_profile, $workingHours->keys()->count());
-
         return view('user-profile-public', [
             'data' => [
                 'avatar_url' => $user->getFilamentAvatarUrl(),
