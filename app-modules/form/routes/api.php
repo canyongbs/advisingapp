@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Facades\Route;
 use Assist\Form\Http\Controllers\FormWidgetController;
 use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 

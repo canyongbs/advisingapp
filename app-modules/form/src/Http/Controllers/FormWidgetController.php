@@ -57,6 +57,7 @@ use Assist\Form\Actions\GenerateSubmissibleValidation;
 use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use Assist\Form\Notifications\AuthenticateFormNotification;
 use Assist\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use Assist\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class FormWidgetController extends Controller
 {
@@ -72,6 +73,10 @@ class FormWidgetController extends Controller
                 ] : [
                     'submission_url' => URL::signedRoute('forms.submit', ['form' => $form]),
                 ]),
+                'recaptcha_enabled' => $form->recaptcha_enabled,
+                ...($form->recaptcha_enabled ? [
+                    'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
+                ] : []),
                 'schema' => $generateSchema($form),
                 'primary_color' => Color::all()[$form->primary_color ?? 'blue'],
                 'rounding' => $form->rounding,

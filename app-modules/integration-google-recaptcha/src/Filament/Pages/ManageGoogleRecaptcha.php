@@ -82,9 +82,12 @@ class ManageGoogleRecaptcha extends SettingsPage
                     ->label('Enabled')
                     ->live(),
                 TextInput::make('site_key')
-                    ->visible(fn (Get $get) => $get('is_enabled')),
+                    ->visible(fn (Get $get) => $get('is_enabled'))
+                    ->required(fn (Get $get) => $get('is_enabled')),
                 TextInput::make('secret_key')
-                    ->visible(fn (Get $get) => $get('is_enabled')),
+                    ->visible(fn (Get $get) => $get('is_enabled'))
+                    ->required(fn (Get $get) => $get('is_enabled'))
+                    ->password(),
             ]);
     }
 }

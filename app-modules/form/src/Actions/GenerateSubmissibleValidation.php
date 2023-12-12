@@ -40,17 +40,24 @@ use Illuminate\Support\Arr;
 use Assist\Form\Models\Submissible;
 use Assist\Form\Models\SubmissibleField;
 use Illuminate\Database\Eloquent\Collection;
+use Assist\IntegrationGoogleRecaptcha\Rules\Recaptcha;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class GenerateSubmissibleValidation
 {
     public function __invoke(Submissible $submissible): array
     {
-        if ($submissible->is_wizard) {
-            return $this->wizardRules($submissible);
+        $rules = [];
+
+        if ($submissible->recaptcha_enabled) {
+            $rules['recaptcha-token'] = [new Recaptcha()];
         }
 
-        return $this->fields($submissible->fields);
+        if ($submissible->is_wizard) {
+            return array_merge($rules, $this->wizardRules($submissible));
+        }
+
+        return array_merge($rules, $this->fields($submissible->fields));
     }
 
     public function fields(Collection $fields): array

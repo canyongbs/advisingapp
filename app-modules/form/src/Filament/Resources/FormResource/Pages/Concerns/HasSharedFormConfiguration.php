@@ -55,6 +55,7 @@ use Filament\Forms\Components\TextInput;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Assist\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 trait HasSharedFormConfiguration
 {
@@ -98,6 +99,15 @@ trait HasSharedFormConfiguration
                 ->label('Multi-step form')
                 ->live()
                 ->disabled(fn (?Form $record) => $record?->submissions()->exists()),
+            Toggle::make('recaptcha_enabled')
+                ->label('Enable reCAPTCHA')
+                ->live()
+                ->disabled(fn (GoogleRecaptchaSettings $settings) => ! $settings->is_enabled)
+                ->helperText(function (GoogleRecaptchaSettings $settings) {
+                    if (! $settings->is_enabled) {
+                        return 'Enable and configure Recaptcha in order to use it on your forms.';
+                    }
+                }),
             Section::make('Fields')
                 ->schema([
                     $this->fieldBuilder(),
