@@ -1,0 +1,8 @@
+type KnowledgeBaseItem @model(class: "AdvisingApp\\KnowledgeBase\\Models\\KnowledgeBaseItem") {
+    id: ID!
+}
+
+extend type Query @afeature(feature: "test") {
+    "Get all subscriptions."
+    knowledgeBaseItems: [KnowledgeBaseItem!]! @paginate @canModel(ability: "viewAny")
+}
