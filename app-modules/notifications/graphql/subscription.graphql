@@ -15,3 +15,23 @@ extend type Query {
         id: ID! @whereKey
     ): UserSubscription @find
 }
+
+extend type Mutation {
+    "Create a new subscription."
+    createUserSubscription(
+        "The user to subscribe."
+        user_id: ID! @rules(apply: ["required", "exists:users,id"])
+
+        "The subscribable to subscribe to."
+        subscribable_id: ID! @rules(apply: ["required"])
+
+        "The type of subscribable to subscribe to."
+        subscribable_type: String! @rules(apply: ["required", "in:student,prospect"])
+    ): UserSubscription! @create
+
+    "Delete an existing subscription."
+    deleteUserSubscription(
+        "The primary key of the subscription."
+        id: ID! @whereKey
+    ): UserSubscription @delete
+}
