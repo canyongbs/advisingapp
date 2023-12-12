@@ -7,7 +7,7 @@ type UserSubscription @model(class: "subscription") {
 
 extend type Query {
     "Get all subscriptions."
-    userSubscriptions: [UserSubscription!]! @paginate
+    userSubscriptions: [UserSubscription!]! @paginate @canModel(ability: "viewAny")
 
     "Get a subscription by its primary key."
     findUserSubscription(
