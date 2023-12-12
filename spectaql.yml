@@ -12,7 +12,7 @@ introspection:
 #  metadataFile: ./examples/data/metadata.json
 #  dynamicExamplesProcessingModule: ./examples/customizations/examples
   queryNameStrategy: capitalizeFirst
-  fieldExpansionDepth: 2
+  fieldExpansionDepth: 20
 
   spectaqlDirective:
     enable: true

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a69d8b008e48f6faccdd8d27dba29cf",
+    "content-hash": "fabfcb9e82d3b75f56a883dcd346c212",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -7713,72 +7713,6 @@
                 "source": "https://github.com/microsoftgraph/msgraph-sdk-php/tree/1.109.2"
             },
             "time": "2023-12-01T09:41:49+00:00"
-        },
-        {
-            "name": "mll-lab/laravel-graphiql",
-            "version": "v3.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mll-lab/laravel-graphiql.git",
-                "reference": "54d7dbe5376ab87a6ea83be11b1431d0af9e2f6c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mll-lab/laravel-graphiql/zipball/54d7dbe5376ab87a6ea83be11b1431d0af9e2f6c",
-                "reference": "54d7dbe5376ab87a6ea83be11b1431d0af9e2f6c",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/console": "^9 || ^10",
-                "illuminate/contracts": "^9 || ^10",
-                "illuminate/support": "^9 || ^10",
-                "php": "^8"
-            },
-            "require-dev": {
-                "ergebnis/composer-normalize": "^2.29",
-                "laravel/lumen-framework": "^9 || ^10",
-                "mll-lab/php-cs-fixer-config": "^5",
-                "nunomaduro/larastan": "^2.5.2",
-                "orchestra/testbench": "^7.7 || ^8.8",
-                "phpstan/extension-installer": "^1",
-                "phpstan/phpstan": "^1.10.15",
-                "phpstan/phpstan-mockery": "^1.1.1",
-                "phpstan/phpstan-phpunit": "^1.3.11"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "MLL\\GraphiQL\\GraphiQLServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "MLL\\GraphiQL\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Benedikt Franke",
-                    "email": "benedikt@franke.tech"
-                }
-            ],
-            "description": "Easily integrate GraphiQL into your Laravel project",
-            "keywords": [
-                "graphiql",
-                "graphql",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/mll-lab/laravel-graphiql/issues",
-                "source": "https://github.com/mll-lab/laravel-graphiql/tree/v3.1.0"
-            },
-            "time": "2023-07-04T13:58:40+00:00"
         },
         {
             "name": "monolog/monolog",
