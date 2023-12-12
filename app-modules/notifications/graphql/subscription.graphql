@@ -1,0 +1,16 @@
+type UserSubscription @model(class: "subscription") {
+    "Unique primary key."
+    id: ID!
+    user: User! @belongsTo
+}
+
+extend type Query {
+    "Get all subscriptions."
+    userSubscriptions: [UserSubscription!]! @paginate
+
+    "Get a subscription by its primary key."
+    findUserSubscription(
+        "The primary key of the subscription."
+        id: ID! @whereKey
+    ): UserSubscription @find
+}
