@@ -3,6 +3,9 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 
 type Query
 
+union Educatable = Prospect | Student
+
 #import ../app-modules/notifications/graphql/subscription.graphql
 #import user.graphql
-
+#import ../app-modules/prospect/graphql/*.graphql
+#import ../app-modules/student-data-model/graphql/*.graphql

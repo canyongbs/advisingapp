@@ -2,6 +2,7 @@ type UserSubscription @model(class: "subscription") {
     "Unique primary key."
     id: ID!
     user: User! @belongsTo
+    subscribable: Educatable! @morphTo
 }
 
 extend type Query {
