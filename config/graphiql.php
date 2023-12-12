@@ -18,7 +18,7 @@ return [
     'routes' => [
         '/graphiql' => [
             'name' => 'graphiql',
-            'middleware' => ['web'],
+            //'middleware' => ['web'],
             // 'prefix' => '',
             // 'domain' => 'graphql.' . env('APP_DOMAIN', 'localhost'),
 
@@ -62,5 +62,5 @@ return [
     |
     */
 
-    'enabled' => env('GRAPHIQL_ENABLED', true),
+    'enabled' => env('GRAPHIQL_ENABLED', false),
 ];
