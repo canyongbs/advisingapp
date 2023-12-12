@@ -200,6 +200,9 @@
         "ci": [
             "rm -rf ./vendor",
             "composer install"
+        ],
+        "print-schema": [
+            "@php artisan lighthouse:print-schema -W -D public"
         ]
     },
     "extra": {

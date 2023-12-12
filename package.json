@@ -10,7 +10,8 @@
         "build:vite": "vite build",
         "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:application && npm run build:form",
         "build:application": "(cd widgets/application && vite build)",
-        "build:form": "(cd widgets/form && vite build)"
+        "build:form": "(cd widgets/form && vite build)",
+	"api-docs:generate": "env-cmd spectaql spectaql.yml"
     },
     "devDependencies": {
         "@headlessui/vue": "^1.7.16",
@@ -30,7 +31,6 @@
         "prettier": "^3.0.0",
         "resolve-url-loader": "^5.0.0",
         "select2": "^4.0.13",
-        "spectaql": "^2.3.0",
         "tailwindcss": "^3.3.3",
         "tippy.js": "^6.3.7",
         "vite": "^4.4.3",
@@ -45,10 +45,12 @@
         "@twilio/conversations": "^2.5.0",
         "alpinejs": "^3.13.2",
         "dompurify": "^3.0.6",
+        "env-cmd": "^10.1.0",
         "esbuild-plugin-polyfill-node": "^0.3.0",
         "flowbite": "^1.8.1",
         "showdown": "^2.1.0",
         "sortablejs": "^1.15.0",
+        "spectaql": "^2.3.0",
         "vue": "^3.3.4"
     }
 }

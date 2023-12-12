@@ -21,25 +21,25 @@ extensions:
   graphqlScalarExamples: true
 
 info:
-  title: GraphQL API Reference
-  description: Welcome to the party!
+  title: Advising App API Reference
+  description: Documentation for the Advising App API
   termsOfService: https://www.example.com/terms
   contact:
     name: API Support
     url: http://www.example.com/support
     email: support@example.com
   license:
-    name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0.html
+    name: Elastic License 2.0
+    url: https://www.elastic.co/licensing/elastic-license
   x-introItems:
     - title: Important thing 1
       description: Some important stuff we wanted you to know. Supports `markdown`
 
 servers:
-  - url: http://localhost/graphql
-    description: Production
+  - url: ${APP_URL}/graphql
+    description: This server
     production: true
     headers:
       - name: Authorization
         example: Bearer <YOUR_TOKEN_HERE>
-        comment: Your foo from bar
+        comment: The API token generated for a System User within the dashboard.
