@@ -59,7 +59,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^3.0",
-        "laravel/framework": "^10.0",
+        "laravel/framework": "^10.37",
         "laravel/sanctum": "^3.2",
         "laravel/scout": "^10.2",
         "laravel/socialite": "^5.8",
