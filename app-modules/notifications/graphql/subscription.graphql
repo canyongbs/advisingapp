@@ -13,7 +13,7 @@ extend type Query {
     findUserSubscription(
         "The primary key of the subscription."
         id: ID! @whereKey
-    ): UserSubscription @find
+    ): UserSubscription @find @canModel(ability: "view")
 }
 
 extend type Mutation {
