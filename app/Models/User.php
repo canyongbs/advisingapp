@@ -119,6 +119,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'out_of_office_is_enabled' => 'boolean',
         'out_of_office_starts_at' => 'datetime',
         'out_of_office_ends_at' => 'datetime',
+        'is_email_visible_on_profile' => 'boolean',
+        'is_phone_number_visible_on_profile' => 'boolean',
+        'working_hours_are_enabled' => 'boolean',
+        'are_working_hours_visible_on_profile' => 'boolean',
+        'working_hours' => 'array',
     ];
 
     protected $fillable = [
@@ -145,6 +150,12 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'out_of_office_is_enabled',
         'out_of_office_starts_at',
         'out_of_office_ends_at',
+        'is_email_visible_on_profile',
+        'phone_number',
+        'is_phone_number_visible_on_profile',
+        'working_hours_are_enabled',
+        'are_working_hours_visible_on_profile',
+        'working_hours' => 'array',
     ];
 
     public $orderable = [
