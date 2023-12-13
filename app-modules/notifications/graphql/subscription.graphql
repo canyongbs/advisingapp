@@ -30,11 +30,11 @@ extend type Mutation {
         "The type of subscribable to subscribe to."
         subscribable_type: String!
             @rules(apply: ["required", "in:student,prospect"])
-    ): UserSubscription! @create
+    ): UserSubscription! @create @canModel(ability: "create")
 
     "Delete an existing subscription."
     deleteUserSubscription(
         "The primary key of the subscription."
         id: ID! @whereKey
-    ): UserSubscription @delete
+    ): UserSubscription @delete @canFind(ability: "delete")
 }

@@ -5,7 +5,7 @@ type KnowledgeBaseItem
 }
 
 extend type Query @feature(feature: "knowledge-management") {
-    "Get all subscriptions."
+    "Get all knowledge base items."
     knowledgeBaseItems: [KnowledgeBaseItem!]!
         @canModel(ability: "viewAny")
         @paginate
