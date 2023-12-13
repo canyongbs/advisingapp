@@ -60,6 +60,9 @@ export default {
                 lg: 'var(--rounding-lg)',
                 full: 'var(--rounding-sm)',
             },
+            fontFamily: {
+                signature: ['Satisfy', 'cursive'],
+            },
         },
     },
     plugins: [forms, typography, FormKitVariants],

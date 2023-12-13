@@ -32,51 +32,106 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { ref } from "vue";
+import {onMounted, ref, watch} from 'vue';
+import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue';
 
 const props = defineProps({
     context: Object,
 });
 
-const pad = ref(null);
+onMounted(() => {
+    const fonts = document.createElement('link');
+    fonts.type = 'text/css';
+    fonts.rel = 'stylesheet';
+    fonts.href = 'https://fonts.googleapis.com/css2?family=Satisfy&display=swap';
 
-const undo = () => {
-    pad.value.undoSignature();
+    document.head.appendChild(fonts);
+});
+
+const mode = ref('draw');
+
+const drawingPad = ref(null);
+
+const undoDrawing = () => {
+    drawingPad.value.undoSignature();
 };
 
-const clear = () => {
-    pad.value.clearSignature();
+const clearDrawing = () => {
+    drawingPad.value.clearSignature();
 };
 
-const save = () => {
-    const { data } = pad.value.saveSignature();
+const saveDrawing = () => {
+    const { data } = drawingPad.value.saveSignature();
 
     props.context.node.input(data);
 };
 
 const resizeCanvas = () => {
-    pad.value.resizeCanvas();
+    drawingPad.value.resizeCanvas();
 };
+
+const text = ref('');
+
+watch(text, () => {
+    const canvas = document.createElement('canvas');
+    canvas.height = 100;
+    canvas.width = 350;
+
+    const canvasContext = canvas.getContext('2d');
+
+    canvasContext.font = '30px Satisfy';
+    canvasContext.fillText(text.value, 10, 50);
+
+    props.context.node.input(canvas.toDataURL());
+});
 </script>
 
 <template>
-    <div class="flex flex-col gap-1">
-        <VueSignaturePad
-            width="350px"
-            height="100px"
-            ref="pad"
-            :options="{ onBegin: resizeCanvas, onEnd: save }"
-            class="border border-gray-400 rounded"
-        />
+    <div class="flex flex-col gap-2">
+        <RadioGroup v-model="mode">
+            <RadioGroupLabel class="sr-only">Choose an input mode</RadioGroupLabel>
 
-        <div class="flex items-center gap-1">
-            <button @click="undo" type="button" class="inline-flex items-center border border-gray-400 text-xs font-normal py-1 px-2 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
-                Undo
-            </button>
+            <div class="flex items-center flex-wrap gap-2">
+                <RadioGroupOption as="template" value="draw" v-slot="{ active, checked }">
+                    <div :class="[active ? 'ring-2 ring-primary-600 ring-offset-2' : '', checked ? 'bg-primary-600 text-white hover:bg-primary-500' : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50', 'flex items-center justify-center rounded py-1 px-2 text-sm font-medium cursor-pointer focus:outline-none']">
+                        <RadioGroupLabel as="span">Draw it</RadioGroupLabel>
+                    </div>
+                </RadioGroupOption>
 
-            <button @click="clear" type="button" class="inline-flex items-center border border-gray-400 text-xs font-normal py-1 px-2 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
-                Clear
-            </button>
+                <RadioGroupOption as="template" value="type" v-slot="{ active, checked }">
+                    <div :class="[active ? 'ring-2 ring-primary-600 ring-offset-2' : '', checked ? 'bg-primary-600 text-white hover:bg-primary-500' : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50', 'flex items-center justify-center rounded py-1 px-2 text-sm font-medium cursor-pointer focus:outline-none']">
+                        <RadioGroupLabel as="span">Type it</RadioGroupLabel>
+                    </div>
+                </RadioGroupOption>
+            </div>
+        </RadioGroup>
+
+        <div v-if="mode === 'draw'" class="flex flex-col gap-1">
+            <VueSignaturePad
+                width="350px"
+                height="100px"
+                ref="drawingPad"
+                :options="{ onBegin: resizeCanvas, onEnd: saveDrawing }"
+                class="border border-gray-400 rounded"
+            />
+
+            <div class="flex items-center gap-1">
+                <button @click="undoDrawing" type="button" class="inline-flex items-center border border-gray-400 text-xs font-normal py-1 px-2 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
+                    Undo
+                </button>
+
+                <button @click="clearDrawing" type="button" class="inline-flex items-center border border-gray-400 text-xs font-normal py-1 px-2 rounded focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <div v-else-if="mode === 'type'" class="flex flex-col gap-1">
+            <input
+                type="text"
+                v-model.lazy="text"
+                class="text-3xl font-signature text-center border border-gray-400 rounded h-[100px] w-[350px]"
+            />
         </div>
     </div>
 </template>
