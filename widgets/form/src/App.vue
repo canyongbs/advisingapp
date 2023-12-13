@@ -34,16 +34,13 @@
 <script setup>
 import { defineProps, ref, reactive, onMounted } from 'vue';
 import useSteps from './useSteps.js';
+import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
+import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
 
 onMounted(async () => {
     await getForm().then(function () {
         if (formRecaptchaEnabled.value === true) {
-            let recaptchaScript = document.createElement('script');
-            recaptchaScript.setAttribute(
-                'src',
-                'https://www.google.com/recaptcha/api.js?render=' + formRecaptchaKey.value,
-            );
-            document.head.appendChild(recaptchaScript);
+            attachRecaptchaScript(formRecaptchaKey.value);
         }
     });
 });
@@ -51,21 +48,6 @@ onMounted(async () => {
 let { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps();
 
 const props = defineProps(['url']);
-
-// TODO Extract this method so it's re-usable in other widgets
-async function getRecaptchaToken() {
-    return new Promise((resolve, reject) => {
-        grecaptcha.ready(async function () {
-            try {
-                let token = await grecaptcha.execute(formRecaptchaKey.value, { action: 'formSubmission' });
-
-                resolve(token);
-            } catch (error) {
-                reject(error);
-            }
-        });
-    });
-}
 
 const data = reactive({
     steps,
@@ -95,7 +77,7 @@ const data = reactive({
         let recaptchaToken = null;
 
         if (formRecaptchaEnabled.value === true) {
-            recaptchaToken = await getRecaptchaToken();
+            recaptchaToken = await getRecaptchaToken(formRecaptchaKey.value);
         }
 
         if (recaptchaToken !== null) {
