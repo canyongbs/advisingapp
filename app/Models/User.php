@@ -38,48 +38,48 @@ namespace App\Models;
 
 use Filament\Panel;
 use DateTimeInterface;
-use Assist\Task\Models\Task;
-use Assist\Team\Models\Team;
-use Assist\Team\Models\TeamUser;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
-use Assist\CareTeam\Models\CareTeam;
-use Assist\Prospect\Models\Prospect;
-use Assist\Authorization\Models\Role;
+use AdvisingApp\Team\Models\TeamUser;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
-use Assist\MeetingCenter\Models\Calendar;
-use Assist\Assistant\Models\AssistantChat;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\CareTeam\Models\CareTeam;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Authorization\Models\Role;
 use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Assist\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\Consent\Models\Concerns\CanConsent;
-use Assist\MeetingCenter\Models\CalendarEvent;
-use Assist\Assistant\Models\AssistantChatFolder;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use AdvisingApp\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\Consent\Models\Concerns\CanConsent;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Models\AssistantChatFolder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Assist\InAppCommunication\Models\TwilioConversation;
-use Assist\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Assist\Authorization\Models\Pivots\RoleGroupUserPivot;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\ServiceManagement\Models\ServiceRequestAssignment;
-use Assist\Engagement\Models\Concerns\HasManyEngagementBatches;
-use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 
 /**
  * @mixin IdeHelperUser
@@ -119,6 +119,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'out_of_office_is_enabled' => 'boolean',
         'out_of_office_starts_at' => 'datetime',
         'out_of_office_ends_at' => 'datetime',
+        'is_email_visible_on_profile' => 'boolean',
+        'is_phone_number_visible_on_profile' => 'boolean',
+        'working_hours_are_enabled' => 'boolean',
+        'are_working_hours_visible_on_profile' => 'boolean',
+        'working_hours' => 'array',
     ];
 
     protected $fillable = [
@@ -145,6 +150,12 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         'out_of_office_is_enabled',
         'out_of_office_starts_at',
         'out_of_office_ends_at',
+        'is_email_visible_on_profile',
+        'phone_number',
+        'is_phone_number_visible_on_profile',
+        'working_hours_are_enabled',
+        'are_working_hours_visible_on_profile',
+        'working_hours' => 'array',
     ];
 
     public $orderable = [

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline\Filament\Pages\Concerns;
+namespace AdvisingApp\Timeline\Filament\Pages\Concerns;
 
 use Illuminate\Pagination\Cursor;
 use Illuminate\Support\Collection;
-use Assist\Timeline\Models\Timeline;
+use AdvisingApp\Timeline\Models\Timeline;
 
 trait LoadsTimelineRecords
 {

@@ -34,39 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Models;
 
 use Exception;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
 use Illuminate\Support\Facades\DB;
-use Assist\Division\Models\Division;
-use Assist\Prospect\Models\Prospect;
 use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
-use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\AssistDataModel\Models\Contracts\Identifiable;
 use Illuminate\Database\UniqueConstraintViolationException;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\Interaction\Models\Concerns\HasManyMorphedInteractions;
-use Assist\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
-use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
-use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
-use Assist\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
-use Assist\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Identifiable;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
+use AdvisingApp\ServiceManagement\Exceptions\ServiceRequestNumberExceededReRollsException;
+use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 
 /**
  * @property-read Student|Prospect $respondent

@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\InAppCommunication\Actions;
+namespace AdvisingApp\InAppCommunication\Actions;
 
 use Throwable;
 use App\Models\User;
 use Twilio\Rest\Client;
 use Illuminate\Support\Collection;
 use Twilio\Exceptions\TwilioException;
-use Assist\InAppCommunication\Enums\ConversationType;
-use Assist\InAppCommunication\Models\TwilioConversation;
+use AdvisingApp\InAppCommunication\Enums\ConversationType;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
 class CreateTwilioConversation
 {

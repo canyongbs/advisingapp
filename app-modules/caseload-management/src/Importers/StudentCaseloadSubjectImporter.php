@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Importers;
+namespace AdvisingApp\CaseloadManagement\Importers;
 
 use App\Models\Import;
 use App\Imports\Importer;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Actions\ImportAction\ImportColumn;
-use Assist\CaseloadManagement\Models\CaseloadSubject;
+use AdvisingApp\CaseloadManagement\Models\CaseloadSubject;
 
 class StudentCaseloadSubjectImporter extends Importer
 {

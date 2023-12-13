@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Notifications;
+namespace AdvisingApp\Form\Notifications;
 
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use App\Models\NotificationSetting;
-use Assist\Form\Models\FormRequest;
+use AdvisingApp\Form\Models\FormRequest;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 

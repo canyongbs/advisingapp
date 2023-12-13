@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
-use Assist\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ViewRecord;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Notifications\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Notifications\Filament\Actions\SubscribeHeaderAction;
 
 class ViewProspect extends ViewRecord
 {

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Policies;
+namespace AdvisingApp\ServiceManagement\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\ServiceManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 
 class ServiceRequestAssignmentPolicy
 {

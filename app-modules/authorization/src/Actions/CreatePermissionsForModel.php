@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Actions;
+namespace AdvisingApp\Authorization\Actions;
 
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Authorization\Models\Permission;
+use AdvisingApp\Authorization\Models\Permission;
 
 class CreatePermissionsForModel
 {

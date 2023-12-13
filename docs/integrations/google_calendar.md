@@ -16,9 +16,9 @@ On the product details page click `ENABLE`.
 
 On the left navigation select `OAuth consent screen`. Select `Internal` as the User Type and click `CREATE`. Under `App information -> App name` enter a name, e.g. `Canyon Google Calendar Test`. Under `User support email` enter your email. Under `Developer contact information -> Email addresses` enter your email. Select `SAVE AND CONTINUE`. Leave everything else blank as it's not important at this time. Complete the setup.
 
-On the left navigation select `Credentials` and `+ CREATE CREDENTIALS`. Select `OAuth client ID`. For type select `Web application`. Give the key a name, e.g. `Assist`. Under `Authorized redirect URIs` click `+ ADD URI` and enter your domain following the pattern `http://localhost/calendar/google/callback`. The path must match `/calendar/google/callback`. You can also add the [OAuth Playground](https://developers.google.com/oauthplayground/) if you want to test your keys `https://developers.google.com/oauthplayground`. Click `CREATE`. You will be shown a modal with the `Client ID` and `Client secret` copy these down.
+On the left navigation select `Credentials` and `+ CREATE CREDENTIALS`. Select `OAuth client ID`. For type select `Web application`. Give the key a name, e.g. `Advising App`. Under `Authorized redirect URIs` click `+ ADD URI` and enter your domain following the pattern `http://localhost/calendar/google/callback`. The path must match `/calendar/google/callback`. You can also add the [OAuth Playground](https://developers.google.com/oauthplayground/) if you want to test your keys `https://developers.google.com/oauthplayground`. Click `CREATE`. You will be shown a modal with the `Client ID` and `Client secret` copy these down.
 
-## Assist App Configuration
+## Advising App Configuration
 
 Add the client id and secret from above to your `.env`
 

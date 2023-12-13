@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Filament\Resources\RoleResource\Pages;
+namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 
 class EditRole extends EditRecord
 {

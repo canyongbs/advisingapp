@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Pages;
+namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Assist\IntegrationAI\Settings\AISettings;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
 
 class ManageAiSettings extends SettingsPage
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Blocks;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Filament\Forms\Components\Builder\Block;
 

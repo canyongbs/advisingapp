@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Actions;
+namespace AdvisingApp\Engagement\Actions;
 
 use Illuminate\Support\Facades\Log;
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
-use Assist\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 
 class FindEngagementResponseSender implements EngagementResponseSenderFinder
 {

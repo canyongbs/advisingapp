@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
 
 class CreateInteractionCampaign extends CreateRecord
 {

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Division\Database\Seeders;
+namespace AdvisingApp\Division\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Division\Models\Division;
+use AdvisingApp\Division\Models\Division;
 
 class DivisionSeeder extends Seeder
 {

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Models\Contracts;
+namespace AdvisingApp\Campaign\Models\Contracts;
 
-use Assist\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Models\CampaignAction;
 
 interface ExecutableFromACampaignAction
 {

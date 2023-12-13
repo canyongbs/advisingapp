@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Filament\Resources\TeamResource\Pages;
+namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Team\Filament\Resources\TeamResource;
+use AdvisingApp\Team\Filament\Resources\TeamResource;
 
 class EditTeam extends EditRecord
 {

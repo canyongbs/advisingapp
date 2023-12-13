@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Models;
+namespace AdvisingApp\Interaction\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Assist\Interaction\Enums\InteractionStatusColorOptions;
-use Assist\Interaction\Models\Concerns\HasManyInteractions;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
+use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperInteractionStatus

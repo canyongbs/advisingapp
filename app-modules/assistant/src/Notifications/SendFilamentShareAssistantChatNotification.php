@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Notifications;
+namespace AdvisingApp\Assistant\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Assist\Assistant\Enums\AssistantChatShareVia;
+use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
 use Filament\Notifications\Notification as FilamentNotification;
 
 class SendFilamentShareAssistantChatNotification extends Notification

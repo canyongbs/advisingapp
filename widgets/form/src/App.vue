@@ -197,7 +197,7 @@ async function getForm() {
             display.value = true;
         })
         .catch((error) => {
-            console.error(`ASSIST Embed Form ${error}`);
+            console.error(`Advising App Embed Form ${error}`);
         });
 }
 

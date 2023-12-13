@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
 class EditServiceRequestType extends EditRecord
 {

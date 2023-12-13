@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use Assist\Authorization\Actions\CreateRoles;
+use AdvisingApp\Authorization\Actions\CreateRoles;
 
 it('will create the roles defined in our config', function () {
     resolve(CreateRoles::class)->handle();

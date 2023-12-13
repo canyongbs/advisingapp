@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Database\Seeders;
+namespace AdvisingApp\Task\Database\Seeders;
 
 use App\Models\User;
-use Assist\Task\Models\Task;
 use Illuminate\Database\Seeder;
+use AdvisingApp\Task\Models\Task;
 
 class TaskSeeder extends Seeder
 {

@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Pages;
+namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
-use Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 
 class AssistantConfiguration extends Page
 {
-    protected static string $view = 'assist.assistant.filament.pages.assistant-configuration';
+    protected static string $view = 'assistant::filament.pages.assistant-configuration';
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
 

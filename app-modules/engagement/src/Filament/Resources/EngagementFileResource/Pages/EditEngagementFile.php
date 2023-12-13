@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EngagementFileResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 
 class EditEngagementFile extends EditRecord
 {

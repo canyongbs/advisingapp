@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use Assist\Audit\Models\Audit;
+use AdvisingApp\Audit\Models\Audit;
 use OwenIt\Auditing\Listeners\ProcessDispatchAudit;
 
 return [

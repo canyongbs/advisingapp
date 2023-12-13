@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Database\Factories;
+namespace AdvisingApp\Authorization\Database\Factories;
 
-use Assist\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Models\RoleGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

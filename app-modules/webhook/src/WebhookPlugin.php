@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Webhook;
+namespace AdvisingApp\Webhook;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,7 +50,7 @@ class WebhookPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Webhook\\Filament\\Resources'
+            for: 'AdvisingApp\\Webhook\\Filament\\Resources'
         );
     }
 

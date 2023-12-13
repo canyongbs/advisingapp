@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace AdvisingApp\Form\Models;
 
-use Assist\Form\Enums\Rounding;
+use AdvisingApp\Form\Enums\Rounding;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**

@@ -36,7 +36,7 @@
 
 namespace App\Filament\Widgets;
 
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class TotalProspects extends StatsOverviewWidget

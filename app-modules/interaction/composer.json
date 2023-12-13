@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/interaction",
+  "name": "canyon-gbs/advising-app-interaction",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Interaction\\": "src/",
-      "Assist\\Interaction\\Tests\\": "tests/",
-      "Assist\\Interaction\\Database\\Factories\\": "database/factories/",
-      "Assist\\Interaction\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Interaction\\": "src/",
+      "AdvisingApp\\Interaction\\Tests\\": "tests/",
+      "AdvisingApp\\Interaction\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Interaction\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Interaction\\Providers\\InteractionServiceProvider"
+        "AdvisingApp\\Interaction\\Providers\\InteractionServiceProvider"
       ]
     }
   }

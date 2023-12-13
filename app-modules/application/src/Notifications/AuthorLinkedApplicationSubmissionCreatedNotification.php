@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Notifications;
+namespace AdvisingApp\Application\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -42,7 +42,7 @@ use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use Filament\Notifications\Notification as FilamentNotification;
 
 class AuthorLinkedApplicationSubmissionCreatedNotification extends Notification implements ShouldQueue

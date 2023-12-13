@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Filament\Blocks;
+namespace AdvisingApp\Form\Filament\Blocks;
 
 class FormFieldBlockRegistry
 {

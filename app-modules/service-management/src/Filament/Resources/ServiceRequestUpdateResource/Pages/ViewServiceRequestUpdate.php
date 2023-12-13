@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
 
 use Filament\Actions;
 use Filament\Infolists\Infolist;
@@ -42,10 +42,10 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Enums\ServiceRequestUpdateDirection;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
 class ViewServiceRequestUpdate extends ViewRecord
 {

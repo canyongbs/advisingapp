@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline\Models;
+namespace AdvisingApp\Timeline\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;

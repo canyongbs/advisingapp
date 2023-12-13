@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectSourceResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
@@ -45,7 +45,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 
 class ListProspectSources extends ListRecords
 {

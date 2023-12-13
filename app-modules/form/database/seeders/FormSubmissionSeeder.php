@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Database\Seeders;
+namespace AdvisingApp\Form\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 

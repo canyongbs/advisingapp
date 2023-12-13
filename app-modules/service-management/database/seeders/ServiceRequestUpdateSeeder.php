@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Seeders;
+namespace AdvisingApp\ServiceManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 
 class ServiceRequestUpdateSeeder extends Seeder
 {

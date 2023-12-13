@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Actions;
+namespace AdvisingApp\Engagement\Filament\Actions;
 
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -43,7 +43,7 @@ use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 
 class EngagementCreateAction
 {

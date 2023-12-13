@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Filament\Resources;
+namespace AdvisingApp\Audit\Filament\Resources;
 
-use Assist\Audit\Models\Audit;
 use Filament\Resources\Resource;
-use Assist\Audit\Filament\Resources\AuditResource\Pages;
+use AdvisingApp\Audit\Models\Audit;
+use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 class AuditResource extends Resource
 {

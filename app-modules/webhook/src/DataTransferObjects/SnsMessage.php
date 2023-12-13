@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Webhook\DataTransferObjects;
+namespace AdvisingApp\Webhook\DataTransferObjects;
 
 use Illuminate\Http\Request;
 use Spatie\LaravelData\Data;

@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
+namespace AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
 use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Concerns\InteractsWithTable;
-use Assist\CaseloadManagement\Enums\CaseloadType;
-use Assist\CaseloadManagement\Enums\CaseloadModel;
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
+use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class GetCaseloadQuery extends EditRecord implements HasTable
 {

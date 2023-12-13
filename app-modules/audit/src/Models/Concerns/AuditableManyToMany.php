@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Audit\Models\Concerns;
+namespace AdvisingApp\Audit\Models\Concerns;
 
-use Assist\Audit\Overrides\MorphToMany;
 use Illuminate\Database\Eloquent\Model;
-use Assist\Audit\Overrides\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Audit\Overrides\MorphToMany;
+use AdvisingApp\Audit\Overrides\BelongsToMany;
 
 trait AuditableManyToMany
 {

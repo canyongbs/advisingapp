@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Listeners;
+namespace AdvisingApp\Assistant\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\IntegrationAI\Events\AIPromptInitiated;
+use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
 
 class LogAssistantChatMessage implements ShouldQueue
 {

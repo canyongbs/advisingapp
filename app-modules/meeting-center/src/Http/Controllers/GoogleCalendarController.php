@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Http\Controllers;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use App\Models\User;
 use Google\Service\Oauth2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\RedirectResponse;
-use Assist\MeetingCenter\Models\Calendar;
-use Assist\MeetingCenter\Enums\CalendarProvider;
-use Assist\MeetingCenter\Managers\GoogleCalendarManager;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
+use AdvisingApp\MeetingCenter\Managers\GoogleCalendarManager;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
 
 class GoogleCalendarController extends CalendarController
 {

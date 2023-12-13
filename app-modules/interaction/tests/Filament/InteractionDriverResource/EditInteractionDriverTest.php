@@ -38,8 +38,8 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Interaction\Models\InteractionDriver;
-use Assist\Interaction\Filament\Resources\InteractionDriverResource;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
 
 test('EditInteractionDriver is gated with proper access control', function () {
     $user = User::factory()->create();

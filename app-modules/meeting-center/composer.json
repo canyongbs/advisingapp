@@ -1,5 +1,5 @@
 {
-    "name": "canyon-gbs/meeting-center",
+    "name": "canyon-gbs/advising-app-meeting-center",
     "description": "",
     "type": "library",
     "version": "1.0",
@@ -12,17 +12,17 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "Assist\\MeetingCenter\\": "src/",
-            "Assist\\MeetingCenter\\Tests\\": "tests/",
-            "Assist\\MeetingCenter\\Database\\Factories\\": "database/factories/",
-            "Assist\\MeetingCenter\\Database\\Seeders\\": "database/seeders/"
+            "AdvisingApp\\MeetingCenter\\": "src/",
+            "AdvisingApp\\MeetingCenter\\Tests\\": "tests/",
+            "AdvisingApp\\MeetingCenter\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\MeetingCenter\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "minimum-stability": "dev",
     "extra": {
         "laravel": {
             "providers": [
-                "Assist\\MeetingCenter\\Providers\\MeetingCenterServiceProvider"
+                "AdvisingApp\\MeetingCenter\\Providers\\MeetingCenterServiceProvider"
             ]
         }
     }

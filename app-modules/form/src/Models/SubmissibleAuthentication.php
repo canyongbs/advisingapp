@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace AdvisingApp\Form\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Support\Carbon;

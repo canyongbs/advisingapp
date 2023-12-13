@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Events;
+namespace AdvisingApp\Notifications\Events;
 
 use App\Models\User;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Assist\Notifications\Models\Contracts\Subscribable;
-use Assist\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
 
 class TriggeredAutoSubscription
 {

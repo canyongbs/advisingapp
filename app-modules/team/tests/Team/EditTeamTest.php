@@ -35,13 +35,13 @@
 */
 
 use App\Models\User;
-use Assist\Team\Models\Team;
+use AdvisingApp\Team\Models\Team;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Team\Filament\Resources\TeamResource;
-use Assist\Team\Filament\Resources\TeamResource\Pages\EditTeam;
+use AdvisingApp\Team\Filament\Resources\TeamResource;
+use AdvisingApp\Team\Filament\Resources\TeamResource\Pages\EditTeam;
 
 // Permission Tests
 

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EngagementFileResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
 
 use Filament\Actions;
 use Filament\Infolists\Infolist;
@@ -43,7 +43,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
-use Assist\Engagement\Filament\Resources\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 
 class ViewEngagementFile extends ViewRecord
 {

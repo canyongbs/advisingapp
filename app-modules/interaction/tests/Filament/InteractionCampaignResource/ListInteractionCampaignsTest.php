@@ -38,7 +38,7 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Interaction\Filament\Resources\InteractionCampaignResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
 
 test('ListInteractionCampaigns is gated with proper access control', function () {
     $user = User::factory()->create();

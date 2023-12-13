@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages;
 
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Assist\ServiceManagement\Enums\ColumnColorOptions;
-use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
+use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 
 class EditServiceRequestStatus extends EditRecord
 {

@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Database\Seeders;
+namespace AdvisingApp\Prospect\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Prospect\Models\ProspectStatus;
-use Assist\Prospect\Enums\ProspectStatusColorOptions;
-use Assist\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 
 class ProspectStatusSeeder extends Seeder
 {

@@ -34,29 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Http\Controllers;
+namespace AdvisingApp\Form\Http\Controllers;
 
 use Closure;
 use Illuminate\Support\Str;
-use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
+use AdvisingApp\Form\Models\Form;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
-use Assist\Form\Models\FormRequest;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Assist\Form\Models\FormSubmission;
+use AdvisingApp\Form\Models\FormRequest;
 use Illuminate\Support\Facades\Validator;
-use Assist\Form\Models\FormAuthentication;
+use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Support\Facades\Notification;
-use Assist\Form\Actions\GenerateFormKitSchema;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Assist\Form\Actions\GenerateSubmissibleValidation;
-use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
-use Assist\Form\Notifications\AuthenticateFormNotification;
-use Assist\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Models\FormAuthentication;
+use AdvisingApp\Form\Actions\GenerateFormKitSchema;
+use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
+use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
+use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use Assist\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class FormWidgetController extends Controller

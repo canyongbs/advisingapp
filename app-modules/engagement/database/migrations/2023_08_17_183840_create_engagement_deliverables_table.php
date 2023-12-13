@@ -37,7 +37,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Assist\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 
 return new class () extends Migration {
     public function up(): void

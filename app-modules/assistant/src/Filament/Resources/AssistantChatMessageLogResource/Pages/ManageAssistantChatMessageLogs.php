@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages;
+namespace AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages;
 
 use Filament\Resources\Pages\ManageRecords;
-use Assist\Assistant\Filament\Resources\AssistantChatMessageLogResource;
+use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
 
 class ManageAssistantChatMessageLogs extends ManageRecords
 {

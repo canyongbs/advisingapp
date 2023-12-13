@@ -42,9 +42,9 @@ use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestPriorityRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestPriorityRequestFactory;
 
 test('A successful action on the EditServiceRequestPriority page', function () {
     $serviceRequestPriority = ServiceRequestPriority::factory()->create();

@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ViewServiceRequest;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ListServiceRequests;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ServiceRequestTimeline;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestUpdate;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestAssignment;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestInteraction;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ViewServiceRequest;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ListServiceRequests;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ServiceRequestTimeline;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestAssignment;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestInteraction;
 
 class ServiceRequestResource extends Resource
 {

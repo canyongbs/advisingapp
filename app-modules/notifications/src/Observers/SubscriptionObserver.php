@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Observers;
+namespace AdvisingApp\Notifications\Observers;
 
-use Assist\Notifications\Models\Subscription;
-use Assist\Notifications\Events\SubscriptionCreated;
-use Assist\Notifications\Events\SubscriptionDeleted;
+use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Notifications\Events\SubscriptionCreated;
+use AdvisingApp\Notifications\Events\SubscriptionDeleted;
 
 class SubscriptionObserver
 {

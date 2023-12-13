@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Observers;
+namespace AdvisingApp\MeetingCenter\Observers;
 
-use Assist\MeetingCenter\Models\CalendarEvent;
-use Assist\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 
 class CalendarEventObserver
 {

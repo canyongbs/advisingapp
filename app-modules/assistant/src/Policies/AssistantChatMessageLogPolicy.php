@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Policies;
+namespace AdvisingApp\Assistant\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
-use Assist\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 
 class AssistantChatMessageLogPolicy
 {

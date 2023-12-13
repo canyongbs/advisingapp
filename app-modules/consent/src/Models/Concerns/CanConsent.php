@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Models\Concerns;
+namespace AdvisingApp\Consent\Models\Concerns;
 
-use Assist\Audit\Overrides\BelongsToMany;
-use Assist\Consent\Models\ConsentAgreement;
-use Assist\Consent\Models\UserConsentAgreement;
+use AdvisingApp\Audit\Overrides\BelongsToMany;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Consent\Models\UserConsentAgreement;
 
 trait CanConsent
 {

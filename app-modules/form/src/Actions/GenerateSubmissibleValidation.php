@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace AdvisingApp\Form\Actions;
 
 use Illuminate\Support\Arr;
-use Assist\Form\Models\Submissible;
-use Assist\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Collection;
-use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Assist\IntegrationGoogleRecaptcha\Rules\RecaptchaTokenValid;
 
 class GenerateSubmissibleValidation

@@ -37,13 +37,11 @@
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-
-use Assist\Prospect\Models\Prospect;
-
 use function Pest\Livewire\livewire;
 
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFactory;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFactory;
 
 // TODO: Write EditProspect page tests
 //test('A successful action on the EditProspect page', function () {});

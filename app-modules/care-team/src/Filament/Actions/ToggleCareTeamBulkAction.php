@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CareTeam\Filament\Actions;
+namespace AdvisingApp\CareTeam\Filament\Actions;
 
 use App\Models\User;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
 class ToggleCareTeamBulkAction extends BulkAction
 {

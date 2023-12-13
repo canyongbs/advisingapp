@@ -41,9 +41,9 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
-use Assist\KnowledgeBase\Tests\KnowledgeBaseCategory\RequestFactories\EditKnowledgeBaseCategoryRequestFactory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseCategory\RequestFactories\EditKnowledgeBaseCategoryRequestFactory;
 
 // TODO: Write EditKnowledgeBaseCategory tests
 //test('A successful action on the EditKnowledgeBaseCategory page', function () {});

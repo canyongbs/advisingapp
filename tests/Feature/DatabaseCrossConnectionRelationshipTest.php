@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Assist\AssistDataModel\Models\Student;
-use Assist\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
 test('relationships work cross connections', function () {
     $student = Student::factory()

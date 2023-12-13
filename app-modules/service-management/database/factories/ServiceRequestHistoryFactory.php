@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Factories;
+namespace AdvisingApp\ServiceManagement\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\ServiceManagement\Models\ServiceRequestHistory>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\ServiceManagement\Models\ServiceRequestHistory>
  */
 class ServiceRequestHistoryFactory extends Factory
 {

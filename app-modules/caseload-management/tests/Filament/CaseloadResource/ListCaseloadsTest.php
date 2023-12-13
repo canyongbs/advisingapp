@@ -38,7 +38,7 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\CaseloadManagement\Filament\Resources\CaseloadResource;
+use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 test('ListCaseloads is gated with proper access control', function () {
     $user = User::factory()->create();

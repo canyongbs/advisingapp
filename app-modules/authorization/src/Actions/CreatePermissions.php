@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Actions;
+namespace AdvisingApp\Authorization\Actions;
 
 use ReflectionClass;
-use Assist\Authorization\Models\Permission;
+use AdvisingApp\Authorization\Models\Permission;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 class CreatePermissions
 {

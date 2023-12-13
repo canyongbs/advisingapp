@@ -35,11 +35,11 @@
 */
 
 use App\Models\User;
-use Assist\Audit\Models\Audit;
+use AdvisingApp\Audit\Models\Audit;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Audit\Filament\Resources\AuditResource;
+use AdvisingApp\Audit\Filament\Resources\AuditResource;
 
 // TODO: Write tests for ViewAudit page
 test('The correct details are displayed on the ViewAudit page', function () {});

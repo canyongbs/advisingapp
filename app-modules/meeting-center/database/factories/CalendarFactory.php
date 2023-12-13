@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Database\Factories;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Assist\MeetingCenter\Models\Calendar>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\MeetingCenter\Models\Calendar>
  */
 class CalendarFactory extends Factory
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Http\Middleware;
+namespace AdvisingApp\Authorization\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

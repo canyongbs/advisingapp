@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Filament\Resources\RoleResource\Pages;
+namespace AdvisingApp\Authorization\Filament\Resources\RoleResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Authorization\Filament\Resources\RoleResource;
+use AdvisingApp\Authorization\Filament\Resources\RoleResource;
 
 class CreateRole extends CreateRecord
 {

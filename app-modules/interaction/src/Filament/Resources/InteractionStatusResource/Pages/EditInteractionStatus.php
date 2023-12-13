@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Filament\Resources\InteractionStatusResource\Pages;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Assist\Interaction\Filament\Resources\InteractionStatusResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 
 class EditInteractionStatus extends EditRecord
 {

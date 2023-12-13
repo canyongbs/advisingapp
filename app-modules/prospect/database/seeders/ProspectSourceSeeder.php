@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Database\Seeders;
+namespace AdvisingApp\Prospect\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectSource;
 
 class ProspectSourceSeeder extends Seeder
 {
@@ -46,7 +46,7 @@ class ProspectSourceSeeder extends Seeder
         ProspectSource::factory()
             ->createMany(
                 [
-                    ['name' => 'ASSIST'],
+                    ['name' => 'Advising App'],
                     ['name' => 'Import'],
                 ]
             );

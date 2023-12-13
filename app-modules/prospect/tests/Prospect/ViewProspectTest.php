@@ -38,8 +38,8 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 // TODO: Write ViewProspectSource page test
 //test('The correct details are displayed on the ViewProspect page', function () {});

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Tests\EngagementFile\RequestFactories;
+namespace AdvisingApp\Engagement\Tests\EngagementFile\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 

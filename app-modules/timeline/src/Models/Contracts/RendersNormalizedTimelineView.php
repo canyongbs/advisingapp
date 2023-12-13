@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline\Models\Contracts;
+namespace AdvisingApp\Timeline\Models\Contracts;
 
 interface RendersNormalizedTimelineView
 {

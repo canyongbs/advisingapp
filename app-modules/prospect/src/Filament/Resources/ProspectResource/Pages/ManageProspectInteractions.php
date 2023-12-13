@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
-use Assist\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\CreateInteraction;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\RelationManagers\HasManyMorphedInteractionsRelationManager;
 
 class ManageProspectInteractions extends ManageRelatedRecords
 {

@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Imports;
+namespace AdvisingApp\Prospect\Imports;
 
 use App\Models\Import;
 use App\Imports\Importer;
 use Illuminate\Support\Str;
-use Assist\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Filament\Actions\ImportAction\ImportColumn;
 
 class ProspectImporter extends Importer

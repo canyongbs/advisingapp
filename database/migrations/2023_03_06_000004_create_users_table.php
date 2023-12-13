@@ -48,6 +48,7 @@ class CreateUsersTable extends Migration
             $table->string('emplid')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable()->unique();
+            $table->boolean('is_email_visible_on_profile')->default(false);
             $table->string('password')->nullable();
             $table->string('remember_token')->nullable();
             $table->string('locale')->nullable();
@@ -67,6 +68,11 @@ class CreateUsersTable extends Migration
             $table->boolean('out_of_office_is_enabled')->default(false);
             $table->datetime('out_of_office_starts_at')->nullable();
             $table->datetime('out_of_office_ends_at')->nullable();
+            $table->text('phone_number')->nullable();
+            $table->boolean('is_phone_number_visible_on_profile')->default(false);
+            $table->boolean('working_hours_are_enabled')->default(false);
+            $table->boolean('are_working_hours_visible_on_profile')->default(false);
+            $table->jsonb('working_hours')->nullable();
 
             $table->foreignUuid('pronouns_id')->nullable()->constrained('pronouns')->nullOnDelete();
             $table->boolean('are_pronouns_visible_on_profile')->default(false);

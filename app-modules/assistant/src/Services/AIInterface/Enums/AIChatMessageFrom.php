@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Services\AIInterface\Enums;
+namespace AdvisingApp\Assistant\Services\AIInterface\Enums;
 
 enum AIChatMessageFrom: string
 {

@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Http\Controllers;
+namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Laravel\Socialite\Two\User;
 use Illuminate\Http\RedirectResponse;
 use SocialiteProviders\Azure\Provider;
-use Assist\MeetingCenter\Models\Calendar;
-use Assist\MeetingCenter\Enums\CalendarProvider;
-use Assist\Authorization\Enums\SocialiteProvider;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
+use AdvisingApp\Authorization\Enums\SocialiteProvider;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages\ListCalendarEvents;
 
 class OutlookCalendarController extends CalendarController
 {

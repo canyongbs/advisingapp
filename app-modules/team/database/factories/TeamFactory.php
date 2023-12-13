@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Database\Factories;
+namespace AdvisingApp\Team\Database\Factories;
 
-use Assist\Team\Models\Team;
-use Assist\Division\Models\Division;
+use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Division\Models\Division;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
