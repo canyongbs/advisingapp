@@ -50,6 +50,7 @@ use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
+use AdvisingApp\Application\Database\Seeders\ApplicationStateSeeder;
 use AdvisingApp\Engagement\Database\Seeders\EngagementResponseSeeder;
 use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
@@ -101,6 +102,7 @@ class DatabaseSeeder extends Seeder
             DemoEducatableEngagementSeeder::class,
             SuperAdminSeeder::class,
             StudentSeeder::class,
+            ApplicationStateSeeder::class,
         ]);
     }
 }
