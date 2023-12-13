@@ -5,7 +5,9 @@ extend type Query {
         id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
 
         "Search by email address."
-        email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
+        email: String
+            @eq
+            @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find
 
     "List multiple users."

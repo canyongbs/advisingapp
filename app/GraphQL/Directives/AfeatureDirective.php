@@ -38,6 +38,7 @@ declare(strict_types = 1);
 
 namespace App\GraphQL\Directives;
 
+use GraphQL\Language\AST\NodeList;
 use GraphQL\Language\AST\TypeExtensionNode;
 use Nuwave\Lighthouse\Schema\AST\ASTHelper;
 use GraphQL\Language\AST\TypeDefinitionNode;
@@ -83,15 +84,13 @@ GRAPHQL;
 
     public function manipulateTypeExtension(DocumentAST &$documentAST, TypeExtensionNode &$typeExtension): void
     {
-        ray($documentAST);
-        ray($typeExtension);
+        $typeExtension->interfaces = new NodeList([]);
+        $typeExtension->directives = new NodeList([]);
+        $typeExtension->fields = new NodeList([]);
 
         $documentAST->typeExtensions[$typeExtension->name->value] = collect($documentAST->typeExtensions[$typeExtension->name->value])->filter(function ($typeExtensionNode) use ($typeExtension) {
             return $typeExtensionNode !== $typeExtension;
         })->toArray();
-
-        ray($documentAST);
-        //ASTHelper::addDirectiveToFields($this->directiveNode, $typeExtension);
     }
 
     public function manipulateFieldDefinition(DocumentAST &$documentAST, FieldDefinitionNode &$fieldDefinition, ObjectTypeDefinitionNode|InterfaceTypeDefinitionNode &$parentType): void
@@ -107,9 +106,15 @@ GRAPHQL;
                 }
             }
 
-            ray($keyToRemove);
-
             unset($parentType->fields[$keyToRemove]);
+
+            $directives = collect($fieldDefinition->directives);
+
+            if ($directives->contains(fn ($directive) => $directive->name->value === 'paginate')) {
+                $fieldDefinition->directives = new NodeList($directives->filter(fn ($directive) => $directive->name->value !== 'paginate')->toArray());
+
+                ASTHelper::addDirectiveToNode('@all', $fieldDefinition);
+            }
         }
     }
 
