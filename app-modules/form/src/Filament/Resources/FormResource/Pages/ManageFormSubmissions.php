@@ -37,6 +37,7 @@
 namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
 use Filament\Tables\Table;
+use Carbon\CarbonInterface;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\Action;
 use Maatwebsite\Excel\Facades\Excel;
@@ -49,10 +50,12 @@ use AdvisingApp\Form\Models\FormSubmission;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use App\Filament\Filters\OpenSearch\SelectFilter;
 use AdvisingApp\Form\Exports\FormSubmissionExport;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 
 class ManageFormSubmissions extends ManageRelatedRecords
 {
@@ -72,7 +75,11 @@ class ManageFormSubmissions extends ManageRelatedRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('created_at')
+                TextColumn::make('status')
+                    ->badge()
+                    ->getStateUsing(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
+                TextColumn::make('submitted_at')
+                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('author.email')
                     ->searchable(),
@@ -80,8 +87,13 @@ class ManageFormSubmissions extends ManageRelatedRecords
                     ->badge()
                     ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
                     ->color('success'),
+                TextColumn::make('requester.name'),
+                TextColumn::make('requested_at')
+                    ->dateTime()
+                    ->getStateUsing(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
             ])
             ->filters([
+                FormSubmissionStatusFilter::make(),
                 SelectFilter::make('author_type')
                     ->options([
                         'student' => 'Student',
@@ -102,7 +114,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
             ])
             ->actions([
                 ViewAction::make()
-                    ->modalHeading(fn (FormSubmission $record) => "Submission Details: {$record->created_at}")
+                    ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
                     ->infolist(fn (FormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Authenticated author')
                             ->schema([
@@ -113,7 +125,8 @@ class ManageFormSubmissions extends ManageRelatedRecords
                             ])
                             ->columns(2),
                     ] : null)
-                    ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record])),
+                    ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record]))
+                    ->visible(fn (FormSubmission $record) => $record->submitted_at),
                 DeleteAction::make(),
             ])
             ->bulkActions([

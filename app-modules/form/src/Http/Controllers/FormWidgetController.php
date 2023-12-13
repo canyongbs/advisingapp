@@ -45,7 +45,6 @@ use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use AdvisingApp\Form\Models\FormRequest;
 use Illuminate\Support\Facades\Validator;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Support\Facades\Notification;
@@ -173,14 +172,21 @@ class FormWidgetController extends Controller
             );
         }
 
-        /** @var FormSubmission $submission */
-        $submission = $form->submissions()->make();
+        /** @var ?FormSubmission $submission */
+        $submission = $authentication ? $form->submissions()
+            ->requested()
+            ->whereMorphedTo('author', $authentication->author)
+            ->first() : null;
+
+        $submission ??= $form->submissions()->make();
 
         if ($authentication) {
             $submission->author()->associate($authentication->author);
 
             $authentication->delete();
         }
+
+        $submission->submitted_at = now();
 
         $submission->save();
 
@@ -241,17 +247,6 @@ class FormWidgetController extends Controller
         }
 
         $submission->save();
-
-        if ($authentication) {
-            $form->requests()
-                ->whereMorphedTo('recipient', $authentication->author)
-                ->whereDoesntHave('submission')
-                ->notCanceled()
-                ->each(function (FormRequest $request) use ($submission) {
-                    $request->submission()->associate($submission);
-                    $request->save();
-                });
-        }
 
         return response()->json(
             [

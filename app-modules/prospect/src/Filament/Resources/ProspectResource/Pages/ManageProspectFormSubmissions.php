@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use Filament\Tables\Table;
+use Carbon\CarbonInterface;
 use App\Filament\Columns\IdColumn;
 use Illuminate\Support\Facades\Cache;
 use Filament\Tables\Actions\ViewAction;
@@ -46,10 +47,12 @@ use Filament\Tables\Actions\DeleteAction;
 use AdvisingApp\Form\Models\FormSubmission;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Form\Filament\Actions\RequestForm;
+use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Form\Filament\Resources\FormResource;
+use AdvisingApp\Form\Filament\Actions\RequestFormSubmission;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 
 class ManageProspectFormSubmissions extends ManageRelatedRecords
 {
@@ -70,21 +73,32 @@ class ManageProspectFormSubmissions extends ManageRelatedRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('form.name')
+                TextColumn::make('submissible.name')
+                    ->label('Form')
                     ->searchable()
-                    ->url(fn (FormSubmission $record): string => FormResource::getUrl('edit', ['record' => $record->form])),
-                TextColumn::make('created_at')
+                    ->url(fn (FormSubmission $record): string => FormResource::getUrl('edit', ['record' => $record->submissible])),
+                TextColumn::make('status')
+                    ->badge()
+                    ->getStateUsing(fn (FormSubmission $record): FormSubmissionStatus => $record->getStatus()),
+                TextColumn::make('submitted_at')
+                    ->dateTime()
                     ->sortable(),
+                TextColumn::make('requester.name'),
+                TextColumn::make('requested_at')
+                    ->dateTime()
+                    ->getStateUsing(fn (FormSubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
             ])
             ->filters([
+                FormSubmissionStatusFilter::make(),
             ])
             ->headerActions([
-                RequestForm::make(),
+                RequestFormSubmission::make(),
             ])
             ->actions([
                 ViewAction::make()
-                    ->modalHeading(fn (FormSubmission $record) => "Submission Details: {$record->created_at}")
-                    ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record])),
+                    ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
+                    ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record]))
+                    ->visible(fn (FormSubmission $record) => $record->submitted_at),
                 DeleteAction::make(),
             ])
             ->bulkActions([

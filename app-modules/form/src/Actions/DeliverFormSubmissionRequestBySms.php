@@ -34,19 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Observers;
+namespace AdvisingApp\Form\Actions;
 
-use AdvisingApp\Form\Models\FormRequest;
+use Twilio\Rest\Client;
+use Twilio\Exceptions\TwilioException;
 
-class FormRequestObserver
+class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
 {
-    public function creating(FormRequest $request): void
+    public function handle(): void
     {
-        $request->user()->associate(auth()->user());
-    }
+        $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
 
-    public function created(FormRequest $request): void
-    {
-        $request->deliver();
+        try {
+            $client->messages->create(
+                ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->submission->author->mobile,
+                [
+                    'from' => config('services.twilio.from_number'),
+                    'body' => "You have been sent a request to complete {$this->submission->submissible->name} by {$this->submission->requester->name}." .
+                        (filled($this->submission->request_note) ? " {$this->submission->request_note}" : '') .
+                        ' ' . route('forms.show', ['form' => $this->submission->submissible]),
+                ],
+            );
+        } catch (TwilioException $e) {
+            // TODO Notify someone of the failure
+        }
     }
 }

@@ -36,27 +36,23 @@
 
 namespace AdvisingApp\Form\Actions;
 
-use Twilio\Rest\Client;
-use Twilio\Exceptions\TwilioException;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use AdvisingApp\Form\Models\FormSubmission;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 
-class DeliverFormRequestBySms extends DeliverFormRequest
+abstract class DeliverFormSubmissionRequest implements ShouldQueue
 {
-    public function handle(): void
-    {
-        $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-        try {
-            $client->messages->create(
-                ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->request->recipient->mobile,
-                [
-                    'from' => config('services.twilio.from_number'),
-                    'body' => "You have been sent a request to complete {$this->request->form->name} by {$this->request->user->name}." .
-                        (filled($this->request->note) ? " {$this->request->note}" : '') .
-                        ' ' . route('forms.show', ['form' => $this->request->form]),
-                ],
-            );
-        } catch (TwilioException $e) {
-            // TODO Notify someone of the failure
-        }
-    }
+    public function __construct(
+        public FormSubmission $submission,
+    ) {}
+
+    abstract public function handle(): void;
 }

@@ -36,23 +36,14 @@
 
 namespace AdvisingApp\Form\Actions;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use AdvisingApp\Form\Models\FormRequest;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\Form\Notifications\FormSubmissionRequestNotification;
 
-abstract class DeliverFormRequest implements ShouldQueue
+class DeliverFormSubmissionRequestByEmail extends DeliverFormSubmissionRequest
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
-    public function __construct(
-        public FormRequest $request
-    ) {}
-
-    abstract public function handle(): void;
+    public function handle(): void
+    {
+        $this->submission
+            ->author
+            ->notify(new FormSubmissionRequestNotification($this->submission));
+    }
 }

@@ -34,44 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+namespace AdvisingApp\Form\Enums;
 
-use Illuminate\Bus\Queueable;
-use App\Notifications\MailMessage;
-use App\Models\NotificationSetting;
-use AdvisingApp\Form\Models\FormRequest;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
 
-class FormRequestNotification extends Notification implements ShouldQueue
+enum FormSubmissionStatus: string implements HasColor, HasLabel
 {
-    use Queueable;
+    case Requested = 'requested';
+    case Submitted = 'submitted';
+    case Canceled = 'canceled';
 
-    public function __construct(
-        public FormRequest $request
-    ) {}
-
-    public function via(object $notifiable): array
+    public function getLabel(): ?string
     {
-        return ['mail'];
+        return $this->name;
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function getColor(): string
     {
-        $divisionName = $this->request->user->teams()->first()?->division?->name;
-
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting())
-            ->subject("Request to Complete: {$this->request->form->name}" . (filled($divisionName) ? " | {$divisionName}" : ''))
-            ->greeting('Hello ' . $this->request->recipient->display_name . '!')
-            ->line("Please complete the attached form: {$this->request->form->name}")
-            ->lineIf(filled($this->request->note), $this->request->note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->request->form]))
-            ->salutation("Regards, {$this->request->user->name}");
-    }
-
-    private function resolveNotificationSetting(): ?NotificationSetting
-    {
-        return $this->request->user->teams()->first()?->division?->notificationSetting?->setting;
+        return match ($this) {
+            self::Requested => 'info',
+            self::Submitted => 'success',
+            self::Canceled => 'danger',
+        };
     }
 }

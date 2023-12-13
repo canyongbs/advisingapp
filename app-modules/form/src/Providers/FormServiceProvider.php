@@ -42,10 +42,8 @@ use AdvisingApp\Form\Models\Form;
 use Illuminate\Support\Facades\Event;
 use AdvisingApp\Form\Models\FormField;
 use Illuminate\Support\ServiceProvider;
-use AdvisingApp\Form\Models\FormRequest;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
-use AdvisingApp\Form\Observers\FormRequestObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Form\Observers\FormSubmissionObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
@@ -74,7 +72,6 @@ class FormServiceProvider extends ServiceProvider
 
     public function registerObservers(): void
     {
-        FormRequest::observe(FormRequestObserver::class);
         FormSubmission::observe(FormSubmissionObserver::class);
     }
 

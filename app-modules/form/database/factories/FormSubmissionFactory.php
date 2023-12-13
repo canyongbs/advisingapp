@@ -68,6 +68,7 @@ class FormSubmissionFactory extends Factory
 
                 return $author->getKey();
             },
+            'submitted_at' => now(),
         ];
     }
 }

@@ -34,16 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\Form\Notifications;
 
-use AdvisingApp\Form\Notifications\FormRequestNotification;
+use Illuminate\Bus\Queueable;
+use App\Notifications\MailMessage;
+use Illuminate\Notifications\Notification;
+use AdvisingApp\Form\Models\FormSubmission;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class DeliverFormRequestByEmail extends DeliverFormRequest
+class FormSubmissionRequestNotification extends Notification implements ShouldQueue
 {
-    public function handle(): void
+    use Queueable;
+
+    public function __construct(
+        public FormSubmission $submission,
+    ) {}
+
+    public function via(object $notifiable): array
     {
-        $this->request
-            ->recipient
-            ->notify(new FormRequestNotification($this->request));
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $division = $this->submission->requester->teams()->first()?->division;
+
+        return MailMessage::make()
+            ->settings($division?->notificationSetting?->setting)
+            ->subject("Request to Complete: {$this->submission->submissible->name}" . (filled($division?->name) ? " | {$division->name}" : ''))
+            ->greeting('Hello ' . $this->submission->author->display_name . '!')
+            ->line("Please complete the attached form: {$this->submission->submissible->name}")
+            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
+            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]))
+            ->salutation("Regards, {$this->submission->requester->name}");
     }
 }

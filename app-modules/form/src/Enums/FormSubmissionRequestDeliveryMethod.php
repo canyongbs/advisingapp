@@ -36,9 +36,29 @@
 
 namespace AdvisingApp\Form\Enums;
 
-enum FormRequestStatus
+use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestBySms;
+use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestByEmail;
+
+enum FormSubmissionRequestDeliveryMethod: string implements HasLabel
 {
-    case Open;
-    case Submitted;
-    case Canceled;
+    case Email = 'email';
+    case Sms = 'sms';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            static::Email => 'Email',
+            static::Sms => 'SMS',
+        };
+    }
+
+    public function deliver(FormSubmission $submission): void
+    {
+        match ($this) {
+            static::Email => DeliverFormSubmissionRequestByEmail::dispatch($submission),
+            static::Sms => DeliverFormSubmissionRequestBySms::dispatch($submission),
+        };
+    }
 }
