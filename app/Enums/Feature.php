@@ -61,8 +61,13 @@ enum Feature: string
     {
         // If features are added that are not based on a License Addon we will need to update this
         Gate::define(
-            $this->value,
+            $this->getGateName(),
             fn () => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
         );
+    }
+
+    public function getGateName(): string
+    {
+        return "feature-{$this->value}";
     }
 }
