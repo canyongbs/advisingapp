@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Form\Filament\Actions;
 
+use Illuminate\Support\Str;
+use AdvisingApp\Form\Models\Form;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use AdvisingApp\Form\Models\FormRequest;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Form\Enums\FormRequestDeliveryMethod;
+use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 
-class RequestForm extends Action
+class RequestFormSubmission extends Action
 {
     protected function setUp(): void
     {
@@ -56,27 +56,41 @@ class RequestForm extends Action
             Step::make('Form')
                 ->schema([
                     Select::make('form_id')
-                        ->relationship('form', 'name', fn (Builder $query) => $query->where('is_authenticated', true))
+                        ->label('Form')
+                        ->options(fn (): array => Form::query()
+                            ->where('is_authenticated', true)
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all())
+                        ->getSearchResultsUsing(fn (string $search): array => Form::query()
+                            ->where('is_authenticated', true)
+                            ->where('lower(name)', 'like', '%' . Str::lower($search) . '%')
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all())
                         ->searchable()
-                        ->preload()
-                        ->model(FormRequest::class)
                         ->helperText('Forms must have authentication enabled to be requested, to verify the identity of the respondent.'),
                 ]),
             Step::make('Notification')
                 ->schema([
-                    Select::make('method')
+                    Select::make('request_method')
                         ->label('How would you like to send this request?')
-                        ->options(FormRequestDeliveryMethod::class)
-                        ->default(FormRequestDeliveryMethod::Email->value)
+                        ->options(FormSubmissionRequestDeliveryMethod::class)
+                        ->default(FormSubmissionRequestDeliveryMethod::Email->value)
                         ->selectablePlaceholder(false)
                         ->live(),
-                    Textarea::make('note')
+                    Textarea::make('request_note')
                         ->columnSpanFull(),
                 ]),
         ]);
 
         $this->action(function (array $data, ManageRelatedRecords $livewire) {
-            $livewire->getOwnerRecord()->formRequests()->create($data);
+            $submission = $livewire->getOwnerRecord()->formSubmissions()->requested()->firstOrNew(['form_id' => $data['form_id']]);
+            $submission->fill($data);
+            $submission->requester()->associate(auth()->user());
+            $submission->save();
+
+            $submission->deliverRequest();
 
             Notification::make()
                 ->title('Form request sent')

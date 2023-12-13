@@ -38,17 +38,16 @@ namespace AdvisingApp\Form\Notifications;
 
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
-use App\Models\NotificationSetting;
-use AdvisingApp\Form\Models\FormRequest;
 use Illuminate\Notifications\Notification;
+use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class FormRequestNotification extends Notification implements ShouldQueue
+class FormSubmissionRequestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public function __construct(
-        public FormRequest $request
+        public FormSubmission $submission,
     ) {}
 
     public function via(object $notifiable): array
@@ -58,20 +57,15 @@ class FormRequestNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $divisionName = $this->request->user->teams()->first()?->division?->name;
+        $division = $this->submission->requester->teams()->first()?->division;
 
         return MailMessage::make()
-            ->settings($this->resolveNotificationSetting())
-            ->subject("Request to Complete: {$this->request->form->name}" . (filled($divisionName) ? " | {$divisionName}" : ''))
-            ->greeting('Hello ' . $this->request->recipient->display_name . '!')
-            ->line("Please complete the attached form: {$this->request->form->name}")
-            ->lineIf(filled($this->request->note), $this->request->note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->request->form]))
-            ->salutation("Regards, {$this->request->user->name}");
-    }
-
-    private function resolveNotificationSetting(): ?NotificationSetting
-    {
-        return $this->request->user->teams()->first()?->division?->notificationSetting?->setting;
+            ->settings($division?->notificationSetting?->setting)
+            ->subject("Request to Complete: {$this->submission->submissible->name}" . (filled($division?->name) ? " | {$division->name}" : ''))
+            ->greeting('Hello ' . $this->submission->author->display_name . '!')
+            ->line("Please complete the attached form: {$this->submission->submissible->name}")
+            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
+            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]))
+            ->salutation("Regards, {$this->submission->requester->name}");
     }
 }

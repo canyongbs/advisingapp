@@ -34,16 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\Form\Filament\Tables\Filters;
 
-use AdvisingApp\Form\Notifications\FormRequestNotification;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Form\Enums\FormSubmissionStatus;
+use App\Filament\Filters\OpenSearch\SelectFilter;
 
-class DeliverFormRequestByEmail extends DeliverFormRequest
+class FormSubmissionStatusFilter extends SelectFilter
 {
-    public function handle(): void
+    protected function setUp(): void
     {
-        $this->request
-            ->recipient
-            ->notify(new FormRequestNotification($this->request));
+        parent::setUp();
+
+        $this->options(FormSubmissionStatus::class);
+
+        $this->query(function (array $data, Builder $query) {
+            $value = $data['value'];
+
+            if (blank($value)) {
+                return;
+            }
+
+            if (! $value instanceof FormSubmissionStatus) {
+                $value = FormSubmissionStatus::tryFrom($value);
+            }
+
+            match ($value) {
+                FormSubmissionStatus::Requested => $query->requested(),
+                FormSubmissionStatus::Submitted => $query->submitted(),
+                FormSubmissionStatus::Canceled => $query->canceled(),
+            };
+        });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'status';
     }
 }

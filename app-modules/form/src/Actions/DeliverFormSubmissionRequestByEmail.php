@@ -34,31 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Enums;
+namespace AdvisingApp\Form\Actions;
 
-use AdvisingApp\Form\Models\FormRequest;
-use Filament\Support\Contracts\HasLabel;
-use AdvisingApp\Form\Actions\DeliverFormRequestBySms;
-use AdvisingApp\Form\Actions\DeliverFormRequestByEmail;
+use AdvisingApp\Form\Notifications\FormSubmissionRequestNotification;
 
-enum FormRequestDeliveryMethod: string implements HasLabel
+class DeliverFormSubmissionRequestByEmail extends DeliverFormSubmissionRequest
 {
-    case Email = 'email';
-    case Sms = 'sms';
-
-    public function getLabel(): ?string
+    public function handle(): void
     {
-        return match ($this) {
-            static::Email => 'Email',
-            static::Sms => 'SMS',
-        };
-    }
-
-    public function deliver(FormRequest $request): void
-    {
-        match ($this) {
-            static::Email => DeliverFormRequestByEmail::dispatch($request),
-            static::Sms => DeliverFormRequestBySms::dispatch($request),
-        };
+        $this->submission
+            ->author
+            ->notify(new FormSubmissionRequestNotification($this->submission));
     }
 }

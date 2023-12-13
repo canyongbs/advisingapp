@@ -36,9 +36,26 @@
 
 namespace AdvisingApp\Form\Enums;
 
-enum FormRequestStatus
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+
+enum FormSubmissionStatus: string implements HasColor, HasLabel
 {
-    case Open;
-    case Submitted;
-    case Canceled;
+    case Requested = 'requested';
+    case Submitted = 'submitted';
+    case Canceled = 'canceled';
+
+    public function getLabel(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Requested => 'info',
+            self::Submitted => 'success',
+            self::Canceled => 'danger',
+        };
+    }
 }

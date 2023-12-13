@@ -34,25 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
+namespace AdvisingApp\Form\Enums;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use AdvisingApp\Form\Models\FormRequest;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
+use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestBySms;
+use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestByEmail;
 
-abstract class DeliverFormRequest implements ShouldQueue
+enum FormSubmissionRequestDeliveryMethod: string implements HasLabel
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    case Email = 'email';
+    case Sms = 'sms';
 
-    public function __construct(
-        public FormRequest $request
-    ) {}
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            static::Email => 'Email',
+            static::Sms => 'SMS',
+        };
+    }
 
-    abstract public function handle(): void;
+    public function deliver(FormSubmission $submission): void
+    {
+        match ($this) {
+            static::Email => DeliverFormSubmissionRequestByEmail::dispatch($submission),
+            static::Sms => DeliverFormSubmissionRequestBySms::dispatch($submission),
+        };
+    }
 }
