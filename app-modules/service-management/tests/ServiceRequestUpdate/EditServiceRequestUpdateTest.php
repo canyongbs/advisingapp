@@ -36,6 +36,7 @@
 
 use App\Models\User;
 
+use App\Settings\LicenseSettings;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -43,10 +44,12 @@ use function Pest\Livewire\livewire;
 use Illuminate\Validation\Rules\Enum;
 
 use function Pest\Laravel\assertDatabaseHas;
+use function PHPUnit\Framework\assertEquals;
 
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestUpdateRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages\EditServiceRequestUpdate;
 
 test('A successful action on the EditServiceRequestUpdate page', function () {
     $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();
@@ -61,7 +64,7 @@ test('A successful action on the EditServiceRequestUpdate page', function () {
 
     $request = collect(EditServiceRequestUpdateRequestFactory::new()->create());
 
-    livewire(ServiceRequestUpdateResource\Pages\EditServiceRequestUpdate::class, [
+    livewire(EditServiceRequestUpdate::class, [
         'record' => $serviceRequestUpdate->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -79,7 +82,7 @@ test('EditServiceRequestUpdate requires valid data', function ($data, $errors) {
 
     asSuperAdmin();
 
-    livewire(ServiceRequestUpdateResource\Pages\EditServiceRequestUpdate::class, [
+    livewire(EditServiceRequestUpdate::class, [
         'record' => $serviceRequestUpdate->getRouteKey(),
     ])
         ->fillForm(EditServiceRequestUpdateRequestFactory::new($data)->create())
@@ -118,7 +121,7 @@ test('EditServiceRequestUpdate is gated with proper access control', function ()
             ])
         )->assertForbidden();
 
-    livewire(ServiceRequestUpdateResource\Pages\EditServiceRequestUpdate::class, [
+    livewire(EditServiceRequestUpdate::class, [
         'record' => $serviceRequestUpdate->getRouteKey(),
     ])
         ->assertForbidden();
@@ -135,7 +138,7 @@ test('EditServiceRequestUpdate is gated with proper access control', function ()
 
     $request = collect(EditServiceRequestUpdateRequestFactory::new()->create());
 
-    livewire(ServiceRequestUpdateResource\Pages\EditServiceRequestUpdate::class, [
+    livewire(EditServiceRequestUpdate::class, [
         'record' => $serviceRequestUpdate->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -146,4 +149,53 @@ test('EditServiceRequestUpdate is gated with proper access control', function ()
 
     expect(ServiceRequestUpdate::first()->serviceRequest->id)
         ->toEqual($request->get('service_request_id'));
+});
+
+test('EditServiceRequestUpdate is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_update.view-any');
+    $user->givePermissionTo('service_request_update.*.update');
+
+    $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestUpdateResource::getUrl('edit', [
+                'record' => $serviceRequestUpdate,
+            ])
+        )->assertForbidden();
+
+    livewire(EditServiceRequestUpdate::class, [
+        'record' => $serviceRequestUpdate->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestUpdateResource::getUrl('edit', [
+                'record' => $serviceRequestUpdate,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditServiceRequestUpdateRequestFactory::new()->create());
+
+    livewire(EditServiceRequestUpdate::class, [
+        'record' => $serviceRequestUpdate->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertEquals($request['update'], $serviceRequestUpdate->fresh()->update);
 });

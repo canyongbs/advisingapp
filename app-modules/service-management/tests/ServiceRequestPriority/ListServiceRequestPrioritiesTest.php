@@ -37,6 +37,9 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
@@ -98,5 +101,31 @@ test('ListServiceRequestPriorities is gated with proper access control', functio
     actingAs($user)
         ->get(
             ServiceRequestPriorityResource::getUrl('index')
+        )->assertSuccessful();
+});
+
+test('ListServiceRequestPriorities is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_priority.view-any');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestPriorityResource::getUrl()
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestPriorityResource::getUrl()
         )->assertSuccessful();
 });

@@ -34,8 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority;
 use App\Models\User;
 
+use App\Settings\LicenseSettings;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -108,6 +110,47 @@ test('CreateServiceRequestPriority is gated with proper access control', functio
     $request = collect(CreateServiceRequestPriorityRequestFactory::new()->create());
 
     livewire(ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, ServiceRequestPriority::all());
+
+    assertDatabaseHas(ServiceRequestPriority::class, $request->toArray());
+});
+
+test('CreateServiceRequestPriority is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_priority.view-any');
+    $user->givePermissionTo('service_request_priority.create');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestPriorityResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(CreateServiceRequestPriority::class)
+        ->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestPriorityResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateServiceRequestPriorityRequestFactory::new()->create());
+
+    livewire(CreateServiceRequestPriority::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

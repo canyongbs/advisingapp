@@ -34,8 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
 use App\Models\User;
 
+use App\Settings\LicenseSettings;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -111,6 +113,47 @@ test('CreateServiceRequestStatus is gated with proper access control', function 
     $request = collect(CreateServiceRequestStatusRequestFactory::new()->create());
 
     livewire(ServiceRequestStatusResource\Pages\CreateServiceRequestStatus::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, ServiceRequestStatus::all());
+
+    assertDatabaseHas(ServiceRequestStatus::class, $request->toArray());
+});
+
+test('CreateServiceRequestStatus is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_status.view-any');
+    $user->givePermissionTo('service_request_status.create');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(CreateServiceRequestStatus::class)
+        ->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateServiceRequestStatusRequestFactory::new()->create());
+
+    livewire(CreateServiceRequestStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

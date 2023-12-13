@@ -36,6 +36,7 @@
 
 use App\Models\User;
 
+use App\Settings\LicenseSettings;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -103,5 +104,31 @@ test('ListServiceRequestStatuses is gated with proper access control', function 
     actingAs($user)
         ->get(
             ServiceRequestStatusResource::getUrl('index')
+        )->assertSuccessful();
+});
+
+test('ListServiceRequestStatuses is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_status.view-any');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl()
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl()
         )->assertSuccessful();
 });

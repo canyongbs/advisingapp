@@ -36,12 +36,17 @@
 
 namespace AdvisingApp\ServiceManagement\Policies;
 
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Enums\Feature;
 use App\Models\User;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 
-class ServiceRequestPriorityPolicy
+class ServiceRequestPriorityPolicy implements FeatureAccessEnforcedPolicy
 {
+    use FeatureAccessEnforcedPolicyBefore;
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(
@@ -96,5 +101,10 @@ class ServiceRequestPriorityPolicy
             abilities: ['service_request_priority.*.force-delete', "service_request_priority.{$serviceRequestPriority->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request priority.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ServiceManagement];
     }
 }
