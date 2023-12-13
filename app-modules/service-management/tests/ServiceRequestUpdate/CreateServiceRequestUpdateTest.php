@@ -34,11 +34,12 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages\CreateServiceRequestUpdate;
 use App\Models\User;
 
-use App\Settings\LicenseSettings;
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
@@ -52,6 +53,7 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestUpdateRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages\CreateServiceRequestUpdate;
 
 test('A successful action on the CreateServiceRequestUpdate page', function () {
     // Because we create a ServiceRequest there is already a Subscription created.

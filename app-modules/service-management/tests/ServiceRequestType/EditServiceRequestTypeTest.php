@@ -34,11 +34,12 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\EditServiceRequestType;
 use App\Models\User;
 
-use App\Settings\LicenseSettings;
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
@@ -47,6 +48,7 @@ use function PHPUnit\Framework\assertEquals;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestTypeRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\EditServiceRequestType;
 
 test('A successful action on the EditServiceRequestType page', function () {
     $serviceRequestType = ServiceRequestType::factory()->create();

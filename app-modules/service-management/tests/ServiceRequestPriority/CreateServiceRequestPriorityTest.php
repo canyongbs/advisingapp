@@ -34,11 +34,12 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority;
 use App\Models\User;
 
-use App\Settings\LicenseSettings;
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
@@ -48,6 +49,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestPriorityRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority;
 
 test('A successful action on the CreateServiceRequestPriority page', function () {
     asSuperAdmin()

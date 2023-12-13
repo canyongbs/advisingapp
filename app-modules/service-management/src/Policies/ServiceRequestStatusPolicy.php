@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\ServiceManagement\Policies;
 
-use App\Concerns\FeatureAccessEnforcedPolicyBefore;
-use App\Enums\Feature;
 use App\Models\User;
-use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 
 class ServiceRequestStatusPolicy implements FeatureAccessEnforcedPolicy

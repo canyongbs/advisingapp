@@ -34,11 +34,12 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\CreateServiceRequestType;
 use App\Models\User;
 
-use App\Settings\LicenseSettings;
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
@@ -48,6 +49,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestTypeRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\CreateServiceRequestType;
 
 test('A successful action on the CreateServiceRequestType page', function () {
     asSuperAdmin()
