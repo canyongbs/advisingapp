@@ -34,28 +34,31 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Application\Enums;
 
-return new class () extends Migration {
-    public function up(): void
+use Filament\Support\Contracts\HasLabel;
+
+enum ApplicationStateClassification: string implements HasLabel
+{
+    case Received = 'received';
+
+    case Review = 'review';
+
+    case Complete = 'complete';
+
+    case DocumentsRequired = 'documents_required';
+
+    case Admit = 'admit';
+
+    case Deny = 'deny';
+
+    case Custom = 'custom';
+
+    public function getLabel(): ?string
     {
-        Schema::create('applications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->boolean('embed_enabled')->default(false);
-            $table->json('allowed_domains')->nullable();
-            $table->string('primary_color')->nullable();
-            $table->string('rounding')->nullable();
-            $table->boolean('is_wizard')->default(false);
-            $table->json('content')->nullable();
-            $table->foreignUuid('state_id')->references('id')->on('application_states');
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        return match ($this) {
+            ApplicationStateClassification::DocumentsRequired => 'Documents Required',
+            default => $this->name,
+        };
     }
-};
+}

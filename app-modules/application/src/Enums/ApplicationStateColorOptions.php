@@ -34,28 +34,26 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Application\Enums;
 
-return new class () extends Migration {
-    public function up(): void
+use Filament\Support\Contracts\HasLabel;
+
+enum ApplicationStateColorOptions: string implements HasLabel
+{
+    case Success = 'success';
+
+    case Danger = 'danger';
+
+    case Warning = 'warning';
+
+    case Info = 'info';
+
+    case Primary = 'primary';
+
+    case Gray = 'gray';
+
+    public function getLabel(): string
     {
-        Schema::create('applications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->boolean('embed_enabled')->default(false);
-            $table->json('allowed_domains')->nullable();
-            $table->string('primary_color')->nullable();
-            $table->string('rounding')->nullable();
-            $table->boolean('is_wizard')->default(false);
-            $table->json('content')->nullable();
-            $table->foreignUuid('state_id')->references('id')->on('application_states');
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        return $this->value;
     }
-};
+}
