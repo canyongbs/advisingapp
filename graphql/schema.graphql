@@ -8,8 +8,4 @@ type Mutation
 
 union Educatable = Prospect | Student
 
-#import ../app-modules/notifications/graphql/subscription.graphql
 #import user.graphql
-#import ../app-modules/prospect/graphql/*.graphql
-#import ../app-modules/student-data-model/graphql/*.graphql
-#import ../app-modules/knowledge-base/graphql/*.graphql

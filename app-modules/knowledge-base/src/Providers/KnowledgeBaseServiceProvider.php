@@ -37,6 +37,7 @@
 namespace AdvisingApp\KnowledgeBase\Providers;
 
 use Filament\Panel;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\KnowledgeBase\KnowledgeBasePlugin;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -50,6 +51,8 @@ use AdvisingApp\KnowledgeBase\Observers\KnowledgeBaseItemObserver;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new KnowledgeBasePlugin()));
@@ -66,6 +69,7 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
 
         $this->registerRolesAndPermissions();
         $this->registerObservers();
+        $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-item.graphql');
     }
 
     public function registerObservers(): void
