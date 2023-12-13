@@ -33,7 +33,7 @@
 -->
 <script setup>
 import { defineProps, ref, reactive } from 'vue';
-import wizard from './FormKit/wizard';
+import wizard from '../../form/src/FormKit/wizard';
 
 let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
@@ -62,7 +62,7 @@ const data = reactive({
     submitForm: async (data, node) => {
         node.clearErrors();
 
-        fetch(formSubmissionUrl.value, {
+        fetch(applicationSubmissionUrl.value, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -96,12 +96,11 @@ const scriptQuery = Object.fromEntries(scriptUrl.searchParams);
 const hostUrl = `${protocol}//${scriptHostname}`;
 
 const display = ref(false);
-const formName = ref('');
-const formIsAuthenticated = ref(false);
-const formDescription = ref('');
-const formSubmissionUrl = ref('');
-const formPrimaryColor = ref('');
-const formRounding= ref('');
+const applicationName = ref('');
+const applicationDescription = ref('');
+const applicationSubmissionUrl = ref('');
+const applicationPrimaryColor = ref('');
+const applicationRounding= ref('');
 const schema = ref([]);
 
 const authentication = ref({
@@ -120,15 +119,13 @@ fetch(props.url)
             throw new Error(json.error);
         }
 
-        formName.value = json.name;
-        formDescription.value = json.description;
+        applicationName.value = json.name;
+        applicationDescription.value = json.description;
         schema.value = json.schema;
-        formIsAuthenticated.value = json.is_authenticated ?? false;
-        formSubmissionUrl.value = json.submission_url ?? null;
-        formPrimaryColor.value = json.primary_color;
-        authentication.value.requestUrl = json.authentication_url ?? null;
+        applicationPrimaryColor.value = json.primary_color;
+        authentication.value.requestUrl = json.authentication_url;
 
-        formRounding.value = {
+        applicationRounding.value = {
             none: {
                 sm: '0px',
                 default: '0px',
@@ -169,10 +166,10 @@ fetch(props.url)
         display.value = true;
     })
     .catch((error) => {
-        console.error(`Advising App Embed Form ${error}`);
+        console.error(`Advising App Embed Application ${error}`);
     });
 
-async function authenticate (formData, node) {
+async function authenticate (applicationData, node) {
     node.clearErrors();
 
     if (authentication.value.isRequested) {
@@ -183,7 +180,7 @@ async function authenticate (formData, node) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                code: formData.code,
+                code: applicationData.code,
             }),
         })
             .then((response) => response.json())
@@ -209,7 +206,7 @@ async function authenticate (formData, node) {
                     return;
                 }
 
-                formSubmissionUrl.value = json.submission_url;
+                applicationSubmissionUrl.value = json.submission_url;
             })
             .catch((error) => {
                 node.setErrors([error]);
@@ -225,7 +222,7 @@ async function authenticate (formData, node) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            email: formData.email,
+            email: applicationData.email,
         }),
     })
         .then((response) => response.json())
@@ -256,39 +253,39 @@ async function authenticate (formData, node) {
 <template>
     <div
         :style="{
-            '--primary-50': formPrimaryColor[50],
-            '--primary-100': formPrimaryColor[100],
-            '--primary-200': formPrimaryColor[200],
-            '--primary-300': formPrimaryColor[300],
-            '--primary-400': formPrimaryColor[400],
-            '--primary-500': formPrimaryColor[500],
-            '--primary-600': formPrimaryColor[600],
-            '--primary-700': formPrimaryColor[700],
-            '--primary-800': formPrimaryColor[800],
-            '--primary-900': formPrimaryColor[900],
-            '--rounding-sm': formRounding.sm,
-            '--rounding': formRounding.default,
-            '--rounding-md': formRounding.md,
-            '--rounding-lg': formRounding.lg,
-            '--rounding-full': formRounding.full,
+            '--primary-50': applicationPrimaryColor[50],
+            '--primary-100': applicationPrimaryColor[100],
+            '--primary-200': applicationPrimaryColor[200],
+            '--primary-300': applicationPrimaryColor[300],
+            '--primary-400': applicationPrimaryColor[400],
+            '--primary-500': applicationPrimaryColor[500],
+            '--primary-600': applicationPrimaryColor[600],
+            '--primary-700': applicationPrimaryColor[700],
+            '--primary-800': applicationPrimaryColor[800],
+            '--primary-900': applicationPrimaryColor[900],
+            '--rounding-sm': applicationRounding.sm,
+            '--rounding': applicationRounding.default,
+            '--rounding-md': applicationRounding.md,
+            '--rounding-lg': applicationRounding.lg,
+            '--rounding-full': applicationRounding.full,
         }"
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
             <link
                 rel="stylesheet"
-                v-bind:href="hostUrl + '/js/widgets/form/style.css'"
+                v-bind:href="hostUrl + '/js/widgets/application/style.css'"
             />
 
             <h1>
-                {{ formName }}
+                {{ applicationName }}
             </h1>
 
             <p>
-                {{ formDescription }}
+                {{ applicationDescription }}
             </p>
 
-            <div v-if="! formSubmissionUrl">
+            <div v-if="! applicationSubmissionUrl">
                 <FormKit type="form" @submit="authenticate" v-model="authentication">
                     <FormKit
                         type="email"
@@ -319,11 +316,8 @@ async function authenticate (formData, node) {
                 </FormKit>
             </div>
 
-            <div v-if="formSubmissionUrl" class="space-y-6">
-                <p
-                    v-if="formIsAuthenticated"
-                    class="text-sm"
-                >
+            <div v-if="applicationSubmissionUrl" class="space-y-6">
+                <p class="text-sm">
                     Signed in as <strong>{{ authentication.email }}</strong>
                 </p>
 
@@ -336,7 +330,7 @@ async function authenticate (formData, node) {
 
         <div v-if="submittedSuccess">
             <h1 class="text-2xl font-bold mb-2 text-center">
-                Thank you, your submission has been received.
+                Thank you, your application has been received.
             </h1>
         </div>
     </div>

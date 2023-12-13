@@ -35,7 +35,7 @@ import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import './widget.css';
 import App from './App.vue';
 import { defaultConfig, plugin } from '@formkit/vue';
-import config from './formkit.config.js';
+import config from './formkit.config';
 import VueSignaturePad from "vue-signature-pad";
 
 customElements.define(

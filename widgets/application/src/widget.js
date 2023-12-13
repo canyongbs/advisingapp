@@ -31,8 +31,34 @@
 
 </COPYRIGHT>
 */
-@import './FormKit/index.css';
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import './widget.css';
+import App from './App.vue';
+import { defaultConfig, plugin } from '@formkit/vue';
+import config from './formkit.config.js';
+import VueSignaturePad from "vue-signature-pad";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+customElements.define(
+    'application-embed',
+    defineCustomElement({
+        setup(props) {
+            const app = createApp();
+
+            // install plugins
+            app.use(plugin, defaultConfig(config));
+
+            app.use(VueSignaturePad)
+
+            app.config.devtools = true;
+
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
+
+            return () => h(App, props)
+        },
+        props: [
+            'url',
+        ],
+    }),
+);

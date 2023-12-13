@@ -31,8 +31,17 @@
 
 </COPYRIGHT>
 */
-@import './FormKit/index.css';
+import { generateClasses } from '@formkit/themes';
+import { genesisIcons } from '@formkit/icons';
+import theme from '../../form/src/FormKit/theme';
+import inputs from '../../form/src/FormKit/Inputs/index'
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+export default {
+    icons: {
+        ...genesisIcons,
+    },
+    inputs,
+    config: {
+        classes: generateClasses(theme),
+    },
+};

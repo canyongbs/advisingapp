@@ -31,8 +31,12 @@
 
 </COPYRIGHT>
 */
-@import './FormKit/index.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+export default {
+    plugins: {
+        'tailwindcss/nesting': {},
+        tailwindcss: {
+            config: './tailwind.config.js',
+        },
+        autoprefixer: {},
+    },
+}
