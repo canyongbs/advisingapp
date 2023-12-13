@@ -70,15 +70,11 @@ GRAPHQL;
 
     public function manipulateTypeDefinition(DocumentAST &$documentAST, TypeDefinitionNode &$typeDefinition): void
     {
-        ray($documentAST)->blue();
         $feature = $this->directiveArgValue('feature');
         $documentAST->types = collect($documentAST->types)->filter(function ($typeDefinitionNode) use ($typeDefinition) {
             return $typeDefinitionNode !== $typeDefinition;
         })->toArray();
 
-        ray($documentAST)->blue();
-
-        //unset($documentAST->types[$typeDefinition->name->value]);
         ASTHelper::addDirectiveToFields($this->directiveNode, $typeDefinition);
     }
 
