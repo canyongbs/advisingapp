@@ -38,7 +38,9 @@ declare(strict_types = 1);
 
 namespace App\GraphQL\Directives;
 
+use App\Enums\Feature;
 use GraphQL\Language\AST\NodeList;
+use Illuminate\Support\Facades\Gate;
 use GraphQL\Language\AST\TypeExtensionNode;
 use Nuwave\Lighthouse\Schema\AST\ASTHelper;
 use GraphQL\Language\AST\TypeDefinitionNode;
@@ -70,23 +72,26 @@ GRAPHQL;
 
     public function manipulateTypeDefinition(DocumentAST &$documentAST, TypeDefinitionNode &$typeDefinition): void
     {
-        $feature = $this->directiveArgValue('feature');
-        $documentAST->types = collect($documentAST->types)->filter(function ($typeDefinitionNode) use ($typeDefinition) {
-            return $typeDefinitionNode !== $typeDefinition;
-        })->toArray();
+        if ($this->shouldHide()) {
+            $documentAST->types = collect($documentAST->types)->filter(function ($typeDefinitionNode) use ($typeDefinition) {
+                return $typeDefinitionNode !== $typeDefinition;
+            })->toArray();
 
-        ASTHelper::addDirectiveToFields($this->directiveNode, $typeDefinition);
+            ASTHelper::addDirectiveToFields($this->directiveNode, $typeDefinition);
+        }
     }
 
     public function manipulateTypeExtension(DocumentAST &$documentAST, TypeExtensionNode &$typeExtension): void
     {
-        $typeExtension->interfaces = new NodeList([]);
-        $typeExtension->directives = new NodeList([]);
-        $typeExtension->fields = new NodeList([]);
+        if ($this->shouldHide()) {
+            $typeExtension->interfaces = new NodeList([]);
+            $typeExtension->directives = new NodeList([]);
+            $typeExtension->fields = new NodeList([]);
 
-        $documentAST->typeExtensions[$typeExtension->name->value] = collect($documentAST->typeExtensions[$typeExtension->name->value])->filter(function ($typeExtensionNode) use ($typeExtension) {
-            return $typeExtensionNode !== $typeExtension;
-        })->toArray();
+            $documentAST->typeExtensions[$typeExtension->name->value] = collect($documentAST->typeExtensions[$typeExtension->name->value])->filter(function ($typeExtensionNode) use ($typeExtension) {
+                return $typeExtensionNode !== $typeExtension;
+            })->toArray();
+        }
     }
 
     public function manipulateFieldDefinition(DocumentAST &$documentAST, FieldDefinitionNode &$fieldDefinition, ObjectTypeDefinitionNode|InterfaceTypeDefinitionNode &$parentType): void
@@ -116,6 +121,8 @@ GRAPHQL;
 
     protected function shouldHide(): bool
     {
-        return true;
+        $feature = Feature::from($this->directiveArgValue('feature'));
+
+        return Gate::denies($feature->getGateName());
     }
 }

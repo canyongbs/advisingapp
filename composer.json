@@ -204,6 +204,7 @@
             "@php artisan lighthouse:print-schema -W -D public"
         ],
         "generate-api-docs": [
+            "@prettier-format",
             "@print-schema",
             "npm run api-docs:generate"
         ]
