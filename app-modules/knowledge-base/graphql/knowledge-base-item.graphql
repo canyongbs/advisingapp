@@ -4,5 +4,5 @@ type KnowledgeBaseItem @model(class: "AdvisingApp\\KnowledgeBase\\Models\\Knowle
 
 extend type Query {
     "Get all subscriptions."
-    knowledgeBaseItems: [KnowledgeBaseItem!]! @paginate @canModel(ability: "viewAny")
+    knowledgeBaseItems: [KnowledgeBaseItem!]! @paginate(model: "AdvisingApp\\KnowledgeBase\\Models\\KnowledgeBaseItem") @canModel(ability: "viewAny")
 }

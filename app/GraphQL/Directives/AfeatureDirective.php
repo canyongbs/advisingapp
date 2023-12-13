@@ -41,22 +41,26 @@ namespace App\GraphQL\Directives;
 use GraphQL\Language\AST\TypeExtensionNode;
 use Nuwave\Lighthouse\Schema\AST\ASTHelper;
 use GraphQL\Language\AST\TypeDefinitionNode;
+use GraphQL\Language\AST\FieldDefinitionNode;
 use Nuwave\Lighthouse\Schema\AST\DocumentAST;
+use GraphQL\Language\AST\ObjectTypeDefinitionNode;
+use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
 use Nuwave\Lighthouse\Support\Contracts\TypeManipulator;
+use Nuwave\Lighthouse\Support\Contracts\FieldManipulator;
 use Nuwave\Lighthouse\Support\Contracts\TypeExtensionManipulator;
 
-final class AfeatureDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator
+final class AfeatureDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator, FieldManipulator
 {
     public static function definition(): string
     {
         return /** @lang GraphQL */ <<<'GRAPHQL'
 """
-Remove type if feature is not enabled.
+Removes the item from the schema if the provided features are not enabled.
 """
 directive @afeature(
   """
-  Specify which feature to use
+  Specify which features to check
   """
   feature: [String!]
 ) repeatable on FIELD_DEFINITION | OBJECT
@@ -65,12 +69,16 @@ GRAPHQL;
 
     public function manipulateTypeDefinition(DocumentAST &$documentAST, TypeDefinitionNode &$typeDefinition): void
     {
+        ray($documentAST)->blue();
         $feature = $this->directiveArgValue('feature');
-        ray($documentAST);
-        ray($typeDefinition);
+        $documentAST->types = collect($documentAST->types)->filter(function ($typeDefinitionNode) use ($typeDefinition) {
+            return $typeDefinitionNode !== $typeDefinition;
+        })->toArray();
 
-        unset($documentAST->types[$typeDefinition->name->value]);
-        //ASTHelper::addDirectiveToFields($this->directiveNode, $typeDefinition);
+        ray($documentAST)->blue();
+
+        //unset($documentAST->types[$typeDefinition->name->value]);
+        ASTHelper::addDirectiveToFields($this->directiveNode, $typeDefinition);
     }
 
     public function manipulateTypeExtension(DocumentAST &$documentAST, TypeExtensionNode &$typeExtension): void
@@ -78,11 +86,35 @@ GRAPHQL;
         ray($documentAST);
         ray($typeExtension);
 
-        $documentAST->typeExtensions = collect($documentAST->typeExtensions)->filter(function ($value, $key) use ($typeExtension, $documentAST) {
-            if ($key !== $typeExtension->name->value) {
-                $documentAST->typeExtensions[$key] = $value;
-            }
+        $documentAST->typeExtensions[$typeExtension->name->value] = collect($documentAST->typeExtensions[$typeExtension->name->value])->filter(function ($typeExtensionNode) use ($typeExtension) {
+            return $typeExtensionNode !== $typeExtension;
         })->toArray();
-        ASTHelper::addDirectiveToFields($this->directiveNode, $typeExtension);
+
+        ray($documentAST);
+        //ASTHelper::addDirectiveToFields($this->directiveNode, $typeExtension);
+    }
+
+    public function manipulateFieldDefinition(DocumentAST &$documentAST, FieldDefinitionNode &$fieldDefinition, ObjectTypeDefinitionNode|InterfaceTypeDefinitionNode &$parentType): void
+    {
+        if ($this->shouldHide()) {
+            $keyToRemove = null;
+
+            foreach ($parentType->fields as $key => $value) {
+                if ($value === $fieldDefinition) {
+                    $keyToRemove = $key;
+
+                    break;
+                }
+            }
+
+            ray($keyToRemove);
+
+            unset($parentType->fields[$keyToRemove]);
+        }
+    }
+
+    protected function shouldHide(): bool
+    {
+        return true;
     }
 }
