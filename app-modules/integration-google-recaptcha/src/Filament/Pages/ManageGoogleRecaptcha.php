@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationGoogleRecaptcha\Filament\Pages;
+namespace AdvisingApp\IntegrationGoogleRecaptcha\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Get;
@@ -42,7 +42,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use Assist\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class ManageGoogleRecaptcha extends SettingsPage
 {

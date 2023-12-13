@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationGoogleRecaptcha;
+namespace AdvisingApp\IntegrationGoogleRecaptcha;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,7 +50,7 @@ class IntegrationGoogleRecaptchaPlugin implements Plugin
     {
         $panel->discoverPages(
             in: __DIR__ . '/Filament/Pages',
-            for: 'Assist\\IntegrationGoogleRecaptcha\\Filament\\Pages'
+            for: 'AdvisingApp\\IntegrationGoogleRecaptcha\\Filament\\Pages'
         );
     }
 

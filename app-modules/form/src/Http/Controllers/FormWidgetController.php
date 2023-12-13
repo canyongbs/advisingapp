@@ -57,7 +57,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
-use Assist\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class FormWidgetController extends Controller
 {

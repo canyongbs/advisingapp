@@ -1,12 +1,12 @@
 <?php
 
-namespace Assist\IntegrationGoogleRecaptcha\Rules;
+namespace AdvisingApp\IntegrationGoogleRecaptcha\Rules;
 
 use Closure;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Assist\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class RecaptchaTokenValid implements ValidationRule
 {

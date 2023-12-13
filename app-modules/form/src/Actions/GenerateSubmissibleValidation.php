@@ -41,7 +41,7 @@ use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use Assist\IntegrationGoogleRecaptcha\Rules\RecaptchaTokenValid;
+use AdvisingApp\IntegrationGoogleRecaptcha\Rules\RecaptchaTokenValid;
 
 class GenerateSubmissibleValidation
 {
