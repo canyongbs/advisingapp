@@ -35,5 +35,5 @@
 */
 
 return [
-    'access',
+    'realtime-chat.access',
 ];
