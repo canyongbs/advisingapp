@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Assist\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
-class Recaptcha implements ValidationRule
+class RecaptchaTokenValid implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -20,12 +20,15 @@ class Recaptcha implements ValidationRule
 
         try {
             $response = Http::asForm()
+                ->retry(3, 100)
                 ->post(config('services.google_recaptcha.url'), [
                     'secret' => $settings->secret_key,
                     'response' => $value,
                     'remoteip' => request()->ip(),
-                ])->throw();
+                ])
+                ->throw();
 
+            // TODO Figure out how we actually want to handle low scores
             if ($response->json('score') < 0.5) {
                 $fail('The recaptcha score was too low.');
             }

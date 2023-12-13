@@ -191,6 +191,8 @@ class FormWidgetController extends Controller
 
         $data = $validator->validated();
 
+        unset($data['recaptcha-token']);
+
         if ($form->is_wizard) {
             foreach ($form->steps as $step) {
                 $stepFields = $step->fields()->pluck('type', 'id')->all();

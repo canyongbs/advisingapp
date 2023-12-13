@@ -40,8 +40,8 @@ use Illuminate\Support\Arr;
 use Assist\Form\Models\Submissible;
 use Assist\Form\Models\SubmissibleField;
 use Illuminate\Database\Eloquent\Collection;
-use Assist\IntegrationGoogleRecaptcha\Rules\Recaptcha;
 use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
+use Assist\IntegrationGoogleRecaptcha\Rules\RecaptchaTokenValid;
 
 class GenerateSubmissibleValidation
 {
@@ -50,7 +50,7 @@ class GenerateSubmissibleValidation
         $rules = [];
 
         if ($submissible->recaptcha_enabled) {
-            $rules['recaptcha-token'] = [new Recaptcha()];
+            $rules['recaptcha-token'] = [new RecaptchaTokenValid()];
         }
 
         if ($submissible->is_wizard) {
