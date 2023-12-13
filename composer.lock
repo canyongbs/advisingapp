@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c20e4688f513027ea9e2b46b1e4c510",
+    "content-hash": "1bd1f6b976015fcbb1c546ee1bcefe9a",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.2.7",
+            "version": "v3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "1ad2d19c6e7694469dbe92122b4440af8a872b97"
+                "reference": "b30a4c09a1073de97a8e3c4bd0943dc0a767a37b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/1ad2d19c6e7694469dbe92122b4440af8a872b97",
-                "reference": "1ad2d19c6e7694469dbe92122b4440af8a872b97",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/b30a4c09a1073de97a8e3c4bd0943dc0a767a37b",
+                "reference": "b30a4c09a1073de97a8e3c4bd0943dc0a767a37b",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +80,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.7"
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.8"
             },
             "funding": [
                 {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-09T19:51:58+00:00"
+            "time": "2023-12-13T13:46:56+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -5426,16 +5426,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.37.1",
+            "version": "v10.37.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "b41612c58e358655cda1239e18d8851ff8736e8f"
+                "reference": "d97b5263ccd2f3950fd93f45b1b957259d76d0db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/b41612c58e358655cda1239e18d8851ff8736e8f",
-                "reference": "b41612c58e358655cda1239e18d8851ff8736e8f",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/d97b5263ccd2f3950fd93f45b1b957259d76d0db",
+                "reference": "d97b5263ccd2f3950fd93f45b1b957259d76d0db",
                 "shasum": ""
             },
             "require": {
@@ -5624,7 +5624,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-12-12T19:03:09+00:00"
+            "time": "2023-12-13T14:12:36+00:00"
         },
         {
             "name": "laravel/prompts",
