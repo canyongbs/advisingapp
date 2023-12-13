@@ -44,7 +44,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
-class ManageGoogleRecaptcha extends SettingsPage
+class ManageGoogleRecaptchaSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
@@ -54,9 +54,9 @@ class ManageGoogleRecaptcha extends SettingsPage
 
     protected static ?string $navigationLabel = 'Google reCAPTCHA';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $navigationGroup = 'Integrations';
 
-    protected static ?int $navigationSort = 90;
+    protected static ?int $navigationSort = 20;
 
     public static function shouldRegisterNavigation(): bool
     {

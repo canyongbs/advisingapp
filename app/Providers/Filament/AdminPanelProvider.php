@@ -132,6 +132,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Product Administration'),
                 NavigationGroup::make()
+                    ->label('Integrations'),
+                NavigationGroup::make()
                     ->label('Product Settings')
                     ->collapsed(),
             ])
