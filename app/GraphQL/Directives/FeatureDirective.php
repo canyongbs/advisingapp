@@ -51,7 +51,7 @@ use Nuwave\Lighthouse\Support\Contracts\TypeManipulator;
 use Nuwave\Lighthouse\Support\Contracts\FieldManipulator;
 use Nuwave\Lighthouse\Support\Contracts\TypeExtensionManipulator;
 
-final class AfeatureDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator, FieldManipulator
+final class FeatureDirective extends BaseDirective implements TypeManipulator, TypeExtensionManipulator, FieldManipulator
 {
     public static function definition(): string
     {
@@ -59,7 +59,7 @@ final class AfeatureDirective extends BaseDirective implements TypeManipulator, 
 """
 Removes the item from the schema if the provided features are not enabled.
 """
-directive @afeature(
+directive @feature(
   """
   Specify which features to check
   """

@@ -1,10 +1,10 @@
 type KnowledgeBaseItem
-    @afeature(feature: "knowledge-base")
+    @feature(feature: "knowledge-base")
     @model(class: "AdvisingApp\\KnowledgeBase\\Models\\KnowledgeBaseItem") {
     id: ID!
 }
 
-extend type Query @afeature(feature: "knowledge-base") {
+extend type Query @feature(feature: "knowledge-base") {
     "Get all subscriptions."
     knowledgeBaseItems: [KnowledgeBaseItem!]!
         @canModel(ability: "viewAny")
