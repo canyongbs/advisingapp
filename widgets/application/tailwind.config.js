@@ -31,8 +31,13 @@
 
 </COPYRIGHT>
 */
-@import './FormKit/index.css';
+import preset from '../form/tailwind.config.preset.js';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+export default {
+    presets: [preset],
+    content: [
+        './src/**/*.vue',
+        '../form/src/**/*.vue',
+        '../form/src/FormKit/theme.js',
+    ],
+};

@@ -166,7 +166,7 @@ class GenerateFormKitSchema
             [
                 '$el' => 'ul',
                 'attrs' => [
-                    'class' => 'steps',
+                    'class' => 'wizard',
                 ],
                 'children' => [
                     [

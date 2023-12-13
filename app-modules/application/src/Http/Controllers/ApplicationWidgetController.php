@@ -65,7 +65,6 @@ class ApplicationWidgetController extends Controller
             [
                 'name' => $application->name,
                 'description' => $application->description,
-                'is_authenticated' => true,
                 'authentication_url' => URL::signedRoute('applications.request-authentication', ['application' => $application]),
                 'schema' => $generateSchema($application),
                 'primary_color' => Color::all()[$application->primary_color ?? 'blue'],

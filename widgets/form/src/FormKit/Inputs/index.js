@@ -31,8 +31,15 @@
 
 </COPYRIGHT>
 */
-@import './FormKit/index.css';
+import { createInput } from '@formkit/vue';
+import OneTimePassword from './OneTimePassword.vue';
+import Signature from './Signature.vue';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+export default {
+    'otp': createInput(OneTimePassword, {
+        props: ['digits'],
+    }),
+    'signature': createInput(Signature, {
+        props: [],
+    }),
+}

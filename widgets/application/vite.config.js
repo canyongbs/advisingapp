@@ -31,8 +31,28 @@
 
 </COPYRIGHT>
 */
-@import './FormKit/index.css';
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+export default defineConfig({
+    plugins: [vue()],
+    build: {
+        manifest: true,
+        lib: {
+            entry: resolve(__dirname, 'src/widget.js'),
+            name: 'AdvisingAppApplicationWidget',
+            fileName: 'advising-app-application-widget',
+            formats: ['es'],
+        },
+        outDir: resolve(__dirname, '../../public/js/widgets/application'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});
