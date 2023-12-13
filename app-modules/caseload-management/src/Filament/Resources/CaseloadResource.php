@@ -43,20 +43,21 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Tables\Filters\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Tables\Filters\QueryBuilder;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\EditCaseload;
 use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\ListCaseloads;
 use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages\CreateCaseload;
+use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 
 class CaseloadResource extends Resource
 {
@@ -281,7 +282,7 @@ class CaseloadResource extends Resource
                     RelationshipConstraint::make('status')
                         ->icon('heroicon-m-flag')
                         ->selectable(
-                            RelationshipConstraint\Operators\IsRelatedToOperator::make()
+                            IsRelatedToOperator::make()
                                 ->titleAttribute('name')
                                 ->multiple()
                                 ->preload(),
@@ -289,7 +290,7 @@ class CaseloadResource extends Resource
                     RelationshipConstraint::make('source')
                         ->icon('heroicon-m-arrow-left-on-rectangle')
                         ->selectable(
-                            RelationshipConstraint\Operators\IsRelatedToOperator::make()
+                            IsRelatedToOperator::make()
                                 ->titleAttribute('name')
                                 ->multiple()
                                 ->preload(),

@@ -34,42 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Tables\Filters\QueryBuilder\Concerns;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Filament\Tables\Filters\QueryBuilder;
-use App\Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
-
-trait HasConstraints
-{
-    /** @var array<Constraint> */
-    protected array $constraints = [];
-
-    /**
-     * @param  array<Constraint>  $constraints
-     */
-    public function constraints(array $constraints): static
+return new class () extends Migration {
+    public function up(): void
     {
-        foreach ($constraints as $constraint) {
-            if ($this instanceof QueryBuilder) {
-                $constraint->filter($this);
-            }
+        Schema::create('failed_import_rows', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-            $this->constraints[$constraint->getName()] = $constraint;
-        }
+            $table->json('data');
+            $table->foreignUuid('import_id')->constrained()->cascadeOnDelete();
+            $table->text('validation_error')->nullable();
 
-        return $this;
+            $table->timestamps();
+        });
     }
-
-    /**
-     * @return array<Constraint>
-     */
-    public function getConstraints(): array
-    {
-        return $this->evaluate($this->constraints);
-    }
-
-    public function getConstraint(string $name): ?Constraint
-    {
-        return $this->getConstraints()[$name] ?? null;
-    }
-}
+};
