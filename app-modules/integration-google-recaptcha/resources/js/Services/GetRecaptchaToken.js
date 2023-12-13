@@ -35,6 +35,7 @@ async function getRecaptchaToken(siteKey) {
     return new Promise((resolve, reject) => {
         grecaptcha.ready(async function () {
             try {
+                // TODO We may want to make the "action" an argument to this function
                 let token = await grecaptcha.execute(siteKey, { action: 'formSubmission' });
 
                 resolve(token);

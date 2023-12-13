@@ -105,7 +105,7 @@ trait HasSharedFormConfiguration
                 ->disabled(fn (GoogleRecaptchaSettings $settings) => ! $settings->is_enabled)
                 ->helperText(function (GoogleRecaptchaSettings $settings) {
                     if (! $settings->is_enabled) {
-                        return 'Enable and configure Recaptcha in order to use it on your forms.';
+                        return 'Enable and configure reCAPTCHA in order to use it on your forms.';
                     }
                 }),
             Section::make('Fields')

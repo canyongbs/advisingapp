@@ -49,7 +49,7 @@ class GenerateSubmissibleValidation
     {
         $rules = [];
 
-        if ($submissible->recaptcha_enabled) {
+        if ($submissible->recaptcha_enabled === true) {
             $rules['recaptcha-token'] = [new RecaptchaTokenValid()];
         }
 
