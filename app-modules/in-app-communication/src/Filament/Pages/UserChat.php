@@ -94,7 +94,10 @@ class UserChat extends Page implements HasForms, HasActions
         $this->authorize(Feature::RealtimeChat->getGateName());
         $this->authorize('in-app-communication.realtime-chat.access');
 
-        $this->conversations = auth()->user()->conversations;
+        /** @var User $user */
+        $user = auth()->user();
+
+        $this->conversations = $user->conversations;
     }
 
     public function newChatAction()
