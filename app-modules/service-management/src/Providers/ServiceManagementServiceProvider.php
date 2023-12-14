@@ -37,6 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Providers;
 
 use Filament\Panel;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
@@ -58,6 +59,8 @@ use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServi
 
 class ServiceManagementServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ServiceManagementPlugin()));
@@ -79,6 +82,8 @@ class ServiceManagementServiceProvider extends ServiceProvider
 
         $this->registerRolesAndPermissions();
         $this->registerObservers();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/service-management.graphql');
     }
 
     protected function registerObservers(): void

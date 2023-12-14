@@ -14,7 +14,6 @@ type Interaction
     "The User related to the interaction."
     user: User @belongsTo
 
-    # TODO: A ServiceRequest
     "The Interactable related to the interaction."
     interactable: Interactable @morphTo
 
@@ -103,7 +102,7 @@ enum QueryInteractionsHasOutcomeColumn {
     name
 }
 
-enum QueryDivisionsWhereColumn{
+enum QueryDivisionsWhereColumn {
     id
 }
 
@@ -157,6 +156,18 @@ extend type Query {
         hasDivision: _
             @whereHasConditions(columnsEnum: QueryDivisionsWhereColumn)
     ): [Interaction!]! @paginate @canModel(ability: "viewAny")
+}
+
+extend type Mutation {
+    "Create a interaction."
+    createInteraction(
+        "The subject of the interaction."
+        subject: String!
+
+        "The description of the interaction."
+        description: String!
+
+    ): Interaction! @create @canModel(ability: "create")
 }
 
 #import ./interaction-campaign.graphql
