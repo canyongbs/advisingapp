@@ -14,6 +14,7 @@ type Interaction
     "The User related to the interaction."
     user: User @belongsTo
 
+    # TODO: A ServiceRequest
     "The Interactable related to the interaction."
     interactable: Interactable @morphTo
 
@@ -53,20 +54,42 @@ type Interaction
 
 # TODO: Query and Mutate
 
+enum QueryInteractionsWhereColumn {
+    subject
+    description
+    start_datetime
+    end_datetime
+    created_at
+    updated_at
+}
+
+enum QueryInteractionsHasUserColumn {
+    id
+    email
+}
+
+enum QueryInteractionsHasTypeColumn {
+    id
+    name
+}
+
 extend type Query {
+    "Find a single interaction by an identifying attribute."
     interaction(
-        "Search by primary key."
-        id: ID @eq
-    ): User @find @canResolved(ability: "view")
+        "The value of the attribute to match."
+        id: ID! @whereKey
+    ): Interaction @find @canResolved(ability: "view")
 
     "List multiple interactions."
     interactions(
-        "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
-        subject: String @where(operator: "like")
-        hasType: _ @whereHasConditions
-    ): [Interaction!]!
-        @paginate
-        @canModel(ability: "viewAny")
+        where: _ @whereConditions(columnsEnum: QueryInteractionsWhereColumn)
+        
+        "Filter by the user relationship."
+        hasUser: _ @whereHasConditions(columnsEnum: QueryInteractionsHasUserColumn)
+
+        "Filter by the type relationship."
+        hasType: _ @whereHasConditions(columnsEnum: QueryInteractionsHasTypeColumn)
+    ): [Interaction!]! @paginate @canModel(ability: "viewAny")
 }
 
 #import ./interaction-campaign.graphql

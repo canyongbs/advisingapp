@@ -11,7 +11,7 @@
         "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:application && npm run build:form",
         "build:application": "(cd widgets/application && vite build)",
         "build:form": "(cd widgets/form && vite build)",
-	    "api-docs:generate": "env-cmd spectaql spectaql.yml"
+	    "api-docs:generate": "export NODE_OPTIONS=--max_old_space_size=4096 && env-cmd spectaql spectaql.yml"
     },
     "devDependencies": {
         "@headlessui/vue": "^1.7.16",
