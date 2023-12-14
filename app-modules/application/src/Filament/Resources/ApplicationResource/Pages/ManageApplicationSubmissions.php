@@ -83,7 +83,6 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                     ->color('success'),
                 TextColumn::make('state')
                     ->badge()
-                    ->translateLabel()
                     ->state(function (ApplicationSubmission $record) {
                         return $record->state->name;
                     })
