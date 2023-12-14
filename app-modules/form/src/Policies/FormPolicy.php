@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Form\Policies;
 
-use App\Models\User;
 use App\Enums\Feature;
+use App\Models\Authenticatable;
 use AdvisingApp\Form\Models\Form;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
@@ -47,57 +47,57 @@ class FormPolicy implements FeatureAccessEnforcedPolicy
 {
     use FeatureAccessEnforcedPolicyBefore;
 
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'form.view-any',
             denyResponse: 'You do not have permission to view forms.'
         );
     }
 
-    public function view(User $user, Form $form): Response
+    public function view(Authenticatable $authenticatable, Form $form): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['form.*.view', "form.{$form->id}.view"],
             denyResponse: 'You do not have permission to view this form.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'form.create',
             denyResponse: 'You do not have permission to create forms.'
         );
     }
 
-    public function update(User $user, Form $form): Response
+    public function update(Authenticatable $authenticatable, Form $form): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['form.*.update', "form.{$form->id}.update"],
             denyResponse: 'You do not have permission to update this form.'
         );
     }
 
-    public function delete(User $user, Form $form): Response
+    public function delete(Authenticatable $authenticatable, Form $form): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['form.*.delete', "form.{$form->id}.delete"],
             denyResponse: 'You do not have permission to delete this form.'
         );
     }
 
-    public function restore(User $user, Form $form): Response
+    public function restore(Authenticatable $authenticatable, Form $form): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['form.*.restore', "form.{$form->id}.restore"],
             denyResponse: 'You do not have permission to restore this form.'
         );
     }
 
-    public function forceDelete(User $user, Form $form): Response
+    public function forceDelete(Authenticatable $authenticatable, Form $form): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['form.*.force-delete', "form.{$form->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this form.'
         );

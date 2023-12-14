@@ -36,63 +36,63 @@
 
 namespace AdvisingApp\Engagement\Policies;
 
-use App\Models\User;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 
 class EngagementResponsePolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'engagement_response.view-any',
             denyResponse: 'You do not have permission to view engagement responses.'
         );
     }
 
-    public function view(User $user, EngagementResponse $engagementResponse): Response
+    public function view(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['engagement_response.*.view', "engagement_response.{$engagementResponse->id}.view"],
             denyResponse: 'You do not have permission to view this engagement response.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'engagement_response.create',
             denyResponse: 'You do not have permission to create engagement responses.'
         );
     }
 
-    public function update(User $user, EngagementResponse $engagementResponse): Response
+    public function update(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['engagement_response.*.update', "engagement_response.{$engagementResponse->id}.update"],
             denyResponse: 'You do not have permission to update this engagement response.'
         );
     }
 
-    public function delete(User $user, EngagementResponse $engagementResponse): Response
+    public function delete(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['engagement_response.*.delete', "engagement_response.{$engagementResponse->id}.delete"],
             denyResponse: 'You do not have permission to delete this engagement response.'
         );
     }
 
-    public function restore(User $user, EngagementResponse $engagementResponse): Response
+    public function restore(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['engagement_response.*.restore', "engagement_response.{$engagementResponse->id}.restore"],
             denyResponse: 'You do not have permission to restore this engagement response.'
         );
     }
 
-    public function forceDelete(User $user, EngagementResponse $engagementResponse): Response
+    public function forceDelete(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['engagement_response.*.force-delete', "engagement_response.{$engagementResponse->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this engagement response.'
         );

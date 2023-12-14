@@ -37,6 +37,9 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
@@ -44,6 +47,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
 
 test('A successful action on the EditServiceRequest page', function () {
     $serviceRequest = ServiceRequest::factory()->create();
@@ -200,4 +204,55 @@ test('EditServiceRequest is gated with proper access control', function () {
         ->toEqual($request->get('priority_id'))
         ->and($serviceRequest->type->id)
         ->toEqual($request->get('type_id'));
+});
+
+test('EditServiceRequest is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request.view-any');
+    $user->givePermissionTo('service_request.*.update');
+
+    $serviceRequest = ServiceRequest::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestResource::getUrl('edit', [
+                'record' => $serviceRequest,
+            ])
+        )->assertForbidden();
+
+    livewire(EditServiceRequest::class, [
+        'record' => $serviceRequest->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestResource::getUrl('edit', [
+                'record' => $serviceRequest,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditServiceRequestRequestFactory::new()->create());
+
+    livewire(EditServiceRequest::class, [
+        'record' => $serviceRequest->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($serviceRequest->fresh()->only($request->except('division_id')->keys()->toArray()))
+        ->toEqual($request->except('division_id')->toArray())
+        ->and($serviceRequest->fresh()->division->id)->toEqual($request['division_id']);
 });

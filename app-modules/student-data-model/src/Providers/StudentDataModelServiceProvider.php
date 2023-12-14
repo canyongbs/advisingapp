@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Providers;
 
 use Filament\Panel;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -49,6 +50,8 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class StudentDataModelServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new StudentDataModelPlugin()));
@@ -64,6 +67,8 @@ class StudentDataModelServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/student.graphql');
     }
 
     protected function registerRolesAndPermissions(): void

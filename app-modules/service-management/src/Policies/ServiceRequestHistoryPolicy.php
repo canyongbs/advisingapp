@@ -36,65 +36,75 @@
 
 namespace AdvisingApp\ServiceManagement\Policies;
 
-use App\Models\User;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
 
-class ServiceRequestHistoryPolicy
+class ServiceRequestHistoryPolicy implements FeatureAccessEnforcedPolicy
 {
-    public function viewAny(User $user): Response
+    use FeatureAccessEnforcedPolicyBefore;
+
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'service_request_history.view-any',
             denyResponse: 'You do not have permissions to view service request history.'
         );
     }
 
-    public function view(User $user, ServiceRequestHistory $serviceRequestHistory): Response
+    public function view(Authenticatable $authenticatable, ServiceRequestHistory $serviceRequestHistory): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_history.*.view', "service_request_history.{$serviceRequestHistory->id}.view"],
             denyResponse: 'You do not have permissions to view this service request history.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'service_request_history.create',
             denyResponse: 'You do not have permissions to create service request history.'
         );
     }
 
-    public function update(User $user, ServiceRequestHistory $serviceRequestHistory): Response
+    public function update(Authenticatable $authenticatable, ServiceRequestHistory $serviceRequestHistory): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_history.*.update', "service_request_history.{$serviceRequestHistory->id}.update"],
             denyResponse: 'You do not have permissions to update this service request history.'
         );
     }
 
-    public function delete(User $user, ServiceRequestHistory $serviceRequestHistory): Response
+    public function delete(Authenticatable $authenticatable, ServiceRequestHistory $serviceRequestHistory): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_history.*.delete', "service_request_history.{$serviceRequestHistory->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request history.'
         );
     }
 
-    public function restore(User $user, ServiceRequestHistory $serviceRequestHistory): Response
+    public function restore(Authenticatable $authenticatable, ServiceRequestHistory $serviceRequestHistory): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_history.*.restore', "service_request_history.{$serviceRequestHistory->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request history.'
         );
     }
 
-    public function forceDelete(User $user, ServiceRequestHistory $serviceRequestHistory): Response
+    public function forceDelete(Authenticatable $authenticatable, ServiceRequestHistory $serviceRequestHistory): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_history.*.force-delete', "service_request_history.{$serviceRequestHistory->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request history.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ServiceManagement];
     }
 }

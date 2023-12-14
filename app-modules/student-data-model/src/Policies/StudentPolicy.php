@@ -36,49 +36,49 @@
 
 namespace AdvisingApp\StudentDataModel\Policies;
 
-use App\Models\User;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentPolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'student.view-any',
             denyResponse: 'You do not have permission to view students.'
         );
     }
 
-    public function view(User $user, Student $student): Response
+    public function view(Authenticatable $authenticatable, Student $student): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['student.*.view', "student.{$student->id}.view"],
             denyResponse: 'You do not have permission to view this student.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
         return Response::deny('Students cannot be created.');
     }
 
-    public function update(User $user, Student $student): Response
+    public function update(Authenticatable $authenticatable, Student $student): Response
     {
         return Response::deny('Students cannot be updated.');
     }
 
-    public function delete(User $user, Student $student): Response
+    public function delete(Authenticatable $authenticatable, Student $student): Response
     {
         return Response::deny('Students cannot be deleted.');
     }
 
-    public function restore(User $user, Student $student): Response
+    public function restore(Authenticatable $authenticatable, Student $student): Response
     {
         return Response::deny('Students cannot be restored.');
     }
 
-    public function forceDelete(User $user, Student $student): Response
+    public function forceDelete(Authenticatable $authenticatable, Student $student): Response
     {
         return Response::deny('Students cannot be force deleted.');
     }

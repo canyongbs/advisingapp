@@ -36,65 +36,75 @@
 
 namespace AdvisingApp\ServiceManagement\Policies;
 
-use App\Models\User;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
-class ServiceRequestPolicy
+class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 {
-    public function viewAny(User $user): Response
+    use FeatureAccessEnforcedPolicyBefore;
+
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'service_request.view-any',
             denyResponse: 'You do not have permission to view service requests.'
         );
     }
 
-    public function view(User $user, ServiceRequest $serviceRequest): Response
+    public function view(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request.*.view', "service_request.{$serviceRequest->id}.view"],
             denyResponse: 'You do not have permission to view this service request.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'service_request.create',
             denyResponse: 'You do not have permission to create service requests.'
         );
     }
 
-    public function update(User $user, ServiceRequest $serviceRequest): Response
+    public function update(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request.*.update', "service_request.{$serviceRequest->id}.update"],
             denyResponse: 'You do not have permission to update this service request.'
         );
     }
 
-    public function delete(User $user, ServiceRequest $serviceRequest): Response
+    public function delete(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request.*.delete', "service_request.{$serviceRequest->id}.delete"],
             denyResponse: 'You do not have permission to delete this service request.'
         );
     }
 
-    public function restore(User $user, ServiceRequest $serviceRequest): Response
+    public function restore(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request.*.restore', "service_request.{$serviceRequest->id}.restore"],
             denyResponse: 'You do not have permission to restore this service request.'
         );
     }
 
-    public function forceDelete(User $user, ServiceRequest $serviceRequest): Response
+    public function forceDelete(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request.*.force-delete', "service_request.{$serviceRequest->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this service request.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ServiceManagement];
     }
 }

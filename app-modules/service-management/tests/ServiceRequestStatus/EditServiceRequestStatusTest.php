@@ -37,6 +37,9 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
@@ -48,6 +51,7 @@ use function PHPUnit\Framework\assertEquals;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestStatusRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
 
 test('A successful action on the EditServiceRequestStatus page', function () {
     $serviceRequestStatus = ServiceRequestStatus::factory()->create();
@@ -62,7 +66,7 @@ test('A successful action on the EditServiceRequestStatus page', function () {
 
     $editRequest = EditServiceRequestStatusRequestFactory::new()->create();
 
-    livewire(ServiceRequestStatusResource\Pages\EditServiceRequestStatus::class, [
+    livewire(EditServiceRequestStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertFormSet([
@@ -84,7 +88,7 @@ test('EditServiceRequestStatus requires valid data', function ($data, $errors) {
 
     $serviceRequestStatus = ServiceRequestStatus::factory()->create();
 
-    livewire(ServiceRequestStatusResource\Pages\EditServiceRequestStatus::class, [
+    livewire(EditServiceRequestStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertFormSet([
@@ -120,7 +124,7 @@ test('EditServiceRequestStatus is gated with proper access control', function ()
             ])
         )->assertForbidden();
 
-    livewire(ServiceRequestStatusResource\Pages\EditServiceRequestStatus::class, [
+    livewire(EditServiceRequestStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->assertForbidden();
@@ -137,7 +141,56 @@ test('EditServiceRequestStatus is gated with proper access control', function ()
 
     $request = collect(EditServiceRequestStatusRequestFactory::new()->create());
 
-    livewire(ServiceRequestStatusResource\Pages\EditServiceRequestStatus::class, [
+    livewire(EditServiceRequestStatus::class, [
+        'record' => $serviceRequestStatus->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertEquals($request['name'], $serviceRequestStatus->fresh()->name);
+});
+
+test('EditServiceRequestStatus is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_status.view-any');
+    $user->givePermissionTo('service_request_status.*.update');
+
+    $serviceRequestStatus = ServiceRequestStatus::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl('edit', [
+                'record' => $serviceRequestStatus,
+            ])
+        )->assertForbidden();
+
+    livewire(EditServiceRequestStatus::class, [
+        'record' => $serviceRequestStatus->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl('edit', [
+                'record' => $serviceRequestStatus,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditServiceRequestStatusRequestFactory::new()->create());
+
+    livewire(EditServiceRequestStatus::class, [
         'record' => $serviceRequestStatus->getRouteKey(),
     ])
         ->fillForm($request->toArray())

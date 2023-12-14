@@ -37,6 +37,9 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
@@ -76,6 +79,39 @@ test('ViewServiceRequestType is gated with proper access control', function () {
 
     $user->givePermissionTo('service_request_type.view-any');
     $user->givePermissionTo('service_request_type.*.view');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestTypeResource::getUrl('view', [
+                'record' => $serviceRequestType,
+            ])
+        )->assertSuccessful();
+});
+
+test('ViewServiceRequestType is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_type.view-any');
+    $user->givePermissionTo('service_request_type.*.view');
+
+    $serviceRequestType = ServiceRequestType::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestTypeResource::getUrl('view', [
+                'record' => $serviceRequestType,
+            ])
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(

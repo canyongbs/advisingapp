@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notifications\Providers;
 
 use Illuminate\Support\Facades\Event;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -52,6 +53,8 @@ use AdvisingApp\Notifications\Listeners\NotifyUserOfSubscriptionDeleted;
 
 class NotificationsServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void {}
 
     public function boot(): void
@@ -63,6 +66,8 @@ class NotificationsServiceProvider extends ServiceProvider
         $this->registerRolesAndPermissions();
         $this->registerObservers();
         $this->registerEvents();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/notifications.graphql');
     }
 
     protected function registerObservers(): void

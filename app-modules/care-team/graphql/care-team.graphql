@@ -1,0 +1,56 @@
+type UserCareTeam @model(class: "AdvisingApp\\CareTeam\\Models\\CareTeam") {
+    "Unique primary key."
+    id: ID!
+    "The user related to this care team assignment."
+    user: User! @belongsTo
+    "The educatable in the user's care team."
+    educatable: Educatable! @morphTo
+    "The created date of the care team assignment."
+    created_at: DateTime
+    "The updated date of the care team assignment."
+    updated_at: DateTime
+}
+
+extend type Query {
+    "Get a care team assignment by its primary key."
+    userCareTeam("Search by primary key." id: ID! @whereKey): UserCareTeam
+        @find
+        @canResolved(ability: "view")
+
+    "Get all care team assignments."
+    userCareTeams: [UserCareTeam!]! @paginate @canModel(ability: "viewAny")
+}
+
+extend type Mutation {
+    "Create a new care team assignment."
+    createUserCareTeam(
+        "The user to add to the care team of."
+        user_id: ID!
+            @rules(
+                apply: [
+                    "required"
+                    "exists:users,id"
+                    "AdvisingApp\\CareTeam\\Rules\\UniqueCareTeamRule"
+                ]
+            )
+
+        "The educatable to add to the care team."
+        educatable_id: ID!
+            @rules(
+                apply: [
+                    "required"
+                    "AdvisingApp\\CareTeam\\Rules\\EducatableIdExistsRule"
+                ]
+            )
+
+        "The type of educatable to add to the care team."
+        educatable_type: String!
+            @rules(apply: ["required", "in:student,prospect"])
+    ): UserCareTeam! @create @canModel(ability: "create")
+
+    "Delete an existing care team assignment."
+    deleteUserCareTeam(
+        "The primary key of the care team assignment."
+        id: ID! @whereKey
+    ): UserCareTeam @delete @canFind(ability: "delete", find: "id")
+}

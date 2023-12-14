@@ -15,12 +15,11 @@
         "ext-pdo": "*",
         "awcodes/filament-tiptap-editor": "^3.2",
         "aws/aws-php-sns-message-validator": "^1.8.0",
-        "aws/aws-sdk-php": "^3.285",
+        "aws/aws-sdk-php": "^3.293",
         "barryvdh/laravel-debugbar": "^3.9",
         "bvtterfly/model-state-machine": "^0.3.0",
         "canyon-gbs/advising-app-alert": "*",
         "canyon-gbs/advising-app-application": "*",
-        "canyon-gbs/advising-app-student-data-model": "*",
         "canyon-gbs/advising-app-assistant": "*",
         "canyon-gbs/advising-app-audit": "*@dev",
         "canyon-gbs/advising-app-authorization": "*",
@@ -43,13 +42,14 @@
         "canyon-gbs/advising-app-notifications": "*",
         "canyon-gbs/advising-app-prospect": "*",
         "canyon-gbs/advising-app-service-management": "^1.0",
+        "canyon-gbs/advising-app-student-data-model": "*",
         "canyon-gbs/advising-app-task": "*",
         "canyon-gbs/advising-app-team": "^1.0",
         "canyon-gbs/advising-app-theme": "*",
         "canyon-gbs/advising-app-timeline": "*",
         "canyon-gbs/advising-app-webhook": "*",
         "composer/composer": "^2.6.4",
-        "filament/filament": "^3.0",
+        "filament/filament": "^3.1",
         "filament/spatie-laravel-media-library-plugin": "^3.0",
         "filament/spatie-laravel-settings-plugin": "^3.0",
         "friendsofcat/opensearch-migrations": "^2.0",
@@ -58,41 +58,43 @@
         "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
-        "kirschbaum-development/eloquent-power-joins": "^3.0",
+        "kirschbaum-development/eloquent-power-joins": "^3.4",
         "laravel/framework": "^10.37",
-        "laravel/sanctum": "^3.2",
-        "laravel/scout": "^10.2",
-        "laravel/socialite": "^5.8",
+        "laravel/sanctum": "^3.3",
+        "laravel/scout": "^10.6",
+        "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
-        "league/csv": "^9.10",
-        "league/flysystem-aws-s3-v3": "^3.15",
+        "league/csv": "^9.12",
+        "league/flysystem-aws-s3-v3": "^3.22",
         "league/oauth2-client": "^2.7",
-        "livewire/livewire": "^3.0",
+        "livewire/livewire": "^3.3",
         "lomkit/laravel-rest-api": "^2.3",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.109",
+        "mll-lab/graphql-php-scalars": "^6.2",
+        "nuwave/lighthouse": "^6.28",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
-        "saade/filament-fullcalendar": "^3.0",
+        "saade/filament-fullcalendar": "^3.1",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/microsoft-azure": "^5.1",
-        "spatie/laravel-data": "^3.7",
-        "spatie/laravel-medialibrary": "^10.9",
+        "spatie/laravel-data": "^3.10",
+        "spatie/laravel-medialibrary": "^10.15",
         "spatie/laravel-settings": "^3.2",
         "sqids/sqids": "^0.4.1",
-        "staudenmeir/eloquent-has-many-deep": "^1.18",
+        "staudenmeir/eloquent-has-many-deep": "^1.19",
         "stechstudio/filament-impersonate": "^3.5",
         "tapp/filament-timezone-field": "^3.0",
         "tpetry/laravel-postgresql-enhanced": "^0.33.0",
-        "twilio/sdk": "^7.7"
+        "twilio/sdk": "^7.12"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.13",
         "brianium/paratest": "^7.2",
         "doctrine/dbal": "^3.6",
         "fakerphp/faker": "^1.9.1",
-        "friendsofphp/php-cs-fixer": "^3.21",
+        "friendsofphp/php-cs-fixer": "^3.41",
         "larastan/larastan": "^2.7",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
@@ -162,7 +164,7 @@
             "rm -f ./.php-cs-fixer.cache"
         ],
         "prettier": [
-            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
         ],
         "prettier-format": [
             "@prettier --write"
@@ -198,6 +200,15 @@
         "ci": [
             "rm -rf ./vendor",
             "composer install"
+        ],
+        "print-schema": [
+            "@php artisan lighthouse:print-schema -W -D public"
+        ],
+        "generate-api-docs": [
+            "@php artisan lighthouse:ide-helper",
+            "@prettier-format",
+            "@print-schema",
+            "npm run api-docs:generate"
         ]
     },
     "extra": {

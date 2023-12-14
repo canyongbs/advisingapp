@@ -37,71 +37,72 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Illuminate\Auth\Access\Response;
 use App\Support\FeatureAccessResponse;
 
 class UserPolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'user.view-any',
             denyResponse: 'You do not have permission to view users.'
         );
     }
 
-    public function view(User $user, User $model): Response
+    public function view(Authenticatable $authenticatable, User $model): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['user.*.view', "user.{$model->id}.view"],
             denyResponse: 'You do not have permission to view this user.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
         if (User::count() >= app(LicenseSettings::class)->data->limits->crmSeats) {
             return FeatureAccessResponse::deny('You have reached the maximum number of users allowed by your license.');
         }
 
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'user.create',
             denyResponse: 'You do not have permission to create users.'
         );
     }
 
-    public function update(User $user, User $model): Response
+    public function update(Authenticatable $authenticatable, User $model): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['user.*.update', "user.{$model->id}.update"],
             denyResponse: 'You do not have permission to update this user.'
         );
     }
 
-    public function delete(User $user, User $model): Response
+    public function delete(Authenticatable $authenticatable, User $model): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['user.*.delete', "user.{$model->id}.delete"],
             denyResponse: 'You do not have permission to delete this user.'
         );
     }
 
-    public function restore(User $user, User $model): Response
+    public function restore(Authenticatable $authenticatable, User $model): Response
     {
         if (User::count() >= app(LicenseSettings::class)->data->limits->crmSeats) {
             return FeatureAccessResponse::deny('You have reached the maximum number of users allowed by your license.');
         }
 
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['user.*.restore', "user.{$model->id}.restore"],
             denyResponse: 'You do not have permission to restore this user.'
         );
     }
 
-    public function forceDelete(User $user, User $model): Response
+    public function forceDelete(Authenticatable $authenticatable, User $model): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['user.*.force-delete', "user.{$model->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this user.'
         );

@@ -70,7 +70,7 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class)->withTimestamps();
+        return $this->belongsTo(User::class);
     }
 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
