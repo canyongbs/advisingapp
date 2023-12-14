@@ -34,41 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+namespace App\Concerns;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Event;
+use Nuwave\Lighthouse\Events\BuildSchemaString;
+use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
 
-enum Feature: string
+trait GraphSchemaDiscovery
 {
-    case OnlineAdmissions = 'online-admissions';
-
-    case RealtimeChat = 'realtime-chat';
-
-    case DynamicForms = 'dynamic-forms';
-
-    case ConductSurveys = 'conduct-surveys';
-
-    case PersonalAssistant = 'personal-assistant';
-
-    case ServiceManagement = 'service-management';
-
-    case KnowledgeManagement = 'knowledge-management';
-
-    case StudentAndProspectPortal = 'student-and-prospect-portal';
-
-    public function generateGate(): void
+    public function discoverSchema(string $path): void
     {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
-    }
-
-    public function getGateName(): string
-    {
-        return "feature-{$this->value}";
+        Event::listen(function (BuildSchemaString $event) use ($path) {
+            return (new SchemaStitcher($path))->getSchemaString();
+        });
     }
 }

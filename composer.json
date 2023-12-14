@@ -20,7 +20,6 @@
         "bvtterfly/model-state-machine": "^0.3.0",
         "canyon-gbs/advising-app-alert": "*",
         "canyon-gbs/advising-app-application": "*",
-        "canyon-gbs/advising-app-student-data-model": "*",
         "canyon-gbs/advising-app-assistant": "*",
         "canyon-gbs/advising-app-audit": "*@dev",
         "canyon-gbs/advising-app-authorization": "*",
@@ -43,6 +42,7 @@
         "canyon-gbs/advising-app-notifications": "*",
         "canyon-gbs/advising-app-prospect": "*",
         "canyon-gbs/advising-app-service-management": "^1.0",
+        "canyon-gbs/advising-app-student-data-model": "*",
         "canyon-gbs/advising-app-task": "*",
         "canyon-gbs/advising-app-team": "^1.0",
         "canyon-gbs/advising-app-theme": "*",
@@ -72,6 +72,7 @@
         "lomkit/laravel-rest-api": "^2.3",
         "maatwebsite/excel": "^3.1",
         "microsoft/microsoft-graph": "^1.109",
+        "nuwave/lighthouse": "^6.28",
         "owen-it/laravel-auditing": "dev-feature/queued-auditing@dev",
         "saade/filament-fullcalendar": "^3.1",
         "shuvroroy/filament-spatie-laravel-health": "^2.0",
@@ -162,7 +163,7 @@
             "rm -f ./.php-cs-fixer.cache"
         ],
         "prettier": [
-            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
+            "./node_modules/.bin/prettier \"resources/**/*{.css,.blade.php,.js}\" \"app-modules/**/resources/**/*{.css,.blade.php,.js}\" \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache"
         ],
         "prettier-format": [
             "@prettier --write"
@@ -198,6 +199,14 @@
         "ci": [
             "rm -rf ./vendor",
             "composer install"
+        ],
+        "print-schema": [
+            "@php artisan lighthouse:print-schema -W -D public"
+        ],
+        "generate-api-docs": [
+            "@prettier-format",
+            "@print-schema",
+            "npm run api-docs:generate"
         ]
     },
     "extra": {

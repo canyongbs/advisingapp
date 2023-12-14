@@ -1,0 +1,12 @@
+type KnowledgeBaseItem
+    @feature(feature: "knowledge-management")
+    @model(class: "AdvisingApp\\KnowledgeBase\\Models\\KnowledgeBaseItem") {
+    id: ID!
+}
+
+extend type Query @feature(feature: "knowledge-management") {
+    "Get all knowledge base items."
+    knowledgeBaseItems: [KnowledgeBaseItem!]!
+        @canModel(ability: "viewAny")
+        @paginate
+}

@@ -27,6 +27,9 @@
         "options": {
           "tabWidth": 4
         }
-      }
+      },
+    {
+      "files": ["*.graphql"]
+    }
   ]
 }
