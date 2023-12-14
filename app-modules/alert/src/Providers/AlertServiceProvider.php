@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Providers;
 
+use App\Concerns\GraphSchemaDiscovery;
 use Filament\Panel;
 use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Models\Alert;
@@ -50,6 +51,8 @@ use AdvisingApp\Alert\Listeners\NotifySubscribersOfAlertCreated;
 
 class AlertServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AlertPlugin()));
@@ -66,6 +69,8 @@ class AlertServiceProvider extends ServiceProvider
         $this->registerObservers();
 
         $this->registerEvents();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/alert.graphql');
     }
 
     protected function registerRolesAndPermissions()

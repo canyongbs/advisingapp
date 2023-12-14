@@ -1,0 +1,30 @@
+type Alert
+    @model(class: "AdvisingApp\\Alert\\Models\\Alert") {
+    "Unique primary key."
+    id: ID!
+    "The concern of the alert."
+    concern: Educatable! @morphTo
+    description: String!
+    severity: String!
+    status: String!
+    suggested_intervention: String!,
+    "The created date of the alert."
+    created_at: DateTime
+    "The updated date of the alert."
+    updated_at: DateTime
+    "The deleted date of the alert."
+    updated_at: DateTime
+}
+
+extend type Query {
+    "Get an alert by its primary key."
+    alert(
+        "Search by primary key."
+        id: ID! @whereKey
+    ): Alert @find @canResolved(ability: "view")
+
+    "Get all alerts."
+    alerts: [Alert!]!
+    @paginate
+    @canModel(ability: "viewAny")
+}
