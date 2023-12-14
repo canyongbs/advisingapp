@@ -47,6 +47,11 @@ return new class () extends Migration {
             $table->foreignUuid('form_id')->constrained('forms')->cascadeOnDelete();
             $table->string('author_id')->nullable();
             $table->string('author_type')->nullable();
+            $table->timestamp('submitted_at')->nullable();
+            $table->timestamp('canceled_at')->nullable();
+            $table->string('request_method')->nullable();
+            $table->text('request_note')->nullable();
+            $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
 
             $table->timestamps();
             $table->softDeletes();

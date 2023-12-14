@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
-use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\DatePicker;
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Models\ProspectStatus;
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class CreateProspect extends CreateRecord
 {

@@ -37,12 +37,15 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 
 test('The correct details are displayed on the ListServiceRequestStatuses page', function () {
     $serviceRequestStatuses = ServiceRequestStatus::factory()
@@ -103,5 +106,31 @@ test('ListServiceRequestStatuses is gated with proper access control', function 
     actingAs($user)
         ->get(
             ServiceRequestStatusResource::getUrl('index')
+        )->assertSuccessful();
+});
+
+test('ListServiceRequestStatuses is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_status.view-any');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl()
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl()
         )->assertSuccessful();
 });

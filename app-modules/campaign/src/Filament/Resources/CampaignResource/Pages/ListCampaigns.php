@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Resources\CampaignResource\Pages;
+namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
-use Assist\Campaign\Models\Campaign;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
-use Assist\Campaign\Filament\Resources\CampaignResource;
+use AdvisingApp\Campaign\Filament\Resources\CampaignResource;
 
 class ListCampaigns extends ListRecords
 {

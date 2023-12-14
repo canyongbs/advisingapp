@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Database\Seeders;
+namespace AdvisingApp\Interaction\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Assist\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionStatus;
 
 class InteractionStatusSeeder extends Seeder
 {

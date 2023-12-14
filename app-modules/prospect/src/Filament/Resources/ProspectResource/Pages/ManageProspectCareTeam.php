@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
-use Assist\Prospect\Models\Prospect;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Assist\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class ManageProspectCareTeam extends ManageRelatedRecords
 {

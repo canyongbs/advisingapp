@@ -34,22 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Providers;
+namespace AdvisingApp\Interaction\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
-use Assist\Interaction\InteractionPlugin;
-use Assist\Interaction\Models\Interaction;
-use Assist\Interaction\Models\InteractionType;
-use Assist\Interaction\Models\InteractionDriver;
-use Assist\Interaction\Models\InteractionStatus;
-use Assist\Interaction\Models\InteractionOutcome;
-use Assist\Interaction\Models\InteractionCampaign;
-use Assist\Interaction\Models\InteractionRelation;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Interaction\InteractionPlugin;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Interaction\Models\InteractionType;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Interaction\Observers\InteractionObserver;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionCampaign;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Interaction\Observers\InteractionObserver;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class InteractionServiceProvider extends ServiceProvider
 {

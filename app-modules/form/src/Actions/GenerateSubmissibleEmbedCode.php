@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace AdvisingApp\Form\Actions;
 
 use Exception;
-use Assist\Form\Models\Form;
-use Assist\Form\Models\Submissible;
+use AdvisingApp\Form\Models\Form;
 use Illuminate\Support\Facades\URL;
-use Assist\Application\Models\Application;
+use AdvisingApp\Form\Models\Submissible;
+use AdvisingApp\Application\Models\Application;
 
 class GenerateSubmissibleEmbedCode
 {
@@ -48,7 +48,7 @@ class GenerateSubmissibleEmbedCode
     {
         return match ($submissible::class) {
             Form::class => (function () use ($submissible) {
-                $scriptUrl = url('js/widgets/form/assist-form-widget.js?');
+                $scriptUrl = url('js/widgets/form/advising-app-form-widget.js?');
                 $formDefinitionUrl = URL::signedRoute('forms.define', ['form' => $submissible]);
 
                 return <<<EOD
@@ -58,11 +58,11 @@ class GenerateSubmissibleEmbedCode
             })(),
             Application::class => (function () use ($submissible) {
                 // TODO: Eventually we will want to change this to create a separate widget for applications.
-                $scriptUrl = url('js/widgets/form/assist-form-widget.js?');
-                $formDefinitionUrl = URL::signedRoute('applications.define', ['application' => $submissible]);
+                $scriptUrl = url('js/widgets/application/advising-app-application-widget.js?');
+                $applicationDefinitionUrl = URL::signedRoute('applications.define', ['application' => $submissible]);
 
                 return <<<EOD
-                <form-embed url="{$formDefinitionUrl}"></form-embed>
+                <application-embed url="{$applicationDefinitionUrl}"></application-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),

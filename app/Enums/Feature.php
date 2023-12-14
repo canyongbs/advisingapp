@@ -36,6 +36,7 @@
 
 namespace App\Enums;
 
+use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Gate;
 
@@ -61,8 +62,13 @@ enum Feature: string
     {
         // If features are added that are not based on a License Addon we will need to update this
         Gate::define(
-            $this->value,
-            fn () => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
+            $this->getGateName(),
+            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
         );
+    }
+
+    public function getGateName(): string
+    {
+        return "feature-{$this->value}";
     }
 }

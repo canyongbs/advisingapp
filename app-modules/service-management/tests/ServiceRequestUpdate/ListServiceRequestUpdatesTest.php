@@ -38,12 +38,15 @@ use App\Models\User;
 use Illuminate\Support\Str;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
 test('The correct details are displayed on the ListServiceRequestUpdates page', function () {
     $serviceRequestUpdates = ServiceRequestUpdate::factory()
@@ -116,5 +119,31 @@ test('ListServiceRequestUpdates is gated with proper access control', function (
     actingAs($user)
         ->get(
             ServiceRequestUpdateResource::getUrl('index')
+        )->assertSuccessful();
+});
+
+test('ListServiceRequestUpdates is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_update.view-any');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestUpdateResource::getUrl()
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestUpdateResource::getUrl()
         )->assertSuccessful();
 });

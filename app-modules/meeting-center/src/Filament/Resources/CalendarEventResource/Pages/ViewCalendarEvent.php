@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
@@ -42,7 +42,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 
 class ViewCalendarEvent extends ViewRecord
 {

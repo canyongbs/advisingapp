@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Database\Factories;
+namespace AdvisingApp\Prospect\Database\Factories;
 
-use Assist\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\Prospect\Enums\ProspectStatusColorOptions;
-use Assist\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 
 /**
  * @extends Factory<ProspectStatus>

@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Team\Filament\Resources\TeamResource\Pages;
+namespace AdvisingApp\Team\Filament\Resources\TeamResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Team\Filament\Resources\TeamResource;
+use AdvisingApp\Team\Filament\Resources\TeamResource;
 
 class CreateTeam extends CreateRecord
 {

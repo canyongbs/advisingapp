@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Filament\Resources\ApplicationResource\Pages\Concerns;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns;
 
 use Filament\Forms\Get;
-use Assist\Form\Enums\Rounding;
-use Assist\Form\Rules\IsDomain;
 use Filament\Forms\Components\Grid;
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Rules\IsDomain;
 use App\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -49,11 +49,11 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Assist\Application\Models\Application;
 use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Application\Models\ApplicationStep;
-use Assist\Application\Models\ApplicationField;
-use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationStep;
+use AdvisingApp\Application\Models\ApplicationField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait HasSharedFormConfiguration

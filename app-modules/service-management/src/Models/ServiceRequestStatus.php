@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
@@ -42,9 +42,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\ServiceManagement\Enums\ColumnColorOptions;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
-use Assist\ServiceManagement\Enums\SystemServiceRequestClassification;
+use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
 
 /**
  * @mixin IdeHelperServiceRequestStatus

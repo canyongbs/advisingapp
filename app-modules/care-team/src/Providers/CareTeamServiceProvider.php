@@ -34,18 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CareTeam\Providers;
+namespace AdvisingApp\CareTeam\Providers;
 
 use Filament\Panel;
-use Assist\CareTeam\CareTeamPlugin;
-use Assist\CareTeam\Models\CareTeam;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\CareTeam\CareTeamPlugin;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class CareTeamServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new CareTeamPlugin()));
@@ -58,6 +61,8 @@ class CareTeamServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
     }
 
     protected function registerRolesAndPermissions(): void

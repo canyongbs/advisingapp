@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationGoogleAnalytics\Settings;
+namespace AdvisingApp\IntegrationGoogleAnalytics\Settings;
 
 use Spatie\LaravelSettings\Settings;
 

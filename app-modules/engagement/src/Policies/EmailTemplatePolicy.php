@@ -34,65 +34,65 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Policies;
+namespace AdvisingApp\Engagement\Policies;
 
-use App\Models\User;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use Assist\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\EmailTemplate;
 
 class EmailTemplatePolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'email_template.view-any',
             denyResponse: 'You do not have permission to view email templates.'
         );
     }
 
-    public function view(User $user, EmailTemplate $emailTemplate): Response
+    public function view(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['email_template.*.view', "email_template.{$emailTemplate->id}.view"],
             denyResponse: 'You do not have permission to view this email template.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'email_template.create',
             denyResponse: 'You do not have permission to create email templates.'
         );
     }
 
-    public function update(User $user, EmailTemplate $emailTemplate): Response
+    public function update(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['email_template.*.update', "email_template.{$emailTemplate->id}.update"],
             denyResponse: 'You do not have permission to update this email template.'
         );
     }
 
-    public function delete(User $user, EmailTemplate $emailTemplate): Response
+    public function delete(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['email_template.*.delete', "email_template.{$emailTemplate->id}.delete"],
             denyResponse: 'You do not have permission to delete this email template.'
         );
     }
 
-    public function restore(User $user, EmailTemplate $emailTemplate): Response
+    public function restore(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['email_template.*.restore', "email_template.{$emailTemplate->id}.restore"],
             denyResponse: 'You do not have permission to restore this email template.'
         );
     }
 
-    public function forceDelete(User $user, EmailTemplate $emailTemplate): Response
+    public function forceDelete(Authenticatable $authenticatable, EmailTemplate $emailTemplate): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['email_template.*.force-delete', "email_template.{$emailTemplate->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this email template.'
         );

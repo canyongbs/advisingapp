@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Managers;
+namespace AdvisingApp\MeetingCenter\Managers;
 
 use DateTime;
 use Google\Client;
@@ -42,13 +42,13 @@ use DateTimeInterface;
 use Google\Service\Oauth2;
 use Illuminate\Support\Carbon;
 use Google\Service\Calendar\Event;
-use Assist\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar\EventAttendee;
 use Google\Service\Calendar\EventDateTime;
-use Assist\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar as GoogleCalendar;
 use Google\Service\Calendar\CalendarListEntry;
-use Assist\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 
 class GoogleCalendarManager implements CalendarInterface
 {

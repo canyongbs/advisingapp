@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\InAppCommunication\Enums;
+namespace AdvisingApp\InAppCommunication\Enums;
 
 enum ConversationType: string
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\DataTransferObjects;
+namespace AdvisingApp\IntegrationTwilio\DataTransferObjects;
 
 use Spatie\LaravelData\Data;
 

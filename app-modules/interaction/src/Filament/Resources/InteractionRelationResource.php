@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Filament\Resources;
+namespace AdvisingApp\Interaction\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
-use Assist\Interaction\Models\InteractionRelation;
-use Assist\Interaction\Filament\Resources\InteractionRelationResource\Pages\EditInteractionRelation;
-use Assist\Interaction\Filament\Resources\InteractionRelationResource\Pages\ListInteractionRelations;
-use Assist\Interaction\Filament\Resources\InteractionRelationResource\Pages\CreateInteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages\EditInteractionRelation;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages\ListInteractionRelations;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages\CreateInteractionRelation;
 
 class InteractionRelationResource extends Resource
 {

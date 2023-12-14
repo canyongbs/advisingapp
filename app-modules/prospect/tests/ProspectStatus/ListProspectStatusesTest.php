@@ -40,9 +40,9 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Prospect\Models\ProspectStatus;
-use Assist\Prospect\Filament\Resources\ProspectStatusResource;
-use Assist\Prospect\Filament\Resources\ProspectStatusResource\Pages\ListProspectStatuses;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ListProspectStatuses;
 
 test('The correct details are displayed on the ListProspectStatuses page', function () {
     $prospectStatuses = ProspectStatus::factory()

@@ -34,16 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Resources;
+namespace AdvisingApp\Assistant\Filament\Resources;
 
-use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use App\Infolists\Components\CodeEntry;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Assistant\Models\AssistantChatMessageLog;
-use Assist\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
+use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource\Pages\ManageAssistantChatMessageLogs;
 
 class AssistantChatMessageLogResource extends Resource
 {
@@ -83,28 +88,28 @@ class AssistantChatMessageLogResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('message')
+                TextColumn::make('message')
                     ->limit(50)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('sent_at')
+                TextColumn::make('sent_at')
                     ->label('Sent')
                     ->sortable()
                     ->dateTime(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('user')
+                SelectFilter::make('user')
                     ->relationship('user', 'name')
                     ->searchable(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                ViewAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('sent_at', 'desc');
@@ -113,7 +118,7 @@ class AssistantChatMessageLogResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageAssistantChatMessageLogs::route('/'),
+            'index' => ManageAssistantChatMessageLogs::route('/'),
         ];
     }
 }

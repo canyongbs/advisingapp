@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Division\Filament\Resources\DivisionResource\Pages;
+namespace AdvisingApp\Division\Filament\Resources\DivisionResource\Pages;
 
 use Filament\Forms\Form;
 use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Division\Filament\Resources\DivisionResource;
+use AdvisingApp\Division\Filament\Resources\DivisionResource;
 
 class CreateDivision extends CreateRecord
 {

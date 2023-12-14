@@ -37,10 +37,13 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 
 test('The correct details are displayed on the ViewServiceRequestPriority page', function () {
     $serviceRequestPriority = ServiceRequestPriority::factory()->create();
@@ -83,6 +86,39 @@ test('ViewServiceRequestPriority is gated with proper access control', function 
         ->get(
             ServiceRequestPriorityResource::getUrl('view', [
                 'record' => $prospectSource,
+            ])
+        )->assertSuccessful();
+});
+
+test('ViewServiceRequestPriority is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_priority.view-any');
+    $user->givePermissionTo('service_request_priority.*.view');
+
+    $serviceRequestPriority = ServiceRequestPriority::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestPriorityResource::getUrl('view', [
+                'record' => $serviceRequestPriority,
+            ])
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestPriorityResource::getUrl('view', [
+                'record' => $serviceRequestPriority,
             ])
         )->assertSuccessful();
 });

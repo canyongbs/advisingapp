@@ -35,13 +35,19 @@
 */
 
 use App\Models\User;
+
+use function Pest\Laravel\seed;
+
 use Illuminate\Support\Facades\Event;
-use Assist\Application\Models\ApplicationSubmission;
-use Assist\Application\Events\ApplicationSubmissionCreated;
-use Assist\Application\Listeners\NotifySubscribersOfApplicationSubmission;
-use Assist\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
+use AdvisingApp\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
 
 it('dispatches ApplicationSubmissionCreated Event when a ApplicationSubmission is created', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
     Event::fake(ApplicationSubmissionCreated::class);
 
     $submission = ApplicationSubmission::factory()->create();
@@ -62,6 +68,8 @@ test('ApplicationSubmissionCreated Event has the proper listeners', function () 
 });
 
 test('NotifySubscribersOfApplicationSubmission dispatches the correct Notification', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
     Notification::fake();
 
     /** @var ApplicationSubmission $submission */

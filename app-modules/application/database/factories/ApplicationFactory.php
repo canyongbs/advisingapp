@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Database\Factories;
+namespace AdvisingApp\Application\Database\Factories;
 
 use Illuminate\Support\Str;
-use Assist\Application\Models\Application;
-use Assist\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Application\Models\ApplicationField;
 
 /**
  * @extends Factory<Application>

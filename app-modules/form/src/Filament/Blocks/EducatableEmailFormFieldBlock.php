@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Filament\Blocks;
+namespace AdvisingApp\Form\Filament\Blocks;
 
 use Filament\Forms\Components\Checkbox;
-use Assist\Form\Models\SubmissibleField;
-use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
+use AdvisingApp\Form\Models\SubmissibleField;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
+use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 
 class EducatableEmailFormFieldBlock extends FormFieldBlock
 {

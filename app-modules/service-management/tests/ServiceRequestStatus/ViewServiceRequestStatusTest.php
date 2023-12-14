@@ -37,10 +37,13 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 
-use Assist\ServiceManagement\Models\ServiceRequestStatus;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 
 test('The correct details are displayed on the ViewServiceRequestStatus page', function () {
     $serviceRequestStatus = ServiceRequestStatus::factory()->create();
@@ -83,6 +86,39 @@ test('ViewServiceRequestStatus is gated with proper access control', function ()
         ->get(
             ServiceRequestStatusResource::getUrl('view', [
                 'record' => $prospectSource,
+            ])
+        )->assertSuccessful();
+});
+
+test('ViewServiceRequestStatus is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_status.view-any');
+    $user->givePermissionTo('service_request_status.*.view');
+
+    $serviceRequestStatus = ServiceRequestStatus::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl('view', [
+                'record' => $serviceRequestStatus,
+            ])
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestStatusResource::getUrl('view', [
+                'record' => $serviceRequestStatus,
             ])
         )->assertSuccessful();
 });

@@ -34,29 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Pages;
+namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Assist\IntegrationAI\Settings\AISettings;
+use AdvisingApp\IntegrationAI\Settings\AISettings;
 
 class ManageAiSettings extends SettingsPage
 {
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static string $settings = AISettings::class;
 
     protected static ?string $title = 'Manage AI Settings';
+
+    // We don't want to register the navigation as we will be using the navigation item in a different page.
+    public static function registerNavigationItems(): void {}
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->can([Feature::PersonalAssistant->getGateName(), 'assistant.access_ai_settings']);
+    }
 
     public function mount(): void
     {
         /** @var User $user */
         $user = auth()->user();
 
-        abort_unless($user->can(['assistant.access_ai_settings']), 403);
+        abort_unless($user->can([Feature::PersonalAssistant->getGateName(), 'assistant.access_ai_settings']), 403);
 
         parent::mount();
     }

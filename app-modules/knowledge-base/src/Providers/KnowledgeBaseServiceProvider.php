@@ -34,22 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Providers;
+namespace AdvisingApp\KnowledgeBase\Providers;
 
 use Filament\Panel;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
-use Assist\KnowledgeBase\KnowledgeBasePlugin;
-use Assist\KnowledgeBase\Models\KnowledgeBaseItem;
-use Assist\Authorization\AuthorizationRoleRegistry;
-use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\KnowledgeBasePlugin;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
-use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\KnowledgeBase\Observers\KnowledgeBaseItemObserver;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\KnowledgeBase\Observers\KnowledgeBaseItemObserver;
 
 class KnowledgeBaseServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new KnowledgeBasePlugin()));
@@ -66,6 +69,7 @@ class KnowledgeBaseServiceProvider extends ServiceProvider
 
         $this->registerRolesAndPermissions();
         $this->registerObservers();
+        $this->discoverSchema(__DIR__ . '/../../graphql/knowledge-base-item.graphql');
     }
 
     public function registerObservers(): void

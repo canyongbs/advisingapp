@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Models;
+namespace AdvisingApp\KnowledgeBase\Models;
 
 use DateTimeInterface;
 use App\Models\BaseModel;
@@ -42,7 +42,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Assist\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperKnowledgeBaseStatus

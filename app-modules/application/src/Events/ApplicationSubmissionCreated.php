@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Events;
+namespace AdvisingApp\Application\Events;
 
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Assist\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 
 class ApplicationSubmissionCreated
 {

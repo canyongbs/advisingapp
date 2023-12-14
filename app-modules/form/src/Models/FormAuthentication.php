@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace AdvisingApp\Form\Models;
 
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

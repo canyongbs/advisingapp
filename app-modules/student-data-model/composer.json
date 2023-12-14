@@ -1,0 +1,41 @@
+{
+    "name": "canyon-gbs/advising-app-student-data-model",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0",
+        "canyon-gbs/advising-app-notifications": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\StudentDataModel\\": "src/",
+            "AdvisingApp\\StudentDataModel\\Tests\\": "tests/",
+            "AdvisingApp\\StudentDataModel\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\StudentDataModel\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\StudentDataModel\\Providers\\StudentDataModelServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
+}

@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Policies;
+namespace AdvisingApp\Application\Policies;
 
-use App\Models\User;
 use App\Enums\Feature;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use Assist\Application\Models\Application;
+use AdvisingApp\Application\Models\Application;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
@@ -47,57 +47,57 @@ class ApplicationPolicy implements FeatureAccessEnforcedPolicy
 {
     use FeatureAccessEnforcedPolicyBefore;
 
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'application.view-any',
             denyResponse: 'You do not have permission to view applications.'
         );
     }
 
-    public function view(User $user, Application $application): Response
+    public function view(Authenticatable $authenticatable, Application $application): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['application.*.view', "application.{$application->id}.view"],
             denyResponse: 'You do not have permission to view this application.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'application.create',
             denyResponse: 'You do not have permission to create applications.'
         );
     }
 
-    public function update(User $user, Application $application): Response
+    public function update(Authenticatable $authenticatable, Application $application): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['application.*.update', "application.{$application->id}.update"],
             denyResponse: 'You do not have permission to update this application.'
         );
     }
 
-    public function delete(User $user, Application $application): Response
+    public function delete(Authenticatable $authenticatable, Application $application): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['application.*.delete', "application.{$application->id}.delete"],
             denyResponse: 'You do not have permission to delete this application.'
         );
     }
 
-    public function restore(User $user, Application $application): Response
+    public function restore(Authenticatable $authenticatable, Application $application): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['application.*.restore', "application.{$application->id}.restore"],
             denyResponse: 'You do not have permission to restore this application.'
         );
     }
 
-    public function forceDelete(User $user, Application $application): Response
+    public function forceDelete(Authenticatable $authenticatable, Application $application): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['application.*.force-delete', "application.{$application->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this application.'
         );

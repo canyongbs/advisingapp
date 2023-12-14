@@ -35,9 +35,9 @@
 */
 
 use App\Models\User;
-use Assist\Authorization\Models\Role;
-use Assist\Authorization\Models\RoleGroup;
-use Assist\Authorization\Enums\ModelHasRolesViaEnum;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Enums\ModelHasRolesViaEnum;
 
 it('will add any roles belonging to the RoleGroup to a newly attached User', function () {
     // Given that we have a user

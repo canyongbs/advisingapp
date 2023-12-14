@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Notifications;
+namespace AdvisingApp\Engagement\Notifications;
 
 use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Assist\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 
 class EngagementNotification extends Notification implements ShouldQueue
 {

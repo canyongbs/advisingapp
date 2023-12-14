@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/audit",
+  "name": "canyon-gbs/advising-app-audit",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -12,17 +12,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Audit\\": "src/",
-      "Assist\\Audit\\Tests\\": "tests/",
-      "Assist\\Audit\\Database\\Factories\\": "database/factories/",
-      "Assist\\Audit\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Audit\\": "src/",
+      "AdvisingApp\\Audit\\Tests\\": "tests/",
+      "AdvisingApp\\Audit\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Audit\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Audit\\Providers\\AuditServiceProvider"
+        "AdvisingApp\\Audit\\Providers\\AuditServiceProvider"
       ]
     }
   },

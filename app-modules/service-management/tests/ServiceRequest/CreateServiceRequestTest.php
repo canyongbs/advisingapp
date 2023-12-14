@@ -37,15 +37,19 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
 
 test('A successful action on the CreateServiceRequest page', function () {
     asSuperAdmin()
@@ -181,4 +185,49 @@ test('CreateServiceRequest is gated with proper access control', function () {
         ->toEqual($request->get('priority_id'))
         ->and($serviceRequest->type->id)
         ->toEqual($request->get('type_id'));
+});
+
+test('CreateServiceRequest is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestResource::getUrl('create')
+        )->assertForbidden();
+
+    $user->givePermissionTo('service_request.view-any');
+    $user->givePermissionTo('service_request.create');
+
+    livewire(CreateServiceRequest::class)
+        ->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateServiceRequestRequestFactory::new()->create());
+
+    livewire(CreateServiceRequest::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, ServiceRequest::all());
+
+    assertDatabaseHas(ServiceRequest::class, $request->except('division_id')->toArray());
+
+    $serviceRequest = ServiceRequest::first();
+
+    expect($serviceRequest->division->id)->toEqual($request['division_id']);
 });

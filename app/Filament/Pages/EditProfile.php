@@ -63,8 +63,8 @@ use Illuminate\Validation\Rules\Password;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Assist\MeetingCenter\Managers\CalendarManager;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
@@ -141,30 +141,6 @@ class EditProfile extends Page
                 }),
         ])->filter(fn (Component $component) => $component->isVisible());
 
-        $officeHoursDays = collect([
-            'sunday',
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-        ])->map(
-            fn ($day) => Grid::make(3)
-                ->schema([
-                    Toggle::make("office_hours.{$day}.enabled")
-                        ->label(str($day)->ucfirst())
-                        ->inline(false)
-                        ->live(),
-                    TimePicker::make("office_hours.{$day}.starts_at")
-                        ->required()
-                        ->visible(fn (Get $get) => $get("office_hours.{$day}.enabled")),
-                    TimePicker::make("office_hours.{$day}.ends_at")
-                        ->required()
-                        ->visible(fn (Get $get) => $get("office_hours.{$day}.enabled")),
-                ])
-        )->toArray();
-
         return $form
             ->schema([
                 Section::make('Public Profile')
@@ -216,6 +192,13 @@ class EditProfile extends Page
                         Checkbox::make('is_bio_visible_on_profile')
                             ->label('Show Bio on profile')
                             ->live(),
+                        TextInput::make('phone_number')
+                            ->label('Contact phone number')
+                            ->integer()
+                            ->hint(fn (Get $get): string => $get('is_phone_number_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        Checkbox::make('is_phone_number_visible_on_profile')
+                            ->label('Show phone number on profile')
+                            ->live(),
                         Select::make('pronouns_id')
                             ->relationship('pronouns', 'label')
                             ->hint(fn (Get $get): string => $get('are_pronouns_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
@@ -248,6 +231,9 @@ class EditProfile extends Page
                     ->schema([
                         $this->getEmailFormComponent()
                             ->disabled($user->is_external),
+                        Checkbox::make('is_email_visible_on_profile')
+                            ->label('Show Email on profile')
+                            ->live(),
                         $this->getPasswordFormComponent()
                             ->hidden($user->is_external),
                         $this->getPasswordConfirmationFormComponent()
@@ -261,25 +247,42 @@ class EditProfile extends Page
                     ->aside()
                     ->schema($connectedAccounts->toArray())
                     ->visible($connectedAccounts->count()),
+                Section::make('Working Hours')
+                    ->aside()
+                    ->schema([
+                        Toggle::make('working_hours_are_enabled')
+                            ->label('Set Working Hours')
+                            ->live()
+                            ->hint(fn (Get $get): string => $get('are_working_hours_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
+                        Checkbox::make('are_working_hours_visible_on_profile')
+                            ->label('Show Working Hours on profile')
+                            ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
+                            ->live(),
+                        Section::make('Days')
+                            ->schema($this->getHoursForDays('working_hours'))
+                            ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
+                    ]),
                 Section::make('Office Hours')
                     ->aside()
                     ->schema([
                         Toggle::make('office_hours_are_enabled')
-                            ->label('Enable office hours')
+                            ->label('Enable Office Hours')
                             ->live(),
-                        Toggle::make('appointments_are_restricted_to_existing_students')
+                        Checkbox::make('appointments_are_restricted_to_existing_students')
                             ->label('Restrict appointments to existing students')
                             ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
                         Section::make('Days')
-                            ->schema($officeHoursDays)
+                            ->schema($this->getHoursForDays('working_hours'))
                             ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                    ]),
+                Section::make('Out of Office')
+                    ->aside()
+                    ->schema([
                         Grid::make(3)
                             ->schema([
                                 Toggle::make('out_of_office_is_enabled')
-                                    ->label('Out of office')
-                                    ->inline(false)
-                                    ->live()
-                                    ->visible(fn (Get $get) => $get('office_hours_are_enabled')),
+                                    ->label('Enable Out of Office')
+                                    ->live(),
                                 DateTimePicker::make('out_of_office_starts_at')
                                     ->label('Start')
                                     ->required()
@@ -432,7 +435,8 @@ class EditProfile extends Page
             ->email()
             ->required()
             ->maxLength(255)
-            ->unique(ignoreRecord: true);
+            ->unique(ignoreRecord: true)
+            ->hint(fn (Get $get): string => $get('is_email_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile');
     }
 
     protected function getPasswordFormComponent(): Component
@@ -509,5 +513,32 @@ class EditProfile extends Page
     protected function hasFullWidthFormActions(): bool
     {
         return false;
+    }
+
+    private function getHoursForDays(string $key): array
+    {
+        return collect([
+            'sunday',
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+        ])->map(
+            fn ($day) => Grid::make(3)
+                ->schema([
+                    Toggle::make("{$key}.{$day}.enabled")
+                        ->label(str($day)->ucfirst())
+                        ->inline(false)
+                        ->live(),
+                    TimePicker::make("{$key}.{$day}.starts_at")
+                        ->required()
+                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
+                    TimePicker::make("{$key}.{$day}.ends_at")
+                        ->required()
+                        ->visible(fn (Get $get) => $get("{$key}.{$day}.enabled")),
+                ])
+        )->toArray();
     }
 }

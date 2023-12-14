@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\EditServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\ViewServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\ListServiceRequestPriorities;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\EditServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\ViewServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\ListServiceRequestPriorities;
 
 class ServiceRequestPriorityResource extends Resource
 {

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Theme\Settings;
+namespace AdvisingApp\Theme\Settings;
 
 use Spatie\LaravelSettings\Settings;
 

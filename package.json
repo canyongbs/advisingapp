@@ -1,16 +1,20 @@
 {
-    "name": "advisingapp",
+    "name": "advising-app",
     "private": true,
     "scripts": {
         "dev": "vite",
+        "dev:application": "(cd widgets/application && vite)",
         "dev:form": "(cd widgets/form && vite)",
         "build:js-compile": "node ./bin/build.js",
         "build:filament": "php artisan filament:assets",
         "build:vite": "vite build",
-        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:form",
-        "build:form": "(cd widgets/form && vite build)"
+        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:application && npm run build:form",
+        "build:application": "(cd widgets/application && vite build)",
+        "build:form": "(cd widgets/form && vite build)",
+	"api-docs:generate": "env-cmd spectaql spectaql.yml"
     },
     "devDependencies": {
+        "@headlessui/vue": "^1.7.16",
         "@shufo/prettier-plugin-blade": "^1.9.2",
         "@tailwindcss/forms": "^0.5.4",
         "@tailwindcss/typography": "^0.5.9",
@@ -41,10 +45,12 @@
         "@twilio/conversations": "^2.5.0",
         "alpinejs": "^3.13.2",
         "dompurify": "^3.0.6",
+        "env-cmd": "^10.1.0",
         "esbuild-plugin-polyfill-node": "^0.3.0",
         "flowbite": "^1.8.1",
         "showdown": "^2.1.0",
         "sortablejs": "^1.15.0",
+        "spectaql": "^2.3.0",
         "vue": "^3.3.4"
     }
 }

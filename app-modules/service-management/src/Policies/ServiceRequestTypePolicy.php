@@ -34,67 +34,77 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Policies;
+namespace AdvisingApp\ServiceManagement\Policies;
 
-use App\Models\User;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use Assist\ServiceManagement\Models\ServiceRequestType;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 
-class ServiceRequestTypePolicy
+class ServiceRequestTypePolicy implements FeatureAccessEnforcedPolicy
 {
-    public function viewAny(User $user): Response
+    use FeatureAccessEnforcedPolicyBefore;
+
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'service_request_type.view-any',
             denyResponse: 'You do not have permissions to view service request types.'
         );
     }
 
-    public function view(User $user, ServiceRequestType $serviceRequestType): Response
+    public function view(Authenticatable $authenticatable, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_type.*.view', "service_request_type.{$serviceRequestType->id}.view"],
             denyResponse: 'You do not have permissions to view this service request type.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'service_request_type.create',
             denyResponse: 'You do not have permissions to create service request types.'
         );
     }
 
-    public function update(User $user, ServiceRequestType $serviceRequestType): Response
+    public function update(Authenticatable $authenticatable, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_type.*.update', "service_request_type.{$serviceRequestType->id}.update"],
             denyResponse: 'You do not have permissions to update this service request type.'
         );
     }
 
-    public function delete(User $user, ServiceRequestType $serviceRequestType): Response
+    public function delete(Authenticatable $authenticatable, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_type.*.delete', "service_request_type.{$serviceRequestType->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request type.'
         );
     }
 
-    public function restore(User $user, ServiceRequestType $serviceRequestType): Response
+    public function restore(Authenticatable $authenticatable, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_type.*.restore', "service_request_type.{$serviceRequestType->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request type.'
         );
     }
 
-    public function forceDelete(User $user, ServiceRequestType $serviceRequestType): Response
+    public function forceDelete(Authenticatable $authenticatable, ServiceRequestType $serviceRequestType): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_type.*.force-delete', "service_request_type.{$serviceRequestType->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request type.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ServiceManagement];
     }
 }

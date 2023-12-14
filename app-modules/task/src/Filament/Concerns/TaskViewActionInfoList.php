@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Filament\Concerns;
+namespace AdvisingApp\Task\Filament\Concerns;
 
-use Assist\Task\Models\Task;
-use Assist\Task\Enums\TaskStatus;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Infolists\Components\Grid;
 use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\Split;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 trait TaskViewActionInfoList
 {

@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Imports;
+namespace AdvisingApp\Task\Imports;
 
 use App\Models\User;
-use App\Models\Import;
-use App\Imports\Importer;
 use AllowDynamicProperties;
 use Illuminate\Support\Str;
-use Assist\Task\Models\Task;
-use Assist\Task\Enums\TaskStatus;
-use Assist\Prospect\Models\Prospect;
+use AdvisingApp\Task\Models\Task;
 use Illuminate\Validation\Rules\Enum;
+use AdvisingApp\Task\Enums\TaskStatus;
+use Filament\Actions\Imports\Importer;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
-use App\Filament\Actions\ImportAction\ImportColumn;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Actions\Imports\Models\Import;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 /**
  * @property ?Task $record
@@ -150,7 +150,13 @@ class TaskImporter extends Importer
 
     public function beforeCreate(): void
     {
-        $this->record->createdBy()->associate($this->import->user);
+        /** @var Task $record */
+        $record = $this->record;
+
+        /** @var User $user */
+        $user = $this->import->user;
+
+        $record->createdBy()->associate($user);
     }
 
     public static function getCompletedNotificationBody(Import $import): string

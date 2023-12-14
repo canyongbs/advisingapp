@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
 class CreateServiceRequestUpdate extends CreateRecord
 {

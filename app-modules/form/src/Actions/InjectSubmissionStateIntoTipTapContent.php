@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace AdvisingApp\Form\Actions;
 
-use Assist\Form\Models\Submission;
-use Assist\Form\Models\SubmissibleField;
-use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class InjectSubmissionStateIntoTipTapContent
 {

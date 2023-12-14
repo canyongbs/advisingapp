@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent;
+namespace AdvisingApp\Consent;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,7 +50,7 @@ class ConsentPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\Consent\\Filament\\Resources'
+            for: 'AdvisingApp\\Consent\\Filament\\Resources'
         );
     }
 

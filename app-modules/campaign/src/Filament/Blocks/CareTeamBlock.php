@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Blocks;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use App\Models\User;
 use Filament\Forms\Components\Select;

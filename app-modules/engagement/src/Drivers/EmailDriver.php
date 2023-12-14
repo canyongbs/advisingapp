@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Drivers;
+namespace AdvisingApp\Engagement\Drivers;
 
-use Assist\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 
 class EmailDriver implements DeliverableDriver
 {

@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Actions;
+namespace AdvisingApp\Form\Actions;
 
-use Assist\Form\Models\Submissible;
-use Assist\Form\Models\SubmissibleStep;
+use AdvisingApp\Form\Models\Submissible;
+use AdvisingApp\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\Collection;
-use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 class GenerateFormKitSchema
 {
@@ -166,7 +166,7 @@ class GenerateFormKitSchema
             [
                 '$el' => 'ul',
                 'attrs' => [
-                    'class' => 'steps',
+                    'class' => 'wizard',
                 ],
                 'children' => [
                     [

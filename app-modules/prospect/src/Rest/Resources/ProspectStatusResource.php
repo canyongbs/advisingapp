@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Rest\Resources;
+namespace AdvisingApp\Prospect\Rest\Resources;
 
 use Illuminate\Validation\Rule;
 use Lomkit\Rest\Relations\HasMany;
 use App\Rest\Resource as RestResource;
-use Assist\Prospect\Models\ProspectStatus;
 use Lomkit\Rest\Http\Requests\RestRequest;
-use Assist\Prospect\Enums\ProspectStatusColorOptions;
-use Assist\Prospect\Enums\SystemProspectClassification;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Enums\ProspectStatusColorOptions;
+use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 
 class ProspectStatusResource extends RestResource
 {

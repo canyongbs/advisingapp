@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAI\Exceptions;
+namespace AdvisingApp\IntegrationAI\Exceptions;
 
 use Exception;
 

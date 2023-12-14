@@ -34,15 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Observers;
+namespace AdvisingApp\Application\Observers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
-use Assist\Application\Models\ApplicationSubmission;
-use Assist\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 
 class ApplicationSubmissionObserver
 {
+    public function creating(ApplicationSubmission $submission): void
+    {
+        $submission->state()->associate(
+            ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->firstOrFail()
+        );
+    }
+
     public function created(ApplicationSubmission $submission): void
     {
         Event::dispatch(

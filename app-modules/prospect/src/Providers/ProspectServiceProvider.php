@@ -34,32 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Providers;
+namespace AdvisingApp\Prospect\Providers;
 
 use Filament\Panel;
-use Assist\Prospect\ProspectPlugin;
-use Assist\Prospect\Models\Prospect;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Models\ProspectStatus;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Prospect\ProspectPlugin;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class ProspectServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ProspectPlugin()));
     }
 
-    public function boot(AuthorizationPermissionRegistry $permissionRegistry, AuthorizationRoleRegistry $roleRegistry): void
+    public function boot(): void
     {
         Relation::morphMap([
             'prospect' => Prospect::class,
             'prospect_source' => ProspectSource::class,
             'prospect_status' => ProspectStatus::class,
         ]);
+
+        $this->registerRolesAndPermissions();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/prospect.graphql');
+    }
+
+    public function registerRolesAndPermissions(): void
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 
         $permissionRegistry->registerApiPermissions(
             module: 'prospect',
@@ -70,6 +82,8 @@ class ProspectServiceProvider extends ServiceProvider
             module: 'prospect',
             path: 'permissions/web/custom'
         );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
 
         $roleRegistry->registerApiRoles(
             module: 'prospect',

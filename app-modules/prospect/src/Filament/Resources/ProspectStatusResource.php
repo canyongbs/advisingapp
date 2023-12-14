@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources;
+namespace AdvisingApp\Prospect\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Assist\Prospect\Models\ProspectStatus;
-use Assist\Prospect\Filament\Resources\ProspectStatusResource\Pages;
+use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
 class ProspectStatusResource extends Resource
 {

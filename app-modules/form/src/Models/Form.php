@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace AdvisingApp\Form\Models;
 
-use Assist\Form\Enums\Rounding;
+use AdvisingApp\Form\Enums\Rounding;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -51,6 +51,7 @@ class Form extends Submissible
         'allowed_domains',
         'is_authenticated',
         'is_wizard',
+        'recaptcha_enabled',
         'primary_color',
         'rounding',
         'content',
@@ -62,6 +63,7 @@ class Form extends Submissible
         'allowed_domains' => 'array',
         'is_authenticated' => 'boolean',
         'is_wizard' => 'boolean',
+        'recaptcha_enabled' => 'boolean',
         'rounding' => Rounding::class,
     ];
 
@@ -78,10 +80,5 @@ class Form extends Submissible
     public function submissions(): HasMany
     {
         return $this->hasMany(FormSubmission::class);
-    }
-
-    public function requests(): HasMany
-    {
-        return $this->hasMany(FormRequest::class);
     }
 }

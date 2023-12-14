@@ -37,14 +37,18 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
-use Assist\ServiceManagement\Tests\RequestFactories\EditServiceRequestPriorityRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestPriorityRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\EditServiceRequestPriority;
 
 test('A successful action on the EditServiceRequestPriority page', function () {
     $serviceRequestPriority = ServiceRequestPriority::factory()->create();
@@ -127,6 +131,55 @@ test('EditServiceRequestPriority is gated with proper access control', function 
     $request = collect(EditServiceRequestPriorityRequestFactory::new()->create());
 
     livewire(ServiceRequestPriorityResource\Pages\EditServiceRequestPriority::class, [
+        'record' => $serviceRequestPriority->getRouteKey(),
+    ])
+        ->fillForm($request->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertEquals($request['name'], $serviceRequestPriority->fresh()->name);
+});
+
+test('EditServiceRequestPriority is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_priority.view-any');
+    $user->givePermissionTo('service_request_priority.*.update');
+
+    $serviceRequestPriority = ServiceRequestPriority::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestPriorityResource::getUrl('edit', [
+                'record' => $serviceRequestPriority,
+            ])
+        )->assertForbidden();
+
+    livewire(EditServiceRequestPriority::class, [
+        'record' => $serviceRequestPriority->getRouteKey(),
+    ])
+        ->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestPriorityResource::getUrl('edit', [
+                'record' => $serviceRequestPriority,
+            ])
+        )->assertSuccessful();
+
+    $request = collect(EditServiceRequestPriorityRequestFactory::new()->create());
+
+    livewire(EditServiceRequestPriority::class, [
         'record' => $serviceRequestPriority->getRouteKey(),
     ])
         ->fillForm($request->toArray())

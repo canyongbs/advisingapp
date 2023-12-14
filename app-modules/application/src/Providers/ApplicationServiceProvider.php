@@ -34,23 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Providers;
+namespace AdvisingApp\Application\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Assist\Application\ApplicationPlugin;
-use Assist\Application\Models\Application;
-use Assist\Application\Models\ApplicationStep;
-use Assist\Application\Models\ApplicationField;
-use Assist\Authorization\AuthorizationRoleRegistry;
-use Assist\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\ApplicationPlugin;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationStep;
+use AdvisingApp\Application\Models\ApplicationField;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Application\Models\ApplicationAuthentication;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Application\Events\ApplicationSubmissionCreated;
-use Assist\Application\Observers\ApplicationSubmissionObserver;
-use Assist\Application\Listeners\NotifySubscribersOfApplicationSubmission;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
+use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
 
 class ApplicationServiceProvider extends ServiceProvider
 {
@@ -67,6 +68,7 @@ class ApplicationServiceProvider extends ServiceProvider
             'application_submission' => ApplicationSubmission::class,
             'application_step' => ApplicationStep::class,
             'application_authentication' => ApplicationAuthentication::class,
+            'application_submission_state' => ApplicationSubmissionState::class,
         ]);
 
         $this->registerRolesAndPermissions();

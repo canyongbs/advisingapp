@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Task\Enums;
+namespace AdvisingApp\Task\Enums;
 
 use Bvtterfly\ModelStateMachine\Attributes\InitialState;
 use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;

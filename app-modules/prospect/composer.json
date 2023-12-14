@@ -1,5 +1,5 @@
 {
-  "name": "canyon-gbs/prospect",
+  "name": "canyon-gbs/advising-app-prospect",
   "description": "",
   "type": "library",
   "version": "1.0",
@@ -9,17 +9,17 @@
   },
   "autoload": {
     "psr-4": {
-      "Assist\\Prospect\\": "src/",
-      "Assist\\Prospect\\Tests\\": "tests/",
-      "Assist\\Prospect\\Database\\Factories\\": "database/factories/",
-      "Assist\\Prospect\\Database\\Seeders\\": "database/seeders/"
+      "AdvisingApp\\Prospect\\": "src/",
+      "AdvisingApp\\Prospect\\Tests\\": "tests/",
+      "AdvisingApp\\Prospect\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Prospect\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "minimum-stability": "stable",
   "extra": {
     "laravel": {
       "providers": [
-        "Assist\\Prospect\\Providers\\ProspectServiceProvider"
+        "AdvisingApp\\Prospect\\Providers\\ProspectServiceProvider"
       ]
     }
   }

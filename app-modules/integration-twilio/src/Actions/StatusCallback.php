@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\Actions;
+namespace AdvisingApp\IntegrationTwilio\Actions;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Assist\Engagement\Models\EngagementDeliverable;
-use Assist\Engagement\Actions\UpdateEngagementDeliverableStatus;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Actions\UpdateEngagementDeliverableStatus;
 
 class StatusCallback implements ShouldQueue
 {

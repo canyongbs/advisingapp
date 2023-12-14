@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Tests\RequestFactories;
+namespace AdvisingApp\ServiceManagement\Tests\RequestFactories;
 
 use Worksome\RequestFactories\RequestFactory;
 

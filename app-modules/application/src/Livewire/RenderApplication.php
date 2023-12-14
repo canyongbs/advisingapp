@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Livewire;
+namespace AdvisingApp\Application\Livewire;
 
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Filament\Forms\Contracts\HasForms;
-use Assist\Application\Models\Application;
+use AdvisingApp\Application\Models\Application;
 use Filament\Forms\Concerns\InteractsWithForms;
 
 class RenderApplication extends Component implements HasForms

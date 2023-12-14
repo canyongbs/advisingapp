@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources\ProspectResource\RelationManagers;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter;
+namespace AdvisingApp\MeetingCenter;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
@@ -50,12 +50,12 @@ class MeetingCenterPlugin implements Plugin
     {
         $panel->discoverResources(
             in: __DIR__ . '/Filament/Resources',
-            for: 'Assist\\MeetingCenter\\Filament\\Resources'
+            for: 'AdvisingApp\\MeetingCenter\\Filament\\Resources'
         );
 
         $panel->discoverWidgets(
             in: __DIR__ . '/Filament/Widgets',
-            for: 'Assist\\MeetingCenter\\Filament\\Widgets'
+            for: 'AdvisingApp\\MeetingCenter\\Filament\\Widgets'
         );
     }
 

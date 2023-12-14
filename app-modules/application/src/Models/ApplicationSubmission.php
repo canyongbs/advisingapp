@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Models;
+namespace AdvisingApp\Application\Models;
 
-use Assist\Form\Models\Submission;
+use AdvisingApp\Form\Models\Submission;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -61,5 +61,11 @@ class ApplicationSubmission extends Submission
                 'field_id'
             )
             ->withPivot(['id', 'response']);
+    }
+
+    public function state(): BelongsTo
+    {
+        return $this
+            ->belongsTo(ApplicationSubmissionState::class, 'state_id');
     }
 }

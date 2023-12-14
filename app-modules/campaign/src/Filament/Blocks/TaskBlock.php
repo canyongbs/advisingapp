@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Filament\Blocks;
+namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use App\Models\User;
-use Assist\Task\Models\Task;
+use AdvisingApp\Task\Models\Task;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;

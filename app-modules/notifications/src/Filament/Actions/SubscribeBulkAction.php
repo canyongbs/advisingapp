@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Filament\Actions;
+namespace AdvisingApp\Notifications\Filament\Actions;
 
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
-use Assist\Notifications\Actions\SubscriptionToggle;
-use Assist\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Notifications\Actions\SubscriptionToggle;
+use AdvisingApp\Notifications\Models\Contracts\Subscribable;
 
 class SubscribeBulkAction extends BulkAction
 {

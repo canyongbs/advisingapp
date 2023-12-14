@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Timeline\Providers;
+namespace AdvisingApp\Timeline\Providers;
 
 use Filament\Panel;
-use Assist\Timeline\TimelinePlugin;
-use Assist\Timeline\Models\Timeline;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Assist\Timeline\Listeners\AddRecordToTimeline;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Timeline\TimelinePlugin;
+use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Timeline\Events\TimelineableRecordCreated;
-use Assist\Timeline\Events\TimelineableRecordDeleted;
-use Assist\Timeline\Listeners\RemoveRecordFromTimeline;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Timeline\Listeners\AddRecordToTimeline;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
+use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\Timeline\Listeners\RemoveRecordFromTimeline;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class TimelineServiceProvider extends ServiceProvider
 {

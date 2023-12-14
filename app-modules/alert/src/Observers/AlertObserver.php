@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Observers;
+namespace AdvisingApp\Alert\Observers;
 
-use Assist\Alert\Models\Alert;
-use Assist\Alert\Events\AlertCreated;
+use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Facades\Cache;
-use Assist\Notifications\Actions\SubscriptionCreate;
+use AdvisingApp\Alert\Events\AlertCreated;
+use AdvisingApp\Notifications\Actions\SubscriptionCreate;
 
 class AlertObserver
 {

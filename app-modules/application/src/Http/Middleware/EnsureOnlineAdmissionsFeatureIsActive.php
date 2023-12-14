@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Application\Http\Middleware;
+namespace AdvisingApp\Application\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
@@ -46,7 +46,7 @@ class EnsureOnlineAdmissionsFeatureIsActive
     public function handle(Request $request, Closure $next): Response
     {
         if (! app(LicenseSettings::class)->data->addons->onlineAdmissions) {
-            return response()->json(['error' => 'Online Admissions is not enabled.'], 403);
+            return response()->json(['error' => 'Online Admissions is not enabled.'], Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);

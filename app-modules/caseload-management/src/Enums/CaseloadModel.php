@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Enums;
+namespace AdvisingApp\CaseloadManagement\Enums;
 
-use App\Imports\Importer;
-use Assist\Prospect\Models\Prospect;
 use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\AssistDataModel\Models\Student;
-use Assist\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
-use Assist\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
+use AdvisingApp\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
 
 enum CaseloadModel: string implements HasLabel
 {
@@ -82,7 +81,7 @@ enum CaseloadModel: string implements HasLabel
             return $value;
         }
 
-        return static::tryFrom($value);
+        return CaseloadModel::tryFrom($value);
     }
 
     /**
@@ -91,8 +90,8 @@ enum CaseloadModel: string implements HasLabel
     public function getSubjectImporter(): string
     {
         return match ($this) {
-            static::Prospect => ProspectCaseloadSubjectImporter::class,
-            static::Student => StudentCaseloadSubjectImporter::class,
+            CaseloadModel::Prospect => ProspectCaseloadSubjectImporter::class,
+            CaseloadModel::Student => StudentCaseloadSubjectImporter::class,
         };
     }
 }

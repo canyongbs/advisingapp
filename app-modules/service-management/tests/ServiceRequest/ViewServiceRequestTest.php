@@ -37,10 +37,13 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 
-use Assist\ServiceManagement\Models\ServiceRequest;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 test('The correct details are displayed on the ViewServiceRequest page', function () {
     $serviceRequest = ServiceRequest::factory()->create();
@@ -88,6 +91,39 @@ test('ViewServiceRequest is gated with proper access control', function () {
 
     $user->givePermissionTo('service_request.view-any');
     $user->givePermissionTo('service_request.*.view');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestResource::getUrl('view', [
+                'record' => $serviceRequest,
+            ])
+        )->assertSuccessful();
+});
+
+test('ViewServiceRequest is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request.view-any');
+    $user->givePermissionTo('service_request.*.view');
+
+    $serviceRequest = ServiceRequest::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestResource::getUrl('view', [
+                'record' => $serviceRequest,
+            ])
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(

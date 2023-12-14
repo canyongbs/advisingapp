@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
@@ -45,7 +45,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\DateTimePicker;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 
 class EditCalendarEvent extends EditRecord
 {

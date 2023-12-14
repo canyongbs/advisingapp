@@ -43,9 +43,9 @@ use App\Filament\Pages\Dashboard;
 
 use function Pest\Laravel\{actingAs};
 
-use Assist\Consent\Models\ConsentAgreement;
-use Assist\Consent\Enums\ConsentAgreementType;
-use Assist\Assistant\Filament\Pages\PersonalAssistant;
+use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Consent\Enums\ConsentAgreementType;
+use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
 
 it('renders successfully', function () {
     ConsentAgreement::factory()->create([

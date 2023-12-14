@@ -39,7 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 // TODO: Write ListApplications tests
 //test('The correct details are displayed on the ListApplications page', function () {});

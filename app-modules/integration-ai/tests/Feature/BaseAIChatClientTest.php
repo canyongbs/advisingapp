@@ -38,11 +38,11 @@ use App\Models\User;
 
 use function Pest\Laravel\{actingAs};
 
-use Assist\IntegrationAI\Events\AIPromptInitiated;
-use Assist\IntegrationAI\Client\Contracts\AIChatClient;
-use Assist\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
-use Assist\Assistant\Services\AIInterface\DataTransferObjects\Chat;
-use Assist\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
+use AdvisingApp\IntegrationAI\Events\AIPromptInitiated;
+use AdvisingApp\IntegrationAI\Client\Contracts\AIChatClient;
+use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\Chat;
+use AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects\ChatMessage;
 
 it('will return a streamed response of strings when prompted', function () {
     $user = User::factory()->create();

@@ -41,9 +41,9 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 
-use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
-use Assist\KnowledgeBase\Tests\KnowledgeBaseQuality\RequestFactories\EditKnowledgeBaseQualityRequestFactory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
+use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseQuality\RequestFactories\EditKnowledgeBaseQualityRequestFactory;
 
 // TODO: Write EditKnowledgeBaseQuality tests
 //test('A successful action on the EditKnowledgeBaseQuality page', function () {});

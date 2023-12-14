@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Filament\Resources;
+namespace AdvisingApp\Prospect\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Filament\Resources\ProspectSourceResource\Pages;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
 class ProspectSourceResource extends Resource
 {

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CaseloadManagement\Console\Commands;
+namespace AdvisingApp\CaseloadManagement\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\CaseloadManagement\Models\Caseload;
-use Assist\CaseloadManagement\Actions\TranslateCaseloadFilters;
+use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 
 class TranslateCaseload extends Command
 {

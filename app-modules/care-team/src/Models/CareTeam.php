@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace Assist\CareTeam\Models;
+namespace AdvisingApp\CareTeam\Models;
 
 use Exception;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Assist\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Assist\AssistDataModel\Models\Contracts\Educatable;
-use Assist\Authorization\Models\Concerns\DefinesPermissions;
-use Assist\Campaign\Models\Contracts\ExecutableFromACampaignAction;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 
 /**
  * @mixin IdeHelperCareTeam
@@ -70,7 +70,7 @@ class CareTeam extends MorphPivot implements ExecutableFromACampaignAction
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class)->withTimestamps();
+        return $this->belongsTo(User::class);
     }
 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string

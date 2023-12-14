@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\Providers;
+namespace AdvisingApp\IntegrationTwilio\Providers;
 
 use Twilio\Rest\Client;
 use Illuminate\Support\ServiceProvider;
-use Assist\Engagement\Actions\FindEngagementResponseSender;
-use Assist\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use Assist\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
+use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
+use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
 
 class IntegrationTwilioServiceProvider extends ServiceProvider
 {

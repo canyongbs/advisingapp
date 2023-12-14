@@ -34,23 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Providers;
+namespace AdvisingApp\Form\Providers;
 
 use Filament\Panel;
-use Assist\Form\FormPlugin;
-use Assist\Form\Models\Form;
-use Assist\Form\Models\FormField;
-use Assist\Form\Models\FormRequest;
+use AdvisingApp\Form\FormPlugin;
+use AdvisingApp\Form\Models\Form;
 use Illuminate\Support\Facades\Event;
-use Assist\Form\Models\FormSubmission;
+use AdvisingApp\Form\Models\FormField;
 use Illuminate\Support\ServiceProvider;
-use Assist\Form\Events\FormSubmissionCreated;
-use Assist\Form\Observers\FormRequestObserver;
-use Assist\Form\Observers\FormSubmissionObserver;
-use Assist\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
-use Assist\Form\Listeners\NotifySubscribersOfFormSubmission;
+use AdvisingApp\Form\Observers\FormSubmissionObserver;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
 
 class FormServiceProvider extends ServiceProvider
 {
@@ -74,7 +72,6 @@ class FormServiceProvider extends ServiceProvider
 
     public function registerObservers(): void
     {
-        FormRequest::observe(FormRequestObserver::class);
         FormSubmission::observe(FormSubmissionObserver::class);
     }
 

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Filament\Resources;
+namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
-use Assist\KnowledgeBase\Models\KnowledgeBaseCategory;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
 
 class KnowledgeBaseCategoryResource extends Resource
 {

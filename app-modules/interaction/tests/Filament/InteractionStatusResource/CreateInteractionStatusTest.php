@@ -38,7 +38,7 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\Interaction\Filament\Resources\InteractionStatusResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
 
 test('CreateInteractionStatus is gated with proper access control', function () {
     $user = User::factory()->create();

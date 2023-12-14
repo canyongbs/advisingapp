@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Filament\Resources\RoleGroupResource\Pages;
+namespace AdvisingApp\Authorization\Filament\Resources\RoleGroupResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -48,7 +48,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Assist\Authorization\Filament\Resources\RoleGroupResource;
+use AdvisingApp\Authorization\Filament\Resources\RoleGroupResource;
 
 class ListRoleGroups extends ListRecords
 {

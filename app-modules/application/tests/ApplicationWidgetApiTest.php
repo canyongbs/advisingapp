@@ -36,19 +36,23 @@
 
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
+use function Pest\Laravel\seed;
 
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\URL;
-use Assist\Prospect\Models\Prospect;
-use Assist\Application\Models\Application;
+use AdvisingApp\Prospect\Models\Prospect;
 
 use function Pest\Laravel\withoutMiddleware;
 
-use Assist\Application\Models\ApplicationAuthentication;
-use Assist\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 
 test('define is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
 
@@ -74,6 +78,8 @@ test('define is protected with proper feature access control', function () {
 
 test('request-authentication is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
 
@@ -101,6 +107,8 @@ test('request-authentication is protected with proper feature access control', f
 
 test('authenticate is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
 
@@ -133,6 +141,8 @@ test('authenticate is protected with proper feature access control', function ()
 
 test('submit is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
 

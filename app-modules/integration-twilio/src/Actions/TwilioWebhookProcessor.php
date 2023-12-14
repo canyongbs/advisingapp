@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationTwilio\Actions;
+namespace AdvisingApp\IntegrationTwilio\Actions;
 
 use Illuminate\Http\Response;
 use Twilio\TwiML\MessagingResponse;

@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Filament\Resources;
+namespace AdvisingApp\Alert\Filament\Resources;
 
-use Assist\Alert\Models\Alert;
 use Filament\Resources\Resource;
-use Assist\Alert\Filament\Resources\AlertResource\Pages;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Alert\Filament\Resources\AlertResource\Pages;
 
 class AlertResource extends Resource
 {

@@ -35,13 +35,17 @@
 */
 
 use App\Models\User;
+
+use function Pest\Laravel\seed;
+
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use Assist\Application\Models\Application;
-use Assist\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 
 // TODO: Write EditApplication tests
 //test('A successful action on the EditApplication page', function () {});
@@ -51,6 +55,8 @@ use Assist\Application\Filament\Resources\ApplicationResource;
 // Permission Tests
 
 test('EditApplication is gated with proper access control', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
     $user = User::factory()->create();
 
     $application = Application::factory()->create();
@@ -81,6 +87,8 @@ test('EditApplication is gated with proper access control', function () {
 });
 
 test('EditApplication is gated with proper feature access control', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->onlineAdmissions = false;

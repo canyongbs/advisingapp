@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
+namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -47,7 +47,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 class ListKnowledgeBaseItems extends ListRecords
 {

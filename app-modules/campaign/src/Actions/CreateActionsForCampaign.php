@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Actions;
+namespace AdvisingApp\Campaign\Actions;
 
-use Assist\Campaign\Models\Campaign;
-use Assist\Campaign\DataTransferObjects\CampaignActionsCreationData;
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\DataTransferObjects\CampaignActionsCreationData;
 
 class CreateActionsForCampaign
 {

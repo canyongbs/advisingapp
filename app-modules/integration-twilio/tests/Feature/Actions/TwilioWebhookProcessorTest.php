@@ -41,8 +41,8 @@ use Illuminate\Support\Facades\Queue;
 use function Tests\loadFixtureFromModule;
 use function Pest\Laravel\withoutMiddleware;
 
-use Assist\IntegrationTwilio\Actions\StatusCallback;
-use Assist\IntegrationTwilio\Actions\MessageReceived;
+use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
+use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
 
 it('will dispatch an appropriate job to process the incoming request', function () {
     withoutMiddleware();

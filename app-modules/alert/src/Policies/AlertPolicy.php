@@ -34,65 +34,65 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Policies;
+namespace AdvisingApp\Alert\Policies;
 
-use App\Models\User;
-use Assist\Alert\Models\Alert;
+use App\Models\Authenticatable;
+use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Auth\Access\Response;
 
 class AlertPolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'alert.view-any',
             denyResponse: 'You do not have permission to view alerts.'
         );
     }
 
-    public function view(User $user, Alert $alert): Response
+    public function view(Authenticatable $authenticatable, Alert $alert): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['alert.*.view', "alert.{$alert->id}.view"],
             denyResponse: 'You do not have permission to view this alert.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'alert.create',
             denyResponse: 'You do not have permission to create alerts.'
         );
     }
 
-    public function update(User $user, Alert $alert): Response
+    public function update(Authenticatable $authenticatable, Alert $alert): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['alert.*.update', "alert.{$alert->id}.update"],
             denyResponse: 'You do not have permission to update this alert.'
         );
     }
 
-    public function delete(User $user, Alert $alert): Response
+    public function delete(Authenticatable $authenticatable, Alert $alert): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['alert.*.delete', "alert.{$alert->id}.delete"],
             denyResponse: 'You do not have permission to delete this alert.'
         );
     }
 
-    public function restore(User $user, Alert $alert): Response
+    public function restore(Authenticatable $authenticatable, Alert $alert): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['alert.*.restore', "alert.{$alert->id}.restore"],
             denyResponse: 'You do not have permission to restore this alert.'
         );
     }
 
-    public function forceDelete(User $user, Alert $alert): Response
+    public function forceDelete(Authenticatable $authenticatable, Alert $alert): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['alert.*.force-delete', "alert.{$alert->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this alert.'
         );

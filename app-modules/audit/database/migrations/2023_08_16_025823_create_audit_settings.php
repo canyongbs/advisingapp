@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use Assist\Audit\Actions\Finders\AuditableModels;
+use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {

@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Database\Factories;
+namespace AdvisingApp\Form\Database\Factories;
 
-use Assist\Form\Models\Form;
-use Assist\Prospect\Models\Prospect;
-use Assist\Form\Models\FormSubmission;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -68,6 +68,7 @@ class FormSubmissionFactory extends Factory
 
                 return $author->getKey();
             },
+            'submitted_at' => now(),
         ];
     }
 }

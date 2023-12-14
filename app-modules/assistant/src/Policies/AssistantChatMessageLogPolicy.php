@@ -34,52 +34,64 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Policies;
+namespace AdvisingApp\Assistant\Policies;
 
-use App\Models\User;
+use App\Enums\Feature;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use Assist\Assistant\Models\AssistantChatMessageLog;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
+use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 
-class AssistantChatMessageLogPolicy
+class AssistantChatMessageLogPolicy implements FeatureAccessEnforcedPolicy
 {
-    public function viewAny(User $user): Response
+    use FeatureAccessEnforcedPolicyBefore;
+
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'assistant_chat_message_log.view-any',
             denyResponse: 'You do not have permission to view assistant chat message logs.'
         );
     }
 
-    public function view(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
+    public function view(Authenticatable $authenticatable, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['assistant_chat_message_log.*.view', "assistant_chat_message_log.{$assistantChatMessageLog->id}.view"],
             denyResponse: 'You do not have permission to view this assistant chat message log.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
         return Response::deny('Assistant chat message logs cannot be created.');
     }
 
-    public function update(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
+    public function update(Authenticatable $authenticatable, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
         return Response::deny('Assistant chat message logs cannot be updated.');
     }
 
-    public function delete(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
+    public function delete(Authenticatable $authenticatable, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
         return Response::deny('Assistant chat message logs cannot be deleted.');
     }
 
-    public function restore(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
+    public function restore(Authenticatable $authenticatable, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
         return Response::deny('Assistant chat message logs cannot be restored.');
     }
 
-    public function forceDelete(User $user, AssistantChatMessageLog $assistantChatMessageLog): Response
+    public function forceDelete(Authenticatable $authenticatable, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
         return Response::deny('Assistant chat message logs cannot be force deleted.');
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [
+            Feature::PersonalAssistant,
+        ];
     }
 }

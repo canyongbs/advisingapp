@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Console\Commands;
+namespace AdvisingApp\Engagement\Console\Commands;
 
 use Illuminate\Console\Command;
-use Assist\Engagement\Actions\DeliverEngagements as DeliverEngagementsJob;
+use AdvisingApp\Engagement\Actions\DeliverEngagements as DeliverEngagementsJob;
 
 class DeliverEngagements extends Command
 {

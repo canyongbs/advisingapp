@@ -34,12 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Database\Factories;
+namespace AdvisingApp\Prospect\Database\Factories;
 
 use App\Models\User;
-use Assist\Prospect\Models\Prospect;
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Models\ProspectStatus;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

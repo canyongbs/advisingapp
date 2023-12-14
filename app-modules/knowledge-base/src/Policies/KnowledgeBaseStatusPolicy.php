@@ -34,70 +34,70 @@
 </COPYRIGHT>
 */
 
-namespace Assist\KnowledgeBase\Policies;
+namespace AdvisingApp\KnowledgeBase\Policies;
 
-use App\Models\User;
 use App\Enums\Feature;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
-use Assist\KnowledgeBase\Models\KnowledgeBaseStatus;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 
 class KnowledgeBaseStatusPolicy implements FeatureAccessEnforcedPolicy
 {
     use FeatureAccessEnforcedPolicyBefore;
 
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'knowledge_base_status.view-any',
             denyResponse: 'You do not have permission to view any knowledge base statuses.'
         );
     }
 
-    public function view(User $user, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function view(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['knowledge_base_status.*.view', "knowledge_base_status.{$knowledgeBaseStatus->id}.view"],
             denyResponse: 'You do not have permission to view this knowledge base status.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'knowledge_base_status.create',
             denyResponse: 'You do not have permission to create knowledge base statuses.'
         );
     }
 
-    public function update(User $user, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function update(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['knowledge_base_status.*.update', "knowledge_base_status.{$knowledgeBaseStatus->id}.update"],
             denyResponse: 'You do not have permission to update this knowledge base status.'
         );
     }
 
-    public function delete(User $user, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function delete(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['knowledge_base_status.*.delete', "knowledge_base_status.{$knowledgeBaseStatus->id}.delete"],
             denyResponse: 'You do not have permission to delete this knowledge base status.'
         );
     }
 
-    public function restore(User $user, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function restore(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['knowledge_base_status.*.restore', "knowledge_base_status.{$knowledgeBaseStatus->id}.restore"],
             denyResponse: 'You do not have permission to restore this knowledge base status.'
         );
     }
 
-    public function forceDelete(User $user, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function forceDelete(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['knowledge_base_status.*.force-delete', "knowledge_base_status.{$knowledgeBaseStatus->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this knowledge base status.'
         );

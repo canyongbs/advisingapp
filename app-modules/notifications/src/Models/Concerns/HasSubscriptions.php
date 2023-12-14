@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Notifications\Models\Concerns;
+namespace AdvisingApp\Notifications\Models\Concerns;
 
-use Assist\Notifications\Models\Subscription;
+use AdvisingApp\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasSubscriptions

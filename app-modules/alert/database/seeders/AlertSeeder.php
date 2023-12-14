@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Alert\Database\Seeders;
+namespace AdvisingApp\Alert\Database\Seeders;
 
-use Assist\Alert\Models\Alert;
 use Illuminate\Database\Seeder;
+use AdvisingApp\Alert\Models\Alert;
 
 class AlertSeeder extends Seeder
 {

@@ -34,12 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Models;
+namespace AdvisingApp\Form\Models;
 
-use Assist\Prospect\Models\Prospect;
-use Assist\AssistDataModel\Models\Student;
+use App\Models\User;
+use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Form\Enums\FormSubmissionStatus;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 
 /**
  * @property Student|Prospect|null $author
@@ -48,10 +52,29 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class FormSubmission extends Submission
 {
+    protected $fillable = [
+        'canceled_at',
+        'form_id',
+        'request_method',
+        'request_note',
+        'submitted_at',
+    ];
+
+    protected $casts = [
+        'submitted_at' => 'immutable_datetime',
+        'canceled_at' => 'immutable_datetime',
+        'request_method' => FormSubmissionRequestDeliveryMethod::class,
+    ];
+
     public function submissible(): BelongsTo
     {
         return $this
             ->belongsTo(Form::class, 'form_id');
+    }
+
+    public function requester(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requester_id');
     }
 
     public function fields(): BelongsToMany
@@ -63,5 +86,48 @@ class FormSubmission extends Submission
             'field_id',
         )
             ->withPivot(['id', 'response']);
+    }
+
+    public function deliverRequest(): void
+    {
+        $this->request_method->deliver($this);
+    }
+
+    public function scopeRequested(Builder $query): Builder
+    {
+        return $query->notSubmitted()->notCanceled();
+    }
+
+    public function scopeSubmitted(Builder $query): Builder
+    {
+        return $query->whereNotNull('submitted_at');
+    }
+
+    public function scopeCanceled(Builder $query): Builder
+    {
+        return $query->notSubmitted()->whereNotNull('canceled_at');
+    }
+
+    public function scopeNotSubmitted(Builder $query): Builder
+    {
+        return $query->whereNull('submitted_at');
+    }
+
+    public function scopeNotCanceled(Builder $query): Builder
+    {
+        return $query->whereNull('canceled_at');
+    }
+
+    public function getStatus(): FormSubmissionStatus
+    {
+        if ($this->submitted_at) {
+            return FormSubmissionStatus::Submitted;
+        }
+
+        if ($this->canceled_at) {
+            return FormSubmissionStatus::Canceled;
+        }
+
+        return FormSubmissionStatus::Requested;
     }
 }

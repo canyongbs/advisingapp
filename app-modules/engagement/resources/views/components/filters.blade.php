@@ -51,7 +51,7 @@
         <div class="flex w-full flex-col items-center space-y-2">
             <div class="w-full">
                 <input
-                    class="!focus:ring-trout-700 text-assist-black-950 dark:text-assist-white-50 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:focus:ring-bright-sun-300"
+                    class="!focus:ring-trout-700 text-advising-app-black-950 dark:text-advising-app-white-50 block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm dark:border-gray-600 dark:bg-gray-800 dark:focus:ring-bright-sun-300"
                     name="filterStartDate"
                     type="date"
                     wire:model.live="filterStartDate"
@@ -61,7 +61,7 @@
             <span class="mx-4 text-gray-500">to</span>
             <div class="w-full">
                 <input
-                    class="!focus:ring-trout-700 text-assist-black-950 dark:text-assist-white-50 block w-full rounded-lg border border-gray-300 bg-transparent p-2.5 text-sm dark:border-gray-600 dark:focus:ring-bright-sun-300"
+                    class="!focus:ring-trout-700 text-advising-app-black-950 dark:text-advising-app-white-50 block w-full rounded-lg border border-gray-300 bg-transparent p-2.5 text-sm dark:border-gray-600 dark:focus:ring-bright-sun-300"
                     name="filterEndDate"
                     type="date"
                     wire:model.live="filterEndDate"

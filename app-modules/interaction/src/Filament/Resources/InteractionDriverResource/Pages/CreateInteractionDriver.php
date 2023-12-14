@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Interaction\Filament\Resources\InteractionDriverResource\Pages;
+namespace AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Assist\Interaction\Filament\Resources\InteractionDriverResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
 
 class CreateInteractionDriver extends CreateRecord
 {

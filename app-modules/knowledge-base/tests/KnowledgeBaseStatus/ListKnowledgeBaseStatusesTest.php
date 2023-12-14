@@ -39,7 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
 
 // TODO: Write ListKnowledgeBaseStatuses tests
 //test('The correct details are displayed on the ListKnowledgeBaseStatuses page', function () {});

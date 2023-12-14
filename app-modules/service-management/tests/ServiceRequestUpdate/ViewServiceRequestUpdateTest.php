@@ -37,10 +37,13 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 
-use Assist\ServiceManagement\Models\ServiceRequestUpdate;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
 test('The correct details are displayed on the ViewServiceRequestUpdate page', function () {
     $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();
@@ -82,6 +85,39 @@ test('ViewServiceRequestUpdate is gated with proper access control', function ()
 
     $user->givePermissionTo('service_request_update.view-any');
     $user->givePermissionTo('service_request_update.*.view');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestUpdateResource::getUrl('view', [
+                'record' => $serviceRequestUpdate,
+            ])
+        )->assertSuccessful();
+});
+
+test('ViewServiceRequestUpdate is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_update.view-any');
+    $user->givePermissionTo('service_request_update.*.view');
+
+    $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestUpdateResource::getUrl('view', [
+                'record' => $serviceRequestUpdate,
+            ])
+        )->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
 
     actingAs($user)
         ->get(

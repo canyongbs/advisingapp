@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Database\Factories;
+namespace AdvisingApp\ServiceManagement\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Assist\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 
 /**
  * @extends Factory<ServiceRequestPriority>

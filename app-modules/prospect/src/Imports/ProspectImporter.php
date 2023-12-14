@@ -34,17 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Prospect\Imports;
+namespace AdvisingApp\Prospect\Imports;
 
-use App\Models\Import;
-use App\Imports\Importer;
+use App\Models\User;
 use Illuminate\Support\Str;
-use Assist\Prospect\Models\Prospect;
+use Filament\Actions\Imports\Importer;
 use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use Assist\Prospect\Models\ProspectSource;
-use Assist\Prospect\Models\ProspectStatus;
-use App\Filament\Actions\ImportAction\ImportColumn;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Actions\Imports\Models\Import;
+use AdvisingApp\Prospect\Models\ProspectSource;
+use AdvisingApp\Prospect\Models\ProspectStatus;
 
 class ProspectImporter extends Importer
 {
@@ -150,8 +151,14 @@ class ProspectImporter extends Importer
 
     public function beforeCreate(): void
     {
-        $this->record->assignedTo()->associate($this->import->user);
-        $this->record->createdBy()->associate($this->import->user);
+        /** @var Prospect $record */
+        $record = $this->record;
+
+        /** @var User $user */
+        $user = $this->import->user;
+
+        $record->assignedTo()->associate($user);
+        $record->createdBy()->associate($user);
     }
 
     public static function getCompletedNotificationBody(Import $import): string

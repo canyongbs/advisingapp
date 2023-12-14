@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EngagementResource\Pages;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
 
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
-use Assist\Prospect\Models\Prospect;
 use App\Filament\Resources\UserResource;
-use Assist\Engagement\Models\Engagement;
 use Filament\Resources\Pages\ViewRecord;
-use Assist\AssistDataModel\Models\Student;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
-use Assist\Prospect\Filament\Resources\ProspectResource;
-use Assist\Engagement\Filament\Resources\EngagementResource;
-use Assist\AssistDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class ViewEngagement extends ViewRecord
 {

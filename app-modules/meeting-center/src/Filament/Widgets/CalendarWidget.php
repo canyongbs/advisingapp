@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\MeetingCenter\Filament\Widgets;
+namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 
 use App\Models\User;
 use Livewire\Attributes\On;
-use Assist\MeetingCenter\Models\CalendarEvent;
 use Saade\FilamentFullCalendar\Data\EventData;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
-use Assist\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 
 class CalendarWidget extends FullCalendarWidget
 {

@@ -40,21 +40,21 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
+use Filament\Actions\ImportAction;
 use App\Filament\Pages\EditProfile;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
 use App\Filament\Pages\ProductHealth;
-use App\Filament\Actions\ImportAction;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Assist\Authorization\Filament\Pages\Auth\Login;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -71,7 +71,7 @@ class AdminPanelProvider extends PanelProvider
         Field::configureUsing(fn ($field) => $field->translateLabel());
         Entry::configureUsing(fn ($entry) => $entry->translateLabel());
         Column::configureUsing(fn ($column) => $column->translateLabel());
-        ImportAction::configureUsing(fn (ImportAction $action) => $action->max(100000));
+        ImportAction::configureUsing(fn (ImportAction $action) => $action->maxRows(100000));
         TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->gridLayouts([
             'two-columns',
             'three-columns',
@@ -131,6 +131,8 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Users and Permissions'),
                 NavigationGroup::make()
                     ->label('Product Administration'),
+                NavigationGroup::make()
+                    ->label('Integrations'),
                 NavigationGroup::make()
                     ->label('Product Settings')
                     ->collapsed(),

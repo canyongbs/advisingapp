@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace Assist\ServiceManagement\Actions;
+namespace AdvisingApp\ServiceManagement\Actions;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Assist\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
 class CreateServiceRequestHistory implements ShouldQueue
 {

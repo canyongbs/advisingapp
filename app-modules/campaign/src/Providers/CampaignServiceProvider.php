@@ -34,19 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Campaign\Providers;
+namespace AdvisingApp\Campaign\Providers;
 
 use Filament\Panel;
-use Assist\Campaign\CampaignPlugin;
-use Assist\Campaign\Models\Campaign;
 use Illuminate\Support\ServiceProvider;
-use Assist\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\CampaignPlugin;
+use AdvisingApp\Campaign\Models\Campaign;
 use Illuminate\Console\Scheduling\Schedule;
-use Assist\Campaign\Observers\CampaignObserver;
-use Assist\Authorization\AuthorizationRoleRegistry;
-use Assist\Campaign\Actions\ExecuteCampaignActions;
+use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Campaign\Observers\CampaignObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Assist\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Campaign\Actions\ExecuteCampaignActions;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class CampaignServiceProvider extends ServiceProvider
 {

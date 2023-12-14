@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAI\Client\Concerns;
+namespace AdvisingApp\IntegrationAI\Client\Concerns;
 
 trait InitializesClient
 {

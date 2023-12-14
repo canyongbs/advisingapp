@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationGoogleAnalytics\Filament\Pages;
+namespace AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Get;
@@ -42,7 +42,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use Assist\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
+use AdvisingApp\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
 
 class ManageGoogleAnalyticsSettings extends SettingsPage
 {
@@ -54,9 +54,9 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Google Analytics';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $navigationGroup = 'Integrations';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 10;
 
     public static function shouldRegisterNavigation(): bool
     {

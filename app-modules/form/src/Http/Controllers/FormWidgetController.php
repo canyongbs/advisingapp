@@ -34,29 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Http\Controllers;
+namespace AdvisingApp\Form\Http\Controllers;
 
 use Closure;
 use Illuminate\Support\Str;
-use Assist\Form\Models\Form;
 use Illuminate\Http\Request;
+use AdvisingApp\Form\Models\Form;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
-use Assist\Form\Models\FormRequest;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Assist\Form\Models\FormSubmission;
 use Illuminate\Support\Facades\Validator;
-use Assist\Form\Models\FormAuthentication;
+use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Support\Facades\Notification;
-use Assist\Form\Actions\GenerateFormKitSchema;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Assist\Form\Actions\GenerateSubmissibleValidation;
-use Assist\Form\Actions\ResolveSubmissionAuthorFromEmail;
-use Assist\Form\Notifications\AuthenticateFormNotification;
-use Assist\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Models\FormAuthentication;
+use AdvisingApp\Form\Actions\GenerateFormKitSchema;
+use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
+use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
+use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class FormWidgetController extends Controller
 {
@@ -72,6 +72,10 @@ class FormWidgetController extends Controller
                 ] : [
                     'submission_url' => URL::signedRoute('forms.submit', ['form' => $form]),
                 ]),
+                'recaptcha_enabled' => $form->recaptcha_enabled,
+                ...($form->recaptcha_enabled ? [
+                    'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
+                ] : []),
                 'schema' => $generateSchema($form),
                 'primary_color' => Color::all()[$form->primary_color ?? 'blue'],
                 'rounding' => $form->rounding,
@@ -173,8 +177,13 @@ class FormWidgetController extends Controller
             );
         }
 
-        /** @var FormSubmission $submission */
-        $submission = $form->submissions()->make();
+        /** @var ?FormSubmission $submission */
+        $submission = $authentication ? $form->submissions()
+            ->requested()
+            ->whereMorphedTo('author', $authentication->author)
+            ->first() : null;
+
+        $submission ??= $form->submissions()->make();
 
         if ($authentication) {
             $submission->author()->associate($authentication->author);
@@ -182,9 +191,13 @@ class FormWidgetController extends Controller
             $authentication->delete();
         }
 
+        $submission->submitted_at = now();
+
         $submission->save();
 
         $data = $validator->validated();
+
+        unset($data['recaptcha-token']);
 
         if ($form->is_wizard) {
             foreach ($form->steps as $step) {
@@ -241,17 +254,6 @@ class FormWidgetController extends Controller
         }
 
         $submission->save();
-
-        if ($authentication) {
-            $form->requests()
-                ->whereMorphedTo('recipient', $authentication->author)
-                ->whereDoesntHave('submission')
-                ->notCanceled()
-                ->each(function (FormRequest $request) use ($submission) {
-                    $request->submission()->associate($submission);
-                    $request->save();
-                });
-        }
 
         return response()->json(
             [

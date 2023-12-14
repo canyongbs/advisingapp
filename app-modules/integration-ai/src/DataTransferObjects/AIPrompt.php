@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\IntegrationAI\DataTransferObjects;
+namespace AdvisingApp\IntegrationAI\DataTransferObjects;
 
 use Carbon\Carbon;
 use App\Models\User;

@@ -37,15 +37,19 @@
 use App\Models\User;
 
 use function Tests\asSuperAdmin;
+
+use App\Settings\LicenseSettings;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\ServiceManagement\Models\ServiceRequestType;
-use Assist\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use Assist\ServiceManagement\Tests\RequestFactories\CreateServiceRequestTypeRequestFactory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
+use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestTypeRequestFactory;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\CreateServiceRequestType;
 
 test('A successful action on the CreateServiceRequestType page', function () {
     asSuperAdmin()
@@ -106,6 +110,47 @@ test('CreateServiceRequestType is gated with proper access control', function ()
     $request = collect(CreateServiceRequestTypeRequestFactory::new()->create());
 
     livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
+        ->fillForm($request->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertCount(1, ServiceRequestType::all());
+
+    assertDatabaseHas(ServiceRequestType::class, $request->toArray());
+});
+
+test('CreateServiceRequestType is gated with proper feature access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->serviceManagement = false;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('service_request_type.view-any');
+    $user->givePermissionTo('service_request_type.create');
+
+    actingAs($user)
+        ->get(
+            ServiceRequestTypeResource::getUrl('create')
+        )->assertForbidden();
+
+    livewire(CreateServiceRequestType::class)
+        ->assertForbidden();
+
+    $settings->data->addons->serviceManagement = true;
+
+    $settings->save();
+
+    actingAs($user)
+        ->get(
+            ServiceRequestTypeResource::getUrl('create')
+        )->assertSuccessful();
+
+    $request = collect(CreateServiceRequestTypeRequestFactory::new()->create());
+
+    livewire(CreateServiceRequestType::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

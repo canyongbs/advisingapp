@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Engagement\Filament\Resources\EngagementResource\RelationManagers;
+namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\RelationManagers;
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -46,8 +46,8 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Assist\Engagement\Enums\EngagementDeliveryMethod;
-use Assist\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class EngagementDeliverablesRelationManager extends RelationManager

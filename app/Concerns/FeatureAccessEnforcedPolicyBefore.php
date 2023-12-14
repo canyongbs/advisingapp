@@ -45,7 +45,7 @@ trait FeatureAccessEnforcedPolicyBefore
     public function before(): FeatureAccessResponse | null | bool
     {
         return Gate::check(
-            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->value)
+            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
         )
             ? null
             : FeatureAccessResponse::deny();

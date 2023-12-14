@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Form\Filament\Resources\FormResource\Pages\Concerns;
+namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages\Concerns;
 
 use Filament\Forms\Get;
-use Assist\Form\Models\Form;
-use Assist\Form\Enums\Rounding;
-use Assist\Form\Rules\IsDomain;
-use Assist\Form\Models\FormStep;
-use Assist\Form\Models\FormField;
+use AdvisingApp\Form\Models\Form;
 use Filament\Forms\Components\Grid;
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Rules\IsDomain;
+use AdvisingApp\Form\Models\FormStep;
 use App\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use AdvisingApp\Form\Models\FormField;
 use Filament\Forms\Components\Section;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Repeater;
@@ -53,8 +53,9 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use FilamentTiptapEditor\Enums\TiptapOutput;
-use Assist\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 trait HasSharedFormConfiguration
 {
@@ -97,13 +98,22 @@ trait HasSharedFormConfiguration
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
-                ->disabled(fn (?Form $record) => $record?->submissions()->exists()),
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
+            Toggle::make('recaptcha_enabled')
+                ->label('Enable reCAPTCHA')
+                ->live()
+                ->disabled(fn (GoogleRecaptchaSettings $settings) => ! $settings->is_enabled)
+                ->helperText(function (GoogleRecaptchaSettings $settings) {
+                    if (! $settings->is_enabled) {
+                        return 'Enable and configure reCAPTCHA in order to use it on your forms.';
+                    }
+                }),
             Section::make('Fields')
                 ->schema([
                     $this->fieldBuilder(),
                 ])
                 ->hidden(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Form $record) => $record?->submissions()->exists()),
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
@@ -118,7 +128,7 @@ trait HasSharedFormConfiguration
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                 ->visible(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Form $record) => $record?->submissions()->exists())
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
                 ->reorderable()
                 ->columnSpanFull(),

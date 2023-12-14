@@ -34,16 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Assistant\Filament\Pages;
+namespace AdvisingApp\Assistant\Filament\Pages;
 
-use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
-use Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 
 class AssistantConfiguration extends Page
 {
-    protected static string $view = 'assist.assistant.filament.pages.assistant-configuration';
+    protected static string $view = 'assistant::filament.pages.assistant-configuration';
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
 
@@ -68,19 +67,14 @@ class AssistantConfiguration extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation();
+        return collect((new AssistantConfiguration())->getSubNavigation())
+            ->filter(function (NavigationItem $item) {
+                return $item->isVisible();
+            })->isNotEmpty();
     }
 
     public function mount(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        abort_unless($user->can(['assistant.access_ai_settings']) || ListConsentAgreements::shouldRegisterNavigation(), 403);
-
         /** @var NavigationItem $firstNavItem */
         $firstNavItem = collect($this->getSubNavigation())->first(function (NavigationItem $item) {
             return $item->isVisible();
@@ -114,22 +108,11 @@ class AssistantConfiguration extends Page
 
     public function getSubNavigation(): array
     {
-        $navigationItems = $this->generateNavigationItems(
+        return $this->generateNavigationItems(
             [
                 ListConsentAgreements::class,
+                ManageAiSettings::class,
             ]
         );
-
-        /** @var User $user */
-        $user = auth()->user();
-
-        if ($user->can(['assistant.access_ai_settings'])) {
-            $navigationItems = [
-                ...$navigationItems,
-                ...ManageAiSettings::getNavigationItems(),
-            ];
-        }
-
-        return $navigationItems;
     }
 }

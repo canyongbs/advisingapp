@@ -34,9 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Consent\Filament\Resources\ConsentAgreementResource\Pages;
+namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -47,8 +48,8 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
-use Assist\Assistant\Filament\Pages\AssistantConfiguration;
-use Assist\Consent\Filament\Resources\ConsentAgreementResource;
+use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 
 class ListConsentAgreements extends ListRecords
 {
@@ -71,7 +72,7 @@ class ListConsentAgreements extends ListRecords
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can(['consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update']);
+        return $user->can([Feature::PersonalAssistant->getGateName(), 'consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update']);
     }
 
     public function form(Form $form): Form

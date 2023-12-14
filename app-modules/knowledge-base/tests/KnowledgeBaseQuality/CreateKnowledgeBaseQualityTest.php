@@ -42,9 +42,9 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 
-use Assist\KnowledgeBase\Models\KnowledgeBaseQuality;
-use Assist\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
-use Assist\KnowledgeBase\Tests\KnowledgeBaseQuality\RequestFactories\CreateKnowledgeBaseQualityRequestFactory;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
+use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseQuality\RequestFactories\CreateKnowledgeBaseQualityRequestFactory;
 
 // TODO: Write CreateKnowledgeBaseQuality tests
 //test('A successful action on the CreateKnowledgeBaseQuality page', function () {});

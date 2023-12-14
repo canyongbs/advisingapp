@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace Assist\Authorization\Listeners;
+namespace AdvisingApp\Authorization\Listeners;
 
-use Assist\Authorization\Actions\AddNewRoleToExistingUsersInRoleGroup;
+use AdvisingApp\Authorization\Actions\AddNewRoleToExistingUsersInRoleGroup;
 
 class HandleRoleAttachedToRoleGroup
 {
