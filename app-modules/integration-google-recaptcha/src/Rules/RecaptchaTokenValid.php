@@ -34,29 +34,40 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\IntegrationGoogleRecaptcha\Rules;
 
-return new class () extends Migration {
-    public function up(): void
+use Closure;
+use Exception;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Contracts\Validation\ValidationRule;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
+
+class RecaptchaTokenValid implements ValidationRule
+{
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        Schema::create('forms', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+        if (blank($value)) {
+            $fail('The recaptcha token was not provided.');
+        }
 
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->boolean('embed_enabled')->default(false);
-            $table->json('allowed_domains')->nullable();
-            $table->string('primary_color')->nullable();
-            $table->string('rounding')->nullable();
-            $table->boolean('is_authenticated')->default(false);
-            $table->boolean('is_wizard')->default(false);
-            $table->boolean('recaptcha_enabled')->default(false);
-            $table->json('content')->nullable();
+        $settings = app(GoogleRecaptchaSettings::class);
 
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        try {
+            $response = Http::asForm()
+                ->retry(3, 100)
+                ->post(config('services.google_recaptcha.url'), [
+                    'secret' => $settings->secret_key,
+                    'response' => $value,
+                    'remoteip' => request()->ip(),
+                ])
+                ->throw();
+
+            // TODO Figure out how we actually want to handle low scores
+            if ($response->json('score') < 0.5) {
+                $fail('The recaptcha score was too low.');
+            }
+        } catch (Exception $e) {
+            $fail('The recaptcha token was invalid.');
+        }
     }
-};
+}

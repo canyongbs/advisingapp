@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "114ab3eac3c7a0e2278d79df819b4371",
+    "content-hash": "138e312c2af2093f49ef9641a68bd054",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.2.8",
+            "version": "v3.2.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "b30a4c09a1073de97a8e3c4bd0943dc0a767a37b"
+                "reference": "0df36b71e6477b4055734cb924f098ba3f0477bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/b30a4c09a1073de97a8e3c4bd0943dc0a767a37b",
-                "reference": "b30a4c09a1073de97a8e3c4bd0943dc0a767a37b",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/0df36b71e6477b4055734cb924f098ba3f0477bb",
+                "reference": "0df36b71e6477b4055734cb924f098ba3f0477bb",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +80,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.8"
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.9"
             },
             "funding": [
                 {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-13T13:46:56+00:00"
+            "time": "2023-12-14T21:37:28+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -204,16 +204,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.293.10",
+            "version": "3.294.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "9ae3bfd036190847dd0a5c3cdc4681dbb0994f5a"
+                "reference": "ab796bc3334e263b52b0b8c6de3edf057675cca4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9ae3bfd036190847dd0a5c3cdc4681dbb0994f5a",
-                "reference": "9ae3bfd036190847dd0a5c3cdc4681dbb0994f5a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ab796bc3334e263b52b0b8c6de3edf057675cca4",
+                "reference": "ab796bc3334e263b52b0b8c6de3edf057675cca4",
                 "shasum": ""
             },
             "require": {
@@ -293,9 +293,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.293.10"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.294.0"
             },
-            "time": "2023-12-13T19:41:27+00:00"
+            "time": "2023-12-14T19:14:39+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1215,6 +1215,41 @@
                     "AdvisingApp\\IntegrationGoogleAnalytics\\Tests\\": "tests/",
                     "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\IntegrationGoogleAnalytics\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-integration-google-recaptcha",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/integration-google-recaptcha",
+                "reference": "bca8ef772fdc2f29a9e1aed6b7b617f39dfdb514"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\IntegrationGoogleRecaptcha\\Providers\\IntegrationGoogleRecaptchaServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\IntegrationGoogleRecaptcha\\": "src/",
+                    "AdvisingApp\\IntegrationGoogleRecaptcha\\Tests\\": "tests/",
+                    "AdvisingApp\\IntegrationGoogleRecaptcha\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\IntegrationGoogleRecaptcha\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -19852,5 +19887,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

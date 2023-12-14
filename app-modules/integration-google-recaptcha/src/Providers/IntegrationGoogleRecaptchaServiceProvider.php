@@ -34,29 +34,50 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\IntegrationGoogleRecaptcha\Providers;
 
-return new class () extends Migration {
-    public function up(): void
+use Filament\Panel;
+use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\IntegrationGoogleRecaptcha\IntegrationGoogleRecaptchaPlugin;
+
+class IntegrationGoogleRecaptchaServiceProvider extends ServiceProvider
+{
+    public function register()
     {
-        Schema::create('forms', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->boolean('embed_enabled')->default(false);
-            $table->json('allowed_domains')->nullable();
-            $table->string('primary_color')->nullable();
-            $table->string('rounding')->nullable();
-            $table->boolean('is_authenticated')->default(false);
-            $table->boolean('is_wizard')->default(false);
-            $table->boolean('recaptcha_enabled')->default(false);
-            $table->json('content')->nullable();
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new IntegrationGoogleRecaptchaPlugin()));
     }
-};
+
+    public function boot()
+    {
+        $this->registerRolesAndPermissions();
+    }
+
+    protected function registerRolesAndPermissions()
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
+
+        $permissionRegistry->registerApiPermissions(
+            module: 'integration-google-recaptcha',
+            path: 'permissions/api/custom'
+        );
+
+        $permissionRegistry->registerWebPermissions(
+            module: 'integration-google-recaptcha',
+            path: 'permissions/web/custom'
+        );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
+
+        $roleRegistry->registerApiRoles(
+            module: 'integration-google-recaptcha',
+            path: 'roles/api'
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: 'integration-google-recaptcha',
+            path: 'roles/web'
+        );
+    }
+}

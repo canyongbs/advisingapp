@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages;
+namespace AdvisingApp\IntegrationGoogleRecaptcha\Filament\Pages;
 
 use App\Models\User;
 use Filament\Forms\Get;
@@ -42,33 +42,33 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\IntegrationGoogleAnalytics\Settings\GoogleAnalyticsSettings;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
-class ManageGoogleAnalyticsSettings extends SettingsPage
+class ManageGoogleRecaptchaSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static string $settings = GoogleAnalyticsSettings::class;
+    protected static string $settings = GoogleRecaptchaSettings::class;
 
-    protected static ?string $title = 'Google Analytics Settings';
+    protected static ?string $title = 'Google reCAPTCHA Settings';
 
-    protected static ?string $navigationLabel = 'Google Analytics';
+    protected static ?string $navigationLabel = 'Google reCAPTCHA';
 
     protected static ?string $navigationGroup = 'Integrations';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 20;
 
     public static function shouldRegisterNavigation(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('integration-google-analytics.view_google_analytics_settings');
+        return $user->can('integration-google-recaptcha.view_google_recaptcha_settings');
     }
 
     public function mount(): void
     {
-        $this->authorize('integration-google-analytics.view_google_analytics_settings');
+        $this->authorize('integration-google-recaptcha.view_google_recaptcha_settings');
 
         parent::mount();
     }
@@ -81,9 +81,13 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
                 Toggle::make('is_enabled')
                     ->label('Enabled')
                     ->live(),
-                TextInput::make('id')
-                    ->visible(fn (Get $get) => $get('is_enabled')),
-                // TODO: add key value options?
+                TextInput::make('site_key')
+                    ->visible(fn (Get $get) => $get('is_enabled'))
+                    ->required(fn (Get $get) => $get('is_enabled')),
+                TextInput::make('secret_key')
+                    ->visible(fn (Get $get) => $get('is_enabled'))
+                    ->required(fn (Get $get) => $get('is_enabled'))
+                    ->password(),
             ]);
     }
 }

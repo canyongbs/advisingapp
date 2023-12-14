@@ -32,8 +32,18 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, reactive } from 'vue';
+import { defineProps, ref, reactive, onMounted } from 'vue';
 import wizard from './FormKit/wizard';
+import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
+import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
+
+onMounted(async () => {
+    await getForm().then(function () {
+        if (formRecaptchaEnabled.value === true) {
+            attachRecaptchaScript(formRecaptchaKey.value);
+        }
+    });
+});
 
 let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
@@ -43,29 +53,41 @@ const data = reactive({
     steps,
     visitedSteps,
     activeStep,
-    plugins: [
-        wizardPlugin,
-    ],
-    setStep: target => () => {
-        setStep(target)
+    plugins: [wizardPlugin],
+    setStep: (target) => () => {
+        setStep(target);
     },
-    setActiveStep: stepName => () => {
-        data.activeStep = stepName
+    setActiveStep: (stepName) => () => {
+        data.activeStep = stepName;
     },
-    showStepErrors: stepName => {
-        return (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) && (visitedSteps.value && visitedSteps.value.includes(stepName))
+    showStepErrors: (stepName) => {
+        return (
+            (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) &&
+            visitedSteps.value &&
+            visitedSteps.value.includes(stepName)
+        );
     },
-    stepIsValid: stepName => {
-        return steps[stepName].valid && steps[stepName].errorCount === 0
+    stepIsValid: (stepName) => {
+        return steps[stepName].valid && steps[stepName].errorCount === 0;
     },
     stringify: (value) => JSON.stringify(value, null, 2),
     submitForm: async (data, node) => {
         node.clearErrors();
 
+        let recaptchaToken = null;
+
+        if (formRecaptchaEnabled.value === true) {
+            recaptchaToken = await getRecaptchaToken(formRecaptchaKey.value);
+        }
+
+        if (recaptchaToken !== null) {
+            data['recaptcha-token'] = recaptchaToken;
+        }
+
         fetch(formSubmissionUrl.value, {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
@@ -82,9 +104,9 @@ const data = reactive({
             })
             .catch((error) => {
                 node.setErrors([error]);
-            })
+            });
     },
-})
+});
 
 const submittedSuccess = ref(false);
 
@@ -101,7 +123,9 @@ const formIsAuthenticated = ref(false);
 const formDescription = ref('');
 const formSubmissionUrl = ref('');
 const formPrimaryColor = ref('');
-const formRounding= ref('');
+const formRounding = ref('');
+const formRecaptchaEnabled = ref(false);
+const formRecaptchaKey = ref(null);
 const schema = ref([]);
 
 const authentication = ref({
@@ -113,73 +137,78 @@ const authentication = ref({
     url: null,
 });
 
-fetch(props.url)
-    .then((response) => response.json())
-    .then((json) => {
-        if (json.error) {
-            throw new Error(json.error);
-        }
+async function getForm() {
+    await fetch(props.url)
+        .then((response) => response.json())
+        .then((json) => {
+            if (json.error) {
+                throw new Error(json.error);
+            }
 
-        formName.value = json.name;
-        formDescription.value = json.description;
-        schema.value = json.schema;
-        formIsAuthenticated.value = json.is_authenticated ?? false;
-        formSubmissionUrl.value = json.submission_url ?? null;
-        formPrimaryColor.value = json.primary_color;
-        authentication.value.requestUrl = json.authentication_url ?? null;
+            formName.value = json.name;
+            formDescription.value = json.description;
+            schema.value = json.schema;
+            formIsAuthenticated.value = json.is_authenticated ?? false;
+            formSubmissionUrl.value = json.submission_url ?? null;
+            formPrimaryColor.value = json.primary_color;
+            authentication.value.requestUrl = json.authentication_url ?? null;
 
-        formRounding.value = {
-            none: {
-                sm: '0px',
-                default: '0px',
-                md: '0px',
-                lg: '0px',
-                full: '0px',
-            },
-            sm: {
-                sm: '0.125rem',
-                default: '0.25rem',
-                md: '0.375rem',
-                lg: '0.5rem',
-                full: '9999px',
-            },
-            md: {
-                sm: '0.25rem',
-                default: '0.375rem',
-                md: '0.5rem',
-                lg: '0.75rem',
-                full: '9999px',
-            },
-            lg: {
-                sm: '0.375rem',
-                default: '0.5rem',
-                md: '0.75rem',
-                lg: '1rem',
-                full: '9999px',
-            },
-            full: {
-                sm: '9999px',
-                default: '9999px',
-                md: '9999px',
-                lg: '9999px',
-                full: '9999px',
-            },
-        }[json.rounding ?? 'md']
+            formRecaptchaEnabled.value = json.recaptcha_enabled ?? false;
+            formRecaptchaKey.value = json.recaptcha_site_key ?? null;
 
-        display.value = true;
-    })
-    .catch((error) => {
-        console.error(`Advising App Embed Form ${error}`);
-    });
+            formRounding.value = {
+                none: {
+                    sm: '0px',
+                    default: '0px',
+                    md: '0px',
+                    lg: '0px',
+                    full: '0px',
+                },
+                sm: {
+                    sm: '0.125rem',
+                    default: '0.25rem',
+                    md: '0.375rem',
+                    lg: '0.5rem',
+                    full: '9999px',
+                },
+                md: {
+                    sm: '0.25rem',
+                    default: '0.375rem',
+                    md: '0.5rem',
+                    lg: '0.75rem',
+                    full: '9999px',
+                },
+                lg: {
+                    sm: '0.375rem',
+                    default: '0.5rem',
+                    md: '0.75rem',
+                    lg: '1rem',
+                    full: '9999px',
+                },
+                full: {
+                    sm: '9999px',
+                    default: '9999px',
+                    md: '9999px',
+                    lg: '9999px',
+                    full: '9999px',
+                },
+            }[json.rounding ?? 'md'];
 
-async function authenticate (formData, node) {
+            display.value = true;
+        })
+        .catch((error) => {
+            console.error(`Advising App Embed Form ${error}`);
+        });
+}
+
+async function authenticate(formData, node) {
     node.clearErrors();
 
     if (authentication.value.isRequested) {
         fetch(authentication.value.url, {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
+                Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -203,7 +232,7 @@ async function authenticate (formData, node) {
                     return;
                 }
 
-                if (! json.submission_url) {
+                if (!json.submission_url) {
                     node.setErrors([json.message]);
 
                     return;
@@ -221,7 +250,7 @@ async function authenticate (formData, node) {
     fetch(authentication.value.requestUrl, {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -236,7 +265,7 @@ async function authenticate (formData, node) {
                 return;
             }
 
-            if (! json.authentication_url) {
+            if (!json.authentication_url) {
                 node.setErrors([json.message]);
 
                 return;
@@ -250,7 +279,6 @@ async function authenticate (formData, node) {
             node.setErrors([error]);
         });
 }
-
 </script>
 
 <template>
@@ -275,10 +303,7 @@ async function authenticate (formData, node) {
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
-            <link
-                rel="stylesheet"
-                v-bind:href="hostUrl + '/js/widgets/form/style.css'"
-            />
+            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/form/style.css'" />
 
             <h1>
                 {{ formName }}
@@ -288,7 +313,7 @@ async function authenticate (formData, node) {
                 {{ formDescription }}
             </p>
 
-            <div v-if="! formSubmissionUrl">
+            <div v-if="!formSubmissionUrl">
                 <FormKit type="form" @submit="authenticate" v-model="authentication">
                     <FormKit
                         type="email"
@@ -299,10 +324,7 @@ async function authenticate (formData, node) {
                         :disabled="authentication.isRequested"
                     />
 
-                    <p
-                        v-if="authentication.requestedMessage"
-                        class="text-sm"
-                    >
+                    <p v-if="authentication.requestedMessage" class="text-sm">
                         {{ authentication.requestedMessage }}
                     </p>
 
@@ -320,24 +342,16 @@ async function authenticate (formData, node) {
             </div>
 
             <div v-if="formSubmissionUrl" class="space-y-6">
-                <p
-                    v-if="formIsAuthenticated"
-                    class="text-sm"
-                >
+                <p v-if="formIsAuthenticated" class="text-sm">
                     Signed in as <strong>{{ authentication.email }}</strong>
                 </p>
 
-                <FormKitSchema
-                    :schema="schema"
-                    :data="data"
-                />
+                <FormKitSchema :schema="schema" :data="data" />
             </div>
         </div>
 
         <div v-if="submittedSuccess">
-            <h1 class="text-2xl font-bold mb-2 text-center">
-                Thank you, your submission has been received.
-            </h1>
+            <h1 class="text-2xl font-bold mb-2 text-center">Thank you, your submission has been received.</h1>
         </div>
     </div>
 </template>

@@ -58,7 +58,7 @@
 
 /* Style Overrides */
 .fi-simple-layout {
-    @apply bg-trout-700 dark:bg-gray-950;
+    @apply bg-trout-50 dark:bg-gray-950;
 }
 
 .fi-sidebar-nav > ul {

@@ -51,6 +51,7 @@ class Form extends Submissible
         'allowed_domains',
         'is_authenticated',
         'is_wizard',
+        'recaptcha_enabled',
         'primary_color',
         'rounding',
         'content',
@@ -62,6 +63,7 @@ class Form extends Submissible
         'allowed_domains' => 'array',
         'is_authenticated' => 'boolean',
         'is_wizard' => 'boolean',
+        'recaptcha_enabled' => 'boolean',
         'rounding' => Rounding::class,
     ];
 
