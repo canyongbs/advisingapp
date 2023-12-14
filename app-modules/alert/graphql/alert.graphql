@@ -5,15 +5,15 @@ type Alert
     "The concern of the alert."
     concern: Educatable! @morphTo
     description: String!
-    severity: String!
-    status: String!
+#    severity: String!
+#    status: String!
     suggested_intervention: String!,
     "The created date of the alert."
-    created_at: DateTime
+    created_at: DateTime!
     "The updated date of the alert."
-    updated_at: DateTime
+    updated_at: DateTime!
     "The deleted date of the alert."
-    updated_at: DateTime
+    deleted_at: DateTime
 }
 
 extend type Query {
@@ -27,4 +27,27 @@ extend type Query {
     alerts: [Alert!]!
     @paginate
     @canModel(ability: "viewAny")
+}
+
+extend type Mutation {
+    "Create a new alert."
+    createAlert(
+        "The id of the concern of the alert."
+        concern_id: ID! @rules(apply: ["required"])
+
+        "The type of concern of the alert."
+        concern_type: String! @rules(apply: ["required", "in:student,prospect"])
+
+        "The description of the alert."
+        description: String! @rules(apply: ["required", "string"])
+
+        "The suggested intervention for the alert."
+        suggested_intervention: String! @rules(apply: ["required", "string"])
+    ): Alert! @create @canModel(ability: "create")
+
+    "Delete an existing alert."
+    deleteAlert(
+        "The primary key of the alert."
+        id: ID! @whereKey
+    ): Alert @delete @canFind(ability: "delete", find: "id")
 }
