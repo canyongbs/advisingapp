@@ -34,61 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CareTeam\Providers;
+namespace AdvisingApp\Notifications\Rules;
 
-use Filament\Panel;
-use App\Concerns\GraphSchemaDiscovery;
-use Illuminate\Support\ServiceProvider;
-use AdvisingApp\CareTeam\CareTeamPlugin;
-use AdvisingApp\CareTeam\Models\CareTeam;
+use Closure;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use AdvisingApp\Authorization\AuthorizationRoleRegistry;
-use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
-class CareTeamServiceProvider extends ServiceProvider
+class SubscribableIdExistsRule implements DataAwareRule, ValidationRule
 {
-    use GraphSchemaDiscovery;
+    protected $data = [];
 
-    public function register(): void
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new CareTeamPlugin()));
+        if (
+            ! Relation::getMorphedModel($this->data['subscribable_type'])::query()
+                ->whereKey($value)
+                ->exists()
+        ) {
+            $fail('The subscribable does not exist.');
+        }
     }
 
-    public function boot(): void
+    public function setData(array $data): static
     {
-        Relation::morphMap([
-            'care_team' => CareTeam::class,
-        ]);
+        $this->data = $data;
 
-        $this->registerRolesAndPermissions();
-
-        $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
-    }
-
-    protected function registerRolesAndPermissions(): void
-    {
-        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
-
-        $permissionRegistry->registerApiPermissions(
-            module: 'care-team',
-            path: 'permissions/api/custom'
-        );
-
-        $permissionRegistry->registerWebPermissions(
-            module: 'care-team',
-            path: 'permissions/web/custom'
-        );
-
-        $roleRegistry = app(AuthorizationRoleRegistry::class);
-
-        $roleRegistry->registerApiRoles(
-            module: 'care-team',
-            path: 'roles/api'
-        );
-
-        $roleRegistry->registerWebRoles(
-            module: 'care-team',
-            path: 'roles/web'
-        );
+        return $this;
     }
 }
