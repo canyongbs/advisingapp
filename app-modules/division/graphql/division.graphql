@@ -1,0 +1,8 @@
+type Division @model(class: "AdvisingApp\\Division\\Models\\Division") {
+    "Unique primary key."
+    id: ID!
+
+    # TODO: Finish fields
+}
+
+# TODO: Query and Mutate

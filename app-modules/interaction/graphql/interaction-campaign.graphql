@@ -1,0 +1,22 @@
+type InteractionCampaign
+    @model(class: "AdvisingApp\\Interaction\\Models\\InteractionCampaign") {
+    "Unique primary key."
+    id: ID!
+
+    "The name of the interaction campaign."
+    name: String!
+
+    "Interactions related to this interaction campaign."
+    interactions: [Interaction!] @hasMany
+
+    "The created date of the interaction campaign."
+    created_at: DateTime
+
+    "The updated date of the interaction campaign."
+    updated_at: DateTime
+
+    "The deleted date of the interaction campaign."
+    deleted_at: DateTime
+}
+
+# TODO: Query and Mutate

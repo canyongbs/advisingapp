@@ -37,6 +37,7 @@
 namespace AdvisingApp\Division\Providers;
 
 use Filament\Panel;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Division\DivisionPlugin;
 use AdvisingApp\Division\Models\Division;
@@ -47,6 +48,8 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class DivisionServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new DivisionPlugin()));
@@ -61,6 +64,7 @@ class DivisionServiceProvider extends ServiceProvider
         $this->registerRolesAndPermissions();
 
         $this->registerObservers();
+        $this->discoverSchema(__DIR__ . '/../../graphql/division.graphql');
     }
 
     protected function registerRolesAndPermissions(): void

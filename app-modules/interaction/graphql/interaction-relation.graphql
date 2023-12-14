@@ -1,0 +1,22 @@
+type InteractionRelation
+    @model(class: "AdvisingApp\\Interaction\\Models\\InteractionRelation") {
+    "Unique primary key."
+    id: ID!
+
+    "The name of the interaction relation."
+    name: String!
+
+    "Interactions related to this interaction relation."
+    interactions: [Interaction!] @hasMany
+
+    "The created date of the interaction relation."
+    created_at: DateTime
+
+    "The updated date of the interaction relation."
+    updated_at: DateTime
+
+    "The deleted date of the interaction relation."
+    deleted_at: DateTime
+}
+
+# TODO: Query and Mutate

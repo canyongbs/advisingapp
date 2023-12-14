@@ -1,0 +1,25 @@
+type InteractionStatus
+    @model(class: "AdvisingApp\\Interaction\\Models\\InteractionStatus") {
+    "Unique primary key."
+    id: ID!
+
+    "The name of the interaction driver."
+    name: String!
+
+    "Interactions related to this interaction driver."
+    interactions: [Interaction!] @hasMany
+
+    "The color of the interaction driver."
+    color: InteractionStatusColorOptions!
+
+    "The created date of the interaction driver."
+    created_at: DateTime
+
+    "The updated date of the interaction driver."
+    updated_at: DateTime
+
+    "The deleted date of the interaction driver."
+    deleted_at: DateTime
+}
+
+# TODO: Query and Mutate

@@ -1,0 +1,22 @@
+type InteractionOutcome
+    @model(class: "AdvisingApp\\Interaction\\Models\\InteractionOutcome") {
+    "Unique primary key."
+    id: ID!
+
+    "The name of the interaction outcome."
+    name: String!
+
+    "Interactions related to this interaction outcome."
+    interactions: [Interaction!] @hasMany
+
+    "The created date of the interaction outcome."
+    created_at: DateTime
+
+    "The updated date of the interaction outcome."
+    updated_at: DateTime
+
+    "The deleted date of the interaction outcome."
+    deleted_at: DateTime
+}
+
+# TODO: Query and Mutate

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Providers;
 
 use Filament\Panel;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Interaction\InteractionPlugin;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -50,9 +51,12 @@ use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
+use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 
 class InteractionServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new InteractionPlugin()));
@@ -72,6 +76,10 @@ class InteractionServiceProvider extends ServiceProvider
 
         $this->registerRolesAndPermissions();
         $this->registerObservers();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/interaction.graphql');
+
+        $this->registerEnum(InteractionStatusColorOptions::class);
     }
 
     protected function registerRolesAndPermissions()
