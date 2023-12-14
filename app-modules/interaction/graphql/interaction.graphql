@@ -56,16 +56,17 @@ type Interaction
 extend type Query {
     interaction(
         "Search by primary key."
-        id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
-
-        "Search by email address."
-        email: String
-        @eq
-        @rules(apply: ["prohibits:id", "required_without:id", "email"])
-    ): User @find
+        id: ID @eq
+    ): User @find @canResolved(ability: "view")
 
     "List multiple interactions."
-    interactions: [Interaction!]! @paginate
+    interactions(
+        "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
+        subject: String @where(operator: "like")
+        hasType: _ @whereHasConditions
+    ): [Interaction!]!
+        @paginate
+        @canModel(ability: "viewAny")
 }
 
 #import ./interaction-campaign.graphql
