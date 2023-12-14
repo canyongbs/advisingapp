@@ -37,6 +37,7 @@
 namespace AdvisingApp\CareTeam\Providers;
 
 use Filament\Panel;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\CareTeam\CareTeamPlugin;
 use AdvisingApp\CareTeam\Models\CareTeam;
@@ -46,6 +47,8 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class CareTeamServiceProvider extends ServiceProvider
 {
+    use GraphSchemaDiscovery;
+
     public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new CareTeamPlugin()));
@@ -58,6 +61,8 @@ class CareTeamServiceProvider extends ServiceProvider
         ]);
 
         $this->registerRolesAndPermissions();
+
+        $this->discoverSchema(__DIR__ . '/../../graphql/care-team.graphql');
     }
 
     protected function registerRolesAndPermissions(): void
