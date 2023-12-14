@@ -14546,16 +14546,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "7.12.3",
+            "version": "7.13.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:twilio/twilio-php.git",
-                "reference": "090b449bf83767ea2939dfaf776895a2cdc81179"
+                "reference": "cda27b65615ecfddce24668803078bc72b46fe17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/090b449bf83767ea2939dfaf776895a2cdc81179",
-                "reference": "090b449bf83767ea2939dfaf776895a2cdc81179",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/cda27b65615ecfddce24668803078bc72b46fe17",
+                "reference": "cda27b65615ecfddce24668803078bc72b46fe17",
                 "shasum": ""
             },
             "require": {
@@ -14591,7 +14591,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2023-12-01T05:44:17+00:00"
+            "time": "2023-12-14T10:47:43+00:00"
         },
         {
             "name": "ueberdosis/tiptap-php",
