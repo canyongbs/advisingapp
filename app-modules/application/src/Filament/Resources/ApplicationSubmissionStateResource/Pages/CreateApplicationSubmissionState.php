@@ -1,19 +1,19 @@
 <?php
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationStateResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationStateSubmissionResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Application\Enums\ApplicationStateColorOptions;
-use AdvisingApp\Application\Enums\ApplicationStateClassification;
-use AdvisingApp\Application\Filament\Resources\ApplicationStateResource;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 
-class CreateApplicationState extends CreateRecord
+class CreateApplicationSubmissionState extends CreateRecord
 {
-    protected static string $resource = ApplicationStateResource::class;
+    protected static string $resource = ApplicationSubmissionStateResource::class;
 
     public function form(Form $form): Form
     {
@@ -26,15 +26,15 @@ class CreateApplicationState extends CreateRecord
                 Select::make('classification')
                     ->label('Classification')
                     ->searchable()
-                    ->options(ApplicationStateClassification::class)
+                    ->options(ApplicationSubmissionStateClassification::class)
                     ->required()
-                    ->enum(ApplicationStateClassification::class),
+                    ->enum(ApplicationSubmissionStateClassification::class),
                 Select::make('color')
                     ->label('Color')
                     ->searchable()
-                    ->options(ApplicationStateColorOptions::class)
+                    ->options(ApplicationSubmissionStateColorOptions::class)
                     ->required()
-                    ->enum(ApplicationStateColorOptions::class),
+                    ->enum(ApplicationSubmissionStateColorOptions::class),
                 Textarea::make('description')
                     ->label('Description')
                     ->required()

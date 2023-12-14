@@ -38,7 +38,7 @@ namespace AdvisingApp\Application\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum ApplicationStateClassification: string implements HasLabel
+enum ApplicationSubmissionStateClassification: string implements HasLabel
 {
     case Received = 'received';
 
@@ -57,7 +57,7 @@ enum ApplicationStateClassification: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            ApplicationStateClassification::DocumentsRequired => 'Documents Required',
+            ApplicationSubmissionStateClassification::DocumentsRequired => 'Documents Required',
             default => $this->name,
         };
     }

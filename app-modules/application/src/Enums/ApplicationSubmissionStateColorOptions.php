@@ -34,25 +34,26 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Application\Enums;
 
-return new class () extends Migration {
-    public function up(): void
+use Filament\Support\Contracts\HasLabel;
+
+enum ApplicationSubmissionStateColorOptions: string implements HasLabel
+{
+    case Success = 'success';
+
+    case Danger = 'danger';
+
+    case Warning = 'warning';
+
+    case Info = 'info';
+
+    case Primary = 'primary';
+
+    case Gray = 'gray';
+
+    public function getLabel(): string
     {
-        Schema::create('application_submissions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->foreignUuid('application_id')->constrained('applications')->cascadeOnDelete();
-            $table->string('author_id')->nullable();
-            $table->string('author_type')->nullable();
-            $table->foreignUuid('state_id')->references('id')->on('application_submission_states');
-
-            $table->timestamps();
-            $table->softDeletes();
-
-            $table->index(['author_type', 'author_id']);
-        });
+        return $this->value;
     }
-};
+}

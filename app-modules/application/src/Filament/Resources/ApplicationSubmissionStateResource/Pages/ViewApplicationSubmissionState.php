@@ -34,28 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationStateSubmissionResource\Pages;
 
-use AdvisingApp\Application\Models\Application;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\Application\Enums\ApplicationStateColorOptions;
-use AdvisingApp\Application\Enums\ApplicationStateClassification;
+use Filament\Actions;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 
-/**
- * @extends Factory<Application>
- */
-class ApplicationStateFactory extends Factory
+class ViewApplicationSubmissionState extends ViewRecord
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected static string $resource = ApplicationSubmissionStateResource::class;
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('classification')
+                            ->label('Classification'),
+                        TextEntry::make('color')
+                            ->label('Color')
+                            ->badge()
+                            ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
+                        TextEntry::make('description')
+                            ->label('Description'),
+                    ])
+                    ->columns(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
     {
         return [
-            'classification' => $this->faker->randomElement(ApplicationStateClassification::cases()),
-            'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(ApplicationStateColorOptions::cases()),
-            'description' => $this->faker->sentence,
+            Actions\EditAction::make(),
         ];
     }
 }

@@ -34,45 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationStateResource\Pages;
-
-use Filament\Actions;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Application\Models\ApplicationState;
-use AdvisingApp\Application\Filament\Resources\ApplicationStateResource;
-
-class ViewApplicationState extends ViewRecord
-{
-    protected static string $resource = ApplicationStateResource::class;
-
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Name'),
-                        TextEntry::make('classification')
-                            ->label('Classification'),
-                        TextEntry::make('color')
-                            ->label('Color')
-                            ->badge()
-                            ->color(fn (ApplicationState $applicationState) => $applicationState->color->value),
-                        TextEntry::make('description')
-                            ->label('Description'),
-                    ])
-                    ->columns(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\EditAction::make(),
-        ];
-    }
-}
+return [
+    'model' => [
+        'application_submission_state' => [
+            '*',
+        ],
+    ],
+];

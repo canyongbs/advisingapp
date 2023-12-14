@@ -34,26 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Enums;
-
-use Filament\Support\Contracts\HasLabel;
-
-enum ApplicationStateColorOptions: string implements HasLabel
-{
-    case Success = 'success';
-
-    case Danger = 'danger';
-
-    case Warning = 'warning';
-
-    case Info = 'info';
-
-    case Primary = 'primary';
-
-    case Gray = 'gray';
-
-    public function getLabel(): string
-    {
-        return $this->value;
-    }
-}
+return [
+    'model' => [
+        'application_submission_state' => [
+            '*',
+        ],
+    ],
+];

@@ -34,25 +34,28 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Application\Database\Factories;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\Application\Models\Application;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+
+/**
+ * @extends Factory<Application>
+ */
+class ApplicationSubmissionStateFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Schema::create('application_submissions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->foreignUuid('application_id')->constrained('applications')->cascadeOnDelete();
-            $table->string('author_id')->nullable();
-            $table->string('author_type')->nullable();
-            $table->foreignUuid('state_id')->references('id')->on('application_submission_states');
-
-            $table->timestamps();
-            $table->softDeletes();
-
-            $table->index(['author_type', 'author_id']);
-        });
+        return [
+            'classification' => $this->faker->randomElement(ApplicationSubmissionStateClassification::cases()),
+            'name' => $this->faker->word,
+            'color' => $this->faker->randomElement(ApplicationSubmissionStateColorOptions::cases()),
+            'description' => $this->faker->sentence,
+        ];
     }
-};
+}

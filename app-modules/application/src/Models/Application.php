@@ -39,7 +39,6 @@ namespace AdvisingApp\Application\Models;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperApplication
@@ -55,7 +54,6 @@ class Application extends Submissible
         'primary_color',
         'rounding',
         'content',
-        'state_id',
     ];
 
     protected $casts = [
@@ -79,10 +77,5 @@ class Application extends Submissible
     public function submissions(): HasMany
     {
         return $this->hasMany(ApplicationSubmission::class);
-    }
-
-    public function state(): BelongsTo
-    {
-        return $this->belongsTo(ApplicationState::class, 'state_id');
     }
 }

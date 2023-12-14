@@ -1,6 +1,6 @@
 <?php
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationStateResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationStateSubmissionResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
@@ -11,12 +11,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Application\Models\ApplicationState;
-use AdvisingApp\Application\Filament\Resources\ApplicationStateResource;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 
-class ListApplicationStates extends ListRecords
+class ListApplicationSubmissionStates extends ListRecords
 {
-    protected static string $resource = ApplicationStateResource::class;
+    protected static string $resource = ApplicationSubmissionStateResource::class;
 
     public function table(Table $table): Table
     {
@@ -34,7 +34,7 @@ class ListApplicationStates extends ListRecords
                 TextColumn::make('color')
                     ->label('Color')
                     ->badge()
-                    ->color(fn (ApplicationState $applicationState) => $applicationState->color->value),
+                    ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
                 TextColumn::make('applications_count')
                     ->label('# of Applications')
                     ->counts('applications')
