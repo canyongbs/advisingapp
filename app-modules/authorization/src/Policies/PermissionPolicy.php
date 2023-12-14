@@ -36,49 +36,49 @@
 
 namespace AdvisingApp\Authorization\Policies;
 
-use App\Models\User;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Authorization\Models\Permission;
 
 class PermissionPolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'permission.view-any',
             denyResponse: 'You do not have permission to view permissions.'
         );
     }
 
-    public function view(User $user, Permission $permission): Response
+    public function view(Authenticatable $authenticatable, Permission $permission): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['permission.*.view', "permission.{$permission->id}.view"],
             denyResponse: 'You do not have permission to view this permission.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
         return Response::deny('Permissions cannot be created.');
     }
 
-    public function update(User $user, Permission $permission): Response
+    public function update(Authenticatable $authenticatable, Permission $permission): Response
     {
         return Response::deny('Permissions cannot be updated.');
     }
 
-    public function delete(User $user, Permission $permission): Response
+    public function delete(Authenticatable $authenticatable, Permission $permission): Response
     {
         return Response::deny('Permissions cannot be deleted.');
     }
 
-    public function restore(User $user, Permission $permission): Response
+    public function restore(Authenticatable $authenticatable, Permission $permission): Response
     {
         return Response::deny('Permissions cannot be restored.');
     }
 
-    public function forceDelete(User $user, Permission $permission): Response
+    public function forceDelete(Authenticatable $authenticatable, Permission $permission): Response
     {
         return Response::deny('Permissions cannot be force deleted.');
     }

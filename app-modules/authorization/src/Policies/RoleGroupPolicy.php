@@ -36,63 +36,63 @@
 
 namespace AdvisingApp\Authorization\Policies;
 
-use App\Models\User;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Authorization\Models\RoleGroup;
 
 class RoleGroupPolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'role_group.view-any',
             denyResponse: 'You do not have permission to view role groups.'
         );
     }
 
-    public function view(User $user, RoleGroup $roleGroup): Response
+    public function view(Authenticatable $authenticatable, RoleGroup $roleGroup): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['role_group.*.view', "role_group.{$roleGroup->id}.view"],
             denyResponse: 'You do not have permission to view this role group.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'role_group.create',
             denyResponse: 'You do not have permission to create role groups.'
         );
     }
 
-    public function update(User $user, RoleGroup $roleGroup): Response
+    public function update(Authenticatable $authenticatable, RoleGroup $roleGroup): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['role_group.*.update', "role_group.{$roleGroup->id}.update"],
             denyResponse: 'You do not have permission to update this role group.'
         );
     }
 
-    public function delete(User $user, RoleGroup $roleGroup): Response
+    public function delete(Authenticatable $authenticatable, RoleGroup $roleGroup): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['role_group.*.delete', "role_group.{$roleGroup->id}.delete"],
             denyResponse: 'You do not have permission to delete this role group.'
         );
     }
 
-    public function restore(User $user, RoleGroup $roleGroup): Response
+    public function restore(Authenticatable $authenticatable, RoleGroup $roleGroup): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['role_group.*.restore', "role_group.{$roleGroup->id}.restore"],
             denyResponse: 'You do not have permission to restore this role group.'
         );
     }
 
-    public function forceDelete(User $user, RoleGroup $roleGroup): Response
+    public function forceDelete(Authenticatable $authenticatable, RoleGroup $roleGroup): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['role_group.*.force-delete', "role_group.{$roleGroup->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this role group.'
         );

@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ServiceManagement\Policies;
 
-use App\Models\User;
 use App\Enums\Feature;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
@@ -47,57 +47,57 @@ class ServiceRequestAssignmentPolicy implements FeatureAccessEnforcedPolicy
 {
     use FeatureAccessEnforcedPolicyBefore;
 
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'service_request_assignment.view-any',
             denyResponse: 'You do not have permissions to view service request assignments.'
         );
     }
 
-    public function view(User $user, ServiceRequestAssignment $serviceRequestAssignment): Response
+    public function view(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_assignment.*.view', "service_request_assignment.{$serviceRequestAssignment->id}.view"],
             denyResponse: 'You do not have permissions to view this service request assignment.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'service_request_assignment.create',
             denyResponse: 'You do not have permissions to create service request assignments.'
         );
     }
 
-    public function update(User $user, ServiceRequestAssignment $serviceRequestAssignment): Response
+    public function update(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_assignment.*.update', "service_request_assignment.{$serviceRequestAssignment->id}.update"],
             denyResponse: 'You do not have permissions to update this service request assignment.'
         );
     }
 
-    public function delete(User $user, ServiceRequestAssignment $serviceRequestAssignment): Response
+    public function delete(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_assignment.*.delete', "service_request_assignment.{$serviceRequestAssignment->id}.delete"],
             denyResponse: 'You do not have permissions to delete this service request assignment.'
         );
     }
 
-    public function restore(User $user, ServiceRequestAssignment $serviceRequestAssignment): Response
+    public function restore(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_assignment.*.restore', "service_request_assignment.{$serviceRequestAssignment->id}.restore"],
             denyResponse: 'You do not have permissions to restore this service request assignment.'
         );
     }
 
-    public function forceDelete(User $user, ServiceRequestAssignment $serviceRequestAssignment): Response
+    public function forceDelete(Authenticatable $authenticatable, ServiceRequestAssignment $serviceRequestAssignment): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['service_request_assignment.*.force-delete', "service_request_assignment.{$serviceRequestAssignment->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request assignment.'
         );
