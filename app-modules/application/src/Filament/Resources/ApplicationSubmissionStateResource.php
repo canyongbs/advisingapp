@@ -38,10 +38,10 @@ namespace AdvisingApp\Application\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Application\Filament\Resources\ApplicationStateSubmissionResource\Pages\EditApplicationSubmissionState;
-use AdvisingApp\Application\Filament\Resources\ApplicationStateSubmissionResource\Pages\ViewApplicationSubmissionState;
-use AdvisingApp\Application\Filament\Resources\ApplicationStateSubmissionResource\Pages\ListApplicationSubmissionStates;
-use AdvisingApp\Application\Filament\Resources\ApplicationStateSubmissionResource\Pages\CreateApplicationSubmissionState;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\EditApplicationSubmissionState;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\ViewApplicationSubmissionState;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\ListApplicationSubmissionStates;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\CreateApplicationSubmissionState;
 
 class ApplicationSubmissionStateResource extends Resource
 {

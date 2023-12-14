@@ -40,7 +40,6 @@ use Illuminate\Support\Str;
 use AdvisingApp\Application\Models\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Application\Models\ApplicationField;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
 
 /**
  * @extends Factory<Application>
@@ -57,7 +56,6 @@ class ApplicationFactory extends Factory
             'description' => fake()->sentences(asText: true),
             'embed_enabled' => fake()->boolean(),
             'allowed_domains' => [fake()->domainName()],
-            'state_id' => ApplicationSubmissionState::factory(),
         ];
     }
 

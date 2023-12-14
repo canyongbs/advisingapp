@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\ApplicationStateSubmissionResource\Pages;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
 
 use Filament\Actions;
 use Filament\Tables\Table;
