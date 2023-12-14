@@ -34,4 +34,6 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'in-app-communication.realtime-chat.access',
+];
