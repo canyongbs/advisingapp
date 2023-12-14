@@ -36,49 +36,49 @@
 
 namespace AdvisingApp\Webhook\Policies;
 
-use App\Models\User;
+use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Webhook\Models\InboundWebhook;
 
 class InboundWebhookPolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'inbound_webhook.view-any',
             denyResponse: 'You do not have permission to view inbound webhooks.'
         );
     }
 
-    public function view(User $user, InboundWebhook $inboundWebhook): Response
+    public function view(Authenticatable $authenticatable, InboundWebhook $inboundWebhook): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['inbound_webhook.*.view', "inbound_webhook.{$inboundWebhook->id}.view"],
             denyResponse: 'You do not have permission to view this inbound webhook.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
         return Response::deny('Inbound webhooks cannot be created.');
     }
 
-    public function update(User $user, InboundWebhook $inboundWebhook): Response
+    public function update(Authenticatable $authenticatable, InboundWebhook $inboundWebhook): Response
     {
         return Response::deny('Inbound webhooks cannot be updated.');
     }
 
-    public function delete(User $user, InboundWebhook $inboundWebhook): Response
+    public function delete(Authenticatable $authenticatable, InboundWebhook $inboundWebhook): Response
     {
         return Response::deny('Inbound webhooks cannot be deleted.');
     }
 
-    public function restore(User $user, InboundWebhook $inboundWebhook): Response
+    public function restore(Authenticatable $authenticatable, InboundWebhook $inboundWebhook): Response
     {
         return Response::deny('Inbound webhooks cannot be restored.');
     }
 
-    public function forceDelete(User $user, InboundWebhook $inboundWebhook): Response
+    public function forceDelete(Authenticatable $authenticatable, InboundWebhook $inboundWebhook): Response
     {
         return Response::deny('Inbound webhooks cannot be force deleted.');
     }

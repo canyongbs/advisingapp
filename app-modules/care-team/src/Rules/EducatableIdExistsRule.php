@@ -34,52 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Policies;
+namespace AdvisingApp\CareTeam\Rules;
 
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-use AdvisingApp\Authorization\Models\Role;
+use Closure;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class RolePolicy
+class EducatableIdExistsRule implements DataAwareRule, ValidationRule
 {
-    public function viewAny(Authenticatable $authenticatable): Response
+    protected $data = [];
+
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return $authenticatable->canOrElse(
-            abilities: 'role.view-any',
-            denyResponse: 'You do not have permission to view roles.'
-        );
+        if (
+            ! Relation::getMorphedModel($this->data['educatable_type'])::query()
+                ->whereKey($value)
+                ->exists()
+        ) {
+            $fail('The educatable does not exist.');
+        }
     }
 
-    public function view(Authenticatable $authenticatable, Role $role): Response
+    public function setData(array $data): static
     {
-        return $authenticatable->canOrElse(
-            abilities: ['role.*.view', "role.{$role->id}.view"],
-            denyResponse: 'You do not have permission to view this role.'
-        );
-    }
+        $this->data = $data;
 
-    public function create(Authenticatable $authenticatable): Response
-    {
-        return Response::deny('Roles cannot be created.');
-    }
-
-    public function update(Authenticatable $authenticatable, Role $role): Response
-    {
-        return Response::deny('Roles cannot be updated.');
-    }
-
-    public function delete(Authenticatable $authenticatable, Role $role): Response
-    {
-        return Response::deny('Roles cannot be deleted.');
-    }
-
-    public function restore(Authenticatable $authenticatable, Role $role): Response
-    {
-        return Response::deny('Roles cannot be restored.');
-    }
-
-    public function forceDelete(Authenticatable $authenticatable, Role $role): Response
-    {
-        return Response::deny('Roles cannot be force deleted.');
+        return $this;
     }
 }
