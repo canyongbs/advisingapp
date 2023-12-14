@@ -43,6 +43,7 @@ use AdvisingApp\Application\ApplicationPlugin;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\ApplicationState;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Application\Models\ApplicationSubmission;
@@ -67,6 +68,7 @@ class ApplicationServiceProvider extends ServiceProvider
             'application_submission' => ApplicationSubmission::class,
             'application_step' => ApplicationStep::class,
             'application_authentication' => ApplicationAuthentication::class,
+            'application_state' => ApplicationState::class,
         ]);
 
         $this->registerRolesAndPermissions();

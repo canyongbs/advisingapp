@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -87,7 +53,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
  * @property-read int|null $failed_rows_count
- * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder|Import newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Import newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Import query()
@@ -468,11 +434,13 @@ namespace AdvisingApp\Application\Models{
  * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
  * @property bool $is_wizard
  * @property array|null $content
+ * @property string $state_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationField> $fields
  * @property-read int|null $fields_count
+ * @property-read \AdvisingApp\Application\Models\ApplicationState $state
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationStep> $steps
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $submissions
@@ -492,6 +460,7 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Application whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Application wherePrimaryColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Application whereRounding($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Application whereStateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Application whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -561,6 +530,41 @@ namespace AdvisingApp\Application\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperApplicationField {}
+}
+
+namespace AdvisingApp\Application\Models{
+/**
+ * AdvisingApp\Application\Models\ApplicationState
+ *
+ * @property string $id
+ * @property \AdvisingApp\Application\Enums\ApplicationStateClassification $classification
+ * @property string $name
+ * @property \AdvisingApp\Application\Enums\ApplicationStateColorOptions $color
+ * @property string $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\Application> $applications
+ * @property-read int|null $applications_count
+ * @method static \AdvisingApp\Application\Database\Factories\ApplicationStateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState whereClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationState withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperApplicationState {}
 }
 
 namespace AdvisingApp\Application\Models{

@@ -10,6 +10,9 @@ use AdvisingApp\Application\Enums\ApplicationStateColorOptions;
 use AdvisingApp\Application\Enums\ApplicationStateClassification;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperApplicationState
+ */
 class ApplicationState extends BaseModel implements Auditable
 {
     use SoftDeletes;

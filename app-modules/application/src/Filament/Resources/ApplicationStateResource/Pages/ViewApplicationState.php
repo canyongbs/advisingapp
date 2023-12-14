@@ -34,15 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationStateResource\Pages;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
+use Filament\Actions;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Application\Models\ApplicationState;
+use AdvisingApp\Application\Filament\Resources\ApplicationStateResource;
 
-/**
- * @mixin IdeHelperFailedImportRow
- */
-class FailedImportRow extends BaseFailedImportRow
+class ViewApplicationState extends ViewRecord
 {
-    use HasUuids;
+    protected static string $resource = ApplicationStateResource::class;
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name')
+                            ->label('Name'),
+                        TextEntry::make('classification')
+                            ->label('Classification'),
+                        TextEntry::make('color')
+                            ->label('Color')
+                            ->badge()
+                            ->color(fn (ApplicationState $applicationState) => $applicationState->color->value),
+                        TextEntry::make('description')
+                            ->label('Description'),
+                    ])
+                    ->columns(),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\EditAction::make(),
+        ];
+    }
 }
