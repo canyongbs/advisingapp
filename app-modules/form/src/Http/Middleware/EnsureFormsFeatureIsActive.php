@@ -34,31 +34,25 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Http\Controllers\FormWidgetController;
-use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+namespace AdvisingApp\Form\Http\Middleware;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureFormsFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
-    ])
-    ->group(function () {
-        Route::prefix('forms')
-            ->name('forms.')
-            ->group(function () {
-                Route::get('/{form}', [FormWidgetController::class, 'view'])
-                    ->middleware(['signed'])
-                    ->name('define');
-                Route::post('/{form}/authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
-                    ->name('request-authentication');
-                Route::post('/{form}/authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
-                    ->name('authenticate');
-                Route::post('/{form}/submit', [FormWidgetController::class, 'store'])
-                    ->middleware(['signed'])
-                    ->name('submit');
-            });
-    });
+use Closure;
+use Illuminate\Http\Request;
+use App\Settings\LicenseSettings;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureFormsFeatureIsActive
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (! app(LicenseSettings::class)->data->addons->dynamicForms) {
+            if ($request->wantsJson() || $request->fullUrlIs('*/api/forms/*')) {
+                return response()->json(['error' => 'Dynamic Forms are not enabled.'], Response::HTTP_FORBIDDEN);
+            }
+
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        return $next($request);
+    }
+}
