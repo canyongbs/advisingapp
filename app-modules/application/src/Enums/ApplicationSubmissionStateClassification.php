@@ -34,15 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace AdvisingApp\Application\Enums;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @mixin IdeHelperFailedImportRow
- */
-class FailedImportRow extends BaseFailedImportRow
+enum ApplicationSubmissionStateClassification: string implements HasLabel
 {
-    use HasUuids;
+    case Received = 'received';
+
+    case Review = 'review';
+
+    case Complete = 'complete';
+
+    case DocumentsRequired = 'documents_required';
+
+    case Admit = 'admit';
+
+    case Deny = 'deny';
+
+    case Custom = 'custom';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            ApplicationSubmissionStateClassification::DocumentsRequired => 'Documents Required',
+            default => $this->name,
+        };
+    }
 }

@@ -34,15 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace AdvisingApp\Application\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
+use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 
 /**
- * @mixin IdeHelperFailedImportRow
+ * @mixin IdeHelperApplicationSubmissionState
  */
-class FailedImportRow extends BaseFailedImportRow
+class ApplicationSubmissionState extends BaseModel implements Auditable
 {
-    use HasUuids;
+    use SoftDeletes;
+    use AuditableTrait;
+
+    protected $fillable = [
+        'classification',
+        'name',
+        'color',
+        'description',
+    ];
+
+    protected $casts = [
+        'classification' => ApplicationSubmissionStateClassification::class,
+        'color' => ApplicationSubmissionStateColorOptions::class,
+    ];
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(ApplicationSubmission::class, 'state_id');
+    }
 }

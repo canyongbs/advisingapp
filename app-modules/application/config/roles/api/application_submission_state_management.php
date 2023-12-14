@@ -34,15 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
-
-/**
- * @mixin IdeHelperFailedImportRow
- */
-class FailedImportRow extends BaseFailedImportRow
-{
-    use HasUuids;
-}
+return [
+    'model' => [
+        'application_submission_state' => [
+            '*',
+        ],
+    ],
+];

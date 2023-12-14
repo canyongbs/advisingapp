@@ -34,15 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace AdvisingApp\Application\Enums;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @mixin IdeHelperFailedImportRow
- */
-class FailedImportRow extends BaseFailedImportRow
+enum ApplicationSubmissionStateColorOptions: string implements HasLabel
 {
-    use HasUuids;
+    case Success = 'success';
+
+    case Danger = 'danger';
+
+    case Warning = 'warning';
+
+    case Info = 'info';
+
+    case Primary = 'primary';
+
+    case Gray = 'gray';
+
+    public function getLabel(): string
+    {
+        return $this->value;
+    }
 }

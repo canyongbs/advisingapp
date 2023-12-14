@@ -59,6 +59,7 @@ use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
 use AdvisingApp\Engagement\Database\Seeders\DemoEducatableEngagementSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestUpdateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestPrioritySeeder;
@@ -101,6 +102,7 @@ class DatabaseSeeder extends Seeder
             DemoEducatableEngagementSeeder::class,
             SuperAdminSeeder::class,
             StudentSeeder::class,
+            ApplicationSubmissionStateSeeder::class,
         ]);
     }
 }

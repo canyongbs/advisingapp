@@ -47,6 +47,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
@@ -67,6 +68,7 @@ class ApplicationServiceProvider extends ServiceProvider
             'application_submission' => ApplicationSubmission::class,
             'application_step' => ApplicationStep::class,
             'application_authentication' => ApplicationAuthentication::class,
+            'application_submission_state' => ApplicationSubmissionState::class,
         ]);
 
         $this->registerRolesAndPermissions();

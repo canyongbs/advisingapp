@@ -34,35 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Observers;
+namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 
-class ApplicationSubmissionObserver
+class CreateApplicationSubmissionState extends CreateRecord
 {
-    public function creating(ApplicationSubmission $submission): void
-    {
-        $submission->state()->associate(
-            ApplicationSubmissionState::where('classification', ApplicationSubmissionStateClassification::Received)->firstOrFail()
-        );
-    }
+    protected static string $resource = ApplicationSubmissionStateResource::class;
 
-    public function created(ApplicationSubmission $submission): void
+    public function form(Form $form): Form
     {
-        Event::dispatch(
-            event: new ApplicationSubmissionCreated(submission: $submission)
-        );
-
-        if (! is_null($submission->author)) {
-            Cache::tags('application-submission-count')
-                ->forget(
-                    "application-submission-count-{$submission->author->getKey()}"
-                );
-        }
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required()
+                    ->string(),
+                Select::make('classification')
+                    ->label('Classification')
+                    ->searchable()
+                    ->options(ApplicationSubmissionStateClassification::class)
+                    ->required()
+                    ->enum(ApplicationSubmissionStateClassification::class),
+                Select::make('color')
+                    ->label('Color')
+                    ->searchable()
+                    ->options(ApplicationSubmissionStateColorOptions::class)
+                    ->required()
+                    ->enum(ApplicationSubmissionStateColorOptions::class),
+                Textarea::make('description')
+                    ->label('Description')
+                    ->required()
+                    ->string(),
+            ]);
     }
 }

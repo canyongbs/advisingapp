@@ -34,15 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace AdvisingApp\Application\Database\Factories;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
+use AdvisingApp\Application\Models\Application;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 
 /**
- * @mixin IdeHelperFailedImportRow
+ * @extends Factory<Application>
  */
-class FailedImportRow extends BaseFailedImportRow
+class ApplicationSubmissionStateFactory extends Factory
 {
-    use HasUuids;
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'classification' => fake()->randomElement(ApplicationSubmissionStateClassification::cases()),
+            'name' => fake()->word,
+            'color' => fake()->randomElement(ApplicationSubmissionStateColorOptions::cases()),
+            'description' => fake()->sentence,
+        ];
+    }
 }

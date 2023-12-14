@@ -34,15 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
-
-/**
- * @mixin IdeHelperFailedImportRow
- */
-class FailedImportRow extends BaseFailedImportRow
-{
-    use HasUuids;
-}
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('application_submission_states', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('classification');
+            $table->string('name');
+            $table->string('color');
+            $table->text('description');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+};

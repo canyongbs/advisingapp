@@ -36,6 +36,7 @@
 
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
+use function Pest\Laravel\seed;
 
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\URL;
@@ -45,10 +46,13 @@ use function Pest\Laravel\withoutMiddleware;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 
 test('define is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
 
@@ -74,6 +78,8 @@ test('define is protected with proper feature access control', function () {
 
 test('request-authentication is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
 
@@ -101,6 +107,8 @@ test('request-authentication is protected with proper feature access control', f
 
 test('authenticate is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
 
@@ -133,6 +141,8 @@ test('authenticate is protected with proper feature access control', function ()
 
 test('submit is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
 
     $settings = app(LicenseSettings::class);
 
