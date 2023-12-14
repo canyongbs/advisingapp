@@ -167,6 +167,15 @@ extend type Mutation {
         "The description of the interaction."
         description: String!
 
+        "The User related to the interaction."
+        user_id: ID! @rules(apply: ["required", "exists:users,id"])
+
+        "The Interactable related to the interaction."
+        interactable_id: ID! @rules(apply: ["required", "exists:students,id"])
+
+        "The type of interaction."
+        interactable_type: String
+
     ): Interaction! @create @canModel(ability: "create")
 }
 
