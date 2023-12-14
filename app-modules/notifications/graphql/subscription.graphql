@@ -29,10 +29,23 @@ extend type Mutation {
     "Create a new subscription."
     createUserSubscription(
         "The user to subscribe."
-        user_id: ID! @rules(apply: ["required", "exists:users,id"])
+        user_id: ID!
+            @rules(
+                apply: [
+                    "required"
+                    "exists:users,id"
+                    "AdvisingApp\\Notifications\\Rules\\UniqueSubscriptionRule"
+                ]
+            )
 
         "The subscribable to subscribe to."
-        subscribable_id: ID! @rules(apply: ["required"])
+        subscribable_id: ID!
+            @rules(
+                apply: [
+                    "required"
+                    "AdvisingApp\\Notifications\\Rules\\SubscribableIdExistsRule"
+                ]
+            )
 
         "The type of subscribable to subscribe to."
         subscribable_type: String!
