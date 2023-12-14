@@ -37,11 +37,16 @@
 namespace AdvisingApp\Form\Policies;
 
 use App\Models\User;
+use App\Enums\Feature;
 use AdvisingApp\Form\Models\Form;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
-class FormPolicy
+class FormPolicy implements FeatureAccessEnforcedPolicy
 {
+    use FeatureAccessEnforcedPolicyBefore;
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(
@@ -96,5 +101,10 @@ class FormPolicy
             abilities: ['form.*.force-delete', "form.{$form->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this form.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::DynamicForms];
     }
 }
