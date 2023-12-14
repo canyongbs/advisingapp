@@ -29,3 +29,6 @@ app-modules/**/resources/js/dist/*
 /.phpactor.json
 **/.DS_Store
 public/api-docs/*
+/_lighthouse_ide_helper.php
+/programmatic-types.graphql
+/schema-directives.graphql

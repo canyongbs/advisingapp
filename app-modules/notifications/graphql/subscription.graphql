@@ -1,21 +1,28 @@
-type UserSubscription @model(class: "subscription") {
+type UserSubscription
+    @model(class: "AdvisingApp\\Notifications\\Models\\Subscription") {
     "Unique primary key."
     id: ID!
+    "The user related to this subscription."
     user: User! @belongsTo
+    "The subscribable the user is subscribed to."
     subscribable: Educatable! @morphTo
+    "The created date of the subscription."
+    created_at: DateTime
+    "The updated date of the subscription."
+    updated_at: DateTime
 }
 
 extend type Query {
+    "Get a subscription by its primary key."
+    userSubscription(
+        "Search by primary key."
+        id: ID! @whereKey
+    ): UserSubscription @find @canResolved(ability: "view")
+
     "Get all subscriptions."
     userSubscriptions: [UserSubscription!]!
         @paginate
         @canModel(ability: "viewAny")
-
-    "Get a subscription by its primary key."
-    findUserSubscription(
-        "The primary key of the subscription."
-        id: ID! @whereKey
-    ): UserSubscription @find @canResolved(ability: "view")
 }
 
 extend type Mutation {
@@ -36,5 +43,5 @@ extend type Mutation {
     deleteUserSubscription(
         "The primary key of the subscription."
         id: ID! @whereKey
-    ): UserSubscription @delete @canFind(ability: "delete")
+    ): UserSubscription @delete @canFind(ability: "delete", find: "id")
 }
