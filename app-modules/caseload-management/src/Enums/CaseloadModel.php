@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\CaseloadManagement\Enums;
 
-use App\Imports\Importer;
 use Filament\Support\Contracts\HasLabel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
@@ -82,7 +81,7 @@ enum CaseloadModel: string implements HasLabel
             return $value;
         }
 
-        return static::tryFrom($value);
+        return CaseloadModel::tryFrom($value);
     }
 
     /**
@@ -91,8 +90,8 @@ enum CaseloadModel: string implements HasLabel
     public function getSubjectImporter(): string
     {
         return match ($this) {
-            static::Prospect => ProspectCaseloadSubjectImporter::class,
-            static::Student => StudentCaseloadSubjectImporter::class,
+            CaseloadModel::Prospect => ProspectCaseloadSubjectImporter::class,
+            CaseloadModel::Student => StudentCaseloadSubjectImporter::class,
         };
     }
 }

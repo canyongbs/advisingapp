@@ -61,92 +61,9 @@
     @apply bg-trout-50 dark:bg-gray-950;
 }
 
-/* .fi-sidebar-item {
-    @apply text-advising-app-black-950 dark:text-advising-app-white-50  !important;
+.fi-sidebar-nav > ul {
+    @apply gap-y-4;
 }
-
-.fi-sidebar-item-active {
-    .fi-sidebar-item-icon, .fi-sidebar-item-label {
-        @apply text-trout-700 dark:text-bright-sun-300 !important;
-    }
-}
-
-.fi-theme-switcher button {
-    @apply text-advising-app-black-900 hover:text-advising-app-black-950 focus:text-advising-app-black-950 dark:text-advising-app-white-50 dark:hover:text-advising-app-white-100 dark:focus:text-advising-app-white-100;
-}
-
-.fi-input-wrp {
-    @apply focus-within:ring-trout-700 dark:focus-within:ring-bright-sun-300 !important;
-}
-
-.fi-input-wrp .choices__inner .choices__item--selectable {
-    @apply text-trout-700 dark:text-bright-sun-300 bg-trout-700/10 dark:bg-bright-sun-300/10 ring-trout-700 dark:ring-bright-sun-300 !important;
-}
-
-.fi-ac > .fi-btn-color-primary   {
-    @apply bg-trout-700 dark:bg-bright-sun-300 ring-trout-700 dark:ring-bright-sun-300 text-advising-app-white-50 dark:text-advising-app-black-950 !important;
-}
-
-.fi-btn-color-gray > .fi-btn-label {
-    @apply text-advising-app-black-950 dark:text-advising-app-white-50 !important;
-}
-
-.fi-btn-color-primary {
-    @apply bg-trout-700 dark:bg-bright-sun-300 !important;
-}
-
-.fi-btn-label {
-    @apply text-advising-app-white-50 dark:text-advising-app-black-950 !important;
-}
-
-.fi-fo-radio input:checked {
-    @apply checked:bg-trout-700 text-trout-700 dark:checked:bg-bright-sun-300 text-bright-sun-300 !important;
-}
-
-.fi-checkbox-input {
-    @apply checked:bg-trout-700 text-trout-700 dark:checked:bg-bright-sun-300 text-bright-sun-300 focus:ring-trout-700 dark:focus:ring-bright-sun-300 !important;
-}
-
-.fi-fo-textarea {
-    @apply focus-within:ring-trout-700 dark:focus-within:ring-bright-sun-300 !important;
-}
-
-.fi-link {
-    @apply text-trout-700 dark:text-bright-sun-300 !important;
-}
-
-.fi-icon-btn {
-    @apply focus:ring-trout-700 dark:focus:ring-bright-sun-300 !important;
-}
-
-.fi-btn-icon {
-    @apply text-advising-app-white-50 dark:text-advising-app-black-950 !important;
-}
-
-.fi-color-custom > .fi-link-icon {
-    @apply text-trout-700 dark:text-bright-sun-300;
-}
-
-.fi-primary-color > .fi-icon-btn-icon {
-    @apply text-trout-700 dark:text-bright-sun-300;
-}
-
-.fi-icon-btn-badge-ctn > .fi-badge {
-    @apply ring-trout-700 dark:ring-bright-sun-300 text-trout-700 dark:text-bright-sun-300 !important;
-}
-
-.fi-ta-filter-indicators .fi-badge {
-    @apply ring-trout-700/10 text-trout-700 bg-trout-700/10 dark:ring-bright-sun-300/30 dark:text-bright-sun-300 dark:bg-bright-sun-300/30 !important;
-    button {
-        @apply text-trout-700/50 hover:text-trout-700/75 focus:text-trout-700/75 dark:text-bright-sun-300/50 dark:hover:text-bright-sun-300/75 dark:focus:text-bright-sun-300/10;
-    }
-}
-
-.fi-tabs-item-active {
-    .fi-tabs-item-label {
-        @apply text-trout-700 dark:text-bright-sun-300;
-    }
-} */
 
 /* TipTap rendering */
 

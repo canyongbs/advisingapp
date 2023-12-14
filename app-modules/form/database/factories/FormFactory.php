@@ -85,7 +85,9 @@ class FormFactory extends Factory
 
             if ($form->submissions()->doesntExist()) {
                 for ($i = 0; $i < rand(1, 3); $i++) {
-                    $submission = $form->submissions()->create();
+                    $submission = $form->submissions()->create([
+                        'submitted_at' => now(),
+                    ]);
 
                     foreach ($form->fields as $field) {
                         $submission->fields()->attach(

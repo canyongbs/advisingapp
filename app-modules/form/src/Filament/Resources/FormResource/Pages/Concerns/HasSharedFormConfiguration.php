@@ -98,7 +98,7 @@ trait HasSharedFormConfiguration
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
-                ->disabled(fn (?Form $record) => $record?->submissions()->exists()),
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
             Toggle::make('recaptcha_enabled')
                 ->label('Enable reCAPTCHA')
                 ->live()
@@ -113,7 +113,7 @@ trait HasSharedFormConfiguration
                     $this->fieldBuilder(),
                 ])
                 ->hidden(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Form $record) => $record?->submissions()->exists()),
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
@@ -128,7 +128,7 @@ trait HasSharedFormConfiguration
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                 ->visible(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Form $record) => $record?->submissions()->exists())
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
                 ->reorderable()
                 ->columnSpanFull(),

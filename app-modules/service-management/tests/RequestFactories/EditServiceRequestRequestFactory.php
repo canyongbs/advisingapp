@@ -47,7 +47,7 @@ class EditServiceRequestRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-            'division_id' => Division::factory()->create()->id,
+            'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id,
             'status_id' => ServiceRequestStatus::factory()->create()->id,
             'priority_id' => ServiceRequestPriority::factory()->create()->id,
             'type_id' => ServiceRequestType::factory()->create()->id,

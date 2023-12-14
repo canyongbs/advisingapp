@@ -1,0 +1,40 @@
+type UserSubscription @model(class: "subscription") {
+    "Unique primary key."
+    id: ID!
+    user: User! @belongsTo
+    subscribable: Educatable! @morphTo
+}
+
+extend type Query {
+    "Get all subscriptions."
+    userSubscriptions: [UserSubscription!]!
+        @paginate
+        @canModel(ability: "viewAny")
+
+    "Get a subscription by its primary key."
+    findUserSubscription(
+        "The primary key of the subscription."
+        id: ID! @whereKey
+    ): UserSubscription @find @canResolved(ability: "view")
+}
+
+extend type Mutation {
+    "Create a new subscription."
+    createUserSubscription(
+        "The user to subscribe."
+        user_id: ID! @rules(apply: ["required", "exists:users,id"])
+
+        "The subscribable to subscribe to."
+        subscribable_id: ID! @rules(apply: ["required"])
+
+        "The type of subscribable to subscribe to."
+        subscribable_type: String!
+            @rules(apply: ["required", "in:student,prospect"])
+    ): UserSubscription! @create @canModel(ability: "create")
+
+    "Delete an existing subscription."
+    deleteUserSubscription(
+        "The primary key of the subscription."
+        id: ID! @whereKey
+    ): UserSubscription @delete @canFind(ability: "delete")
+}

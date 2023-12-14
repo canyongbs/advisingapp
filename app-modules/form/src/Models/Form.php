@@ -81,9 +81,4 @@ class Form extends Submissible
     {
         return $this->hasMany(FormSubmission::class);
     }
-
-    public function requests(): HasMany
-    {
-        return $this->hasMany(FormRequest::class);
-    }
 }

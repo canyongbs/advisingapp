@@ -37,11 +37,16 @@
 namespace AdvisingApp\ServiceManagement\Policies;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
-class ServiceRequestPolicy
+class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 {
+    use FeatureAccessEnforcedPolicyBefore;
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(
@@ -96,5 +101,10 @@ class ServiceRequestPolicy
             abilities: ['service_request.*.force-delete', "service_request.{$serviceRequest->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this service request.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ServiceManagement];
     }
 }

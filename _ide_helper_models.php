@@ -272,6 +272,7 @@ namespace App\Models{
  * @property string|null $emplid
  * @property string|null $name
  * @property string|null $email
+ * @property bool $is_email_visible_on_profile
  * @property string|null $password
  * @property string|null $remember_token
  * @property string|null $locale
@@ -291,6 +292,11 @@ namespace App\Models{
  * @property bool $out_of_office_is_enabled
  * @property \Illuminate\Support\Carbon|null $out_of_office_starts_at
  * @property \Illuminate\Support\Carbon|null $out_of_office_ends_at
+ * @property string|null $phone_number
+ * @property bool $is_phone_number_visible_on_profile
+ * @property bool $working_hours_are_enabled
+ * @property bool $are_working_hours_visible_on_profile
+ * @property array|null $working_hours
  * @property string|null $pronouns_id
  * @property bool $are_pronouns_visible_on_profile
  * @property bool $default_assistant_chat_folders_created
@@ -367,6 +373,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAppointmentsAreRestrictedToExistingStudents($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereArePronounsVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAreTeamsVisibleOnProfile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereAreWorkingHoursVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAvatarUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereBio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
@@ -379,7 +386,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsBioVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsDivisionVisibleOnProfile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereIsEmailVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereIsExternal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereIsPhoneNumberVisibleOnProfile($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLocale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOfficeHours($value)
@@ -388,12 +397,15 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeIsEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOutOfOfficeStartsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePhoneNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePronounsId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePublicProfileSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereWorkingHours($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereWorkingHoursAreEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|User withoutTrashed()
  * @mixin \Eloquent
@@ -1489,8 +1501,6 @@ namespace AdvisingApp\Form\Models{
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormRequest> $requests
- * @property-read int|null $requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormStep> $steps
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $submissions
@@ -1583,48 +1593,6 @@ namespace AdvisingApp\Form\Models{
 
 namespace AdvisingApp\Form\Models{
 /**
- * AdvisingApp\Form\Models\FormRequest
- *
- * @property string $id
- * @property string $form_id
- * @property \AdvisingApp\Form\Enums\FormRequestDeliveryMethod $method
- * @property string|null $recipient_id
- * @property string|null $recipient_type
- * @property string|null $submission_id
- * @property string $user_id
- * @property string|null $note
- * @property int|null $canceled_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \AdvisingApp\Form\Models\Form $form
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $recipient
- * @property-read \AdvisingApp\Form\Models\FormSubmission|null $submission
- * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest notCanceled()
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest query()
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereCanceledAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereFormId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereMethod($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereNote($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereRecipientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereRecipientType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereSubmissionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormRequest whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperFormRequest {}
-}
-
-namespace AdvisingApp\Form\Models{
-/**
  * AdvisingApp\Form\Models\FormStep
  *
  * @property string $id
@@ -1662,22 +1630,38 @@ namespace AdvisingApp\Form\Models{
  * @property string $form_id
  * @property string|null $author_id
  * @property string|null $author_type
+ * @property \Carbon\CarbonImmutable|null $submitted_at
+ * @property \Carbon\CarbonImmutable|null $canceled_at
+ * @property \AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod|null $request_method
+ * @property string|null $request_note
+ * @property string|null $requester_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
+ * @property-read \App\Models\User|null $requester
  * @property-read \AdvisingApp\Form\Models\Form $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission canceled()
  * @method static \AdvisingApp\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission notCanceled()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission notSubmitted()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission requested()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission submitted()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereCanceledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereFormId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereRequestMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereRequestNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereRequesterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereSubmittedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -2237,8 +2221,6 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $engagement_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormRequest> $formRequests
- * @property-read int|null $form_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -2686,8 +2668,6 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Enrollment> $enrollments
  * @property-read int|null $enrollments_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormRequest> $formRequests
- * @property-read int|null $form_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions

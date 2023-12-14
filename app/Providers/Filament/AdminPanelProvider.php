@@ -40,11 +40,11 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
+use Filament\Actions\ImportAction;
 use App\Filament\Pages\EditProfile;
 use Filament\Tables\Columns\Column;
 use Filament\Forms\Components\Field;
 use App\Filament\Pages\ProductHealth;
-use App\Filament\Actions\ImportAction;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
@@ -71,7 +71,7 @@ class AdminPanelProvider extends PanelProvider
         Field::configureUsing(fn ($field) => $field->translateLabel());
         Entry::configureUsing(fn ($entry) => $entry->translateLabel());
         Column::configureUsing(fn ($column) => $column->translateLabel());
-        ImportAction::configureUsing(fn (ImportAction $action) => $action->max(100000));
+        ImportAction::configureUsing(fn (ImportAction $action) => $action->maxRows(100000));
         TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->gridLayouts([
             'two-columns',
             'three-columns',

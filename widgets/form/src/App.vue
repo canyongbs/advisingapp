@@ -33,7 +33,7 @@
 -->
 <script setup>
 import { defineProps, ref, reactive, onMounted } from 'vue';
-import useSteps from './useSteps.js';
+import wizard from './FormKit/wizard';
 import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
 import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
 
@@ -45,7 +45,7 @@ onMounted(async () => {
     });
 });
 
-let { steps, visitedSteps, activeStep, setStep, stepPlugin } = useSteps();
+let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
 const props = defineProps(['url']);
 
@@ -53,7 +53,7 @@ const data = reactive({
     steps,
     visitedSteps,
     activeStep,
-    plugins: [stepPlugin],
+    plugins: [wizardPlugin],
     setStep: (target) => () => {
         setStep(target);
     },

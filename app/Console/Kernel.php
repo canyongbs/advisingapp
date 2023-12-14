@@ -36,7 +36,6 @@
 
 namespace App\Console;
 
-use App\Models\FailedImportRow;
 use AdvisingApp\Audit\Models\Audit;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
@@ -44,6 +43,7 @@ use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use Spatie\Health\Commands\RunHealthChecksCommand;
 use App\Console\Commands\RefreshAdmMaterializedView;
+use Filament\Actions\Imports\Models\FailedImportRow;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;

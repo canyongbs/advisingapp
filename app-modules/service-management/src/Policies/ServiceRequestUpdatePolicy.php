@@ -37,11 +37,16 @@
 namespace AdvisingApp\ServiceManagement\Policies;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 
-class ServiceRequestUpdatePolicy
+class ServiceRequestUpdatePolicy implements FeatureAccessEnforcedPolicy
 {
+    use FeatureAccessEnforcedPolicyBefore;
+
     public function viewAny(User $user): Response
     {
         return $user->canOrElse(
@@ -96,5 +101,10 @@ class ServiceRequestUpdatePolicy
             abilities: ['service_request_update.*.force-delete', "service_request_update.{$serviceRequestUpdate->id}.force-delete"],
             denyResponse: 'You do not have permissions to force delete this service request update.'
         );
+    }
+
+    protected function requiredFeatures(): array
+    {
+        return [Feature::ServiceManagement];
     }
 }

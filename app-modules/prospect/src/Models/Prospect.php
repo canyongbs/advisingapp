@@ -42,7 +42,6 @@ use App\Models\BaseModel;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
-use AdvisingApp\Form\Models\FormRequest;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
@@ -221,11 +220,6 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     public function formSubmissions(): MorphMany
     {
         return $this->morphMany(FormSubmission::class, 'author');
-    }
-
-    public function formRequests(): MorphMany
-    {
-        return $this->morphMany(FormRequest::class, 'recipient');
     }
 
     public function applicationSubmissions(): MorphMany

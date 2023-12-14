@@ -37,6 +37,7 @@
 namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
+use App\Enums\Feature;
 use Filament\Forms\Get;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
@@ -48,6 +49,7 @@ use Livewire\Attributes\Computed;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Collection;
 use Filament\Forms\Components\Radio;
+use Illuminate\Support\Facades\Gate;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\ActionSize;
@@ -108,11 +110,12 @@ class PersonalAssistant extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('assistant.access');
+        return Gate::check(Feature::PersonalAssistant->getGateName()) && $user->can('assistant.access');
     }
 
     public function mount(): void
     {
+        $this->authorize(Feature::PersonalAssistant->getGateName());
         $this->authorize('assistant.access');
 
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();

@@ -38,8 +38,6 @@ namespace AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pag
 
 use Iterator;
 use App\Models\User;
-use App\Models\Import;
-use App\Jobs\ImportCsv;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
 use Illuminate\Support\Arr;
@@ -59,6 +57,8 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Tables\Concerns\InteractsWithTable;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
@@ -250,7 +250,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                             NotificationAction::make('downloadFailedRowsCsv')
                                 ->label('Download information about the failed ' . Str::plural('row', $failedRowsCount))
                                 ->color('danger')
-                                ->url(route('imports.failed-rows.download', ['import' => $import])),
+                                ->url(route('filament.imports.failed-rows.download', ['import' => $import])),
                         ]),
                     )
                     ->sendToDatabase($import->user);

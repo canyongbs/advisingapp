@@ -58,11 +58,11 @@ class GenerateSubmissibleEmbedCode
             })(),
             Application::class => (function () use ($submissible) {
                 // TODO: Eventually we will want to change this to create a separate widget for applications.
-                $scriptUrl = url('js/widgets/form/advising-app-form-widget.js?');
-                $formDefinitionUrl = URL::signedRoute('applications.define', ['application' => $submissible]);
+                $scriptUrl = url('js/widgets/application/advising-app-application-widget.js?');
+                $applicationDefinitionUrl = URL::signedRoute('applications.define', ['application' => $submissible]);
 
                 return <<<EOD
-                <form-embed url="{$formDefinitionUrl}"></form-embed>
+                <application-embed url="{$applicationDefinitionUrl}"></application-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),

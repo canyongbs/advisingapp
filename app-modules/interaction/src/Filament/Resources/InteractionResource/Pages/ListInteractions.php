@@ -40,7 +40,7 @@ use Filament\Actions;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
 use App\Filament\Columns\IdColumn;
-use App\Filament\Actions\ImportAction;
+use Filament\Actions\ImportAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;

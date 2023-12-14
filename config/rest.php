@@ -96,6 +96,7 @@ return [
             'path' => '/api-documentation',
             'middlewares' => [
                 'web',
+                'can:authorization.view_api_documentation',
             ],
         ],
         'info' => [
