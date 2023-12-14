@@ -53,6 +53,21 @@ type Interaction
 
 # TODO: Query and Mutate
 
+extend type Query {
+    interaction(
+        "Search by primary key."
+        id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+
+        "Search by email address."
+        email: String
+        @eq
+        @rules(apply: ["prohibits:id", "required_without:id", "email"])
+    ): User @find
+
+    "List multiple interactions."
+    interactions: [Interaction!]! @paginate
+}
+
 #import ./interaction-campaign.graphql
 #import ./interaction-driver.graphql
 #import ./interaction-outcome.graphql
