@@ -73,6 +73,40 @@ enum QueryInteractionsHasTypeColumn {
     name
 }
 
+enum QueryInteractionsHasInteractableEnum {
+    full_name
+}
+
+enum QueryInteractionsHasRelationColumn {
+    id
+    name
+}
+
+enum QueryInteractionsHasCampaignColumn {
+    id
+    name
+}
+
+enum QueryInteractionsHasDriverColumn {
+    id
+    name
+}
+
+enum QueryInteractionsHasStatusColumn {
+    id
+    name
+    color
+}
+
+enum QueryInteractionsHasOutcomeColumn {
+    id
+    name
+}
+
+enum QueryDivisionsWhereColumn{
+    id
+}
+
 extend type Query {
     "Find a single interaction by an identifying attribute."
     interaction(
@@ -82,13 +116,46 @@ extend type Query {
 
     "List multiple interactions."
     interactions(
+        "Filter by the interactions attributes."
         where: _ @whereConditions(columnsEnum: QueryInteractionsWhereColumn)
-        
+
         "Filter by the user relationship."
-        hasUser: _ @whereHasConditions(columnsEnum: QueryInteractionsHasUserColumn)
+        hasUser: _
+            @whereHasConditions(columnsEnum: QueryInteractionsHasUserColumn)
+
+        # TODO: Look into improving Polymorphic whereHas
+        hasInteractable: _
+            @whereHasConditions(
+                columnsEnum: QueryInteractionsHasInteractableEnum
+            )
 
         "Filter by the type relationship."
-        hasType: _ @whereHasConditions(columnsEnum: QueryInteractionsHasTypeColumn)
+        hasType: _
+            @whereHasConditions(columnsEnum: QueryInteractionsHasTypeColumn)
+
+        "Filter by the relation relationship."
+        hasRelation: _
+            @whereHasConditions(columnsEnum: QueryInteractionsHasRelationColumn)
+
+        "Filter by the campaign relationship."
+        hasCampaign: _
+            @whereHasConditions(columnsEnum: QueryInteractionsHasCampaignColumn)
+
+        "Filter by the driver relationship."
+        hasDriver: _
+            @whereHasConditions(columnsEnum: QueryInteractionsHasDriverColumn)
+
+        "Filter by the status relationship."
+        hasStatus: _
+            @whereHasConditions(columnsEnum: QueryInteractionsHasStatusColumn)
+
+        "Filter by the outcome relationship."
+        hasOutcome: _
+            @whereHasConditions(columnsEnum: QueryInteractionsHasOutcomeColumn)
+
+        "Filter by the division relationship."
+        hasDivision: _
+            @whereHasConditions(columnsEnum: QueryDivisionsWhereColumn)
     ): [Interaction!]! @paginate @canModel(ability: "viewAny")
 }
 
