@@ -35,10 +35,14 @@
 */
 
 use App\Livewire\RenderForm;
+use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 
-Route::middleware('web')
-    ->prefix('forms')
+Route::prefix('forms')
     ->name('forms.')
+    ->middleware([
+        'web',
+        EnsureFormsFeatureIsActive::class,
+    ])
     ->group(function () {
         Route::get('/{form}/respond', RenderForm::class)
             ->name('show');

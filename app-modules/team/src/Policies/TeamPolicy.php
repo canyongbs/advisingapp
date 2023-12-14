@@ -36,63 +36,63 @@
 
 namespace AdvisingApp\Team\Policies;
 
-use App\Models\User;
+use App\Models\Authenticatable;
 use AdvisingApp\Team\Models\Team;
 use Illuminate\Auth\Access\Response;
 
 class TeamPolicy
 {
-    public function viewAny(User $user): Response
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'team.view-any',
             denyResponse: 'You do not have permission to view interactions.'
         );
     }
 
-    public function view(User $user, Team $team): Response
+    public function view(Authenticatable $authenticatable, Team $team): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['team.*.view', "team.{$team->id}.view"],
             denyResponse: 'You do not have permission to view this team.'
         );
     }
 
-    public function create(User $user): Response
+    public function create(Authenticatable $authenticatable): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: 'team.create',
             denyResponse: 'You do not have permission to create interactions.'
         );
     }
 
-    public function update(User $user, Team $team): Response
+    public function update(Authenticatable $authenticatable, Team $team): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['team.*.update', "team.{$team->id}.update"],
             denyResponse: 'You do not have permission to update this team.'
         );
     }
 
-    public function delete(User $user, Team $team): Response
+    public function delete(Authenticatable $authenticatable, Team $team): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['team.*.delete', "team.{$team->id}.delete"],
             denyResponse: 'You do not have permission to delete this team.'
         );
     }
 
-    public function restore(User $user, Team $team): Response
+    public function restore(Authenticatable $authenticatable, Team $team): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['team.*.restore', "team.{$team->id}.restore"],
             denyResponse: 'You do not have permission to restore this team.'
         );
     }
 
-    public function forceDelete(User $user, Team $team): Response
+    public function forceDelete(Authenticatable $authenticatable, Team $team): Response
     {
-        return $user->canOrElse(
+        return $authenticatable->canOrElse(
             abilities: ['team.*.force-delete', "team.{$team->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this team.'
         );

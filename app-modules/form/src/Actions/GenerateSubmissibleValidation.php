@@ -41,16 +41,23 @@ use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\IntegrationGoogleRecaptcha\Rules\RecaptchaTokenValid;
 
 class GenerateSubmissibleValidation
 {
     public function __invoke(Submissible $submissible): array
     {
-        if ($submissible->is_wizard) {
-            return $this->wizardRules($submissible);
+        $rules = [];
+
+        if ($submissible->recaptcha_enabled === true) {
+            $rules['recaptcha-token'] = [new RecaptchaTokenValid()];
         }
 
-        return $this->fields($submissible->fields);
+        if ($submissible->is_wizard) {
+            return array_merge($rules, $this->wizardRules($submissible));
+        }
+
+        return array_merge($rules, $this->fields($submissible->fields));
     }
 
     public function fields(Collection $fields): array

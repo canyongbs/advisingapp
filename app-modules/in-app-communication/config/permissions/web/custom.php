@@ -34,4 +34,6 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'realtime-chat.access',
+];

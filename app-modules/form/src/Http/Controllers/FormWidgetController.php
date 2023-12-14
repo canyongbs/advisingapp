@@ -56,6 +56,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class FormWidgetController extends Controller
 {
@@ -71,6 +72,10 @@ class FormWidgetController extends Controller
                 ] : [
                     'submission_url' => URL::signedRoute('forms.submit', ['form' => $form]),
                 ]),
+                'recaptcha_enabled' => $form->recaptcha_enabled,
+                ...($form->recaptcha_enabled ? [
+                    'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
+                ] : []),
                 'schema' => $generateSchema($form),
                 'primary_color' => Color::all()[$form->primary_color ?? 'blue'],
                 'rounding' => $form->rounding,
@@ -191,6 +196,8 @@ class FormWidgetController extends Controller
         $submission->save();
 
         $data = $validator->validated();
+
+        unset($data['recaptcha-token']);
 
         if ($form->is_wizard) {
             foreach ($form->steps as $step) {

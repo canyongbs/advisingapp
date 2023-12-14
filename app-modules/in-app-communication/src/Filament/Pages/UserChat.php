@@ -38,12 +38,14 @@ namespace AdvisingApp\InAppCommunication\Filament\Pages;
 
 use Exception;
 use App\Models\User;
+use App\Enums\Feature;
 use Twilio\Rest\Client;
 use Filament\Pages\Page;
 use Twilio\Jwt\AccessToken;
 use Filament\Actions\Action;
 use Twilio\Jwt\Grants\ChatGrant;
 use Livewire\Attributes\Renderless;
+use Illuminate\Support\Facades\Gate;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
@@ -79,9 +81,23 @@ class UserChat extends Page implements HasForms, HasActions
 
     protected static ?string $title = 'Realtime Chat';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return Gate::check(Feature::RealtimeChat->getGateName()) && $user->can('in-app-communication.realtime-chat.access');
+    }
+
     public function mount()
     {
-        $this->conversations = auth()->user()->conversations;
+        $this->authorize(Feature::RealtimeChat->getGateName());
+        $this->authorize('in-app-communication.realtime-chat.access');
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        $this->conversations = $user->conversations;
     }
 
     public function newChatAction()

@@ -46,7 +46,7 @@ class EnsureOnlineAdmissionsFeatureIsActive
     public function handle(Request $request, Closure $next): Response
     {
         if (! app(LicenseSettings::class)->data->addons->onlineAdmissions) {
-            return response()->json(['error' => 'Online Admissions is not enabled.'], 403);
+            return response()->json(['error' => 'Online Admissions is not enabled.'], Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);
