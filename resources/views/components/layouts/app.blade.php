@@ -65,6 +65,8 @@
 <body class="antialiased">
     {{ $slot }}
 
+    @include('cookie-consent::index')
+
     @filamentScripts
     @vite('resources/js/app.js')
 </body>
