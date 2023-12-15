@@ -32,8 +32,8 @@ info:
     name: Elastic License 2.0
     url: https://www.elastic.co/licensing/elastic-license
   x-introItems:
-    - title: Important thing 1
-      description: Some important stuff we wanted you to know. Supports `markdown`
+    - title: Authorization
+      description: Add additional details for authentication. Supports `markdown`, more sections can be added.
 
 servers:
   - url: ${APP_URL}/graphql

@@ -1,4 +1,5 @@
 type Prospect {
+    "Unique primary key."
     id: ID!
 
     status_id: ID

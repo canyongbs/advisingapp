@@ -6,4 +6,9 @@ type ServiceRequest
     # TODO: Finish fields
 }
 
+input ServiceRequestQuery {
+    "Unique primary key."
+    id: ID
+}
+
 # TODO: Query and Mutate
