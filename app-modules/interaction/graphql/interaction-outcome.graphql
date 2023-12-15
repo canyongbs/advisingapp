@@ -20,8 +20,64 @@ type InteractionOutcome
 }
 
 input InteractionOutcomeQuery {
+    "The unique primary key of the interaction outcome."
+    id: ID
+
     "The name of the interaction outcome."
     name: String
+
+    "The interactions related to this interaction outcome."
+    interactions: InteractionsQuery
+
+    "The created date of the interaction outcome."
+    created_at: DateTime
+
+    "The updated date of the interaction outcome."
+    updated_at: DateTime
+
+    "The deleted date of the interaction outcome."
+    deleted_at: DateTime
 }
 
-# TODO: Query and Mutate
+extend type Query {
+    "Get a specific interaction outcome by id."
+    interactionOutcome(id: ID! @eq): InteractionOutcome @find @canResolved(ability: "view")
+
+    "List multiple interactions outcomes."
+    interactionOutcomes(
+        "Filter by the interaction outcomes attributes and relations."
+        where: InteractionOutcomeQuery @searchBy
+    ): [InteractionOutcome!]! @paginate @canModel(ability: "viewAny")
+}
+
+input CreateInteractionOutcomeInput {
+    "The name of the interaction outcome."
+    name: String! @rules(apply: ["required", "string", "max:255", "unique:interaction_outcomes,name"])
+}
+
+input UpdateInteractionOutcomeInput {
+    "The name of the interaction outcome."
+    name: String @rules(apply: ["string", "max:255", "unique:interaction_outcomes,name"])
+}
+
+extend type Mutation {
+    "Create a interaction outcome."
+    createInteraction(input: CreateInteractionOutcomeInput! @spread): InteractionOutcome!
+    @create
+    @canModel(ability: "create")
+
+    "Update an existing interaction outcome."
+    updateInteractionOutcome(
+        "The identifier of the interaction outcome you would like to update."
+        id: ID! @whereKey
+
+        "The fields you would like to update."
+        input: UpdateInteractionOutcomeInput! @spread
+    ): InteractionOutcome! @canFind(ability: "update", find: "id") @update
+
+    "Delete an existing interaction outcome."
+    deleteInteractionOutcome(
+        "The identifier of the interaction outcome you would like to delete."
+        id: ID! @whereKey
+    ): InteractionOutcome @canFind(ability: "delete", find: "id") @delete
+}

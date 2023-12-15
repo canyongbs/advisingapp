@@ -25,25 +25,68 @@ type InteractionStatus
 # TODO: Mutate
 
 input InteractionStatusesQuery {
+    "The unique primary key of the interaction status."
+    id: ID
+
     "The name of the interaction status."
     name: String
 
     "The color of the interaction status."
     color: InteractionStatusColorOptions
+
+    "The interactions related to this interaction status."
+    interactions: InteractionsQuery
+
+    "The created date of the interaction status."
+    created_at: DateTime
+
+    "The updated date of the interaction status."
+    updated_at: DateTime
+
+    "The deleted date of the interaction status."
+    deleted_at: DateTime
 }
 
 extend type Query {
-    "Find a single interaction status by an identifying attribute."
-    interactionStatus(
-        "The value of the attribute to match."
-        id: ID @eq @rules(apply: ["prohibits:name", "required_without:name"])
+    "Get a specific interaction status by id."
+    interactionStatus(id: ID! @eq): InteractionStatus @find @canResolved(ability: "view")
 
-        "The name of the interaction status."
-        name: String @eq @rules(apply: ["prohibits:id", "required_without:id"])
-    ): Interaction @find @canResolved(ability: "view")
-
-    "Get all interaction statuses."
+    "List multiple interactions statuses."
     interactionStatuses(
-        where: InteractionStatusesQuery @searchBy
+        "Filter by the interaction statuses attributes and relations."
+        where: InteractionStatusQuery @searchBy
     ): [InteractionStatus!]! @paginate @canModel(ability: "viewAny")
 }
+
+input CreateInteractionStatusInput {
+    "The name of the interaction status."
+    name: String! @rules(apply: ["required", "string", "max:255", "unique:interaction_statuses,name"])
+}
+
+input UpdateInteractionStatusInput {
+    "The name of the interaction status."
+    name: String @rules(apply: ["string", "max:255", "unique:interaction_statuses,name"])
+}
+
+extend type Mutation {
+    "Create a interaction status."
+    createInteraction(input: CreateInteractionStatusInput! @spread): InteractionStatus!
+    @create
+    @canModel(ability: "create")
+
+    "Update an existing interaction status."
+    updateInteractionStatus(
+        "The identifier of the interaction status you would like to update."
+        id: ID! @whereKey
+
+        "The fields you would like to update."
+        input: UpdateInteractionStatusInput! @spread
+    ): InteractionStatus! @canFind(ability: "update", find: "id") @update
+
+    "Delete an existing interaction status."
+    deleteInteractionStatus(
+        "The identifier of the interaction status you would like to delete."
+        id: ID! @whereKey
+    ): InteractionStatus @canFind(ability: "delete", find: "id") @delete
+}
+

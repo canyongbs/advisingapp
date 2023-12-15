@@ -45,7 +45,7 @@ extend type Query {
 
     "List multiple interactions campaigns."
     interactionCampaigns(
-        "Filter by the interactions attributes."
+        "Filter by the interaction campaigns attributes and relations."
         where: InteractionCampaignQuery @searchBy
     ): [InteractionCampaign!]! @paginate @canModel(ability: "viewAny")
 }

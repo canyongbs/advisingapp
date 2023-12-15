@@ -20,8 +20,64 @@ type InteractionRelation
 }
 
 input InteractionRelationQuery {
+    "The unique primary key of the interaction relation."
+    id: ID
+
     "The name of the interaction relation."
     name: String
+
+    "The interactions related to this interaction relation."
+    interactions: InteractionsQuery
+
+    "The created date of the interaction relation."
+    created_at: DateTime
+
+    "The updated date of the interaction relation."
+    updated_at: DateTime
+
+    "The deleted date of the interaction relation."
+    deleted_at: DateTime
 }
 
-# TODO: Query and Mutate
+extend type Query {
+    "Get a specific interaction relation by id."
+    interactionRelation(id: ID! @eq): InteractionRelation @find @canResolved(ability: "view")
+
+    "List multiple interactions relations."
+    interactionRelations(
+        "Filter by the interaction relations attributes and relations."
+        where: InteractionRelationQuery @searchBy
+    ): [InteractionRelation!]! @paginate @canModel(ability: "viewAny")
+}
+
+input CreateInteractionRelationInput {
+    "The name of the interaction relation."
+    name: String! @rules(apply: ["required", "string", "max:255", "unique:interaction_relations,name"])
+}
+
+input UpdateInteractionRelationInput {
+    "The name of the interaction relation."
+    name: String @rules(apply: ["string", "max:255", "unique:interaction_relations,name"])
+}
+
+extend type Mutation {
+    "Create a interaction relation."
+    createInteraction(input: CreateInteractionRelationInput! @spread): InteractionRelation!
+    @create
+    @canModel(ability: "create")
+
+    "Update an existing interaction relation."
+    updateInteractionRelation(
+        "The identifier of the interaction relation you would like to update."
+        id: ID! @whereKey
+
+        "The fields you would like to update."
+        input: UpdateInteractionRelationInput! @spread
+    ): InteractionRelation! @canFind(ability: "update", find: "id") @update
+
+    "Delete an existing interaction relation."
+    deleteInteractionRelation(
+        "The identifier of the interaction relation you would like to delete."
+        id: ID! @whereKey
+    ): InteractionRelation @canFind(ability: "delete", find: "id") @delete
+}
