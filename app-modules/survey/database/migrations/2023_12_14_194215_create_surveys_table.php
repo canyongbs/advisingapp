@@ -52,6 +52,7 @@ return new class () extends Migration {
             $table->string('rounding')->nullable();
             $table->boolean('is_authenticated')->default(false);
             $table->boolean('is_wizard')->default(false);
+            $table->boolean('recaptcha_enabled')->default(false);
             $table->json('content')->nullable();
 
             $table->timestamps();

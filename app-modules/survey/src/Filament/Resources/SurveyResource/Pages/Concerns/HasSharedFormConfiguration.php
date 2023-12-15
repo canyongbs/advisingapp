@@ -55,8 +55,8 @@ use AdvisingApp\Survey\Models\SurveyField;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
-// This isn't actually shared between any of the form related entities (Form, Survey, Application)
 trait HasSharedFormConfiguration
 {
     public function fields(): array
@@ -99,6 +99,15 @@ trait HasSharedFormConfiguration
                 ->label('Multi-step survey')
                 ->live()
                 ->disabled(fn (?Survey $record) => $record?->submissions()->submitted()->exists()),
+            Toggle::make('recaptcha_enabled')
+                ->label('Enable reCAPTCHA')
+                ->live()
+                ->disabled(fn (GoogleRecaptchaSettings $settings) => ! $settings->is_enabled)
+                ->helperText(function (GoogleRecaptchaSettings $settings) {
+                    if (! $settings->is_enabled) {
+                        return 'Enable and configure reCAPTCHA in order to use it on your surveys.';
+                    }
+                }),
             Section::make('Fields')
                 ->schema([
                     $this->fieldBuilder(),
