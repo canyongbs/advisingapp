@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "138e312c2af2093f49ef9641a68bd054",
+    "content-hash": "0794645289f95763d3a2caebc3cc84b9",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -1571,6 +1571,41 @@
                     "AdvisingApp\\StudentDataModel\\Tests\\": "tests/",
                     "AdvisingApp\\StudentDataModel\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\StudentDataModel\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-survey",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/survey",
+                "reference": "f018d995e19cedeacf5d5b73b30c9a192b1b531d"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Survey\\Providers\\SurveyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Survey\\": "src/",
+                    "AdvisingApp\\Survey\\Tests\\": "tests/",
+                    "AdvisingApp\\Survey\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Survey\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -19887,5 +19922,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
