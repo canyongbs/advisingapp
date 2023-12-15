@@ -51,8 +51,6 @@ type Interaction
     updated_at: DateTime
 }
 
-# TODO: Query and Mutate
-
 enum QueryInteractionsWhereColumn {
     subject
     description

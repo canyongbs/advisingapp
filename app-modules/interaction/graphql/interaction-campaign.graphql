@@ -20,3 +20,16 @@ type InteractionCampaign
 }
 
 # TODO: Query and Mutate
+
+#extend type Query {
+#    "List multiple interactions campaigns."
+#    interactionCampaigns(
+#        "Filter by the interactions attributes."
+#        where: _ @whereConditions(columnsEnum: QueryInteractionsWhereColumn)
+#
+#    ): [InteractionCampaign!]! @paginate @canModel(ability: "viewAny")
+#
+#
+#    "Get a specific interaction campaign by id."
+#    interactionCampaign(id: ID! @eq): InteractionCampaign @find
+#}
