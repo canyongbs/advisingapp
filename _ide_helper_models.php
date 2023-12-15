@@ -87,7 +87,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FailedImportRow> $failedRows
  * @property-read int|null $failed_rows_count
- * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $user
  * @method static \Illuminate\Database\Eloquent\Builder|Import newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Import newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Import query()
@@ -601,12 +601,14 @@ namespace AdvisingApp\Application\Models{
  * @property string $application_id
  * @property string|null $author_id
  * @property string|null $author_type
+ * @property string $state_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationField> $fields
  * @property-read int|null $fields_count
+ * @property-read \AdvisingApp\Application\Models\ApplicationSubmissionState $state
  * @property-read \AdvisingApp\Application\Models\Application $submissible
  * @method static \AdvisingApp\Application\Database\Factories\ApplicationSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission newModelQuery()
@@ -618,11 +620,49 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereStateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
  class IdeHelperApplicationSubmission {}
+}
+
+namespace AdvisingApp\Application\Models{
+/**
+ * AdvisingApp\Application\Models\ApplicationSubmissionState
+ *
+ * @property string $id
+ * @property \AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification $classification
+ * @property string $name
+ * @property \AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions $color
+ * @property string $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @method static \AdvisingApp\Application\Database\Factories\ApplicationSubmissionStateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperApplicationSubmissionState {}
 }
 
 namespace AdvisingApp\Assistant\Models{

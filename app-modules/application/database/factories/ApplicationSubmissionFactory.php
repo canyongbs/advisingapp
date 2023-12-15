@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
 
 /**
  * @extends Factory<ApplicationSubmission>
@@ -65,6 +66,7 @@ class ApplicationSubmissionFactory extends Factory
 
                 return $author->getKey();
             },
+            'state_id' => ApplicationSubmissionState::factory(),
         ];
     }
 }

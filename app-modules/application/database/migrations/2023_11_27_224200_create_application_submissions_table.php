@@ -47,6 +47,7 @@ return new class () extends Migration {
             $table->foreignUuid('application_id')->constrained('applications')->cascadeOnDelete();
             $table->string('author_id')->nullable();
             $table->string('author_type')->nullable();
+            $table->foreignUuid('state_id')->references('id')->on('application_submission_states');
 
             $table->timestamps();
             $table->softDeletes();
