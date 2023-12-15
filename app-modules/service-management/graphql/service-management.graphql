@@ -1,4 +1,5 @@
-type ServiceRequest @model(class: "AdvisingApp\\ServiceManagement\\Models\\ServiceRequest") {
+type ServiceRequest
+    @model(class: "AdvisingApp\\ServiceManagement\\Models\\ServiceRequest") {
     "Unique primary key."
     id: ID!
 

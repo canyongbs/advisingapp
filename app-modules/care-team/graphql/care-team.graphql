@@ -28,8 +28,8 @@ extend type Mutation {
         user_id: ID!
             @rules(
                 apply: [
-                    "required",
-                    "exists:users,id",
+                    "required"
+                    "exists:users,id"
                     "AdvisingApp\\CareTeam\\Rules\\UniqueCareTeamRule"
                 ]
             )
@@ -38,7 +38,8 @@ extend type Mutation {
         educatable_id: ID!
             @rules(
                 apply: [
-                    "required", "AdvisingApp\\CareTeam\\Rules\\EducatableIdExistsRule"
+                    "required"
+                    "AdvisingApp\\CareTeam\\Rules\\EducatableIdExistsRule"
                 ]
             )
 

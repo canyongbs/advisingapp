@@ -170,29 +170,32 @@ input UpdateInteractionInput {
 
     "The Interactable related to the interaction."
     interactable_id: ID
-    @rules(
-        apply: [
-            "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRules"
-            "required_with:interactable_type"
-        ]
-    )
+        @rules(
+            apply: [
+                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRules"
+                "required_with:interactable_type"
+            ]
+        )
 
     "The type of Interactable related to the interaction."
-    interactable_type: String @rules(
-        apply: [
-            "in:student,prospect,service_request",
-            "required_with:interactable_id"
-        ]
-    )
+    interactable_type: String
+        @rules(
+            apply: [
+                "in:student,prospect,service_request"
+                "required_with:interactable_id"
+            ]
+        )
 
     "The type of interaction."
     interaction_type_id: ID @rules(apply: ["exists:interaction_types,id"])
 
     "The relation of the interaction."
-    interaction_relation_id: ID @rules(apply: ["exists:interaction_relations,id"])
+    interaction_relation_id: ID
+        @rules(apply: ["exists:interaction_relations,id"])
 
     "The campaign of the interaction."
-    interaction_campaign_id: ID @rules(apply: ["exists:interaction_campaigns,id"])
+    interaction_campaign_id: ID
+        @rules(apply: ["exists:interaction_campaigns,id"])
 
     "The driver of the interaction."
     interaction_driver_id: ID @rules(apply: ["exists:interaction_drivers,id"])
@@ -210,7 +213,8 @@ input UpdateInteractionInput {
     start_datetime: DateTime @rules(apply: ["date_format:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
-    end_datetime: DateTime @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
+    end_datetime: DateTime
+        @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
 }
 
 extend type Mutation {
@@ -229,49 +233,64 @@ extend type Mutation {
         interactable_id: ID!
             @rules(
                 apply: [
-                    "required",
+                    "required"
                     "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRules"
                 ]
             )
 
         "The type of Interactable related to the interaction."
-        interactable_type: String! @rules(apply: ["required", "in:student,prospect,service_request"])
+        interactable_type: String!
+            @rules(apply: ["required", "in:student,prospect,service_request"])
 
         "The type of interaction."
-        interaction_type_id: ID! @rules(apply: ["required", "exists:interaction_types,id"])
+        interaction_type_id: ID!
+            @rules(apply: ["required", "exists:interaction_types,id"])
 
         "The relation of the interaction."
-        interaction_relation_id: ID! @rules(apply: ["required", "exists:interaction_relations,id"])
+        interaction_relation_id: ID!
+            @rules(apply: ["required", "exists:interaction_relations,id"])
 
         "The campaign of the interaction."
-        interaction_campaign_id: ID! @rules(apply: ["required", "exists:interaction_campaigns,id"])
+        interaction_campaign_id: ID!
+            @rules(apply: ["required", "exists:interaction_campaigns,id"])
 
         "The driver of the interaction."
-        interaction_driver_id: ID! @rules(apply: ["required", "exists:interaction_drivers,id"])
+        interaction_driver_id: ID!
+            @rules(apply: ["required", "exists:interaction_drivers,id"])
 
         "The status of the interaction."
-        interaction_status_id: ID! @rules(apply: ["required", "exists:interaction_statuses,id"])
+        interaction_status_id: ID!
+            @rules(apply: ["required", "exists:interaction_statuses,id"])
 
         "The outcome of the interaction."
-        interaction_outcome_id: ID! @rules(apply: ["required", "exists:interaction_outcomes,id"])
+        interaction_outcome_id: ID!
+            @rules(apply: ["required", "exists:interaction_outcomes,id"])
 
         "The division of the interaction."
         division_id: ID! @rules(apply: ["required", "exists:divisions,id"])
 
         "The start datetime of the interaction."
-        start_datetime: DateTime! @rules(apply: ["required", "date_format:Y-m-d H:i:s"])
+        start_datetime: DateTime!
+            @rules(apply: ["required", "date_format:Y-m-d H:i:s"])
 
         "The end datetime of the interaction."
-        end_datetime: DateTime @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
+        end_datetime: DateTime
+            @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
     ): Interaction! @create @canModel(ability: "create")
 
     "Update a interaction."
     updateInteraction(
         "The identifier of the interaction you would like to update."
-        id: ID! @rules(apply: ["required", "exists:interactions,id"])
+        id: ID! @whereKey
 
-        input: UpdateInteractionInput!
-    ): Interaction! @create @canModel(ability: "create")
+        input: UpdateInteractionInput! @spread
+    ): Interaction! @canFind(ability: "update", find: "id") @update
+
+    "Delete a interaction."
+    deleteInteraction(
+        "The identifier of the interaction you would like to delete."
+        id: ID! @whereKey
+    ): Interaction @canFind(ability: "delete", find: "id") @delete
 }
 
 #import ./interaction-campaign.graphql
