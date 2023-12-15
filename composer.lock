@@ -204,16 +204,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.294.0",
+            "version": "3.294.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ab796bc3334e263b52b0b8c6de3edf057675cca4"
+                "reference": "63c720229a9c9cdedff6bac98d6e72be8cc241f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ab796bc3334e263b52b0b8c6de3edf057675cca4",
-                "reference": "ab796bc3334e263b52b0b8c6de3edf057675cca4",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/63c720229a9c9cdedff6bac98d6e72be8cc241f1",
+                "reference": "63c720229a9c9cdedff6bac98d6e72be8cc241f1",
                 "shasum": ""
             },
             "require": {
@@ -293,9 +293,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.294.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.294.1"
             },
-            "time": "2023-12-14T19:14:39+00:00"
+            "time": "2023-12-15T19:25:52+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -702,7 +702,7 @@
             },
             "require": {
                 "canyon-gbs/advising-app-form": "*",
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -737,7 +737,7 @@
                 "reference": "6fe2b0bc737d6deeba86456b791e3ed2ca39f130"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -846,7 +846,7 @@
                 "reference": "9ed07874a81db2e2eb65ad3d2346612e632e163b"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -881,7 +881,7 @@
                 "reference": "2d9653a84f149b6c5330701a40845780b3f78bab"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -916,7 +916,7 @@
                 "reference": "8d0e90d94e710181086fd8087935b2f7370d0505"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -951,7 +951,7 @@
                 "reference": "c0e4ebf86447c7e5cad5737d84c5379c8d346025"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -986,7 +986,7 @@
                 "reference": "f0c1b6e2d78ffd807bb21b9e72f719eec4317a20"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1057,7 +1057,7 @@
                 "reference": "916a913c27a7b0e76d8ae109be6b2b1a08e5a851"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1092,7 +1092,7 @@
                 "reference": "e2813d35a370b07d31a98fb59d8e936746839eaa"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1127,7 +1127,7 @@
                 "reference": "b4618bdcf425db54c7e09b379f42f6b622072a2a"
             },
             "require": {
-                "filament/filament": "^3.0.0",
+                "filament/filament": "^3.1",
                 "openai-php/client": "^0.7.3",
                 "spatie/laravel-settings": "^3.2"
             },
@@ -1164,7 +1164,7 @@
                 "reference": "39158b337a38e25d19e63a64896c5eb894c9ce21"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1199,7 +1199,7 @@
                 "reference": "638f6def3ea231e73b06ee1d34b0b21f17244c17"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1234,7 +1234,7 @@
                 "reference": "bca8ef772fdc2f29a9e1aed6b7b617f39dfdb514"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1269,7 +1269,7 @@
                 "reference": "bf1de603a8ea82344bbfd4f69832c3f8d8a78653"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1341,7 +1341,7 @@
                 "reference": "34a22f9b6fe7cf18c3ed7df373c3113f64510815"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1411,7 +1411,7 @@
                 "reference": "2c43537fcf2e4bb3642572f5c31f81d7c2714c97"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1625,7 +1625,7 @@
                 "reference": "cefb14a6e4b08add73bdb76ad4543baf0d0ae45a"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -1697,7 +1697,7 @@
                 "reference": "6b40605254b1236a0405a11d586e0f849413f89a"
             },
             "require": {
-                "filament/filament": "^3.0.0"
+                "filament/filament": "^3.1"
             },
             "type": "library",
             "extra": {
@@ -7299,16 +7299,16 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "3.1.50",
+            "version": "3.1.51",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SpartnerNL/Laravel-Excel.git",
-                "reference": "d79e66391aa306983bb7e234503f5605c3e33348"
+                "reference": "6d3c78ce6645abada32e03b40dc7f3c561878bc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SpartnerNL/Laravel-Excel/zipball/d79e66391aa306983bb7e234503f5605c3e33348",
-                "reference": "d79e66391aa306983bb7e234503f5605c3e33348",
+                "url": "https://api.github.com/repos/SpartnerNL/Laravel-Excel/zipball/6d3c78ce6645abada32e03b40dc7f3c561878bc3",
+                "reference": "6d3c78ce6645abada32e03b40dc7f3c561878bc3",
                 "shasum": ""
             },
             "require": {
@@ -7363,7 +7363,7 @@
             ],
             "support": {
                 "issues": "https://github.com/SpartnerNL/Laravel-Excel/issues",
-                "source": "https://github.com/SpartnerNL/Laravel-Excel/tree/3.1.50"
+                "source": "https://github.com/SpartnerNL/Laravel-Excel/tree/3.1.51"
             },
             "funding": [
                 {
@@ -7375,7 +7375,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-06T11:29:48+00:00"
+            "time": "2023-12-08T12:44:49+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -18977,16 +18977,16 @@
         },
         {
             "name": "spatie/laravel-ignition",
-            "version": "2.3.1",
+            "version": "2.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-ignition.git",
-                "reference": "bf21cd15aa47fa4ec5d73bbc932005c70261efc8"
+                "reference": "4800661a195e15783477d99f7f8f669a49793996"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-ignition/zipball/bf21cd15aa47fa4ec5d73bbc932005c70261efc8",
-                "reference": "bf21cd15aa47fa4ec5d73bbc932005c70261efc8",
+                "url": "https://api.github.com/repos/spatie/laravel-ignition/zipball/4800661a195e15783477d99f7f8f669a49793996",
+                "reference": "4800661a195e15783477d99f7f8f669a49793996",
                 "shasum": ""
             },
             "require": {
@@ -19065,7 +19065,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-10-09T12:55:26+00:00"
+            "time": "2023-12-15T13:44:49+00:00"
         },
         {
             "name": "spatie/laravel-ray",
