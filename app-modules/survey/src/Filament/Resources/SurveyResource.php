@@ -34,26 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey\Filament\Resources;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
+use AdvisingApp\Survey\Models\Survey;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Survey\Filament\Resources\FormResource\Pages\EditSurvey;
+use AdvisingApp\Survey\Filament\Resources\FormResource\Pages\ListSurveys;
+use AdvisingApp\Survey\Filament\Resources\FormResource\Pages\CreateSurvey;
+use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageSurveySubmissions;
 
-class FormPlugin implements Plugin
+class SurveyResource extends Resource
 {
-    public function getId(): string
+    protected static ?string $model = Survey::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Forms and Surveys';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Manage Surveys';
+
+    public static function getEloquentQuery(): Builder
     {
-        return 'form';
+        return parent::getEloquentQuery()->with(['fields']);
     }
 
-    public function register(Panel $panel): void
+    public static function getRecordSubNavigation(Page $page): array
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
+        return $page->generateNavigationItems([
+            EditSurvey::class,
+            ManageSurveySubmissions::class,
+        ]);
     }
 
-    public function boot(Panel $panel): void {}
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListSurveys::route('/'),
+            'create' => CreateSurvey::route('/create'),
+            'edit' => EditSurvey::route('/{record}/edit'),
+            'manage-submissions' => ManageSurveySubmissions::route('/{record}/submissions'),
+        ];
+    }
 }

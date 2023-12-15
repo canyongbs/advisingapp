@@ -34,26 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey\Livewire;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
+use AdvisingApp\Survey\Models\Survey;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Concerns\InteractsWithForms;
 
-class FormPlugin implements Plugin
+class RenderSurvey extends Component implements HasForms
 {
-    public function getId(): string
-    {
-        return 'form';
-    }
+    use InteractsWithForms;
 
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
-    }
+    public bool $show = true;
 
-    public function boot(Panel $panel): void {}
+    public Survey $survey;
+
+    public ?array $data = [];
+
+    public function render(): View
+    {
+        return view('survey::livewire.render-survey')
+            ->title($this->survey->name);
+    }
 }

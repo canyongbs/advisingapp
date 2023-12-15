@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,28 +30,26 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\Form;
+<div class="tiptap-rendered-content flex flex-col gap-6">
+    @if ($submission->submissible->is_wizard)
+        @foreach ($submission->submissible->steps as $step)
+            <x-filament::section>
+                <x-slot name="heading">
+                    {{ $step->label }}
+                </x-slot>
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class FormPlugin implements Plugin
-{
-    public function getId(): string
-    {
-        return 'form';
-    }
-
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
-    }
-
-    public function boot(Panel $panel): void {}
-}
+                <x-form::submissions.content
+                    :content="$step->content"
+                    :submission="$submission"
+                />
+            </x-filament::section>
+        @endforeach
+    @else
+        <x-form::submissions.content
+            :content="$submission->submissible->content"
+            :submission="$submission"
+        />
+    @endif
+</div>

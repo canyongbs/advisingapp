@@ -34,26 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey\Models;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class FormPlugin implements Plugin
+/**
+ * @mixin IdeHelperForm
+ */
+class Survey extends Submissible
 {
-    public function getId(): string
+    protected $fillable = [
+        'name',
+        'description',
+        'embed_enabled',
+        'allowed_domains',
+        'is_authenticated',
+        'is_wizard',
+        'primary_color',
+        'rounding',
+        'content',
+    ];
+
+    protected $casts = [
+        'content' => 'array',
+        'embed_enabled' => 'boolean',
+        'allowed_domains' => 'array',
+        'is_authenticated' => 'boolean',
+        'is_wizard' => 'boolean',
+        'rounding' => Rounding::class,
+    ];
+
+    public function fields(): HasMany
     {
-        return 'form';
+        return $this->hasMany(SurveyField::class);
     }
 
-    public function register(Panel $panel): void
+    public function steps(): HasMany
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
+        return $this->hasMany(SurveyStep::class);
     }
 
-    public function boot(Panel $panel): void {}
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(SurveySubmission::class);
+    }
 }

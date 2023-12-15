@@ -34,26 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class FormPlugin implements Plugin
-{
-    public function getId(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'form';
-    }
+        Schema::create('survey_steps', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
-    }
+            $table->text('label');
+            $table->json('content')->nullable();
+            $table->foreignUuid('survey_id')->constrained('surveys')->cascadeOnDelete();
+            $table->integer('sort');
 
-    public function boot(Panel $panel): void {}
-}
+            $table->timestamps();
+        });
+    }
+};

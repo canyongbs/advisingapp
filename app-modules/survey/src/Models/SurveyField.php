@@ -34,26 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey\Models;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use AdvisingApp\Form\Models\SubmissibleField;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class FormPlugin implements Plugin
+/**
+ * @mixin IdeHelperFormField
+ */
+class SurveyField extends SubmissibleField
 {
-    public function getId(): string
+    protected $fillable = [
+        'config',
+        'label',
+        'type',
+        'is_required',
+        'survey_id',
+    ];
+
+    protected $casts = [
+        'config' => 'array',
+        'is_required' => 'bool',
+    ];
+
+    public function submissible(): BelongsTo
     {
-        return 'form';
+        return $this
+            ->belongsTo(Survey::class, 'survey_id');
     }
 
-    public function register(Panel $panel): void
+    public function step(): BelongsTo
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
+        return $this
+            ->belongsTo(SurveyStep::class, 'step_id');
     }
-
-    public function boot(Panel $panel): void {}
 }

@@ -34,26 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+use Illuminate\Support\Facades\Route;
+use AdvisingApp\Survey\Livewire\RenderSurvey;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class FormPlugin implements Plugin
-{
-    public function getId(): string
-    {
-        return 'form';
-    }
-
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
-    }
-
-    public function boot(Panel $panel): void {}
-}
+Route::middleware('web')
+    ->prefix('surveys')
+    ->name('surveys.')
+    ->group(function () {
+        Route::get('/{survey}/respond', RenderSurvey::class)
+            ->name('show');
+    });

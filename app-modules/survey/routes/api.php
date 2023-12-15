@@ -34,26 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+use AdvisingApp\Survey\Http\Controllers\SurveyWidgetController;
+use AdvisingApp\Application\Http\Middleware\EnsureSurveysFeatureIsActive;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class FormPlugin implements Plugin
-{
-    public function getId(): string
-    {
-        return 'form';
-    }
-
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
-    }
-
-    public function boot(Panel $panel): void {}
-}
+Route::prefix('api')
+    ->middleware([
+        'api',
+        EnsureSurveysFeatureIsActive::class,
+        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':survey',
+    ])
+    ->group(function () {
+        Route::prefix('surveys')
+            ->name('surveys.')
+            ->group(function () {
+                Route::get('/{survey}', [SurveyWidgetController::class, 'view'])
+                    ->middleware(['signed'])
+                    ->name('define');
+                Route::post('/{survey}/authenticate/request', [SurveyWidgetController::class, 'requestAuthentication'])
+                    ->middleware(['signed'])
+                    ->name('request-authentication');
+                Route::post('/{survey}/authenticate/{authentication}', [SurveyWidgetController::class, 'authenticate'])
+                    ->middleware(['signed'])
+                    ->name('authenticate');
+                Route::post('/{survey}/submit', [SurveyWidgetController::class, 'store'])
+                    ->middleware(['signed'])
+                    ->name('submit');
+            });
+    });

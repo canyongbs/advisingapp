@@ -34,26 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey\Filament\Resources\FormResource\Pages;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\Concerns\HasSharedFormConfiguration;
 
-class FormPlugin implements Plugin
+class CreateSurvey extends CreateRecord
 {
-    public function getId(): string
-    {
-        return 'form';
-    }
+    use HasSharedFormConfiguration;
 
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
-    }
+    protected static string $resource = SurveyResource::class;
 
-    public function boot(Panel $panel): void {}
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema($this->fields());
+    }
 }

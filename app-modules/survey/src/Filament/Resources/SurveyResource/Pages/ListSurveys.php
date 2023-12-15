@@ -34,26 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey\Filament\Resources\FormResource\Pages;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\Action;
+use AdvisingApp\Survey\Models\Survey;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 
-class FormPlugin implements Plugin
+class ListSurveys extends ListRecords
 {
-    public function getId(): string
+    protected static string $resource = SurveyResource::class;
+
+    public function table(Table $table): Table
     {
-        return 'form';
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+            ])
+            ->filters([
+            ])
+            ->actions([
+                Action::make('Respond')
+                    ->url(fn (Survey $survey) => route('surveys.show', ['survey' => $survey]))
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->openUrlInNewTab()
+                    ->color('gray'),
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
-    public function register(Panel $panel): void
+    protected function getHeaderActions(): array
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
+        return [
+            CreateAction::make(),
+        ];
     }
-
-    public function boot(Panel $panel): void {}
 }

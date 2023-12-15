@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,28 +30,13 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+@endphp
 
-namespace AdvisingApp\Form;
-
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class FormPlugin implements Plugin
-{
-    public function getId(): string
-    {
-        return 'form';
-    }
-
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
-    }
-
-    public function boot(Panel $panel): void {}
-}
+<div class="flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-4xl">
+        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($this->survey) !!}
+    </div>
+</div>

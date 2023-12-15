@@ -34,26 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey\Models;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use App\Models\Attributes\NoPermissions;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
 
-class FormPlugin implements Plugin
+/**
+ * @mixin IdeHelperFormAuthentication
+ */
+#[NoPermissions]
+class SurveyAuthentication extends SubmissibleAuthentication
 {
-    public function getId(): string
+    public function submissible(): BelongsTo
     {
-        return 'form';
+        return $this
+            ->belongsTo(Survey::class, 'survey_id');
     }
-
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
-    }
-
-    public function boot(Panel $panel): void {}
 }

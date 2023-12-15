@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 /*
 <COPYRIGHT>
@@ -34,26 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Application\Http\Middleware;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Closure;
+use Illuminate\Http\Request;
+use App\Settings\LicenseSettings;
+use Symfony\Component\HttpFoundation\Response;
 
-class FormPlugin implements Plugin
+class EnsureSurveysFeatureIsActive
 {
-    public function getId(): string
+    public function handle(Request $request, Closure $next): Response
     {
-        return 'form';
-    }
+        if (! app(LicenseSettings::class)->data->addons->conductSurveys) {
+            return response()->json(['error' => 'Surveys is not enabled.'], 403);
+        }
 
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
+        return $next($request);
     }
-
-    public function boot(Panel $panel): void {}
 }

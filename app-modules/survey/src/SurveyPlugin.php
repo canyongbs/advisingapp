@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey;
 
 use Filament\Panel;
 use Filament\Contracts\Plugin;
 
-class FormPlugin implements Plugin
+class SurveyPlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'form';
+        return 'survey';
     }
 
     public function register(Panel $panel): void
@@ -51,7 +51,7 @@ class FormPlugin implements Plugin
         $panel
             ->discoverResources(
                 in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
+                for: 'AdvisingApp\\Survey\\Filament\\Resources'
             );
     }
 

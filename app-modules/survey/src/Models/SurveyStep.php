@@ -34,26 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form;
+namespace AdvisingApp\Survey\Models;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use App\Models\Attributes\NoPermissions;
+use AdvisingApp\Form\Models\SubmissibleStep;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class FormPlugin implements Plugin
+/**
+ * @mixin IdeHelperFormStep
+ */
+#[NoPermissions]
+class SurveyStep extends SubmissibleStep
 {
-    public function getId(): string
+    protected $fillable = [
+        'label',
+        'content',
+        'sort',
+    ];
+
+    protected $casts = [
+        'content' => 'array',
+        'sort' => 'integer',
+    ];
+
+    public function submissible(): BelongsTo
     {
-        return 'form';
+        return $this
+            ->belongsTo(Survey::class, 'survey_id');
     }
 
-    public function register(Panel $panel): void
+    public function fields(): HasMany
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Form\\Filament\\Resources'
-            );
+        return $this->hasMany(SurveyField::class, 'step_id');
     }
-
-    public function boot(Panel $panel): void {}
 }
