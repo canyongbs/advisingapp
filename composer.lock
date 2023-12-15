@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0794645289f95763d3a2caebc3cc84b9",
+    "content-hash": "91271f79b0c4a7d9b632e9498dbc2a01",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -1571,41 +1571,6 @@
                     "AdvisingApp\\StudentDataModel\\Tests\\": "tests/",
                     "AdvisingApp\\StudentDataModel\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\StudentDataModel\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/advising-app-survey",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/survey",
-                "reference": "f018d995e19cedeacf5d5b73b30c9a192b1b531d"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Survey\\Providers\\SurveyServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Survey\\": "src/",
-                    "AdvisingApp\\Survey\\Tests\\": "tests/",
-                    "AdvisingApp\\Survey\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Survey\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -3760,7 +3725,7 @@
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v3.1.21",
+            "version": "v3.1.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -8412,16 +8377,16 @@
         },
         {
             "name": "nuwave/lighthouse",
-            "version": "v6.28.0",
+            "version": "v6.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nuwave/lighthouse.git",
-                "reference": "76018af1019d97739a71eb47c9008f3e69273fbc"
+                "reference": "e1b36601ad798449dec04d5ab7bd81587bd90eb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nuwave/lighthouse/zipball/76018af1019d97739a71eb47c9008f3e69273fbc",
-                "reference": "76018af1019d97739a71eb47c9008f3e69273fbc",
+                "url": "https://api.github.com/repos/nuwave/lighthouse/zipball/e1b36601ad798449dec04d5ab7bd81587bd90eb6",
+                "reference": "e1b36601ad798449dec04d5ab7bd81587bd90eb6",
                 "shasum": ""
             },
             "require": {
@@ -8543,7 +8508,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-12-11T13:03:36+00:00"
+            "time": "2023-12-15T12:47:21+00:00"
         },
         {
             "name": "openai-php/client",
@@ -11285,6 +11250,84 @@
                 }
             ],
             "time": "2023-07-19T18:55:36+00:00"
+        },
+        {
+            "name": "spatie/laravel-cookie-consent",
+            "version": "3.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-cookie-consent.git",
+                "reference": "5a5b2f0a03cc66d8ffede42037a7f3e00f95aaa9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-cookie-consent/zipball/5a5b2f0a03cc66d8ffede42037a7f3e00f95aaa9",
+                "reference": "5a5b2f0a03cc66d8ffede42037a7f3e00f95aaa9",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/cookie": "^8.0|^9.0|^10.0",
+                "illuminate/support": "^8.0|^9.0|^10.0",
+                "illuminate/view": "^8.0|^9.0|^10.0",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.9"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.9",
+                "orchestra/testbench": "^6.0|^7.0|^8.0",
+                "pestphp/pest": "^1.22"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\CookieConsent\\CookieConsentServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\CookieConsent\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Willem Van Bockstal",
+                    "email": "willem@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Make your Laravel app comply with the crazy EU cookie law",
+            "homepage": "https://github.com/spatie/cookie-consent",
+            "keywords": [
+                "comply",
+                "cookie",
+                "cookie-consent",
+                "eu",
+                "law",
+                "spatie"
+            ],
+            "support": {
+                "source": "https://github.com/spatie/laravel-cookie-consent/tree/3.2.4"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                }
+            ],
+            "time": "2023-01-25T09:18:22+00:00"
         },
         {
             "name": "spatie/laravel-data",
@@ -16507,16 +16550,16 @@
         },
         {
             "name": "pestphp/pest",
-            "version": "v2.28.0",
+            "version": "v2.28.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest.git",
-                "reference": "9a8f6e64149592b2555a2519237abb39e9e4f1fe"
+                "reference": "9ee41910201ef8fc5f5b6d1390e5ec4558222927"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest/zipball/9a8f6e64149592b2555a2519237abb39e9e4f1fe",
-                "reference": "9a8f6e64149592b2555a2519237abb39e9e4f1fe",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/9ee41910201ef8fc5f5b6d1390e5ec4558222927",
+                "reference": "9ee41910201ef8fc5f5b6d1390e5ec4558222927",
                 "shasum": ""
             },
             "require": {
@@ -16526,10 +16569,10 @@
                 "pestphp/pest-plugin": "^2.1.1",
                 "pestphp/pest-plugin-arch": "^2.5.0",
                 "php": "^8.1.0",
-                "phpunit/phpunit": "^10.5.2"
+                "phpunit/phpunit": "^10.5.3"
             },
             "conflict": {
-                "phpunit/phpunit": ">10.5.2",
+                "phpunit/phpunit": ">10.5.3",
                 "sebastian/exporter": "<5.1.0",
                 "webmozart/assert": "<1.11.0"
             },
@@ -16599,7 +16642,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pestphp/pest/issues",
-                "source": "https://github.com/pestphp/pest/tree/v2.28.0"
+                "source": "https://github.com/pestphp/pest/tree/v2.28.1"
             },
             "funding": [
                 {
@@ -16611,7 +16654,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-05T19:06:22+00:00"
+            "time": "2023-12-15T11:42:34+00:00"
         },
         {
             "name": "pestphp/pest-plugin",
@@ -17594,16 +17637,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.2",
+            "version": "10.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "5aedff46afba98dddecaa12349ec044d9103d4fe"
+                "reference": "6fce887c71076a73f32fd3e0774a6833fc5c7f19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5aedff46afba98dddecaa12349ec044d9103d4fe",
-                "reference": "5aedff46afba98dddecaa12349ec044d9103d4fe",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6fce887c71076a73f32fd3e0774a6833fc5c7f19",
+                "reference": "6fce887c71076a73f32fd3e0774a6833fc5c7f19",
                 "shasum": ""
             },
             "require": {
@@ -17675,7 +17718,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.2"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.3"
             },
             "funding": [
                 {
@@ -17691,7 +17734,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-05T14:54:33+00:00"
+            "time": "2023-12-13T07:25:23+00:00"
         },
         {
             "name": "pimple/pimple",
