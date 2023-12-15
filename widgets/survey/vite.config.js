@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,28 @@
 
 </COPYRIGHT>
 */
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
-namespace AdvisingApp\Survey\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use App\Settings\LicenseSettings;
-use Symfony\Component\HttpFoundation\Response;
-
-class EnsureSurveysFeatureIsActive
-{
-    public function handle(Request $request, Closure $next): Response
-    {
-        if (! app(LicenseSettings::class)->data->addons->conductSurveys) {
-            return response()->json(['error' => 'Surveys is not enabled.'], 403);
-        }
-
-        return $next($request);
-    }
-}
+export default defineConfig({
+    plugins: [vue()],
+    build: {
+        manifest: true,
+        lib: {
+            entry: resolve(__dirname, 'src/widget.js'),
+            name: 'AdvisingAppSurveyWidget',
+            fileName: 'advising-app-survey-widget',
+            formats: ['es'],
+        },
+        outDir: resolve(__dirname, '../../public/js/widgets/survey'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});

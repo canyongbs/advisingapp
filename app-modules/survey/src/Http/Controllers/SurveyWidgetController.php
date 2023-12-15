@@ -49,13 +49,15 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
-use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Survey\Models\SurveyAuthentication;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class SurveyWidgetController extends Controller
 {
@@ -65,7 +67,16 @@ class SurveyWidgetController extends Controller
             [
                 'name' => $survey->name,
                 'description' => $survey->description,
-                'authentication_url' => URL::signedRoute('survey.request-authentication', ['survey' => $survey]),
+                'is_authenticated' => $survey->is_authenticated,
+                ...($survey->is_authenticated ? [
+                    'authentication_url' => URL::signedRoute('surveys.request-authentication', ['survey' => $survey]),
+                ] : [
+                    'submission_url' => URL::signedRoute('surveys.submit', ['survey' => $survey]),
+                ]),
+                'recaptcha_enabled' => $survey->recaptcha_enabled,
+                ...($survey->recaptcha_enabled ? [
+                    'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
+                ] : []),
                 'schema' => $generateSchema($survey),
                 'primary_color' => Color::all()[$survey->primary_color ?? 'blue'],
                 'rounding' => $survey->rounding,
@@ -89,7 +100,7 @@ class SurveyWidgetController extends Controller
 
         $code = random_int(100000, 999999);
 
-        $authentication = new ApplicationAuthentication();
+        $authentication = new SurveyAuthentication();
         $authentication->author()->associate($author);
         $authentication->submissible()->associate($survey);
         $authentication->code = Hash::make($code);
@@ -101,8 +112,8 @@ class SurveyWidgetController extends Controller
 
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
-            'authentication_url' => URL::signedRoute('applications.authenticate', [
-                'application' => $survey,
+            'authentication_url' => URL::signedRoute('surveys.authenticate', [
+                'survey' => $survey,
                 'authentication' => $authentication,
             ]),
         ]);
@@ -127,8 +138,8 @@ class SurveyWidgetController extends Controller
         ]);
 
         return response()->json([
-            'submission_url' => URL::signedRoute('applications.submit', [
-                'authentication' => $authentication,
+            'submission_url' => URL::signedRoute('surveys.submit', [
+                'survey' => $authentication,
                 'application' => $authentication->submissible,
             ]),
         ]);
@@ -147,6 +158,7 @@ class SurveyWidgetController extends Controller
         }
 
         if (
+            $survey->is_authenticated &&
             ($authentication?->isExpired() ?? true)
         ) {
             abort(Response::HTTP_UNAUTHORIZED);
@@ -166,7 +178,7 @@ class SurveyWidgetController extends Controller
             );
         }
 
-        /** @var ApplicationSubmission $submission */
+        /** @var SurveySubmission $submission */
         $submission = $survey->submissions()->make();
 
         if ($authentication) {
@@ -175,9 +187,13 @@ class SurveyWidgetController extends Controller
             $authentication->delete();
         }
 
+        $submission->submitted_at = now();
+
         $submission->save();
 
         $data = $validator->validated();
+
+        unset($data['recaptcha-token']);
 
         if ($survey->is_wizard) {
             foreach ($survey->steps as $step) {
@@ -207,7 +223,7 @@ class SurveyWidgetController extends Controller
                 }
             }
         } else {
-            $applicationFields = $survey->fields()->pluck('type', 'id')->all();
+            $surveyFields = $survey->fields()->pluck('type', 'id')->all();
 
             foreach ($data as $fieldId => $response) {
                 $submission->fields()->attach(
@@ -219,7 +235,7 @@ class SurveyWidgetController extends Controller
                     continue;
                 }
 
-                if ($applicationFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
+                if ($surveyFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
                     continue;
                 }
 
@@ -237,7 +253,7 @@ class SurveyWidgetController extends Controller
 
         return response()->json(
             [
-                'message' => 'Application submitted successfully.',
+                'message' => 'Survey submitted successfully.',
             ]
         );
     }

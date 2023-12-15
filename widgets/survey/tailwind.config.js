@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,9 @@
 
 </COPYRIGHT>
 */
+import preset from './tailwind.config.preset.js';
 
-namespace AdvisingApp\Survey\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use App\Settings\LicenseSettings;
-use Symfony\Component\HttpFoundation\Response;
-
-class EnsureSurveysFeatureIsActive
-{
-    public function handle(Request $request, Closure $next): Response
-    {
-        if (! app(LicenseSettings::class)->data->addons->conductSurveys) {
-            return response()->json(['error' => 'Surveys is not enabled.'], 403);
-        }
-
-        return $next($request);
-    }
-}
+export default {
+    presets: [preset],
+    content: ['./src/**/*.vue', './src/FormKit/theme.js'],
+};

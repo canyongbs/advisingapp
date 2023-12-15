@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,32 @@
 
 </COPYRIGHT>
 */
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import './widget.css';
+import App from './App.vue';
+import { defaultConfig, plugin } from '@formkit/vue';
+import config from './formkit.config.js';
+import VueSignaturePad from 'vue-signature-pad';
 
-namespace AdvisingApp\Survey\Http\Middleware;
+customElements.define(
+    'survey-embed',
+    defineCustomElement({
+        setup(props) {
+            const app = createApp();
 
-use Closure;
-use Illuminate\Http\Request;
-use App\Settings\LicenseSettings;
-use Symfony\Component\HttpFoundation\Response;
+            // install plugins
+            app.use(plugin, defaultConfig(config));
 
-class EnsureSurveysFeatureIsActive
-{
-    public function handle(Request $request, Closure $next): Response
-    {
-        if (! app(LicenseSettings::class)->data->addons->conductSurveys) {
-            return response()->json(['error' => 'Surveys is not enabled.'], 403);
-        }
+            app.use(VueSignaturePad);
 
-        return $next($request);
-    }
-}
+            app.config.devtools = true;
+
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
+
+            return () => h(App, props);
+        },
+        props: ['url'],
+    }),
+);

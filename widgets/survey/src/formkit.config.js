@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,17 @@
 
 </COPYRIGHT>
 */
+import { generateClasses } from '@formkit/themes';
+import { genesisIcons } from '@formkit/icons';
+import theme from './FormKit/theme';
+import inputs from './FormKit/Inputs/index'
 
-namespace AdvisingApp\Survey\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\Request;
-use App\Settings\LicenseSettings;
-use Symfony\Component\HttpFoundation\Response;
-
-class EnsureSurveysFeatureIsActive
-{
-    public function handle(Request $request, Closure $next): Response
-    {
-        if (! app(LicenseSettings::class)->data->addons->conductSurveys) {
-            return response()->json(['error' => 'Surveys is not enabled.'], 403);
-        }
-
-        return $next($request);
-    }
-}
+export default {
+    icons: {
+        ...genesisIcons,
+    },
+    inputs,
+    config: {
+        classes: generateClasses(theme),
+    },
+};

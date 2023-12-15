@@ -67,11 +67,11 @@ class GenerateSubmissibleEmbedCode
                 EOD;
             })(),
             Survey::class => (function () use ($submissible) {
-                $scriptUrl = url('js/widgets/application/advising-app-application-widget.js?');
+                $scriptUrl = url('js/widgets/survey/advising-app-survey-widget.js?');
                 $surveyDefinitionUrl = URL::signedRoute('surveys.define', ['survey' => $submissible]);
 
                 return <<<EOD
-                <application-embed url="{$surveyDefinitionUrl}"></application-embed>
+                <survey-embed url="{$surveyDefinitionUrl}"></survey-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),
