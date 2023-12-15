@@ -41,7 +41,7 @@ use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperForm
+ * @mixin IdeHelperSurvey
  */
 class Survey extends Submissible
 {

@@ -40,7 +40,7 @@ use AdvisingApp\Form\Models\SubmissibleField;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperFormField
+ * @mixin IdeHelperSurveyField
  */
 class SurveyField extends SubmissibleField
 {

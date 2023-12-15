@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperFormStep
+ * @mixin IdeHelperSurveyStep
  */
 #[NoPermissions]
 class SurveyStep extends SubmissibleStep

@@ -49,7 +49,7 @@ use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 /**
  * @property Student|Prospect|null $author
  *
- * @mixin IdeHelperFormSubmission
+ * @mixin IdeHelperSurveySubmission
  */
 class SurveySubmission extends Submission
 {
