@@ -343,7 +343,7 @@ return [
     |
     */
 
-    'transactional_mutations' => true,
+    'transactional_mutations' => false,
 
     /*
     |--------------------------------------------------------------------------

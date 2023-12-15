@@ -36,12 +36,14 @@
 
 namespace AdvisingApp\Alert\Providers;
 
-use App\Concerns\GraphSchemaDiscovery;
 use Filament\Panel;
 use AdvisingApp\Alert\AlertPlugin;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Facades\Event;
+use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use AdvisingApp\Alert\Enums\AlertSeverity;
 use AdvisingApp\Alert\Events\AlertCreated;
 use AdvisingApp\Alert\Observers\AlertObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -70,10 +72,10 @@ class AlertServiceProvider extends ServiceProvider
 
         $this->registerEvents();
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/alert.graphql');
+        $this->registerGraphQL();
     }
 
-    protected function registerRolesAndPermissions()
+    protected function registerRolesAndPermissions(): void
     {
         $permissionRegistry = app(AuthorizationPermissionRegistry::class);
 
@@ -111,5 +113,13 @@ class AlertServiceProvider extends ServiceProvider
             AlertCreated::class,
             NotifySubscribersOfAlertCreated::class
         );
+    }
+
+    protected function registerGraphQL(): void
+    {
+        $this->discoverSchema(__DIR__ . '/../../graphql/alert.graphql');
+
+        $this->registerEnum(AlertSeverity::class);
+        $this->registerEnum(AlertStatus::class);
     }
 }
