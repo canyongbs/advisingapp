@@ -34,10 +34,42 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'survey' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\Survey\Database\Factories;
+
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Survey\Models\Survey;
+use AdvisingApp\Survey\Models\SurveySubmission;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
+
+/**
+ * @extends Factory<SurveySubmission>
+ */
+class SurveySubmissionFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'survey_id' => Survey::factory(),
+            'author_type' => fake()->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
+            'author_id' => function (array $attributes) {
+                $authorClass = Relation::getMorphedModel($attributes['author_type']);
+
+                /** @var Student|Prospect $authorModel */
+                $authorModel = new $authorClass();
+
+                $author = $authorClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $authorModel::factory()->create();
+
+                return $author->getKey();
+            },
+            'submitted_at' => now(),
+        ];
+    }
+}

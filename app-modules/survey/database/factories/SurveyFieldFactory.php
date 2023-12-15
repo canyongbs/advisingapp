@@ -34,10 +34,33 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'survey' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\Survey\Database\Factories;
+
+use AdvisingApp\Survey\Models\SurveyField;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<SurveyField>
+ */
+class SurveyFieldFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        $type = fake()->randomElement(['text_input', 'text_area', 'select']);
+
+        $config = match ($type) {
+            'select' => json_decode('{"options":{"us":"United States","ca":"Canada","uk":"United Kingdom"}}'),
+            default => [],
+        };
+
+        return [
+            'label' => fake()->words(asText: true),
+            'is_required' => fake()->boolean(),
+            'type' => $type,
+            'config' => $config,
+        ];
+    }
+}
