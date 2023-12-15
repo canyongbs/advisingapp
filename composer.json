@@ -41,6 +41,7 @@
         "canyon-gbs/advising-app-knowledge-base": "*",
         "canyon-gbs/advising-app-meeting-center": "*",
         "canyon-gbs/advising-app-notifications": "*",
+        "canyon-gbs/advising-app-portal": "*",
         "canyon-gbs/advising-app-prospect": "*",
         "canyon-gbs/advising-app-service-management": "^1.0",
         "canyon-gbs/advising-app-student-data-model": "*",
