@@ -87,10 +87,11 @@ class ManageSurveySubmissions extends ManageRelatedRecords
                     ->badge()
                     ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
                     ->color('success'),
-                TextColumn::make('requester.name'),
-                TextColumn::make('requested_at')
-                    ->dateTime()
-                    ->getStateUsing(fn (SurveySubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
+                // TODO: Add requester column when implemented
+                // TextColumn::make('requester.name'),
+                // TextColumn::make('requested_at')
+                //     ->dateTime()
+                //     ->getStateUsing(fn (SurveySubmission $record): ?CarbonInterface => $record->requester ? $record->created_at : null),
             ])
             ->filters([
                 FormSubmissionStatusFilter::make(),
