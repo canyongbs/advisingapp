@@ -41,7 +41,9 @@ input InteractionRelationQuery {
 
 extend type Query {
     "Get a specific interaction relation by id."
-    interactionRelation(id: ID! @eq): InteractionRelation @find @canResolved(ability: "view")
+    interactionRelation(id: ID! @eq): InteractionRelation
+        @find
+        @canResolved(ability: "view")
 
     "List multiple interactions relations."
     interactionRelations(
@@ -52,19 +54,30 @@ extend type Query {
 
 input CreateInteractionRelationInput {
     "The name of the interaction relation."
-    name: String! @rules(apply: ["required", "string", "max:255", "unique:interaction_relations,name"])
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:interaction_relations,name"
+            ]
+        )
 }
 
 input UpdateInteractionRelationInput {
     "The name of the interaction relation."
-    name: String @rules(apply: ["string", "max:255", "unique:interaction_relations,name"])
+    name: String
+        @rules(
+            apply: ["string", "max:255", "unique:interaction_relations,name"]
+        )
 }
 
 extend type Mutation {
     "Create a interaction relation."
-    createInteraction(input: CreateInteractionRelationInput! @spread): InteractionRelation!
-    @create
-    @canModel(ability: "create")
+    createInteraction(
+        input: CreateInteractionRelationInput! @spread
+    ): InteractionRelation! @create @canModel(ability: "create")
 
     "Update an existing interaction relation."
     updateInteractionRelation(

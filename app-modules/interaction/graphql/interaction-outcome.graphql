@@ -41,7 +41,9 @@ input InteractionOutcomeQuery {
 
 extend type Query {
     "Get a specific interaction outcome by id."
-    interactionOutcome(id: ID! @eq): InteractionOutcome @find @canResolved(ability: "view")
+    interactionOutcome(id: ID! @eq): InteractionOutcome
+        @find
+        @canResolved(ability: "view")
 
     "List multiple interactions outcomes."
     interactionOutcomes(
@@ -52,19 +54,28 @@ extend type Query {
 
 input CreateInteractionOutcomeInput {
     "The name of the interaction outcome."
-    name: String! @rules(apply: ["required", "string", "max:255", "unique:interaction_outcomes,name"])
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:interaction_outcomes,name"
+            ]
+        )
 }
 
 input UpdateInteractionOutcomeInput {
     "The name of the interaction outcome."
-    name: String @rules(apply: ["string", "max:255", "unique:interaction_outcomes,name"])
+    name: String
+        @rules(apply: ["string", "max:255", "unique:interaction_outcomes,name"])
 }
 
 extend type Mutation {
     "Create a interaction outcome."
-    createInteraction(input: CreateInteractionOutcomeInput! @spread): InteractionOutcome!
-    @create
-    @canModel(ability: "create")
+    createInteraction(
+        input: CreateInteractionOutcomeInput! @spread
+    ): InteractionOutcome! @create @canModel(ability: "create")
 
     "Update an existing interaction outcome."
     updateInteractionOutcome(

@@ -41,7 +41,9 @@ input InteractionTypeQuery {
 
 extend type Query {
     "Get a specific interaction type by id."
-    interactionType(id: ID! @eq): InteractionType @find @canResolved(ability: "view")
+    interactionType(id: ID! @eq): InteractionType
+        @find
+        @canResolved(ability: "view")
 
     "List multiple interactions types."
     interactionTypes(
@@ -52,19 +54,28 @@ extend type Query {
 
 input CreateInteractionTypeInput {
     "The name of the interaction type."
-    name: String! @rules(apply: ["required", "string", "max:255", "unique:interaction_types,name"])
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:interaction_types,name"
+            ]
+        )
 }
 
 input UpdateInteractionTypeInput {
     "The name of the interaction type."
-    name: String @rules(apply: ["string", "max:255", "unique:interaction_types,name"])
+    name: String
+        @rules(apply: ["string", "max:255", "unique:interaction_types,name"])
 }
 
 extend type Mutation {
     "Create a interaction type."
-    createInteraction(input: CreateInteractionTypeInput! @spread): InteractionType!
-    @create
-    @canModel(ability: "create")
+    createInteraction(
+        input: CreateInteractionTypeInput! @spread
+    ): InteractionType! @create @canModel(ability: "create")
 
     "Update an existing interaction type."
     updateInteractionType(

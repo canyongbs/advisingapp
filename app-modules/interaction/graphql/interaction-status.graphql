@@ -49,7 +49,9 @@ input InteractionStatusesQuery {
 
 extend type Query {
     "Get a specific interaction status by id."
-    interactionStatus(id: ID! @eq): InteractionStatus @find @canResolved(ability: "view")
+    interactionStatus(id: ID! @eq): InteractionStatus
+        @find
+        @canResolved(ability: "view")
 
     "List multiple interactions statuses."
     interactionStatuses(
@@ -60,19 +62,28 @@ extend type Query {
 
 input CreateInteractionStatusInput {
     "The name of the interaction status."
-    name: String! @rules(apply: ["required", "string", "max:255", "unique:interaction_statuses,name"])
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:interaction_statuses,name"
+            ]
+        )
 }
 
 input UpdateInteractionStatusInput {
     "The name of the interaction status."
-    name: String @rules(apply: ["string", "max:255", "unique:interaction_statuses,name"])
+    name: String
+        @rules(apply: ["string", "max:255", "unique:interaction_statuses,name"])
 }
 
 extend type Mutation {
     "Create a interaction status."
-    createInteraction(input: CreateInteractionStatusInput! @spread): InteractionStatus!
-    @create
-    @canModel(ability: "create")
+    createInteraction(
+        input: CreateInteractionStatusInput! @spread
+    ): InteractionStatus! @create @canModel(ability: "create")
 
     "Update an existing interaction status."
     updateInteractionStatus(
@@ -89,4 +100,3 @@ extend type Mutation {
         id: ID! @whereKey
     ): InteractionStatus @canFind(ability: "delete", find: "id") @delete
 }
-

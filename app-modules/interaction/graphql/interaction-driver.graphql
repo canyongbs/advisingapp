@@ -41,7 +41,9 @@ input InteractionDriverQuery {
 
 extend type Query {
     "Get a specific interaction driver by id."
-    interactionDriver(id: ID! @eq): InteractionDriver @find @canResolved(ability: "view")
+    interactionDriver(id: ID! @eq): InteractionDriver
+        @find
+        @canResolved(ability: "view")
 
     "List multiple interactions drivers."
     interactionDrivers(
@@ -52,19 +54,28 @@ extend type Query {
 
 input CreateInteractionDriverInput {
     "The name of the interaction driver."
-    name: String! @rules(apply: ["required", "string", "max:255", "unique:interaction_drivers,name"])
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:interaction_drivers,name"
+            ]
+        )
 }
 
 input UpdateInteractionDriverInput {
     "The name of the interaction driver."
-    name: String @rules(apply: ["string", "max:255", "unique:interaction_drivers,name"])
+    name: String
+        @rules(apply: ["string", "max:255", "unique:interaction_drivers,name"])
 }
 
 extend type Mutation {
     "Create a interaction driver."
-    createInteraction(input: CreateInteractionDriverInput! @spread): InteractionDriver!
-    @create
-    @canModel(ability: "create")
+    createInteraction(
+        input: CreateInteractionDriverInput! @spread
+    ): InteractionDriver! @create @canModel(ability: "create")
 
     "Update an existing interaction driver."
     updateInteractionDriver(
