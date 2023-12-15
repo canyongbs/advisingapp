@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "138e312c2af2093f49ef9641a68bd054",
+    "content-hash": "ff575f675516da67617404b1d1ab08e2",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -6219,6 +6219,314 @@
                 "source": "https://github.com/laravel/ui/tree/v4.2.3"
             },
             "time": "2023-11-23T14:44:22+00:00"
+        },
+        {
+            "name": "lastdragon-ru/lara-asp-core",
+            "version": "5.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LastDragon-ru/lara-asp-core.git",
+                "reference": "36108ae9dfc8764f601e2187b5a795a5071b19fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LastDragon-ru/lara-asp-core/zipball/36108ae9dfc8764f601e2187b5a795a5071b19fc",
+                "reference": "36108ae9dfc8764f601e2187b5a795a5071b19fc",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "laravel/framework": "^9.21.0|^10.0.0",
+                "php": "^8.1|^8.2|^8.3",
+                "symfony/polyfill-php83": "^1.28"
+            },
+            "require-dev": {
+                "lastdragon-ru/lara-asp-testing": "self.version",
+                "orchestra/testbench": "^7.0.0|^8.0.0",
+                "phpunit/phpunit": "^9.5.0|^10.1.0"
+            },
+            "suggest": {
+                "ext-fileinfo": "Required for league/flysystem"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LastDragon_ru\\LaraASP\\Core\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/**Test.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The Awesome Set of Packages for Laravel - The Core.",
+            "homepage": "https://github.com/LastDragon-ru/lara-asp",
+            "keywords": [
+                "laravel",
+                "laravel-package",
+                "php"
+            ],
+            "support": {
+                "forum": "https://github.com/LastDragon-ru/lara-asp/discussions",
+                "issues": "https://github.com/LastDragon-ru/lara-asp/issues",
+                "source": "https://github.com/LastDragon-ru/lara-asp"
+            },
+            "time": "2023-12-13T05:06:05+00:00"
+        },
+        {
+            "name": "lastdragon-ru/lara-asp-eloquent",
+            "version": "5.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LastDragon-ru/lara-asp-eloquent.git",
+                "reference": "9a63254e9fd4819de32e0be3bab0f6424de1ecc6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LastDragon-ru/lara-asp-eloquent/zipball/9a63254e9fd4819de32e0be3bab0f6424de1ecc6",
+                "reference": "9a63254e9fd4819de32e0be3bab0f6424de1ecc6",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^9.21.0|^10.0.0",
+                "lastdragon-ru/lara-asp-core": "self.version",
+                "php": "^8.1|^8.2|^8.3",
+                "symfony/polyfill-php83": "^1.28"
+            },
+            "require-dev": {
+                "ext-pdo_sqlite": "*",
+                "lastdragon-ru/lara-asp-testing": "self.version",
+                "orchestra/testbench": "^7.0.0|^8.0.0",
+                "phpunit/phpunit": "^9.5.0|^10.1.0"
+            },
+            "suggest": {
+                "ext-fileinfo": "Required for league/flysystem"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/mixins.php"
+                ],
+                "psr-4": {
+                    "LastDragon_ru\\LaraASP\\Eloquent\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/**Test.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The Awesome Set of Packages for Laravel - Eloquent Helpers.",
+            "homepage": "https://github.com/LastDragon-ru/lara-asp",
+            "keywords": [
+                "laravel",
+                "laravel-eloquent",
+                "laravel-package",
+                "php"
+            ],
+            "support": {
+                "forum": "https://github.com/LastDragon-ru/lara-asp/discussions",
+                "issues": "https://github.com/LastDragon-ru/lara-asp/issues",
+                "source": "https://github.com/LastDragon-ru/lara-asp"
+            },
+            "time": "2023-12-13T05:06:05+00:00"
+        },
+        {
+            "name": "lastdragon-ru/lara-asp-graphql",
+            "version": "5.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LastDragon-ru/lara-asp-graphql.git",
+                "reference": "94570deceba9b2639fb810df43c13a52ccf40f19"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LastDragon-ru/lara-asp-graphql/zipball/94570deceba9b2639fb810df43c13a52ccf40f19",
+                "reference": "94570deceba9b2639fb810df43c13a52ccf40f19",
+                "shasum": ""
+            },
+            "require": {
+                "composer/semver": "^3.2",
+                "ext-mbstring": "*",
+                "laravel/framework": "^9.21.0|^10.0.0",
+                "lastdragon-ru/lara-asp-core": "self.version",
+                "lastdragon-ru/lara-asp-eloquent": "self.version",
+                "lastdragon-ru/lara-asp-graphql-printer": "self.version",
+                "lastdragon-ru/lara-asp-serializer": "self.version",
+                "nuwave/lighthouse": "^6.5.0",
+                "php": "^8.1|^8.2|^8.3",
+                "symfony/polyfill-php83": "^1.28"
+            },
+            "require-dev": {
+                "ext-pdo_sqlite": "*",
+                "laravel/scout": "^9.8.0|^10.0.0",
+                "lastdragon-ru/lara-asp-testing": "self.version",
+                "mockery/mockery": "^1.6.2",
+                "orchestra/testbench": "^7.0.0|^8.0.0",
+                "phpunit/phpunit": "^9.5.0|^10.1.0"
+            },
+            "suggest": {
+                "ext-fileinfo": "Required for league/flysystem",
+                "laravel/scout": "Required for the @sortBy directive to work with Scout Builder."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LastDragon_ru\\LaraASP\\GraphQL\\Provider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LastDragon_ru\\LaraASP\\GraphQL\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/**Test.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The Awesome Set of Packages for Laravel - The GraphQL Extensions.",
+            "homepage": "https://github.com/LastDragon-ru/lara-asp",
+            "keywords": [
+                "graphql",
+                "laravel",
+                "laravel-package",
+                "lighthouse-php",
+                "php"
+            ],
+            "support": {
+                "forum": "https://github.com/LastDragon-ru/lara-asp/discussions",
+                "issues": "https://github.com/LastDragon-ru/lara-asp/issues",
+                "source": "https://github.com/LastDragon-ru/lara-asp"
+            },
+            "time": "2023-12-13T05:06:05+00:00"
+        },
+        {
+            "name": "lastdragon-ru/lara-asp-graphql-printer",
+            "version": "5.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LastDragon-ru/lara-asp-graphql-printer.git",
+                "reference": "93fc1f40a025b4a2ece5c8bab6cc82509d8a79da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LastDragon-ru/lara-asp-graphql-printer/zipball/93fc1f40a025b4a2ece5c8bab6cc82509d8a79da",
+                "reference": "93fc1f40a025b4a2ece5c8bab6cc82509d8a79da",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^8.1|^8.2|^8.3",
+                "symfony/polyfill-php83": "^1.28",
+                "webonyx/graphql-php": "^15.4.0"
+            },
+            "require-dev": {
+                "composer/class-map-generator": "^1.0",
+                "lastdragon-ru/lara-asp-testing": "self.version",
+                "mockery/mockery": "^1.6.2",
+                "phpunit/phpunit": "^9.5.0|^10.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LastDragon_ru\\LaraASP\\GraphQLPrinter\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/**Test.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The Awesome Set of Packages for Laravel - The GraphQL Printer.",
+            "homepage": "https://github.com/LastDragon-ru/lara-asp",
+            "keywords": [
+                "GraphQL Printer",
+                "GraphQL Schema Printer",
+                "graphql",
+                "php"
+            ],
+            "support": {
+                "forum": "https://github.com/LastDragon-ru/lara-asp/discussions",
+                "issues": "https://github.com/LastDragon-ru/lara-asp/issues",
+                "source": "https://github.com/LastDragon-ru/lara-asp"
+            },
+            "time": "2023-12-13T05:06:05+00:00"
+        },
+        {
+            "name": "lastdragon-ru/lara-asp-serializer",
+            "version": "5.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LastDragon-ru/lara-asp-serializer.git",
+                "reference": "2e59e3c8984f680d57ad0a3bb0f66b7d626d1c21"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LastDragon-ru/lara-asp-serializer/zipball/2e59e3c8984f680d57ad0a3bb0f66b7d626d1c21",
+                "reference": "2e59e3c8984f680d57ad0a3bb0f66b7d626d1c21",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^9.21.0|^10.0.0",
+                "lastdragon-ru/lara-asp-core": "self.version",
+                "php": "^8.1|^8.2|^8.3",
+                "phpdocumentor/type-resolver": "^1.7",
+                "phpstan/phpdoc-parser": "^1.23",
+                "symfony/polyfill-php83": "^1.28",
+                "symfony/property-access": "^6.3.0",
+                "symfony/property-info": "^6.3.9",
+                "symfony/serializer": "^6.3.3"
+            },
+            "require-dev": {
+                "lastdragon-ru/lara-asp-testing": "self.version",
+                "orchestra/testbench": "^7.0.0|^8.0.0",
+                "phpunit/phpunit": "^9.5.0|^10.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LastDragon_ru\\LaraASP\\Serializer\\Provider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LastDragon_ru\\LaraASP\\Serializer\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "src/**Test.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The Awesome Set of Packages for Laravel - The Serializer.",
+            "homepage": "https://github.com/LastDragon-ru/lara-asp",
+            "keywords": [
+                "laravel",
+                "laravel-package",
+                "php",
+                "serializer"
+            ],
+            "support": {
+                "forum": "https://github.com/LastDragon-ru/lara-asp/discussions",
+                "issues": "https://github.com/LastDragon-ru/lara-asp/issues",
+                "source": "https://github.com/LastDragon-ru/lara-asp"
+            },
+            "time": "2023-12-13T05:06:05+00:00"
         },
         {
             "name": "league/commonmark",
@@ -14121,6 +14429,166 @@
             "time": "2023-11-17T21:06:49+00:00"
         },
         {
+            "name": "symfony/property-access",
+            "version": "v6.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/property-access.git",
+                "reference": "75f6990ae8e8040dd587162f3f1863f755957129"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/property-access/zipball/75f6990ae8e8040dd587162f3f1863f755957129",
+                "reference": "75f6990ae8e8040dd587162f3f1863f755957129",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/deprecation-contracts": "^2.5|^3",
+                "symfony/property-info": "^5.4|^6.0|^7.0"
+            },
+            "require-dev": {
+                "symfony/cache": "^5.4|^6.0|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\PropertyAccess\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides functions to read and write from/to an object or array using a simple string notation",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "access",
+                "array",
+                "extraction",
+                "index",
+                "injection",
+                "object",
+                "property",
+                "property-path",
+                "reflection"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/property-access/tree/v6.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-09-25T12:52:38+00:00"
+        },
+        {
+            "name": "symfony/property-info",
+            "version": "v6.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/property-info.git",
+                "reference": "288be71bae2ebc88676f5d3a03d23f70b278fcc1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/property-info/zipball/288be71bae2ebc88676f5d3a03d23f70b278fcc1",
+                "reference": "288be71bae2ebc88676f5d3a03d23f70b278fcc1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/string": "^5.4|^6.0|^7.0"
+            },
+            "conflict": {
+                "phpdocumentor/reflection-docblock": "<5.2",
+                "phpdocumentor/type-resolver": "<1.5.1",
+                "symfony/dependency-injection": "<5.4",
+                "symfony/serializer": "<6.4"
+            },
+            "require-dev": {
+                "phpdocumentor/reflection-docblock": "^5.2",
+                "phpstan/phpdoc-parser": "^1.0",
+                "symfony/cache": "^5.4|^6.0|^7.0",
+                "symfony/dependency-injection": "^5.4|^6.0|^7.0",
+                "symfony/serializer": "^6.4|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\PropertyInfo\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kévin Dunglas",
+                    "email": "dunglas@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Extracts information about PHP class' properties using metadata of popular sources",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "doctrine",
+                "phpdoc",
+                "property",
+                "symfony",
+                "type",
+                "validator"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/property-info/tree/v6.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-11-25T16:57:46+00:00"
+        },
+        {
             "name": "symfony/routing",
             "version": "v6.4.1",
             "source": {
@@ -14186,6 +14654,104 @@
             ],
             "support": {
                 "source": "https://github.com/symfony/routing/tree/v6.4.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-12-01T14:54:37+00:00"
+        },
+        {
+            "name": "symfony/serializer",
+            "version": "v6.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/serializer.git",
+                "reference": "7ead272e62c9567df619ef3c49809bf934ddbc1f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/serializer/zipball/7ead272e62c9567df619ef3c49809bf934ddbc1f",
+                "reference": "7ead272e62c9567df619ef3c49809bf934ddbc1f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/deprecation-contracts": "^2.5|^3",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "doctrine/annotations": "<1.12",
+                "phpdocumentor/reflection-docblock": "<3.2.2",
+                "phpdocumentor/type-resolver": "<1.4.0",
+                "symfony/dependency-injection": "<5.4",
+                "symfony/property-access": "<5.4",
+                "symfony/property-info": "<5.4.24|>=6,<6.2.11",
+                "symfony/uid": "<5.4",
+                "symfony/validator": "<6.4",
+                "symfony/yaml": "<5.4"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^1.12|^2",
+                "phpdocumentor/reflection-docblock": "^3.2|^4.0|^5.0",
+                "seld/jsonlint": "^1.10",
+                "symfony/cache": "^5.4|^6.0|^7.0",
+                "symfony/config": "^5.4|^6.0|^7.0",
+                "symfony/console": "^5.4|^6.0|^7.0",
+                "symfony/dependency-injection": "^5.4|^6.0|^7.0",
+                "symfony/error-handler": "^5.4|^6.0|^7.0",
+                "symfony/filesystem": "^5.4|^6.0|^7.0",
+                "symfony/form": "^5.4|^6.0|^7.0",
+                "symfony/http-foundation": "^5.4|^6.0|^7.0",
+                "symfony/http-kernel": "^5.4|^6.0|^7.0",
+                "symfony/messenger": "^5.4|^6.0|^7.0",
+                "symfony/mime": "^5.4|^6.0|^7.0",
+                "symfony/property-access": "^5.4|^6.0|^7.0",
+                "symfony/property-info": "^5.4.24|^6.2.11|^7.0",
+                "symfony/translation-contracts": "^2.5|^3",
+                "symfony/uid": "^5.4|^6.0|^7.0",
+                "symfony/validator": "^6.4|^7.0",
+                "symfony/var-dumper": "^5.4|^6.0|^7.0",
+                "symfony/var-exporter": "^5.4|^6.0|^7.0",
+                "symfony/yaml": "^5.4|^6.0|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Serializer\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Handles serializing and deserializing data structures, including object graphs, into array structures or other formats like XML and JSON.",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/serializer/tree/v6.4.1"
             },
             "funding": [
                 {
@@ -19887,5 +20453,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

@@ -22,4 +22,28 @@ type InteractionStatus
     deleted_at: DateTime
 }
 
-# TODO: Query and Mutate
+# TODO: Mutate
+
+input InteractionStatusesQuery {
+    "The name of the interaction status."
+    name: String
+
+    "The color of the interaction status."
+    color: InteractionStatusColorOptions
+}
+
+extend type Query {
+    "Find a single interaction status by an identifying attribute."
+    interaction(
+        "The value of the attribute to match."
+        id: ID @eq @rules(apply: ["prohibits:name", "required_without:name"])
+
+        "The name of the interaction status."
+        name: String @eq @rules(apply: ["prohibits:id", "required_without:id"])
+    ): Interaction @find @canResolved(ability: "view")
+
+    "Get all interaction statuses."
+    interactionStatuses(
+        where: InteractionStatusesQuery @searchBy
+    ): [InteractionStatus!]! @paginate @canModel(ability: "viewAny")
+}
