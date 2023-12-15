@@ -19,6 +19,11 @@ type InteractionCampaign
     deleted_at: DateTime
 }
 
+input InteractionCampaignQuery {
+    "The name of the interaction relation."
+    name: String
+}
+
 # TODO: Query and Mutate
 
 #extend type Query {

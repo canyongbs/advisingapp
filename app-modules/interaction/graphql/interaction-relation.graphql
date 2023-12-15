@@ -19,4 +19,9 @@ type InteractionRelation
     deleted_at: DateTime
 }
 
+input InteractionRelationQuery {
+    "The name of the interaction relation."
+    name: String
+}
+
 # TODO: Query and Mutate

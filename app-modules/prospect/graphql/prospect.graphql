@@ -1,3 +1,23 @@
 type Prospect {
     id: ID!
+
+    status_id: ID
+
+    source_id: ID
+
+    first_name: String
+
+    last_name: String
+
+    full_name: String
+}
+
+input ProspectQuery {
+    id: ID
+
+    first_name: String
+
+    last_name: String
+
+    full_name: String
 }

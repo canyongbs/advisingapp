@@ -1,0 +1,144 @@
+<?php
+
+declare(strict_types = 1);
+
+namespace App\GraphQL\Directives;
+
+use function is_a;
+use function reset;
+use function array_merge;
+
+use GraphQL\Language\DirectiveLocation;
+use LastDragon_ru\LaraASP\Eloquent\ModelHelper;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Property;
+use Nuwave\Lighthouse\Execution\Arguments\Argument;
+use Nuwave\Lighthouse\Execution\Arguments\ArgumentSet;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Handler;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeSource;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\TypeProvider;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\BaseOperator;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Operators\Complex\RelationType;
+use LastDragon_ru\LaraASP\GraphQL\Builder\Exceptions\OperatorUnsupportedBuilder;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Exceptions\OperatorInvalidArgumentValue;
+use LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByOperatorPropertyDirective;
+
+class MorphToRelationDirective extends BaseOperator
+{
+    public function __construct(
+        protected SearchByOperatorPropertyDirective $property,
+    ) {
+        parent::__construct();
+    }
+
+    public static function getName(): string
+    {
+        return 'relation';
+    }
+
+    public function getFieldType(TypeProvider $provider, TypeSource $source): string
+    {
+        return $provider->getType(RelationType::class, $source);
+    }
+
+    public function getFieldDescription(): string
+    {
+        return 'Relationship condition.';
+    }
+
+    public function isBuilderSupported(string $builder): bool
+    {
+        return is_a($builder, EloquentBuilder::class, true);
+    }
+
+    public function call(Handler $handler, object $builder, Property $property, Argument $argument): object
+    {
+        // TODO: Update this directive to remove things that are not needed for MorphTo relations
+
+        // Supported?
+        if (! ($builder instanceof EloquentBuilder)) {
+            throw new OperatorUnsupportedBuilder($this, $builder);
+        }
+
+        // ArgumentSet?
+        if (! ($argument->value instanceof ArgumentSet)) {
+            throw new OperatorInvalidArgumentValue($this, ArgumentSet::class, $argument->value);
+        }
+
+        // Conditions
+        $relation = (new ModelHelper($builder))->getRelation($property->getName());
+        $hasCount = $argument->value->arguments['count'] ?? null;
+        $notExists = (bool) ($argument->value->arguments['notExists']->value ?? false);
+
+        // Build
+        $alias = $relation->getRelationCountHash(false);
+        $count = 1;
+        $operator = '>=';
+
+        if ($hasCount instanceof Argument) {
+            $query = $builder->getQuery()->newQuery();
+            $query = $this->property->call($handler, $query, new Property(), $hasCount);
+            $where = reset($query->wheres);
+            $count = $where['value'] ?? $count;
+            $operator = $where['operator'] ?? $operator;
+        } elseif ($notExists) {
+            $count = 1;
+            $operator = '<';
+        }
+
+        $relationshipTypes = [];
+
+        foreach ($argument->value->arguments['where'] as $item) {
+            if ($item instanceof ArgumentSet) {
+                foreach ($item->arguments as $key => $argument) {
+                    $relationshipTypes[$key] = function (EloquentBuilder $builder) use ($relation, $argument, $alias, $handler) {
+                        if ($argument instanceof Argument && $argument->value instanceof ArgumentSet) {
+                            if (! $alias || $alias === $relation->getRelationCountHash(false)) {
+                                $alias = $builder->getModel()->getTable();
+                            }
+                            $handler->handle($builder, new Property($alias), $argument->value->arguments['where']->value);
+                        }
+                    };
+                }
+            }
+        }
+
+        // Build
+        $this->build(
+            $builder,
+            $relationshipTypes,
+            $property,
+            $operator,
+            $count,
+        );
+
+        // Return
+        return $builder;
+    }
+
+    // <editor-fold desc="Directive">
+    // =========================================================================
+    /**
+     * @inheritDoc
+     */
+    protected static function getDirectiveLocations(): array
+    {
+        return array_merge(parent::getDirectiveLocations(), [
+            DirectiveLocation::FIELD_DEFINITION,
+        ]);
+    }
+
+    protected function build(
+        EloquentBuilder $builder,
+        array $relationshipTypes,
+        Property $property,
+        string $operator,
+        int $count,
+    ): void {
+        foreach ($relationshipTypes as $type => $closure) {
+            $method = array_key_first($relationshipTypes) == $type ? 'whereHasMorph' : 'orWhereHasMorph';
+
+            $builder->{$method}($property->getName(), $type, $closure, $operator, $count);
+        }
+    }
+}

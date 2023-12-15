@@ -51,57 +51,27 @@ type Interaction
     updated_at: DateTime
 }
 
-enum QueryInteractionsWhereColumn {
-    subject
-    description
-    start_datetime
-    end_datetime
-    created_at
-    updated_at
+input InteractionInteractablesQuery {
+    student: StudentQuery
+    prospect: ProspectQuery
 }
 
-enum QueryInteractionsHasUserColumn {
-    id
-    email
-}
-
-enum QueryInteractionsHasTypeColumn {
-    id
-    name
-}
-
-enum QueryInteractionsHasInteractableEnum {
-    full_name
-}
-
-enum QueryInteractionsHasRelationColumn {
-    id
-    name
-}
-
-enum QueryInteractionsHasCampaignColumn {
-    id
-    name
-}
-
-enum QueryInteractionsHasDriverColumn {
-    id
-    name
-}
-
-enum QueryInteractionsHasStatusColumn {
-    id
-    name
-    color
-}
-
-enum QueryInteractionsHasOutcomeColumn {
-    id
-    name
-}
-
-enum QueryDivisionsWhereColumn {
-    id
+input InteractionsQuery {
+    subject: String
+    description: String
+    user: UserQuery
+    # TODO: Service Request
+    interactable: InteractionInteractablesQuery @morphToRelation
+    relation: InteractionRelationQuery
+    campaign: InteractionCampaignQuery
+    driver: InteractionDriverQuery
+    status: InteractionStatusesQuery
+    outcome: InteractionOutcomeQuery
+    division: DivisionQuery
+    start_datetime: DateTime
+    end_datetime: DateTime
+    created_at: DateTime
+    updated_at: DateTime
 }
 
 extend type Query {
@@ -113,46 +83,7 @@ extend type Query {
 
     "List multiple interactions."
     interactions(
-        "Filter by the interactions attributes."
-        where: _ @whereConditions(columnsEnum: QueryInteractionsWhereColumn)
-
-        "Filter by the user relationship."
-        hasUser: _
-            @whereHasConditions(columnsEnum: QueryInteractionsHasUserColumn)
-
-        # TODO: Look into improving Polymorphic whereHas
-        hasInteractable: _
-            @whereHasConditions(
-                columnsEnum: QueryInteractionsHasInteractableEnum
-            )
-
-        "Filter by the type relationship."
-        hasType: _
-            @whereHasConditions(columnsEnum: QueryInteractionsHasTypeColumn)
-
-        "Filter by the relation relationship."
-        hasRelation: _
-            @whereHasConditions(columnsEnum: QueryInteractionsHasRelationColumn)
-
-        "Filter by the campaign relationship."
-        hasCampaign: _
-            @whereHasConditions(columnsEnum: QueryInteractionsHasCampaignColumn)
-
-        "Filter by the driver relationship."
-        hasDriver: _
-            @whereHasConditions(columnsEnum: QueryInteractionsHasDriverColumn)
-
-        "Filter by the status relationship."
-        hasStatus: _
-            @whereHasConditions(columnsEnum: QueryInteractionsHasStatusColumn)
-
-        "Filter by the outcome relationship."
-        hasOutcome: _
-            @whereHasConditions(columnsEnum: QueryInteractionsHasOutcomeColumn)
-
-        "Filter by the division relationship."
-        hasDivision: _
-            @whereHasConditions(columnsEnum: QueryDivisionsWhereColumn)
+        where: InteractionsQuery @searchBy
     ): [Interaction!]! @paginate @canModel(ability: "viewAny")
 }
 

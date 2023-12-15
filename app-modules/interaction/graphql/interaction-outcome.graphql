@@ -19,4 +19,9 @@ type InteractionOutcome
     deleted_at: DateTime
 }
 
+input InteractionOutcomeQuery {
+    "The name of the interaction outcome."
+    name: String
+}
+
 # TODO: Query and Mutate

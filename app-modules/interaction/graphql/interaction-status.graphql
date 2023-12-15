@@ -34,7 +34,7 @@ input InteractionStatusesQuery {
 
 extend type Query {
     "Find a single interaction status by an identifying attribute."
-    interaction(
+    interactionStatus(
         "The value of the attribute to match."
         id: ID @eq @rules(apply: ["prohibits:name", "required_without:name"])
 

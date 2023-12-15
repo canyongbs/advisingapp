@@ -19,4 +19,9 @@ type InteractionDriver
     deleted_at: DateTime
 }
 
+input InteractionDriverQuery {
+    "The name of the interaction driver."
+    name: String
+}
+
 # TODO: Query and Mutate

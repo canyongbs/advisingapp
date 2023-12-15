@@ -1,3 +1,23 @@
 type Student {
     sisid: ID!
+
+    otherid: String
+
+    first: String
+
+    last: String
+
+    full_name: String
+}
+
+input StudentQuery {
+    sisid: ID
+
+    otherid: String
+
+    first: String
+
+    last: String
+
+    full_name: String
 }
