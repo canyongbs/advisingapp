@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Survey\Filament\Resources\FormResource\Pages;
+namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;

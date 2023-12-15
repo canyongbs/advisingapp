@@ -40,10 +40,10 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use AdvisingApp\Survey\Models\Survey;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Survey\Filament\Resources\FormResource\Pages\EditSurvey;
-use AdvisingApp\Survey\Filament\Resources\FormResource\Pages\ListSurveys;
-use AdvisingApp\Survey\Filament\Resources\FormResource\Pages\CreateSurvey;
-use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageSurveySubmissions;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\EditSurvey;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\ListSurveys;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\CreateSurvey;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\ManageSurveySubmissions;
 
 class SurveyResource extends Resource
 {

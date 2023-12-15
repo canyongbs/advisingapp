@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Survey\Filament\Resources\FormResource\Pages;
+namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
