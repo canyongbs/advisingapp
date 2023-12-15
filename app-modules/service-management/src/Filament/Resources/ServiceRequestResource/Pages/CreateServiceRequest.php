@@ -45,6 +45,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\MorphToSelect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
@@ -100,7 +102,8 @@ class CreateServiceRequest extends CreateRecord
                             ->titleAttribute(Student::displayNameKey()),
                         MorphToSelect\Type::make(Prospect::class)
                             ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
+                    ])
+                    ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
             ]);
     }
 }
