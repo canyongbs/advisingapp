@@ -66,6 +66,7 @@
         "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
+        "lastdragon-ru/lara-asp-graphql": "^5.3",
         "league/csv": "^9.12",
         "league/flysystem-aws-s3-v3": "^3.22",
         "league/oauth2-client": "^2.7",

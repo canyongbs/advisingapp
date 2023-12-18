@@ -17,6 +17,14 @@ extend type Query {
     ): [User!]! @paginate(defaultCount: 10)
 }
 
+input UserQuery {
+    "Unique primary key."
+    id: ID!
+
+    "Users email address."
+    email: String!
+}
+
 "Account of a person who utilizes this application."
 type User @model(class: "user") {
     "Unique primary key."

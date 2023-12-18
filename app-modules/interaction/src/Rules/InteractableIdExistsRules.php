@@ -34,32 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace App\Concerns;
+namespace AdvisingApp\Interaction\Rules;
 
-use Illuminate\Support\Facades\Event;
-use GraphQL\Type\Definition\PhpEnumType;
-use Nuwave\Lighthouse\Schema\TypeRegistry;
-use Nuwave\Lighthouse\Events\BuildSchemaString;
-use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
-use Nuwave\Lighthouse\Exceptions\DefinitionException;
+use Closure;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-trait GraphSchemaDiscovery
+class InteractableIdExistsRules implements DataAwareRule, ValidationRule
 {
-    public function discoverSchema(string $path): void
+    protected $data = [];
+
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        Event::listen(function (BuildSchemaString $event) use ($path) {
-            return (new SchemaStitcher($path))->getSchemaString();
-        });
+        if (
+            ! Relation::getMorphedModel($this->data['interactable_type'])::query()
+                ->whereKey($value)
+                ->exists()
+        ) {
+            $fail('The interactable does not exist.');
+        }
     }
 
-    /**
-     * @param class-string $enumClass
-     *
-     * @throws DefinitionException
-    */
-    public function registerEnum(string $enumClass): void
+    public function setData(array $data): static
     {
-        $typeRegistry = app(TypeRegistry::class);
-        $typeRegistry->register(new PhpEnumType($enumClass));
+        $this->data = $data;
+
+        return $this;
     }
 }

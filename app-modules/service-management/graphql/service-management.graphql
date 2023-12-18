@@ -1,0 +1,14 @@
+type ServiceRequest
+    @model(class: "AdvisingApp\\ServiceManagement\\Models\\ServiceRequest") {
+    "Unique primary key."
+    id: ID!
+
+    # TODO: Finish fields
+}
+
+input ServiceRequestQuery {
+    "Unique primary key."
+    id: ID
+}
+
+# TODO: Query and Mutate

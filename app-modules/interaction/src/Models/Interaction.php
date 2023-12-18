@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use Exception;
+use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -78,6 +79,11 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function getWebPermissions(): Collection
     {
