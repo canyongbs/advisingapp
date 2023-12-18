@@ -56,7 +56,7 @@ trait GraphSchemaDiscovery
      * @param class-string $enumClass
      *
      * @throws DefinitionException
-    */
+     */
     public function registerEnum(string $enumClass): void
     {
         $typeRegistry = app(TypeRegistry::class);

@@ -8,13 +8,13 @@ extend type Query {
         email: String
             @eq
             @rules(apply: ["prohibits:id", "required_without:id", "email"])
-    ): User @find
+    ): User @find @canResolved(ability: "view")
 
     "List multiple users."
     users(
         "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
         name: String @where(operator: "like")
-    ): [User!]! @paginate(defaultCount: 10)
+    ): [User!]! @paginate @canModel(ability: "viewAny")
 }
 
 input UserQuery {
