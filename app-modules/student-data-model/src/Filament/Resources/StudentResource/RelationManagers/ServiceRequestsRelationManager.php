@@ -40,6 +40,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\CreateAction;
@@ -98,6 +99,7 @@ class ServiceRequestsRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
             ])
