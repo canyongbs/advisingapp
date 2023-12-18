@@ -62,4 +62,10 @@ class ApplicationSubmission extends Submission
             )
             ->withPivot(['id', 'response']);
     }
+
+    public function state(): BelongsTo
+    {
+        return $this
+            ->belongsTo(ApplicationSubmissionState::class, 'state_id');
+    }
 }

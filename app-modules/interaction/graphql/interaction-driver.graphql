@@ -1,0 +1,98 @@
+type InteractionDriver
+    @model(class: "AdvisingApp\\Interaction\\Models\\InteractionDriver") {
+    "Unique primary key."
+    id: ID!
+
+    "The name of the interaction driver."
+    name: String!
+
+    "Interactions related to this interaction driver."
+    interactions: [Interaction!] @hasMany
+
+    "The created date of the interaction driver."
+    created_at: DateTime
+
+    "The updated date of the interaction driver."
+    updated_at: DateTime
+
+    "The deleted date of the interaction driver."
+    deleted_at: DateTime
+}
+
+input InteractionDriverQuery {
+    "The unique primary key of the interaction driver."
+    id: ID
+
+    "The name of the interaction driver."
+    name: String
+
+    "The interactions related to this interaction driver."
+    interactions: InteractionsQuery
+
+    "The created date of the interaction driver."
+    created_at: DateTime
+
+    "The updated date of the interaction driver."
+    updated_at: DateTime
+
+    "The deleted date of the interaction driver."
+    deleted_at: DateTime
+}
+
+extend type Query {
+    "Get a specific interaction driver by id."
+    interactionDriver(id: ID! @eq): InteractionDriver
+        @find
+        @softDeletes
+        @canResolved(ability: "view")
+
+    "List multiple interactions drivers."
+    interactionDrivers(
+        "Filter by the interaction drivers attributes and relations."
+        where: InteractionDriverQuery @searchBy
+    ): [InteractionDriver!]!
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
+}
+
+input CreateInteractionDriverInput {
+    "The name of the interaction driver."
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:interaction_drivers,name"
+            ]
+        )
+}
+
+input UpdateInteractionDriverInput {
+    "The name of the interaction driver."
+    name: String
+        @rules(apply: ["string", "max:255", "unique:interaction_drivers,name"])
+}
+
+extend type Mutation {
+    "Create a interaction driver."
+    createInteractionDriver(
+        input: CreateInteractionDriverInput! @spread
+    ): InteractionDriver! @create @canModel(ability: "create")
+
+    "Update an existing interaction driver."
+    updateInteractionDriver(
+        "The identifier of the interaction driver you would like to update."
+        id: ID! @whereKey
+
+        "The fields you would like to update."
+        input: UpdateInteractionDriverInput! @spread
+    ): InteractionDriver! @canFind(ability: "update", find: "id") @update
+
+    "Delete an existing interaction driver."
+    deleteInteractionDriver(
+        "The identifier of the interaction driver you would like to delete."
+        id: ID! @whereKey
+    ): InteractionDriver @canFind(ability: "delete", find: "id") @delete
+}

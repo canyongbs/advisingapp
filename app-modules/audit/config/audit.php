@@ -65,6 +65,7 @@ return [
         'guards' => [
             'web',
             'api',
+            'sanctum',
         ],
         'resolver' => OwenIt\Auditing\Resolvers\UserResolver::class,
     ],

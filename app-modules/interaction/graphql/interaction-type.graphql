@@ -1,0 +1,95 @@
+type InteractionType
+    @model(class: "AdvisingApp\\Interaction\\Models\\InteractionType") {
+    "Unique primary key."
+    id: ID!
+
+    "The name of the interaction type."
+    name: String!
+
+    "Interactions related to this interaction type."
+    interactions: [Interaction!] @hasMany
+
+    "The created date of the interaction type."
+    created_at: DateTime
+
+    "The updated date of the interaction type."
+    updated_at: DateTime
+
+    "The deleted date of the interaction type."
+    deleted_at: DateTime
+}
+
+input InteractionTypeQuery {
+    "The unique primary key of the interaction type."
+    id: ID
+
+    "The name of the interaction relation."
+    name: String
+
+    "The interactions related to this interaction type."
+    interactions: InteractionsQuery
+
+    "The created date of the interaction type."
+    created_at: DateTime
+
+    "The updated date of the interaction type."
+    updated_at: DateTime
+
+    "The deleted date of the interaction type."
+    deleted_at: DateTime
+}
+
+extend type Query {
+    "Get a specific interaction type by id."
+    interactionType(id: ID! @eq): InteractionType
+        @find
+        @softDeletes
+        @canResolved(ability: "view")
+
+    "List multiple interactions types."
+    interactionTypes(
+        "Filter by the interaction types attributes and relations."
+        where: InteractionTypeQuery @searchBy
+    ): [InteractionType!]! @paginate @softDeletes @canModel(ability: "viewAny")
+}
+
+input CreateInteractionTypeInput {
+    "The name of the interaction type."
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:interaction_types,name"
+            ]
+        )
+}
+
+input UpdateInteractionTypeInput {
+    "The name of the interaction type."
+    name: String
+        @rules(apply: ["string", "max:255", "unique:interaction_types,name"])
+}
+
+extend type Mutation {
+    "Create a interaction type."
+    createInteractionType(
+        input: CreateInteractionTypeInput! @spread
+    ): InteractionType! @create @canModel(ability: "create")
+
+    "Update an existing interaction type."
+    updateInteractionType(
+        "The identifier of the interaction type you would like to update."
+        id: ID! @whereKey
+
+        "The fields you would like to update."
+        input: UpdateInteractionTypeInput! @spread
+    ): InteractionType! @canFind(ability: "update", find: "id") @update
+
+    "Delete an existing interaction type."
+    deleteInteractionType(
+        "The identifier of the interaction type you would like to delete."
+        id: ID! @whereKey
+    ): InteractionType @canFind(ability: "delete", find: "id") @delete
+}
