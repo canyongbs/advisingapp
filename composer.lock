@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d80b939167c5f0542ab050ee505d58c7",
+    "content-hash": "f04879f7143f389060ee9ff7d0f35082",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.2.9",
+            "version": "v3.2.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "0df36b71e6477b4055734cb924f098ba3f0477bb"
+                "reference": "251611b8c6fe1898c80f70cbd545c06f533d5072"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/0df36b71e6477b4055734cb924f098ba3f0477bb",
-                "reference": "0df36b71e6477b4055734cb924f098ba3f0477bb",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/251611b8c6fe1898c80f70cbd545c06f533d5072",
+                "reference": "251611b8c6fe1898c80f70cbd545c06f533d5072",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +80,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.9"
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.11"
             },
             "funding": [
                 {
@@ -88,7 +88,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-14T21:37:28+00:00"
+            "time": "2023-12-16T21:26:51+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -383,16 +383,16 @@
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
-            "version": "2.1.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/blade-ui-kit/blade-heroicons.git",
-                "reference": "f756c807b0d04afd2caf7079bac26492da9cc6d4"
+                "reference": "8d5abd00bd274928b50307882d635fcc013866c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/blade-ui-kit/blade-heroicons/zipball/f756c807b0d04afd2caf7079bac26492da9cc6d4",
-                "reference": "f756c807b0d04afd2caf7079bac26492da9cc6d4",
+                "url": "https://api.github.com/repos/blade-ui-kit/blade-heroicons/zipball/8d5abd00bd274928b50307882d635fcc013866c3",
+                "reference": "8d5abd00bd274928b50307882d635fcc013866c3",
                 "shasum": ""
             },
             "require": {
@@ -436,19 +436,19 @@
             ],
             "support": {
                 "issues": "https://github.com/blade-ui-kit/blade-heroicons/issues",
-                "source": "https://github.com/blade-ui-kit/blade-heroicons/tree/2.1.0"
+                "source": "https://github.com/blade-ui-kit/blade-heroicons/tree/2.2.0"
             },
             "funding": [
                 {
-                    "url": "https://github.com/caneco",
+                    "url": "https://github.com/sponsors/driesvints",
                     "type": "github"
                 },
                 {
-                    "url": "https://github.com/driesvints",
-                    "type": "github"
+                    "url": "https://www.paypal.com/paypalme/driesvints",
+                    "type": "paypal"
                 }
             ],
-            "time": "2023-01-11T08:38:22+00:00"
+            "time": "2023-12-18T17:41:29+00:00"
         },
         {
             "name": "blade-ui-kit/blade-icons",
@@ -1476,6 +1476,41 @@
             }
         },
         {
+            "name": "canyon-gbs/advising-app-portal",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/portal",
+                "reference": "9c47850026f621ab50efaacdd16116a2cb746440"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Portal\\Providers\\PortalServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Portal\\": "src/",
+                    "AdvisingApp\\Portal\\Tests\\": "tests/",
+                    "AdvisingApp\\Portal\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Portal\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/advising-app-prospect",
             "version": "1.0",
             "dist": {
@@ -1829,16 +1864,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.3.7",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "76e46335014860eec1aa5a724799a00a2e47cc85"
+                "reference": "b66d11b7479109ab547f9405b97205640b17d385"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/76e46335014860eec1aa5a724799a00a2e47cc85",
-                "reference": "76e46335014860eec1aa5a724799a00a2e47cc85",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/b66d11b7479109ab547f9405b97205640b17d385",
+                "reference": "b66d11b7479109ab547f9405b97205640b17d385",
                 "shasum": ""
             },
             "require": {
@@ -1850,7 +1885,7 @@
                 "phpstan/phpstan": "^0.12.55",
                 "psr/log": "^1.0",
                 "symfony/phpunit-bridge": "^4.2 || ^5",
-                "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0 || ^6.0"
+                "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
             "type": "library",
             "extra": {
@@ -1885,7 +1920,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.3.7"
+                "source": "https://github.com/composer/ca-bundle/tree/1.4.0"
             },
             "funding": [
                 {
@@ -1901,7 +1936,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-30T09:31:38+00:00"
+            "time": "2023-12-18T12:05:55+00:00"
         },
         {
             "name": "composer/class-map-generator",
@@ -3725,22 +3760,22 @@
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v3.1.22",
+            "version": "v3.1.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
-                "reference": "bf31a2ff2574203fa819276cb37ae8958f31d43b"
+                "reference": "386775c13dab597df57b9b02fcb3cc1535700c97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/spatie-laravel-media-library-plugin/zipball/bf31a2ff2574203fa819276cb37ae8958f31d43b",
-                "reference": "bf31a2ff2574203fa819276cb37ae8958f31d43b",
+                "url": "https://api.github.com/repos/filamentphp/spatie-laravel-media-library-plugin/zipball/386775c13dab597df57b9b02fcb3cc1535700c97",
+                "reference": "386775c13dab597df57b9b02fcb3cc1535700c97",
                 "shasum": ""
             },
             "require": {
                 "illuminate/support": "^10.0",
                 "php": "^8.1",
-                "spatie/laravel-medialibrary": "^10.0"
+                "spatie/laravel-medialibrary": "^10.0|^11.0"
             },
             "type": "library",
             "autoload": {
@@ -3758,7 +3793,7 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2023-12-12T14:20:38+00:00"
+            "time": "2023-12-17T22:25:47+00:00"
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
@@ -4533,16 +4568,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.327.0",
+            "version": "v0.328.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "51a11d4ff70dd9f60334525e71bf4cf592e6d282"
+                "reference": "211ba786d30a4ab21e012d2b7dbefc49b4fc6a3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/51a11d4ff70dd9f60334525e71bf4cf592e6d282",
-                "reference": "51a11d4ff70dd9f60334525e71bf4cf592e6d282",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/211ba786d30a4ab21e012d2b7dbefc49b4fc6a3d",
+                "reference": "211ba786d30a4ab21e012d2b7dbefc49b4fc6a3d",
                 "shasum": ""
             },
             "require": {
@@ -4571,9 +4606,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
-                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.327.0"
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.328.0"
             },
-            "time": "2023-12-11T00:52:16+00:00"
+            "time": "2023-12-18T01:00:18+00:00"
         },
         {
             "name": "google/auth",
@@ -6718,16 +6753,16 @@
         },
         {
             "name": "league/csv",
-            "version": "9.12.0",
+            "version": "9.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/csv.git",
-                "reference": "c1dc31e23eb3cd0f7b537ee1a669d5f58d5cfe21"
+                "reference": "3690cc71bfe8dc3b6daeef356939fac95348f0a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/csv/zipball/c1dc31e23eb3cd0f7b537ee1a669d5f58d5cfe21",
-                "reference": "c1dc31e23eb3cd0f7b537ee1a669d5f58d5cfe21",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/3690cc71bfe8dc3b6daeef356939fac95348f0a8",
+                "reference": "3690cc71bfe8dc3b6daeef356939fac95348f0a8",
                 "shasum": ""
             },
             "require": {
@@ -6742,11 +6777,11 @@
                 "ext-xdebug": "*",
                 "friendsofphp/php-cs-fixer": "^v3.22.0",
                 "phpbench/phpbench": "^1.2.15",
-                "phpstan/phpstan": "^1.10.46",
+                "phpstan/phpstan": "^1.10.50",
                 "phpstan/phpstan-deprecation-rules": "^1.1.4",
                 "phpstan/phpstan-phpunit": "^1.3.15",
                 "phpstan/phpstan-strict-rules": "^1.5.2",
-                "phpunit/phpunit": "^10.4.2",
+                "phpunit/phpunit": "^10.5.3",
                 "symfony/var-dumper": "^6.4.0"
             },
             "suggest": {
@@ -6803,7 +6838,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-01T17:54:07+00:00"
+            "time": "2023-12-16T11:03:20+00:00"
         },
         {
             "name": "league/flysystem",
@@ -8685,16 +8720,16 @@
         },
         {
             "name": "nuwave/lighthouse",
-            "version": "v6.29.0",
+            "version": "v6.29.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nuwave/lighthouse.git",
-                "reference": "e1b36601ad798449dec04d5ab7bd81587bd90eb6"
+                "reference": "fa2c79f9af32de2e2b36f78f9a880d0dff937289"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nuwave/lighthouse/zipball/e1b36601ad798449dec04d5ab7bd81587bd90eb6",
-                "reference": "e1b36601ad798449dec04d5ab7bd81587bd90eb6",
+                "url": "https://api.github.com/repos/nuwave/lighthouse/zipball/fa2c79f9af32de2e2b36f78f9a880d0dff937289",
+                "reference": "fa2c79f9af32de2e2b36f78f9a880d0dff937289",
                 "shasum": ""
             },
             "require": {
@@ -8816,7 +8851,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-12-15T12:47:21+00:00"
+            "time": "2023-12-17T11:10:54+00:00"
         },
         {
             "name": "openai-php/client",
@@ -9717,16 +9752,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.24.4",
+            "version": "1.24.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "6bd0c26f3786cd9b7c359675cb789e35a8e07496"
+                "reference": "fedf211ff14ec8381c9bf5714e33a7a552dd1acc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/6bd0c26f3786cd9b7c359675cb789e35a8e07496",
-                "reference": "6bd0c26f3786cd9b7c359675cb789e35a8e07496",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/fedf211ff14ec8381c9bf5714e33a7a552dd1acc",
+                "reference": "fedf211ff14ec8381c9bf5714e33a7a552dd1acc",
                 "shasum": ""
             },
             "require": {
@@ -9758,9 +9793,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.24.4"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.24.5"
             },
-            "time": "2023-11-26T18:29:22+00:00"
+            "time": "2023-12-16T09:33:33+00:00"
         },
         {
             "name": "psr/cache",
@@ -10829,16 +10864,16 @@
         },
         {
             "name": "seld/jsonlint",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/jsonlint.git",
-                "reference": "594fd6462aad8ecee0b45ca5045acea4776667f1"
+                "reference": "76d449a358ece77d6f1d6331c68453e657172202"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/594fd6462aad8ecee0b45ca5045acea4776667f1",
-                "reference": "594fd6462aad8ecee0b45ca5045acea4776667f1",
+                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/76d449a358ece77d6f1d6331c68453e657172202",
+                "reference": "76d449a358ece77d6f1d6331c68453e657172202",
                 "shasum": ""
             },
             "require": {
@@ -10865,7 +10900,7 @@
                 {
                     "name": "Jordi Boggiano",
                     "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be"
+                    "homepage": "https://seld.be"
                 }
             ],
             "description": "JSON Linter",
@@ -10877,7 +10912,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/jsonlint/issues",
-                "source": "https://github.com/Seldaek/jsonlint/tree/1.10.0"
+                "source": "https://github.com/Seldaek/jsonlint/tree/1.10.1"
             },
             "funding": [
                 {
@@ -10889,7 +10924,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-11T13:16:46+00:00"
+            "time": "2023-12-18T13:03:25+00:00"
         },
         {
             "name": "seld/phar-utils",
