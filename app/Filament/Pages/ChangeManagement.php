@@ -34,25 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\SystemUserResource\Pages;
+namespace App\Filament\Pages;
 
-use Filament\Forms\Form;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Resources\SystemUserResource;
+use Filament\Pages\Page;
 
-class CreateSystemUser extends CreateRecord
+class ChangeManagement extends Page
 {
-    protected static string $resource = SystemUserResource::class;
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected ?string $heading = 'Creat Programmatic (API) User';
+    protected static ?string $navigationGroup = 'Service Management';
 
-    public function form(Form $form): Form
-    {
-        return $form->schema([
-            TextInput::make('name')
-                ->required()
-                ->string(),
-        ]);
-    }
+    protected static ?int $navigationSort = 20;
+
+    protected static string $view = 'filament.pages.coming-soon';
 }

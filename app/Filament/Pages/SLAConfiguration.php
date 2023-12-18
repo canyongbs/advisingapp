@@ -34,25 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\SystemUserResource\Pages;
+namespace App\Filament\Pages;
 
-use Filament\Forms\Form;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Resources\SystemUserResource;
+use Filament\Pages\Page;
 
-class CreateSystemUser extends CreateRecord
+class SLAConfiguration extends Page
 {
-    protected static string $resource = SystemUserResource::class;
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected ?string $heading = 'Creat Programmatic (API) User';
+    protected static ?string $navigationLabel = 'SLA Configuration';
 
-    public function form(Form $form): Form
-    {
-        return $form->schema([
-            TextInput::make('name')
-                ->required()
-                ->string(),
-        ]);
-    }
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 120;
+
+    protected ?string $heading = 'SLA Configuration';
+
+    protected static string $view = 'filament.pages.coming-soon';
 }
