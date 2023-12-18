@@ -2,8 +2,8 @@
 
 namespace AdvisingApp\Prospect\Observers;
 
-use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\User;
+use AdvisingApp\Prospect\Models\Prospect;
 
 class ProspectObserver
 {

@@ -73,7 +73,9 @@ test('CreateProspect is gated with proper access control', function () {
             ProspectResource::getUrl('create')
         )->assertSuccessful();
 
-    $request = collect(CreateProspectRequestFactory::new()->create());
+    $request = collect(CreateProspectRequestFactory::new()->create([
+        'created_by_id' => $user->id,
+    ]));
 
     livewire(ProspectResource\Pages\CreateProspect::class)
         ->fillForm($request->toArray())
