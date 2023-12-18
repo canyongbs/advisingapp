@@ -43,13 +43,17 @@ extend type Query {
     "Get a specific interaction campaign by id."
     interactionCampaign(id: ID! @eq): InteractionCampaign
         @find
+        @softDeletes
         @canResolved(ability: "view")
 
     "List multiple interactions campaigns."
     interactionCampaigns(
         "Filter by the interaction campaigns attributes and relations."
         where: InteractionCampaignQuery @searchBy
-    ): [InteractionCampaign!]! @paginate @canModel(ability: "viewAny")
+    ): [InteractionCampaign!]!
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
 }
 
 input CreateInteractionCampaignInput {
@@ -75,7 +79,7 @@ input UpdateInteractionCampaignInput {
 
 extend type Mutation {
     "Create a interaction campaign."
-    createInteraction(
+    createInteractionCampaign(
         input: CreateInteractionCampaignInput! @spread
     ): InteractionCampaign! @create @canModel(ability: "create")
 

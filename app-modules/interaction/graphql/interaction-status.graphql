@@ -22,8 +22,6 @@ type InteractionStatus
     deleted_at: DateTime
 }
 
-# TODO: Mutate
-
 input InteractionStatusesQuery {
     "The unique primary key of the interaction status."
     id: ID
@@ -51,13 +49,17 @@ extend type Query {
     "Get a specific interaction status by id."
     interactionStatus(id: ID! @eq): InteractionStatus
         @find
+        @softDeletes
         @canResolved(ability: "view")
 
     "List multiple interactions statuses."
     interactionStatuses(
         "Filter by the interaction statuses attributes and relations."
-        where: InteractionStatusQuery @searchBy
-    ): [InteractionStatus!]! @paginate @canModel(ability: "viewAny")
+        where: InteractionStatusesQuery @searchBy
+    ): [InteractionStatus!]!
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
 }
 
 input CreateInteractionStatusInput {
@@ -81,7 +83,7 @@ input UpdateInteractionStatusInput {
 
 extend type Mutation {
     "Create a interaction status."
-    createInteraction(
+    createInteractionStatus(
         input: CreateInteractionStatusInput! @spread
     ): InteractionStatus! @create @canModel(ability: "create")
 

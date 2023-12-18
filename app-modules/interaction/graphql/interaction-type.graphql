@@ -43,13 +43,14 @@ extend type Query {
     "Get a specific interaction type by id."
     interactionType(id: ID! @eq): InteractionType
         @find
+        @softDeletes
         @canResolved(ability: "view")
 
     "List multiple interactions types."
     interactionTypes(
         "Filter by the interaction types attributes and relations."
         where: InteractionTypeQuery @searchBy
-    ): [InteractionType!]! @paginate @canModel(ability: "viewAny")
+    ): [InteractionType!]! @paginate @softDeletes @canModel(ability: "viewAny")
 }
 
 input CreateInteractionTypeInput {
@@ -73,7 +74,7 @@ input UpdateInteractionTypeInput {
 
 extend type Mutation {
     "Create a interaction type."
-    createInteraction(
+    createInteractionType(
         input: CreateInteractionTypeInput! @spread
     ): InteractionType! @create @canModel(ability: "create")
 

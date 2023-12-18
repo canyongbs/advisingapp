@@ -43,13 +43,17 @@ extend type Query {
     "Get a specific interaction driver by id."
     interactionDriver(id: ID! @eq): InteractionDriver
         @find
+        @softDeletes
         @canResolved(ability: "view")
 
     "List multiple interactions drivers."
     interactionDrivers(
         "Filter by the interaction drivers attributes and relations."
         where: InteractionDriverQuery @searchBy
-    ): [InteractionDriver!]! @paginate @canModel(ability: "viewAny")
+    ): [InteractionDriver!]!
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
 }
 
 input CreateInteractionDriverInput {
@@ -73,7 +77,7 @@ input UpdateInteractionDriverInput {
 
 extend type Mutation {
     "Create a interaction driver."
-    createInteraction(
+    createInteractionDriver(
         input: CreateInteractionDriverInput! @spread
     ): InteractionDriver! @create @canModel(ability: "create")
 
