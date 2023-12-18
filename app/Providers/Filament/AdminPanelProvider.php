@@ -128,6 +128,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Forms and Surveys'),
                 NavigationGroup::make()
+                    ->label('Reporting'),
+                NavigationGroup::make()
                     ->label('Data and Analytics'),
                 NavigationGroup::make()
                     ->label('Users and Permissions'),

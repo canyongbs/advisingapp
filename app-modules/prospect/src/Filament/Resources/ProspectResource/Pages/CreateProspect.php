@@ -59,7 +59,7 @@ class CreateProspect extends CreateRecord
             ->schema([
                 Select::make('status_id')
                     ->label('Status')
-                    ->translateLabel()
+                    ->required()
                     ->relationship('status', 'name')
                     ->exists(
                         table: (new ProspectStatus())->getTable(),
@@ -67,7 +67,7 @@ class CreateProspect extends CreateRecord
                     ),
                 Select::make('source_id')
                     ->label('Source')
-                    ->translateLabel()
+                    ->required()
                     ->relationship('source', 'name')
                     ->exists(
                         table: (new ProspectSource())->getTable(),
@@ -75,65 +75,51 @@ class CreateProspect extends CreateRecord
                     ),
                 TextInput::make('first_name')
                     ->label('First Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
                 TextInput::make('last_name')
                     ->label('Last Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
                 TextInput::make(Prospect::displayNameKey())
                     ->label('Full Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
                 TextInput::make('preferred')
                     ->label('Preferred Name')
-                    ->translateLabel()
                     ->string(),
                 Textarea::make('description')
                     ->label('Description')
-                    ->translateLabel()
                     ->string(),
                 TextInput::make('email')
                     ->label('Primary Email')
-                    ->translateLabel()
                     ->email(),
                 TextInput::make('email_2')
                     ->label('Other Email')
-                    ->translateLabel()
                     ->email(),
                 TextInput::make('mobile')
                     ->label('Mobile')
-                    ->translateLabel()
                     ->string(),
                 Radio::make('sms_opt_out')
                     ->label('SMS Opt Out')
-                    ->translateLabel()
                     ->default(false)
                     ->boolean(),
                 Radio::make('email_bounce')
                     ->label('Email Bounce')
-                    ->translateLabel()
                     ->default(false)
                     ->boolean(),
                 TextInput::make('phone')
                     ->label('Other Phone')
-                    ->translateLabel()
                     ->string(),
                 TextInput::make('address')
                     ->label('Address')
-                    ->translateLabel()
                     ->string(),
                 TextInput::make('address_2')
                     ->label('Address 2')
-                    ->translateLabel()
                     ->string(),
                 // TODO: Display this based on system configurable data format
                 DatePicker::make('birthdate')
                     ->label('Birthdate')
-                    ->translateLabel()
                     ->native(false)
                     ->closeOnDateSelection()
                     ->format('Y-m-d')
@@ -141,26 +127,13 @@ class CreateProspect extends CreateRecord
                     ->maxDate(now()),
                 TextInput::make('hsgrad')
                     ->label('High School Graduation Date')
-                    ->translateLabel()
                     ->nullable()
                     ->numeric()
                     ->minValue(1920)
                     ->maxValue(now()->addYears(25)->year),
                 Select::make('assigned_to_id')
                     ->label('Assigned To')
-                    ->translateLabel()
                     ->relationship('assignedTo', 'name')
-                    ->searchable()
-                    ->nullable()
-                    ->exists(
-                        table: (new User())->getTable(),
-                        column: (new User())->getKeyName()
-                    ),
-                // TODO: Should this be hidden and just filled in by the system?
-                Select::make('created_by_id')
-                    ->label('Created By')
-                    ->translateLabel()
-                    ->relationship('createdBy', 'name')
                     ->searchable()
                     ->nullable()
                     ->exists(

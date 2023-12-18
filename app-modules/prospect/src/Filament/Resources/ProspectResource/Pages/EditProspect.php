@@ -38,6 +38,8 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Actions;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -63,7 +65,7 @@ class EditProspect extends EditRecord
             ->schema([
                 Select::make('status_id')
                     ->label('Status')
-                    ->translateLabel()
+                    ->required()
                     ->relationship('status', 'name')
                     ->exists(
                         table: (new ProspectStatus())->getTable(),
@@ -71,7 +73,7 @@ class EditProspect extends EditRecord
                     ),
                 Select::make('source_id')
                     ->label('Source')
-                    ->translateLabel()
+                    ->required()
                     ->relationship('source', 'name')
                     ->exists(
                         table: (new ProspectSource())->getTable(),
@@ -79,63 +81,49 @@ class EditProspect extends EditRecord
                     ),
                 TextInput::make('first_name')
                     ->label('First Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
                 TextInput::make('last_name')
                     ->label('Last Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
                 TextInput::make(Prospect::displayNameKey())
                     ->label('Full Name')
-                    ->translateLabel()
                     ->required()
                     ->string(),
                 TextInput::make('preferred')
                     ->label('Preferred Name')
-                    ->translateLabel()
                     ->string(),
                 Textarea::make('description')
                     ->label('Description')
-                    ->translateLabel()
                     ->string(),
                 TextInput::make('email')
                     ->label('Primary Email')
-                    ->translateLabel()
                     ->email(),
                 TextInput::make('email_2')
                     ->label('Other Email')
-                    ->translateLabel()
                     ->email(),
                 TextInput::make('mobile')
                     ->label('Mobile')
-                    ->translateLabel()
                     ->string(),
                 Radio::make('sms_opt_out')
                     ->label('SMS Opt Out')
-                    ->translateLabel()
                     ->boolean(),
                 Radio::make('email_bounce')
                     ->label('Email Bounce')
-                    ->translateLabel()
                     ->boolean(),
                 TextInput::make('phone')
                     ->label('Other Phone')
-                    ->translateLabel()
                     ->string(),
                 TextInput::make('address')
                     ->label('Address')
-                    ->translateLabel()
                     ->string(),
                 TextInput::make('address_2')
                     ->label('Address 2')
-                    ->translateLabel()
                     ->string(),
                 // TODO: Display this based on system configurable data format
                 DatePicker::make('birthdate')
                     ->label('Birthdate')
-                    ->translateLabel()
                     ->native(false)
                     ->closeOnDateSelection()
                     ->format('Y-m-d')
@@ -143,14 +131,12 @@ class EditProspect extends EditRecord
                     ->maxDate(now()),
                 TextInput::make('hsgrad')
                     ->label('High School Graduation Date')
-                    ->translateLabel()
                     ->nullable()
                     ->numeric()
                     ->minValue(1920)
                     ->maxValue(now()->addYears(25)->year),
                 Select::make('assigned_to_id')
                     ->label('Assigned To')
-                    ->translateLabel()
                     ->relationship('assignedTo', 'name')
                     ->searchable()
                     ->nullable()
@@ -160,7 +146,6 @@ class EditProspect extends EditRecord
                     ),
                 Select::make('created_by_id')
                     ->label('Created By')
-                    ->translateLabel()
                     ->relationship('createdBy', 'name')
                     ->searchable()
                     ->nullable()
@@ -174,8 +159,8 @@ class EditProspect extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

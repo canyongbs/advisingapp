@@ -51,11 +51,13 @@ class CalendarEventResource extends Resource
 
     protected static ?string $navigationGroup = 'Meeting Center';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $navigationLabel = 'Schedule';
 
-    protected static ?string $modelLabel = 'Event';
+    protected static ?string $breadcrumb = 'Schedule';
+
+    protected static ?string $modelLabel = 'appointment';
 
     public static function getRelations(): array
     {
