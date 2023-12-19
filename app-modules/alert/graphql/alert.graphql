@@ -1,6 +1,6 @@
 type Alert @model(class: "AdvisingApp\\Alert\\Models\\Alert") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The concern of the alert."
     concern: Educatable! @morphTo
@@ -29,7 +29,7 @@ type Alert @model(class: "AdvisingApp\\Alert\\Models\\Alert") {
 
 extend type Query {
     "Get an alert by its primary key."
-    alert("Search by primary key." id: ID! @whereKey): Alert
+    alert("Search by primary key." id: UUID! @whereKey): Alert
         @find
         @canResolved(ability: "view")
 
@@ -39,7 +39,7 @@ extend type Query {
 
 input CreateAlertInput {
     "The id of the concern of the alert."
-    concern_id: ID! @rules(apply: ["required"])
+    concern_id: UUID! @rules(apply: ["required"])
 
     "The type of concern of the alert."
     concern_type: String! @rules(apply: ["required", "in:student,prospect"])
@@ -80,13 +80,13 @@ extend type Mutation {
     "Update an existing alert."
     updateAlert(
         "The primary key of the alert."
-        id: ID! @drop @whereKey
+        id: UUID! @drop @whereKey
 
         input: UpdateAlertInput! @spread
     ): Alert! @update @canFind(ability: "update", find: "id")
 
     "Delete an existing alert."
-    deleteAlert("The primary key of the alert." id: ID! @whereKey): Alert
+    deleteAlert("The primary key of the alert." id: UUID! @whereKey): Alert
         @delete
         @canFind(ability: "delete", find: "id")
 }

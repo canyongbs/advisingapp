@@ -1,7 +1,7 @@
 type InteractionOutcome
     @model(class: "AdvisingApp\\Interaction\\Models\\InteractionOutcome") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The name of the interaction outcome."
     name: String!
@@ -21,7 +21,7 @@ type InteractionOutcome
 
 input InteractionOutcomeQuery {
     "The unique primary key of the interaction outcome."
-    id: ID
+    id: UUID
 
     "The name of the interaction outcome."
     name: String
@@ -41,7 +41,7 @@ input InteractionOutcomeQuery {
 
 extend type Query {
     "Get a specific interaction outcome by id."
-    interactionOutcome(id: ID! @eq): InteractionOutcome
+    interactionOutcome(id: UUID! @eq): InteractionOutcome
         @find
         @softDeletes
         @canResolved(ability: "view")
@@ -84,7 +84,7 @@ extend type Mutation {
     "Update an existing interaction outcome."
     updateInteractionOutcome(
         "The identifier of the interaction outcome you would like to update."
-        id: ID! @whereKey
+        id: UUID! @whereKey
 
         "The fields you would like to update."
         input: UpdateInteractionOutcomeInput! @spread
@@ -93,6 +93,6 @@ extend type Mutation {
     "Delete an existing interaction outcome."
     deleteInteractionOutcome(
         "The identifier of the interaction outcome you would like to delete."
-        id: ID! @whereKey
+        id: UUID! @whereKey
     ): InteractionOutcome @canFind(ability: "delete", find: "id") @delete
 }
