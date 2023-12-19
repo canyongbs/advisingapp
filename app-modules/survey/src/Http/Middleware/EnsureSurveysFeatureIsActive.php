@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey\Http\Middleware;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Closure;
+use Illuminate\Http\Request;
+use App\Settings\LicenseSettings;
+use Symfony\Component\HttpFoundation\Response;
 
-class VerifyCsrfToken extends Middleware
+class EnsureSurveysFeatureIsActive
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (! app(LicenseSettings::class)->data->addons->conductSurveys) {
+            return response()->json(['error' => 'Surveys is not enabled.'], 403);
+        }
+
+        return $next($request);
+    }
 }

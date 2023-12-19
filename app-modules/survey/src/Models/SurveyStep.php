@@ -34,21 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey\Models;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use App\Models\Attributes\NoPermissions;
+use AdvisingApp\Form\Models\SubmissibleStep;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class VerifyCsrfToken extends Middleware
+/**
+ * @mixin IdeHelperSurveyStep
+ */
+#[NoPermissions]
+class SurveyStep extends SubmissibleStep
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
+    protected $fillable = [
+        'label',
+        'content',
+        'sort',
     ];
+
+    protected $casts = [
+        'content' => 'array',
+        'sort' => 'integer',
+    ];
+
+    public function submissible(): BelongsTo
+    {
+        return $this
+            ->belongsTo(Survey::class, 'survey_id');
+    }
+
+    public function fields(): HasMany
+    {
+        return $this->hasMany(SurveyField::class, 'step_id');
+    }
 }

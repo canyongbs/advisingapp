@@ -34,21 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey\Filament\Resources;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
+use AdvisingApp\Survey\Models\Survey;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\EditSurvey;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\ListSurveys;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\CreateSurvey;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\ManageSurveySubmissions;
 
-class VerifyCsrfToken extends Middleware
+class SurveyResource extends Resource
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
+    protected static ?string $model = Survey::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Forms and Surveys';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Manage Surveys';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['fields']);
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            EditSurvey::class,
+            ManageSurveySubmissions::class,
+        ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListSurveys::route('/'),
+            'create' => CreateSurvey::route('/create'),
+            'edit' => EditSurvey::route('/{record}/edit'),
+            'manage-submissions' => ManageSurveySubmissions::route('/{record}/submissions'),
+        ];
+    }
 }

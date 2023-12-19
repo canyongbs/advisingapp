@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,23 +30,13 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+@endphp
 
-namespace App\Http\Middleware;
-
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
-
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
-}
+<div class="flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-4xl">
+        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($this->survey) !!}
+    </div>
+</div>

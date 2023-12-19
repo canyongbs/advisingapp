@@ -34,21 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey\Livewire;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
+use AdvisingApp\Survey\Models\Survey;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Concerns\InteractsWithForms;
 
-class VerifyCsrfToken extends Middleware
+class RenderSurvey extends Component implements HasForms
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
+    use InteractsWithForms;
+
+    public bool $show = true;
+
+    public Survey $survey;
+
+    public ?array $data = [];
+
+    public function render(): View
+    {
+        return view('survey::livewire.render-survey')
+            ->title($this->survey->name);
+    }
 }

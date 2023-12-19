@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,32 @@
 
 </COPYRIGHT>
 */
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import './widget.css';
+import App from './App.vue';
+import { defaultConfig, plugin } from '@formkit/vue';
+import config from './formkit.config.js';
+import VueSignaturePad from 'vue-signature-pad';
 
-namespace App\Http\Middleware;
+customElements.define(
+    'survey-embed',
+    defineCustomElement({
+        setup(props) {
+            const app = createApp();
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+            // install plugins
+            app.use(plugin, defaultConfig(config));
 
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
-}
+            app.use(VueSignaturePad);
+
+            app.config.devtools = true;
+
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
+
+            return () => h(App, props);
+        },
+        props: ['url'],
+    }),
+);

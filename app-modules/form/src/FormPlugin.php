@@ -52,10 +52,6 @@ class FormPlugin implements Plugin
             ->discoverResources(
                 in: __DIR__ . '/Filament/Resources',
                 for: 'AdvisingApp\\Form\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Form\\Filament\\Pages'
             );
     }
 

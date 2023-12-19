@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,28 @@
 
 </COPYRIGHT>
 */
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
-namespace App\Http\Middleware;
-
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
-
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
-}
+export default defineConfig({
+    plugins: [vue()],
+    build: {
+        manifest: true,
+        lib: {
+            entry: resolve(__dirname, 'src/widget.js'),
+            name: 'AdvisingAppSurveyWidget',
+            fileName: 'advising-app-survey-widget',
+            formats: ['es'],
+        },
+        outDir: resolve(__dirname, '../../public/js/widgets/survey'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});

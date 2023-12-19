@@ -34,21 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Filament\Panel;
+use Filament\Contracts\Plugin;
 
-class VerifyCsrfToken extends Middleware
+class SurveyPlugin implements Plugin
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
+    public function getId(): string
+    {
+        return 'survey';
+    }
+
+    public function register(Panel $panel): void
+    {
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'AdvisingApp\\Survey\\Filament\\Resources'
+            );
+    }
+
+    public function boot(Panel $panel): void {}
 }

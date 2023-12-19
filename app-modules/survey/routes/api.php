@@ -34,21 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+use AdvisingApp\Survey\Http\Controllers\SurveyWidgetController;
+use AdvisingApp\Survey\Http\Middleware\EnsureSurveysFeatureIsActive;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
-
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
-}
+Route::prefix('api')
+    ->middleware([
+        'api',
+        EnsureSurveysFeatureIsActive::class,
+        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':survey',
+    ])
+    ->group(function () {
+        Route::prefix('surveys')
+            ->name('surveys.')
+            ->group(function () {
+                Route::get('/{survey}', [SurveyWidgetController::class, 'view'])
+                    ->middleware(['signed'])
+                    ->name('define');
+                Route::post('/{survey}/authenticate/request', [SurveyWidgetController::class, 'requestAuthentication'])
+                    ->middleware(['signed'])
+                    ->name('request-authentication');
+                Route::post('/{survey}/authenticate/{authentication}', [SurveyWidgetController::class, 'authenticate'])
+                    ->middleware(['signed'])
+                    ->name('authenticate');
+                Route::post('/{survey}/submit', [SurveyWidgetController::class, 'store'])
+                    ->middleware(['signed'])
+                    ->name('submit');
+            });
+    });

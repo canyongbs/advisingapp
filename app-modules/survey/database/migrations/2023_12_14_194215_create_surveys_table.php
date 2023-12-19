@@ -34,21 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('surveys', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
-}
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
+            $table->boolean('embed_enabled')->default(false);
+            $table->json('allowed_domains')->nullable();
+            $table->string('primary_color')->nullable();
+            $table->string('rounding')->nullable();
+            $table->boolean('is_authenticated')->default(false);
+            $table->boolean('is_wizard')->default(false);
+            $table->boolean('recaptcha_enabled')->default(false);
+            $table->json('content')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+};

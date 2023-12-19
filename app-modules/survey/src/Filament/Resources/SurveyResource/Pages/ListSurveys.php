@@ -34,21 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\Action;
+use AdvisingApp\Survey\Models\Survey;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 
-class VerifyCsrfToken extends Middleware
+class ListSurveys extends ListRecords
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
+    protected static string $resource = SurveyResource::class;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name'),
+            ])
+            ->filters([
+            ])
+            ->actions([
+                Action::make('Respond')
+                    ->url(fn (Survey $survey) => route('surveys.show', ['survey' => $survey]))
+                    ->icon('heroicon-m-arrow-top-right-on-square')
+                    ->openUrlInNewTab()
+                    ->color('gray'),
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
 }

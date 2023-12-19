@@ -34,21 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey\Database\Factories;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use AdvisingApp\Survey\Models\SurveyField;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class VerifyCsrfToken extends Middleware
+/**
+ * @extends Factory<SurveyField>
+ */
+class SurveyFieldFactory extends Factory
 {
     /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
+     * @return array<string, mixed>
      */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
+    public function definition(): array
+    {
+        $type = fake()->randomElement(['text_input', 'text_area', 'select']);
+
+        $config = match ($type) {
+            'select' => json_decode('{"options":{"us":"United States","ca":"Canada","uk":"United Kingdom"}}'),
+            default => [],
+        };
+
+        return [
+            'label' => fake()->words(asText: true),
+            'is_required' => fake()->boolean(),
+            'type' => $type,
+            'config' => $config,
+        ];
+    }
 }

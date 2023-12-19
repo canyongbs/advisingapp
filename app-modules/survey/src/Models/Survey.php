@@ -34,21 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey\Models;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class VerifyCsrfToken extends Middleware
+/**
+ * @mixin IdeHelperSurvey
+ */
+class Survey extends Submissible
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
+    protected $fillable = [
+        'name',
+        'description',
+        'embed_enabled',
+        'allowed_domains',
+        'is_authenticated',
+        'is_wizard',
+        'recaptcha_enabled',
+        'primary_color',
+        'rounding',
+        'content',
     ];
+
+    protected $casts = [
+        'content' => 'array',
+        'embed_enabled' => 'boolean',
+        'allowed_domains' => 'array',
+        'is_authenticated' => 'boolean',
+        'is_wizard' => 'boolean',
+        'recaptcha_enabled' => 'boolean',
+        'rounding' => Rounding::class,
+    ];
+
+    public function fields(): HasMany
+    {
+        return $this->hasMany(SurveyField::class);
+    }
+
+    public function steps(): HasMany
+    {
+        return $this->hasMany(SurveyStep::class);
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(SurveySubmission::class);
+    }
 }

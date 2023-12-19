@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,23 +30,26 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace App\Http\Middleware;
+<div class="tiptap-rendered-content flex flex-col gap-6">
+    @if ($submission->submissible->is_wizard)
+        @foreach ($submission->submissible->steps as $step)
+            <x-filament::section>
+                <x-slot name="heading">
+                    {{ $step->label }}
+                </x-slot>
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
-
-class VerifyCsrfToken extends Middleware
-{
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
-}
+                <x-form::submissions.content
+                    :content="$step->content"
+                    :submission="$submission"
+                />
+            </x-filament::section>
+        @endforeach
+    @else
+        <x-form::submissions.content
+            :content="$submission->submissible->content"
+            :submission="$submission"
+        />
+    @endif
+</div>

@@ -34,21 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource;
+use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\Concerns\HasSharedFormConfiguration;
 
-class VerifyCsrfToken extends Middleware
+class CreateSurvey extends CreateRecord
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/graphql/*',
-    ];
+    use HasSharedFormConfiguration;
+
+    protected static string $resource = SurveyResource::class;
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema($this->fields());
+    }
 }
