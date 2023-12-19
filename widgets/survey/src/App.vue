@@ -33,7 +33,8 @@
 -->
 <script setup>
 import { defineProps, ref, reactive, onMounted } from 'vue';
-import wizard from './FormKit/wizard';
+import wizard from '../../form/src/FormKit/wizard';
+
 import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
 import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
 
