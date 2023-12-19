@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d0a412bd5ff99146b91e408d37ff947b",
+    "content-hash": "7c1ce5b811691f2dc276e094f695dde8",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -1606,41 +1606,6 @@
                     "AdvisingApp\\StudentDataModel\\Tests\\": "tests/",
                     "AdvisingApp\\StudentDataModel\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\StudentDataModel\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/advising-app-survey",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/survey",
-                "reference": "f018d995e19cedeacf5d5b73b30c9a192b1b531d"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Survey\\Providers\\SurveyServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Survey\\": "src/",
-                    "AdvisingApp\\Survey\\Tests\\": "tests/",
-                    "AdvisingApp\\Survey\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Survey\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -3795,7 +3760,7 @@
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v3.1.23",
+            "version": "v3.1.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -5631,16 +5596,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.37.3",
+            "version": "v10.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "996375dd61f8c6e4ac262b57ed485655d71fcbdc"
+                "reference": "531732a17e4d0fa4fc4fb987a72abbdb93537d3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/996375dd61f8c6e4ac262b57ed485655d71fcbdc",
-                "reference": "996375dd61f8c6e4ac262b57ed485655d71fcbdc",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/531732a17e4d0fa4fc4fb987a72abbdb93537d3a",
+                "reference": "531732a17e4d0fa4fc4fb987a72abbdb93537d3a",
                 "shasum": ""
             },
             "require": {
@@ -5829,7 +5794,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-12-13T20:10:58+00:00"
+            "time": "2023-12-19T14:59:00+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -6230,16 +6195,16 @@
         },
         {
             "name": "laravel/ui",
-            "version": "v4.2.3",
+            "version": "v4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/ui.git",
-                "reference": "eb532ea096ca1c0298c87c19233daf011fda743a"
+                "reference": "d166e09cdcb2e23836f694774cba77a32edb6007"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/ui/zipball/eb532ea096ca1c0298c87c19233daf011fda743a",
-                "reference": "eb532ea096ca1c0298c87c19233daf011fda743a",
+                "url": "https://api.github.com/repos/laravel/ui/zipball/d166e09cdcb2e23836f694774cba77a32edb6007",
+                "reference": "d166e09cdcb2e23836f694774cba77a32edb6007",
                 "shasum": ""
             },
             "require": {
@@ -6286,9 +6251,9 @@
                 "ui"
             ],
             "support": {
-                "source": "https://github.com/laravel/ui/tree/v4.2.3"
+                "source": "https://github.com/laravel/ui/tree/v4.3.0"
             },
-            "time": "2023-11-23T14:44:22+00:00"
+            "time": "2023-12-19T14:46:09+00:00"
         },
         {
             "name": "lastdragon-ru/lara-asp-core",
@@ -7534,16 +7499,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.3.0",
+            "version": "v3.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "7c1f609515e74ef1197c08e56a5606571b3ec1d9"
+                "reference": "35105bbe58a63fa3e44587f1b8988cec79c51990"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/7c1f609515e74ef1197c08e56a5606571b3ec1d9",
-                "reference": "7c1f609515e74ef1197c08e56a5606571b3ec1d9",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/35105bbe58a63fa3e44587f1b8988cec79c51990",
+                "reference": "35105bbe58a63fa3e44587f1b8988cec79c51990",
                 "shasum": ""
             },
             "require": {
@@ -7596,7 +7561,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.3.0"
+                "source": "https://github.com/livewire/livewire/tree/v3.3.1"
             },
             "funding": [
                 {
@@ -7604,7 +7569,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-11T18:04:00+00:00"
+            "time": "2023-12-19T14:59:55+00:00"
         },
         {
             "name": "lomkit/laravel-rest-api",
@@ -12463,16 +12428,16 @@
         },
         {
             "name": "staudenmeir/eloquent-has-many-deep",
-            "version": "v1.19",
+            "version": "v1.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/staudenmeir/eloquent-has-many-deep.git",
-                "reference": "7a858ba0bfe5d42c06c563175a7255ebb6abad27"
+                "reference": "4192ef405f74a52fbac47f515a40260b7c45e319"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/staudenmeir/eloquent-has-many-deep/zipball/7a858ba0bfe5d42c06c563175a7255ebb6abad27",
-                "reference": "7a858ba0bfe5d42c06c563175a7255ebb6abad27",
+                "url": "https://api.github.com/repos/staudenmeir/eloquent-has-many-deep/zipball/4192ef405f74a52fbac47f515a40260b7c45e319",
+                "reference": "4192ef405f74a52fbac47f515a40260b7c45e319",
                 "shasum": ""
             },
             "require": {
@@ -12497,7 +12462,7 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Staudenmeir\\EloquentHasManyDeep\\EloquentHasManyDeepServiceProvider"
+                        "Staudenmeir\\EloquentHasManyDeep\\IdeHelperServiceProvider"
                     ]
                 }
             },
@@ -12519,7 +12484,7 @@
             "description": "Laravel Eloquent HasManyThrough relationships with unlimited levels",
             "support": {
                 "issues": "https://github.com/staudenmeir/eloquent-has-many-deep/issues",
-                "source": "https://github.com/staudenmeir/eloquent-has-many-deep/tree/v1.19"
+                "source": "https://github.com/staudenmeir/eloquent-has-many-deep/tree/v1.19.2"
             },
             "funding": [
                 {
@@ -12527,7 +12492,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2023-12-05T11:38:39+00:00"
+            "time": "2023-12-19T15:44:14+00:00"
         },
         {
             "name": "staudenmeir/eloquent-has-many-deep-contracts",
@@ -20601,5 +20566,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
