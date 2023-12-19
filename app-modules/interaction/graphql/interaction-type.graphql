@@ -1,7 +1,7 @@
 type InteractionType
     @model(class: "AdvisingApp\\Interaction\\Models\\InteractionType") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The name of the interaction type."
     name: String!
@@ -21,7 +21,7 @@ type InteractionType
 
 input InteractionTypeQuery {
     "The unique primary key of the interaction type."
-    id: ID
+    id: UUID
 
     "The name of the interaction relation."
     name: String
@@ -41,7 +41,7 @@ input InteractionTypeQuery {
 
 extend type Query {
     "Get a specific interaction type by id."
-    interactionType(id: ID! @eq): InteractionType
+    interactionType(id: UUID! @eq): InteractionType
         @find
         @softDeletes
         @canResolved(ability: "view")
@@ -81,7 +81,7 @@ extend type Mutation {
     "Update an existing interaction type."
     updateInteractionType(
         "The identifier of the interaction type you would like to update."
-        id: ID! @whereKey
+        id: UUID! @whereKey
 
         "The fields you would like to update."
         input: UpdateInteractionTypeInput! @spread
@@ -90,6 +90,6 @@ extend type Mutation {
     "Delete an existing interaction type."
     deleteInteractionType(
         "The identifier of the interaction type you would like to delete."
-        id: ID! @whereKey
+        id: UUID! @whereKey
     ): InteractionType @canFind(ability: "delete", find: "id") @delete
 }
