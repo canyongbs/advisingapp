@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f04879f7143f389060ee9ff7d0f35082",
+    "content-hash": "d0a412bd5ff99146b91e408d37ff947b",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -204,16 +204,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.294.1",
+            "version": "3.294.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "63c720229a9c9cdedff6bac98d6e72be8cc241f1"
+                "reference": "e6a63e39fed0fd9fb553af42e99aaf8d7c104c88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/63c720229a9c9cdedff6bac98d6e72be8cc241f1",
-                "reference": "63c720229a9c9cdedff6bac98d6e72be8cc241f1",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e6a63e39fed0fd9fb553af42e99aaf8d7c104c88",
+                "reference": "e6a63e39fed0fd9fb553af42e99aaf8d7c104c88",
                 "shasum": ""
             },
             "require": {
@@ -293,9 +293,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.294.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.294.2"
             },
-            "time": "2023-12-15T19:25:52+00:00"
+            "time": "2023-12-18T19:11:16+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -383,16 +383,16 @@
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
-            "version": "2.2.0",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/blade-ui-kit/blade-heroicons.git",
-                "reference": "8d5abd00bd274928b50307882d635fcc013866c3"
+                "reference": "bcf4be8f6bbde0bb4c23f2e3fb189b88dec1580a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/blade-ui-kit/blade-heroicons/zipball/8d5abd00bd274928b50307882d635fcc013866c3",
-                "reference": "8d5abd00bd274928b50307882d635fcc013866c3",
+                "url": "https://api.github.com/repos/blade-ui-kit/blade-heroicons/zipball/bcf4be8f6bbde0bb4c23f2e3fb189b88dec1580a",
+                "reference": "bcf4be8f6bbde0bb4c23f2e3fb189b88dec1580a",
                 "shasum": ""
             },
             "require": {
@@ -436,7 +436,7 @@
             ],
             "support": {
                 "issues": "https://github.com/blade-ui-kit/blade-heroicons/issues",
-                "source": "https://github.com/blade-ui-kit/blade-heroicons/tree/2.2.0"
+                "source": "https://github.com/blade-ui-kit/blade-heroicons/tree/2.2.1"
             },
             "funding": [
                 {
@@ -448,7 +448,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2023-12-18T17:41:29+00:00"
+            "time": "2023-12-18T20:44:03+00:00"
         },
         {
             "name": "blade-ui-kit/blade-icons",
@@ -702,7 +702,7 @@
             },
             "require": {
                 "canyon-gbs/advising-app-form": "*",
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -737,7 +737,7 @@
                 "reference": "6fe2b0bc737d6deeba86456b791e3ed2ca39f130"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -846,7 +846,7 @@
                 "reference": "9ed07874a81db2e2eb65ad3d2346612e632e163b"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -881,7 +881,7 @@
                 "reference": "2d9653a84f149b6c5330701a40845780b3f78bab"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -916,7 +916,7 @@
                 "reference": "8d0e90d94e710181086fd8087935b2f7370d0505"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -951,7 +951,7 @@
                 "reference": "c0e4ebf86447c7e5cad5737d84c5379c8d346025"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -986,7 +986,7 @@
                 "reference": "f0c1b6e2d78ffd807bb21b9e72f719eec4317a20"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1057,7 +1057,7 @@
                 "reference": "916a913c27a7b0e76d8ae109be6b2b1a08e5a851"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1092,7 +1092,7 @@
                 "reference": "e2813d35a370b07d31a98fb59d8e936746839eaa"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1127,7 +1127,7 @@
                 "reference": "b4618bdcf425db54c7e09b379f42f6b622072a2a"
             },
             "require": {
-                "filament/filament": "^3.1",
+                "filament/filament": "^3.0.0",
                 "openai-php/client": "^0.7.3",
                 "spatie/laravel-settings": "^3.2"
             },
@@ -1164,7 +1164,7 @@
                 "reference": "39158b337a38e25d19e63a64896c5eb894c9ce21"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1199,7 +1199,7 @@
                 "reference": "638f6def3ea231e73b06ee1d34b0b21f17244c17"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1234,7 +1234,7 @@
                 "reference": "bca8ef772fdc2f29a9e1aed6b7b617f39dfdb514"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1269,7 +1269,7 @@
                 "reference": "bf1de603a8ea82344bbfd4f69832c3f8d8a78653"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1341,7 +1341,7 @@
                 "reference": "34a22f9b6fe7cf18c3ed7df373c3113f64510815"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1411,7 +1411,7 @@
                 "reference": "2c43537fcf2e4bb3642572f5c31f81d7c2714c97"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1617,6 +1617,41 @@
             }
         },
         {
+            "name": "canyon-gbs/advising-app-survey",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/survey",
+                "reference": "f018d995e19cedeacf5d5b73b30c9a192b1b531d"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Survey\\Providers\\SurveyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Survey\\": "src/",
+                    "AdvisingApp\\Survey\\Tests\\": "tests/",
+                    "AdvisingApp\\Survey\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Survey\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/advising-app-task",
             "version": "1.0",
             "dist": {
@@ -1660,7 +1695,7 @@
                 "reference": "cefb14a6e4b08add73bdb76ad4543baf0d0ae45a"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -1732,7 +1767,7 @@
                 "reference": "6b40605254b1236a0405a11d586e0f849413f89a"
             },
             "require": {
-                "filament/filament": "^3.1"
+                "filament/filament": "^3.0.0"
             },
             "type": "library",
             "extra": {
@@ -20566,5 +20601,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
