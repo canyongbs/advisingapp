@@ -2,7 +2,7 @@ type Alert @model(class: "AdvisingApp\\Alert\\Models\\Alert") {
     "Unique primary key."
     id: ID!
 
-    "The concern of the alert."
+    "The Concern of the alert."
     concern: Educatable! @morphTo
 
     "The description of the alert."
@@ -27,22 +27,53 @@ type Alert @model(class: "AdvisingApp\\Alert\\Models\\Alert") {
     deleted_at: DateTime
 }
 
+input AlertConcernsQuery {
+    student: StudentQuery
+    prospect: ProspectQuery
+}
+
+input AlertsQuery {
+    id: ID
+    concern: AlertConcernsQuery @morphToRelation
+    concern_id: ID
+    concern_type: ConcernType
+    description: String
+    severity: AlertSeverity
+    status: AlertStatus
+    suggested_intervention: String
+    created_at: DateTime
+    updated_at: DateTime
+    deleted_at: DateTime
+}
+
 extend type Query {
-    "Get an alert by its primary key."
-    alert("Search by primary key." id: ID! @whereKey): Alert
+    "Find a single alert by an identifying attribute."
+    alert(
+        "The value of the attribute to match."
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
+    ): Alert
         @find
+        @softDeletes
         @canResolved(ability: "view")
 
-    "List multiple alerts." #TODO: filtering
-    alerts: [Alert!]! @paginate @softDeletes @canModel(ability: "viewAny")
+    "List multiple alerts."
+    alerts(
+        where: AlertsQuery @searchBy
+    ): [Alert!]!
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
 }
 
 input CreateAlertInput {
-    "The id of the concern of the alert."
-    concern_id: ID! @rules(apply: ["required"])
+    "The Concern related to the alert."
+    concern_id: ID! @rules(apply: [
+        "required"
+        "AdvisingApp\\Alert\\Rules\\ConcernIdExistsRules"
+    ])
 
-    "The type of concern of the alert."
-    concern_type: String! @rules(apply: ["required", "in:student,prospect"])
+    "The type of Concern related to the alert."
+    concern_type: ConcernType! @rules(apply: ["required", "in:student,prospect"])
 
     "The description of the alert."
     description: String! @rules(apply: ["required", "string"])
@@ -72,21 +103,25 @@ input UpdateAlertInput {
 }
 
 extend type Mutation {
-    "Create a new alert."
+    "Create an alert."
     createAlert(input: CreateAlertInput! @spread): Alert!
         @create
         @canModel(ability: "create")
 
-    "Update an existing alert."
+    "Update an alert."
     updateAlert(
-        "The primary key of the alert."
-        id: ID! @drop @whereKey
+        "The identifier of the alert you would like to update."
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
 
+        "The fields you would like to update."
         input: UpdateAlertInput! @spread
     ): Alert! @update @canFind(ability: "update", find: "id")
 
-    "Delete an existing alert."
-    deleteAlert("The primary key of the alert." id: ID! @whereKey): Alert
+    "Delete an alert."
+    deleteAlert(
+        "The identifier of the alert you would like to delete."
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
+    ): Alert
         @delete
         @canFind(ability: "delete", find: "id")
 }

@@ -41,7 +41,9 @@ input InteractionTypeQuery {
 
 extend type Query {
     "Get a specific interaction type by id."
-    interactionType(id: ID! @eq): InteractionType
+    interactionType(
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_types"])
+    ): InteractionType
         @find
         @softDeletes
         @canResolved(ability: "view")
@@ -81,7 +83,7 @@ extend type Mutation {
     "Update an existing interaction type."
     updateInteractionType(
         "The identifier of the interaction type you would like to update."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_types"])
 
         "The fields you would like to update."
         input: UpdateInteractionTypeInput! @spread
@@ -90,6 +92,6 @@ extend type Mutation {
     "Delete an existing interaction type."
     deleteInteractionType(
         "The identifier of the interaction type you would like to delete."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_types"])
     ): InteractionType @canFind(ability: "delete", find: "id") @delete
 }

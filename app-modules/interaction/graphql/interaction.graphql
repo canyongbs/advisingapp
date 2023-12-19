@@ -1,5 +1,11 @@
 union Interactable = Student | Prospect | ServiceRequest
 
+enum InteractableType {
+    Student @enum(value: "student")
+    Prospect @enum(value: "prospect")
+    ServiceRequest @enum(value: "service_request")
+}
+
 type Interaction
     @model(class: "AdvisingApp\\Interaction\\Models\\Interaction") {
     "Unique primary key."
@@ -58,10 +64,13 @@ input InteractionInteractablesQuery {
 }
 
 input InteractionsQuery {
+    id: ID
     subject: String
     description: String
     user: UserQuery
     interactable: InteractionInteractablesQuery @morphToRelation
+    interactable_id: ID
+    interactable_type: InteractableType
     relation: InteractionRelationQuery
     campaign: InteractionCampaignQuery
     driver: InteractionDriverQuery
@@ -78,11 +87,13 @@ extend type Query {
     "Find a single interaction by an identifying attribute."
     interaction(
         "The value of the attribute to match."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @find @canResolved(ability: "view")
 
     "List multiple interactions."
-    interactions(where: InteractionsQuery @searchBy): [Interaction!]!
+    interactions(
+        where: InteractionsQuery @searchBy
+    ): [Interaction!]!
         @paginate
         @canModel(ability: "viewAny")
 }
@@ -107,7 +118,7 @@ input UpdateInteractionInput {
         )
 
     "The type of Interactable related to the interaction."
-    interactable_type: String
+    interactable_type: InteractableType
         @rules(
             apply: [
                 "in:student,prospect,service_request"
@@ -139,11 +150,11 @@ input UpdateInteractionInput {
     division_id: ID @rules(apply: ["exists:divisions,id"])
 
     "The start datetime of the interaction."
-    start_datetime: DateTime @rules(apply: ["date_format:Y-m-d H:i:s"])
+    start_datetime: DateTime @rules(apply: ["date:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
     end_datetime: DateTime
-        @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
+        @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
 }
 
 input CreateInteractionInput {
@@ -166,7 +177,7 @@ input CreateInteractionInput {
         )
 
     "The type of Interactable related to the interaction."
-    interactable_type: String!
+    interactable_type: InteractableType!
         @rules(apply: ["required", "in:student,prospect,service_request"])
 
     "The type of interaction."
@@ -198,31 +209,32 @@ input CreateInteractionInput {
 
     "The start datetime of the interaction."
     start_datetime: DateTime!
-        @rules(apply: ["required", "date_format:Y-m-d H:i:s"])
+        @rules(apply: ["required", "date:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
     end_datetime: DateTime
-        @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
+        @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
 }
 
 extend type Mutation {
-    "Create a interaction."
+    "Create an interaction."
     createInteraction(input: CreateInteractionInput! @spread): Interaction!
         @create
         @canModel(ability: "create")
 
-    "Update a interaction."
+    "Update an interaction."
     updateInteraction(
         "The identifier of the interaction you would like to update."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interactions"])
 
+        "The fields you would like to update."
         input: UpdateInteractionInput! @spread
     ): Interaction! @canFind(ability: "update", find: "id") @update
 
-    "Delete a interaction."
+    "Delete an interaction."
     deleteInteraction(
         "The identifier of the interaction you would like to delete."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @canFind(ability: "delete", find: "id") @delete
 }
 

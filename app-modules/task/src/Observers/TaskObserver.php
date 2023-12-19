@@ -51,7 +51,12 @@ class TaskObserver
         DB::beginTransaction();
 
         if (is_null($task->created_by)) {
-            $task->created_by = auth()->id();
+
+            $user = auth()->user();
+
+            if ($user instanceof User) {
+                $task->created_by = $user->id;
+            }
         }
 
         if (is_null($task->assigned_to)) {

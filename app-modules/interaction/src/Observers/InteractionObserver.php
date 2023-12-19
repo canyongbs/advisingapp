@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Observers;
 
+use App\Models\User;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 
@@ -54,7 +55,9 @@ class InteractionObserver
 
     public function created(Interaction $interaction): void
     {
-        if ($user = auth()->user()) {
+        $user = auth()->user();
+
+        if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $interaction);
         }
     }

@@ -8,4 +8,14 @@ type Mutation
 
 union Educatable = Prospect | Student
 
+enum ConcernType {
+    Student @enum(value: "student")
+    Prospect @enum(value: "prospect")
+}
+
+enum EducatableType {
+    Student @enum(value: "student")
+    Prospect @enum(value: "prospect")
+}
+
 #import user.graphql

@@ -41,6 +41,7 @@ use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Actions\CreateServiceRequestHistory;
 use AdvisingApp\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
+use App\Models\User;
 
 class ServiceRequestObserver
 {
@@ -51,7 +52,9 @@ class ServiceRequestObserver
 
     public function created(ServiceRequest $serviceRequest): void
     {
-        if ($user = auth()->user()) {
+        $user = auth()->user();
+
+        if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $serviceRequest);
         }
     }

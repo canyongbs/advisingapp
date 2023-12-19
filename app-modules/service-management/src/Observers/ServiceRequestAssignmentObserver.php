@@ -41,12 +41,15 @@ use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
+use App\Models\User;
 
 class ServiceRequestAssignmentObserver
 {
     public function created(ServiceRequestAssignment $serviceRequestAssignment): void
     {
-        if ($user = auth()->user()) {
+        $user = auth()->user();
+
+        if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $serviceRequestAssignment);
         }
 

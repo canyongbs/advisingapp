@@ -47,7 +47,9 @@ input InteractionStatusesQuery {
 
 extend type Query {
     "Get a specific interaction status by id."
-    interactionStatus(id: ID! @eq): InteractionStatus
+    interactionStatus(
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
+    ): InteractionStatus
         @find
         @softDeletes
         @canResolved(ability: "view")
@@ -90,7 +92,7 @@ extend type Mutation {
     "Update an existing interaction status."
     updateInteractionStatus(
         "The identifier of the interaction status you would like to update."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
 
         "The fields you would like to update."
         input: UpdateInteractionStatusInput! @spread
@@ -99,6 +101,6 @@ extend type Mutation {
     "Delete an existing interaction status."
     deleteInteractionStatus(
         "The identifier of the interaction status you would like to delete."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
     ): InteractionStatus @canFind(ability: "delete", find: "id") @delete
 }

@@ -34,29 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Observers;
+namespace AdvisingApp\Alert\Rules;
 
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
-use App\Models\User;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class ServiceRequestUpdateObserver
+class ConcernIdExistsRules implements DataAwareRule, ValidationRule
 {
-    public function created(ServiceRequestUpdate $serviceRequestUpdate): void
+    protected $data = [];
+
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $user = auth()->user();
+        $type = $this->data['input']['concern_type'];
 
-        if ($user instanceof User) {
-            TriggeredAutoSubscription::dispatch($user, $serviceRequestUpdate);
+        /** @var ?Model $morph */
+        $morph = Relation::getMorphedModel($type);
+
+        if (! $morph) {
+            $fail('The concern type must be either student or prospect.');
+        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
+            $fail('The concern does not exist.');
         }
-
-        TimelineableRecordCreated::dispatch($serviceRequestUpdate->serviceRequest, $serviceRequestUpdate);
     }
 
-    public function deleted(ServiceRequestUpdate $serviceRequestUpdate): void
+    public function setData(array $data): static
     {
-        TimelineableRecordDeleted::dispatch($serviceRequestUpdate->serviceRequest, $serviceRequestUpdate);
+        $this->data = $data;
+
+        return $this;
     }
 }

@@ -2,9 +2,9 @@ type UserSubscription
     @model(class: "AdvisingApp\\Notifications\\Models\\Subscription") {
     "Unique primary key."
     id: ID!
-    "The user related to this subscription."
+    "The User related to this subscription."
     user: User! @belongsTo
-    "The subscribable the user is subscribed to."
+    "The Subscribable the User is subscribed to."
     subscribable: Educatable! @morphTo
     "The created date of the subscription."
     created_at: DateTime
@@ -12,49 +12,70 @@ type UserSubscription
     updated_at: DateTime
 }
 
+input UserSubscriptionSubscribablesQuery {
+    student: StudentQuery
+    prospect: ProspectQuery
+}
+
+input SubscriptionsQuery {
+    id: ID
+    user: UserQuery
+    subscribable: UserSubscriptionSubscribablesQuery @morphToRelation
+    subscribable_id: ID
+    subscribable_type: EducatableType
+    created_at: DateTime
+    updated_at: DateTime
+}
+
 extend type Query {
-    "Get a subscription by its primary key."
+    "Find a single subscription by an identifying attribute."
     userSubscription(
-        "Search by primary key."
-        id: ID! @whereKey
+        "The value of the attribute to match."
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @find @canResolved(ability: "view")
 
-    "Get all subscriptions."
-    userSubscriptions: [UserSubscription!]!
+    "List multiple subscriptions."
+    userSubscriptions(
+        where: SubscriptionsQuery @searchBy
+    ): [UserSubscription!]!
         @paginate
         @canModel(ability: "viewAny")
+}
+
+input CreateUserSubscriptionInput {
+    "The user to subscribe."
+    user_id: ID!
+        @rules(
+            apply: [
+                "required"
+                "exists:users,id"
+                "AdvisingApp\\Notifications\\Rules\\UniqueSubscriptionRule"
+            ]
+        )
+
+    "The subscribable to subscribe to."
+    subscribable_id: ID!
+        @rules(
+            apply: [
+                "required"
+                "AdvisingApp\\Notifications\\Rules\\SubscribableIdExistsRule"
+            ]
+        )
+
+    "The type of subscribable to subscribe to."
+    subscribable_type: EducatableType!
+        @rules(apply: ["required", "in:student,prospect"])
 }
 
 extend type Mutation {
     "Create a new subscription."
     createUserSubscription(
-        "The user to subscribe."
-        user_id: ID!
-            @rules(
-                apply: [
-                    "required"
-                    "exists:users,id"
-                    "AdvisingApp\\Notifications\\Rules\\UniqueSubscriptionRule"
-                ]
-            )
-
-        "The subscribable to subscribe to."
-        subscribable_id: ID!
-            @rules(
-                apply: [
-                    "required"
-                    "AdvisingApp\\Notifications\\Rules\\SubscribableIdExistsRule"
-                ]
-            )
-
-        "The type of subscribable to subscribe to."
-        subscribable_type: String!
-            @rules(apply: ["required", "in:student,prospect"])
+        input: CreateUserSubscriptionInput! @spread
     ): UserSubscription! @create @canModel(ability: "create")
 
     "Delete an existing subscription."
     deleteUserSubscription(
         "The primary key of the subscription."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @delete @canFind(ability: "delete", find: "id")
 }

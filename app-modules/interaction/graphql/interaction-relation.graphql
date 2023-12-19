@@ -41,7 +41,9 @@ input InteractionRelationQuery {
 
 extend type Query {
     "Get a specific interaction relation by id."
-    interactionRelation(id: ID! @eq): InteractionRelation
+    interactionRelation(
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+    ): InteractionRelation
         @find
         @softDeletes
         @canResolved(ability: "view")
@@ -86,7 +88,7 @@ extend type Mutation {
     "Update an existing interaction relation."
     updateInteractionRelation(
         "The identifier of the interaction relation you would like to update."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
 
         "The fields you would like to update."
         input: UpdateInteractionRelationInput! @spread
@@ -95,6 +97,6 @@ extend type Mutation {
     "Delete an existing interaction relation."
     deleteInteractionRelation(
         "The identifier of the interaction relation you would like to delete."
-        id: ID! @whereKey
+        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
     ): InteractionRelation @canFind(ability: "delete", find: "id") @delete
 }

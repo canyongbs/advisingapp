@@ -38,12 +38,15 @@ namespace AdvisingApp\Engagement\Observers;
 
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use App\Models\User;
 
 class EngagementFileEntitiesObserver
 {
     public function created(EngagementFileEntities $engagementFileEntities): void
     {
-        if ($user = auth()->user()) {
+        $user = auth()->user();
+
+        if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $engagementFileEntities);
         }
     }
