@@ -37,8 +37,11 @@
 namespace App\Concerns;
 
 use Illuminate\Support\Facades\Event;
+use GraphQL\Type\Definition\PhpEnumType;
+use Nuwave\Lighthouse\Schema\TypeRegistry;
 use Nuwave\Lighthouse\Events\BuildSchemaString;
 use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
+use Nuwave\Lighthouse\Exceptions\DefinitionException;
 
 trait GraphSchemaDiscovery
 {
@@ -47,5 +50,16 @@ trait GraphSchemaDiscovery
         Event::listen(function (BuildSchemaString $event) use ($path) {
             return (new SchemaStitcher($path))->getSchemaString();
         });
+    }
+
+    /**
+     * @param class-string $enumClass
+     *
+     * @throws DefinitionException
+     */
+    public function registerEnum(string $enumClass): void
+    {
+        $typeRegistry = app(TypeRegistry::class);
+        $typeRegistry->register(new PhpEnumType($enumClass));
     }
 }

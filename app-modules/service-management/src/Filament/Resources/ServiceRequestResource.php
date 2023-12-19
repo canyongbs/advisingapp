@@ -52,17 +52,11 @@ class ServiceRequestResource extends Resource
 {
     protected static ?string $model = ServiceRequest::class;
 
-    protected static ?string $navigationLabel = 'Service Management';
-
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
-    protected static ?string $navigationGroup = 'Productivity Tools';
+    protected static ?string $navigationGroup = 'Service Management';
 
-    protected static ?int $navigationSort = 4;
-
-    protected static ?string $modelLabel = 'Service Management';
-
-    protected static ?string $pluralLabel = 'Service Management';
+    protected static ?int $navigationSort = 10;
 
     public static function getRecordSubNavigation(Page $page): array
     {

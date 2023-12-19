@@ -48,6 +48,8 @@ class EditSystemUser extends EditRecord
 {
     protected static string $resource = SystemUserResource::class;
 
+    protected ?string $heading = 'Edit Programmatic (API) User';
+
     public function form(Form $form): Form
     {
         return $form->schema([
