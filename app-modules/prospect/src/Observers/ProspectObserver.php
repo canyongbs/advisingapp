@@ -34,55 +34,19 @@
 </COPYRIGHT>
 */
 
+namespace AdvisingApp\Prospect\Observers;
+
 use App\Models\User;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-
 use AdvisingApp\Prospect\Models\Prospect;
 
-use function PHPUnit\Framework\assertCount;
-use function Pest\Laravel\assertDatabaseHas;
+class ProspectObserver
+{
+    public function creating(Prospect $prospect): void
+    {
+        $user = auth()->user();
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\CreateProspectRequestFactory;
-
-// TODO: Write CreateProspect page tests
-//test('A successful action on the CreateProspect page', function () {});
-//
-//test('CreateProspect requires valid data', function ($data, $errors) {})->with([]);
-
-// Permission Tests
-
-test('CreateProspect is gated with proper access control', function () {
-    $user = User::factory()->create();
-
-    actingAs($user)
-        ->get(
-            ProspectResource::getUrl('create')
-        )->assertForbidden();
-
-    livewire(ProspectResource\Pages\CreateProspect::class)
-        ->assertForbidden();
-
-    $user->givePermissionTo('prospect.view-any');
-    $user->givePermissionTo('prospect.create');
-
-    actingAs($user)
-        ->get(
-            ProspectResource::getUrl('create')
-        )->assertSuccessful();
-
-    $request = collect(CreateProspectRequestFactory::new()->create([
-        'created_by_id' => $user->id,
-    ]));
-
-    livewire(ProspectResource\Pages\CreateProspect::class)
-        ->fillForm($request->toArray())
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    assertCount(1, Prospect::all());
-
-    assertDatabaseHas(Prospect::class, $request->toArray());
-});
+        if ($user instanceof User && ! $prospect->createdBy) {
+            $prospect->createdBy()->associate($user);
+        }
+    }
+}
