@@ -36,6 +36,7 @@
 
 namespace App\Support\MediaEncoding;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -46,57 +47,77 @@ class TiptapMediaEncoder
 {
     public static function encode(string $disk, string | array | null $state): array|string|null
     {
-        if (gettype($state) === 'string') {
-            $state = self::encodeExistingMedia($state);
+        if (blank($state)) {
+            return $state;
+        }
 
-            $diskConfig = Storage::disk($disk)->getConfig();
+        if (isset($state['content'])) {
+            $stateContent = collect($state['content'])->map(function (array $content) use ($disk) {
+                return self::getEncodedContent($content, $disk);
+            })->toArray();
 
-            $bucket = isset($diskConfig['bucket']) ? "\/{$diskConfig['bucket']}" : null;
-
-            $regex = "/<img.*?src=\"?'?(https?:\/\/[^\/]*{$bucket}(\/[^?]*)\??[^\"']*(?=\"?'?))/";
-
-            preg_match_all($regex, $state, $matches, PREG_SET_ORDER);
-
-            if (! empty($matches)) {
-                foreach ($matches as $match) {
-                    $path = $match[2];
-
-                    $urlString = $match[1];
-
-                    $state = str_replace($urlString, "{{media|path:{$path};disk:{$disk};}}", $state);
-                }
-            }
+            $state['content'] = $stateContent;
         }
 
         return $state;
     }
 
-    public static function encodeExistingMedia(string $state): string
+    public static function getEncodedContent(array $content, string $disk): array
     {
-        $regex = "/<img.*?src=\"?'?(https?:\/\/[^\/]*\/.*?\/([^?\"]*)\/([^?\"]*)\??[^\"']*(?=\"?'?))/";
+        if (isset($content['type']) && $content['type'] === 'image') {
+            $content['attrs']['src'] = self::encodeContent($content['attrs']['src'], $disk);
 
-        preg_match_all($regex, $state, $matches, PREG_SET_ORDER);
+            return $content;
+        }
 
-        if (! empty($matches)) {
-            foreach ($matches as $match) {
-                $urlString = $match[1];
-                $id = $match[2];
-                $fileName = $match[3];
-
-                $media = Media::query()
-                    ->where(
-                        [
-                            [DB::raw('id::VARCHAR'), '=', $id],
-                            ['file_name', '=', $fileName],
-                        ]
-                    )->first();
-
-                if (! $media) {
-                    continue;
+        if (is_array($content)) {
+            $content = collect($content)->map(function ($item) use ($disk) {
+                if (is_array($item)) {
+                    return self::getEncodedContent($item, $disk);
                 }
 
-                $state = str_replace($urlString, "{{media|id:{$id};}}", $state);
-            }
+                return $item;
+            })->toArray();
+        }
+
+        return $content;
+    }
+
+    public static function encodeContent(string $content, string $disk): string
+    {
+        $diskConfig = Storage::disk($disk)->getConfig();
+
+        $bucket = isset($diskConfig['bucket']) ? "/{$diskConfig['bucket']}/" : null;
+
+        $path = parse_url($content, PHP_URL_PATH);
+
+        $path = Str::of($path)->replaceFirst($bucket, '');
+
+        ray('path', $path);
+
+        if (Str::contains($path, config('filament-tiptap-editor.directory'))) {
+            return "{{media|path:{$path};disk:{$disk};}}";
+        }
+
+        return self::encodeExistingMedia($path);
+    }
+
+    public static function encodeExistingMedia(string $state): string
+    {
+        $path = parse_url($state, PHP_URL_PATH);
+        $id = Str::of($path)->before('/');
+        $fileName = Str::of($path)->after('/');
+
+        $media = Media::query()
+            ->where(
+                [
+                    [DB::raw('id::VARCHAR'), '=', $id],
+                    ['file_name', '=', $fileName],
+                ]
+            )->first();
+
+        if (! is_null($media)) {
+            $state = str_replace($path, "{{media|id:{$id};}}", $state);
         }
 
         return $state;
@@ -104,11 +125,47 @@ class TiptapMediaEncoder
 
     public static function decode(string | array | null $state): array|string|null
     {
-        if (gettype($state) === 'string') {
-            $state = self::decodeMediaIds($state);
-
-            $state = self::decodePaths($state);
+        if (blank($state)) {
+            return $state;
         }
+
+        if (isset($state['content'])) {
+            $stateContent = collect($state['content'])->map(function (array $content) {
+                return self::getDecodedContent($content);
+            })->toArray();
+
+            $state['content'] = $stateContent;
+        }
+
+        return $state;
+    }
+
+    public static function getDecodedContent(array $content): array
+    {
+        if (isset($content['type']) && $content['type'] === 'image') {
+            $content['attrs']['src'] = self::decodeContent($content['attrs']['src']);
+
+            return $content;
+        }
+
+        if (is_array($content)) {
+            $content = collect($content)->map(function ($item) {
+                if (is_array($item)) {
+                    return self::getDecodedContent($item);
+                }
+
+                return $item;
+            })->toArray();
+        }
+
+        return $content;
+    }
+
+    public static function decodeContent(string $state): string
+    {
+        $state = self::decodeMediaIds($state);
+
+        $state = self::decodePaths($state);
 
         return $state;
     }
@@ -166,7 +223,11 @@ class TiptapMediaEncoder
 
         $regex = '/{{media\|path:([^}]*);disk:([^}]*);}}/';
 
-        preg_match_all($regex, $content, $matches, PREG_SET_ORDER);
+        if (is_null($content)) {
+            return false;
+        }
+
+        preg_match_all($regex, json_encode($content, JSON_UNESCAPED_SLASHES), $matches, PREG_SET_ORDER);
 
         if (! empty($matches)) {
             foreach ($matches as $match) {
@@ -176,10 +237,10 @@ class TiptapMediaEncoder
 
                 $storedMedia = $model->addMediaFromDisk($path, $disk)->toMediaCollection($attribute);
 
-                $content = str_replace($shortcode, "{{media|id:{$storedMedia->id};}}", $content);
+                $content = str_replace($shortcode, "{{media|id:{$storedMedia->id};}}", json_encode($content, JSON_UNESCAPED_SLASHES));
             }
 
-            $model->{$attribute} = $content;
+            $model->{$attribute} = json_decode($content);
 
             return true;
         }
@@ -187,11 +248,11 @@ class TiptapMediaEncoder
         return false;
     }
 
-    public static function getMediaItemsInContent(string $content): Collection
+    public static function getMediaItemsInContent(?array $content): Collection
     {
         $regex = '/{{media\|id:([^};]*);?}}/';
 
-        preg_match_all($regex, $content, $matches, PREG_SET_ORDER);
+        preg_match_all($regex, json_encode($content, JSON_UNESCAPED_SLASHES), $matches, PREG_SET_ORDER);
 
         if (! empty($matches)) {
             $mediaIds = [];

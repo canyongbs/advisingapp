@@ -43,8 +43,8 @@ class KnowledgeBaseItemSeeder extends Seeder
 {
     public function run(): void
     {
-        KnowledgeBaseItem::factory()
-            ->count(25)
-            ->create();
+        // KnowledgeBaseItem::factory()
+        //     ->count(25)
+        //     ->create();
     }
 }

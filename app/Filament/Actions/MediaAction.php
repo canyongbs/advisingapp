@@ -114,8 +114,9 @@ class MediaAction extends BaseMediaAction
 
                             $upload = $file->{$storeMethod}($component->getDirectory(), $filename . '.' . $file->getClientOriginalExtension(), $component->getDiskName());
 
-                            return $component->getVisibility() === 'private' ? Storage::disk($component->getDiskName())->temporaryUrl($upload, now()->addMinutes(5)) : Storage::disk($component->getDiskName())->url($upload);
-                            //return Storage::disk($component->getDiskName())->url($upload);
+                            return $component->getVisibility() === 'private'
+                                ? Storage::disk($component->getDiskName())->temporaryUrl($upload, now()->addMinutes(5))
+                                : Storage::disk($component->getDiskName())->url($upload);
                         }),
                     TextInput::make('link_text')
                         ->label(__('filament-tiptap-editor::media-modal.labels.link_text'))
@@ -133,12 +134,15 @@ class MediaAction extends BaseMediaAction
                         ->default('document'),
                 ];
             })->action(function (TiptapEditor $component, $data) {
+
+
                 $source = str_starts_with($data['src'], 'http')
                     ? $data['src']
                     : config('app.url') . Storage::url($data['src']);
 
                 $component->getLivewire()->dispatch(
-                    'insert-media',
+                    'insert-content',
+                    type: 'media',
                     statePath: $component->getStatePath(),
                     media: [
                         'src' => $source,
