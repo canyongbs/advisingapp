@@ -45,7 +45,7 @@ class ProspectObserver
     {
         $user = auth()->user();
 
-        if ($user instanceof User) {
+        if ($user instanceof User && ! $prospect->createdBy) {
             $prospect->createdBy()->associate($user);
         }
     }
