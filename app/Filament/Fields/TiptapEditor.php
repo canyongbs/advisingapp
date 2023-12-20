@@ -49,8 +49,6 @@ class TiptapEditor extends BaseTiptapEditor
         parent::setUp();
 
         $this->afterStateHydrated(function (BaseTiptapEditor $component, string | array | null $state) {
-
-
             if (! $state) {
                 return;
             }

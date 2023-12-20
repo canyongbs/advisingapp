@@ -134,8 +134,6 @@ class MediaAction extends BaseMediaAction
                         ->default('document'),
                 ];
             })->action(function (TiptapEditor $component, $data) {
-
-
                 $source = str_starts_with($data['src'], 'http')
                     ? $data['src']
                     : config('app.url') . Storage::url($data['src']);

@@ -47,13 +47,23 @@ class TiptapMediaEncoder
 {
     public static function encode(string $disk, string | array | null $state): array|string|null
     {
+        return self::processContent($state, [self::class, 'getEncodedContent'], $disk);
+    }
+
+    public static function decode(string | array | null $state): array|string|null
+    {
+        return self::processContent($state, [self::class, 'getDecodedContent']);
+    }
+
+    public static function processContent(string | array | null $state, callable $processFunction, string $disk = null): array|string|null
+    {
         if (blank($state)) {
             return $state;
         }
 
         if (isset($state['content'])) {
-            $stateContent = collect($state['content'])->map(function (array $content) use ($disk) {
-                return self::getEncodedContent($content, $disk);
+            $stateContent = collect($state['content'])->map(function (array $content) use ($processFunction, $disk) {
+                return $processFunction($content, $disk);
             })->toArray();
 
             $state['content'] = $stateContent;
@@ -64,16 +74,26 @@ class TiptapMediaEncoder
 
     public static function getEncodedContent(array $content, string $disk): array
     {
+        return self::processContentItem($content, [self::class, 'encodeContent'], $disk);
+    }
+
+    public static function getDecodedContent(array $content): array
+    {
+        return self::processContentItem($content, [self::class, 'decodeContent']);
+    }
+
+    public static function processContentItem(array $content, callable $processFunction, string $disk = null): array
+    {
         if (isset($content['type']) && $content['type'] === 'image') {
-            $content['attrs']['src'] = self::encodeContent($content['attrs']['src'], $disk);
+            $content['attrs']['src'] = $processFunction($content['attrs']['src'], $disk);
 
             return $content;
         }
 
         if (is_array($content)) {
-            $content = collect($content)->map(function ($item) use ($disk) {
+            $content = collect($content)->map(function ($item) use ($processFunction, $disk) {
                 if (is_array($item)) {
-                    return self::getEncodedContent($item, $disk);
+                    return self::processContentItem($item, $processFunction, $disk);
                 }
 
                 return $item;
@@ -87,19 +107,22 @@ class TiptapMediaEncoder
     {
         $diskConfig = Storage::disk($disk)->getConfig();
 
-        $bucket = isset($diskConfig['bucket']) ? "/{$diskConfig['bucket']}/" : null;
+        $bucket = $diskConfig['bucket'] ?? null;
+        $bucketPath = $bucket ? "/{$bucket}/" : '';
 
         $path = parse_url($content, PHP_URL_PATH);
 
-        $path = Str::of($path)->replaceFirst($bucket, '');
-
-        ray('path', $path);
-
-        if (Str::contains($path, config('filament-tiptap-editor.directory'))) {
-            return "{{media|path:{$path};disk:{$disk};}}";
+        if (! $path) {
+            $path = '';
         }
 
-        return self::encodeExistingMedia($path);
+        $path = Str::of($path)->replaceFirst($bucketPath, '');
+
+        $defaultDirectory = config('filament-tiptap-editor.directory');
+
+        return Str::contains($path, $defaultDirectory)
+            ? "{{media|path:{$path};disk:{$disk};}}"
+            : self::encodeExistingMedia($path);
     }
 
     public static function encodeExistingMedia(string $state): string
@@ -121,44 +144,6 @@ class TiptapMediaEncoder
         }
 
         return $state;
-    }
-
-    public static function decode(string | array | null $state): array|string|null
-    {
-        if (blank($state)) {
-            return $state;
-        }
-
-        if (isset($state['content'])) {
-            $stateContent = collect($state['content'])->map(function (array $content) {
-                return self::getDecodedContent($content);
-            })->toArray();
-
-            $state['content'] = $stateContent;
-        }
-
-        return $state;
-    }
-
-    public static function getDecodedContent(array $content): array
-    {
-        if (isset($content['type']) && $content['type'] === 'image') {
-            $content['attrs']['src'] = self::decodeContent($content['attrs']['src']);
-
-            return $content;
-        }
-
-        if (is_array($content)) {
-            $content = collect($content)->map(function ($item) {
-                if (is_array($item)) {
-                    return self::getDecodedContent($item);
-                }
-
-                return $item;
-            })->toArray();
-        }
-
-        return $content;
     }
 
     public static function decodeContent(string $state): string
