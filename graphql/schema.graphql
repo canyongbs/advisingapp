@@ -2,6 +2,14 @@
 scalar DateTime
     @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+scalar UUID
+    @scalar(class: "App\\GraphQL\\Scalars\\UUID")
+    @searchByOperators(type: "ID")
+
+scalar EducatableId
+    @scalar(class: "App\\GraphQL\\Scalars\\EducatableId")
+    @searchByOperators(type: "ID")
+
 type Query
 
 type Mutation

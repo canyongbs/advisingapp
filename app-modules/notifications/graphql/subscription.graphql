@@ -1,7 +1,7 @@
 type UserSubscription
     @model(class: "AdvisingApp\\Notifications\\Models\\Subscription") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
     "The User related to this subscription."
     user: User! @belongsTo
     "The Subscribable the User is subscribed to."
@@ -18,10 +18,10 @@ input UserSubscriptionSubscribablesQuery {
 }
 
 input SubscriptionsQuery {
-    id: ID
+    id: UUID
     user: UserQuery
     subscribable: UserSubscriptionSubscribablesQuery @morphToRelation
-    subscribable_id: ID
+    subscribable_id: EducatableId
     subscribable_type: EducatableType
     created_at: DateTime
     updated_at: DateTime
@@ -31,7 +31,7 @@ extend type Query {
     "Find a single subscription by an identifying attribute."
     userSubscription(
         "The value of the attribute to match."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:subscriptions"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @find @canResolved(ability: "view")
 
     "List multiple subscriptions."
@@ -44,7 +44,7 @@ extend type Query {
 
 input CreateUserSubscriptionInput {
     "The user to subscribe."
-    user_id: ID!
+    user_id: UUID!
         @rules(
             apply: [
                 "required"
@@ -54,7 +54,7 @@ input CreateUserSubscriptionInput {
         )
 
     "The subscribable to subscribe to."
-    subscribable_id: ID!
+    subscribable_id: EducatableId!
         @rules(
             apply: [
                 "required"
@@ -76,6 +76,6 @@ extend type Mutation {
     "Delete an existing subscription."
     deleteUserSubscription(
         "The primary key of the subscription."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:subscriptions"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @delete @canFind(ability: "delete", find: "id")
 }

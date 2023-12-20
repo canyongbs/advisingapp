@@ -1,6 +1,6 @@
 type UserCareTeam @model(class: "AdvisingApp\\CareTeam\\Models\\CareTeam") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The User related to this care team assignment."
     user: User! @belongsTo
@@ -34,7 +34,7 @@ extend type Query {
     "Find a single care team by an identifying attribute."
     userCareTeam(
         "The value of the attribute to match."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:care_teams"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:care_teams"])
     ): UserCareTeam
         @find
         @canResolved(ability: "view")
@@ -50,7 +50,7 @@ extend type Query {
 
 input CreateUserCareTeamInput {
     "The User to add to the Care Team of."
-    user_id: ID!
+    user_id: UUID!
         @rules(
             apply: [
                 "required"
@@ -60,7 +60,7 @@ input CreateUserCareTeamInput {
         )
 
     "The Educatable to add to the care team."
-    educatable_id: ID!
+    educatable_id: EducatableId!
         @rules(
             apply: [
                 "required"
@@ -82,6 +82,6 @@ extend type Mutation {
     "Delete an existing care team assignment."
     deleteUserCareTeam(
         "The primary key of the care team assignment."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:care_teams"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:care_teams"])
     ): UserCareTeam @delete @canFind(ability: "delete", find: "id")
 }

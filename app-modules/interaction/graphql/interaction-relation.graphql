@@ -1,7 +1,7 @@
 type InteractionRelation
     @model(class: "AdvisingApp\\Interaction\\Models\\InteractionRelation") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The name of the interaction relation."
     name: String!
@@ -21,7 +21,7 @@ type InteractionRelation
 
 input InteractionRelationQuery {
     "The unique primary key of the interaction relation."
-    id: ID
+    id: UUID
 
     "The name of the interaction relation."
     name: String
@@ -42,7 +42,7 @@ input InteractionRelationQuery {
 extend type Query {
     "Get a specific interaction relation by id."
     interactionRelation(
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
     ): InteractionRelation
         @find
         @softDeletes
@@ -88,7 +88,7 @@ extend type Mutation {
     "Update an existing interaction relation."
     updateInteractionRelation(
         "The identifier of the interaction relation you would like to update."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
 
         "The fields you would like to update."
         input: UpdateInteractionRelationInput! @spread
@@ -97,6 +97,6 @@ extend type Mutation {
     "Delete an existing interaction relation."
     deleteInteractionRelation(
         "The identifier of the interaction relation you would like to delete."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_relations"])
     ): InteractionRelation @canFind(ability: "delete", find: "id") @delete
 }

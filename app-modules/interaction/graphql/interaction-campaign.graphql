@@ -1,7 +1,7 @@
 type InteractionCampaign
     @model(class: "AdvisingApp\\Interaction\\Models\\InteractionCampaign") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The name of the interaction campaign."
     name: String!
@@ -21,7 +21,7 @@ type InteractionCampaign
 
 input InteractionCampaignQuery {
     "The unique primary key of the interaction campaign."
-    id: ID
+    id: UUID
 
     "The name of the interaction relation."
     name: String
@@ -42,7 +42,7 @@ input InteractionCampaignQuery {
 extend type Query {
     "Get a specific interaction campaign by id."
     interactionCampaign(
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
     ): InteractionCampaign
         @find
         @softDeletes
@@ -88,7 +88,7 @@ extend type Mutation {
     "Update an existing interaction campaign."
     updateInteractionCampaign(
         "The identifier of the interaction campaign you would like to update."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
 
         "The fields you would like to update."
         input: UpdateInteractionCampaignInput! @spread
@@ -97,6 +97,6 @@ extend type Mutation {
     "Delete an existing interaction campaign."
     deleteInteractionCampaign(
         "The identifier of the interaction campaign you would like to delete."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
     ): InteractionCampaign @canFind(ability: "delete", find: "id") @delete
 }

@@ -1,6 +1,6 @@
 type Alert @model(class: "AdvisingApp\\Alert\\Models\\Alert") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The Concern of the alert."
     concern: Educatable! @morphTo
@@ -50,7 +50,7 @@ extend type Query {
     "Find a single alert by an identifying attribute."
     alert(
         "The value of the attribute to match."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
     ): Alert
         @find
         @softDeletes
@@ -67,7 +67,7 @@ extend type Query {
 
 input CreateAlertInput {
     "The Concern related to the alert."
-    concern_id: ID! @rules(apply: [
+    concern_id: UUID! @rules(apply: [
         "required"
         "AdvisingApp\\Alert\\Rules\\ConcernIdExistsRules"
     ])
@@ -111,7 +111,7 @@ extend type Mutation {
     "Update an alert."
     updateAlert(
         "The identifier of the alert you would like to update."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
 
         "The fields you would like to update."
         input: UpdateAlertInput! @spread
@@ -120,7 +120,7 @@ extend type Mutation {
     "Delete an alert."
     deleteAlert(
         "The identifier of the alert you would like to delete."
-        id: ID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
+        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
     ): Alert
         @delete
         @canFind(ability: "delete", find: "id")
