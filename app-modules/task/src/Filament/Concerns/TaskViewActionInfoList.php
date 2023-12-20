@@ -79,8 +79,7 @@ trait TaskViewActionInfoList
                     ->schema([
                         TextEntry::make('status')
                             ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
-                            ->badge()
-                            ->color(fn (Task $record) => $record->status->getTableColor()),
+                            ->badge(),
                         TextEntry::make('due')
                             ->label('Due Date')
                             ->default('N/A'),
