@@ -39,22 +39,26 @@ input InteractionRelationQuery {
     deleted_at: DateTime
 }
 
-extend type Query {
+type InteractionRelationQueries {
     "Get a specific interaction relation by id."
-    interactionRelation(
+    find(
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interaction_relations"])
     ): InteractionRelation @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions relations."
-    interactionRelations(
+    list(
         "Filter by the interaction relations attributes and relations."
         where: InteractionRelationQuery @searchBy
     ): [InteractionRelation!]!
-        @paginate
-        @softDeletes
-        @canModel(ability: "viewAny")
+    @paginate
+    @softDeletes
+    @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    interactionRelation: InteractionRelationQueries! @namespaced
 }
 
 input CreateInteractionRelationInput {
@@ -78,28 +82,32 @@ input UpdateInteractionRelationInput {
         )
 }
 
-extend type Mutation {
-    "Create a interaction relation."
-    createInteractionRelation(
+type InteractionRelationMutations {
+    "Create an interaction relation."
+    create(
         input: CreateInteractionRelationInput! @spread
     ): InteractionRelation! @create @canModel(ability: "create")
 
     "Update an existing interaction relation."
-    updateInteractionRelation(
+    update(
         "The identifier of the interaction relation you would like to update."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interaction_relations"])
 
         "The fields you would like to update."
         input: UpdateInteractionRelationInput! @spread
     ): InteractionRelation! @canFind(ability: "update", find: "id") @update
 
     "Delete an existing interaction relation."
-    deleteInteractionRelation(
+    delete(
         "The identifier of the interaction relation you would like to delete."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interaction_relations"])
     ): InteractionRelation @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    interactionRelation: InteractionRelationMutations! @namespaced
 }

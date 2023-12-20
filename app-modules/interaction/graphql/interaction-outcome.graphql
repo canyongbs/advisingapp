@@ -39,22 +39,26 @@ input InteractionOutcomeQuery {
     deleted_at: DateTime
 }
 
-extend type Query {
+type InteractionOutcomeQueries {
     "Get a specific interaction outcome by id."
-    interactionOutcome(
+    find(
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
     ): InteractionOutcome @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions outcomes."
-    interactionOutcomes(
+    list(
         "Filter by the interaction outcomes attributes and relations."
         where: InteractionOutcomeQuery @searchBy
     ): [InteractionOutcome!]!
-        @paginate
-        @softDeletes
-        @canModel(ability: "viewAny")
+    @paginate
+    @softDeletes
+    @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    interactionOutcome: InteractionOutcomeQueries! @namespaced
 }
 
 input CreateInteractionOutcomeInput {
@@ -76,28 +80,32 @@ input UpdateInteractionOutcomeInput {
         @rules(apply: ["string", "max:255", "unique:interaction_outcomes,name"])
 }
 
-extend type Mutation {
-    "Create a interaction outcome."
-    createInteractionOutcome(
+type InteractionOutcomeMutations {
+    "Create an interaction outcome."
+    create(
         input: CreateInteractionOutcomeInput! @spread
     ): InteractionOutcome! @create @canModel(ability: "create")
 
     "Update an existing interaction outcome."
-    updateInteractionOutcome(
+    update(
         "The identifier of the interaction outcome you would like to update."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
 
         "The fields you would like to update."
         input: UpdateInteractionOutcomeInput! @spread
     ): InteractionOutcome! @canFind(ability: "update", find: "id") @update
 
     "Delete an existing interaction outcome."
-    deleteInteractionOutcome(
+    delete(
         "The identifier of the interaction outcome you would like to delete."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
     ): InteractionOutcome @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    interactionOutcome: InteractionOutcomeMutations! @namespaced
 }

@@ -46,33 +46,37 @@ input AlertsQuery {
     deleted_at: DateTime
 }
 
-extend type Query {
+type AlertQueries {
     "Find a single alert by an identifying attribute."
-    alert(
+    find(
         "The value of the attribute to match."
         id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
     ): Alert @find @softDeletes @canResolved(ability: "view")
 
     "List multiple alerts."
-    alerts(where: AlertsQuery @searchBy): [Alert!]!
+    list(where: AlertsQuery @searchBy): [Alert!]!
         @paginate
         @softDeletes
         @canModel(ability: "viewAny")
 }
 
+extend type Query {
+    alert: AlertQueries! @namespaced
+}
+
 input CreateAlertInput {
     "The Concern related to the alert."
     concern_id: EducatableId!
-        @rules(
-            apply: [
-                "required"
-                "AdvisingApp\\Alert\\Rules\\ConcernIdExistsRules"
-            ]
-        )
+    @rules(
+        apply: [
+            "required"
+            "AdvisingApp\\Alert\\Rules\\ConcernIdExistsRules"
+        ]
+    )
 
     "The type of Concern related to the alert."
     concern_type: EducatableType!
-        @rules(apply: ["required", "in:student,prospect"])
+    @rules(apply: ["required", "in:student,prospect"])
 
     "The description of the alert."
     description: String! @rules(apply: ["required", "string"])
@@ -101,14 +105,14 @@ input UpdateAlertInput {
     suggested_intervention: String @rules(apply: ["filled", "string"])
 }
 
-extend type Mutation {
+type AlertMutations {
     "Create an alert."
-    createAlert(input: CreateAlertInput! @spread): Alert!
-        @create
-        @canModel(ability: "create")
+    create(input: CreateAlertInput! @spread): Alert!
+    @create
+    @canModel(ability: "create")
 
     "Update an alert."
-    updateAlert(
+    update(
         "The identifier of the alert you would like to update."
         id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
 
@@ -117,8 +121,12 @@ extend type Mutation {
     ): Alert! @update @canFind(ability: "update", find: "id")
 
     "Delete an alert."
-    deleteAlert(
+    delete(
         "The identifier of the alert you would like to delete."
         id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:alerts"])
     ): Alert @delete @canFind(ability: "delete", find: "id")
+}
+
+extend type Mutation {
+    alert: AlertMutations! @namespaced
 }

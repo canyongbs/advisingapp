@@ -87,19 +87,23 @@ input InteractionsQuery {
     updated_at: DateTime
 }
 
-extend type Query {
+type InteractionQueries {
     "Find a single interaction by an identifying attribute."
-    interaction(
+    find(
         "The value of the attribute to match."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interactions"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @find @canResolved(ability: "view")
 
     "List multiple interactions."
-    interactions(where: InteractionsQuery @searchBy): [Interaction!]!
-        @paginate
-        @canModel(ability: "viewAny")
+    list(where: InteractionsQuery @searchBy): [Interaction!]!
+    @paginate
+    @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    interaction: InteractionQueries! @namespaced
 }
 
 input UpdateInteractionInput {
@@ -219,30 +223,34 @@ input CreateInteractionInput {
     end_datetime: DateTime @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
 }
 
-extend type Mutation {
+type InteractionMutations {
     "Create an interaction."
-    createInteraction(input: CreateInteractionInput! @spread): Interaction!
-        @create
-        @canModel(ability: "create")
+    create(input: CreateInteractionInput! @spread): Interaction!
+    @create
+    @canModel(ability: "create")
 
     "Update an interaction."
-    updateInteraction(
+    update(
         "The identifier of the interaction you would like to update."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interactions"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interactions"])
 
         "The fields you would like to update."
         input: UpdateInteractionInput! @spread
     ): Interaction! @canFind(ability: "update", find: "id") @update
 
     "Delete an interaction."
-    deleteInteraction(
+    delete(
         "The identifier of the interaction you would like to delete."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:interactions"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    interaction: InteractionMutations! @namespaced
 }
 
 #import ./interaction-campaign.graphql

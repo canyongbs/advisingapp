@@ -27,19 +27,23 @@ input SubscriptionsQuery {
     updated_at: DateTime
 }
 
-extend type Query {
+type UserSubscriptionQueries {
     "Find a single subscription by an identifying attribute."
-    userSubscription(
+    find(
         "The value of the attribute to match."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:subscriptions"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @find @canResolved(ability: "view")
 
     "List multiple subscriptions."
-    userSubscriptions(
+    list(
         where: SubscriptionsQuery @searchBy
     ): [UserSubscription!]! @paginate @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    subscription: UserSubscriptionQueries! @namespaced
 }
 
 input CreateUserSubscriptionInput {
@@ -67,17 +71,21 @@ input CreateUserSubscriptionInput {
         @rules(apply: ["required", "in:student,prospect"])
 }
 
-extend type Mutation {
-    "Create a new subscription."
-    createUserSubscription(
+type UserSubscriptionMutations {
+    "Subscribe a User to a Subscribable."
+    subscribe(
         input: CreateUserSubscriptionInput! @spread
     ): UserSubscription! @create @canModel(ability: "create")
 
-    "Delete an existing subscription."
-    deleteUserSubscription(
+    "Unsubscribe a User from a Subscribable."
+    unsubscribe(
         "The primary key of the subscription."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:subscriptions"])
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @delete @canFind(ability: "delete", find: "id")
+}
+
+extend type Mutation {
+    subscription: UserSubscriptionMutations! @namespaced
 }

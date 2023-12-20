@@ -1,4 +1,4 @@
-type UserCareTeam @model(class: "AdvisingApp\\CareTeam\\Models\\CareTeam") {
+type CareTeam @model(class: "AdvisingApp\\CareTeam\\Models\\CareTeam") {
     "Unique primary key."
     id: UUID!
 
@@ -15,37 +15,41 @@ type UserCareTeam @model(class: "AdvisingApp\\CareTeam\\Models\\CareTeam") {
     updated_at: DateTime
 }
 
-input UserCareTeamEducatablesQuery {
+input CareTeamEducatablesQuery {
     student: StudentQuery
     prospect: ProspectQuery
 }
 
-input UserCareTeamsQuery {
+input CareTeamsQuery {
     id: UUID
     user: UserQuery
-    educatable: UserCareTeamEducatablesQuery @morphToRelation
+    educatable: CareTeamEducatablesQuery @morphToRelation
     educatable_id: EducatableId
     educatable_type: EducatableType
     created_at: DateTime
     updated_at: DateTime
 }
 
-extend type Query {
+type CareTeamQueries {
     "Find a single care team by an identifying attribute."
-    userCareTeam(
+    find(
         "The value of the attribute to match."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:care_teams"])
-    ): UserCareTeam @find @canResolved(ability: "view")
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:care_teams"])
+    ): CareTeam @find @canResolved(ability: "view")
 
     "List multiple care team assignments."
-    userCareTeams(where: UserCareTeamsQuery @searchBy): [UserCareTeam!]!
-        @paginate
-        @canModel(ability: "viewAny")
+    list(where: CareTeamsQuery @searchBy): [CareTeam!]!
+    @paginate
+    @canModel(ability: "viewAny")
 }
 
-input CreateUserCareTeamInput {
+extend type Query {
+    careTeam: CareTeamQueries! @namespaced
+}
+
+input CreateCareTeamInput {
     "The User to add to the Care Team of."
     user_id: UUID!
         @rules(
@@ -70,17 +74,21 @@ input CreateUserCareTeamInput {
         @rules(apply: ["required", "in:student,prospect"])
 }
 
-extend type Mutation {
-    "Create a new care team assignment."
-    createUserCareTeam(input: CreateUserCareTeamInput! @spread): UserCareTeam!
-        @create
-        @canModel(ability: "create")
+type CareTeamMutations {
+    "Assign a User to a Care Team."
+    assign(input: CreateCareTeamInput! @spread): CareTeam!
+    @create
+    @canModel(ability: "create")
 
-    "Delete an existing care team assignment."
-    deleteUserCareTeam(
+    "Remove a User from a Care Team."
+    remove(
         "The primary key of the care team assignment."
         id: UUID!
-            @whereKey
-            @rules(apply: ["required", "uuid", "exists:care_teams"])
-    ): UserCareTeam @delete @canFind(ability: "delete", find: "id")
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:care_teams"])
+    ): CareTeam @delete @canFind(ability: "delete", find: "id")
+}
+
+extend type Mutation {
+    careTeam: CareTeamMutations! @namespaced
 }

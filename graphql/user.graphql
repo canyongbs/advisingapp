@@ -1,22 +1,10 @@
-extend type Query {
-    "Find a single user by an identifying attribute."
-    user(
-        "Search by primary key."
-        id: UUID
-            @eq
-            @rules(apply: ["prohibits:email", "required_without:email"])
+"Account of a person who utilizes this application."
+type User @model(class: "user") {
+    "Unique primary key."
+    id: UUID!
 
-        "Search by email address."
-        email: String
-            @eq
-            @rules(apply: ["prohibits:id", "required_without:id", "email"])
-    ): User @find @canResolved(ability: "view")
-
-    "List multiple users."
-    users(
-        "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
-        name: String @where(operator: "like")
-    ): [User!]! @paginate @canModel(ability: "viewAny")
+    "Unique email address."
+    email: String!
 }
 
 input UserQuery {
@@ -27,11 +15,28 @@ input UserQuery {
     email: String!
 }
 
-"Account of a person who utilizes this application."
-type User @model(class: "user") {
-    "Unique primary key."
-    id: UUID!
+type UserQueries {
+    "Find a single user by an identifying attribute."
+    find(
+        "Search by primary key."
+        id: UUID
+        @eq
+        @rules(apply: ["prohibits:email", "required_without:email"])
 
-    "Unique email address."
-    email: String!
+        "Search by email address."
+        email: String
+        @eq
+        @rules(apply: ["prohibits:id", "required_without:id", "email"])
+    ): User @find @canResolved(ability: "view")
+
+    "List multiple users."
+    list(
+        "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
+        name: String @where(operator: "like")
+    ): [User!]! @paginate @canModel(ability: "viewAny")
 }
+
+extend type Query {
+    user: UserQueries! @namespaced
+}
+
