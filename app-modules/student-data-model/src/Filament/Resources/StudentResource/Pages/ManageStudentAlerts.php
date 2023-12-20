@@ -81,7 +81,7 @@ class ManageStudentAlerts extends ManageRelatedRecords
         /** @var Student $ownerRecord */
         $alertsCount = Cache::tags('{alert-count}')
             ->remember(
-                "alert-count-{$ownerRecord->getKey()}",
+                "{alert-count-{$ownerRecord->getKey()}}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     return $ownerRecord->alerts()->status(AlertStatus::Active)->count();

@@ -117,7 +117,7 @@ class ManageStudentFormSubmissions extends ManageRelatedRecords
         /** @var Prospect $ownerRecord */
         $formSubmissionsCount = Cache::tags('{form-submission-count}')
             ->remember(
-                "form-submission-count-{$ownerRecord->getKey()}",
+                "{form-submission-count-{$ownerRecord->getKey()}}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     return $ownerRecord->formSubmissions()->count();

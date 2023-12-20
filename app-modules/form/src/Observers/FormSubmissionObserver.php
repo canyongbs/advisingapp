@@ -52,7 +52,7 @@ class FormSubmissionObserver
         if (! is_null($submission->author)) {
             Cache::tags('{form-submission-count}')
                 ->forget(
-                    "form-submission-count-{$submission->author->getKey()}"
+                    "{form-submission-count-{$submission->author->getKey()}}"
                 );
         }
     }
