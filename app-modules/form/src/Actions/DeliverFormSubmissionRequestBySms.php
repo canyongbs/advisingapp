@@ -36,27 +36,16 @@
 
 namespace AdvisingApp\Form\Actions;
 
-use Twilio\Rest\Client;
-use Twilio\Exceptions\TwilioException;
+use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
 
+// TODO Turn this into a notification
 class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
 {
     public function handle(): void
     {
-        $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
-
-        try {
-            $client->messages->create(
-                ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->submission->author->mobile,
-                [
-                    'from' => config('services.twilio.from_number'),
-                    'body' => "You have been sent a request to complete {$this->submission->submissible->name} by {$this->submission->requester->name}." .
-                        (filled($this->submission->request_note) ? " {$this->submission->request_note}" : '') .
-                        ' ' . route('forms.show', ['form' => $this->submission->submissible]),
-                ],
-            );
-        } catch (TwilioException $e) {
-            // TODO Notify someone of the failure
-        }
+        $this
+            ->submission
+            ->author
+            ->notify(new FormSubmissionRequestSmsNotification($this->submission));
     }
 }

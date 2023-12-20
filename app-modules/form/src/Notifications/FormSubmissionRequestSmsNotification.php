@@ -34,17 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+namespace AdvisingApp\Form\Notifications;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
 
-interface SmsNotification
+class FormSubmissionRequestSmsNotification extends BaseNotification
 {
-    public function toSms(object $notifiable): TwilioMessage;
+    use SmsChannelTrait;
 
-    public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false;
+    public function __construct(
+        public FormSubmission $submission,
+    ) {}
 
-    public function afterSend(object $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void;
+    public function toSms(object $notifiable): TwilioMessage
+    {
+        $body = "You have been sent a request to complete {$this->submission->submissible->name} by {$this->submission->requester->name}." .
+                    (filled($this->submission->request_note) ? " {$this->submission->request_note}" : '') .
+                    ' ' . route('forms.show', ['form' => $this->submission->submissible]);
+
+        return TwilioMessage::make($notifiable)
+            ->content($body);
+    }
 }
