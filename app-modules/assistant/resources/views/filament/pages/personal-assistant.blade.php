@@ -39,10 +39,7 @@ use Illuminate\Support\Facades\Vite;
 
 ?>
 
-<x-filament-panels::page
-    class="max-h-screen"
-    full-height="true"
->
+<x-filament-panels::page full-height="true">
     <div
         class="flex h-full flex-col"
         wire:init="determineIfConsentWasGiven"
