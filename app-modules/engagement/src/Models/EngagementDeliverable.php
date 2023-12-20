@@ -44,11 +44,7 @@ use AdvisingApp\Engagement\Drivers\DeliverableDriver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
-use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
-use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
-use AdvisingApp\Engagement\Exceptions\UnknownDeliveryMethodException;
 
 /**
  * @mixin IdeHelperEngagementDeliverable
@@ -111,26 +107,6 @@ class EngagementDeliverable extends BaseModel implements Auditable
         return match ($this->channel) {
             EngagementDeliveryMethod::Email => new EmailDriver($this),
             EngagementDeliveryMethod::Sms => new SmsDriver($this),
-        };
-    }
-
-    // TODO We can move this to the "driver"
-    public function jobForDelivery(): QueuedEngagementDelivery
-    {
-        return match ($this->channel) {
-            EngagementDeliveryMethod::Email => new EngagementEmailChannelDelivery($this),
-            EngagementDeliveryMethod::Sms => new EngagementSmsChannelDelivery($this),
-            default => throw new UnknownDeliveryMethodException("Delivery channel '{$this->channel}' is not supported."),
-        };
-    }
-
-    // TODO We can move this to the "driver"
-    public function deliver(): void
-    {
-        match ($this->channel) {
-            EngagementDeliveryMethod::Email => EngagementEmailChannelDelivery::dispatch($this),
-            EngagementDeliveryMethod::Sms => EngagementSmsChannelDelivery::dispatch($this),
-            default => throw new UnknownDeliveryMethodException("Delivery channel '{$this->channel}' is not supported."),
         };
     }
 }

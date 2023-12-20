@@ -90,7 +90,7 @@ class CreateEngagementBatch implements ShouldQueue
         });
 
         $deliverableJobs = $deliverables->flatten()->map(function (EngagementDeliverable $deliverable) {
-            return $deliverable->jobForDelivery();
+            return $deliverable->driver()->jobForDelivery();
         });
 
         $engagementBatch->user->notify(new EngagementBatchStartedNotification($engagementBatch, $deliverableJobs->count()));

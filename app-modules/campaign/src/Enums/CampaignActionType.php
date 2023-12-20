@@ -43,7 +43,7 @@ use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
 use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;

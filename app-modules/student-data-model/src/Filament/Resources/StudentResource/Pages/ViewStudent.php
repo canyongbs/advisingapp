@@ -42,7 +42,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\Notifications\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 
 class ViewStudent extends ViewRecord
 {

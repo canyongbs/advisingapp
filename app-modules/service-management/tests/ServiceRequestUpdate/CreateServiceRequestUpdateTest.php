@@ -50,7 +50,7 @@ use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
-use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestUpdateRequestFactory;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource\Pages\CreateServiceRequestUpdate;

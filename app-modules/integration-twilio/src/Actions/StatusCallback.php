@@ -57,6 +57,7 @@ class StatusCallback implements ShouldQueue
 
     public function handle(): void
     {
+        // TODO Update this to be the OutboundDeliverable model and hand off functionality to the "related" model if applicable
         $deliverable = EngagementDeliverable::where('external_reference_id', $this->data['MessageSid'])->first();
 
         if (is_null($deliverable)) {

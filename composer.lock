@@ -4,24 +4,23 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "93858d8980e23de662dd916028747e6d",
+    "content-hash": "1056cbdbc088021921de8baf657d6b51",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.2.11",
+            "version": "v3.2.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "251611b8c6fe1898c80f70cbd545c06f533d5072"
+                "reference": "5d83fba2346577d9733c8ad89786bba49bf79016"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/251611b8c6fe1898c80f70cbd545c06f533d5072",
-                "reference": "251611b8c6fe1898c80f70cbd545c06f533d5072",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/5d83fba2346577d9733c8ad89786bba49bf79016",
+                "reference": "5d83fba2346577d9733c8ad89786bba49bf79016",
                 "shasum": ""
             },
             "require": {
-                "intervention/image": "^2.7",
                 "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.9.2",
                 "ueberdosis/tiptap-php": "^1.1"
@@ -80,7 +79,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.11"
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.12"
             },
             "funding": [
                 {
@@ -88,7 +87,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-16T21:26:51+00:00"
+            "time": "2023-12-19T21:51:03+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -1442,12 +1441,12 @@
             }
         },
         {
-            "name": "canyon-gbs/advising-app-notifications",
+            "name": "canyon-gbs/advising-app-notification",
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/notifications",
-                "reference": "7dbec344f693b6973f93539b31c53d03f5891f3e"
+                "url": "app-modules/notification",
+                "reference": "5062ea2b82f5998318e06e77dcb7836661b3a412"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1456,16 +1455,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "AdvisingApp\\Notifications\\Providers\\NotificationsServiceProvider"
+                        "AdvisingApp\\Notification\\Providers\\NotificationServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "AdvisingApp\\Notifications\\": "src/",
-                    "AdvisingApp\\Notifications\\Tests\\": "tests/",
-                    "AdvisingApp\\Notifications\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Notifications\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Notification\\": "src/",
+                    "AdvisingApp\\Notification\\Tests\\": "tests/",
+                    "AdvisingApp\\Notification\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Notification\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1587,10 +1586,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/student-data-model",
-                "reference": "bae8ef0016aab67de5ed247f19915690e93cbd21"
+                "reference": "97787a2aedc5da23f7907add6646513bb8f39a97"
             },
             "require": {
-                "canyon-gbs/advising-app-notifications": "^1.0",
+                "canyon-gbs/advising-app-notification": "*",
                 "filament/filament": "^3.0"
             },
             "type": "library",
@@ -5632,16 +5631,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.38.0",
+            "version": "v10.38.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "531732a17e4d0fa4fc4fb987a72abbdb93537d3a"
+                "reference": "ced4689f495213e9d23995b36098f12a802cc15b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/531732a17e4d0fa4fc4fb987a72abbdb93537d3a",
-                "reference": "531732a17e4d0fa4fc4fb987a72abbdb93537d3a",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/ced4689f495213e9d23995b36098f12a802cc15b",
+                "reference": "ced4689f495213e9d23995b36098f12a802cc15b",
                 "shasum": ""
             },
             "require": {
@@ -5687,6 +5686,8 @@
                 "voku/portable-ascii": "^2.0"
             },
             "conflict": {
+                "carbonphp/carbon-doctrine-types": ">=3.0",
+                "doctrine/dbal": ">=4.0",
                 "tightenco/collect": "<5.5.33"
             },
             "provide": {
@@ -5798,6 +5799,7 @@
                 "files": [
                     "src/Illuminate/Collections/helpers.php",
                     "src/Illuminate/Events/functions.php",
+                    "src/Illuminate/Filesystem/functions.php",
                     "src/Illuminate/Foundation/helpers.php",
                     "src/Illuminate/Support/helpers.php"
                 ],
@@ -5830,7 +5832,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-12-19T14:59:00+00:00"
+            "time": "2023-12-20T14:52:12+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -7535,16 +7537,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.3.2",
+            "version": "v3.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "cfda4d16fdd63052cff3030f066deeb2b6f97c9b"
+                "reference": "6dd3bec8c711cd792742be4620057637e261e6f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/cfda4d16fdd63052cff3030f066deeb2b6f97c9b",
-                "reference": "cfda4d16fdd63052cff3030f066deeb2b6f97c9b",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/6dd3bec8c711cd792742be4620057637e261e6f7",
+                "reference": "6dd3bec8c711cd792742be4620057637e261e6f7",
                 "shasum": ""
             },
             "require": {
@@ -7597,7 +7599,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.3.2"
+                "source": "https://github.com/livewire/livewire/tree/v3.3.3"
             },
             "funding": [
                 {
@@ -7605,7 +7607,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-19T18:02:00+00:00"
+            "time": "2023-12-20T05:34:05+00:00"
         },
         {
             "name": "lomkit/laravel-rest-api",
@@ -20602,5 +20604,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

@@ -44,12 +44,12 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Timelines\ServiceRequestUpdateTimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
-use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @mixin IdeHelperServiceRequestUpdate

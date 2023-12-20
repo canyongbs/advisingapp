@@ -37,7 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Observers;
 
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Actions\CreateServiceRequestHistory;
 use AdvisingApp\ServiceManagement\Exceptions\ServiceRequestNumberUpdateAttemptException;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;

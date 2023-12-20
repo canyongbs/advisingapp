@@ -1,0 +1,26 @@
+{
+    "name": "canyon-gbs/advising-app-notification",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AdvisingApp\\Notification\\": "src/",
+            "AdvisingApp\\Notification\\Tests\\": "tests/",
+            "AdvisingApp\\Notification\\Database\\Factories\\": "database/factories/",
+            "AdvisingApp\\Notification\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdvisingApp\\Notification\\Providers\\NotificationServiceProvider"
+            ]
+        }
+    }
+}

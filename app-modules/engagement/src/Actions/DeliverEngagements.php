@@ -59,7 +59,7 @@ class DeliverEngagements implements ShouldQueue
             ->hasNotBeenDelivered()
             ->cursor()
             ->each(function (Engagement $engagement) {
-                $engagement->deliverable->deliver();
+                $engagement->deliverable->driver()->deliver();
             });
     }
 }

@@ -43,7 +43,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Notifications\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 
 class ViewProspect extends ViewRecord
 {
