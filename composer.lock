@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "93858d8980e23de662dd916028747e6d",
+    "content-hash": "1dab5f3b2ed8db97084b071504c128d3",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -7606,75 +7606,6 @@
                 }
             ],
             "time": "2023-12-19T18:02:00+00:00"
-        },
-        {
-            "name": "lomkit/laravel-rest-api",
-            "version": "v2.3.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Lomkit/laravel-rest-api.git",
-                "reference": "6f631445a8a2dbc449cdc6c80590c1585a42a476"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Lomkit/laravel-rest-api/zipball/6f631445a8a2dbc449cdc6c80590c1585a42a476",
-                "reference": "6f631445a8a2dbc449cdc6c80590c1585a42a476",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^10.0",
-                "illuminate/http": "^10.0",
-                "illuminate/support": "^10.0",
-                "php": "^8.0"
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "^6.0|^7.0",
-                "orchestra/testbench": "^8.5",
-                "phpunit/phpunit": "^8.0|^9.0|^10.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Lomkit\\Rest\\RestServiceProvider"
-                    ],
-                    "aliases": {
-                        "Rest": "Lomkit\\Rest\\Facades\\Rest"
-                    }
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Lomkit\\Rest\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Gautier Deleglise",
-                    "email": "gautier@lomkit.com"
-                }
-            ],
-            "description": "A package to build quick and robust rest api for the Laravel framework.",
-            "keywords": [
-                "api",
-                "graphql",
-                "laravel",
-                "lomkit",
-                "rest"
-            ],
-            "support": {
-                "issues": "https://github.com/Lomkit/laravel-rest-api/issues",
-                "source": "https://github.com/Lomkit/laravel-rest-api/tree/v2.3.3"
-            },
-            "time": "2023-11-29T12:00:56+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -20602,5 +20533,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
