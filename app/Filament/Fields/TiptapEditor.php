@@ -53,9 +53,7 @@ class TiptapEditor extends BaseTiptapEditor
                 return;
             }
 
-            if (! empty($state)) {
-                $component->state(TiptapMediaEncoder::decode($state));
-            }
+            $component->state(TiptapMediaEncoder::decode($state));
 
             $component->state($component->getHTML());
         });
