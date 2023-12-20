@@ -32,14 +32,14 @@ type UserSubscriptionQueries {
     find(
         "The value of the attribute to match."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:subscriptions"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @find @canResolved(ability: "view")
 
     "List multiple subscriptions."
-    list(
-        where: SubscriptionsQuery @searchBy
-    ): [UserSubscription!]! @paginate @canModel(ability: "viewAny")
+    list(where: SubscriptionsQuery @searchBy): [UserSubscription!]!
+        @paginate
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -73,16 +73,16 @@ input CreateUserSubscriptionInput {
 
 type UserSubscriptionMutations {
     "Subscribe a User to a Subscribable."
-    subscribe(
-        input: CreateUserSubscriptionInput! @spread
-    ): UserSubscription! @create @canModel(ability: "create")
+    subscribe(input: CreateUserSubscriptionInput! @spread): UserSubscription!
+        @create
+        @canModel(ability: "create")
 
     "Unsubscribe a User from a Subscribable."
     unsubscribe(
         "The primary key of the subscription."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:subscriptions"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @delete @canFind(ability: "delete", find: "id")
 }
 

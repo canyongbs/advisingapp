@@ -92,14 +92,14 @@ type InteractionQueries {
     find(
         "The value of the attribute to match."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interactions"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @find @canResolved(ability: "view")
 
     "List multiple interactions."
     list(where: InteractionsQuery @searchBy): [Interaction!]!
-    @paginate
-    @canModel(ability: "viewAny")
+        @paginate
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -226,15 +226,15 @@ input CreateInteractionInput {
 type InteractionMutations {
     "Create an interaction."
     create(input: CreateInteractionInput! @spread): Interaction!
-    @create
-    @canModel(ability: "create")
+        @create
+        @canModel(ability: "create")
 
     "Update an interaction."
     update(
         "The identifier of the interaction you would like to update."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interactions"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
 
         "The fields you would like to update."
         input: UpdateInteractionInput! @spread
@@ -244,8 +244,8 @@ type InteractionMutations {
     delete(
         "The identifier of the interaction you would like to delete."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interactions"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @canFind(ability: "delete", find: "id") @delete
 }
 

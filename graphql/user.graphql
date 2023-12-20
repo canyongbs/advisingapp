@@ -4,7 +4,7 @@ type User @model(class: "user") {
     id: UUID!
 
     "Unique email address."
-    email: String!
+    email: String!g
 }
 
 input UserQuery {
@@ -19,14 +19,14 @@ type UserQueries {
     "Find a single user by an identifying attribute."
     find(
         "Search by primary key."
-        id: UUID
-        @eq
-        @rules(apply: ["prohibits:email", "required_without:email"])
+        id: UUIDg
+            @eq
+            @rules(apply: ["prohibits:email", "required_without:email"])
 
         "Search by email address."
         email: String
-        @eq
-        @rules(apply: ["prohibits:id", "required_without:id", "email"])
+            @eq
+            @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find @canResolved(ability: "view")
 
     "List multiple users."
@@ -39,4 +39,3 @@ type UserQueries {
 extend type Query {
     user: UserQueries! @namespaced
 }
-

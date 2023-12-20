@@ -67,16 +67,16 @@ extend type Query {
 input CreateAlertInput {
     "The Concern related to the alert."
     concern_id: EducatableId!
-    @rules(
-        apply: [
-            "required"
-            "AdvisingApp\\Alert\\Rules\\ConcernIdExistsRules"
-        ]
-    )
+        @rules(
+            apply: [
+                "required"
+                "AdvisingApp\\Alert\\Rules\\ConcernIdExistsRules"
+            ]
+        )
 
     "The type of Concern related to the alert."
     concern_type: EducatableType!
-    @rules(apply: ["required", "in:student,prospect"])
+        @rules(apply: ["required", "in:student,prospect"])
 
     "The description of the alert."
     description: String! @rules(apply: ["required", "string"])
@@ -108,8 +108,8 @@ input UpdateAlertInput {
 type AlertMutations {
     "Create an alert."
     create(input: CreateAlertInput! @spread): Alert!
-    @create
-    @canModel(ability: "create")
+        @create
+        @canModel(ability: "create")
 
     "Update an alert."
     update(

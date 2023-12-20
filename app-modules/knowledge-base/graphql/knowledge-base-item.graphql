@@ -4,20 +4,17 @@ type KnowledgeBaseItem
     id: UUID!
 }
 
-type KnowledgeBaseItemQueries
-    @feature(feature: "knowledge-management") {
+type KnowledgeBaseItemQueries @feature(feature: "knowledge-management") {
     "Find a single knowledge base item by an identifying attribute."
     find(
         "The value of the attribute to match."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:knowledge_base_items"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:knowledge_base_items"])
     ): KnowledgeBaseItem @find @canResolved(ability: "view")
 
     "Get all knowledge base items."
-    list: [KnowledgeBaseItem!]!
-    @canModel(ability: "viewAny")
-    @paginate
+    list: [KnowledgeBaseItem!]! @canModel(ability: "viewAny") @paginate
 }
 
 extend type Query @feature(feature: "knowledge-management") {

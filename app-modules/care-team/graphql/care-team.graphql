@@ -35,14 +35,14 @@ type CareTeamQueries {
     find(
         "The value of the attribute to match."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:care_teams"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:care_teams"])
     ): CareTeam @find @canResolved(ability: "view")
 
     "List multiple care team assignments."
     list(where: CareTeamsQuery @searchBy): [CareTeam!]!
-    @paginate
-    @canModel(ability: "viewAny")
+        @paginate
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -77,15 +77,15 @@ input CreateCareTeamInput {
 type CareTeamMutations {
     "Assign a User to a Care Team."
     assign(input: CreateCareTeamInput! @spread): CareTeam!
-    @create
-    @canModel(ability: "create")
+        @create
+        @canModel(ability: "create")
 
     "Remove a User from a Care Team."
     remove(
         "The primary key of the care team assignment."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:care_teams"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:care_teams"])
     ): CareTeam @delete @canFind(ability: "delete", find: "id")
 }
 

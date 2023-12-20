@@ -49,8 +49,8 @@ type InteractionStatusQueries {
     "Get a specific interaction status by id."
     find(
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
     ): InteractionStatus @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions statuses."
@@ -58,9 +58,9 @@ type InteractionStatusQueries {
         "Filter by the interaction statuses attributes and relations."
         where: InteractionStatusesQuery @searchBy
     ): [InteractionStatus!]!
-    @paginate
-    @softDeletes
-    @canModel(ability: "viewAny")
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -88,16 +88,16 @@ input UpdateInteractionStatusInput {
 
 type InteractionStatusMutations {
     "Create an interaction status."
-    create(
-        input: CreateInteractionStatusInput! @spread
-    ): InteractionStatus! @create @canModel(ability: "create")
+    create(input: CreateInteractionStatusInput! @spread): InteractionStatus!
+        @create
+        @canModel(ability: "create")
 
     "Update an existing interaction status."
     update(
         "The identifier of the interaction status you would like to update."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
 
         "The fields you would like to update."
         input: UpdateInteractionStatusInput! @spread
@@ -107,8 +107,8 @@ type InteractionStatusMutations {
     delete(
         "The identifier of the interaction status you would like to delete."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_statuses"])
     ): InteractionStatus @canFind(ability: "delete", find: "id") @delete
 }
 

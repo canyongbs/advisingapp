@@ -43,8 +43,8 @@ type InteractionDriverQueries {
     "Get a specific interaction driver by id."
     find(
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
     ): InteractionDriver @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions drivers."
@@ -52,9 +52,9 @@ type InteractionDriverQueries {
         "Filter by the interaction drivers attributes and relations."
         where: InteractionDriverQuery @searchBy
     ): [InteractionDriver!]!
-    @paginate
-    @softDeletes
-    @canModel(ability: "viewAny")
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -82,16 +82,16 @@ input UpdateInteractionDriverInput {
 
 type InteractionDriverMutations {
     "Create an interaction driver."
-    create(
-        input: CreateInteractionDriverInput! @spread
-    ): InteractionDriver! @create @canModel(ability: "create")
+    create(input: CreateInteractionDriverInput! @spread): InteractionDriver!
+        @create
+        @canModel(ability: "create")
 
     "Update an existing interaction driver."
     update(
         "The identifier of the interaction driver you would like to update."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
 
         "The fields you would like to update."
         input: UpdateInteractionDriverInput! @spread
@@ -101,8 +101,8 @@ type InteractionDriverMutations {
     delete(
         "The identifier of the interaction driver you would like to delete."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
     ): InteractionDriver @canFind(ability: "delete", find: "id") @delete
 }
 

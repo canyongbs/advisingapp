@@ -43,8 +43,8 @@ type InteractionOutcomeQueries {
     "Get a specific interaction outcome by id."
     find(
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
     ): InteractionOutcome @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions outcomes."
@@ -52,9 +52,9 @@ type InteractionOutcomeQueries {
         "Filter by the interaction outcomes attributes and relations."
         where: InteractionOutcomeQuery @searchBy
     ): [InteractionOutcome!]!
-    @paginate
-    @softDeletes
-    @canModel(ability: "viewAny")
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -82,16 +82,16 @@ input UpdateInteractionOutcomeInput {
 
 type InteractionOutcomeMutations {
     "Create an interaction outcome."
-    create(
-        input: CreateInteractionOutcomeInput! @spread
-    ): InteractionOutcome! @create @canModel(ability: "create")
+    create(input: CreateInteractionOutcomeInput! @spread): InteractionOutcome!
+        @create
+        @canModel(ability: "create")
 
     "Update an existing interaction outcome."
     update(
         "The identifier of the interaction outcome you would like to update."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
 
         "The fields you would like to update."
         input: UpdateInteractionOutcomeInput! @spread
@@ -101,8 +101,8 @@ type InteractionOutcomeMutations {
     delete(
         "The identifier of the interaction outcome you would like to delete."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
     ): InteractionOutcome @canFind(ability: "delete", find: "id") @delete
 }
 

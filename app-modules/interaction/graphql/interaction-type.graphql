@@ -43,8 +43,8 @@ type InteractionTypeQueries {
     "Get a specific interaction type by id."
     find(
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_types"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_types"])
     ): InteractionType @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions types."
@@ -79,16 +79,16 @@ input UpdateInteractionTypeInput {
 
 type InteractionTypeMutations {
     "Create an interaction type."
-    create(
-        input: CreateInteractionTypeInput! @spread
-    ): InteractionType! @create @canModel(ability: "create")
+    create(input: CreateInteractionTypeInput! @spread): InteractionType!
+        @create
+        @canModel(ability: "create")
 
     "Update an existing interaction type."
     update(
         "The identifier of the interaction type you would like to update."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_types"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_types"])
 
         "The fields you would like to update."
         input: UpdateInteractionTypeInput! @spread
@@ -98,8 +98,8 @@ type InteractionTypeMutations {
     delete(
         "The identifier of the interaction type you would like to delete."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_types"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_types"])
     ): InteractionType @canFind(ability: "delete", find: "id") @delete
 }
 

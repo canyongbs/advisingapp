@@ -43,8 +43,8 @@ type InteractionRelationQueries {
     "Get a specific interaction relation by id."
     find(
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_relations"])
     ): InteractionRelation @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions relations."
@@ -52,9 +52,9 @@ type InteractionRelationQueries {
         "Filter by the interaction relations attributes and relations."
         where: InteractionRelationQuery @searchBy
     ): [InteractionRelation!]!
-    @paginate
-    @softDeletes
-    @canModel(ability: "viewAny")
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -92,8 +92,8 @@ type InteractionRelationMutations {
     update(
         "The identifier of the interaction relation you would like to update."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_relations"])
 
         "The fields you would like to update."
         input: UpdateInteractionRelationInput! @spread
@@ -103,8 +103,8 @@ type InteractionRelationMutations {
     delete(
         "The identifier of the interaction relation you would like to delete."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:interaction_relations"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_relations"])
     ): InteractionRelation @canFind(ability: "delete", find: "id") @delete
 }
 
