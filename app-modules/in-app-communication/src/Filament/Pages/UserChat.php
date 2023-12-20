@@ -147,11 +147,11 @@ class UserChat extends Page implements HasForms, HasActions
     public function generateToken(bool $bustCache = false): string
     {
         if ($bustCache) {
-            Cache::forget('twilio_access_token_' . auth()->id());
+            Cache::forget('{twilio_access_token_' . auth()->id() . '}');
         }
 
         /** @var AccessToken $token */
-        $token = Cache::remember('twilio_access_token_' . auth()->id(), 21500, function () {
+        $token = Cache::remember('{twilio_access_token_' . auth()->id() . '}', 21500, function () {
             $apiKey = app(GetTwilioApiKey::class)();
 
             $twilioClient = app(Client::class);
