@@ -163,7 +163,8 @@ input UpdateInteractionInput {
     start_datetime: DateTime @rules(apply: ["date_format:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
-    end_datetime: DateTime @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
+    end_datetime: DateTime
+        @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
 }
 
 input CreateInteractionInput {
