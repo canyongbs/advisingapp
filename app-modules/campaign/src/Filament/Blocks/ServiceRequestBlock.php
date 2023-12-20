@@ -108,8 +108,7 @@ class ServiceRequestBlock extends CampaignActionBlock
             DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->required()
-                ->minDate(now(auth()->user()->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 

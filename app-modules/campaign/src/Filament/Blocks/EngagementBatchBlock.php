@@ -41,6 +41,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
+use Illuminate\Support\Carbon;
 
 class EngagementBatchBlock extends CampaignActionBlock
 {
@@ -89,8 +90,9 @@ class EngagementBatchBlock extends CampaignActionBlock
             DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
                 ->required()
-                ->minDate(now(auth()->user()->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now())
+                ->lazy()
+                ->hint(fn ($state): ?string => $state ? Carbon::parse($state)->longRelativeToNowDiffForHumans() : null),
         ];
     }
 

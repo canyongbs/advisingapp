@@ -52,16 +52,13 @@ class SubscriptionBlock extends CampaignActionBlock
 
     public function generateFields(string $fieldPrefix = ''): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return [
             Select::make($fieldPrefix . 'user_ids')
                 ->label('Who should be subscribed?')
                 ->options(User::all()->pluck('name', 'id'))
                 ->multiple()
                 ->searchable()
-                ->default([$user->id])
+                ->default([auth()->id()])
                 ->required()
                 ->exists('users', 'id'),
             Toggle::make($fieldPrefix . 'remove_prior')
@@ -71,8 +68,7 @@ class SubscriptionBlock extends CampaignActionBlock
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
                 ->required()
-                ->minDate(now($user->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 

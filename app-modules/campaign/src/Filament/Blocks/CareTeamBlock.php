@@ -70,8 +70,7 @@ class CareTeamBlock extends CampaignActionBlock
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
                 ->required()
-                ->minDate(now(auth()->user()->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 

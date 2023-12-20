@@ -57,9 +57,6 @@ class TaskBlock extends CampaignActionBlock
 
     public function generateFields(string $fieldPrefix = ''): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return [
             Fieldset::make('Details')
                 ->schema([
@@ -82,8 +79,7 @@ class TaskBlock extends CampaignActionBlock
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
                 ->required()
-                ->minDate(now($user->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 
