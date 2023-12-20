@@ -120,7 +120,7 @@ input UpdateInteractionInput {
     interactable_id: InteractableId
         @rules(
             apply: [
-                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRules"
+                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRule"
                 "required_with:interactable_type"
             ]
         )
@@ -160,10 +160,10 @@ input UpdateInteractionInput {
     division_id: UUID @rules(apply: ["exists:divisions,id"])
 
     "The start datetime of the interaction."
-    start_datetime: DateTime @rules(apply: ["date:Y-m-d H:i:s"])
+    start_datetime: DateTime @rules(apply: ["date_format:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
-    end_datetime: DateTime @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
+    end_datetime: DateTime @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
 }
 
 input CreateInteractionInput {
@@ -181,7 +181,7 @@ input CreateInteractionInput {
         @rules(
             apply: [
                 "required"
-                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRules"
+                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRule"
             ]
         )
 

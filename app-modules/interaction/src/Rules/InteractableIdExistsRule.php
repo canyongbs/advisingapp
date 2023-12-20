@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Alert\Rules;
+namespace AdvisingApp\Interaction\Rules;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
@@ -42,21 +42,21 @@ use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
-class ConcernIdExistsRules implements DataAwareRule, ValidationRule
+class InteractableIdExistsRule implements DataAwareRule, ValidationRule
 {
     protected $data = [];
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $type = $this->data['input']['concern_type'];
+        $type = $this->data['input']['interactable_type'];
 
         /** @var ?Model $morph */
         $morph = Relation::getMorphedModel($type);
 
         if (! $morph) {
-            $fail('The concern type must be either student or prospect.');
+            $fail('The interactable type must be student, prospect, or service_request');
         } elseif ($morph::query()->whereKey($value)->doesntExist()) {
-            $fail('The concern does not exist.');
+            $fail('The interactable does not exist.');
         }
     }
 

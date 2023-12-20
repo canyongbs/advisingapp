@@ -70,7 +70,7 @@ input CreateAlertInput {
         @rules(
             apply: [
                 "required"
-                "AdvisingApp\\Alert\\Rules\\ConcernIdExistsRules"
+                "AdvisingApp\\Alert\\Rules\\ConcernIdExistsRule"
             ]
         )
 
