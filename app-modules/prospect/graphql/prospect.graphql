@@ -1,10 +1,10 @@
 type Prospect {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
-    status_id: ID
+    status_id: UUID
 
-    source_id: ID
+    source_id: UUID
 
     first_name: String
 
@@ -14,7 +14,7 @@ type Prospect {
 }
 
 input ProspectQuery {
-    id: ID
+    id: UUID
 
     first_name: String
 

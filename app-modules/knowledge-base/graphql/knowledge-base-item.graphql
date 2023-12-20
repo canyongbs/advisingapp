@@ -1,7 +1,7 @@
 type KnowledgeBaseItem
     @feature(feature: "knowledge-management")
     @model(class: "AdvisingApp\\KnowledgeBase\\Models\\KnowledgeBaseItem") {
-    id: ID!
+    id: UUID!
 }
 
 extend type Query @feature(feature: "knowledge-management") {

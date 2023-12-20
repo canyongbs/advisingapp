@@ -1,9 +1,13 @@
 union Interactable = Student | Prospect | ServiceRequest
 
+scalar InteractableId
+    @scalar(class: "App\\GraphQL\\Scalars\\InteractableId")
+    @searchByOperators(type: "ID")
+
 type Interaction
     @model(class: "AdvisingApp\\Interaction\\Models\\Interaction") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The subject of the interaction."
     subject: String!
@@ -78,7 +82,7 @@ extend type Query {
     "Find a single interaction by an identifying attribute."
     interaction(
         "The value of the attribute to match."
-        id: ID! @whereKey
+        id: UUID! @whereKey
     ): Interaction @find @canResolved(ability: "view")
 
     "List multiple interactions."
@@ -95,10 +99,10 @@ input UpdateInteractionInput {
     description: String @rules(apply: ["string"])
 
     "The User related to the interaction."
-    user_id: ID @rules(apply: ["exists:users,id"])
+    user_id: UUID @rules(apply: ["exists:users,id"])
 
     "The Interactable related to the interaction."
-    interactable_id: ID
+    interactable_id: InteractableId
         @rules(
             apply: [
                 "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRules"
@@ -116,27 +120,29 @@ input UpdateInteractionInput {
         )
 
     "The type of interaction."
-    interaction_type_id: ID @rules(apply: ["exists:interaction_types,id"])
+    interaction_type_id: UUID @rules(apply: ["exists:interaction_types,id"])
 
     "The relation of the interaction."
-    interaction_relation_id: ID
+    interaction_relation_id: UUID
         @rules(apply: ["exists:interaction_relations,id"])
 
     "The campaign of the interaction."
-    interaction_campaign_id: ID
+    interaction_campaign_id: UUID
         @rules(apply: ["exists:interaction_campaigns,id"])
 
     "The driver of the interaction."
-    interaction_driver_id: ID @rules(apply: ["exists:interaction_drivers,id"])
+    interaction_driver_id: UUID @rules(apply: ["exists:interaction_drivers,id"])
 
     "The status of the interaction."
-    interaction_status_id: ID @rules(apply: ["exists:interaction_statuses,id"])
+    interaction_status_id: UUID
+        @rules(apply: ["exists:interaction_statuses,id"])
 
     "The outcome of the interaction."
-    interaction_outcome_id: ID @rules(apply: ["exists:interaction_outcomes,id"])
+    interaction_outcome_id: UUID
+        @rules(apply: ["exists:interaction_outcomes,id"])
 
     "The division of the interaction."
-    division_id: ID @rules(apply: ["exists:divisions,id"])
+    division_id: UUID @rules(apply: ["exists:divisions,id"])
 
     "The start datetime of the interaction."
     start_datetime: DateTime @rules(apply: ["date_format:Y-m-d H:i:s"])
@@ -154,10 +160,10 @@ input CreateInteractionInput {
     description: String! @rules(apply: ["required", "string"])
 
     "The User related to the interaction."
-    user_id: ID! @rules(apply: ["required", "exists:users,id"])
+    user_id: UUID! @rules(apply: ["required", "exists:users,id"])
 
     "The Interactable related to the interaction."
-    interactable_id: ID!
+    interactable_id: InteractableId!
         @rules(
             apply: [
                 "required"
@@ -170,31 +176,31 @@ input CreateInteractionInput {
         @rules(apply: ["required", "in:student,prospect,service_request"])
 
     "The type of interaction."
-    interaction_type_id: ID!
+    interaction_type_id: UUID!
         @rules(apply: ["required", "exists:interaction_types,id"])
 
     "The relation of the interaction."
-    interaction_relation_id: ID!
+    interaction_relation_id: UUID!
         @rules(apply: ["required", "exists:interaction_relations,id"])
 
     "The campaign of the interaction."
-    interaction_campaign_id: ID!
+    interaction_campaign_id: UUID!
         @rules(apply: ["required", "exists:interaction_campaigns,id"])
 
     "The driver of the interaction."
-    interaction_driver_id: ID!
+    interaction_driver_id: UUID!
         @rules(apply: ["required", "exists:interaction_drivers,id"])
 
     "The status of the interaction."
-    interaction_status_id: ID!
+    interaction_status_id: UUID!
         @rules(apply: ["required", "exists:interaction_statuses,id"])
 
     "The outcome of the interaction."
-    interaction_outcome_id: ID!
+    interaction_outcome_id: UUID!
         @rules(apply: ["required", "exists:interaction_outcomes,id"])
 
     "The division of the interaction."
-    division_id: ID! @rules(apply: ["required", "exists:divisions,id"])
+    division_id: UUID! @rules(apply: ["required", "exists:divisions,id"])
 
     "The start datetime of the interaction."
     start_datetime: DateTime!
@@ -214,7 +220,7 @@ extend type Mutation {
     "Update a interaction."
     updateInteraction(
         "The identifier of the interaction you would like to update."
-        id: ID! @whereKey
+        id: UUID! @whereKey
 
         input: UpdateInteractionInput! @spread
     ): Interaction! @canFind(ability: "update", find: "id") @update
@@ -222,7 +228,7 @@ extend type Mutation {
     "Delete a interaction."
     deleteInteraction(
         "The identifier of the interaction you would like to delete."
-        id: ID! @whereKey
+        id: UUID! @whereKey
     ): Interaction @canFind(ability: "delete", find: "id") @delete
 }
 

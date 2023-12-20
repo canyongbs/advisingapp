@@ -1,6 +1,6 @@
 type Division @model(class: "AdvisingApp\\Division\\Models\\Division") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The name of the division."
     name: String!

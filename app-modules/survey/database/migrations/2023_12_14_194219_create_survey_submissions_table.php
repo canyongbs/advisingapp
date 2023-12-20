@@ -34,19 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Pages\Page;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('survey_submissions', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-class ManageSurveys extends Page
-{
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
+            $table->foreignUuid('survey_id')->constrained('surveys')->cascadeOnDelete();
+            $table->string('author_id')->nullable();
+            $table->string('author_type')->nullable();
+            $table->timestamp('submitted_at')->nullable();
+            $table->timestamp('canceled_at')->nullable();
+            $table->string('request_method')->nullable();
+            $table->text('request_note')->nullable();
+            $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
 
-    protected static string $view = 'filament.pages.coming-soon';
+            $table->timestamps();
+            $table->softDeletes();
 
-    protected static ?string $navigationGroup = 'Forms and Surveys';
-
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $navigationLabel = 'Manage Surveys';
-}
+            $table->index(['author_type', 'author_id']);
+        });
+    }
+};

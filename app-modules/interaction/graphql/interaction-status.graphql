@@ -1,7 +1,7 @@
 type InteractionStatus
     @model(class: "AdvisingApp\\Interaction\\Models\\InteractionStatus") {
     "Unique primary key."
-    id: ID!
+    id: UUID!
 
     "The name of the interaction driver."
     name: String!
@@ -24,7 +24,7 @@ type InteractionStatus
 
 input InteractionStatusesQuery {
     "The unique primary key of the interaction status."
-    id: ID
+    id: UUID
 
     "The name of the interaction status."
     name: String
@@ -47,7 +47,7 @@ input InteractionStatusesQuery {
 
 extend type Query {
     "Get a specific interaction status by id."
-    interactionStatus(id: ID! @eq): InteractionStatus
+    interactionStatus(id: UUID! @eq): InteractionStatus
         @find
         @softDeletes
         @canResolved(ability: "view")
@@ -90,7 +90,7 @@ extend type Mutation {
     "Update an existing interaction status."
     updateInteractionStatus(
         "The identifier of the interaction status you would like to update."
-        id: ID! @whereKey
+        id: UUID! @whereKey
 
         "The fields you would like to update."
         input: UpdateInteractionStatusInput! @spread
@@ -99,6 +99,6 @@ extend type Mutation {
     "Delete an existing interaction status."
     deleteInteractionStatus(
         "The identifier of the interaction status you would like to delete."
-        id: ID! @whereKey
+        id: UUID! @whereKey
     ): InteractionStatus @canFind(ability: "delete", find: "id") @delete
 }

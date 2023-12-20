@@ -46,12 +46,12 @@ class ProductHealth extends HealthCheckResults
 {
     public static function getNavigationLabel(): string
     {
-        return 'Product Administration';
+        return 'Health Dashboard';
     }
 
     public function getHeading(): string | Htmlable
     {
-        return 'Product Health Dashboard';
+        return 'Health Dashboard';
     }
 
     public static function getNavigationGroup(): ?string
