@@ -91,13 +91,13 @@ extend type Query {
     "Find a single interaction by an identifying attribute."
     interaction(
         "The value of the attribute to match."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interactions"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @find @canResolved(ability: "view")
 
     "List multiple interactions."
-    interactions(
-        where: InteractionsQuery @searchBy
-    ): [Interaction!]!
+    interactions(where: InteractionsQuery @searchBy): [Interaction!]!
         @paginate
         @canModel(ability: "viewAny")
 }
@@ -159,8 +159,7 @@ input UpdateInteractionInput {
     start_datetime: DateTime @rules(apply: ["date:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
-    end_datetime: DateTime
-        @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
+    end_datetime: DateTime @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
 }
 
 input CreateInteractionInput {
@@ -214,12 +213,10 @@ input CreateInteractionInput {
     division_id: UUID! @rules(apply: ["required", "exists:divisions,id"])
 
     "The start datetime of the interaction."
-    start_datetime: DateTime!
-        @rules(apply: ["required", "date:Y-m-d H:i:s"])
+    start_datetime: DateTime! @rules(apply: ["required", "date:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
-    end_datetime: DateTime
-        @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
+    end_datetime: DateTime @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
 }
 
 extend type Mutation {
@@ -231,7 +228,9 @@ extend type Mutation {
     "Update an interaction."
     updateInteraction(
         "The identifier of the interaction you would like to update."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interactions"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
 
         "The fields you would like to update."
         input: UpdateInteractionInput! @spread
@@ -240,7 +239,9 @@ extend type Mutation {
     "Delete an interaction."
     deleteInteraction(
         "The identifier of the interaction you would like to delete."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interactions"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @canFind(ability: "delete", find: "id") @delete
 }
 

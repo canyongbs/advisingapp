@@ -42,11 +42,10 @@ input InteractionOutcomeQuery {
 extend type Query {
     "Get a specific interaction outcome by id."
     interactionOutcome(
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
-    ): InteractionOutcome
-        @find
-        @softDeletes
-        @canResolved(ability: "view")
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+    ): InteractionOutcome @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions outcomes."
     interactionOutcomes(
@@ -86,7 +85,9 @@ extend type Mutation {
     "Update an existing interaction outcome."
     updateInteractionOutcome(
         "The identifier of the interaction outcome you would like to update."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
 
         "The fields you would like to update."
         input: UpdateInteractionOutcomeInput! @spread
@@ -95,6 +96,8 @@ extend type Mutation {
     "Delete an existing interaction outcome."
     deleteInteractionOutcome(
         "The identifier of the interaction outcome you would like to delete."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_outcomes"])
     ): InteractionOutcome @canFind(ability: "delete", find: "id") @delete
 }

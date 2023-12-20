@@ -42,11 +42,10 @@ input InteractionDriverQuery {
 extend type Query {
     "Get a specific interaction driver by id."
     interactionDriver(
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
-    ): InteractionDriver
-        @find
-        @softDeletes
-        @canResolved(ability: "view")
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
+    ): InteractionDriver @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions drivers."
     interactionDrivers(
@@ -86,7 +85,9 @@ extend type Mutation {
     "Update an existing interaction driver."
     updateInteractionDriver(
         "The identifier of the interaction driver you would like to update."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
 
         "The fields you would like to update."
         input: UpdateInteractionDriverInput! @spread
@@ -95,6 +96,8 @@ extend type Mutation {
     "Delete an existing interaction driver."
     deleteInteractionDriver(
         "The identifier of the interaction driver you would like to delete."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
     ): InteractionDriver @canFind(ability: "delete", find: "id") @delete
 }

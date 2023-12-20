@@ -31,15 +31,15 @@ extend type Query {
     "Find a single subscription by an identifying attribute."
     userSubscription(
         "The value of the attribute to match."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:subscriptions"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @find @canResolved(ability: "view")
 
     "List multiple subscriptions."
     userSubscriptions(
         where: SubscriptionsQuery @searchBy
-    ): [UserSubscription!]!
-        @paginate
-        @canModel(ability: "viewAny")
+    ): [UserSubscription!]! @paginate @canModel(ability: "viewAny")
 }
 
 input CreateUserSubscriptionInput {
@@ -76,6 +76,8 @@ extend type Mutation {
     "Delete an existing subscription."
     deleteUserSubscription(
         "The primary key of the subscription."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:subscriptions"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:subscriptions"])
     ): UserSubscription @delete @canFind(ability: "delete", find: "id")
 }

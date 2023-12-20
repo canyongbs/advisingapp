@@ -42,11 +42,10 @@ input InteractionCampaignQuery {
 extend type Query {
     "Get a specific interaction campaign by id."
     interactionCampaign(
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
-    ): InteractionCampaign
-        @find
-        @softDeletes
-        @canResolved(ability: "view")
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+    ): InteractionCampaign @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions campaigns."
     interactionCampaigns(
@@ -88,7 +87,9 @@ extend type Mutation {
     "Update an existing interaction campaign."
     updateInteractionCampaign(
         "The identifier of the interaction campaign you would like to update."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
 
         "The fields you would like to update."
         input: UpdateInteractionCampaignInput! @spread
@@ -97,6 +98,8 @@ extend type Mutation {
     "Delete an existing interaction campaign."
     deleteInteractionCampaign(
         "The identifier of the interaction campaign you would like to delete."
-        id: UUID! @whereKey @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
     ): InteractionCampaign @canFind(ability: "delete", find: "id") @delete
 }
