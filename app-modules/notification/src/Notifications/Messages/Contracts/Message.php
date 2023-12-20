@@ -34,38 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Actions;
+namespace AdvisingApp\Notification\Notifications\Messages\Contracts;
 
-use Exception;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
-
-class CreateOutboundDeliverable
+interface Message
 {
-    public function handle(BaseNotification $notification, object $notifiable, string $channel): OutboundDeliverable
-    {
-        $channel = match ($channel) {
-            SmsChannel::class => NotificationChannel::Sms,
-            // EmailChannel::class => $deliverable->channel = NotificationChannel::Email,
-            // DatabaseChannel::class => $deliverable->channel = NotificationChannel::Database,
-            default => throw new Exception('Invalid notification channel.'),
-        };
-
-        $content = match ($channel) {
-            NotificationChannel::Sms => $notification->toSms($notifiable)->toArray(),
-            default => throw new Exception('Invalid notification channel.'),
-        };
-
-        $deliverable = OutboundDeliverable::create([
-            'channel' => $channel,
-            'notification_class' => get_class($notification),
-            'content' => json_encode($content),
-            'recipient_id' => $notifiable->id,
-            'recipient_type' => $notifiable->getMorphClass(),
-        ]);
-
-        return $deliverable;
-    }
+    public function toArray(): array;
 }

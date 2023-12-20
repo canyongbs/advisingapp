@@ -34,46 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Notifications;
+namespace AdvisingApp\Notification\Notifications;
 
-use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\SmsNotification;
-use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
+use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 
-class EngagementSmsNotification extends BaseNotification implements SmsNotification
+interface SmsNotification
 {
-    use SmsChannelTrait;
+    public function toSms(object $notifiable): TwilioMessage;
 
-    public function __construct(
-        public EngagementDeliverable $deliverable
-    ) {}
+    // public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false;
 
-    public function toSms(object $notifiable): TwilioMessage
-    {
-        return TwilioMessage::make($notifiable)
-            ->content($this->deliverable->engagement->getBody());
-    }
-
-    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
-    {
-        $deliverable->update([
-            'related_id' => $this->deliverable->id,
-            'related_type' => $this->deliverable->getMorphClass(),
-        ]);
-    }
-
-    public function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
-    {
-        $this->deliverable->update([
-            'external_reference_id' => $deliverable->external_reference_id,
-            'external_status' => $deliverable->external_status,
-            'delivery_status' => $deliverable->delivery_status,
-            'delivered_at' => $deliverable->delivered_at,
-            'last_delivery_attempt' => $deliverable->last_delivery_attempt,
-            'delivery_response' => $deliverable->delivery_response,
-        ]);
-    }
+    // public function afterSend(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void;
 }

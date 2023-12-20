@@ -42,11 +42,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Actions\CreateOutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Concerns\ChannelTrait;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
 abstract class BaseNotification extends Notification implements ShouldQueue
 {
@@ -64,6 +65,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
                 return collect($trait->getTraits())
                     ->contains(fn (ReflectionClass $nestedTrait) => $nestedTrait->getName() === ChannelTrait::class);
             })
+
             ->map(function (ReflectionClass $trait) {
                 return collect($trait->getProperties())
                     ->filter(function (ReflectionProperty $property) {
@@ -79,27 +81,35 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false
     {
-        $deliverable = OutboundDeliverable::create([
-            'recipient_id' => $notifiable->id,
-            'recipient_type' => $notifiable->getMorphClass(),
-            'channel' => NotificationChannel::Sms,
-        ]);
-
-        // Perform any necessary checks to determine if the notification should be sent
-        if (! $this->checkRateLimitsFor($channel)) {
-            $deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::RateLimited,
-            ]);
-
-            return false;
-        }
+        $deliverable = resolve(CreateOutboundDeliverable::class)->handle($this, $notifiable, $channel);
 
         $this->beforeSendHook($notifiable, $deliverable, $channel);
+
+        // TODO Implement some kind of checker against the rate limits for a particular channel
+        // Reminder that we'll need to consider "must send" notifications, which may be those sent
+        // To a sending party letting them know they've hit a quota or been throttled, etc...
+        // if (! $this->checkRateLimitsFor($channel)) {
+        //     $deliverable->update([
+        //         'delivery_status' => NotificationDeliveryStatus::RateLimited,
+        //     ]);
+
+        //     return false;
+        // }
 
         return $deliverable;
     }
 
-    public function afterSend(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
+    public function afterSend(object $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
+    {
+        match (true) {
+            $result->type instanceof SmsChannelResultData => $this->afterSendSms($notifiable, $deliverable, $result->type),
+            default => throw new \Exception('Invalid notification result data.'),
+        };
+
+        $this->afterSendHook($notifiable, $deliverable);
+    }
+
+    protected function afterSendSms(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
     {
         if ($result->success) {
             $deliverable->update([
@@ -113,8 +123,6 @@ abstract class BaseNotification extends Notification implements ShouldQueue
                 'delivery_response' => $result->error,
             ]);
         }
-
-        $this->afterSendHook($notifiable, $deliverable);
     }
 
     protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void {}

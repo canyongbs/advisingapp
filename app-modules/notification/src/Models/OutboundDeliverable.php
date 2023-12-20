@@ -10,19 +10,25 @@ use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 class OutboundDeliverable extends BaseModel
 {
     protected $fillable = [
+        'channel',
+        'content',
+        'delivered_at',
+        'delivery_response',
+        'delivery_status',
         'external_reference_id',
         'external_status',
-        'channel',
-        'delivery_status',
-        'delivered_at',
         'last_delivery_attempt',
-        'delivery_response',
+        'notification_class',
+        'recipient_id',
+        'recipient_type',
+        'related_id',
+        'related_type',
     ];
 
     protected $casts = [
         'channel' => NotificationChannel::class,
-        'delivery_status' => NotificationDeliveryStatus::class,
         'delivered_at' => 'datetime',
+        'delivery_status' => NotificationDeliveryStatus::class,
         'last_delivery_attempt' => 'datetime',
     ];
 
@@ -54,8 +60,7 @@ class OutboundDeliverable extends BaseModel
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([
-                // TODO Utilize global delivery statuses
-                'delivery_status' => 'success',
+                'delivery_status' => NotificationDeliveryStatus::Successful,
                 'delivered_at' => now(),
                 'last_delivery_attempt' => now(),
             ]);
@@ -66,8 +71,7 @@ class OutboundDeliverable extends BaseModel
     {
         if (! $this->hasBeenDelivered()) {
             $this->update([
-                // TODO Utilize global delivery statuses
-                'delivery_status' => 'failed',
+                'delivery_status' => NotificationDeliveryStatus::Failed,
                 'last_delivery_attempt' => now(),
                 'delivery_response' => $reason,
             ]);

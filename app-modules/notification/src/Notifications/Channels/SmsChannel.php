@@ -5,8 +5,10 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 use Twilio\Rest\Client;
 use Twilio\Exceptions\TwilioException;
 use AdvisingApp\Notification\Messages\TwilioMessage;
+use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
 class SmsChannel
 {
@@ -24,8 +26,10 @@ class SmsChannel
         $notification->afterSend($notifiable, $deliverable, $smsData);
     }
 
-    public function handle(object $notifiable, BaseNotification $notification): SmsChannelResultData
+    public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
     {
+        // TODO Figure out if we can remove this easily/nicely...
+        /** @var SmsNotification $notification */
         /** @var TwilioMessage $twilioMessage */
         $twilioMessage = $notification->toSms($notifiable);
 
@@ -40,8 +44,13 @@ class SmsChannel
             $messageContent['statusCallback'] = route('inbound.webhook.twilio', ['event' => 'status_callback']);
         }
 
-        $result = SmsChannelResultData::from([
+        // TODO Clean this up
+        $smsResult = SmsChannelResultData::from([
             'success' => false,
+        ]);
+
+        $result = NotificationResultData::from([
+            'type' => $smsResult,
         ]);
 
         try {
@@ -50,10 +59,10 @@ class SmsChannel
                 $messageContent
             );
 
-            $result->success = true;
-            $result->message = $message;
+            $result->type->success = true;
+            $result->type->message = $message;
         } catch (TwilioException $e) {
-            $result->error = $e->getMessage();
+            $result->type->error = $e->getMessage();
         }
 
         return $result;

@@ -15,9 +15,9 @@ return new class () extends Migration {
             $table->string('recipient_id')->nullable();
             $table->string('recipient_type')->nullable();
             $table->string('channel');
+            $table->string('notification_class');
             $table->string('external_reference_id')->nullable()->unique();
             $table->string('external_status')->nullable();
-            // TODO An array of the content that the message consisted of...
             $table->json('content')->nullable();
             $table->string('delivery_status')->default(NotificationDeliveryStatus::Awaiting);
             $table->timestamp('delivered_at')->nullable();

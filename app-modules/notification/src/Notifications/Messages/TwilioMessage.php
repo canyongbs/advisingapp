@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Notification\Notifications\Messages;
 
-class TwilioMessage
+use AdvisingApp\Notification\Notifications\Messages\Contracts\Message;
+
+class TwilioMessage implements Message
 {
     public function __construct(
         protected object $notifiable,
@@ -88,5 +90,14 @@ class TwilioMessage
     public function getFrom(): string
     {
         return $this->from;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'recipient_phone_number' => $this->getRecipientPhoneNumber(),
+            'content' => $this->getContent(),
+            'from' => $this->getFrom(),
+        ];
     }
 }
