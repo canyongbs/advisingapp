@@ -38,7 +38,7 @@ namespace AdvisingApp\Interaction\Observers;
 
 use App\Models\User;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
 class InteractionObserver
 {

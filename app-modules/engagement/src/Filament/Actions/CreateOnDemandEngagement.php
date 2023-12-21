@@ -53,6 +53,6 @@ class CreateOnDemandEngagement
 
         $createEngagementDeliverable($engagement, $data['delivery_method']);
 
-        $engagement->deliverable->deliver();
+        $engagement->deliverable->driver()->deliver();
     }
 }

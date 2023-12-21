@@ -39,12 +39,12 @@ namespace AdvisingApp\Task\Notifications;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use AdvisingApp\Task\Models\Task;
-use App\Notifications\MailMessage;
 use Illuminate\Support\HtmlString;
 use App\Models\NotificationSetting;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
 
