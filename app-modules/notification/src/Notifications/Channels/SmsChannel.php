@@ -5,8 +5,10 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 use Twilio\Rest\Client;
 use Twilio\Exceptions\TwilioException;
 use AdvisingApp\Notification\Messages\TwilioMessage;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
@@ -61,5 +63,21 @@ class SmsChannel
         }
 
         return $result;
+    }
+
+    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
+    {
+        if ($result->success) {
+            $deliverable->update([
+                'external_reference_id' => $result->message->sid,
+                'external_status' => $result->message->status,
+                'delivery_status' => NotificationDeliveryStatus::Successful,
+            ]);
+        } else {
+            $deliverable->update([
+                'delivery_status' => NotificationDeliveryStatus::Failed,
+                'delivery_response' => $result->error,
+            ]);
+        }
     }
 }

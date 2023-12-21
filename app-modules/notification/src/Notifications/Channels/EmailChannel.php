@@ -4,6 +4,7 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Channels\MailChannel;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
@@ -37,8 +38,8 @@ class EmailChannel extends MailChannel
             $result->success = true;
         }
 
-        ray('result', $result);
-
         return $result;
     }
+
+    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void {}
 }

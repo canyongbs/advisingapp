@@ -45,6 +45,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Actions\CreateOutboundDeliverable;
+use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
+use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Concerns\ChannelTrait;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
@@ -102,50 +104,13 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     public function afterSend(object $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
     {
-        ray('afterSend', $result);
-
         match (true) {
-            $result instanceof SmsChannelResultData => $this->afterSendSms($notifiable, $deliverable, $result),
-            $result instanceof EmailChannelResultData => $this->afterSendEmail($notifiable, $deliverable, $result),
+            $result instanceof SmsChannelResultData => SmsChannel::afterSending($notifiable, $deliverable, $result),
+            $result instanceof EmailChannelResultData => EmailChannel::afterSending($notifiable, $deliverable, $result),
             default => throw new \Exception('Invalid notification result data.'),
         };
 
         $this->afterSendHook($notifiable, $deliverable);
-    }
-
-    // TODO Extract to an appropriate class
-    protected function afterSendSms(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
-    {
-        if ($result->success) {
-            $deliverable->update([
-                'external_reference_id' => $result->message->sid,
-                'external_status' => $result->message->status,
-                'delivery_status' => NotificationDeliveryStatus::Successful,
-            ]);
-        } else {
-            $deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::Failed,
-                'delivery_response' => $result->error,
-            ]);
-        }
-    }
-
-    // TODO Extract to an appropriate class
-    protected function afterSendEmail(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void
-    {
-        ray('afterSendEmail', $result);
-        // if ($result->success) {
-        //     $deliverable->update([
-        //         'external_reference_id' => $result->message->sid,
-        //         'external_status' => $result->message->status,
-        //         'delivery_status' => NotificationDeliveryStatus::Successful,
-        //     ]);
-        // } else {
-        //     $deliverable->update([
-        //         'delivery_status' => NotificationDeliveryStatus::Failed,
-        //         'delivery_response' => $result->error,
-        //     ]);
-        // }
     }
 
     protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void {}
