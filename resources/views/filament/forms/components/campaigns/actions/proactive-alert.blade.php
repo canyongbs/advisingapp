@@ -32,6 +32,7 @@
 </COPYRIGHT>
 --}}
 @php
+    use AdvisingApp\Campaign\Settings\CampaignSettings;
     use Carbon\Carbon;
 @endphp
 
@@ -59,7 +60,8 @@
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Execute At</dt>
-            <dd class="text-sm font-semibold">{{ Carbon::parse($action['execute_at'])->format('m/d/Y H:i:s') }}</dd>
+            <dd class="text-sm font-semibold">{{ Carbon::parse($action['execute_at'])->format('M j, Y H:i:s') }}
+                {{ app(CampaignSettings::class)->getActionExecutionTimezoneLabel() }}</dd>
         </div>
     </dl>
 

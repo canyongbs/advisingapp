@@ -34,30 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
-
-class CampaignPlugin implements Plugin
-{
-    public function getId(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'campaign';
+        $this->migrator->add('campaign.action_execution_timezone');
     }
-
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Campaign\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Campaign\\Filament\\Pages'
-            );
-    }
-
-    public function boot(Panel $panel): void {}
-}
+};

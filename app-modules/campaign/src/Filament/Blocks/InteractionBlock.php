@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use Closure;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
@@ -45,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
@@ -128,9 +130,13 @@ class InteractionBlock extends CampaignActionBlock
                 ]),
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                 ->required()
-                ->minDate(now(auth()->user()->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 
