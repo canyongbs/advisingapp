@@ -36,13 +36,14 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use App\Models\User;
+use Carbon\CarbonImmutable;
 use AdvisingApp\Task\Models\Task;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 
 class TaskBlock extends CampaignActionBlock
 {
@@ -57,9 +58,6 @@ class TaskBlock extends CampaignActionBlock
 
     public function generateFields(string $fieldPrefix = ''): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return [
             Fieldset::make('Details')
                 ->schema([
@@ -81,9 +79,13 @@ class TaskBlock extends CampaignActionBlock
                 ]),
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                 ->required()
-                ->minDate(now($user->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 

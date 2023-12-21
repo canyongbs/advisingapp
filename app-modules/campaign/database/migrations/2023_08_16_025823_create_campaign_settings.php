@@ -34,8 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Rest;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Lomkit\Rest\Http\Controllers\Controller as RestController;
-
-abstract class Controller extends RestController {}
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        $this->migrator->add('campaign.action_execution_timezone');
+    }
+};

@@ -58,6 +58,7 @@ class EditSystemUser extends EditRecord
                 ->string(),
             TextInput::make('token')
                 ->hint('Please copy the token, it will only be shown once.')
+                ->disabled()
                 ->dehydrated(false)
                 ->visible(fn (?string $state) => filled($state)),
         ]);

@@ -37,8 +37,10 @@
 namespace App\Filament\Resources\SystemUserResource\RelationManagers;
 
 use Filament\Forms\Form;
+use App\Models\SystemUser;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\AttachAction;
@@ -75,8 +77,17 @@ class PermissionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->recordSelectOptionsQuery(fn (Builder $query) => $query->where('guard_name', 'api'))
-                    ->attachAnother(),
+                    ->recordSelectOptionsQuery(
+                        function (Builder $query) {
+                            /** @var SystemUser $owner */
+                            $owner = $this->getOwnerRecord();
+
+                            return $query
+                                ->where('guard_name', 'api')
+                                ->whereNotIn('name', $owner->getPermissionNames());
+                        }
+                    )
+                    ->recordSelect(fn (Select $select) => $select->multiple()),
             ])
             ->actions([
             ])

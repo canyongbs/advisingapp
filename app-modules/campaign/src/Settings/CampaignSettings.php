@@ -34,7 +34,30 @@
 </COPYRIGHT>
 */
 
-use Lomkit\Rest\Facades\Rest;
-use AdvisingApp\Prospect\Rest\Controllers\ProspectController;
+namespace AdvisingApp\Campaign\Settings;
 
-Rest::resource('prospects', ProspectController::class);
+use Spatie\LaravelSettings\Settings;
+
+class CampaignSettings extends Settings
+{
+    public ?string $action_execution_timezone = null;
+
+    public static function group(): string
+    {
+        return 'campaign';
+    }
+
+    public function getActionExecutionTimezone(): string
+    {
+        return $this->action_execution_timezone ?? config('app.timezone');
+    }
+
+    public function getActionExecutionTimezoneLabel(): string
+    {
+        return str_replace(
+            ['/', '_', 'St '],
+            [', ', ' ', 'St. '],
+            $this->getActionExecutionTimezone()
+        );
+    }
+}

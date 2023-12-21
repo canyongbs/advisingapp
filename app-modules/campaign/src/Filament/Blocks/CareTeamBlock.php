@@ -37,9 +37,11 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 
 class CareTeamBlock extends CampaignActionBlock
 {
@@ -69,9 +71,13 @@ class CareTeamBlock extends CampaignActionBlock
                 ->hintIconTooltip('If checked, all prior care team assignments will be removed.'),
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                 ->required()
-                ->minDate(now(auth()->user()->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 

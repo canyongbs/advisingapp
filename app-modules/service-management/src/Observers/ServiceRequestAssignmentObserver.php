@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Observers;
 
+use App\Models\User;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
@@ -46,7 +47,9 @@ class ServiceRequestAssignmentObserver
 {
     public function created(ServiceRequestAssignment $serviceRequestAssignment): void
     {
-        if ($user = auth()->user()) {
+        $user = auth()->user();
+
+        if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $serviceRequestAssignment);
         }
 

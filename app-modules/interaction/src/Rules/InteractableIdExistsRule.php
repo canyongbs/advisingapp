@@ -34,12 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace AdvisingApp\Interaction\Rules;
 
-use InterNACHI\Modular\Console\Commands\Make\Modularize;
-use Lomkit\Rest\Console\Commands\ResourceCommand as BaseResourceCommand;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class ResourceCommand extends BaseResourceCommand
+class InteractableIdExistsRule implements DataAwareRule, ValidationRule
 {
-    use Modularize;
+    protected $data = [];
+
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        $type = $this->data['input']['interactable_type'];
+
+        /** @var ?Model $morph */
+        $morph = Relation::getMorphedModel($type);
+
+        if (! $morph) {
+            $fail('The interactable type must be student, prospect, or service_request');
+        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
+            $fail('The interactable does not exist.');
+        }
+    }
+
+    public function setData(array $data): static
+    {
+        $this->data = $data;
+
+        return $this;
+    }
 }
