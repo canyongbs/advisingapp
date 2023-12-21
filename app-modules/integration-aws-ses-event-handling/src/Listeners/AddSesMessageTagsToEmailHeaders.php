@@ -42,7 +42,7 @@ class AddSesMessageTagsToEmailHeaders
 {
     public function handle(MessageSending $event): void
     {
-        if ($event->message->metadata) {
+        if (property_exists($event->message, 'metadata') && is_array($event->message->metadata)) {
             foreach ($event->message->metadata as $key => $value) {
                 $event->message->getHeaders()->addTextHeader('X-SES-MESSAGE-TAGS', $key . '=' . $value);
             }
