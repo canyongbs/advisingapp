@@ -34,30 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Settings;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Spatie\LaravelSettings\Settings;
 
-class IntegrationAwsSesEventHandlingPlugin implements Plugin
+class SesSettings extends Settings
 {
-    public function getId(): string
+    public ?string $key;
+
+    public ?string $secret;
+
+    public ?string $region;
+
+    public ?string $configuration_set;
+
+    public static function group(): string
     {
-        return 'integration-aws-ses-event-handling';
+        return 'ses';
     }
 
-    public function register(Panel $panel): void
+    public static function encrypted(): array
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\IntegrationAwsSesEventHandling\\Filament\\Resources'
-        );
-
-        $panel->discoverPages(
-            in: __DIR__ . '/Filament/Pages',
-            for: 'AdvisingApp\\IntegrationAwsSesEventHandling\\Filament\\Pages'
-        );
+        return [
+            'key',
+            'secret',
+            'region',
+            'configuration_set',
+        ];
     }
-
-    public function boot(Panel $panel): void {}
 }
