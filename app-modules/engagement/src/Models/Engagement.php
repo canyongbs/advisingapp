@@ -147,7 +147,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function scopeIsAwaitingDelivery(Builder $query): void
     {
         $query->whereHas('engagementDeliverable', function (Builder $query) {
-            $query->where('status', EngagementDeliveryStatus::Awaiting);
+            $query->where('delivery_status', EngagementDeliveryStatus::Awaiting);
         });
     }
 

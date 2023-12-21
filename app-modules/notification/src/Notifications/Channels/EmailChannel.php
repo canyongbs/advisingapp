@@ -80,11 +80,11 @@ class EmailChannel extends MailChannel
     {
         if ($result->success) {
             $deliverable->update([
-                'status' => NotificationDeliveryStatus::Dispatched,
+                'delivery_status' => NotificationDeliveryStatus::Dispatched,
             ]);
         } else {
             $deliverable->update([
-                'status' => NotificationDeliveryStatus::DispatchFailed,
+                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
             ]);
         }
     }
