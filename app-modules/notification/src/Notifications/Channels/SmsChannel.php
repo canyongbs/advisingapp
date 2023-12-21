@@ -105,11 +105,11 @@ class SmsChannel
             $deliverable->update([
                 'external_reference_id' => $result->message->sid,
                 'external_status' => $result->message->status,
-                'delivery_status' => NotificationDeliveryStatus::Successful,
+                'delivery_status' => NotificationDeliveryStatus::Dispatched,
             ]);
         } else {
             $deliverable->update([
-                'delivery_status' => NotificationDeliveryStatus::Failed,
+                'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
                 'delivery_response' => $result->error,
             ]);
         }

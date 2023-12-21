@@ -40,6 +40,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Channels\MailChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
@@ -77,7 +78,14 @@ class EmailChannel extends MailChannel
 
     public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void
     {
-        // TODO Do we want to add any updating of the deliverable here?
-        // Or do we want to leave it all for SES events handled via webhook?
+        if ($result->success) {
+            $deliverable->update([
+                'status' => NotificationDeliveryStatus::Dispatched,
+            ]);
+        } else {
+            $deliverable->update([
+                'status' => NotificationDeliveryStatus::DispatchFailed,
+            ]);
+        }
     }
 }

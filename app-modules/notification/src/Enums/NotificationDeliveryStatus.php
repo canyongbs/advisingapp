@@ -40,10 +40,15 @@ use Filament\Support\Contracts\HasLabel;
 
 enum NotificationDeliveryStatus: string implements HasLabel
 {
+    // Internal
     case Awaiting = 'awaiting';
-    case Successful = 'successful';
-    case Failed = 'failed';
+    case Dispatched = 'dispatched';
+    case DispatchFailed = 'failed_dispatch';
     case RateLimited = 'rate_limited';
+
+    // External
+    case Failed = 'failed';
+    case Successful = 'successful';
 
     public function getLabel(): ?string
     {
