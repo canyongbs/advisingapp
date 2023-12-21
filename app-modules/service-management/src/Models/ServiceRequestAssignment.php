@@ -42,12 +42,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Timeline\Timelines\ServiceRequestAssignmentTimeline;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
-use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @mixin IdeHelperServiceRequestAssignment

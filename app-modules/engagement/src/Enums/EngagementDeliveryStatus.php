@@ -39,6 +39,10 @@ namespace AdvisingApp\Engagement\Enums;
 enum EngagementDeliveryStatus: string
 {
     case Awaiting = 'awaiting';
+    case Dispatched = 'dispatched';
+    case DispatchFailed = 'failed_dispatch';
+    case RateLimited = 'rate_limited';
+
     case Successful = 'successful';
     case Failed = 'failed';
 }

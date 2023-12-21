@@ -36,7 +36,13 @@
 
 namespace AdvisingApp\Engagement\Drivers;
 
+use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+
 interface DeliverableDriver
 {
     public function updateDeliveryStatus(array $data): void;
+
+    public function jobForDelivery(): QueuedEngagementDelivery;
+
+    public function deliver(): void;
 }

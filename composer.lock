@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "76b62f75042752e87277f492a1212ec7",
+    "content-hash": "06a7cf58a79008fb80e6a9abff643c00",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1992,12 +1992,12 @@
             }
         },
         {
-            "name": "canyon-gbs/advising-app-notifications",
+            "name": "canyon-gbs/advising-app-notification",
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/notifications",
-                "reference": "7dbec344f693b6973f93539b31c53d03f5891f3e"
+                "url": "app-modules/notification",
+                "reference": "5062ea2b82f5998318e06e77dcb7836661b3a412"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -2006,16 +2006,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "AdvisingApp\\Notifications\\Providers\\NotificationsServiceProvider"
+                        "AdvisingApp\\Notification\\Providers\\NotificationServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "AdvisingApp\\Notifications\\": "src/",
-                    "AdvisingApp\\Notifications\\Tests\\": "tests/",
-                    "AdvisingApp\\Notifications\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Notifications\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Notification\\": "src/",
+                    "AdvisingApp\\Notification\\Tests\\": "tests/",
+                    "AdvisingApp\\Notification\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Notification\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -2137,10 +2137,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/student-data-model",
-                "reference": "bae8ef0016aab67de5ed247f19915690e93cbd21"
+                "reference": "97787a2aedc5da23f7907add6646513bb8f39a97"
             },
             "require": {
-                "canyon-gbs/advising-app-notifications": "^1.0",
+                "canyon-gbs/advising-app-notification": "*",
                 "filament/filament": "^3.0"
             },
             "type": "library",
@@ -8158,75 +8158,6 @@
                 }
             ],
             "time": "2023-12-20T05:34:05+00:00"
-        },
-        {
-            "name": "lomkit/laravel-rest-api",
-            "version": "v2.3.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Lomkit/laravel-rest-api.git",
-                "reference": "6f631445a8a2dbc449cdc6c80590c1585a42a476"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Lomkit/laravel-rest-api/zipball/6f631445a8a2dbc449cdc6c80590c1585a42a476",
-                "reference": "6f631445a8a2dbc449cdc6c80590c1585a42a476",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^10.0",
-                "illuminate/http": "^10.0",
-                "illuminate/support": "^10.0",
-                "php": "^8.0"
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "^6.0|^7.0",
-                "orchestra/testbench": "^8.5",
-                "phpunit/phpunit": "^8.0|^9.0|^10.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Lomkit\\Rest\\RestServiceProvider"
-                    ],
-                    "aliases": {
-                        "Rest": "Lomkit\\Rest\\Facades\\Rest"
-                    }
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Lomkit\\Rest\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Gautier Deleglise",
-                    "email": "gautier@lomkit.com"
-                }
-            ],
-            "description": "A package to build quick and robust rest api for the Laravel framework.",
-            "keywords": [
-                "api",
-                "graphql",
-                "laravel",
-                "lomkit",
-                "rest"
-            ],
-            "support": {
-                "issues": "https://github.com/Lomkit/laravel-rest-api/issues",
-                "source": "https://github.com/Lomkit/laravel-rest-api/tree/v2.3.3"
-            },
-            "time": "2023-11-29T12:00:56+00:00"
         },
         {
             "name": "maatwebsite/excel",
@@ -21237,5 +21168,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

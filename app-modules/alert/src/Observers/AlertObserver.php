@@ -40,7 +40,7 @@ use App\Models\User;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Alert\Events\AlertCreated;
-use AdvisingApp\Notifications\Actions\SubscriptionCreate;
+use AdvisingApp\Notification\Actions\SubscriptionCreate;
 
 class AlertObserver
 {

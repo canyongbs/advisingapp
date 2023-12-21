@@ -37,10 +37,10 @@
 namespace AdvisingApp\Form\Notifications;
 
 use Illuminate\Bus\Queueable;
-use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\AnonymousNotifiable;
 use AdvisingApp\Form\Models\SubmissibleAuthentication;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 
 class AuthenticateFormNotification extends Notification
 {

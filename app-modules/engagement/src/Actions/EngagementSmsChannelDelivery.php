@@ -36,42 +36,16 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
-use Twilio\Rest\Client;
-use Twilio\Exceptions\TwilioException;
-use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
 
 class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
 {
     public function deliver(): void
     {
-        $settings = app(TwilioSettings::class);
-
-        $client = new Client($settings->account_sid, $settings->auth_token);
-
-        $messageContent = [
-            'from' => $settings->from_number,
-            'body' => $this->deliverable->engagement->getBody(),
-        ];
-
-        if (! app()->environment('local')) {
-            $messageContent['statusCallback'] = route('inbound.webhook.twilio', ['event' => 'status_callback']);
-        }
-
-        try {
-            $message = $client->messages->create(
-                ! is_null(config('services.twilio.test_to_number')) ? config('services.twilio.test_to_number') : $this->deliverable->engagement->recipient->mobile,
-                $messageContent
-            );
-
-            $this->deliverable->update([
-                'external_reference_id' => $message->sid,
-                'external_status' => $message->status,
-            ]);
-        } catch (TwilioException $e) {
-            // TODO Notify someone of the failure
-            $this->deliverable->update([
-                'external_status' => $e->getMessage(),
-            ]);
-        }
+        $this
+            ->deliverable
+            ->engagement
+            ->recipient
+            ->notify(new EngagementSmsNotification($this->deliverable));
     }
 }

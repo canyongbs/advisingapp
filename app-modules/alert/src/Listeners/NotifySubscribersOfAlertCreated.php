@@ -40,7 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Alert\Events\AlertCreated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 
 class NotifySubscribersOfAlertCreated implements ShouldQueue
