@@ -51,10 +51,10 @@ class KnowledgeBaseItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'question' => $this->faker->sentence(),
-            'public' => $this->faker->boolean(),
-            'solution' => $this->faker->paragraph(),
-            'notes' => $this->faker->paragraph(),
+            'question' => fake()->sentence(),
+            'public' => fake()->boolean(),
+            'solution' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
+            'notes' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
             'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first() ?? KnowledgeBaseQuality::factory(),
             'status_id' => KnowledgeBaseStatus::inRandomOrder()->first() ?? KnowledgeBaseStatus::factory(),
             'category_id' => KnowledgeBaseCategory::inRandomOrder()->first() ?? KnowledgeBaseCategory::factory(),
