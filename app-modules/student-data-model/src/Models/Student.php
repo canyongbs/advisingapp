@@ -69,6 +69,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 
 /**
  * @property string $display_name
+ * @property string $mobile
  *
  * @mixin IdeHelperStudent
  */
