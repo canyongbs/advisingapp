@@ -34,29 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace AdvisingApp\Interaction\Rules;
 
-use App\Rest\OpenApi;
-use Lomkit\Rest\Console\Commands\DocumentationCommand as BaseDocumentationCommand;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class DocumentationCommand extends BaseDocumentationCommand
+class InteractableIdExistsRule implements DataAwareRule, ValidationRule
 {
-    // TODO: We can delete this when ___ is merged in
-    public function handle()
+    protected $data = [];
+
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $openApi = (new OpenApi())
-            ->generate();
+        $type = $this->data['input']['interactable_type'];
 
-        $path = $this->getPath('openapi');
+        /** @var ?Model $morph */
+        $morph = Relation::getMorphedModel($type);
 
-        $this->makeDirectory($path);
+        if (! $morph) {
+            $fail('The interactable type must be student, prospect, or service_request');
+        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
+            $fail('The interactable does not exist.');
+        }
+    }
 
-        $this->files->put(
-            $path,
-            json_encode($openApi->jsonSerialize())
-        );
+    public function setData(array $data): static
+    {
+        $this->data = $data;
 
-        $this->info('The documentation was generated successfully!');
-        $this->info('Open ' . url(config('rest.documentation.routing.path')) . ' in a web browser.');
+        return $this;
     }
 }

@@ -1,5 +1,11 @@
 union Interactable = Student | Prospect | ServiceRequest
 
+enum InteractableType {
+    Student @enum(value: "student")
+    Prospect @enum(value: "prospect")
+    ServiceRequest @enum(value: "service_request")
+}
+
 scalar InteractableId
     @scalar(class: "App\\GraphQL\\Scalars\\InteractableId")
     @searchByOperators(type: "ID")
@@ -62,10 +68,13 @@ input InteractionInteractablesQuery {
 }
 
 input InteractionsQuery {
+    id: UUID
     subject: String
     description: String
     user: UserQuery
     interactable: InteractionInteractablesQuery @morphToRelation
+    interactable_id: InteractableId
+    interactable_type: InteractableType
     relation: InteractionRelationQuery
     campaign: InteractionCampaignQuery
     driver: InteractionDriverQuery
@@ -78,17 +87,23 @@ input InteractionsQuery {
     updated_at: DateTime
 }
 
-extend type Query {
+type InteractionQueries {
     "Find a single interaction by an identifying attribute."
-    interaction(
+    find(
         "The value of the attribute to match."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @find @canResolved(ability: "view")
 
     "List multiple interactions."
-    interactions(where: InteractionsQuery @searchBy): [Interaction!]!
+    list(where: InteractionsQuery @searchBy): [Interaction!]!
         @paginate
         @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    interaction: InteractionQueries! @namespaced
 }
 
 input UpdateInteractionInput {
@@ -105,13 +120,13 @@ input UpdateInteractionInput {
     interactable_id: InteractableId
         @rules(
             apply: [
-                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRules"
+                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRule"
                 "required_with:interactable_type"
             ]
         )
 
     "The type of Interactable related to the interaction."
-    interactable_type: String
+    interactable_type: InteractableType
         @rules(
             apply: [
                 "in:student,prospect,service_request"
@@ -167,12 +182,12 @@ input CreateInteractionInput {
         @rules(
             apply: [
                 "required"
-                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRules"
+                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRule"
             ]
         )
 
     "The type of Interactable related to the interaction."
-    interactable_type: String!
+    interactable_type: InteractableType!
         @rules(apply: ["required", "in:student,prospect,service_request"])
 
     "The type of interaction."
@@ -211,25 +226,34 @@ input CreateInteractionInput {
         @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
 }
 
-extend type Mutation {
-    "Create a interaction."
-    createInteraction(input: CreateInteractionInput! @spread): Interaction!
+type InteractionMutations {
+    "Create an interaction."
+    create(input: CreateInteractionInput! @spread): Interaction!
         @create
         @canModel(ability: "create")
 
-    "Update a interaction."
-    updateInteraction(
+    "Update an interaction."
+    update(
         "The identifier of the interaction you would like to update."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
 
+        "The fields you would like to update."
         input: UpdateInteractionInput! @spread
     ): Interaction! @canFind(ability: "update", find: "id") @update
 
-    "Delete a interaction."
-    deleteInteraction(
+    "Delete an interaction."
+    delete(
         "The identifier of the interaction you would like to delete."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interactions"])
     ): Interaction @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    interaction: InteractionMutations! @namespaced
 }
 
 #import ./interaction-campaign.graphql

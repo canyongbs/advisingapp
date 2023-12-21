@@ -601,13 +601,14 @@ namespace AdvisingApp\Application\Models{
  * @property string $application_id
  * @property string|null $author_id
  * @property string|null $author_type
+ * @property string $state_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationField> $fields
  * @property-read int|null $fields_count
- * @property-read \AdvisingApp\Application\Models\ApplicationSubmissionState|null $state
+ * @property-read \AdvisingApp\Application\Models\ApplicationSubmissionState $state
  * @property-read \AdvisingApp\Application\Models\Application $submissible
  * @method static \AdvisingApp\Application\Database\Factories\ApplicationSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission newModelQuery()
@@ -619,6 +620,7 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereStateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -630,8 +632,14 @@ namespace AdvisingApp\Application\Models{
 /**
  * AdvisingApp\Application\Models\ApplicationSubmissionState
  *
+ * @property string $id
  * @property \AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification $classification
+ * @property string $name
  * @property \AdvisingApp\Application\Enums\ApplicationSubmissionStateColorOptions $color
+ * @property string $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $submissions
@@ -641,6 +649,14 @@ namespace AdvisingApp\Application\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmissionState withoutTrashed()
  * @mixin \Eloquent
@@ -1520,6 +1536,7 @@ namespace AdvisingApp\Form\Models{
  * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
  * @property bool $is_authenticated
  * @property bool $is_wizard
+ * @property bool $recaptcha_enabled
  * @property array|null $content
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -1545,6 +1562,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereRecaptchaEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereRounding($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -1750,6 +1768,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property-read \AdvisingApp\Interaction\Models\InteractionRelation|null $relation
  * @property-read \AdvisingApp\Interaction\Models\InteractionStatus|null $status
  * @property-read \AdvisingApp\Interaction\Models\InteractionType|null $type
+ * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Interaction\Database\Factories\InteractionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newQuery()
@@ -2738,6 +2757,7 @@ namespace AdvisingApp\Survey\Models{
  * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
  * @property bool $is_authenticated
  * @property bool $is_wizard
+ * @property bool $recaptcha_enabled
  * @property array|null $content
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -2748,6 +2768,7 @@ namespace AdvisingApp\Survey\Models{
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveySubmission> $submissions
  * @property-read int|null $submissions_count
+ * @method static \AdvisingApp\Survey\Database\Factories\SurveyFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Survey newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Survey newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Survey query()
@@ -2762,6 +2783,7 @@ namespace AdvisingApp\Survey\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Survey whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Survey whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Survey wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereRecaptchaEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Survey whereRounding($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Survey whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -2814,6 +2836,7 @@ namespace AdvisingApp\Survey\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\Survey\Models\SurveyStep|null $step
  * @property-read \AdvisingApp\Survey\Models\Survey $submissible
+ * @method static \AdvisingApp\Survey\Database\Factories\SurveyFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveyField query()
@@ -2884,6 +2907,7 @@ namespace AdvisingApp\Survey\Models{
  * @property-read \App\Models\User|null $requester
  * @property-read \AdvisingApp\Survey\Models\Survey $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission canceled()
+ * @method static \AdvisingApp\Survey\Database\Factories\SurveySubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission notCanceled()
