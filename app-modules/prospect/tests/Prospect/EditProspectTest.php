@@ -102,7 +102,7 @@ test('EditProspect is gated with proper access control', function () {
         ->and($prospect->fresh()->phone)->toEqual($request->get('phone'))
         ->and($prospect->fresh()->address)->toEqual($request->get('address'))
         ->and($prospect->fresh()->address_2)->toEqual($request->get('address_2'))
-        ->and($prospect->fresh()->birthdate)->toEqual($request->get('birthdate'))
+        ->and($prospect->fresh()->birthdate->toDateString())->toEqual($request->get('birthdate'))
         ->and($prospect->fresh()->hsgrad)->toEqual($request->get('hsgrad'))
         ->and($prospect->fresh()->assigned_to_id)->toEqual($request->get('assigned_to_id'))
         ->and($prospect->fresh()->created_by_id)->toEqual($request->get('created_by_id'));
