@@ -162,7 +162,7 @@ class UserChat extends Page implements HasForms, HasActions
             $configuration = $twilioClient->conversations->v1->configuration()->fetch();
 
             return (new AccessToken(
-                accountSid: $settings->from_number,
+                accountSid: $settings->account_sid,
                 signingKeySid: $apiKey->api_sid,
                 secret: $apiKey->secret,
                 ttl: 21600, // 6 hours

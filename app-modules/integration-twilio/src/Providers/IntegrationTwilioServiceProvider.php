@@ -39,7 +39,6 @@ namespace AdvisingApp\IntegrationTwilio\Providers;
 use Filament\Panel;
 use Twilio\Rest\Client;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
@@ -72,8 +71,6 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Relation::morphMap([]);
-
         $this->registerRolesAndPermissions();
     }
 
