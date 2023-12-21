@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -109,7 +110,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
             $result instanceof SmsChannelResultData => SmsChannel::afterSending($notifiable, $deliverable, $result),
             $result instanceof EmailChannelResultData => EmailChannel::afterSending($notifiable, $deliverable, $result),
             $result instanceof DatabaseChannelResultData => DatabaseChannel::afterSending($notifiable, $deliverable, $result),
-            default => throw new \Exception('Invalid notification result data.'),
+            default => throw new Exception('Invalid notification result data.'),
         };
 
         $this->afterSendHook($notifiable, $deliverable);
