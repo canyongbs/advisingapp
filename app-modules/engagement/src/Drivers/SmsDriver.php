@@ -37,7 +37,10 @@
 namespace AdvisingApp\Engagement\Drivers;
 
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
 
+// TODO Rename this to be "EngagementSmsDriver"
 class SmsDriver implements DeliverableDriver
 {
     public function __construct(
@@ -55,5 +58,15 @@ class SmsDriver implements DeliverableDriver
             'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($data['ErrorMessage'] ?? null),
             default => null,
         };
+    }
+
+    public function jobForDelivery(): QueuedEngagementDelivery
+    {
+        return new EngagementSmsChannelDelivery($this->deliverable);
+    }
+
+    public function deliver(): void
+    {
+        EngagementSmsChannelDelivery::dispatch($this->deliverable);
     }
 }

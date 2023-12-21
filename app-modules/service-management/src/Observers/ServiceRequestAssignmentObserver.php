@@ -39,7 +39,7 @@ namespace AdvisingApp\ServiceManagement\Observers;
 use App\Models\User;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 

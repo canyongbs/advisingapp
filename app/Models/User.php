@@ -57,7 +57,7 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
-use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;

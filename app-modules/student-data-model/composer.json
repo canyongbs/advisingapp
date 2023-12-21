@@ -6,7 +6,7 @@
     "license": "proprietary",
     "require": {
         "filament/filament": "^3.0",
-        "canyon-gbs/advising-app-notifications": "^1.0"
+        "canyon-gbs/advising-app-notification": "*"
     },
     "autoload": {
         "psr-4": {

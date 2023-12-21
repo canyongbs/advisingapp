@@ -41,7 +41,7 @@ use App\Models\User;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\Facades\DB;
 use AdvisingApp\Authorization\Models\Permission;
-use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 
 class TaskObserver

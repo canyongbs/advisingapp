@@ -1,0 +1,60 @@
+type UserSubscription
+    @model(class: "AdvisingApp\\Notification\\Models\\Subscription") {
+    "Unique primary key."
+    id: UUID!
+    "The user related to this subscription."
+    user: User! @belongsTo
+    "The subscribable the user is subscribed to."
+    subscribable: Educatable! @morphTo
+    "The created date of the subscription."
+    created_at: DateTime
+    "The updated date of the subscription."
+    updated_at: DateTime
+}
+
+extend type Query {
+    "Get a subscription by its primary key."
+    userSubscription(
+        "Search by primary key."
+        id: UUID! @whereKey
+    ): UserSubscription @find @canResolved(ability: "view")
+
+    "Get all subscriptions."
+    userSubscriptions: [UserSubscription!]!
+        @paginate
+        @canModel(ability: "viewAny")
+}
+
+extend type Mutation {
+    "Create a new subscription."
+    createUserSubscription(
+        "The user to subscribe."
+        user_id: UUID!
+            @rules(
+                apply: [
+                    "required"
+                    "exists:users,id"
+                    "AdvisingApp\\Notification\\Rules\\UniqueSubscriptionRule"
+                ]
+            )
+
+        "The subscribable to subscribe to."
+        subscribable_id: EducatableId!
+            @rules(
+                apply: [
+                    "required"
+                    "AdvisingApp\\Notification\\Rules\\SubscribableIdExistsRule"
+                ]
+            )
+
+        "The type of subscribable to subscribe to."
+        subscribable_type: String!
+            @rules(apply: ["required", "in:student,prospect"])
+    ): UserSubscription! @create @canModel(ability: "create")
+
+    "Delete an existing subscription."
+    deleteUserSubscription(
+        "The primary key of the subscription."
+        id: UUID! @whereKey
+    ): UserSubscription @delete @canFind(ability: "delete", find: "id")
+}
