@@ -110,6 +110,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     protected $casts = [
         'sms_opt_out' => 'boolean',
         'email_bounce' => 'boolean',
+        'birthdate' => 'date',
     ];
 
     public function searchableAs(): string

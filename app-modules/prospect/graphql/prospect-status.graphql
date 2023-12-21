@@ -10,7 +10,7 @@ type ProspectStatus
     prospects: [Prospect!] @hasMany
 
     "The classification of the prospect status."
-    classification: ProspectStatusClassificationOptions!
+    classification: SystemProspectClassification!
 
     "The color of the prospect status."
     color: ProspectStatusColorOptions!
@@ -36,7 +36,7 @@ input ProspectStatusesQuery {
     prospects: ProspectsQuery
 
     "The classification of the prospect status."
-    classification: ProspectStatusClassificationOptions
+    classification: SystemProspectClassification
 
     "The color of the prospect status."
     color: ProspectStatusColorOptions
@@ -55,18 +55,15 @@ type ProspectStatusQueries {
     "Get a specific prospect status by ID."
     find(
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
     ): ProspectStatus @find @softDeletes @canResolved(ability: "view")
 
     "List multiple prospects statuses."
     list(
         "Filter by the prospect statuses attributes and relations."
         where: ProspectStatusesQuery @searchBy
-    ): [ProspectStatus!]!
-    @paginate
-    @softDeletes
-    @canModel(ability: "viewAny")
+    ): [ProspectStatus!]! @paginate @softDeletes @canModel(ability: "viewAny")
 }
 
 extend type Query {
@@ -76,34 +73,53 @@ extend type Query {
 input CreateProspectStatusInput {
     "The name of the prospect status."
     name: String!
-    @rules(
-        apply: [
-            "required"
-            "string"
-            "max:255"
-            "unique:prospect_statuses,name"
-        ]
-    )
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:prospect_statuses,name"
+            ]
+        )
+
+    "The classification of the prospect status."
+    classification: SystemProspectClassification!
+
+    "The color of the prospect status."
+    color: ProspectStatusColorOptions!
 }
 
 input UpdateProspectStatusInput {
     "The name of the prospect status."
     name: String
-    @rules(apply: ["string", "max:255", "unique:prospect_statuses,name"])
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:prospect_statuses,name"
+            ]
+        )
+
+    "The classification of the prospect status."
+    classification: SystemProspectClassification
+
+    "The color of the prospect status."
+    color: ProspectStatusColorOptions
 }
 
 type ProspectStatusMutations {
     "Create an prospect status."
     create(input: CreateProspectStatusInput! @spread): ProspectStatus!
-    @create
-    @canModel(ability: "create")
+        @create
+        @canModel(ability: "create")
 
     "Update an existing prospect status."
     update(
         "The identifier of the prospect status you would like to update."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
 
         "The fields you would like to update."
         input: UpdateProspectStatusInput! @spread
@@ -113,8 +129,8 @@ type ProspectStatusMutations {
     delete(
         "The identifier of the prospect status you would like to delete."
         id: UUID!
-        @whereKey
-        @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
     ): ProspectStatus @canFind(ability: "delete", find: "id") @delete
 }
 

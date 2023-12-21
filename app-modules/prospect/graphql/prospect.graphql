@@ -3,7 +3,10 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     id: UUID!
 
     "The status of the prospect."
-    status: String!
+    status: ProspectStatus! @belongsTo
+
+    "The source of the prospect."
+    source: ProspectSource! @belongsTo
 
     "The first name of the prospect."
     first_name: String!
@@ -45,10 +48,10 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     address_2: String
 
     "The birthdate of the prospect."
-    birthdate: DateTime
+    birthdate: Date
 
     "The High School graduation year of the prospect."
-    hs_grad_year: String
+    hsgrad: String
 
     "The created date of the prospect."
     created_at: DateTime
@@ -61,10 +64,74 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
 }
 
 input ProspectsQuery {
-    id: UUID!
-    first_name: String!
-    last_name: String!
-    full_name: String!
+    "Unique primary key."
+    id: UUID
+
+    "The status ID of the prospect."
+    status_id: UUID
+
+    "The status of the prospect."
+    status: ProspectStatusesQuery
+
+    "The source ID of the prospect."
+    source_id: UUID
+
+    "The source of the prospect."
+    source: ProspectSourcesQuery
+
+    "The first name of the prospect."
+    first_name: String
+
+    "The last name of the prospect."
+    last_name: String
+
+    "The full name of the prospect."
+    full_name: String
+
+    "The preferred name of the prospect."
+    preferred: String
+
+    "The description of the prospect."
+    description: String
+
+    "The email of the prospect."
+    email: String
+
+    "The email 2 of the prospect."
+    email_2: String
+
+    "The mobile number of the prospect."
+    mobile: String
+
+    "The phone number of the prospect."
+    phone: String
+
+    "If the prospect is opted out of SMS messages."
+    sms_opt_out: Boolean
+
+    "If the prospect's email bounces."
+    email_bounce: Boolean
+
+    "The address of the prospect."
+    address: String
+
+    "The address 2 of the prospect."
+    address_2: String
+
+    "The birthdate of the prospect."
+    birthdate: Date
+
+    "The High School graduation year of the prospect."
+    hsgrad: String
+
+    "The created date of the prospect."
+    created_at: DateTime
+
+    "The updated date of the prospect."
+    updated_at: DateTime
+
+    "The deleted date of the prospect."
+    deleted_at: DateTime
 }
 
 type ProspectQueries {
@@ -86,18 +153,13 @@ extend type Query {
     prospect: ProspectQueries! @namespaced
 }
 
-input UpdateProspectInput {
-    "The first name of the prospect."
-    first_name: String @rules(apply: ["string", "max:255"])
-
-    "The last name of the prospect."
-    last_name: String @rules(apply: ["string", "max:255"])
-
-    "The full name of the prospect."
-    full_name: String @rules(apply: ["string", "max:255"])
-}
-
 input CreateProspectInput {
+    "The status of the prospect."
+    status_id: UUID! @rules(apply: ["required", "exists:prospect_statuses,id"])
+
+    "The source of the prospect."
+    source_id: UUID! @rules(apply: ["required", "exists:prospect_sources,id"])
+
     "The first name of the prospect."
     first_name: String! @rules(apply: ["required", "string", "max:255"])
 
@@ -106,6 +168,95 @@ input CreateProspectInput {
 
     "The full name of the prospect."
     full_name: String! @rules(apply: ["required", "string", "max:255"])
+
+    "The preferred name of the prospect."
+    preferred: String @rules(apply: ["string", "max:255"])
+
+    "The description of the prospect."
+    description: String @rules(apply: ["string", "max:4294967295"])
+
+    "The email of the prospect."
+    email: String @rules(apply: ["string", "email", "max:255"])
+
+    "The email 2 of the prospect."
+    email_2: String @rules(apply: ["string", "email", "max:255"])
+
+    "The mobile number of the prospect."
+    mobile: String @rules(apply: ["string", "max:255"])
+
+    "The phone number of the prospect."
+    phone: String @rules(apply: ["string", "max:255"])
+
+    "If the prospect is opted out of SMS messages."
+    sms_opt_out: Boolean @rules(apply: ["boolean"])
+
+    "If the prospect's email bounces."
+    email_bounce: Boolean @rules(apply: ["boolean"])
+
+    "The address of the prospect."
+    address: String @rules(apply: ["string", "max:255"])
+
+    "The address 2 of the prospect."
+    address_2: String @rules(apply: ["string", "max:255"])
+
+    "The birthdate of the prospect."
+    birthdate: Date @rules(apply: ["date_format:Y-m-d"])
+
+    "The High School graduation year of the prospect."
+    hsgrad: String @rules(apply: ["string", "max:255"])
+}
+
+input UpdateProspectInput {
+    "The status of the prospect."
+    status_id: UUID @rules(apply: ["exists:prospect_statuses,id"])
+
+    "The source of the prospect."
+    source_id: UUID @rules(apply: ["exists:prospect_sources,id"])
+
+    "The first name of the prospect."
+    first_name: String @rules(apply: ["string", "max:255"])
+
+    "The last name of the prospect."
+    last_name: String @rules(apply: ["string", "max:255"])
+
+    "The full name of the prospect."
+    full_name: String @rules(apply: ["string", "max:255"])
+
+    "The preferred name of the prospect."
+    preferred: String @rules(apply: ["string", "max:255"])
+
+    "The description of the prospect."
+    description: String @rules(apply: ["string", "max:4294967295"])
+
+    "The email of the prospect."
+    email: String @rules(apply: ["string", "email", "max:255"])
+
+    "The email 2 of the prospect."
+    email_2: String @rules(apply: ["string", "email", "max:255"])
+
+    "The mobile number of the prospect."
+    mobile: String @rules(apply: ["string", "max:255"])
+
+    "The phone number of the prospect."
+    phone: String @rules(apply: ["string", "max:255"])
+
+    "If the prospect is opted out of SMS messages."
+    sms_opt_out: Boolean @rules(apply: ["boolean"])
+
+    "If the prospect's email bounces."
+    email_bounce: Boolean @rules(apply: ["boolean"])
+
+    "The address of the prospect."
+    address: String @rules(apply: ["string", "max:255"])
+
+    "The address 2 of the prospect."
+    address_2: String @rules(apply: ["string", "max:255"])
+
+    "The birthdate of the prospect."
+    birthdate: Date @rules(apply: ["date_format:Y-m-d"])
+
+    "The High School graduation year of the prospect."
+    hsgrad: String @rules(apply: ["string", "max:255"])
 }
 
 type ProspectMutations {
@@ -137,3 +288,6 @@ type ProspectMutations {
 extend type Mutation {
     prospect: ProspectMutations! @namespaced
 }
+
+#import ./prospect-source.graphql
+#import ./prospect-status.graphql

@@ -13,8 +13,8 @@ type UserSubscription
 }
 
 input UserSubscriptionSubscribablesQuery {
-    student: StudentQuery
-    prospect: ProspectQuery
+    student: StudentsQuery
+    prospect: ProspectsQuery
 }
 
 input SubscriptionsQuery {
