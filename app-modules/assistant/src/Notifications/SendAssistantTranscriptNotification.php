@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Assistant\Notifications;
 
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use App\Notifications\MailMessage;
-use App\Models\NotificationSetting;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
 class SendAssistantTranscriptNotification extends Notification implements ShouldQueue
 {

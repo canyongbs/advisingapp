@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
-use App\Notifications\MailMessage;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 
 class EngagementEmailNotification extends BaseNotification
 {

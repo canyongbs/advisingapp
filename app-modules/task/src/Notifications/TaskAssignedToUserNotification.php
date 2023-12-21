@@ -36,17 +36,17 @@
 
 namespace AdvisingApp\Task\Notifications;
 
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use AdvisingApp\Task\Models\Task;
-use App\Notifications\MailMessage;
-use Illuminate\Support\HtmlString;
-use App\Models\NotificationSetting;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
+use AdvisingApp\Task\Models\Task;
+use App\Models\NotificationSetting;
+use App\Models\User;
+use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\HtmlString;
 
 class TaskAssignedToUserNotification extends Notification implements ShouldQueue
 {
