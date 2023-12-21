@@ -5,7 +5,6 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 use Illuminate\Notifications\Notification;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
@@ -36,5 +35,12 @@ class DatabaseChannel extends BaseDatabaseChannel
         );
     }
 
-    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void {}
+    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, DatabaseChannelResultData $result): void
+    {
+        if ($result->success) {
+            $deliverable->markDeliverySuccessful();
+        } else {
+            $deliverable->markDeliveryFailed('Failed to send notification');
+        }
+    }
 }

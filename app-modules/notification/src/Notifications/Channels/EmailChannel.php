@@ -41,5 +41,9 @@ class EmailChannel extends MailChannel
         return $result;
     }
 
-    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void {}
+    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, EmailChannelResultData $result): void
+    {
+        // TODO Do we want to add any updating of the deliverable here?
+        // Or do we want to leave it all for SES events?
+    }
 }
