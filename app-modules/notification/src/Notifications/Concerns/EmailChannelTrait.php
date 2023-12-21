@@ -9,7 +9,10 @@ trait EmailChannelTrait
 {
     use ChannelTrait;
 
-    public static $channel = EmailChannel::class;
+    public static function getEmailChannel(): string
+    {
+        return EmailChannel::class;
+    }
 
     public function toMail(object $notifiable): MailMessage
     {

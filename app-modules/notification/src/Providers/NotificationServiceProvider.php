@@ -91,13 +91,8 @@ class NotificationServiceProvider extends ServiceProvider
             HandleNotificationFailed::class
         );
 
-        // TODO We should probably introduce a listener for the NotificationSending class as well
-        // The corresponding listener could effectively serve as a middleware to prevent sending in situations
-        // Where the notification should not be sent (for instance, quota is reached, recipient declined to receive, etc.)
-        // Event::listen(
-        //     NotificationSending::class,
-        //     ShouldSendNotification::class
-        // )
+        // TODO Listen to the MessageSent event in order to update email statuses
+        // as best as we can without the SES information...
 
         // TODO Should subscriptions exist in their own module???
         Event::listen(

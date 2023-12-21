@@ -36,52 +36,53 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
-use ReflectionClass;
-use ReflectionProperty;
+use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Actions\CreateOutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Concerns\ChannelTrait;
+use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 
 abstract class BaseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     use Dispatchable;
 
-    public array $channels = [];
-
     protected array $metadata = [];
 
     public function via(object $notifiable): array
     {
-        $reflectionClass = new ReflectionClass($this);
+        $traits = collect(class_uses_recursive(static::class));
 
-        return collect($reflectionClass->getTraits())
-            ->filter(function (ReflectionClass $trait) {
-                return collect($trait->getTraits())
-                    ->contains(fn (ReflectionClass $nestedTrait) => $nestedTrait->getName() === ChannelTrait::class);
+        $channels = $traits
+            ->filter(function ($traitName) {
+                return in_array(ChannelTrait::class, class_uses($traitName));
             })
+            ->map(function ($traitName) {
+                $channelName = Str::before(class_basename($traitName), 'ChannelTrait');
+                $methodName = 'get' . Str::studly($channelName) . 'Channel';
 
-            ->map(function (ReflectionClass $trait) {
-                return collect($trait->getProperties())
-                    ->filter(function (ReflectionProperty $property) {
-                        return $property->getName() === 'channel';
-                    })
-                    ->map(function (ReflectionProperty $property) {
-                        return $property->getValue();
-                    });
+                if (method_exists($traitName, $methodName)) {
+                    return forward_static_call([$traitName, $methodName]);
+                }
+
+                return null;
             })
-            ->flatten()
+            ->filter()
+            ->unique()
+            ->values()
             ->toArray();
+
+        return $channels;
     }
 
     public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false
@@ -94,16 +95,10 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
         $this->beforeSendHook($notifiable, $deliverable, $channel);
 
-        // TODO Implement some kind of check against the rate limits for a particular channel
-        // Reminder that we'll need to consider "must send" notifications, which may be those sent
-        // To a sending party letting them know they've hit a quota or been throttled, etc...
-        // if (! $this->checkRateLimitsFor($channel)) {
-        //     $deliverable->update([
-        //         'delivery_status' => NotificationDeliveryStatus::RateLimited,
-        //     ]);
-
-        //     return false;
-        // }
+        // TODO Check License Limits / update deliverable status / etc...
+        // This will be completed in:
+        // https://canyongbs.atlassian.net/browse/ADVAPP-1
+        // https://canyongbs.atlassian.net/browse/ADVAPP-2
 
         return $deliverable;
     }
@@ -113,6 +108,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         match (true) {
             $result instanceof SmsChannelResultData => SmsChannel::afterSending($notifiable, $deliverable, $result),
             $result instanceof EmailChannelResultData => EmailChannel::afterSending($notifiable, $deliverable, $result),
+            $result instanceof DatabaseChannelResultData => DatabaseChannel::afterSending($notifiable, $deliverable, $result),
             default => throw new \Exception('Invalid notification result data.'),
         };
 

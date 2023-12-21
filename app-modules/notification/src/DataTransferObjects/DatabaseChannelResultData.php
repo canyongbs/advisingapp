@@ -34,22 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Listeners;
+namespace AdvisingApp\Notification\DataTransferObjects;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Events\NotificationSent;
-use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
-use AdvisingApp\Engagement\Actions\HandleEngagementEmailNotificationSent;
+use Twilio\Rest\Api\V2010\Account\MessageInstance;
 
-class HandleNotificationSent implements ShouldQueue
+class DatabaseChannelResultData extends NotificationResultData
 {
-    public function handle(NotificationSent $event): void
-    {
-        $notification = $event->notification;
-
-        match (true) {
-            $notification instanceof EngagementEmailNotification => HandleEngagementEmailNotificationSent::dispatch($event),
-            default => null,
-        };
-    }
+    public function __construct(
+        public bool $success,
+        // TODO Is there something we can add here?
+        // public ?MessageInstance $message = null,
+        public ?string $error = null,
+    ) {}
 }

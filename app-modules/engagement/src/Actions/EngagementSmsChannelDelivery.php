@@ -38,8 +38,6 @@ namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\Notifications\EngagementSmsNotification;
 
-// TODO We can probably do away with these classes altogether and just queue up the
-// notification from where these are currently sent.
 class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
 {
     public function deliver(): void

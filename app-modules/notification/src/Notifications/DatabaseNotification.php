@@ -34,22 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Listeners;
+namespace AdvisingApp\Notification\Notifications;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Events\NotificationSent;
-use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
-use AdvisingApp\Engagement\Actions\HandleEngagementEmailNotificationSent;
-
-class HandleNotificationSent implements ShouldQueue
+interface DatabaseNotification
 {
-    public function handle(NotificationSent $event): void
-    {
-        $notification = $event->notification;
-
-        match (true) {
-            $notification instanceof EngagementEmailNotification => HandleEngagementEmailNotificationSent::dispatch($event),
-            default => null,
-        };
-    }
+    public function toDatabase(object $notifiable): array;
 }

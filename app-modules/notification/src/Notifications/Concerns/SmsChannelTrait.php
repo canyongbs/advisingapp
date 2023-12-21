@@ -8,5 +8,8 @@ trait SmsChannelTrait
 {
     use ChannelTrait;
 
-    public static $channel = SmsChannel::class;
+    public static function getSmsChannel(): string
+    {
+        return SmsChannel::class;
+    }
 }

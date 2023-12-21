@@ -30,8 +30,8 @@ class SmsChannel
 
     public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
     {
-        // TODO Figure out if we can remove this easily/nicely...
         /** @var SmsNotification $notification */
+
         /** @var TwilioMessage $twilioMessage */
         $twilioMessage = $notification->toSms($notifiable);
 

@@ -36,15 +36,9 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
-use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
 interface EmailNotification
 {
     public function toEmail(object $notifiable): MailMessage;
-
-    public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false;
-
-    public function afterSend(object $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void;
 }

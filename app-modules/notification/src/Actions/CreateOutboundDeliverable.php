@@ -42,6 +42,7 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
+use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 
 class CreateOutboundDeliverable
 {
@@ -50,14 +51,14 @@ class CreateOutboundDeliverable
         $channel = match ($channel) {
             SmsChannel::class => NotificationChannel::Sms,
             EmailChannel::class => NotificationChannel::Email,
-            // DatabaseChannel::class => $deliverable->channel = NotificationChannel::Database,
+            DatabaseChannel::class => NotificationChannel::Database,
             default => throw new Exception('Invalid notification channel.'),
         };
 
         $content = match ($channel) {
             NotificationChannel::Sms => $notification->toSms($notifiable)->toArray(),
             NotificationChannel::Email => $notification->toMail($notifiable)->toArray(),
-            // NotificationChannel::Database => $notification->toDatabase($notifiable)->toArray(),
+            NotificationChannel::Database => $notification->toDatabase($notifiable),
             default => throw new Exception('Invalid notification channel.'),
         };
 

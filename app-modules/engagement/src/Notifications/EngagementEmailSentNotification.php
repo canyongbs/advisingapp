@@ -37,36 +37,34 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
 use App\Models\NotificationSetting;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-class EngagementEmailSentNotification extends Notification implements ShouldQueue
+class EngagementEmailSentNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {
-    use Queueable;
+    use EmailChannelTrait;
+    use DatabaseChannelTrait;
 
     public function __construct(
         public Engagement $engagement
     ) {}
 
-    public function via(User $notifiable): array
-    {
-        return ['mail', 'database'];
-    }
-
-    public function toMail(User $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject('Your Engagement Email has successfully been delivered.')
+            ->subject('Your Engagement email has successfully been delivered.')
             ->line("Your engagement was successfully delivered to {$this->engagement->recipient->display_name}.");
     }
 
-    public function toDatabase(User $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return FilamentNotification::make()
             ->success()
