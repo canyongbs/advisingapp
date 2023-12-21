@@ -1,0 +1,44 @@
+<?php
+
+namespace AdvisingApp\Notification\Notifications\Channels;
+
+use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Channels\MailChannel;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
+use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+
+class EmailChannel extends MailChannel
+{
+    public function send($notifiable, Notification $notification)
+    {
+        /** @var BaseNotification $notification */
+        $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
+
+        if ($deliverable === false) {
+            // Do anything else we need to to notify sending party that notification was not sent
+            return;
+        }
+
+        $result = $this->handle($notifiable, $notification);
+
+        $notification->afterSend($notifiable, $deliverable, $result);
+    }
+
+    public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
+    {
+        $result = new EmailChannelResultData(
+            success: false,
+        );
+
+        $message = parent::send($notifiable, $notification);
+
+        if (! is_null($message)) {
+            $result->success = true;
+        }
+
+        ray('result', $result);
+
+        return $result;
+    }
+}

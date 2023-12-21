@@ -36,24 +36,19 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
-use Illuminate\Bus\Queueable;
 use App\Notifications\MailMessage;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class EngagementEmailNotification extends Notification implements ShouldQueue
+class EngagementEmailNotification extends BaseNotification
 {
-    use Queueable;
+    use EmailChannelTrait;
 
     public function __construct(
         public EngagementDeliverable $deliverable
     ) {}
-
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
 
     public function toMail(object $notifiable): MailMessage
     {
@@ -62,5 +57,29 @@ class EngagementEmailNotification extends Notification implements ShouldQueue
             ->greeting('Hello ' . $this->deliverable->engagement->recipient->display_name . '!')
             ->content($this->deliverable->engagement->getBody())
             ->salutation("Regards, {$this->deliverable->engagement->user->name}");
+    }
+
+    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    {
+        $deliverable->update([
+            'related_id' => $this->deliverable->id,
+            'related_type' => $this->deliverable->getMorphClass(),
+        ]);
+    }
+
+    public function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+    {
+        $updateData = array_filter([
+            'external_reference_id' => $deliverable->external_reference_id,
+            'external_status' => $deliverable->external_status,
+            'delivery_status' => $deliverable->delivery_status,
+            'delivered_at' => $deliverable->delivered_at,
+            'last_delivery_attempt' => $deliverable->last_delivery_attempt,
+            'delivery_response' => $deliverable->delivery_response,
+        ], function ($value) {
+            return ! is_null($value);
+        });
+
+        $this->deliverable->update($updateData);
     }
 }

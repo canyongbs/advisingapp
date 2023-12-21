@@ -44,13 +44,8 @@ class SmsChannel
             $messageContent['statusCallback'] = route('inbound.webhook.twilio', ['event' => 'status_callback']);
         }
 
-        // TODO Clean this up
-        $smsResult = SmsChannelResultData::from([
+        $result = SmsChannelResultData::from([
             'success' => false,
-        ]);
-
-        $result = NotificationResultData::from([
-            'type' => $smsResult,
         ]);
 
         try {
@@ -59,10 +54,10 @@ class SmsChannel
                 $messageContent
             );
 
-            $result->type->success = true;
-            $result->type->message = $message;
+            $result->success = true;
+            $result->message = $message;
         } catch (TwilioException $e) {
-            $result->type->error = $e->getMessage();
+            $result->error = $e->getMessage();
         }
 
         return $result;

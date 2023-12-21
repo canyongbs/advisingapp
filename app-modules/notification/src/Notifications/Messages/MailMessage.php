@@ -34,15 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\DataTransferObjects;
+namespace AdvisingApp\Notification\Notifications\Messages;
 
-use Twilio\Rest\Api\V2010\Account\MessageInstance;
+use App\Models\NotificationSetting;
+use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
 
-class SmsChannelResultData extends NotificationResultData
+class MailMessage extends BaseMailMessage
 {
-    public function __construct(
-        public bool $success,
-        public ?MessageInstance $message = null,
-        public ?string $error = null,
-    ) {}
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+
+    public function content(string $content): static
+    {
+        $this->viewData = [
+            $this->viewData,
+            'content' => $content,
+        ];
+
+        return $this;
+    }
+
+    public function settings(?NotificationSetting $setting): static
+    {
+        $this->viewData = [
+            $this->viewData,
+            'settings' => $setting,
+        ];
+
+        return $this;
+    }
 }

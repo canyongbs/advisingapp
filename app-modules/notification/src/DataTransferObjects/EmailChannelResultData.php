@@ -36,13 +36,14 @@
 
 namespace AdvisingApp\Notification\DataTransferObjects;
 
-use Twilio\Rest\Api\V2010\Account\MessageInstance;
+use Spatie\LaravelData\Data;
+use Illuminate\Mail\SentMessage;
 
-class SmsChannelResultData extends NotificationResultData
+class EmailChannelResultData extends NotificationResultData
 {
     public function __construct(
         public bool $success,
-        public ?MessageInstance $message = null,
+        public ?SentMessage $message = null,
         public ?string $error = null,
     ) {}
 }

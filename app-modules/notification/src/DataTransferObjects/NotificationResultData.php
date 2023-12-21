@@ -40,7 +40,5 @@ use Spatie\LaravelData\Data;
 
 class NotificationResultData extends Data
 {
-    public function __construct(
-        public SmsChannelResultData $type,
-    ) {}
+    public function __construct() {}
 }
