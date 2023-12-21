@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1056cbdbc088021921de8baf657d6b51",
+    "content-hash": "06a9456c89725f4b69a04f6371e0ca65",
     "packages": [
         {
             "name": "awcodes/filament-tiptap-editor",
@@ -1441,12 +1441,12 @@
             }
         },
         {
-            "name": "canyon-gbs/advising-app-notification",
+            "name": "canyon-gbs/advising-app-notifications",
             "version": "1.0",
             "dist": {
                 "type": "path",
-                "url": "app-modules/notification",
-                "reference": "5062ea2b82f5998318e06e77dcb7836661b3a412"
+                "url": "app-modules/notifications",
+                "reference": "7dbec344f693b6973f93539b31c53d03f5891f3e"
             },
             "require": {
                 "filament/filament": "^3.0"
@@ -1455,16 +1455,16 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "AdvisingApp\\Notification\\Providers\\NotificationServiceProvider"
+                        "AdvisingApp\\Notifications\\Providers\\NotificationsServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "AdvisingApp\\Notification\\": "src/",
-                    "AdvisingApp\\Notification\\Tests\\": "tests/",
-                    "AdvisingApp\\Notification\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Notification\\Database\\Seeders\\": "database/seeders/"
+                    "AdvisingApp\\Notifications\\": "src/",
+                    "AdvisingApp\\Notifications\\Tests\\": "tests/",
+                    "AdvisingApp\\Notifications\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Notifications\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -1586,10 +1586,10 @@
             "dist": {
                 "type": "path",
                 "url": "app-modules/student-data-model",
-                "reference": "97787a2aedc5da23f7907add6646513bb8f39a97"
+                "reference": "bae8ef0016aab67de5ed247f19915690e93cbd21"
             },
             "require": {
-                "canyon-gbs/advising-app-notification": "*",
+                "canyon-gbs/advising-app-notifications": "^1.0",
                 "filament/filament": "^3.0"
             },
             "type": "library",
@@ -18430,16 +18430,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.18.12",
+            "version": "0.18.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "ed8d5352a3faa69e4a5e315896abffd4bc29c828"
+                "reference": "f8011a76d36aa4f839f60f3b4f97707d97176618"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/ed8d5352a3faa69e4a5e315896abffd4bc29c828",
-                "reference": "ed8d5352a3faa69e4a5e315896abffd4bc29c828",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/f8011a76d36aa4f839f60f3b4f97707d97176618",
+                "reference": "f8011a76d36aa4f839f60f3b4f97707d97176618",
                 "shasum": ""
             },
             "require": {
@@ -18474,7 +18474,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.18.12"
+                "source": "https://github.com/rectorphp/rector/tree/0.18.13"
             },
             "funding": [
                 {
@@ -18482,7 +18482,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-04T08:47:30+00:00"
+            "time": "2023-12-20T16:08:01+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -20599,10 +20599,10 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2",
+        "php": "8.2.*",
         "ext-gd": "*",
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

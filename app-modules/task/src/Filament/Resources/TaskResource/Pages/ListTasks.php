@@ -74,7 +74,14 @@ class ListTasks extends ListRecords
 
     protected static string $view = 'task::filament.pages.list-tasks';
 
-    public string $viewType = 'table';
+    public ?string $viewType = null;
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        $this->viewType = session('task-view-type') ?? 'table';
+    }
 
     public function table(Table $table): Table
     {
@@ -87,8 +94,7 @@ class ListTasks extends ListRecords
                     ->limit(50),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
-                    ->badge()
-                    ->color(fn (Task $record) => $record->status->getTableColor()),
+                    ->badge(),
                 TextColumn::make('due')
                     ->label('Due Date')
                     ->sortable(),
@@ -151,7 +157,8 @@ class ListTasks extends ListRecords
                     ->default([
                         TaskStatus::Pending->value,
                         TaskStatus::InProgress->value,
-                    ]),
+                    ])
+                    ->visible(fn () => $this->viewType === 'table'),
             ])
             ->actions([
                 TaskViewAction::make(),
@@ -168,6 +175,8 @@ class ListTasks extends ListRecords
     public function setViewType(string $viewType): void
     {
         $this->viewType = $viewType;
+
+        session(['task-view-type' => $viewType]);
     }
 
     protected function getHeaderActions(): array

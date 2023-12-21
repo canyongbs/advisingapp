@@ -38,10 +38,7 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
 ?>
 
-<x-filament-panels::page
-    class="max-h-screen"
-    full-height="true"
->
+<x-filament-panels::page full-height="true">
     <div class="flex h-full flex-col">
         <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
             <div class="col-span-1">

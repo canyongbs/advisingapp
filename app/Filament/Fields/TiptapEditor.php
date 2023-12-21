@@ -39,29 +39,21 @@ namespace App\Filament\Fields;
 use App\Filament\Actions\MediaAction;
 use App\Support\MediaEncoding\TiptapMediaEncoder;
 use FilamentTiptapEditor\TiptapEditor as BaseTiptapEditor;
-use FilamentTiptapEditor\Actions\MediaAction as FilamentTiptapEditorMediaAction;
 
 class TiptapEditor extends BaseTiptapEditor
 {
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->mediaAction = MediaAction::class;
 
-        $this->actions = collect($this->actions)
-            ->filter(function ($action) {
-                return $action::class !== FilamentTiptapEditorMediaAction::class;
-            })
-            ->push(MediaAction::make())
-            ->toArray();
+        parent::setUp();
 
         $this->afterStateHydrated(function (BaseTiptapEditor $component, string | array | null $state) {
             if (! $state) {
-                $component->state('<p></p>');
+                return;
             }
 
-            if (! empty($state)) {
-                $component->state(TiptapMediaEncoder::decode($state));
-            }
+            $component->state(TiptapMediaEncoder::decode($state));
 
             $component->state($component->getHTML());
         });

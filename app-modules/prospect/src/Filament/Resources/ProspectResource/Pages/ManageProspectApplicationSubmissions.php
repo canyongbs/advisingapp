@@ -135,9 +135,9 @@ class ManageProspectApplicationSubmissions extends ManageRelatedRecords
         $ownerRecord = $urlParameters['record'];
 
         /** @var Prospect $ownerRecord */
-        $applicationSubmissionsCount = Cache::tags('application-submission-count')
+        $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
             ->remember(
-                "application-submission-count-{$ownerRecord->getKey()}",
+                "{application-submission-count-{$ownerRecord->getKey()}}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     return $ownerRecord->applicationSubmissions()->count();

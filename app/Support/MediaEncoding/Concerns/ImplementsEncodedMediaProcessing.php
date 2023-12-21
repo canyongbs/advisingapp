@@ -71,9 +71,11 @@ trait ImplementsEncodedMediaProcessing
         $storedMediaItems = collect();
 
         foreach ($attributes as $attribute) {
-            $mediaItemsInContent = $mediaItemsInContent->merge(TiptapMediaEncoder::getMediaItemsInContent($model->{$attribute}));
+            if (is_array($model->{$attribute})) {
+                $mediaItemsInContent = $mediaItemsInContent->merge(TiptapMediaEncoder::getMediaItemsInContent($model->{$attribute}));
 
-            $storedMediaItems = $storedMediaItems->merge($model->getMedia($attribute)->collect());
+                $storedMediaItems = $storedMediaItems->merge($model->getMedia($attribute)->collect());
+            }
         }
 
         $mediaItemsToDelete = $storedMediaItems->filter(fn ($storedMediaItem) => ! $mediaItemsInContent->contains('id', $storedMediaItem->id));

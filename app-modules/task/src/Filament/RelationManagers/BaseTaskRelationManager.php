@@ -99,8 +99,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->limit(50),
                 TextColumn::make('status')
                     ->formatStateUsing(fn (TaskStatus $state): string => str($state->value)->title()->headline())
-                    ->badge()
-                    ->color(fn (Task $record) => $record->status->getTableColor()),
+                    ->badge(),
                 TextColumn::make('due')
                     ->label('Due Date')
                     ->sortable(),

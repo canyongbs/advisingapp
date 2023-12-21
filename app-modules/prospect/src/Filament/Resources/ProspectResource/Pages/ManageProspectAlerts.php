@@ -79,9 +79,9 @@ class ManageProspectAlerts extends ManageRelatedRecords
         $ownerRecord = $urlParameters['record'];
 
         /** @var Prospect $ownerRecord */
-        $alertsCount = Cache::tags('alert-count')
+        $alertsCount = Cache::tags('{alert-count}')
             ->remember(
-                "alert-count-{$ownerRecord->getKey()}",
+                "{alert-count-{$ownerRecord->getKey()}}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     return $ownerRecord->alerts()->status(AlertStatus::Active)->count();
