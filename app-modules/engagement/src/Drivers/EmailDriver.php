@@ -54,13 +54,6 @@ class EmailDriver implements DeliverableDriver
         return new EngagementEmailChannelDelivery($this->deliverable);
     }
 
-    // Currently, deliverables are created at the point of Engagement creation
-    // But, if we move in the direction of normalization of "deliverables" as a concept across any notification (including engagements)
-    // We probably don't want to create "deliverables" until we _actually_ attempt to deliver them. This would take place in the underlying notification
-    // class that every other notification would extend
-    // This way, we could introduce hooks that allow us to perform actions before/after send of a notification, and the normalized deliverables would be
-    // Created and tracked on demand
-    // At least initially, let's created a duplicated data source for the normalized outbound deliverables that will serve as a layer on top of engagement deliverables for now
     public function deliver(): void
     {
         EngagementEmailChannelDelivery::dispatch($this->deliverable);
