@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Notification\DataTransferObjects;
 
-use Spatie\LaravelData\Data;
 use Illuminate\Mail\SentMessage;
 
 class EmailChannelResultData extends NotificationResultData

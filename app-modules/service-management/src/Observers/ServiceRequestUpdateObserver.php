@@ -38,8 +38,8 @@ namespace AdvisingApp\ServiceManagement\Observers;
 
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 
 class ServiceRequestUpdateObserver
 {

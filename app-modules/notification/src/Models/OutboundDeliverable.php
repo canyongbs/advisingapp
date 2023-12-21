@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 
+/**
+ * @mixin IdeHelperOutboundDeliverable
+ */
 class OutboundDeliverable extends BaseModel
 {
     protected $fillable = [

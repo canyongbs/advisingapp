@@ -45,10 +45,14 @@ class HandleEngagementEmailNotificationFailed implements ShouldQueue
 {
     use Dispatchable;
 
-    public function handle(NotificationFailed $event): void
+    public function __construct(
+        public NotificationFailed $event
+    ) {}
+
+    public function handle(): void
     {
         /** @var EngagementEmailNotification $notification */
-        $notification = $event->notification;
+        $notification = $this->event->notification;
 
         /** @var EngagementDeliverable $deliverable */
         $deliverable = $notification->deliverable;

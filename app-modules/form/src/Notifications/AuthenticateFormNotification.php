@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Form\Notifications;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\AnonymousNotifiable;
 use AdvisingApp\Form\Models\SubmissibleAuthentication;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\AnonymousNotifiable;
-use Illuminate\Notifications\Notification;
 
 class AuthenticateFormNotification extends Notification
 {

@@ -46,10 +46,14 @@ class HandleEngagementEmailNotificationSent implements ShouldQueue
 {
     use Dispatchable;
 
-    public function handle(NotificationSent $event): void
+    public function __construct(
+        public NotificationSent $event
+    ) {}
+
+    public function handle(): void
     {
         /** @var EngagementEmailNotification $notification */
-        $notification = $event->notification;
+        $notification = $this->event->notification;
 
         /** @var EngagementDeliverable $deliverable */
         $deliverable = $notification->deliverable;

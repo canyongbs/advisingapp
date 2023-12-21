@@ -39,8 +39,8 @@ namespace AdvisingApp\Engagement\Notifications;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
 class EngagementEmailNotification extends BaseNotification
 {

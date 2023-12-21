@@ -38,8 +38,8 @@ namespace AdvisingApp\Notification\Events;
 
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use AdvisingApp\Notification\Models\Subscription;
+use Illuminate\Broadcasting\InteractsWithSockets;
 
 class SubscriptionCreated
 {
