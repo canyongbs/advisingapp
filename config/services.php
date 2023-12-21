@@ -86,10 +86,8 @@ return [
 
     // TODO Find a way to move this setting to the Integration Twilio module
     'twilio' => [
-        'account_sid' => env('TWILIO_ACCOUNT_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'from_number' => env('TWILIO_FROM_NUMBER'),
-        'test_to_number' => env('TWILIO_TEST_TO_NUMBER', null),
+        'test_from_number' => env('TWILIO_FROM_NUMBER'),
+        'test_to_number' => env('TWILIO_TEST_TO_NUMBER'),
         'enable_test_sender' => env('TWILIO_ENABLE_TEST_SENDER', false),
     ],
 

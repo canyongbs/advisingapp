@@ -38,6 +38,7 @@ namespace AdvisingApp\IntegrationTwilio\Http\Middleware;
 
 use Closure;
 use Twilio\Security\RequestValidator;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 
 class EnsureTwilioRequestIsValid
 {
@@ -47,7 +48,9 @@ class EnsureTwilioRequestIsValid
             abort(404);
         }
 
-        $validator = new RequestValidator(config('services.twilio.auth_token'));
+        $settings = app(TwilioSettings::class);
+
+        $validator = new RequestValidator($settings->auth_token);
 
         if (! $validator->validate($request->header('x-twilio-signature'), $request->url(), $request->all())) {
             abort(404);

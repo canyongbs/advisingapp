@@ -38,15 +38,18 @@ namespace AdvisingApp\Engagement\Actions;
 
 use Twilio\Rest\Client;
 use Twilio\Exceptions\TwilioException;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 
 class EngagementSmsChannelDelivery extends QueuedEngagementDelivery
 {
     public function deliver(): void
     {
-        $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+        $settings = app(TwilioSettings::class);
+
+        $client = new Client($settings->account_sid, $settings->auth_token);
 
         $messageContent = [
-            'from' => config('services.twilio.from_number'),
+            'from' => $settings->from_number,
             'body' => $this->deliverable->engagement->getBody(),
         ];
 

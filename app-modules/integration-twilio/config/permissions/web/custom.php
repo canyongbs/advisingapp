@@ -34,4 +34,6 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'view_twilio_settings',
+];

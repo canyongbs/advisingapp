@@ -34,4 +34,8 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'custom' => [
+        'integration-twilio.view_twilio_settings',
+    ],
+];
