@@ -11,7 +11,7 @@ use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
 class EmailChannel extends MailChannel
 {
-    public function send($notifiable, Notification $notification)
+    public function send($notifiable, Notification $notification): void
     {
         /** @var BaseNotification $notification */
         $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);

@@ -39,10 +39,11 @@ namespace AdvisingApp\Engagement\Notifications;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class EngagementEmailNotification extends BaseNotification
+class EngagementEmailNotification extends BaseNotification implements EmailNotification
 {
     use EmailChannelTrait;
 
@@ -50,7 +51,7 @@ class EngagementEmailNotification extends BaseNotification
         public EngagementDeliverable $deliverable
     ) {}
 
-    public function toMail(object $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->subject($this->deliverable->engagement->subject)

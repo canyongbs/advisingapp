@@ -59,6 +59,8 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     public array $channels = [];
 
+    protected array $metadata = [];
+
     public function via(object $notifiable): array
     {
         $reflectionClass = new ReflectionClass($this);
@@ -85,6 +87,10 @@ abstract class BaseNotification extends Notification implements ShouldQueue
     public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false
     {
         $deliverable = resolve(CreateOutboundDeliverable::class)->handle($this, $notifiable, $channel);
+
+        $this->metadata = [
+            'outbound_deliverable_id' => $deliverable->id,
+        ];
 
         $this->beforeSendHook($notifiable, $deliverable, $channel);
 
