@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Observers;
 
+use App\Models\User;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Actions\CreateServiceRequestHistory;
@@ -51,7 +52,9 @@ class ServiceRequestObserver
 
     public function created(ServiceRequest $serviceRequest): void
     {
-        if ($user = auth()->user()) {
+        $user = auth()->user();
+
+        if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $serviceRequest);
         }
     }

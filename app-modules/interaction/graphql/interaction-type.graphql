@@ -39,18 +39,23 @@ input InteractionTypeQuery {
     deleted_at: DateTime
 }
 
-extend type Query {
-    "Get a specific interaction type by ID."
-    interactionType(id: UUID! @eq): InteractionType
-        @find
-        @softDeletes
-        @canResolved(ability: "view")
+type InteractionTypeQueries {
+    "Get a specific interaction type by id."
+    find(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_types"])
+    ): InteractionType @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions types."
-    interactionTypes(
+    list(
         "Filter by the interaction types attributes and relations."
         where: InteractionTypeQuery @searchBy
     ): [InteractionType!]! @paginate @softDeletes @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    interactionType: InteractionTypeQueries! @namespaced
 }
 
 input CreateInteractionTypeInput {
@@ -72,24 +77,32 @@ input UpdateInteractionTypeInput {
         @rules(apply: ["string", "max:255", "unique:interaction_types,name"])
 }
 
-extend type Mutation {
-    "Create a interaction type."
-    createInteractionType(
-        input: CreateInteractionTypeInput! @spread
-    ): InteractionType! @create @canModel(ability: "create")
+type InteractionTypeMutations {
+    "Create an interaction type."
+    create(input: CreateInteractionTypeInput! @spread): InteractionType!
+        @create
+        @canModel(ability: "create")
 
     "Update an existing interaction type."
-    updateInteractionType(
+    update(
         "The identifier of the interaction type you would like to update."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_types"])
 
         "The fields you would like to update."
         input: UpdateInteractionTypeInput! @spread
     ): InteractionType! @canFind(ability: "update", find: "id") @update
 
     "Delete an existing interaction type."
-    deleteInteractionType(
+    delete(
         "The identifier of the interaction type you would like to delete."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_types"])
     ): InteractionType @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    interactionType: InteractionTypeMutations! @namespaced
 }

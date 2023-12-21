@@ -58,11 +58,11 @@ class AlertObserver
 
     public function saved(Alert $alert): void
     {
-        Cache::tags('alert-count')->flush();
+        Cache::tags('{alert-count}')->flush();
     }
 
     public function deleted(Alert $alert): void
     {
-        Cache::tags('alert-count')->flush();
+        Cache::tags('{alert-count}')->flush();
     }
 }

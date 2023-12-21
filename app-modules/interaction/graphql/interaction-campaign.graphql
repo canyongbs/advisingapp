@@ -39,21 +39,26 @@ input InteractionCampaignQuery {
     deleted_at: DateTime
 }
 
-extend type Query {
-    "Get a specific interaction campaign by ID."
-    interactionCampaign(id: UUID! @eq): InteractionCampaign
-        @find
-        @softDeletes
-        @canResolved(ability: "view")
+type InteractionCampaignQueries {
+    "Get a specific interaction campaign by id."
+    find(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+    ): InteractionCampaign @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions campaigns."
-    interactionCampaigns(
+    list(
         "Filter by the interaction campaigns attributes and relations."
         where: InteractionCampaignQuery @searchBy
     ): [InteractionCampaign!]!
         @paginate
         @softDeletes
         @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    interactionCampaign: InteractionCampaignQueries! @namespaced
 }
 
 input CreateInteractionCampaignInput {
@@ -77,24 +82,32 @@ input UpdateInteractionCampaignInput {
         )
 }
 
-extend type Mutation {
-    "Create a interaction campaign."
-    createInteractionCampaign(
+type InteractionCampaignMutations {
+    "Create an interaction campaign."
+    create(
         input: CreateInteractionCampaignInput! @spread
     ): InteractionCampaign! @create @canModel(ability: "create")
 
     "Update an existing interaction campaign."
-    updateInteractionCampaign(
+    update(
         "The identifier of the interaction campaign you would like to update."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
 
         "The fields you would like to update."
         input: UpdateInteractionCampaignInput! @spread
     ): InteractionCampaign! @canFind(ability: "update", find: "id") @update
 
     "Delete an existing interaction campaign."
-    deleteInteractionCampaign(
+    delete(
         "The identifier of the interaction campaign you would like to delete."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
     ): InteractionCampaign @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    interactionCampaign: InteractionCampaignMutations! @namespaced
 }

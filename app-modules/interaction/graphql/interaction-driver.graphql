@@ -39,21 +39,26 @@ input InteractionDriverQuery {
     deleted_at: DateTime
 }
 
-extend type Query {
-    "Get a specific interaction driver by ID."
-    interactionDriver(id: UUID! @eq): InteractionDriver
-        @find
-        @softDeletes
-        @canResolved(ability: "view")
+type InteractionDriverQueries {
+    "Get a specific interaction driver by id."
+    find(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
+    ): InteractionDriver @find @softDeletes @canResolved(ability: "view")
 
     "List multiple interactions drivers."
-    interactionDrivers(
+    list(
         "Filter by the interaction drivers attributes and relations."
         where: InteractionDriverQuery @searchBy
     ): [InteractionDriver!]!
         @paginate
         @softDeletes
         @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    interactionDriver: InteractionDriverQueries! @namespaced
 }
 
 input CreateInteractionDriverInput {
@@ -75,24 +80,32 @@ input UpdateInteractionDriverInput {
         @rules(apply: ["string", "max:255", "unique:interaction_drivers,name"])
 }
 
-extend type Mutation {
-    "Create a interaction driver."
-    createInteractionDriver(
-        input: CreateInteractionDriverInput! @spread
-    ): InteractionDriver! @create @canModel(ability: "create")
+type InteractionDriverMutations {
+    "Create an interaction driver."
+    create(input: CreateInteractionDriverInput! @spread): InteractionDriver!
+        @create
+        @canModel(ability: "create")
 
     "Update an existing interaction driver."
-    updateInteractionDriver(
+    update(
         "The identifier of the interaction driver you would like to update."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
 
         "The fields you would like to update."
         input: UpdateInteractionDriverInput! @spread
     ): InteractionDriver! @canFind(ability: "update", find: "id") @update
 
     "Delete an existing interaction driver."
-    deleteInteractionDriver(
+    delete(
         "The identifier of the interaction driver you would like to delete."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_drivers"])
     ): InteractionDriver @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    interactionDriver: InteractionDriverMutations! @namespaced
 }

@@ -34,12 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace AdvisingApp\Alert\Rules;
 
-use InterNACHI\Modular\Console\Commands\Make\Modularize;
-use Lomkit\Rest\Console\Commands\ResourceCommand as BaseResourceCommand;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class ResourceCommand extends BaseResourceCommand
+class ConcernIdExistsRule implements DataAwareRule, ValidationRule
 {
-    use Modularize;
+    protected $data = [];
+
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        $type = $this->data['input']['concern_type'];
+
+        /** @var ?Model $morph */
+        $morph = Relation::getMorphedModel($type);
+
+        if (! $morph) {
+            $fail('The concern type must be either student or prospect.');
+        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
+            $fail('The concern does not exist.');
+        }
+    }
+
+    public function setData(array $data): static
+    {
+        $this->data = $data;
+
+        return $this;
+    }
 }

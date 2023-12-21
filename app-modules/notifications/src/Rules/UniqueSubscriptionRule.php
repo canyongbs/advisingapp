@@ -49,8 +49,8 @@ class UniqueSubscriptionRule implements DataAwareRule, ValidationRule
     {
         if (
             Subscription::query()
-                ->where('subscribable_id', $this->data['subscribable_id'])
-                ->where('subscribable_type', $this->data['subscribable_type'])
+                ->where('subscribable_id', $this->data['input']['subscribable_id'])
+                ->where('subscribable_type', $this->data['input']['subscribable_type'])
                 ->where('user_id', $value)
                 ->exists()
         ) {
