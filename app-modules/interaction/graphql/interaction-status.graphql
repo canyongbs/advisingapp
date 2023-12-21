@@ -3,22 +3,22 @@ type InteractionStatus
     "Unique primary key."
     id: UUID!
 
-    "The name of the interaction driver."
+    "The name of the interaction status."
     name: String!
 
-    "Interactions related to this interaction driver."
+    "Interactions related to this interaction status."
     interactions: [Interaction!] @hasMany
 
-    "The color of the interaction driver."
+    "The color of the interaction status."
     color: InteractionStatusColorOptions!
 
-    "The created date of the interaction driver."
+    "The created date of the interaction status."
     created_at: DateTime
 
-    "The updated date of the interaction driver."
+    "The updated date of the interaction status."
     updated_at: DateTime
 
-    "The deleted date of the interaction driver."
+    "The deleted date of the interaction status."
     deleted_at: DateTime
 }
 
@@ -46,7 +46,7 @@ input InteractionStatusesQuery {
 }
 
 extend type Query {
-    "Get a specific interaction status by id."
+    "Get a specific interaction status by ID."
     interactionStatus(id: UUID! @eq): InteractionStatus
         @find
         @softDeletes

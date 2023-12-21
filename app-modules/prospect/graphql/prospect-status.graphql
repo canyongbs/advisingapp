@@ -1,0 +1,123 @@
+type ProspectStatus
+    @model(class: "AdvisingApp\\Prospect\\Models\\ProspectStatus") {
+    "Unique primary key."
+    id: UUID!
+
+    "The name of the prospect driver."
+    name: String!
+
+    "Prospects related to this prospect driver."
+    prospects: [Prospect!] @hasMany
+
+    "The classification of the prospect status."
+    classification: ProspectStatusClassificationOptions!
+
+    "The color of the prospect status."
+    color: ProspectStatusColorOptions!
+
+    "The created date of the prospect driver."
+    created_at: DateTime
+
+    "The updated date of the prospect driver."
+    updated_at: DateTime
+
+    "The deleted date of the prospect driver."
+    deleted_at: DateTime
+}
+
+input ProspectStatusesQuery {
+    "The unique primary key of the prospect status."
+    id: UUID
+
+    "The name of the prospect status."
+    name: String
+
+    "The prospects related to this prospect status."
+    prospects: ProspectsQuery
+
+    "The classification of the prospect status."
+    classification: ProspectStatusClassificationOptions
+
+    "The color of the prospect status."
+    color: ProspectStatusColorOptions
+
+    "The created date of the prospect status."
+    created_at: DateTime
+
+    "The updated date of the prospect status."
+    updated_at: DateTime
+
+    "The deleted date of the prospect status."
+    deleted_at: DateTime
+}
+
+type ProspectStatusQueries {
+    "Get a specific prospect status by ID."
+    find(
+        id: UUID!
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
+    ): ProspectStatus @find @softDeletes @canResolved(ability: "view")
+
+    "List multiple prospects statuses."
+    list(
+        "Filter by the prospect statuses attributes and relations."
+        where: ProspectStatusesQuery @searchBy
+    ): [ProspectStatus!]!
+    @paginate
+    @softDeletes
+    @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    prospectStatus: ProspectStatusQueries! @namespaced
+}
+
+input CreateProspectStatusInput {
+    "The name of the prospect status."
+    name: String!
+    @rules(
+        apply: [
+            "required"
+            "string"
+            "max:255"
+            "unique:prospect_statuses,name"
+        ]
+    )
+}
+
+input UpdateProspectStatusInput {
+    "The name of the prospect status."
+    name: String
+    @rules(apply: ["string", "max:255", "unique:prospect_statuses,name"])
+}
+
+type ProspectStatusMutations {
+    "Create an prospect status."
+    create(input: CreateProspectStatusInput! @spread): ProspectStatus!
+    @create
+    @canModel(ability: "create")
+
+    "Update an existing prospect status."
+    update(
+        "The identifier of the prospect status you would like to update."
+        id: UUID!
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
+
+        "The fields you would like to update."
+        input: UpdateProspectStatusInput! @spread
+    ): ProspectStatus! @canFind(ability: "update", find: "id") @update
+
+    "Delete an existing prospect status."
+    delete(
+        "The identifier of the prospect status you would like to delete."
+        id: UUID!
+        @whereKey
+        @rules(apply: ["required", "uuid", "exists:prospect_statuses"])
+    ): ProspectStatus @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    prospectStatus: ProspectStatusMutations! @namespaced
+}

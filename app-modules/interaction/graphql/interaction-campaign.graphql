@@ -40,7 +40,7 @@ input InteractionCampaignQuery {
 }
 
 extend type Query {
-    "Get a specific interaction campaign by id."
+    "Get a specific interaction campaign by ID."
     interactionCampaign(id: UUID! @eq): InteractionCampaign
         @find
         @softDeletes

@@ -40,7 +40,7 @@ input InteractionOutcomeQuery {
 }
 
 extend type Query {
-    "Get a specific interaction outcome by id."
+    "Get a specific interaction outcome by ID."
     interactionOutcome(id: UUID! @eq): InteractionOutcome
         @find
         @softDeletes

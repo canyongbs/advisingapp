@@ -40,7 +40,7 @@ input InteractionRelationQuery {
 }
 
 extend type Query {
-    "Get a specific interaction relation by id."
+    "Get a specific interaction relation by ID."
     interactionRelation(id: UUID! @eq): InteractionRelation
         @find
         @softDeletes

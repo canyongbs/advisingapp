@@ -2,6 +2,9 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     "Unique primary key."
     id: UUID!
 
+    "The status of the prospect."
+    status: String!
+
     "The first name of the prospect."
     first_name: String!
 
@@ -46,6 +49,15 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
 
     "The High School graduation year of the prospect."
     hs_grad_year: String
+
+    "The created date of the prospect."
+    created_at: DateTime
+
+    "The updated date of the prospect."
+    updated_at: DateTime
+
+    "The deleted date of the prospect."
+    deleted_at: DateTime
 }
 
 input ProspectsQuery {
