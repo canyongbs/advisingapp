@@ -41,7 +41,7 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         $this->migrator->inGroup('twilio', function (SettingsBlueprint $blueprint): void {
-            $blueprint->add('is_enabled', false);
+            $blueprint->add('is_enabled', true); //TODO: force enabled for now
             $blueprint->addEncrypted('api_key');
             $blueprint->addEncrypted('account_sid');
             $blueprint->addEncrypted('auth_token');

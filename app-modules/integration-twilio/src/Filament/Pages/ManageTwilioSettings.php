@@ -47,10 +47,12 @@ class ManageTwilioSettings extends SettingsPage
             ->schema([
                 Toggle::make('is_enabled')
                     ->label('Enabled')
-                    ->live(),
+                    ->live()
+                    ->disabled(), //TODO: force enabled for now
                 Section::make()
                     ->schema([
                         TextInput::make('account_sid')
+                            ->label('Account SID')
                             ->string()
                             ->required(),
                         TextInput::make('auth_token')
