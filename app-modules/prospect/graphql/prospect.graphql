@@ -1,24 +1,71 @@
-type Prospect {
+type Prospect
+    @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     "Unique primary key."
     id: UUID!
 
-    status_id: UUID
+    "The first name of the prospect."
+    first_name: String!
 
-    source_id: UUID
+    "The last name of the prospect."
+    last_name: String!
 
-    first_name: String
-
-    last_name: String
-
-    full_name: String
+    "The full name of the prospect."
+    full_name: String!
 }
 
 input ProspectQuery {
-    id: UUID
+    id: UUID!
+    first_name: String!
+    last_name: String!
+    full_name: String!
+}
 
-    first_name: String
+extend type Query {
+    "List multiple prospects."
+    prospects(where: ProspectQuery @searchBy): [Prospect!]!
+    @paginate
+    @canModel(ability: "viewAny")
+}
 
-    last_name: String
+input UpdateProspectInput {
+    "The first name of the prospect."
+    first_name: String @rules(apply: ["string", "max:255"])
 
-    full_name: String
+    "The last name of the prospect."
+    last_name: String @rules(apply: ["string", "max:255"])
+
+    "The full name of the prospect."
+    full_name: String @rules(apply: ["string", "max:255"])
+}
+
+input CreateProspectInput {
+    "The first name of the prospect."
+    first_name: String! @rules(apply: ["required", "string", "max:255"])
+
+    "The last name of the prospect."
+    last_name: String! @rules(apply: ["required", "string", "max:255"])
+
+    "The full name of the prospect."
+    full_name: String! @rules(apply: ["required", "string", "max:255"])
+}
+
+extend type Mutation {
+    "Create a prospect."
+    createProspect(input: CreateProspectInput! @spread): Prospect!
+    @create
+    @canModel(ability: "create")
+
+    "Update a prospect."
+    updateProspect(
+        "The identifier of the prospect you would like to update."
+        id: UUID! @whereKey
+
+        input: UpdateProspectInput! @spread
+    ): Prospect! @canFind(ability: "update", find: "id") @update
+
+    "Delete a prospect."
+    deleteProspect(
+    "The identifier of the prospect you would like to delete."
+    id: UUID! @whereKey
+    ): Prospect @canFind(ability: "delete", find: "id") @delete
 }

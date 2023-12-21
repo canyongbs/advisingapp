@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManagers;
 
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Builder;
@@ -77,6 +78,8 @@ class CampaignActionsRelationManager extends RelationManager
             ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('type'),
+                TextColumn::make('execute_at')
+                    ->dateTime(timezone: app(CampaignSettings::class)->getActionExecutionTimezone()),
             ])
             ->filters([
             ])

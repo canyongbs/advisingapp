@@ -34,53 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Blocks;
+namespace AdvisingApp\Campaign\Filament\Pages;
 
 use AdvisingApp\Campaign\Settings\CampaignSettings;
+use App\Filament\Pages\EmailConfiguration;
 use App\Models\User;
-use Carbon\CarbonImmutable;
-use Filament\Forms\Components\Select;
+use App\Enums\Feature;
+use Filament\Forms\Form;
+use App\Models\SettingsProperty;
+use Filament\Pages\SettingsPage;
+use Illuminate\Support\Facades\Gate;
+use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\ColorPicker;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use AdvisingApp\Portal\Settings\PortalSettings;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
-class SubscriptionBlock extends CampaignActionBlock
+class ManageCampaignSettings extends SettingsPage
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-        $this->schema($this->createFields());
+    protected static ?string $navigationLabel = 'Campaign Settings';
+
+    protected static ?int $navigationSort = 140;
+
+    protected static bool $shouldRegisterNavigation = false;
+
+    protected static string $settings = CampaignSettings::class;
+
+    protected static ?string $title = 'Campaign Settings';
+
+    public function mount(): void
+    {
+        $this->authorize('campaign.view_campaign_settings');
+
+        parent::mount();
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function form(Form $form): Form
     {
-        return [
-            Select::make($fieldPrefix . 'user_ids')
-                ->label('Who should be subscribed?')
-                ->options(User::all()->pluck('name', 'id'))
-                ->multiple()
-                ->searchable()
-                ->default([auth()->id()])
-                ->required()
-                ->exists('users', 'id'),
-            Toggle::make($fieldPrefix . 'remove_prior')
-                ->label('Remove all prior subscriptions?')
-                ->default(false)
-                ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
-            DateTimePicker::make($fieldPrefix . 'execute_at')
-                ->label('When should the journey step be executed?')
-                ->columnSpanFull()
-                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
-                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
-                ->lazy()
-                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
-                ->required()
-                ->minDate(now()),
-        ];
+        return $form
+            ->schema([
+                TimezoneSelect::make('action_execution_timezone')
+                    ->label('Journey step execution timezone')
+                    ->placeholder(fn (TimezoneSelect $component): string => $component->getOptions()[config('app.timezone')]),
+            ]);
     }
 
-    public static function type(): string
+    public function getSubNavigation(): array
     {
-        return 'subscription';
+        return (new EmailConfiguration())->getSubNavigation();
     }
 }

@@ -36,6 +36,8 @@
 
 namespace App\Filament\Pages;
 
+use AdvisingApp\Campaign\Filament\Pages\ManageCampaignSettings;
+use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,10 +107,16 @@ class EmailConfiguration extends Page
 
     public function getSubNavigation(): array
     {
-        return $this->generateNavigationItems([
-            ListNotificationSettings::class,
-            ListEmailTemplates::class,
-            ListSmsTemplates::class,
-        ]);
+        /** @var User $user */
+        $user = auth()->user();
+
+        return [
+            ...$this->generateNavigationItems([
+                ListNotificationSettings::class,
+                ListEmailTemplates::class,
+                ListSmsTemplates::class,
+            ]),
+            ...($user->can('campaign.view_campaign_settings') ? ManageCampaignSettings::getNavigationItems() : []),
+        ];
     }
 }

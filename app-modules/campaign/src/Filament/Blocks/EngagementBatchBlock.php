@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -89,10 +91,13 @@ class EngagementBatchBlock extends CampaignActionBlock
                 }),
             DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
-                ->required()
-                ->minDate(now())
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
                 ->lazy()
-                ->hint(fn ($state): ?string => $state ? Carbon::parse($state)->longRelativeToNowDiffForHumans() : null),
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
+                ->required()
+                ->minDate(now()),
         ];
     }
 

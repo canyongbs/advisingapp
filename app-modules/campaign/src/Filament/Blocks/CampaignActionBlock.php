@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use Carbon\CarbonInterface;
 use Filament\Forms\Components\Builder\Block;
 
 abstract class CampaignActionBlock extends Block
@@ -63,4 +65,11 @@ abstract class CampaignActionBlock extends Block
     abstract public function generateFields(string $fieldPrefix = ''): array;
 
     abstract public static function type(): string;
+
+    public function generateUserTimezoneHint(CarbonInterface $dateTime): string
+    {
+        return $dateTime
+            ->shiftTimezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+            ->setTimezone(auth()->user()->timezone)->format('M j, Y H:i:s') . ' in your timezone';
+    }
 }

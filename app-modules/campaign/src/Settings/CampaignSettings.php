@@ -34,30 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign;
+namespace AdvisingApp\Campaign\Settings;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use App\Filament\Pages\EmailConfiguration;
+use Spatie\LaravelSettings\Settings;
 
-class CampaignPlugin implements Plugin
+class CampaignSettings extends Settings
 {
-    public function getId(): string
+    public ?string $action_execution_timezone = null;
+
+    public static function group(): string
     {
         return 'campaign';
     }
 
-    public function register(Panel $panel): void
+    public function getActionExecutionTimezone(): string
     {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\Campaign\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\Campaign\\Filament\\Pages'
-            );
+        return $this->action_execution_timezone ?? config('app.timezone');
     }
 
-    public function boot(Panel $panel): void {}
+    public function getActionExecutionTimezoneLabel(): string
+    {
+        return str_replace(
+            ['/', '_', 'St '],
+            [', ', ' ', 'St. '],
+            $this->getActionExecutionTimezone()
+        );
+    }
 }

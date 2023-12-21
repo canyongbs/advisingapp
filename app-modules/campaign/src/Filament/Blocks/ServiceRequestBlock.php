@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use Carbon\CarbonImmutable;
 use Closure;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -107,6 +109,11 @@ class ServiceRequestBlock extends CampaignActionBlock
                 ->string(),
             DateTimePicker::make('execute_at')
                 ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                 ->required()
                 ->minDate(now()),
         ];
