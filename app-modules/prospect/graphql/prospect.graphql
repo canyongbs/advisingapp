@@ -1,5 +1,4 @@
-type Prospect
-    @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
+type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
     "Unique primary key."
     id: UUID!
 
@@ -23,8 +22,8 @@ input ProspectQuery {
 extend type Query {
     "List multiple prospects."
     prospects(where: ProspectQuery @searchBy): [Prospect!]!
-    @paginate
-    @canModel(ability: "viewAny")
+        @paginate
+        @canModel(ability: "viewAny")
 }
 
 input UpdateProspectInput {
@@ -52,8 +51,8 @@ input CreateProspectInput {
 extend type Mutation {
     "Create a prospect."
     createProspect(input: CreateProspectInput! @spread): Prospect!
-    @create
-    @canModel(ability: "create")
+        @create
+        @canModel(ability: "create")
 
     "Update a prospect."
     updateProspect(
@@ -65,7 +64,7 @@ extend type Mutation {
 
     "Delete a prospect."
     deleteProspect(
-    "The identifier of the prospect you would like to delete."
-    id: UUID! @whereKey
+        "The identifier of the prospect you would like to delete."
+        id: UUID! @whereKey
     ): Prospect @canFind(ability: "delete", find: "id") @delete
 }

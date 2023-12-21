@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 
 class ProactiveAlertBlock extends CampaignActionBlock
 {

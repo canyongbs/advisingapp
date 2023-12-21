@@ -36,15 +36,14 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Settings\CampaignSettings;
-use App\Models\User;
-use AdvisingApp\Task\Models\Task;
 use Carbon\CarbonImmutable;
+use AdvisingApp\Task\Models\Task;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 
 class TaskBlock extends CampaignActionBlock
 {

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\CampaignResource\RelationManagers;
 
-use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Builder;
@@ -49,6 +48,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 use App\Filament\Resources\RelationManagers\RelationManager;
 
 class CampaignActionsRelationManager extends RelationManager

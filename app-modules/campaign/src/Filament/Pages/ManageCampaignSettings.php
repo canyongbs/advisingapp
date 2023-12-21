@@ -36,21 +36,10 @@
 
 namespace AdvisingApp\Campaign\Filament\Pages;
 
-use AdvisingApp\Campaign\Settings\CampaignSettings;
-use App\Filament\Pages\EmailConfiguration;
-use App\Models\User;
-use App\Enums\Feature;
 use Filament\Forms\Form;
-use App\Models\SettingsProperty;
 use Filament\Pages\SettingsPage;
-use Illuminate\Support\Facades\Gate;
-use App\Filament\Fields\TiptapEditor;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\ColorPicker;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use AdvisingApp\Portal\Settings\PortalSettings;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Filament\Pages\EmailConfiguration;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
 class ManageCampaignSettings extends SettingsPage

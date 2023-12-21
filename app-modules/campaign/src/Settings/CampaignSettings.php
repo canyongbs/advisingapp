@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Campaign\Settings;
 
-use App\Filament\Pages\EmailConfiguration;
 use Spatie\LaravelSettings\Settings;
 
 class CampaignSettings extends Settings

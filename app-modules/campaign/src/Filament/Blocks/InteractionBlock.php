@@ -36,9 +36,8 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
-use AdvisingApp\Campaign\Settings\CampaignSettings;
-use Carbon\CarbonImmutable;
 use Closure;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
@@ -47,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use AdvisingApp\Division\Models\Division;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionStatus;
