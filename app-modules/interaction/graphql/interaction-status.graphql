@@ -46,7 +46,7 @@ input InteractionStatusesQuery {
 }
 
 type InteractionStatusQueries {
-    "Get a specific interaction status by id."
+    "Get a specific interaction status by ID."
     find(
         id: UUID!
             @whereKey

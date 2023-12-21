@@ -40,7 +40,7 @@ input InteractionOutcomeQuery {
 }
 
 type InteractionOutcomeQueries {
-    "Get a specific interaction outcome by id."
+    "Get a specific interaction outcome by ID."
     find(
         id: UUID!
             @whereKey
