@@ -56,8 +56,8 @@ type Interaction
 }
 
 input InteractionInteractablesQuery {
-    student: StudentQuery
-    prospect: ProspectQuery
+    student: StudentsQuery
+    prospect: ProspectsQuery
     service_request: ServiceRequestQuery
 }
 

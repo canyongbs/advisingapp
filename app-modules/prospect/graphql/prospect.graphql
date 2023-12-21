@@ -10,20 +10,68 @@ type Prospect @model(class: "AdvisingApp\\Prospect\\Models\\Prospect") {
 
     "The full name of the prospect."
     full_name: String!
+
+    "The preferred name of the prospect."
+    preferred: String
+
+    "The description of the prospect."
+    description: String
+
+    "The email of the prospect."
+    email: String
+
+    "The email 2 of the prospect."
+    email_2: String
+
+    "The mobile number of the prospect."
+    mobile: String
+
+    "The phone number of the prospect."
+    phone: String
+
+    "If the prospect is opted out of SMS messages."
+    sms_opt_out: Boolean
+
+    "If the prospect's email bounces."
+    email_bounce: Boolean
+
+    "The address of the prospect."
+    address: String
+
+    "The address 2 of the prospect."
+    address_2: String
+
+    "The birthdate of the prospect."
+    birthdate: DateTime
+
+    "The High School graduation year of the prospect."
+    hs_grad_year: String
 }
 
-input ProspectQuery {
+input ProspectsQuery {
     id: UUID!
     first_name: String!
     last_name: String!
     full_name: String!
 }
 
-extend type Query {
+type ProspectQueries {
+    "Find a single prospect by an identifying attribute."
+    find(
+        "The value of the attribute to match."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prospects"])
+    ): Prospect @find @canResolved(ability: "view")
+
     "List multiple prospects."
-    prospects(where: ProspectQuery @searchBy): [Prospect!]!
-    @paginate
-    @canModel(ability: "viewAny")
+    list(where: ProspectsQuery @searchBy): [Prospect!]!
+        @paginate
+        @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    prospect: ProspectQueries! @namespaced
 }
 
 input UpdateProspectInput {
@@ -48,23 +96,32 @@ input CreateProspectInput {
     full_name: String! @rules(apply: ["required", "string", "max:255"])
 }
 
-extend type Mutation {
-    "Create a prospect."
-    createProspect(input: CreateProspectInput! @spread): Prospect!
-    @create
-    @canModel(ability: "create")
+type ProspectMutations {
+    "Create an prospect."
+    create(input: CreateProspectInput! @spread): Prospect!
+        @create
+        @canModel(ability: "create")
 
-    "Update a prospect."
-    updateProspect(
+    "Update an prospect."
+    update(
         "The identifier of the prospect you would like to update."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prospects"])
 
+        "The fields you would like to update."
         input: UpdateProspectInput! @spread
     ): Prospect! @canFind(ability: "update", find: "id") @update
 
-    "Delete a prospect."
-    deleteProspect(
+    "Delete an prospect."
+    delete(
         "The identifier of the prospect you would like to delete."
-        id: UUID! @whereKey
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:prospects"])
     ): Prospect @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    prospect: ProspectMutations! @namespaced
 }

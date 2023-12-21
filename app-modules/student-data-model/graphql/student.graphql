@@ -10,7 +10,7 @@ type Student {
     full_name: String
 }
 
-input StudentQuery {
+input StudentsQuery {
     sisid: ID
 
     otherid: String
