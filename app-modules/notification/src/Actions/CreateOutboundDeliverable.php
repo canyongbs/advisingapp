@@ -66,7 +66,7 @@ class CreateOutboundDeliverable
             'channel' => $channel,
             'notification_class' => get_class($notification),
             'content' => json_encode($content),
-            'recipient_id' => $notifiable->id,
+            'recipient_id' => $notifiable->getKey(),
             'recipient_type' => $notifiable->getMorphClass(),
         ]);
 
