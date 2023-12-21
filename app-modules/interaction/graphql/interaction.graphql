@@ -218,10 +218,12 @@ input CreateInteractionInput {
     division_id: UUID! @rules(apply: ["required", "exists:divisions,id"])
 
     "The start datetime of the interaction."
-    start_datetime: DateTime! @rules(apply: ["required", "date:Y-m-d H:i:s"])
+    start_datetime: DateTime!
+        @rules(apply: ["required", "date_format:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
-    end_datetime: DateTime @rules(apply: ["nullable", "date:Y-m-d H:i:s"])
+    end_datetime: DateTime
+        @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
 }
 
 type InteractionMutations {
