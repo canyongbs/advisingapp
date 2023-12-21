@@ -38,7 +38,6 @@ namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Notifications\FormSubmissionRequestSmsNotification;
 
-// TODO Turn this into a notification
 class DeliverFormSubmissionRequestBySms extends DeliverFormSubmissionRequest
 {
     public function handle(): void
