@@ -16,8 +16,8 @@ type CareTeam @model(class: "AdvisingApp\\CareTeam\\Models\\CareTeam") {
 }
 
 input CareTeamEducatablesQuery {
-    student: StudentQuery
-    prospect: ProspectQuery
+    student: StudentsQuery
+    prospect: ProspectsQuery
 }
 
 input CareTeamsQuery {

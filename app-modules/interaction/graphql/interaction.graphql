@@ -62,8 +62,8 @@ type Interaction
 }
 
 input InteractionInteractablesQuery {
-    student: StudentQuery
-    prospect: ProspectQuery
+    student: StudentsQuery
+    prospect: ProspectsQuery
     service_request: ServiceRequestQuery
 }
 
@@ -104,6 +104,65 @@ type InteractionQueries {
 
 extend type Query {
     interaction: InteractionQueries! @namespaced
+}
+
+input CreateInteractionInput {
+    "The subject of the interaction."
+    subject: String! @rules(apply: ["required", "string", "max:255"])
+
+    "The description of the interaction."
+    description: String! @rules(apply: ["required", "string"])
+
+    "The User related to the interaction."
+    user_id: UUID! @rules(apply: ["required", "exists:users,id"])
+
+    "The Interactable related to the interaction."
+    interactable_id: InteractableId!
+        @rules(
+            apply: [
+                "required"
+                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRule"
+            ]
+        )
+
+    "The type of Interactable related to the interaction."
+    interactable_type: InteractableType!
+        @rules(apply: ["required", "in:student,prospect,service_request"])
+
+    "The type of interaction."
+    interaction_type_id: UUID!
+        @rules(apply: ["required", "exists:interaction_types,id"])
+
+    "The relation of the interaction."
+    interaction_relation_id: UUID!
+        @rules(apply: ["required", "exists:interaction_relations,id"])
+
+    "The campaign of the interaction."
+    interaction_campaign_id: UUID!
+        @rules(apply: ["required", "exists:interaction_campaigns,id"])
+
+    "The driver of the interaction."
+    interaction_driver_id: UUID!
+        @rules(apply: ["required", "exists:interaction_drivers,id"])
+
+    "The status of the interaction."
+    interaction_status_id: UUID!
+        @rules(apply: ["required", "exists:interaction_statuses,id"])
+
+    "The outcome of the interaction."
+    interaction_outcome_id: UUID!
+        @rules(apply: ["required", "exists:interaction_outcomes,id"])
+
+    "The division of the interaction."
+    division_id: UUID! @rules(apply: ["required", "exists:divisions,id"])
+
+    "The start datetime of the interaction."
+    start_datetime: DateTime!
+        @rules(apply: ["required", "date_format:Y-m-d H:i:s"])
+
+    "The end datetime of the interaction."
+    end_datetime: DateTime
+        @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
 }
 
 input UpdateInteractionInput {
@@ -161,65 +220,6 @@ input UpdateInteractionInput {
 
     "The start datetime of the interaction."
     start_datetime: DateTime @rules(apply: ["date_format:Y-m-d H:i:s"])
-
-    "The end datetime of the interaction."
-    end_datetime: DateTime
-        @rules(apply: ["nullable", "date_format:Y-m-d H:i:s"])
-}
-
-input CreateInteractionInput {
-    "The subject of the interaction."
-    subject: String! @rules(apply: ["required", "string", "max:255"])
-
-    "The description of the interaction."
-    description: String! @rules(apply: ["required", "string"])
-
-    "The User related to the interaction."
-    user_id: UUID! @rules(apply: ["required", "exists:users,id"])
-
-    "The Interactable related to the interaction."
-    interactable_id: InteractableId!
-        @rules(
-            apply: [
-                "required"
-                "AdvisingApp\\Interaction\\Rules\\InteractableIdExistsRule"
-            ]
-        )
-
-    "The type of Interactable related to the interaction."
-    interactable_type: InteractableType!
-        @rules(apply: ["required", "in:student,prospect,service_request"])
-
-    "The type of interaction."
-    interaction_type_id: UUID!
-        @rules(apply: ["required", "exists:interaction_types,id"])
-
-    "The relation of the interaction."
-    interaction_relation_id: UUID!
-        @rules(apply: ["required", "exists:interaction_relations,id"])
-
-    "The campaign of the interaction."
-    interaction_campaign_id: UUID!
-        @rules(apply: ["required", "exists:interaction_campaigns,id"])
-
-    "The driver of the interaction."
-    interaction_driver_id: UUID!
-        @rules(apply: ["required", "exists:interaction_drivers,id"])
-
-    "The status of the interaction."
-    interaction_status_id: UUID!
-        @rules(apply: ["required", "exists:interaction_statuses,id"])
-
-    "The outcome of the interaction."
-    interaction_outcome_id: UUID!
-        @rules(apply: ["required", "exists:interaction_outcomes,id"])
-
-    "The division of the interaction."
-    division_id: UUID! @rules(apply: ["required", "exists:divisions,id"])
-
-    "The start datetime of the interaction."
-    start_datetime: DateTime!
-        @rules(apply: ["required", "date_format:Y-m-d H:i:s"])
 
     "The end datetime of the interaction."
     end_datetime: DateTime
