@@ -34,51 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Rest\Resources;
+namespace AdvisingApp\Alert\Rules;
 
-use Lomkit\Rest\Relations\HasMany;
-use App\Rest\Resource as RestResource;
-use Lomkit\Rest\Http\Requests\RestRequest;
-use AdvisingApp\Prospect\Models\ProspectSource;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Validation\DataAwareRule;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class ProspectSourceResource extends RestResource
+class ConcernIdExistsRule implements DataAwareRule, ValidationRule
 {
-    public static $model = ProspectSource::class;
+    protected $data = [];
 
-    public function fields(RestRequest $request): array
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return [
-            'id',
-            'name',
-            'created_at',
-            'updated_at',
-        ];
+        $type = $this->data['input']['concern_type'];
+
+        /** @var ?Model $morph */
+        $morph = Relation::getMorphedModel($type);
+
+        if (! $morph) {
+            $fail('The concern type must be either student or prospect.');
+        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
+            $fail('The concern does not exist.');
+        }
     }
 
-    public function createRules(RestRequest $request): array
+    public function setData(array $data): static
     {
-        return [
-            'id' => ['missing'],
-            'name' => ['required', 'string', 'unique:prospect_sources,name', 'max:255'],
-            'created_at' => ['missing'],
-            'updated_at' => ['missing'],
-        ];
-    }
+        $this->data = $data;
 
-    public function updateRules(RestRequest $request): array
-    {
-        return [
-            'id' => ['missing'],
-            'name' => ['string', 'unique:prospect_sources,name', 'max:255'],
-            'created_at' => ['missing'],
-            'updated_at' => ['missing'],
-        ];
-    }
-
-    public function relations(RestRequest $request): array
-    {
-        return [
-            HasMany::make('prospects', ProspectResource::class),
-        ];
+        return $this;
     }
 }

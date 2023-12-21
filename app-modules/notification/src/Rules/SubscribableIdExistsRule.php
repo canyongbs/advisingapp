@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notification\Rules;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Validation\DataAwareRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -47,11 +48,14 @@ class SubscribableIdExistsRule implements DataAwareRule, ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (
-            ! Relation::getMorphedModel($this->data['subscribable_type'])::query()
-                ->whereKey($value)
-                ->exists()
-        ) {
+        $type = $this->data['input']['subscribable_type'];
+
+        /** @var ?Model $morph */
+        $morph = Relation::getMorphedModel($type);
+
+        if (! $morph) {
+            $fail('The subscribable type must be student or prospect.');
+        } elseif ($morph::query()->whereKey($value)->doesntExist()) {
             $fail('The subscribable does not exist.');
         }
     }

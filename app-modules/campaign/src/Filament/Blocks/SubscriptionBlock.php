@@ -37,9 +37,11 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 
 class SubscriptionBlock extends CampaignActionBlock
 {
@@ -52,16 +54,13 @@ class SubscriptionBlock extends CampaignActionBlock
 
     public function generateFields(string $fieldPrefix = ''): array
     {
-        /** @var User $user */
-        $user = auth()->user();
-
         return [
             Select::make($fieldPrefix . 'user_ids')
                 ->label('Who should be subscribed?')
                 ->options(User::all()->pluck('name', 'id'))
                 ->multiple()
                 ->searchable()
-                ->default([$user->id])
+                ->default([auth()->id()])
                 ->required()
                 ->exists('users', 'id'),
             Toggle::make($fieldPrefix . 'remove_prior')
@@ -70,9 +69,13 @@ class SubscriptionBlock extends CampaignActionBlock
                 ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                 ->required()
-                ->minDate(now($user->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 

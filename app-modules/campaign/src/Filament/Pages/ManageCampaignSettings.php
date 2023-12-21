@@ -34,12 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+namespace AdvisingApp\Campaign\Filament\Pages;
 
-use InterNACHI\Modular\Console\Commands\Make\Modularize;
-use Lomkit\Rest\Console\Commands\ControllerCommand as BaseControllerCommand;
+use Filament\Forms\Form;
+use Filament\Pages\SettingsPage;
+use App\Filament\Pages\EmailConfiguration;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
+use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
-class ControllerCommand extends BaseControllerCommand
+class ManageCampaignSettings extends SettingsPage
 {
-    use Modularize;
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+
+    protected static ?string $navigationLabel = 'Campaign Settings';
+
+    protected static ?int $navigationSort = 140;
+
+    protected static bool $shouldRegisterNavigation = false;
+
+    protected static string $settings = CampaignSettings::class;
+
+    protected static ?string $title = 'Campaign Settings';
+
+    public function mount(): void
+    {
+        $this->authorize('campaign.view_campaign_settings');
+
+        parent::mount();
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TimezoneSelect::make('action_execution_timezone')
+                    ->label('Journey step execution timezone')
+                    ->placeholder(fn (TimezoneSelect $component): string => $component->getOptions()[config('app.timezone')]),
+            ]);
+    }
+
+    public function getSubNavigation(): array
+    {
+        return (new EmailConfiguration())->getSubNavigation();
+    }
 }

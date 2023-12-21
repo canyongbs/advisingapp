@@ -69,12 +69,12 @@ class ManagePortalSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('audit.view_portal_settings');
+        return $user->can('portal.view_portal_settings');
     }
 
     public function mount(): void
     {
-        $this->authorize('audit.view_portal_settings');
+        $this->authorize('portal.view_portal_settings');
 
         parent::mount();
     }

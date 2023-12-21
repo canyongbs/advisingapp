@@ -65,6 +65,7 @@ class CampaignAction extends BaseModel implements Auditable
     protected $casts = [
         'type' => CampaignActionType::class,
         'data' => 'array',
+        'execute_at' => 'datetime',
     ];
 
     public function campaign(): BelongsTo

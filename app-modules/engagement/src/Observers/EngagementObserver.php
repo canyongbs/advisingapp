@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Observers;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
@@ -58,7 +59,9 @@ class EngagementObserver
 
     public function created(Engagement $engagement): void
     {
-        if ($user = auth()->user()) {
+        $user = auth()->user();
+
+        if ($user instanceof User) {
             TriggeredAutoSubscription::dispatch($user, $engagement);
         }
 
