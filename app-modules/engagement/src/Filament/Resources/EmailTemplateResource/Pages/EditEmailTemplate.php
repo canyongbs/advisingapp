@@ -72,7 +72,6 @@ class EditEmailTemplate extends EditRecord
                 TiptapEditor::make('content')
                     ->disk('s3-public')
                     ->visibility('public')
-                    ->directory('editor-images/email-templates')
                     ->mergeTags([
                         'student full name',
                         'student email',

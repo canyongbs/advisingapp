@@ -38,14 +38,25 @@ namespace App\Livewire;
 
 use Exception;
 use Livewire\Component;
+use Illuminate\Support\Arr;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
+use Filament\Forms\Components\Select;
 use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\Task\Filament\Concerns\TaskEditForm;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
@@ -119,6 +130,50 @@ class TaskKanban extends Component implements HasForms, HasActions
         $this->currentTask = $task;
 
         $this->mountAction('view');
+    }
+
+    public function createTaskAction(): Action
+    {
+        return Action::make('createTask')
+            ->model(Task::class)
+            ->form([
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(100)
+                    ->string(),
+                Textarea::make('description')
+                    ->required()
+                    ->string(),
+                DateTimePicker::make('due')
+                    ->label('Due Date')
+                    ->native(false),
+                Select::make('assigned_to')
+                    ->label('Assigned To')
+                    ->relationship('assignedTo', 'name')
+                    ->nullable()
+                    ->searchable(['name', 'email'])
+                    ->default(auth()->id()),
+                MorphToSelect::make('concern')
+                    ->label('Related To')
+                    ->searchable()
+                    ->types([
+                        Type::make(Student::class)
+                            ->titleAttribute(Student::displayNameKey()),
+                        Type::make(Prospect::class)
+                            ->titleAttribute(Prospect::displayNameKey()),
+                    ]),
+            ])
+            ->action(function (array $data, array $arguments) {
+                $record = new Task(Arr::except($data, 'assigned_to'));
+                $record->assigned_to = $data['assigned_to'] ?? null;
+                $record->status = $arguments['status'] ?? null;
+                $record->save();
+
+                Notification::make()
+                    ->success()
+                    ->title('Created task')
+                    ->send();
+            });
     }
 
     public function viewAction()

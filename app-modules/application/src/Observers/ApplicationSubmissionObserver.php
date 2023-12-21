@@ -59,9 +59,9 @@ class ApplicationSubmissionObserver
         );
 
         if (! is_null($submission->author)) {
-            Cache::tags('application-submission-count')
+            Cache::tags('{application-submission-count}')
                 ->forget(
-                    "application-submission-count-{$submission->author->getKey()}"
+                    "{application-submission-count-{$submission->author->getKey()}}"
                 );
         }
     }

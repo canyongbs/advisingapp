@@ -58,6 +58,8 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
 
     protected $casts = [
         'public' => 'boolean',
+        'solution' => 'array',
+        'notes' => 'array',
     ];
 
     protected $fillable = [
