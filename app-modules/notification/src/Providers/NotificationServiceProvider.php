@@ -71,7 +71,7 @@ class NotificationServiceProvider extends ServiceProvider
         $this->registerObservers();
         $this->registerEvents();
 
-        $this->discoverSchema(__DIR__ . '/../../graphql/notifications.graphql');
+        $this->discoverSchema(__DIR__ . '/../../graphql/subscription.graphql');
     }
 
     protected function registerObservers(): void
