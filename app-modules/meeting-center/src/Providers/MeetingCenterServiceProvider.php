@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\MeetingCenter\Providers;
 
-use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;

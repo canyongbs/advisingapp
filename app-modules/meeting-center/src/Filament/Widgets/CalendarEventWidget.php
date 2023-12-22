@@ -50,6 +50,9 @@ class CalendarEventWidget extends FullCalendarWidget
         /** @var User $user */
         $user = auth()->user();
 
+        //TODO: We probably want to eventually automatically filter past events
+        //Maybe reuse the shared filter capability of the kanban view
+
         return $user->calendar
             ->events()
             ->get()

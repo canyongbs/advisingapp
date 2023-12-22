@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 
-use App\Models\User;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
@@ -46,6 +45,9 @@ class CalendarWidget extends FullCalendarWidget
 {
     public function fetchEvents(array $info): array
     {
+        //TODO: We probably want to eventually automatically filter past events
+        //Maybe reuse the shared filter capability of the kanban view
+
         return Event::all()
             ->map(fn (Event $event) => EventData::make()
                 ->id($event->id)
