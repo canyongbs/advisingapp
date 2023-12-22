@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e306da4e37e82fb488c32ab1fa88b6f0",
+    "content-hash": "8d99ca5a506882a8dd2d48a033841d2c",
     "packages": [
         {
             "name": "amphp/amp",
@@ -559,16 +559,16 @@
         },
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.2.15",
+            "version": "v3.2.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "48ed6cfd6fe1c44b18628b36dbfade54d4141cf0"
+                "reference": "60d5840516a862e693c7de86d2f69d5f4d3b85c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/48ed6cfd6fe1c44b18628b36dbfade54d4141cf0",
-                "reference": "48ed6cfd6fe1c44b18628b36dbfade54d4141cf0",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/60d5840516a862e693c7de86d2f69d5f4d3b85c1",
+                "reference": "60d5840516a862e693c7de86d2f69d5f4d3b85c1",
                 "shasum": ""
             },
             "require": {
@@ -630,7 +630,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.15"
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.14"
             },
             "funding": [
                 {
@@ -638,7 +638,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-22T15:03:42+00:00"
+            "time": "2023-12-21T15:23:55+00:00"
         },
         {
             "name": "aws/aws-crt-php",
