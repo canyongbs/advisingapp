@@ -93,7 +93,7 @@ class ListEvents extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('starts_at', 'desc');
+            ->defaultSort('starts_at');
     }
 
     protected function getHeaderActions(): array

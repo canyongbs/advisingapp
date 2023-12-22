@@ -170,7 +170,7 @@ class ListCalendarEvents extends ListRecords
 
                 return $query->whereRelation('calendar', 'user_id', $user->id);
             })
-            ->defaultSort('starts_at', 'desc');
+            ->defaultSort('starts_at');
     }
 
     protected function getHeaderActions(): array
