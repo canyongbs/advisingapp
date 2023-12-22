@@ -34,11 +34,18 @@
 </COPYRIGHT>
 */
 
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->addEncrypted('twilio.api_key', null);
+        $this->migrator->inGroup('twilio', function (SettingsBlueprint $blueprint): void {
+            $blueprint->add('is_enabled', true); //TODO: force enabled for now
+            $blueprint->addEncrypted('api_key');
+            $blueprint->addEncrypted('account_sid');
+            $blueprint->addEncrypted('auth_token');
+            $blueprint->addEncrypted('from_number');
+        });
     }
 };

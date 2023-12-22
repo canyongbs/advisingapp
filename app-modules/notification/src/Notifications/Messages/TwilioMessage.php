@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Notification\Notifications\Messages;
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Notifications\Messages\Contracts\Message;
 
 class TwilioMessage implements Message
@@ -46,7 +47,9 @@ class TwilioMessage implements Message
         protected ?string $content = null,
         protected ?string $from = null,
     ) {
-        $this->from = config('services.twilio.from_number');
+        $settings = app(TwilioSettings::class);
+
+        $this->from ??= $settings->from_number;
     }
 
     public static function make(object $notifiable): static

@@ -35,5 +35,7 @@
 */
 
 return [
-    'view_twilio_settings',
+    'custom' => [
+        'integration-twilio.view_twilio_settings',
+    ],
 ];
