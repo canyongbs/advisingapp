@@ -51,6 +51,12 @@ class SystemUserResource extends Resource
 
     protected static ?string $navigationGroup = 'Users and Permissions';
 
+    protected static ?string $navigationLabel = 'Programmatic (API) Users';
+
+    protected static ?string $modelLabel = 'Programmatic (API) User';
+
+    protected static ?string $breadcrumb = 'Programmatic (API) Users';
+
     protected static ?int $navigationSort = 7;
 
     public static function getRelations(): array

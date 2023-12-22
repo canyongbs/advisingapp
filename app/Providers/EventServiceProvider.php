@@ -39,8 +39,6 @@ namespace App\Providers;
 use OwenIt\Auditing\Events\Auditing;
 use Illuminate\Auth\Events\Registered;
 use AdvisingApp\Audit\Listeners\AuditingListener;
-use Illuminate\Notifications\Events\NotificationSent;
-use Illuminate\Notifications\Events\NotificationFailed;
 use AdvisingApp\Authorization\Events\RoleRemovedFromUser;
 use AdvisingApp\Authorization\Events\RoleAttachedToRoleGroup;
 use AdvisingApp\Authorization\Events\UserAttachedToRoleGroup;
@@ -50,10 +48,8 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use AdvisingApp\Authorization\Listeners\HandleRoleRemovedFromUser;
 use AdvisingApp\Authorization\Listeners\HandleRoleAttachedToRoleGroup;
 use AdvisingApp\Authorization\Listeners\HandleUserAttachedToRoleGroup;
-use AdvisingApp\Engagement\Listeners\HandleEngagementNotificationSent;
 use AdvisingApp\Authorization\Listeners\HandleRoleRemovedFromRoleGroup;
 use AdvisingApp\Authorization\Listeners\HandleUserRemovedFromRoleGroup;
-use AdvisingApp\Engagement\Listeners\HandleEngagementNotificationFailed;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -86,14 +82,6 @@ class EventServiceProvider extends ServiceProvider
         // TODO: Move this to the auditing Module somehow
         Auditing::class => [
             AuditingListener::class,
-        ],
-        // TODO Introduce generic handler here that only then dispatches the appropriate listener per the notification
-        NotificationSent::class => [
-            HandleEngagementNotificationSent::class,
-        ],
-        // TODO Introduce generic handler here that only then dispatches the appropriate listener per the notification
-        NotificationFailed::class => [
-            HandleEngagementNotificationFailed::class,
         ],
     ];
 

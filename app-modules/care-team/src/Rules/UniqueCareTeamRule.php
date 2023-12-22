@@ -49,8 +49,8 @@ class UniqueCareTeamRule implements DataAwareRule, ValidationRule
     {
         if (
             CareTeam::query()
-                ->where('educatable_id', $this->data['educatable_id'])
-                ->where('educatable_type', $this->data['educatable_type'])
+                ->where('educatable_id', $this->data['input']['educatable_id'])
+                ->where('educatable_type', $this->data['input']['educatable_type'])
                 ->where('user_id', $value)
                 ->exists()
         ) {

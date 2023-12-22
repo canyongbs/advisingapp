@@ -120,11 +120,15 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Productivity Tools'),
                 NavigationGroup::make()
+                    ->label('Service Management'),
+                NavigationGroup::make()
                     ->label('Meeting Center'),
                 NavigationGroup::make()
                     ->label('Mass Engagement'),
                 NavigationGroup::make()
                     ->label('Forms and Surveys'),
+                NavigationGroup::make()
+                    ->label('Reporting'),
                 NavigationGroup::make()
                     ->label('Data and Analytics'),
                 NavigationGroup::make()

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
-use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Engagement\Notifications\EngagementEmailNotification;
 
 class EngagementEmailChannelDelivery extends QueuedEngagementDelivery
 {
@@ -46,6 +46,6 @@ class EngagementEmailChannelDelivery extends QueuedEngagementDelivery
             ->deliverable
             ->engagement
             ->recipient
-            ->notify(new EngagementNotification($this->deliverable));
+            ->notify(new EngagementEmailNotification($this->deliverable));
     }
 }

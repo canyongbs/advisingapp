@@ -41,7 +41,7 @@ use App\Models\User;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\Facades\DB;
 use AdvisingApp\Authorization\Models\Permission;
-use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\Task\Notifications\TaskAssignedToUserNotification;
 
 class TaskObserver
@@ -51,7 +51,11 @@ class TaskObserver
         DB::beginTransaction();
 
         if (is_null($task->created_by)) {
-            $task->created_by = auth()->id();
+            $user = auth()->user();
+
+            if ($user instanceof User) {
+                $task->created_by = $user->id;
+            }
         }
 
         if (is_null($task->assigned_to)) {

@@ -1,11 +1,26 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
 scalar DateTime
     @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+scalar UUID
+    @scalar(class: "App\\GraphQL\\Scalars\\UUID")
+    @searchByOperators(type: "ID")
+
+scalar EducatableId
+    @scalar(class: "App\\GraphQL\\Scalars\\EducatableId")
+    @searchByOperators(type: "ID")
 
 type Query
 
 type Mutation
 
 union Educatable = Prospect | Student
+
+enum EducatableType {
+    Student @enum(value: "student")
+    Prospect @enum(value: "prospect")
+}
 
 #import user.graphql

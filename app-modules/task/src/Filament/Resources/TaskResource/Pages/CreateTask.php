@@ -37,7 +37,8 @@
 namespace AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
 use Filament\Forms\Form;
-use Filament\Facades\Filament;
+use Illuminate\Support\Arr;
+use AdvisingApp\Task\Models\Task;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
@@ -88,18 +89,15 @@ class CreateTask extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data = collect($data);
-
-        $record = new ($this->getModel())($data->except('assigned_to')->toArray());
-
-        $record->assigned_to = $data->get('assigned_to');
-
-        if ($tenant = Filament::getTenant()) {
-            return $this->associateRecordWithTenant($record, $tenant);
-        }
-
+        $record = new Task(Arr::except($data, 'assigned_to'));
+        $record->assigned_to = $data['assigned_to'] ?? null;
         $record->save();
 
         return $record;
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return TaskResource::getUrl();
     }
 }

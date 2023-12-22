@@ -351,7 +351,7 @@ namespace App\Models{
  * @property-read int|null $student_care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $studentSubscriptions
  * @property-read int|null $student_subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $teams
  * @property-read int|null $teams_count
@@ -1058,6 +1058,7 @@ namespace AdvisingApp\CareTeam\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $educatable
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|CareTeam newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CareTeam newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CareTeam query()
@@ -1535,6 +1536,7 @@ namespace AdvisingApp\Form\Models{
  * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
  * @property bool $is_authenticated
  * @property bool $is_wizard
+ * @property bool $recaptcha_enabled
  * @property array|null $content
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -1560,6 +1562,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereRecaptchaEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereRounding($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -1765,6 +1768,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property-read \AdvisingApp\Interaction\Models\InteractionRelation|null $relation
  * @property-read \AdvisingApp\Interaction\Models\InteractionStatus|null $status
  * @property-read \AdvisingApp\Interaction\Models\InteractionType|null $type
+ * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Interaction\Database\Factories\InteractionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newQuery()
@@ -2190,9 +2194,57 @@ namespace AdvisingApp\MeetingCenter\Models{
  class IdeHelperCalendarEvent {}
 }
 
-namespace AdvisingApp\Notifications\Models{
+namespace AdvisingApp\Notification\Models{
 /**
- * AdvisingApp\Notifications\Models\Subscription
+ * AdvisingApp\Notification\Models\OutboundDeliverable
+ *
+ * @property string $id
+ * @property string|null $related_id
+ * @property string|null $related_type
+ * @property string|null $recipient_id
+ * @property string|null $recipient_type
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
+ * @property string $notification_class
+ * @property string|null $external_reference_id
+ * @property string|null $external_status
+ * @property mixed|null $content
+ * @property \AdvisingApp\Notification\Enums\NotificationDeliveryStatus $delivery_status
+ * @property \Illuminate\Support\Carbon|null $delivered_at
+ * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
+ * @property string|null $delivery_response
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $recipient
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $related
+ * @method static \AdvisingApp\Notification\Database\Factories\OutboundDeliverableFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable query()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereChannel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereDeliveredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereDeliveryResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereDeliveryStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereExternalReferenceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereExternalStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereLastDeliveryAttempt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereNotificationClass($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRecipientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRecipientType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRelatedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRelatedType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperOutboundDeliverable {}
+}
+
+namespace AdvisingApp\Notification\Models{
+/**
+ * AdvisingApp\Notification\Models\Subscription
  *
  * @property string $id
  * @property string $user_id
@@ -2277,7 +2329,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read \AdvisingApp\Prospect\Models\ProspectStatus $status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
  * @property-read int|null $subscribed_users_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
@@ -2726,7 +2778,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $service_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
  * @property-read int|null $subscribed_users_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
@@ -2738,6 +2790,195 @@ namespace AdvisingApp\StudentDataModel\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperStudent {}
+}
+
+namespace AdvisingApp\Survey\Models{
+/**
+ * AdvisingApp\Survey\Models\Survey
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property bool $embed_enabled
+ * @property array|null $allowed_domains
+ * @property string|null $primary_color
+ * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
+ * @property bool $is_authenticated
+ * @property bool $is_wizard
+ * @property bool $recaptcha_enabled
+ * @property array|null $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveyField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveyStep> $steps
+ * @property-read int|null $steps_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveySubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @method static \AdvisingApp\Survey\Database\Factories\SurveyFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereAllowedDomains($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereEmbedEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereIsAuthenticated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereIsWizard($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereRecaptchaEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereRounding($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Survey whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSurvey {}
+}
+
+namespace AdvisingApp\Survey\Models{
+/**
+ * AdvisingApp\Survey\Models\SurveyAuthentication
+ *
+ * @property string $id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property string|null $code
+ * @property string $survey_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
+ * @property-read \AdvisingApp\Survey\Models\Survey $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication whereSurveyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyAuthentication whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSurveyAuthentication {}
+}
+
+namespace AdvisingApp\Survey\Models{
+/**
+ * AdvisingApp\Survey\Models\SurveyField
+ *
+ * @property string $id
+ * @property string $label
+ * @property string $type
+ * @property bool $is_required
+ * @property array $config
+ * @property string $survey_id
+ * @property string|null $step_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Survey\Models\SurveyStep|null $step
+ * @property-read \AdvisingApp\Survey\Models\Survey $submissible
+ * @method static \AdvisingApp\Survey\Database\Factories\SurveyFieldFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereConfig($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereIsRequired($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereStepId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereSurveyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyField whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSurveyField {}
+}
+
+namespace AdvisingApp\Survey\Models{
+/**
+ * AdvisingApp\Survey\Models\SurveyStep
+ *
+ * @property string $id
+ * @property string $label
+ * @property array|null $content
+ * @property string $survey_id
+ * @property int $sort
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveyField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \AdvisingApp\Survey\Models\Survey $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep whereSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep whereSurveyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveyStep whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSurveyStep {}
+}
+
+namespace AdvisingApp\Survey\Models{
+/**
+ * AdvisingApp\Survey\Models\SurveySubmission
+ *
+ * @property Student|Prospect|null $author
+ * @property string $id
+ * @property string $survey_id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property \Carbon\CarbonImmutable|null $submitted_at
+ * @property \Carbon\CarbonImmutable|null $canceled_at
+ * @property \AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod|null $request_method
+ * @property string|null $request_note
+ * @property string|null $requester_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Survey\Models\SurveyField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \App\Models\User|null $requester
+ * @property-read \AdvisingApp\Survey\Models\Survey $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission canceled()
+ * @method static \AdvisingApp\Survey\Database\Factories\SurveySubmissionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission notCanceled()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission notSubmitted()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission requested()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission submitted()
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereRequestMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereRequestNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereRequesterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereSubmittedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereSurveyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperSurveySubmission {}
 }
 
 namespace AdvisingApp\Task\Models{

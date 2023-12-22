@@ -39,7 +39,7 @@ namespace AdvisingApp\Application\Listeners;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Notifications\Models\Subscription;
+use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
 

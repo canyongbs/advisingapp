@@ -46,17 +46,31 @@
                                 /** @var TaskStatus $status */
                             @endphp
                             <div class="min-w-kanban">
-                                <div class="py-4 text-base font-semibold text-gray-900 dark:text-gray-300">
-                                    {{ $status->displayName() }}</div>
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="py-4 text-base font-semibold text-gray-900 dark:text-gray-300">
+                                        {{ $status->displayName() }}
+                                    </div>
+
+                                    <x-filament::link
+                                        tag="button"
+                                        icon="heroicon-m-plus"
+                                        :wire:click="'mountAction(\'createTask\', { status:\'' . $status->value . '\' })'"
+                                    >
+                                        New
+                                    </x-filament::link>
+                                </div>
 
                                 <div
-                                    class="min-w-kanban mb-4 space-y-4"
                                     id="kanban-list-{{ $status->value }}"
                                     data-status="{{ $status->value }}"
+                                    @class([
+                                        'relative flex flex-col gap-4 min-w-kanban mb-4 h-full',
+                                        'pb-20' => !count($tasks[$status->value]),
+                                    ])
                                 >
                                     @foreach ($tasks[$status->value] as $task)
                                         <div
-                                            class="flex max-w-md transform cursor-move flex-col rounded-lg bg-white p-5 shadow dark:bg-gray-800"
+                                            class="z-10 flex max-w-md transform cursor-move flex-col rounded-lg bg-white p-5 shadow dark:bg-gray-800"
                                             data-task="{{ $task->id }}"
                                             wire:key="task-{{ $task->id }}"
                                         >
@@ -120,27 +134,22 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                </div>
 
-                                <button
-                                    class="flex w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-200 py-2 font-semibold text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900 dark:border-gray-800 dark:hover:border-gray-700 dark:hover:bg-gray-800 dark:hover:text-white"
-                                    data-modal-toggle="new-card-modal"
-                                    type="button"
-                                >
-                                    <svg
-                                        class="h-6 w-6"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path
-                                            fill-rule="evenodd"
-                                            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                                            clip-rule="evenodd"
-                                        ></path>
-                                    </svg>
-                                    Add another card
-                                </button>
+                                    <div
+                                        class="absolute flex h-20 w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 py-2 font-semibold text-gray-500 hover:border-gray-300 dark:border-gray-800">
+                                        <div>
+                                            Drag tasks here
+                                        </div>
+
+                                        <button
+                                            class="hover:underline"
+                                            tag="button"
+                                            wire:click="mountAction('createTask', { status: '{{ $status->value }}' })"
+                                        >
+                                            or add a new one
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         @endforeach
                     </div>

@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\Task\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Bvtterfly\ModelStateMachine\Attributes\InitialState;
 use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
 
-enum TaskStatus: string
+enum TaskStatus: string implements HasColor
 {
     #[InitialState]
     #[AllowTransitionTo(self::InProgress)]
@@ -54,7 +55,7 @@ enum TaskStatus: string
 
     case Cancelled = 'canceled';
 
-    public function getTableColor(): string
+    public function getColor(): string
     {
         return match ($this) {
             self::Pending => 'gray',

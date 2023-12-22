@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
+use Carbon\CarbonImmutable;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Alert\Enums\AlertSeverity;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Campaign\Settings\CampaignSettings;
 
 class ProactiveAlertBlock extends CampaignActionBlock
 {
@@ -76,9 +78,13 @@ class ProactiveAlertBlock extends CampaignActionBlock
                 ->enum(AlertStatus::class),
             DateTimePicker::make($fieldPrefix . 'execute_at')
                 ->label('When should the journey step be executed?')
+                ->columnSpanFull()
+                ->timezone(app(CampaignSettings::class)->getActionExecutionTimezone())
+                ->helperText(app(CampaignSettings::class)->getActionExecutionTimezoneLabel())
+                ->lazy()
+                ->hint(fn ($state): ?string => filled($state) ? $this->generateUserTimezoneHint(CarbonImmutable::parse($state)) : null)
                 ->required()
-                ->minDate(now(auth()->user()->timezone))
-                ->closeOnDateSelection(),
+                ->minDate(now()),
         ];
     }
 

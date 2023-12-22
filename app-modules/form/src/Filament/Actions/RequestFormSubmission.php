@@ -42,6 +42,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Query\Expression;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
@@ -64,7 +65,7 @@ class RequestFormSubmission extends Action
                             ->all())
                         ->getSearchResultsUsing(fn (string $search): array => Form::query()
                             ->where('is_authenticated', true)
-                            ->where('lower(name)', 'like', '%' . Str::lower($search) . '%')
+                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all())

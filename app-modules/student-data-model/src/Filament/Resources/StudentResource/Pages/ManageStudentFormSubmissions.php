@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
-use Filament\Forms\Set;
 use Filament\Tables\Table;
 use Carbon\CarbonInterface;
 use App\Filament\Columns\IdColumn;
@@ -116,9 +115,9 @@ class ManageStudentFormSubmissions extends ManageRelatedRecords
         $ownerRecord = $urlParameters['record'];
 
         /** @var Prospect $ownerRecord */
-        $formSubmissionsCount = Cache::tags('form-submission-count')
+        $formSubmissionsCount = Cache::tags('{form-submission-count}')
             ->remember(
-                "form-submission-count-{$ownerRecord->getKey()}",
+                "{form-submission-count-{$ownerRecord->getKey()}}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     return $ownerRecord->formSubmissions()->count();

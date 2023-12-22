@@ -46,8 +46,8 @@ class CreateKnowledgeBaseItemsTable extends Migration
             $table->uuid('id')->primary();
             $table->string('question');
             $table->boolean('public');
-            $table->longText('solution')->nullable();
-            $table->longText('notes')->nullable();
+            $table->jsonb('solution')->nullable();
+            $table->jsonb('notes')->nullable();
             $table->uuid('quality_id')->nullable();
             $table->uuid('status_id')->nullable();
             $table->uuid('category_id')->nullable();

@@ -37,10 +37,10 @@
 namespace AdvisingApp\Form\Notifications;
 
 use Illuminate\Bus\Queueable;
-use App\Notifications\MailMessage;
 use Illuminate\Notifications\Notification;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 
 class FormSubmissionRequestNotification extends Notification implements ShouldQueue
 {

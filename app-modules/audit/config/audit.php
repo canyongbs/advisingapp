@@ -65,6 +65,7 @@ return [
         'guards' => [
             'web',
             'api',
+            'sanctum',
         ],
         'resolver' => OwenIt\Auditing\Resolvers\UserResolver::class,
     ],
@@ -204,7 +205,7 @@ return [
     'queue' => [
         'dispatch_listener' => ProcessDispatchAudit::class,
         'connection' => env('AUDIT_QUEUE_CONNECTION', 'sync'),
-        'queue' => 'default',
+        'queue' => env('SQS_QUEUE', 'default'),
         'delay' => 0,
     ],
 

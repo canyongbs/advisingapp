@@ -53,7 +53,7 @@ class SuperAdminSeeder extends Seeder
 
         // Data for super admin
         $this->seedSubscribersFor($superAdmin);
-        $this->seedEngagementsFor($superAdmin);
+        // $this->seedEngagementsFor($superAdmin);
     }
 
     protected function seedSubscribersFor(User $user): void

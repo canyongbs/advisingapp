@@ -36,16 +36,19 @@
 
 namespace AdvisingApp\Alert\Observers;
 
+use App\Models\User;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Support\Facades\Cache;
 use AdvisingApp\Alert\Events\AlertCreated;
-use AdvisingApp\Notifications\Actions\SubscriptionCreate;
+use AdvisingApp\Notification\Actions\SubscriptionCreate;
 
 class AlertObserver
 {
     public function created(Alert $alert): void
     {
-        if ($user = auth()->user()) {
+        $user = auth()->user();
+
+        if ($user instanceof User) {
             // Creating the subscription directly so that the alert can be sent to this User as well
             resolve(SubscriptionCreate::class)->handle($user, $alert->getSubscribable(), false);
         }
@@ -55,11 +58,11 @@ class AlertObserver
 
     public function saved(Alert $alert): void
     {
-        Cache::tags('alert-count')->flush();
+        Cache::tags('{alert-count}')->flush();
     }
 
     public function deleted(Alert $alert): void
     {
-        Cache::tags('alert-count')->flush();
+        Cache::tags('{alert-count}')->flush();
     }
 }

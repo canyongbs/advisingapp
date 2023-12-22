@@ -2,9 +2,9 @@
 
 namespace {{ namespace }};
 
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\EmailTemplate;
 use App\Models\User;
-use App\Notifications\MailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;

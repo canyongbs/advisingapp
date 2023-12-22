@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
+// TODO Make this more generic as this is also used for the sms channel.
 class GenerateEmailMarkdownContent
 {
     public function __invoke(array $content, array $mergeData = [], string $markdown = ''): string

@@ -48,6 +48,8 @@ class EditSystemUser extends EditRecord
 {
     protected static string $resource = SystemUserResource::class;
 
+    protected ?string $heading = 'Edit Programmatic (API) User';
+
     public function form(Form $form): Form
     {
         return $form->schema([
@@ -56,6 +58,7 @@ class EditSystemUser extends EditRecord
                 ->string(),
             TextInput::make('token')
                 ->hint('Please copy the token, it will only be shown once.')
+                ->disabled()
                 ->dehydrated(false)
                 ->visible(fn (?string $state) => filled($state)),
         ]);

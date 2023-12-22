@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Actions;
 use Exception;
 use AdvisingApp\Form\Models\Form;
 use Illuminate\Support\Facades\URL;
+use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Application\Models\Application;
 
@@ -57,12 +58,20 @@ class GenerateSubmissibleEmbedCode
                 EOD;
             })(),
             Application::class => (function () use ($submissible) {
-                // TODO: Eventually we will want to change this to create a separate widget for applications.
                 $scriptUrl = url('js/widgets/application/advising-app-application-widget.js?');
                 $applicationDefinitionUrl = URL::signedRoute('applications.define', ['application' => $submissible]);
 
                 return <<<EOD
                 <application-embed url="{$applicationDefinitionUrl}"></application-embed>
+                <script src="{$scriptUrl}"></script>
+                EOD;
+            })(),
+            Survey::class => (function () use ($submissible) {
+                $scriptUrl = url('js/widgets/survey/advising-app-survey-widget.js?');
+                $surveyDefinitionUrl = URL::signedRoute('surveys.define', ['survey' => $submissible]);
+
+                return <<<EOD
+                <survey-embed url="{$surveyDefinitionUrl}"></survey-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),

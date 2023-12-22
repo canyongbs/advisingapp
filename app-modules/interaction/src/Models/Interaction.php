@@ -37,6 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use Exception;
+use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -44,11 +45,11 @@ use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
-use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @mixin IdeHelperInteraction
@@ -78,6 +79,11 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         'start_datetime' => 'datetime',
         'end_datetime' => 'datetime',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function getWebPermissions(): Collection
     {

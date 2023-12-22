@@ -81,7 +81,11 @@ test('CreateKnowledgeBaseItem is gated with proper access control', function () 
 
     assertCount(1, KnowledgeBaseItem::all());
 
-    assertDatabaseHas(KnowledgeBaseItem::class, $request->except('division')->toArray());
+    $data = $request->except('division')->toArray();
+    $data['solution'] = json_encode($data['solution']);
+    $data['notes'] = json_encode($data['notes']);
+
+    assertDatabaseHas(KnowledgeBaseItem::class, $data);
 
     $knowledgeBaseItem = KnowledgeBaseItem::first();
 
@@ -126,7 +130,11 @@ test('CreateKnowledgeBaseItem is gated with proper feature access control', func
 
     assertCount(1, KnowledgeBaseItem::all());
 
-    assertDatabaseHas(KnowledgeBaseItem::class, $request->except('division')->toArray());
+    $data = $request->except('division')->toArray();
+    $data['solution'] = json_encode($data['solution']);
+    $data['notes'] = json_encode($data['notes']);
+
+    assertDatabaseHas(KnowledgeBaseItem::class, $data);
 
     $knowledgeBaseItem = KnowledgeBaseItem::first();
 

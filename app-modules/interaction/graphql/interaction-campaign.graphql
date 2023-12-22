@@ -1,0 +1,113 @@
+type InteractionCampaign
+    @model(class: "AdvisingApp\\Interaction\\Models\\InteractionCampaign") {
+    "Unique primary key."
+    id: UUID!
+
+    "The name of the interaction campaign."
+    name: String!
+
+    "Interactions related to this interaction campaign."
+    interactions: [Interaction!] @hasMany
+
+    "The created date of the interaction campaign."
+    created_at: DateTime
+
+    "The updated date of the interaction campaign."
+    updated_at: DateTime
+
+    "The deleted date of the interaction campaign."
+    deleted_at: DateTime
+}
+
+input InteractionCampaignQuery {
+    "The unique primary key of the interaction campaign."
+    id: UUID
+
+    "The name of the interaction relation."
+    name: String
+
+    "The interactions related to this interaction campaign."
+    interactions: InteractionsQuery
+
+    "The created date of the interaction campaign."
+    created_at: DateTime
+
+    "The updated date of the interaction campaign."
+    updated_at: DateTime
+
+    "The deleted date of the interaction campaign."
+    deleted_at: DateTime
+}
+
+type InteractionCampaignQueries {
+    "Get a specific interaction campaign by ID."
+    find(
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+    ): InteractionCampaign @find @softDeletes @canResolved(ability: "view")
+
+    "List multiple interactions campaigns."
+    list(
+        "Filter by the interaction campaigns attributes and relations."
+        where: InteractionCampaignQuery @searchBy
+    ): [InteractionCampaign!]!
+        @paginate
+        @softDeletes
+        @canModel(ability: "viewAny")
+}
+
+extend type Query {
+    interactionCampaign: InteractionCampaignQueries! @namespaced
+}
+
+input CreateInteractionCampaignInput {
+    "The name of the interaction campaign."
+    name: String!
+        @rules(
+            apply: [
+                "required"
+                "string"
+                "max:255"
+                "unique:interaction_campaigns,name"
+            ]
+        )
+}
+
+input UpdateInteractionCampaignInput {
+    "The name of the interaction campaign."
+    name: String
+        @rules(
+            apply: ["string", "max:255", "unique:interaction_campaigns,name"]
+        )
+}
+
+type InteractionCampaignMutations {
+    "Create an interaction campaign."
+    create(
+        input: CreateInteractionCampaignInput! @spread
+    ): InteractionCampaign! @create @canModel(ability: "create")
+
+    "Update an existing interaction campaign."
+    update(
+        "The identifier of the interaction campaign you would like to update."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+
+        "The fields you would like to update."
+        input: UpdateInteractionCampaignInput! @spread
+    ): InteractionCampaign! @canFind(ability: "update", find: "id") @update
+
+    "Delete an existing interaction campaign."
+    delete(
+        "The identifier of the interaction campaign you would like to delete."
+        id: UUID!
+            @whereKey
+            @rules(apply: ["required", "uuid", "exists:interaction_campaigns"])
+    ): InteractionCampaign @canFind(ability: "delete", find: "id") @delete
+}
+
+extend type Mutation {
+    interactionCampaign: InteractionCampaignMutations! @namespaced
+}

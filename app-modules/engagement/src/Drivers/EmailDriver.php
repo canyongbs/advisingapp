@@ -37,7 +37,10 @@
 namespace AdvisingApp\Engagement\Drivers;
 
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+use AdvisingApp\Engagement\Actions\EngagementEmailChannelDelivery;
 
+// TODO Rename this to be "EngagementEmailDriver"
 class EmailDriver implements DeliverableDriver
 {
     public function __construct(
@@ -45,4 +48,14 @@ class EmailDriver implements DeliverableDriver
     ) {}
 
     public function updateDeliveryStatus(array $data): void {}
+
+    public function jobForDelivery(): QueuedEngagementDelivery
+    {
+        return new EngagementEmailChannelDelivery($this->deliverable);
+    }
+
+    public function deliver(): void
+    {
+        EngagementEmailChannelDelivery::dispatch($this->deliverable);
+    }
 }
