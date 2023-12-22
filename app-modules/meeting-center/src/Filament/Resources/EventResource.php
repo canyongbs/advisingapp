@@ -34,26 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Widgets;
+namespace AdvisingApp\MeetingCenter\Filament\Resources;
 
-use App\Models\User;
+use Filament\Resources\Resource;
 use AdvisingApp\MeetingCenter\Models\Event;
-use Saade\FilamentFullCalendar\Data\EventData;
-use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\EditEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ViewEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\CreateEvent;
 
-class CalendarWidget extends FullCalendarWidget
+class EventResource extends Resource
 {
-    public function fetchEvents(array $info): array
+    protected static ?string $model = Event::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Meeting Center';
+
+    protected static ?int $navigationSort = 20;
+
+    public static function getRelations(): array
     {
-        return Event::all()
-            ->map(fn (Event $event) => EventData::make()
-                ->id($event->id)
-                ->title($event->title)
-                ->start($event->starts_at)
-                ->end($event->ends_at)
-                ->url(EventResource::getUrl('view', ['record' => $event]), true)
-                ->extendedProps(['shouldOpenInNewTab' => true]))
-            ->toArray();
+        return [];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListEvents::route('/'),
+            'create' => CreateEvent::route('/create'),
+            'view' => ViewEvent::route('/{record}'),
+            'edit' => EditEvent::route('/{record}/edit'),
+        ];
     }
 }

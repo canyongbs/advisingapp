@@ -34,17 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
-use Filament\Pages\Page;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Infolist;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
-class Events extends Page
+class ViewEvent extends ViewRecord
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string $resource = EventResource::class;
 
-    protected static ?string $navigationGroup = 'Meeting Center';
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('title'),
+                        TextEntry::make('description'),
+                        TextEntry::make('location'),
+                        TextEntry::make('capacity'),
+                        TextEntry::make('starts_at'),
+                        TextEntry::make('ends_at'),
+                    ])
+                    ->columns(),
+            ]);
+    }
 
-    protected static ?int $navigationSort = 20;
-
-    protected static string $view = 'filament.pages.coming-soon';
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+            DeleteAction::make(),
+        ];
+    }
 }

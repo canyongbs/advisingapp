@@ -45,6 +45,7 @@ use AdvisingApp\Team\Database\Seeders\TeamSeeder;
 use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
+use AdvisingApp\MeetingCenter\Database\Seeders\EventSeeder;
 use AdvisingApp\Engagement\Database\Seeders\EngagementSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
@@ -103,6 +104,7 @@ class DatabaseSeeder extends Seeder
             SuperAdminSeeder::class,
             StudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,
+            EventSeeder::class,
         ]);
     }
 }

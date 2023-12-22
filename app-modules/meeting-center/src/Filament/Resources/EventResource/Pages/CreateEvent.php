@@ -34,26 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Widgets;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
 use App\Models\User;
-use AdvisingApp\MeetingCenter\Models\Event;
-use Saade\FilamentFullCalendar\Data\EventData;
-use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+use Filament\Forms\Form;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
-class CalendarWidget extends FullCalendarWidget
+class CreateEvent extends CreateRecord
 {
-    public function fetchEvents(array $info): array
+    protected static string $resource = EventResource::class;
+
+    public function form(Form $form): Form
     {
-        return Event::all()
-            ->map(fn (Event $event) => EventData::make()
-                ->id($event->id)
-                ->title($event->title)
-                ->start($event->starts_at)
-                ->end($event->ends_at)
-                ->url(EventResource::getUrl('view', ['record' => $event]), true)
-                ->extendedProps(['shouldOpenInNewTab' => true]))
-            ->toArray();
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $form->schema([
+            TextInput::make('title')
+                ->string()
+                ->required(),
+            Textarea::make('description')
+                ->string()
+                ->nullable(),
+            TextInput::make('location')
+                ->string()
+                ->nullable(),
+            TextInput::make('capacity')
+                ->integer()
+                ->minValue(1)
+                ->nullable(),
+            DateTimePicker::make('starts_at')
+                ->timezone($user->timezone)
+                ->required(),
+            DateTimePicker::make('ends_at')
+                ->timezone($user->timezone)
+                ->required(),
+        ]);
     }
 }

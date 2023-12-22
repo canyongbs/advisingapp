@@ -45,7 +45,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->string('title');
-            $table->text('description')->nullable();
+            $table->longText('description')->nullable();
             $table->json('attendees')->nullable();
 
             $table->string('provider_id')->nullable();

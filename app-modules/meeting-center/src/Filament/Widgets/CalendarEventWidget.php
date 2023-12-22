@@ -37,23 +37,35 @@
 namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 
 use App\Models\User;
-use AdvisingApp\MeetingCenter\Models\Event;
+use Livewire\Attributes\On;
 use Saade\FilamentFullCalendar\Data\EventData;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 
-class CalendarWidget extends FullCalendarWidget
+class CalendarEventWidget extends FullCalendarWidget
 {
     public function fetchEvents(array $info): array
     {
-        return Event::all()
-            ->map(fn (Event $event) => EventData::make()
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->calendar
+            ->events()
+            ->get()
+            ->map(fn (CalendarEvent $event) => EventData::make()
                 ->id($event->id)
                 ->title($event->title)
                 ->start($event->starts_at)
                 ->end($event->ends_at)
-                ->url(EventResource::getUrl('view', ['record' => $event]), true)
+                ->url(CalendarEventResource::getUrl('view', ['record' => $event]), true)
                 ->extendedProps(['shouldOpenInNewTab' => true]))
             ->toArray();
+    }
+
+    #[On('refresh-events')]
+    public function refreshEvents(): void
+    {
+        $this->refreshRecords();
     }
 }
