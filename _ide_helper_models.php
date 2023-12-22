@@ -351,7 +351,7 @@ namespace App\Models{
  * @property-read int|null $student_care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $studentSubscriptions
  * @property-read int|null $student_subscriptions_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Team\Models\Team> $teams
  * @property-read int|null $teams_count
@@ -2194,9 +2194,57 @@ namespace AdvisingApp\MeetingCenter\Models{
  class IdeHelperCalendarEvent {}
 }
 
-namespace AdvisingApp\Notifications\Models{
+namespace AdvisingApp\Notification\Models{
 /**
- * AdvisingApp\Notifications\Models\Subscription
+ * AdvisingApp\Notification\Models\OutboundDeliverable
+ *
+ * @property string $id
+ * @property string|null $related_id
+ * @property string|null $related_type
+ * @property string|null $recipient_id
+ * @property string|null $recipient_type
+ * @property \AdvisingApp\Notification\Enums\NotificationChannel $channel
+ * @property string $notification_class
+ * @property string|null $external_reference_id
+ * @property string|null $external_status
+ * @property mixed|null $content
+ * @property \AdvisingApp\Notification\Enums\NotificationDeliveryStatus $delivery_status
+ * @property \Illuminate\Support\Carbon|null $delivered_at
+ * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
+ * @property string|null $delivery_response
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $recipient
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $related
+ * @method static \AdvisingApp\Notification\Database\Factories\OutboundDeliverableFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable query()
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereChannel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereDeliveredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereDeliveryResponse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereDeliveryStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereExternalReferenceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereExternalStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereLastDeliveryAttempt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereNotificationClass($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRecipientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRecipientType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRelatedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRelatedType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperOutboundDeliverable {}
+}
+
+namespace AdvisingApp\Notification\Models{
+/**
+ * AdvisingApp\Notification\Models\Subscription
  *
  * @property string $id
  * @property string $user_id
@@ -2281,7 +2329,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read \AdvisingApp\Prospect\Models\ProspectStatus $status
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
  * @property-read int|null $subscribed_users_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count
@@ -2730,7 +2778,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $service_requests_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $subscribedUsers
  * @property-read int|null $subscribed_users_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notifications\Models\Subscription> $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Notification\Models\Subscription> $subscriptions
  * @property-read int|null $subscriptions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Task\Models\Task> $tasks
  * @property-read int|null $tasks_count

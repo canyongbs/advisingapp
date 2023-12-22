@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\IntegrationAwsSesEventHandling\IntegrationAwsSesEventHandlingPlugin;
+use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\AddSesMessageTagsToEmailHeaders;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\AddSesConfigurationSetToEmailHeaders;
 
 class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
@@ -66,6 +67,11 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Event::listen(
             MessageSending::class,
             AddSesConfigurationSetToEmailHeaders::class
+        );
+
+        Event::listen(
+            MessageSending::class,
+            AddSesMessageTagsToEmailHeaders::class
         );
     }
 

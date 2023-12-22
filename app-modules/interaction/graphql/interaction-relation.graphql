@@ -40,7 +40,7 @@ input InteractionRelationQuery {
 }
 
 type InteractionRelationQueries {
-    "Get a specific interaction relation by id."
+    "Get a specific interaction relation by ID."
     find(
         id: UUID!
             @whereKey

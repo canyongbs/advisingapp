@@ -41,7 +41,7 @@ use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-use AdvisingApp\Notifications\Events\TriggeredAutoSubscription;
+use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 
 class EngagementObserver
 {

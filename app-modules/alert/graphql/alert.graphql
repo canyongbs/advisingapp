@@ -28,8 +28,8 @@ type Alert @model(class: "AdvisingApp\\Alert\\Models\\Alert") {
 }
 
 input AlertConcernsQuery {
-    student: StudentQuery
-    prospect: ProspectQuery
+    student: StudentsQuery
+    prospect: ProspectsQuery
 }
 
 input AlertsQuery {

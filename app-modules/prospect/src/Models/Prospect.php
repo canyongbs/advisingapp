@@ -49,8 +49,8 @@ use OpenSearch\ScoutDriverPlus\Searchable;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use AdvisingApp\Notifications\Models\Subscription;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -58,11 +58,12 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
-use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
+use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
-use AdvisingApp\Notifications\Models\Concerns\HasSubscriptions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
@@ -84,6 +85,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     use HasManyMorphedInteractions;
     use HasSubscriptions;
     use Searchable;
+    use NotifiableViaSms;
 
     protected $fillable = [
         'first_name',
@@ -110,6 +112,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     protected $casts = [
         'sms_opt_out' => 'boolean',
         'email_bounce' => 'boolean',
+        'birthdate' => 'date',
     ];
 
     public function searchableAs(): string

@@ -50,12 +50,13 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
-use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Notifications\Models\Contracts\CanTriggerAutoSubscription;
+use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
  * @property-read Educatable $recipient
@@ -141,6 +142,13 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function scopeIsScheduled(Builder $query): void
     {
         $query->where('scheduled', true);
+    }
+
+    public function scopeIsAwaitingDelivery(Builder $query): void
+    {
+        $query->whereHas('engagementDeliverable', function (Builder $query) {
+            $query->where('delivery_status', EngagementDeliveryStatus::Awaiting);
+        });
     }
 
     public function scopeHasBeenDelivered(Builder $query): void

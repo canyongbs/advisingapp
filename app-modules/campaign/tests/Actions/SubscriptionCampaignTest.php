@@ -43,8 +43,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\Notifications\Actions\SubscriptionCreate;
-use AdvisingApp\Notifications\Models\Contracts\Subscribable;
+use AdvisingApp\Notification\Actions\SubscriptionCreate;
+use AdvisingApp\Notification\Models\Contracts\Subscribable;
 
 it('will create the subscription records for subscribables in the caseload', function (array $priorSubscriptions, Collection $subscribables, bool $removePrior) {
     $caseload = Caseload::factory()->create([

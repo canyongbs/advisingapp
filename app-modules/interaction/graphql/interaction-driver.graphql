@@ -40,7 +40,7 @@ input InteractionDriverQuery {
 }
 
 type InteractionDriverQueries {
-    "Get a specific interaction driver by id."
+    "Get a specific interaction driver by ID."
     find(
         id: UUID!
             @whereKey
