@@ -37,13 +37,16 @@
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Mail\Events\MessageSent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 it('sets the X-SES-CONFIGURATION-SET header if mail.mailers.ses.configuration_set is set', function () {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
 
-    config(['mail.mailers.ses.configuration_set' => $configurationSet]);
+    $settings = app(SesSettings::class);
+    $settings->configuration_set = $configurationSet;
+    $settings->save();
 
     Mail::raw(
         'Hello, welcome to Laravel!',
@@ -57,8 +60,6 @@ it('sets the X-SES-CONFIGURATION-SET header if mail.mailers.ses.configuration_se
 
 it('X-SES-CONFIGURATION-SET is not present if mail.mailers.ses.configuration_set is not', function () {
     Event::fake(MessageSent::class);
-
-    config(['mail.mailers.ses.configuration_set' => null]);
 
     Mail::raw(
         'Hello, welcome to Laravel!',

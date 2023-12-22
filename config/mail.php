@@ -80,7 +80,6 @@ return [
 
         'ses' => [
             'transport' => 'ses',
-            'configuration_set' => env('MAIL_SES_CONFIGURATION_SET'),
         ],
 
         'mailgun' => [

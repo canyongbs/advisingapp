@@ -34,4 +34,8 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'custom' => [
+        'integration-aws-ses-event-handling.view_ses_settings',
+    ],
+];

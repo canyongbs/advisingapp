@@ -40,12 +40,6 @@ use Spatie\LaravelSettings\Settings;
 
 class SesSettings extends Settings
 {
-    public ?string $key;
-
-    public ?string $secret;
-
-    public ?string $region;
-
     public ?string $configuration_set;
 
     public static function group(): string
@@ -56,9 +50,6 @@ class SesSettings extends Settings
     public static function encrypted(): array
     {
         return [
-            'key',
-            'secret',
-            'region',
             'configuration_set',
         ];
     }

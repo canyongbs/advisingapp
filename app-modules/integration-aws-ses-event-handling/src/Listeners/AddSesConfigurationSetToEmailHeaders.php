@@ -37,13 +37,16 @@
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
 use Illuminate\Mail\Events\MessageSending;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 class AddSesConfigurationSetToEmailHeaders
 {
     public function handle(MessageSending $event): void
     {
-        if (filled(config('mail.mailers.ses.configuration_set'))) {
-            $event->message->getHeaders()->addTextHeader('X-SES-CONFIGURATION-SET', config('mail.mailers.ses.configuration_set'));
+        $settings = app(SesSettings::class);
+
+        if ($settings->configuration_set) {
+            $event->message->getHeaders()->addTextHeader('X-SES-CONFIGURATION-SET', $settings->configuration_set);
         }
     }
 }
