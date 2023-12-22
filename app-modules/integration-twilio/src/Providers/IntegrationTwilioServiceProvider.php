@@ -36,8 +36,13 @@
 
 namespace AdvisingApp\IntegrationTwilio\Providers;
 
+use Filament\Panel;
 use Twilio\Rest\Client;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
@@ -46,7 +51,9 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(EngagementResponseSenderFinder::class, function ($app) {
+        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new IntegrationTwilioPlugin()));
+
+        $this->app->bind(EngagementResponseSenderFinder::class, function () {
             if (config('services.twilio.enable_test_sender') === true) {
                 return new PlaygroundFindEngagementResponseSender();
             }
@@ -54,11 +61,43 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
             return new FindEngagementResponseSender();
         });
 
+        $settings = $this->app->make(TwilioSettings::class);
+
         $this->app->bind(Client::class, fn () => new Client(
-            config('services.twilio.account_sid'),
-            config('services.twilio.auth_token')
+            $settings->account_sid,
+            $settings->auth_token
         ));
     }
 
-    public function boot(): void {}
+    public function boot(): void
+    {
+        $this->registerRolesAndPermissions();
+    }
+
+    protected function registerRolesAndPermissions(): void
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
+
+        $permissionRegistry->registerApiPermissions(
+            module: 'integration-twilio',
+            path: 'permissions/api/custom'
+        );
+
+        $permissionRegistry->registerWebPermissions(
+            module: 'integration-twilio',
+            path: 'permissions/web/custom'
+        );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
+
+        $roleRegistry->registerApiRoles(
+            module: 'integration-twilio',
+            path: 'roles/api'
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: 'integration-twilio',
+            path: 'roles/web'
+        );
+    }
 }

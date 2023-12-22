@@ -56,6 +56,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
 
 class UserChat extends Page implements HasForms, HasActions
@@ -156,14 +157,16 @@ class UserChat extends Page implements HasForms, HasActions
 
             $twilioClient = app(Client::class);
 
+            $settings = app(TwilioSettings::class);
+
             $configuration = $twilioClient->conversations->v1->configuration()->fetch();
 
             return (new AccessToken(
-                accountSid: config('services.twilio.account_sid'),
+                accountSid: $settings->account_sid,
                 signingKeySid: $apiKey->api_sid,
                 secret: $apiKey->secret,
                 ttl: 21600, // 6 hours
-                identity: auth()->user()->id,
+                identity: auth()->id(),
             ))
                 ->addGrant((new ChatGrant())->setServiceSid($configuration->defaultChatServiceSid));
         });

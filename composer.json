@@ -208,8 +208,7 @@
             "@php artisan lighthouse:print-schema -W -D public"
         ],
         "generate-api-docs": [
-            "@php artisan lighthouse:ide-helper",
-            "@prettier-format",
+            "./node_modules/.bin/prettier \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --write",
             "@print-schema",
             "npm run api-docs:generate"
         ]

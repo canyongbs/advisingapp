@@ -2,7 +2,7 @@ spectaql:
 #  logoFile: ./test/fixtures/logo.png
 #  faviconFile: ./test/fixtures/favicon.png
   displayAllServers: true
-  targetDir: ./public/api-docs
+  targetDir: ./storage/app/api-docs
   oneFile: true
   themeDir: spectaql
 

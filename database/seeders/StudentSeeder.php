@@ -46,7 +46,7 @@ class StudentSeeder extends Seeder
         Student::factory()
             ->create([
                 'full_name' => 'Twilio Tester',
-                'mobile' => config('services.twilio.from_number'),
+                'mobile' => config('services.twilio.test_from_number'),
             ]);
     }
 }
