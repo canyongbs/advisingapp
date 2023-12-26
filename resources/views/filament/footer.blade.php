@@ -36,12 +36,12 @@
     <div class="mt-4 flex w-full justify-center">
         <img
             class="hidden h-5 dark:block"
-            src="{{ Vite::asset('resources/images/default-logo-dark.png') }}"
+            src="{{ Vite::asset('resources/images/canyon-logo-dark.png') }}"
             alt="{{ config('app.name') }}"
         />
         <img
             class="block h-5 dark:hidden"
-            src="{{ Vite::asset('resources/images/default-logo-light.png') }}"
+            src="{{ Vite::asset('resources/images/canyon-logo-light.png') }}"
             alt="{{ config('app.name') }}"
         />
     </div>
