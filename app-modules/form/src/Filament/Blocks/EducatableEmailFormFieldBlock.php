@@ -43,7 +43,7 @@ use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 
 class EducatableEmailFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Student email address';
+    public ?string $label = 'Filler email address';
 
     public string $rendered = 'form::blocks.submissions.educatable-email';
 
