@@ -7,6 +7,7 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
@@ -26,16 +27,26 @@ class ListAssets extends ListRecords
                 TextColumn::make('serial_number')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('type.name')
-                    ->sortable(),
-                TextColumn::make('status.name')
-                    ->sortable(),
-                TextColumn::make('location.name')
-                    ->sortable(),
+                TextColumn::make('type.name'),
+                TextColumn::make('status.name'),
+                TextColumn::make('location.name'),
                 TextColumn::make('purchase_date')
+                    ->searchable()
                     ->sortable(),
             ])
             ->filters([
+                SelectFilter::make('type')
+                    ->relationship('type', 'name')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('status')
+                    ->relationship('status', 'name')
+                    ->multiple()
+                    ->preload(),
+                SelectFilter::make('location')
+                    ->relationship('location', 'name')
+                    ->multiple()
+                    ->preload(),
             ])
             ->actions([
                 EditAction::make(),
