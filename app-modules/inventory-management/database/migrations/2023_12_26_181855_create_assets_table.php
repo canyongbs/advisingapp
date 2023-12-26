@@ -12,9 +12,9 @@ return new class () extends Migration {
             $table->string('serial_number');
             $table->string('name');
             $table->string('description');
-            $table->foreignUuid('asset_type_id')->constrained('asset_types')->cascadeOnDelete();
-            $table->foreignUuid('asset_status_id')->constrained('asset_statuses')->cascadeOnDelete();
-            $table->foreignUuid('asset_location_id')->constrained('asset_locations')->cascadeOnDelete();
+            $table->foreignUuid('type_id')->constrained('asset_types')->cascadeOnDelete();
+            $table->foreignUuid('status_id')->constrained('asset_statuses')->cascadeOnDelete();
+            $table->foreignUuid('location_id')->constrained('asset_locations')->cascadeOnDelete();
             $table->timestamp('purchase_date');
             $table->timestamps();
         });
