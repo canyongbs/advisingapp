@@ -34,4 +34,6 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'view_ses_settings',
+];

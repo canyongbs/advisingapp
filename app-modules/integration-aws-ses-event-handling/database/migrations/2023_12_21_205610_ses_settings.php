@@ -34,19 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Illuminate\Mail\Events\MessageSending;
-use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
-
-class AddSesConfigurationSetToEmailHeaders
-{
-    public function handle(MessageSending $event): void
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        $settings = app(SesSettings::class);
-
-        if ($settings->configuration_set) {
-            $event->message->getHeaders()->addTextHeader('X-SES-CONFIGURATION-SET', $settings->configuration_set);
-        }
+        $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+            $blueprint->addEncrypted('configuration_set');
+        });
     }
-}
+};

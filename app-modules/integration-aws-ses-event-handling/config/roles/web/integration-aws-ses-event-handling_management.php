@@ -34,19 +34,8 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
-
-use Illuminate\Mail\Events\MessageSending;
-use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
-
-class AddSesConfigurationSetToEmailHeaders
-{
-    public function handle(MessageSending $event): void
-    {
-        $settings = app(SesSettings::class);
-
-        if ($settings->configuration_set) {
-            $event->message->getHeaders()->addTextHeader('X-SES-CONFIGURATION-SET', $settings->configuration_set);
-        }
-    }
-}
+return [
+    'custom' => [
+        'integration-aws-ses-event-handling.view_ses_settings',
+    ],
+];
