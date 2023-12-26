@@ -34,11 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use Illuminate\Database\Seeder;
+use App\Models\BaseModel;
 
-class CalendarEventSeeder extends Seeder
+class Event extends BaseModel
 {
-    public function run(): void {}
+    protected $fillable = [
+        'title',
+        'description',
+        'location',
+        'capacity',
+        'starts_at',
+        'ends_at',
+    ];
+
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+    ];
 }

@@ -36,36 +36,26 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Widgets;
 
-use App\Models\User;
-use Livewire\Attributes\On;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Saade\FilamentFullCalendar\Data\EventData;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
-use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
 class CalendarWidget extends FullCalendarWidget
 {
     public function fetchEvents(array $info): array
     {
-        /** @var User $user */
-        $user = auth()->user();
+        //TODO: We probably want to eventually automatically filter past events
+        //Maybe reuse the shared filter capability of the kanban view
 
-        return $user->calendar
-            ->events()
-            ->get()
-            ->map(fn (CalendarEvent $event) => EventData::make()
+        return Event::all()
+            ->map(fn (Event $event) => EventData::make()
                 ->id($event->id)
                 ->title($event->title)
                 ->start($event->starts_at)
                 ->end($event->ends_at)
-                ->url(CalendarEventResource::getUrl('view', ['record' => $event]), true)
+                ->url(EventResource::getUrl('view', ['record' => $event]), true)
                 ->extendedProps(['shouldOpenInNewTab' => true]))
             ->toArray();
-    }
-
-    #[On('refresh-events')]
-    public function refreshEvents(): void
-    {
-        $this->refreshRecords();
     }
 }

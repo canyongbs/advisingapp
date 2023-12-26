@@ -34,11 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
-use Illuminate\Database\Seeder;
+use App\Models\User;
+use Filament\Forms\Form;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
-class CalendarEventSeeder extends Seeder
+class EditEvent extends EditRecord
 {
-    public function run(): void {}
+    protected static string $resource = EventResource::class;
+
+    public function form(Form $form): Form
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $form->schema([
+            TextInput::make('title')
+                ->string()
+                ->required(),
+            Textarea::make('description')
+                ->string()
+                ->nullable(),
+            TextInput::make('location')
+                ->string()
+                ->nullable(),
+            TextInput::make('capacity')
+                ->integer()
+                ->minValue(1)
+                ->nullable(),
+            DateTimePicker::make('starts_at')
+                ->timezone($user->timezone)
+                ->required(),
+            DateTimePicker::make('ends_at')
+                ->timezone($user->timezone)
+                ->required(),
+        ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
 }

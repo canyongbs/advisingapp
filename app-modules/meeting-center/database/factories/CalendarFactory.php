@@ -36,10 +36,11 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
+use AdvisingApp\MeetingCenter\Models\Calendar;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\MeetingCenter\Models\Calendar>
+ * @extends Factory<Calendar>
  */
 class CalendarFactory extends Factory
 {

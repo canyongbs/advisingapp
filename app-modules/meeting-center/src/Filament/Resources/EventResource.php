@@ -34,11 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\MeetingCenter\Filament\Resources;
 
-use Illuminate\Database\Seeder;
+use Filament\Resources\Resource;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\EditEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ViewEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\CreateEvent;
 
-class CalendarEventSeeder extends Seeder
+class EventResource extends Resource
 {
-    public function run(): void {}
+    protected static ?string $model = Event::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $navigationGroup = 'Meeting Center';
+
+    protected static ?int $navigationSort = 20;
+
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListEvents::route('/'),
+            'create' => CreateEvent::route('/create'),
+            'view' => ViewEvent::route('/{record}'),
+            'edit' => EditEvent::route('/{record}/edit'),
+        ];
+    }
 }
