@@ -34,4 +34,19 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'model' => [
+        'asset' => [
+            '*',
+        ],
+        'asset_location' => [
+            '*',
+        ],
+        'asset_status' => [
+            '*',
+        ],
+        'asset_type' => [
+            '*',
+        ],
+    ],
+];
