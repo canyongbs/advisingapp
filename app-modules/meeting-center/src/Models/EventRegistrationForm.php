@@ -34,40 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property Carbon|null $created_at
- * @property-read Submissible $submissible
+ * @mixin IdeHelperEventRegistrationForm
  */
-#[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
+class EventRegistrationForm extends Submissible
 {
-    use MassPrunable;
+    protected $fillable = [
+        'form_id',
+        'embed_enabled',
+        'allowed_domains',
+        'is_wizard',
+        'recaptcha_enabled',
+        'primary_color',
+        'rounding',
+        'content',
+    ];
 
-    abstract public function submissible(): BelongsTo;
+    protected $casts = [
+        'content' => 'array',
+        'embed_enabled' => 'boolean',
+        'allowed_domains' => 'array',
+        'is_wizard' => 'boolean',
+        'recaptcha_enabled' => 'boolean',
+        'rounding' => Rounding::class,
+    ];
 
-    public function isExpired(): bool
+    public function event(): BelongsTo
     {
-        return $this->created_at->addDay()->isPast();
+        return $this
+            ->belongsTo(Event::class, 'event_id');
     }
 
-    public function prunable(): Builder
+    public function fields(): HasMany
     {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
+        return $this->hasMany(EventRegistrationFormField::class);
     }
 
-    public function author(): MorphTo|BelongsTo
+    public function steps(): HasMany
     {
-        return $this->morphTo();
+        return $this->hasMany(EventRegistrationFormStep::class);
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(EventRegistrationFormSubmission::class);
     }
 }

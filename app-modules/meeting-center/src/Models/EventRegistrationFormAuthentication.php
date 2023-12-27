@@ -34,40 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
 use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
 
-/**
- * @property Carbon|null $created_at
- * @property-read Submissible $submissible
- */
 #[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
+/**
+ * @property-read EventRegistrationForm $submissible
+ *
+ * @mixin IdeHelperEventRegistrationFormAuthentication
+ */
+class EventRegistrationFormAuthentication extends SubmissibleAuthentication
 {
-    use MassPrunable;
-
-    abstract public function submissible(): BelongsTo;
-
-    public function isExpired(): bool
+    public function submissible(): BelongsTo
     {
-        return $this->created_at->addDay()->isPast();
+        return $this
+            ->belongsTo(EventRegistrationForm::class, 'form_id');
     }
 
-    public function prunable(): Builder
+    public function author(): BelongsTo
     {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
-    }
-
-    public function author(): MorphTo|BelongsTo
-    {
-        return $this->morphTo();
+        return $this->belongsTo(EventAttendee::class, 'event_attendee_id');
     }
 }
