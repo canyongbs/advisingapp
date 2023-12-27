@@ -15,6 +15,7 @@ class MaintenanceActivity extends BaseModel implements Auditable
     protected $fillable = [
         'asset_id',
         'date',
+        'details',
         'maintenance_provider_id',
         'notes',
         'scheduled_date',

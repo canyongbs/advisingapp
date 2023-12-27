@@ -34,23 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Enums;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
-use Filament\Support\Contracts\HasLabel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\RelationManagers\MaintenanceActivitiesRelationManager;
 
-enum MaintenanceActivityStatus: string implements HasLabel
+class ManageAssetMaintenanceActivity extends ManageRelatedRecords
 {
-    case Scheduled = 'scheduled';
-    case InProgress = 'in_progress';
-    case Completed = 'completed';
-    case Cancelled = 'cancelled';
-    case Delayed = 'delayed';
+    protected static string $resource = AssetResource::class;
 
-    public function getLabel(): ?string
+    // TODO: Obsolete when there is no table, remove from Filament
+    protected static string $relationship = 'maintenanceActivities';
+
+    protected static ?string $navigationLabel = 'Maintenance';
+
+    protected static ?string $breadcrumb = 'Maintenance';
+
+    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
+
+    public function getTitle(): string | Htmlable
     {
-        return match ($this) {
-            self::InProgress => 'In Progress',
-            default => $this->name,
-        };
+        return 'Manage Asset Maintenance Activity';
+    }
+
+    public static function canAccess(?Model $record = null): bool
+    {
+        return (bool) count(static::managers($record));
+    }
+
+    public function getRelationManagers(): array
+    {
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(Model $record): array
+    {
+        return collect([
+            MaintenanceActivitiesRelationManager::class,
+        ])
+            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
+            ->toArray();
     }
 }
