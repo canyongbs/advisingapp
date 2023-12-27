@@ -34,40 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Form\Models\SubmissibleField;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property Carbon|null $created_at
- * @property-read Submissible $submissible
+ * @mixin IdeHelperEventRegistrationFormField
  */
-#[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
+class EventRegistrationFormField extends SubmissibleField
 {
-    use MassPrunable;
+    protected $fillable = [
+        'config',
+        'label',
+        'type',
+        'is_required',
+        'form_id',
+    ];
 
-    abstract public function submissible(): BelongsTo;
+    protected $casts = [
+        'config' => 'array',
+        'is_required' => 'bool',
+    ];
 
-    public function isExpired(): bool
+    public function submissible(): BelongsTo
     {
-        return $this->created_at->addDay()->isPast();
+        return $this
+            ->belongsTo(EventRegistrationForm::class, 'form_id');
     }
 
-    public function prunable(): Builder
+    public function step(): BelongsTo
     {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
-    }
-
-    public function author(): MorphTo|BelongsTo
-    {
-        return $this->morphTo();
+        return $this
+            ->belongsTo(EventRegistrationFormStep::class, 'step_id');
     }
 }

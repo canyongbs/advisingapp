@@ -34,40 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\Form\Notifications;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\AnonymousNotifiable;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 
-/**
- * @property Carbon|null $created_at
- * @property-read Submissible $submissible
- */
-#[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
+class AuthenticateEventRegistrationFormNotification extends Notification
 {
-    use MassPrunable;
+    use Queueable;
 
-    abstract public function submissible(): BelongsTo;
+    public function __construct(
+        public EventRegistrationFormAuthentication $authentication,
+        public int $code,
+    ) {}
 
-    public function isExpired(): bool
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        return $this->created_at->addDay()->isPast();
+        return ['mail'];
     }
 
-    public function prunable(): Builder
+    public function toMail(AnonymousNotifiable $notifiable): MailMessage
     {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
-    }
-
-    public function author(): MorphTo|BelongsTo
-    {
-        return $this->morphTo();
+        return MailMessage::make()
+            ->subject("Your authentication code for {$this->authentication->submissible->event->title} registration")
+            ->line("Your code is: {$this->code}.")
+            ->line('You should type this code into the form to authenticate yourself.')
+            ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
     }
 }

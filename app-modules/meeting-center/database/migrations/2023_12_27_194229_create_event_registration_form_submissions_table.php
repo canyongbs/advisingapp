@@ -34,40 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @property Carbon|null $created_at
- * @property-read Submissible $submissible
- */
-#[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
-{
-    use MassPrunable;
-
-    abstract public function submissible(): BelongsTo;
-
-    public function isExpired(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->created_at->addDay()->isPast();
-    }
+        Schema::create('event_registration_form_submissions', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function prunable(): Builder
-    {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
-    }
+            $table->foreignUuid('form_id')->constrained('event_registration_forms')->cascadeOnDelete();
+            $table->foreignUuid('event_attendee_id')->constrained('event_attendees')->cascadeOnDelete();
+            $table->timestamp('submitted_at')->nullable();
+            $table->timestamp('canceled_at')->nullable();
+            $table->string('request_method')->nullable();
+            $table->text('request_note')->nullable();
+            $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
 
-    public function author(): MorphTo|BelongsTo
-    {
-        return $this->morphTo();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-}
+};

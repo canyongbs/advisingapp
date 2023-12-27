@@ -34,40 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
 use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 
-/**
- * @property Carbon|null $created_at
- * @property-read Submissible $submissible
- */
 #[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
+/**
+ * @mixin IdeHelperEventAttendee
+ */
+class EventAttendee extends BaseModel
 {
-    use MassPrunable;
+    use Notifiable;
 
-    abstract public function submissible(): BelongsTo;
+    protected $fillable = [
+        'status',
+        'email',
+        'event_id',
+    ];
 
-    public function isExpired(): bool
-    {
-        return $this->created_at->addDay()->isPast();
-    }
-
-    public function prunable(): Builder
-    {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
-    }
-
-    public function author(): MorphTo|BelongsTo
-    {
-        return $this->morphTo();
-    }
+    protected $casts = [
+        'status' => EventAttendeeStatus::class,
+    ];
 }

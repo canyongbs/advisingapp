@@ -34,40 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @property Carbon|null $created_at
- * @property-read Submissible $submissible
- */
-#[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
-{
-    use MassPrunable;
-
-    abstract public function submissible(): BelongsTo;
-
-    public function isExpired(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->created_at->addDay()->isPast();
-    }
+        Schema::create('event_attendees', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function prunable(): Builder
-    {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
-    }
+            $table->string('status');
+            $table->string('email');
+            $table->foreignUuid('event_id')->constrained('events')->cascadeOnDelete();
 
-    public function author(): MorphTo|BelongsTo
-    {
-        return $this->morphTo();
+            $table->timestamps();
+
+            $table->unique(['email', 'event_id']);
+        });
     }
-}
+};

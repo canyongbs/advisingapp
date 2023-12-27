@@ -44,10 +44,16 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 
 class MeetingCenterServiceProvider extends ServiceProvider
 {
@@ -62,6 +68,12 @@ class MeetingCenterServiceProvider extends ServiceProvider
             'calendar' => Calendar::class,
             'calendar_event' => CalendarEvent::class,
             'event' => Event::class,
+            'event_attendee' => EventAttendee::class,
+            'event_registration_form' => EventRegistrationForm::class,
+            'event_registration_form_authentication' => EventRegistrationFormAuthentication::class,
+            'event_registration_form_field' => EventRegistrationFormField::class,
+            'event_registration_form_step' => EventRegistrationFormStep::class,
+            'event_registration_form_submission' => EventRegistrationFormSubmission::class,
         ]);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {

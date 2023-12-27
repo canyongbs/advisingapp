@@ -34,40 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Models\BaseModel;
-use Illuminate\Support\Carbon;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-/**
- * @property Carbon|null $created_at
- * @property-read Submissible $submissible
- */
-#[NoPermissions]
-abstract class SubmissibleAuthentication extends BaseModel
-{
-    use MassPrunable;
-
-    abstract public function submissible(): BelongsTo;
-
-    public function isExpired(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->created_at->addDay()->isPast();
-    }
+        Schema::create('event_attendees_entities', function (Blueprint $table) {
+            $table->string('entity_id');
+            $table->string('entity_type');
+            $table->foreignUuid('event_attendee_id')->constrained('event_attendees')->cascadeOnDelete();
 
-    public function prunable(): Builder
-    {
-        return static::query()
-            ->where('created_at', '<', now()->subMonth());
+            $table->unique(['entity_id', 'entity_type', 'event_attendee_id']);
+        });
     }
-
-    public function author(): MorphTo|BelongsTo
-    {
-        return $this->morphTo();
-    }
-}
+};
