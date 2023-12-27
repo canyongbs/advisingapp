@@ -278,16 +278,26 @@ class EditProfile extends Page
                 Section::make('Out of Office')
                     ->aside()
                     ->schema([
-                        Grid::make(3)
+                        Grid::make()
+                            ->columns([
+                                'sm' => 1,
+                                'md' => 1,
+                                'lg' => 1,
+                                'xl' => 2,
+                                '2xl' => 2,
+                            ])
                             ->schema([
                                 Toggle::make('out_of_office_is_enabled')
+                                    ->columnSpanFull()
                                     ->label('Enable Out of Office')
                                     ->live(),
                                 DateTimePicker::make('out_of_office_starts_at')
+                                    ->columnSpan(1)
                                     ->label('Start')
                                     ->required()
                                     ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
                                 DateTimePicker::make('out_of_office_ends_at')
+                                    ->columnSpan(1)
                                     ->label('End')
                                     ->required()
                                     ->visible(fn (Get $get) => $get('out_of_office_is_enabled')),
@@ -526,7 +536,14 @@ class EditProfile extends Page
             'friday',
             'saturday',
         ])->map(
-            fn ($day) => Grid::make(3)
+            fn ($day) => Grid::make()
+                ->columns([
+                    'sm' => 1,
+                    'md' => 1,
+                    'lg' => 1,
+                    'xl' => 3,
+                    '2xl' => 3,
+                ])
                 ->schema([
                     Toggle::make("{$key}.{$day}.enabled")
                         ->label(str($day)->ucfirst())
