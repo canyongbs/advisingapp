@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -21,5 +22,12 @@ class ViewAssetType extends ViewRecord
                         TextEntry::make('name'),
                     ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
     }
 }

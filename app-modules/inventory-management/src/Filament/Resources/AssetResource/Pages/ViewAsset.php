@@ -2,6 +2,7 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
+use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -30,5 +31,12 @@ class ViewAsset extends ViewRecord
                         TextEntry::make('purchase_date'),
                     ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
     }
 }
