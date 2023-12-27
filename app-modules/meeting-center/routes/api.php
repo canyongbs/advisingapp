@@ -34,23 +34,29 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\Survey\Livewire\RenderEventRegistrationForm;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
 
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
+Route::prefix('api')
+    ->middleware([
+        'api',
+        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
+    ])
     ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
-
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{eventRegistrationForm}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
+        Route::prefix('event-registration')
+            ->name('event-registration.')
+            ->group(function () {
+                Route::get('/{form}', [EventRegistrationWidgetController::class, 'view'])
+                    ->middleware(['signed'])
+                    ->name('define');
+                Route::post('/{form}/authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
+                    ->middleware(['signed'])
+                    ->name('request-authentication');
+                Route::post('/{form}/authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
+                    ->middleware(['signed'])
+                    ->name('authenticate');
+                Route::post('/{form}/submit', [EventRegistrationWidgetController::class, 'store'])
+                    ->middleware(['signed'])
+                    ->name('submit');
+            });
     });

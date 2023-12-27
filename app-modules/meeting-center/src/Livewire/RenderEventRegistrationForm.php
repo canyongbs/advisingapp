@@ -34,23 +34,27 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\Survey\Livewire\RenderEventRegistrationForm;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
+namespace AdvisingApp\Survey\Livewire;
 
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
-    ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Concerns\InteractsWithForms;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{eventRegistrationForm}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
-    });
+class RenderEventRegistrationForm extends Component implements HasForms
+{
+    use InteractsWithForms;
+
+    public bool $show = true;
+
+    public EventRegistrationForm $eventRegistrationForm;
+
+    public ?array $data = [];
+
+    public function render(): View
+    {
+        return view('meeting-center::livewire.render-event-registration-form')
+            ->title("{$this->eventRegistrationForm->event->title} Registration");
+    }
+}
