@@ -34,45 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Models;
+namespace AdvisingApp\InventoryManagement\Enums;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Filament\Support\Contracts\HasLabel;
 
-class Asset extends BaseModel implements Auditable
+enum MaintenanceActivityStatus: string implements HasLabel
 {
-    use AuditableTrait;
+    case Scheduled = 'scheduled';
+    case InProgress = 'in_progress';
+    case Completed = 'completed';
+    case Cancelled = 'cancelled';
+    case Delayed = 'delayed';
 
-    protected $fillable = [
-        'description',
-        'location_id',
-        'name',
-        'purchase_date',
-        'serial_number',
-        'status_id',
-        'type_id',
-    ];
-
-    public function type(): BelongsTo
+    public function getLabel(): ?string
     {
-        return $this->belongsTo(AssetType::class, 'type_id');
-    }
-
-    public function location(): BelongsTo
-    {
-        return $this->belongsTo(AssetLocation::class, 'location_id');
-    }
-
-    public function status(): BelongsTo
-    {
-        return $this->belongsTo(AssetStatus::class, 'status_id');
-    }
-
-    public function maintenanceActivities(): HasMany
-    {
-        return $this->hasMany(MaintenanceActivity::class, 'asset_id');
+        return $this->name;
     }
 }
