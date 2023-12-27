@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\InventoryManagement\Models;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 class AssetStatus extends BaseModel implements Auditable
 {
