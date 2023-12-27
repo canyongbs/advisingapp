@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,25 +30,13 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
+@endphp
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\Survey\Livewire\RenderEventRegistrationForm;
-use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
-use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
-
-Route::middleware(['web', 'auth'])
-    ->name('calendar.')
-    ->prefix('/calendar')
-    ->group(function () {
-        provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
-        provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
-    });
-
-Route::middleware('web')
-    ->prefix('event-registration')
-    ->name('event-registration.')
-    ->group(function () {
-        Route::get('/{eventRegistrationForm}/respond', RenderEventRegistrationForm::class)
-            ->name('show');
-    });
+<div class="flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-4xl">
+        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($this->eventRegistrationForm) !!}
+    </div>
+</div>
