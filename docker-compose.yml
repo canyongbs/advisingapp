@@ -9,7 +9,7 @@ services:
                 SPECIFIC_NODE_VERSION: 20.4.0
         image: sail-8.2/app
         labels:
-            - dev.orbstack.domains=advising.local
+            - dev.orbstack.domains=advisingapp.local
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
