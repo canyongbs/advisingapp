@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9852f155e7e3a2df6ade911a5950b83d",
+    "content-hash": "761e1ab4df8d1f0b319877af916a3d1a",
     "packages": [
         {
             "name": "amphp/amp",
@@ -559,16 +559,16 @@
         },
         {
             "name": "awcodes/filament-tiptap-editor",
-            "version": "v3.2.14",
+            "version": "v3.2.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/awcodes/filament-tiptap-editor.git",
-                "reference": "60d5840516a862e693c7de86d2f69d5f4d3b85c1"
+                "reference": "c7f9657daf436aa84a7b3262e83dde88b5480373"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/60d5840516a862e693c7de86d2f69d5f4d3b85c1",
-                "reference": "60d5840516a862e693c7de86d2f69d5f4d3b85c1",
+                "url": "https://api.github.com/repos/awcodes/filament-tiptap-editor/zipball/c7f9657daf436aa84a7b3262e83dde88b5480373",
+                "reference": "c7f9657daf436aa84a7b3262e83dde88b5480373",
                 "shasum": ""
             },
             "require": {
@@ -630,7 +630,7 @@
             ],
             "support": {
                 "issues": "https://github.com/awcodes/filament-tiptap-editor/issues",
-                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.14"
+                "source": "https://github.com/awcodes/filament-tiptap-editor/tree/v3.2.16"
             },
             "funding": [
                 {
@@ -638,7 +638,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-21T15:23:55+00:00"
+            "time": "2023-12-23T15:29:51+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -2369,41 +2369,6 @@
                     "AdvisingApp\\Webhook\\Tests\\": "tests/",
                     "AdvisingApp\\Webhook\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Webhook\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/inventory-management",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/inventory-management",
-                "reference": "16210c789f3a6d5a4b14ce0db3a17f5cdc4f6e48"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\InventoryManagement\\Providers\\InventoryManagementServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\InventoryManagement\\": "src/",
-                    "AdvisingApp\\InventoryManagement\\Tests\\": "tests/",
-                    "AdvisingApp\\InventoryManagement\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\InventoryManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

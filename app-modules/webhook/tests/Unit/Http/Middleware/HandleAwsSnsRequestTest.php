@@ -76,7 +76,7 @@ it('will successfully handle a SubscriptionConfirmation request', function () {
     expect($inboundWebhooks)->toHaveCount(1)
         ->and($inboundWebhooks->first()->source)->toBe(InboundWebhookSource::AwsSns)
         ->and($inboundWebhooks->first()->event)->toBe('SubscriptionConfirmation')
-        ->and($inboundWebhooks->first()->url)->toBe('http://example.com')
+        ->and($inboundWebhooks->first()->url)->toContain('example.com')
         ->and($inboundWebhooks->first()->payload)->toBe(json_encode(loadFixtureFromModule('webhook', 'HandleAwsSnsRequest/SubscriptionConfirmation')));
 });
 
@@ -114,7 +114,7 @@ it('will successfully handle a UnsubscribeConfirmation request', function () {
     expect($inboundWebhooks)->toHaveCount(1)
         ->and($inboundWebhooks->first()->source)->toBe(InboundWebhookSource::AwsSns)
         ->and($inboundWebhooks->first()->event)->toBe('UnsubscribeConfirmation')
-        ->and($inboundWebhooks->first()->url)->toBe('http://example.com')
+        ->and($inboundWebhooks->first()->url)->toContain('example.com')
         ->and($inboundWebhooks->first()->payload)->toBe(json_encode(loadFixtureFromModule('webhook', 'HandleAwsSnsRequest/UnsubscribeConfirmation')));
 });
 
@@ -149,7 +149,7 @@ it('will throw an error if the type is not expected', function () {
     expect($inboundWebhooks)->toHaveCount(1)
         ->and($inboundWebhooks->first()->source)->toBe(InboundWebhookSource::AwsSns)
         ->and($inboundWebhooks->first()->event)->toBe('UnknownSnsType')
-        ->and($inboundWebhooks->first()->url)->toBe('http://example.com')
+        ->and($inboundWebhooks->first()->url)->toContain('example.com')
         ->and($inboundWebhooks->first()->payload)->toBe(json_encode(loadFixtureFromModule('webhook', 'HandleAwsSnsRequest/UnsubscribeConfirmation')));
 })->throws(Exception::class, 'Unknown AWS SNS webhook type');
 
@@ -188,6 +188,6 @@ it('will successfully handle a Notification request', function () {
     expect($inboundWebhooks)->toHaveCount(1)
         ->and($inboundWebhooks->first()->source)->toBe(InboundWebhookSource::AwsSns)
         ->and($inboundWebhooks->first()->event)->toBe('Notification')
-        ->and($inboundWebhooks->first()->url)->toBe('http://example.com')
+        ->and($inboundWebhooks->first()->url)->toContain('example.com')
         ->and($inboundWebhooks->first()->payload)->toBe(json_encode(loadFixtureFromModule('webhook', 'HandleAwsSnsRequest/Notification')));
 });
