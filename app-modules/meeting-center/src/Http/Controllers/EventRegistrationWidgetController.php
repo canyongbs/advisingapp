@@ -44,19 +44,16 @@ use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use AdvisingApp\Survey\Models\Survey;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use AdvisingApp\Form\Notifications\AuthenticateEventRegistrationFormNotification;
@@ -122,7 +119,7 @@ class EventRegistrationWidgetController extends Controller
         ]);
     }
 
-    public function authenticate(Request $request, Survey $survey, ApplicationAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, EventRegistrationForm $form, EventRegistrationFormAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([
@@ -141,9 +138,9 @@ class EventRegistrationWidgetController extends Controller
         ]);
 
         return response()->json([
-            'submission_url' => URL::signedRoute('surveys.submit', [
-                'survey' => $authentication,
-                'application' => $authentication->submissible,
+            'submission_url' => URL::signedRoute('event-registration.submit', [
+                'authentication' => $authentication,
+                'form' => $authentication->submissible,
             ]),
         ]);
     }
@@ -152,16 +149,15 @@ class EventRegistrationWidgetController extends Controller
         Request $request,
         GenerateSubmissibleValidation $generateValidation,
         ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail,
-        Survey $survey,
+        EventRegistrationForm $form,
     ): JsonResponse {
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
-            $authentication = ApplicationAuthentication::findOrFail($authentication);
+            $authentication = EventRegistrationFormAuthentication::findOrFail($authentication);
         }
 
         if (
-            $survey->is_authenticated &&
             ($authentication?->isExpired() ?? true)
         ) {
             abort(Response::HTTP_UNAUTHORIZED);
@@ -169,7 +165,7 @@ class EventRegistrationWidgetController extends Controller
 
         $validator = Validator::make(
             $request->all(),
-            $generateValidation($survey)
+            $generateValidation($form)
         );
 
         if ($validator->fails()) {
@@ -181,16 +177,16 @@ class EventRegistrationWidgetController extends Controller
             );
         }
 
-        /** @var SurveySubmission $submission */
-        $submission = $survey->submissions()->make();
+        /** @var EventRegistrationFormSubmission $submission */
+        $submission = $form->submissions()->make();
 
-        if ($authentication) {
-            $submission->author()->associate($authentication->author);
+        $submission->author()->associate($authentication->author);
 
-            $authentication->delete();
-        }
+        $authentication->delete();
 
         $submission->submitted_at = now();
+
+        // TODO: Adjust the status of the EventAttendee to Attending or Not Attending based on the form submission.
 
         $submission->save();
 
@@ -198,57 +194,21 @@ class EventRegistrationWidgetController extends Controller
 
         unset($data['recaptcha-token']);
 
-        if ($survey->is_wizard) {
-            foreach ($survey->steps as $step) {
-                $stepFields = $step->fields()->pluck('type', 'id')->all();
-
+        if ($form->is_wizard) {
+            foreach ($form->steps as $step) {
                 foreach ($data[$step->label] as $fieldId => $response) {
                     $submission->fields()->attach(
                         $fieldId,
                         ['id' => Str::orderedUuid(), 'response' => $response],
                     );
-
-                    if ($submission->author) {
-                        continue;
-                    }
-
-                    if ($stepFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
-                        continue;
-                    }
-
-                    $author = $resolveSubmissionAuthorFromEmail($response);
-
-                    if (! $author) {
-                        continue;
-                    }
-
-                    $submission->author()->associate($author);
                 }
             }
         } else {
-            $surveyFields = $survey->fields()->pluck('type', 'id')->all();
-
             foreach ($data as $fieldId => $response) {
                 $submission->fields()->attach(
                     $fieldId,
                     ['id' => Str::orderedUuid(), 'response' => $response],
                 );
-
-                if ($submission->author) {
-                    continue;
-                }
-
-                if ($surveyFields[$fieldId] !== EducatableEmailFormFieldBlock::type()) {
-                    continue;
-                }
-
-                $author = $resolveSubmissionAuthorFromEmail($response);
-
-                if (! $author) {
-                    continue;
-                }
-
-                $submission->author()->associate($author);
             }
         }
 
@@ -256,7 +216,7 @@ class EventRegistrationWidgetController extends Controller
 
         return response()->json(
             [
-                'message' => 'Survey submitted successfully.',
+                'message' => 'Event registration submitted successfully.',
             ]
         );
     }
