@@ -38,6 +38,7 @@ namespace AdvisingApp\InventoryManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use AdvisingApp\InventoryManagement\Models\Asset;
+use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
 
 class AssetSeeder extends Seeder
 {
@@ -45,7 +46,17 @@ class AssetSeeder extends Seeder
     {
         Asset::factory()
             ->count(10)
-            ->create();
+            ->create()
+            ->each(function (Asset $asset) {
+                $maintenanceActivitiesCount = rand(0, 10);
+
+                for ($i = 0; $i < $maintenanceActivitiesCount; $i++) {
+                    MaintenanceActivity::factory()
+                        ->randomizeState()
+                        ->for($asset, 'asset')
+                        ->create();
+                }
+            });
     }
 
     public static function metadataSeeders(): array
