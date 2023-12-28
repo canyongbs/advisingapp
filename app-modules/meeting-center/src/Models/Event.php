@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperEvent
@@ -61,5 +62,10 @@ class Event extends BaseModel
     public function eventRegistrationForm(): HasOne
     {
         return $this->hasOne(EventRegistrationForm::class, 'event_id');
+    }
+
+    public function attendees(): HasMany
+    {
+        return $this->hasMany(EventAttendee::class, 'event_id');
     }
 }
