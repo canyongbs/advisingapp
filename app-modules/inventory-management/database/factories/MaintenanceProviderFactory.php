@@ -34,25 +34,19 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'asset' => [
-            '*',
-        ],
-        'asset_location' => [
-            '*',
-        ],
-        'asset_status' => [
-            '*',
-        ],
-        'asset_type' => [
-            '*',
-        ],
-        'maintenance_activity' => [
-            '*',
-        ],
-        'maintenance_provider' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\InventoryManagement\Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\InventoryManagement\Models\MaintenanceProvider>
+ */
+class MaintenanceProviderFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->company(),
+        ];
+    }
+}

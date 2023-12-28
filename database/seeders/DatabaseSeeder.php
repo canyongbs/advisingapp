@@ -106,6 +106,7 @@ class DatabaseSeeder extends Seeder
             StudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,
             EventSeeder::class,
+            AssetSeeder::class,
             ...AssetSeeder::metadataSeeders(),
         ]);
     }

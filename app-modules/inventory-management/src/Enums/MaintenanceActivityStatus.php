@@ -34,25 +34,23 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'asset' => [
-            '*',
-        ],
-        'asset_location' => [
-            '*',
-        ],
-        'asset_status' => [
-            '*',
-        ],
-        'asset_type' => [
-            '*',
-        ],
-        'maintenance_activity' => [
-            '*',
-        ],
-        'maintenance_provider' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\InventoryManagement\Enums;
+
+use Filament\Support\Contracts\HasLabel;
+
+enum MaintenanceActivityStatus: string implements HasLabel
+{
+    case Scheduled = 'scheduled';
+    case InProgress = 'in_progress';
+    case Completed = 'completed';
+    case Cancelled = 'cancelled';
+    case Delayed = 'delayed';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            self::InProgress => 'In Progress',
+            default => $this->name,
+        };
+    }
+}

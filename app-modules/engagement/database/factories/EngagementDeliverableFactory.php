@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Database\Factories;
 
 use AdvisingApp\Engagement\Models\Engagement;
+use Database\Factories\Concerns\RandomizeState;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
@@ -47,6 +48,8 @@ use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
  */
 class EngagementDeliverableFactory extends Factory
 {
+    use RandomizeState;
+
     public function definition(): array
     {
         return [
@@ -96,15 +99,5 @@ class EngagementDeliverableFactory extends Factory
             'delivered_at' => null,
             'delivery_response' => 'Something went wrong when trying to deliver the engagement.',
         ]);
-    }
-
-    // TODO Potentially think about extracting this concept as a trait
-    // And adding the ability to "weight" certain states more than others
-    public function randomizeState(): self
-    {
-        $states = ['deliveryAwaiting', 'deliverySuccessful', 'deliveryFailed'];
-        $randomState = $states[array_rand($states)];
-
-        return call_user_func([$this, $randomState]);
     }
 }

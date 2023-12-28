@@ -46,6 +46,8 @@ use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\InventoryManagement\Models\AssetLocation;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\InventoryManagement\InventoryManagementPlugin;
+use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
+use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
 
 class InventoryManagementServiceProvider extends ServiceProvider
 {
@@ -61,6 +63,8 @@ class InventoryManagementServiceProvider extends ServiceProvider
             'asset_status' => AssetStatus::class,
             'asset_type' => AssetType::class,
             'asset' => Asset::class,
+            'maintenance_activity' => MaintenanceActivity::class,
+            'maintenance_provider' => MaintenanceProvider::class,
         ]);
 
         $this->registerRolesAndPermissions();

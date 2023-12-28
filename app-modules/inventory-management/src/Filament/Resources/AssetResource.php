@@ -38,6 +38,7 @@ namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -50,6 +51,7 @@ use AdvisingApp\InventoryManagement\Models\AssetLocation;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\ViewAsset;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\ListAssets;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\CreateAsset;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\ManageAssetMaintenanceActivity;
 
 class AssetResource extends Resource
 {
@@ -68,6 +70,14 @@ class AssetResource extends Resource
     public function getTitle(): string | Htmlable
     {
         return 'Manage Assets';
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewAsset::class,
+            ManageAssetMaintenanceActivity::class,
+        ]);
     }
 
     public static function form(Form $form): Form
@@ -109,6 +119,7 @@ class AssetResource extends Resource
             'index' => ListAssets::route('/'),
             'create' => CreateAsset::route('/create'),
             'view' => ViewAsset::route('/{record}'),
+            'manage-maintenance-activity' => ManageAssetMaintenanceActivity::route('/{record}/maintenance-activity'),
         ];
     }
 }

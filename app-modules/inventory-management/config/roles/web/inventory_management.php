@@ -48,5 +48,11 @@ return [
         'asset_type' => [
             '*',
         ],
+        'maintenance_activity' => [
+            '*',
+        ],
+        'maintenance_provider' => [
+            '*',
+        ],
     ],
 ];

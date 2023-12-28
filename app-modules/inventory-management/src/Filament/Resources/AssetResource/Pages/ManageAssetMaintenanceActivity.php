@@ -34,25 +34,48 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'asset' => [
-            '*',
-        ],
-        'asset_location' => [
-            '*',
-        ],
-        'asset_status' => [
-            '*',
-        ],
-        'asset_type' => [
-            '*',
-        ],
-        'maintenance_activity' => [
-            '*',
-        ],
-        'maintenance_provider' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\RelationManagers\MaintenanceActivitiesRelationManager;
+
+class ManageAssetMaintenanceActivity extends ManageRelatedRecords
+{
+    protected static string $resource = AssetResource::class;
+
+    // TODO: Obsolete when there is no table, remove from Filament
+    protected static string $relationship = 'maintenanceActivities';
+
+    protected static ?string $navigationLabel = 'Maintenance';
+
+    protected static ?string $breadcrumb = 'Maintenance';
+
+    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Manage Asset Maintenance Activity';
+    }
+
+    public static function canAccess(?Model $record = null): bool
+    {
+        return (bool) count(static::managers($record));
+    }
+
+    public function getRelationManagers(): array
+    {
+        return static::managers($this->getRecord());
+    }
+
+    private static function managers(Model $record): array
+    {
+        return collect([
+            MaintenanceActivitiesRelationManager::class,
+        ])
+            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
+            ->toArray();
+    }
+}
