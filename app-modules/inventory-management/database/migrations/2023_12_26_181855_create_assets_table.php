@@ -46,9 +46,9 @@ return new class () extends Migration {
             $table->string('serial_number');
             $table->string('name');
             $table->longText('description');
-            $table->foreignUuid('type_id')->constrained('asset_types')->cascadeOnDelete();
-            $table->foreignUuid('status_id')->constrained('asset_statuses')->cascadeOnDelete();
-            $table->foreignUuid('location_id')->constrained('asset_locations')->cascadeOnDelete();
+            $table->foreignUuid('type_id')->constrained('asset_types');
+            $table->foreignUuid('status_id')->constrained('asset_statuses');
+            $table->foreignUuid('location_id')->constrained('asset_locations');
             $table->timestamp('purchase_date');
             $table->timestamps();
         });
