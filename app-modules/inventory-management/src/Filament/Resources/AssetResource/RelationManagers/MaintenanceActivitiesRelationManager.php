@@ -49,7 +49,6 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\DateTimePicker;
 use App\Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
 use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
 use AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus;
 
@@ -78,7 +77,7 @@ class MaintenanceActivitiesRelationManager extends RelationManager
             DateTimePicker::make('completed_date')
                 ->label('Completed On')
                 ->visible(fn (callable $get) => $get('status') === MaintenanceActivityStatus::Completed->value)
-                ->requiredIf('status', MaintenanceActivityStatus::Completed),
+                ->requiredIf('status', MaintenanceActivityStatus::Completed->value),
             DateTimePicker::make('scheduled_date')
                 ->label('Scheduled For')
                 ->visible(fn (callable $get) => $get('status') !== MaintenanceActivityStatus::Completed->value)
@@ -101,25 +100,13 @@ class MaintenanceActivitiesRelationManager extends RelationManager
             ->heading('Maintenance Activity')
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('details')
-                    ->formatStateUsing(function (MaintenanceActivity $activity) {
-                        if ($activity->status === MaintenanceActivityStatus::Scheduled && $activity->scheduled_date < today()) {
-                            return $activity->details . ' (Overdue)';
-                        }
-
-                        return $activity->details;
-                    }),
+                TextColumn::make('details'),
                 TextColumn::make('maintenanceProvider.name'),
                 TextColumn::make('status'),
                 TextColumn::make('scheduled_date')
-                    ->label('Scheduled For')
-                    ->formatStateUsing(function (MaintenanceActivity $activity) {
-                        if (! $activity->scheduled_date) {
-                            return 'N/A';
-                        }
-
-                        return $activity->scheduled_date;
-                    }),
+                    ->label('Scheduled For'),
+                TextColumn::make('completed_date')
+                    ->label('Completed On'),
             ])
             ->filters([
                 SelectFilter::make('status')
