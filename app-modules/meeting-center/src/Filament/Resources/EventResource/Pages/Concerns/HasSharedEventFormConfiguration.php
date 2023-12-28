@@ -151,7 +151,7 @@ trait HasSharedEventFormConfiguration
                 $form = $record instanceof EventRegistrationForm ? $record : $record->submissible;
                 $formStep = $record instanceof EventRegistrationFormStep ? $record : null;
 
-                EventRegistrationFormStep::query()
+                EventRegistrationFormField::query()
                     ->whereBelongsTo($form, 'submissible')
                     ->when($formStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($formStep, 'step'))
                     ->delete();
