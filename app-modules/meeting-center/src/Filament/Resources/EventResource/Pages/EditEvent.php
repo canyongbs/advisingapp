@@ -52,6 +52,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
@@ -64,6 +65,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
+use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 
 class EditEvent extends EditRecord
 {
@@ -98,6 +100,24 @@ class EditEvent extends EditRecord
                 ->required(),
             Fieldset::make('Registration Form')
                 ->relationship('eventRegistrationForm')
+                ->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
+                    $component->getCachedExistingRecord()?->delete();
+
+                    $relationship = $component->getRelationship();
+
+                    $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
+                    $data = $component->mutateRelationshipDataBeforeCreate($data);
+
+                    $relatedModel = $component->getRelatedModel();
+
+                    $record = new $relatedModel();
+                    $record->fill($data);
+
+                    $relationship->save($record);
+
+                    $component->cachedExistingRecord($record);
+                })
+                ->saveRelationshipsUsing(null)
                 ->schema([
                     Grid::make()
                         ->schema([
@@ -203,8 +223,6 @@ class EditEvent extends EditRecord
                     $state = tiptap_converter()->asJSON($state, decoded: true);
                 }
 
-                ray('here2');
-
                 $state = $component->renderBlockPreviews($state, $component);
 
                 $component->state($state);
@@ -275,14 +293,14 @@ class EditEvent extends EditRecord
 
         $form = $event->eventRegistrationForm;
 
-        if ($form->is_wizard) {
+        if ($form?->is_wizard) {
             $form->content = null;
             $form->save();
 
             return;
         }
 
-        $form->steps()->delete();
+        $form?->steps()->delete();
     }
 
     protected function getHeaderActions(): array
