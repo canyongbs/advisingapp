@@ -72,6 +72,7 @@ class GenerateFormKitSchema
             [
                 '$formkit' => 'radio',
                 'label' => 'Will you be attending?',
+                'id' => 'attending',
                 'name' => 'attending',
                 'options' => [
                     [
@@ -87,10 +88,14 @@ class GenerateFormKitSchema
             ],
             [
                 '$el' => 'div',
-                'attrs' => [
-                    'if' => '$get(form).values.attending === "yes"',
-                ],
+                'if' => '$get(attending).value === "yes"',
                 'children' => $content,
+            ],
+            [
+                '$formkit' => 'submit',
+                'if' => '$get(attending).value === "no"',
+                'label' => 'Submit',
+                'disabled' => '$get(form).state.valid !== true',
             ],
         ];
 

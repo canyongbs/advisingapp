@@ -167,12 +167,17 @@ class EventRegistrationWidgetController extends Controller
             abort(Response::HTTP_UNAUTHORIZED);
         }
 
+        // TODO See if we can make attending a bool
+
         $validator = Validator::make(
             $request->all(),
-            $generateValidation($form)
+            [
+                'attending' => ['required', 'in:yes,no'],
+                ...$request->get('attending') === 'yes' ? $generateValidation($form) : [],
+            ]
         );
 
-        ray($validator->errors());
+        //ray($validator->errors());
 
         if ($validator->fails()) {
             return response()->json(
@@ -192,33 +197,37 @@ class EventRegistrationWidgetController extends Controller
 
         $submission->submitted_at = now();
 
-        // TODO: Adjust the status of the EventAttendee to Attending or Not Attending based on the form submission.
-
         $submission->save();
+
+        $authentication->author->update(['status' => $request->get('attending') === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending]);
 
         $data = $validator->validated();
 
-        unset($data['recaptcha-token']);
+        // TODO: change the EventFormSubmission to have a column to store the attending data item
 
-        if ($form->is_wizard) {
-            foreach ($form->steps as $step) {
-                foreach ($data[$step->label] as $fieldId => $response) {
+        if ($data['attending'] === 'yes') {
+            unset($data['recaptcha-token'], $data['attending']);
+
+            if ($form->is_wizard) {
+                foreach ($form->steps as $step) {
+                    foreach ($data[$step->label] as $fieldId => $response) {
+                        $submission->fields()->attach(
+                            $fieldId,
+                            ['id' => Str::orderedUuid(), 'response' => $response],
+                        );
+                    }
+                }
+            } else {
+                foreach ($data as $fieldId => $response) {
                     $submission->fields()->attach(
                         $fieldId,
                         ['id' => Str::orderedUuid(), 'response' => $response],
                     );
                 }
             }
-        } else {
-            foreach ($data as $fieldId => $response) {
-                $submission->fields()->attach(
-                    $fieldId,
-                    ['id' => Str::orderedUuid(), 'response' => $response],
-                );
-            }
-        }
 
-        $submission->save();
+            $submission->save();
+        }
 
         return response()->json(
             [
