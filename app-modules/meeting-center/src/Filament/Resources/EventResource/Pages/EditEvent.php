@@ -126,7 +126,7 @@ class EditEvent extends EditRecord
                             $this->fieldBuilder(),
                         ])
                         ->hidden(fn (Get $get) => $get('is_wizard'))
-                        ->disabled(fn (?EventRegistrationForm $record) => $record->submissions()->exists()),
+                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
