@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\Survey\Livewire\RenderEventRegistrationForm;
+use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
 use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
 use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
 

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Survey\Livewire;
+namespace AdvisingApp\MeetingCenter\Livewire;
 
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
