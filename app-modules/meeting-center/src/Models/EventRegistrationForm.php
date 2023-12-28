@@ -74,16 +74,16 @@ class EventRegistrationForm extends Submissible
 
     public function fields(): HasMany
     {
-        return $this->hasMany(EventRegistrationFormField::class);
+        return $this->hasMany(EventRegistrationFormField::class, 'form_id');
     }
 
     public function steps(): HasMany
     {
-        return $this->hasMany(EventRegistrationFormStep::class);
+        return $this->hasMany(EventRegistrationFormStep::class, 'form_id');
     }
 
     public function submissions(): HasMany
     {
-        return $this->hasMany(EventRegistrationFormSubmission::class);
+        return $this->hasMany(EventRegistrationFormSubmission::class, 'form_id');
     }
 }

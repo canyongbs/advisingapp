@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @mixin IdeHelperEvent
@@ -56,4 +57,9 @@ class Event extends BaseModel
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
     ];
+
+    public function eventRegistrationForm(): HasOne
+    {
+        return $this->hasOne(EventRegistrationForm::class, 'event_id');
+    }
 }
