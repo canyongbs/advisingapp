@@ -2,7 +2,10 @@
 
 namespace AdvisingApp\MeetingCenter\Enums;
 
-enum EventAttendeeStatus: string
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
+
+enum EventAttendeeStatus: string implements HasColor, HasLabel
 {
     case Invited = 'invited';
 
@@ -17,6 +20,16 @@ enum EventAttendeeStatus: string
         return match ($this) {
             self::NotAttending => 'Not Attending',
             default => $this->name,
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Invited => 'info',
+            self::Pending => 'warning',
+            self::Attending => 'success',
+            self::NotAttending => 'danger',
         };
     }
 }

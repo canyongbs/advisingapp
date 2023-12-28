@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Models;
 use App\Models\BaseModel;
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 
 #[NoPermissions]
@@ -58,4 +59,9 @@ class EventAttendee extends BaseModel
     protected $casts = [
         'status' => EventAttendeeStatus::class,
     ];
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(Event::class, 'event_id');
+    }
 }
