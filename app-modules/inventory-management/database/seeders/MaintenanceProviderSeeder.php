@@ -34,28 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Database\Factories;
+namespace AdvisingApp\InventoryManagement\Database\Seeders;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\InventoryManagement\Models\AssetType;
-use AdvisingApp\InventoryManagement\Models\AssetStatus;
-use AdvisingApp\InventoryManagement\Models\AssetLocation;
+use Illuminate\Database\Seeder;
+use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\InventoryManagement\Models\Asset>
- */
-class AssetFactory extends Factory
+class MaintenanceProviderSeeder extends Seeder
 {
-    public function definition(): array
+    public function run(): void
     {
-        return [
-            'serial_number' => fake()->isbn13(),
-            'name' => fake()->catchPhrase(),
-            'description' => fake()->paragraph(),
-            'type_id' => AssetType::inRandomOrder()->first(),
-            'status_id' => AssetStatus::inRandomOrder()->first(),
-            'location_id' => AssetLocation::inRandomOrder()->first(),
-            'purchase_date' => fake()->dateTime(),
-        ];
+        MaintenanceProvider::factory()
+            ->count(15)
+            ->create();
     }
 }

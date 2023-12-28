@@ -64,6 +64,7 @@ use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestUpdateSeeder;
+use AdvisingApp\InventoryManagement\Database\Seeders\MaintenanceProviderSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestPrioritySeeder;
 
 class DatabaseSeeder extends Seeder
@@ -106,8 +107,10 @@ class DatabaseSeeder extends Seeder
             StudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,
             EventSeeder::class,
-            AssetSeeder::class,
+            // InventoryManagement
             ...AssetSeeder::metadataSeeders(),
+            AssetSeeder::class,
+            MaintenanceProviderSeeder::class,
         ]);
     }
 }
