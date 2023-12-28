@@ -36,17 +36,25 @@
 
 namespace AdvisingApp\InventoryManagement\Models;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 class AssetStatus extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
+        'classification',
         'name',
+    ];
+
+    protected $casts = [
+        'classification' => SystemAssetStatusClassification::class,
     ];
 
     public function assets(): HasMany

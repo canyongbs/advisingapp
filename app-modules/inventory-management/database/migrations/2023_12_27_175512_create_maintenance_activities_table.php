@@ -55,6 +55,7 @@ return new class () extends Migration {
             $table->string('status')->default(MaintenanceActivityStatus::Scheduled);
             $table->longText('notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };
