@@ -34,17 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource\Pages;
 
-use Filament\Pages\Page;
+use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource;
 
-class AssetManagement extends Page
+class CreateAssetLocation extends CreateRecord
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string $resource = AssetLocationResource::class;
 
-    protected static ?string $navigationGroup = 'Service Management';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static string $view = 'filament.pages.coming-soon';
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required(),
+            ]);
+    }
 }

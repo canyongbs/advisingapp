@@ -77,7 +77,7 @@ use LastDragon_ru\LaraASP\GraphQL\Builder\Contracts\Operator;
  */
 $settings = [
     /**
-     * Settings for {@see \LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective @searchBy} directive.
+     * Settings for {@see LastDragon_ru\LaraASP\GraphQL\SearchBy\Definitions\SearchByDirective @searchBy} directive.
      */
     'search_by' => [
         /**
@@ -97,7 +97,7 @@ $settings = [
     ],
 
     /**
-     * Settings for {@see \LastDragon_ru\LaraASP\GraphQL\SortBy\Definitions\SortByDirective @sortBy} directive.
+     * Settings for {@see LastDragon_ru\LaraASP\GraphQL\SortBy\Definitions\SortByDirective @sortBy} directive.
      */
     'sort_by' => [
         /**
@@ -117,7 +117,7 @@ $settings = [
     ],
 
     /**
-     * Settings for {@see \LastDragon_ru\LaraASP\GraphQL\Stream\Definitions\StreamDirective @stream} directive.
+     * Settings for {@see LastDragon_ru\LaraASP\GraphQL\Stream\Definitions\StreamDirective @stream} directive.
      */
     'stream' => [
         'search' => [
