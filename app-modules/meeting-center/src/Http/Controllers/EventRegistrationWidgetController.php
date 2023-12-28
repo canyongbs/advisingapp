@@ -69,7 +69,6 @@ class EventRegistrationWidgetController extends Controller
             [
                 'name' => $form->event->title,
                 'description' => $form->event->description,
-                // TODO: Maybe get rid of this? It would never not be authenticated.
                 'is_authenticated' => true,
                 'authentication_url' => URL::signedRoute('event-registration.request-authentication', ['event' => $event]),
                 'recaptcha_enabled' => $form->recaptcha_enabled,
