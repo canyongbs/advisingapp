@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\InventoryManagement\Models;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\InventoryManagement\Enums\AssetExchangeType;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperAsset
@@ -48,6 +50,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 class Asset extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'description',
@@ -77,5 +80,20 @@ class Asset extends BaseModel implements Auditable
     public function maintenanceActivities(): HasMany
     {
         return $this->hasMany(MaintenanceActivity::class, 'asset_id');
+    }
+
+    public function exchanges(): HasMany
+    {
+        return $this->hasMany(AssetExchange::class, 'asset_id');
+    }
+
+    public function checkOuts(): HasMany
+    {
+        return $this->exchanges()->where('type', AssetExchangeType::CheckOut);
+    }
+
+    public function checkIns(): HasMany
+    {
+        return $this->exchanges()->where('type', AssetExchangeType::CheckIn);
     }
 }

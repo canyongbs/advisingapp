@@ -36,11 +36,12 @@
 
 namespace AdvisingApp\InventoryManagement\Models;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperMaintenanceActivity
@@ -48,6 +49,7 @@ use AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus;
 class MaintenanceActivity extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'asset_id',

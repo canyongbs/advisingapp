@@ -52,7 +52,6 @@ use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
 class ServiceRequestStatus extends BaseModel implements Auditable
 {
     use SoftDeletes;
-    use HasUuids;
     use AuditableTrait;
 
     protected $fillable = [
