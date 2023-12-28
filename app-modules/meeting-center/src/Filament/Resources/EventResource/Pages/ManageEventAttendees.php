@@ -38,8 +38,12 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
 class ManageEventAttendees extends ManageRelatedRecords
@@ -67,21 +71,21 @@ class ManageEventAttendees extends ManageRelatedRecords
             ->filters([])
             ->headerActions([])
             ->actions([
-                //ViewAction::make()
-                //    ->modalHeading(fn (SurveySubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
-                //    ->infolist(fn (SurveySubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
-                //        Section::make('Authenticated author')
-                //            ->schema([
-                //                TextEntry::make('author.' . $record->author::displayNameKey())
-                //                    ->label('Name'),
-                //                TextEntry::make('author.email')
-                //                    ->label('Email address'),
-                //            ])
-                //            ->columns(2),
-                //    ] : null)
-                //    ->modalContent(fn (SurveySubmission $record) => view('survey::submission', ['submission' => $record]))
-                //    ->visible(fn (SurveySubmission $record) => $record->submitted_at),
-                //DeleteAction::make(),
+                ViewAction::make()
+                    ->modalHeading(fn (EventAttendee $record) => $record->event->title . ' - ' . $record->email)
+                    ->infolist(fn (EventAttendee $record): array => [
+                        Section::make('Attendee Info')
+                            ->schema([
+                                TextEntry::make('status')
+                                    ->label('Status')
+                                    ->badge(),
+                                TextEntry::make('email')
+                                    ->label('Email address'),
+                            ])
+                            ->columns(),
+                    ]),
+                // TODO: Display this Attendees submissions
+                //->modalContent(fn (EventAttendee $record) => view('survey::submission', ['submission' => $record])),
             ])
             ->bulkActions([]);
     }
