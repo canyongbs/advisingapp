@@ -51,6 +51,6 @@ Route::middleware('web')
     ->prefix('event-registration')
     ->name('event-registration.')
     ->group(function () {
-        Route::get('/{eventRegistrationForm}/respond', RenderEventRegistrationForm::class)
+        Route::get('/{event}/respond', RenderEventRegistrationForm::class)
             ->name('show');
     });

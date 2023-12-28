@@ -37,6 +37,6 @@
 
 <div class="flex items-center justify-center px-4 py-16">
     <div class="w-full max-w-4xl">
-        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($this->eventRegistrationForm) !!}
+        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($this->event->eventRegistrationForm) !!}
     </div>
 </div>

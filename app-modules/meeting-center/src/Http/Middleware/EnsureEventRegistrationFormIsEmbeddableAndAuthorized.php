@@ -34,30 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\MeetingCenter\Http\Middleware;
 
-use App\Models\BaseModel;
-use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Closure;
+use Illuminate\Http\Request;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @property-read Submissible $submissible
- * @property-read Collection<int, SubmissibleField> $fields
- * @property-read Student|Prospect|null $author
- */
-abstract class Submission extends BaseModel
+class EnsureEventRegistrationFormIsEmbeddableAndAuthorized
 {
-    abstract public function submissible(): BelongsTo;
-
-    abstract public function fields(): BelongsToMany;
-
-    public function author(): MorphTo|BelongsTo
+    public function handle(Request $request, Closure $next, string $binding): Response
     {
-        return $this
-            ->morphTo('author');
+        /** @var Event $event */
+        $event = $request->route($binding);
+
+        $submissible = $event->eventRegistrationForm;
+
+        $referer = $request->headers->get('referer');
+
+        if (! $referer) {
+            return response()->json(['error' => 'Missing referer header.'], 400);
+        }
+
+        $referer = parse_url($referer)['host'];
+
+        if ($referer != parse_url(config('app.url'))['host']) {
+            if (! $submissible->embed_enabled) {
+                return response()->json(['error' => 'Embedding is not enabled for this form.'], 403);
+            }
+
+            $allowedDomains = collect($submissible->allowed_domains ?? []);
+
+            if (! $allowedDomains->contains($referer)) {
+                return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);
+            }
+        }
+
+        return $next($request);
     }
 }

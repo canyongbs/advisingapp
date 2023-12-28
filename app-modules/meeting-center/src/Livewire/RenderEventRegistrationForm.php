@@ -39,8 +39,8 @@ namespace AdvisingApp\MeetingCenter\Livewire;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 use Filament\Forms\Contracts\HasForms;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Forms\Concerns\InteractsWithForms;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 
 class RenderEventRegistrationForm extends Component implements HasForms
 {
@@ -48,13 +48,13 @@ class RenderEventRegistrationForm extends Component implements HasForms
 
     public bool $show = true;
 
-    public EventRegistrationForm $eventRegistrationForm;
+    public Event $event;
 
     public ?array $data = [];
 
     public function render(): View
     {
         return view('meeting-center::livewire.render-event-registration-form')
-            ->title("{$this->eventRegistrationForm->event->title} Registration");
+            ->title("{$this->event->title} Registration");
     }
 }

@@ -45,30 +45,33 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
-use AdvisingApp\Form\Notifications\AuthenticateEventRegistrationFormNotification;
+use AdvisingApp\MeetingCenter\Notifications\AuthenticateEventRegistrationFormNotification;
 
 class EventRegistrationWidgetController extends Controller
 {
-    public function view(GenerateFormKitSchema $generateSchema, EventRegistrationForm $form): JsonResponse
+    public function view(GenerateFormKitSchema $generateSchema, Event $event): JsonResponse
     {
+        $form = $event->eventRegistrationForm;
+
+        ray($event, $form);
+
         return response()->json(
             [
                 'name' => $form->event->title,
                 'description' => $form->event->description,
                 // TODO: Maybe get rid of this? It would never not be authenticated.
                 'is_authenticated' => true,
-                'authentication_url' => URL::signedRoute('event-registration.request-authentication', ['form' => $form]),
+                'authentication_url' => URL::signedRoute('event-registration.request-authentication', ['event' => $event]),
                 'recaptcha_enabled' => $form->recaptcha_enabled,
                 ...($form->recaptcha_enabled ? [
                     'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
@@ -80,8 +83,10 @@ class EventRegistrationWidgetController extends Controller
         );
     }
 
-    public function requestAuthentication(Request $request, EventRegistrationForm $form): JsonResponse
+    public function requestAuthentication(Request $request, Event $event): JsonResponse
     {
+        $form = $event->eventRegistrationForm;
+
         $data = $request->validate([
             'email' => ['required', 'email'],
         ]);
@@ -113,13 +118,13 @@ class EventRegistrationWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$attendee->email}.",
             'authentication_url' => URL::signedRoute('event-registration.authenticate', [
-                'form' => $form,
+                'event' => $event,
                 'authentication' => $authentication,
             ]),
         ]);
     }
 
-    public function authenticate(Request $request, EventRegistrationForm $form, EventRegistrationFormAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, Event $event, EventRegistrationFormAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([
@@ -140,7 +145,7 @@ class EventRegistrationWidgetController extends Controller
         return response()->json([
             'submission_url' => URL::signedRoute('event-registration.submit', [
                 'authentication' => $authentication,
-                'form' => $authentication->submissible,
+                'event' => $authentication->submissible->event,
             ]),
         ]);
     }
@@ -148,9 +153,10 @@ class EventRegistrationWidgetController extends Controller
     public function store(
         Request $request,
         GenerateSubmissibleValidation $generateValidation,
-        ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail,
-        EventRegistrationForm $form,
+        Event $event,
     ): JsonResponse {
+        $form = $event->eventRegistrationForm;
+
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
@@ -167,6 +173,8 @@ class EventRegistrationWidgetController extends Controller
             $request->all(),
             $generateValidation($form)
         );
+
+        ray($validator->errors());
 
         if ($validator->fails()) {
             return response()->json(
