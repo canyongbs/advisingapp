@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -46,6 +47,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class EventRegistrationForm extends Submissible
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'form_id',
         'embed_enabled',
