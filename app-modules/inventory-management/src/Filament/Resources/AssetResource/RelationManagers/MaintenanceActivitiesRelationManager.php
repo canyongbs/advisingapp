@@ -45,6 +45,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\DateTimePicker;
 use App\Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
@@ -68,13 +69,19 @@ class MaintenanceActivitiesRelationManager extends RelationManager
                 ->exists((new MaintenanceProvider())->getTable(), 'id'),
             Select::make('status')
                 ->label('Status')
+                ->reactive()
                 ->searchable()
                 ->options(MaintenanceActivityStatus::class)
                 ->required()
                 ->enum(MaintenanceActivityStatus::class),
-            DateTimePicker::make('date')
-                ->label('Date')
-                ->required(),
+            DateTimePicker::make('completed_date')
+                ->label('Completed On')
+                ->visible(fn (callable $get) => $get('status') === MaintenanceActivityStatus::Completed->value)
+                ->requiredIf('status', MaintenanceActivityStatus::Completed),
+            DateTimePicker::make('scheduled_date')
+                ->label('Scheduled For')
+                ->visible(fn (callable $get) => $get('status') !== MaintenanceActivityStatus::Completed->value)
+                ->requiredIf('status', [MaintenanceActivityStatus::Scheduled->value, MaintenanceActivityStatus::Delayed->value]),
             Textarea::make('notes')
                 ->label('Notes'),
         ]);
@@ -93,35 +100,39 @@ class MaintenanceActivitiesRelationManager extends RelationManager
             ->heading('Maintenance Activity')
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('details'),
+                TextColumn::make('details')
+                    ->formatStateUsing(function (MaintenanceActivity $activity) {
+                        if ($activity->status === MaintenanceActivityStatus::Scheduled && $activity->scheduled_date < today()) {
+                            return $activity->details . ' (Overdue)';
+                        }
+
+                        return $activity->details;
+                    }),
+                TextColumn::make('maintenanceProvider.name'),
                 TextColumn::make('status'),
-                TextColumn::make('date'),
+                TextColumn::make('scheduled_date')
+                    ->label('Scheduled For')
+                    ->formatStateUsing(function (MaintenanceActivity $activity) {
+                        if (! $activity->scheduled_date) {
+                            return 'N/A';
+                        }
+
+                        return $activity->scheduled_date;
+                    }),
             ])
             ->filters([
+                SelectFilter::make('status')
+                    ->options(MaintenanceActivityStatus::class)
+                    ->label('Status'),
             ])
             ->headerActions([
-                CreateAction::make()
-                    ->after(function (MaintenanceActivity $activity, array $data) {
-                        $this->afterCreate($activity, $data);
-                    }),
+                CreateAction::make(),
             ])
             ->actions([
                 ViewAction::make(),
             ])
             ->bulkActions([
             ])
-            ->defaultSort('created_at', 'asc');
-    }
-
-    // TODO Most likely move this to observer
-    protected function afterCreate(MaintenanceActivity $activity, array $data): void
-    {
-        ray('afterCreate', $activity);
-
-        if ($activity->status === MaintenanceActivityStatus::Scheduled) {
-            $activity->update([
-                'scheduled_date' => $activity->date,
-            ]);
-        }
+            ->defaultSort('scheduled_date', 'asc');
     }
 }

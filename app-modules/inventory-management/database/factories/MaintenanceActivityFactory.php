@@ -17,13 +17,15 @@ class MaintenanceActivityFactory extends Factory
 
     public function definition(): array
     {
+        $date = fake()->date();
+
         return [
             'asset_id' => Asset::factory(),
-            'maintenance_provider_id' => MaintenanceProvider::factory(),
+            'completed_date' => $date,
             'details' => fake()->sentence(),
-            'date' => fake()->date(),
-            'scheduled_date' => fake()->date(),
+            'maintenance_provider_id' => MaintenanceProvider::factory(),
             'notes' => fake()->paragraph(),
+            'scheduled_date' => $date,
         ];
     }
 
@@ -32,6 +34,8 @@ class MaintenanceActivityFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'status' => MaintenanceActivityStatus::InProgress,
+                'completed_date' => null,
+                'scheduled_date' => now(),
             ];
         });
     }
@@ -41,6 +45,8 @@ class MaintenanceActivityFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'status' => MaintenanceActivityStatus::Completed,
+                'completed_date' => now(),
+                'scheduled_date' => now(),
             ];
         });
     }
@@ -50,6 +56,8 @@ class MaintenanceActivityFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'status' => MaintenanceActivityStatus::Cancelled,
+                'completed_date' => null,
+                'scheduled_date' => now()->subDays(7),
             ];
         });
     }
@@ -59,6 +67,8 @@ class MaintenanceActivityFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'status' => MaintenanceActivityStatus::Delayed,
+                'completed_date' => null,
+                'scheduled_date' => now()->addDays(7),
             ];
         });
     }

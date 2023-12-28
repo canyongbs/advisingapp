@@ -14,7 +14,7 @@ class MaintenanceActivity extends BaseModel implements Auditable
 
     protected $fillable = [
         'asset_id',
-        'date',
+        'completed_date',
         'details',
         'maintenance_provider_id',
         'notes',
@@ -23,7 +23,7 @@ class MaintenanceActivity extends BaseModel implements Auditable
     ];
 
     protected $casts = [
-        'date' => 'datetime',
+        'completed_date' => 'datetime',
         'scheduled_date' => 'datetime',
         'status' => MaintenanceActivityStatus::class,
     ];

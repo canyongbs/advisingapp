@@ -13,8 +13,8 @@ return new class () extends Migration {
             $table->foreignUuid('asset_id')->constrained('assets');
             $table->foreignUuid('maintenance_provider_id')->nullable()->constrained('maintenance_providers');
             $table->string('details');
-            $table->timestamp('date');
             $table->timestamp('scheduled_date')->nullable();
+            $table->timestamp('completed_date')->nullable();
             $table->string('status')->default(MaintenanceActivityStatus::Scheduled);
             $table->longText('notes')->nullable();
             $table->timestamps();

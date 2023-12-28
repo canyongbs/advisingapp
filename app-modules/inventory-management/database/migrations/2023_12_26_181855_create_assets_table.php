@@ -45,7 +45,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->string('serial_number');
             $table->string('name');
-            $table->string('description');
+            $table->longText('description');
             $table->foreignUuid('type_id')->constrained('asset_types')->cascadeOnDelete();
             $table->foreignUuid('status_id')->constrained('asset_statuses')->cascadeOnDelete();
             $table->foreignUuid('location_id')->constrained('asset_locations')->cascadeOnDelete();
