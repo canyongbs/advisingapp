@@ -68,6 +68,32 @@ class GenerateFormKitSchema
             ];
         }
 
+        $content = [
+            [
+                '$formkit' => 'radio',
+                'label' => 'Will you be attending?',
+                'name' => 'attending',
+                'options' => [
+                    [
+                        'label' => 'Yes',
+                        'value' => 'yes',
+                    ],
+                    [
+                        'label' => 'No',
+                        'value' => 'no',
+                    ],
+                ],
+                'validation' => 'required',
+            ],
+            [
+                '$el' => 'div',
+                'attrs' => [
+                    'if' => '$get(form).values.attending === "yes"',
+                ],
+                'children' => $content,
+            ],
+        ];
+
         return [
             '$cmp' => 'FormKit',
             'props' => [
