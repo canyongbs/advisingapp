@@ -41,6 +41,7 @@ use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -130,6 +131,7 @@ class MaintenanceActivitiesRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
             ])
