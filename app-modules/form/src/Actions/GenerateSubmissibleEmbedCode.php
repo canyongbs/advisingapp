@@ -77,8 +77,9 @@ class GenerateSubmissibleEmbedCode
                 EOD;
             })(),
             EventRegistrationForm::class => (function () use ($submissible) {
+                /** @var EventRegistrationForm $submissible */
                 $scriptUrl = url('js/widgets/events/advising-app-event-registration-form-widget.js?');
-                $formDefinitionUrl = URL::signedRoute('event-registration.define', ['form' => $submissible]);
+                $formDefinitionUrl = URL::signedRoute('event-registration.define', ['event' => $submissible->event]);
 
                 return <<<EOD
                 <event-registration-embed url="{$formDefinitionUrl}"></event-registration-embed>

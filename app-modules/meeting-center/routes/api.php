@@ -34,28 +34,28 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
+use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
 
 Route::prefix('api')
     ->middleware([
         'api',
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':form',
+        EnsureEventRegistrationFormIsEmbeddableAndAuthorized::class . ':event',
     ])
     ->group(function () {
         Route::prefix('event-registration')
             ->name('event-registration.')
             ->group(function () {
-                Route::get('/{form}', [EventRegistrationWidgetController::class, 'view'])
+                Route::get('/{event}', [EventRegistrationWidgetController::class, 'view'])
                     ->middleware(['signed'])
                     ->name('define');
-                Route::post('/{form}/authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
+                Route::post('/{event}/authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
                     ->middleware(['signed'])
                     ->name('request-authentication');
-                Route::post('/{form}/authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
+                Route::post('/{event}/authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
                     ->middleware(['signed'])
                     ->name('authenticate');
-                Route::post('/{form}/submit', [EventRegistrationWidgetController::class, 'store'])
+                Route::post('/{event}/submit', [EventRegistrationWidgetController::class, 'store'])
                     ->middleware(['signed'])
                     ->name('submit');
             });

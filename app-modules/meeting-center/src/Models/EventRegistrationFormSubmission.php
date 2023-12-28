@@ -85,6 +85,11 @@ class EventRegistrationFormSubmission extends Submission
             ->withPivot(['id', 'response']);
     }
 
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(EventAttendee::class, 'event_attendee_id');
+    }
+
     public function deliverRequest(): void
     {
         $this->request_method->deliver($this);
