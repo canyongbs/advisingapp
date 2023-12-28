@@ -38,7 +38,6 @@ namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Relat
 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\EditAction;
@@ -85,13 +84,6 @@ class MaintenanceActivitiesRelationManager extends RelationManager
             Textarea::make('notes')
                 ->label('Notes'),
         ]);
-    }
-
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-            ]);
     }
 
     public function table(Table $table): Table
