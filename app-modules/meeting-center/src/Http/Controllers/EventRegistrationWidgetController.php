@@ -63,8 +63,6 @@ class EventRegistrationWidgetController extends Controller
     {
         $form = $event->eventRegistrationForm;
 
-        ray($event, $form);
-
         return response()->json(
             [
                 'name' => $form->event->title,
