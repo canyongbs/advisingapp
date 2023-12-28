@@ -69,6 +69,8 @@ class EditEvent extends EditRecord
 {
     protected static string $resource = EventResource::class;
 
+    protected bool $contentHydrated = false;
+
     public function form(Form $form): Form
     {
         /** @var User $user */
@@ -189,7 +191,26 @@ class EditEvent extends EditRecord
             })
             ->dehydrated(false)
             ->columnSpanFull()
-            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+            ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+            ->afterStateHydrated(function (TiptapEditor $component, string | array | null $state): void {
+                // TODO: This is a temporary fix until we can figure out whey this gets hydrated twice.
+
+                if (! $state || $this->contentHydrated) {
+                    return;
+                }
+
+                if (! is_array($state)) {
+                    $state = tiptap_converter()->asJSON($state, decoded: true);
+                }
+
+                ray('here2');
+
+                $state = $component->renderBlockPreviews($state, $component);
+
+                $component->state($state);
+
+                $this->contentHydrated = true;
+            });
     }
 
     public function saveFieldsFromComponents(EventRegistrationForm $form, array $components, ?EventRegistrationFormStep $eventRegistrationFormStep): array
