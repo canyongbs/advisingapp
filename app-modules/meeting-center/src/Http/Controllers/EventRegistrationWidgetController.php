@@ -50,18 +50,18 @@ use Illuminate\Support\Facades\Validator;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
+use AdvisingApp\MeetingCenter\Actions\GenerateEventRegistrationFormKitSchema;
 use AdvisingApp\MeetingCenter\Notifications\AuthenticateEventRegistrationFormNotification;
 
 class EventRegistrationWidgetController extends Controller
 {
-    public function view(GenerateFormKitSchema $generateSchema, Event $event): JsonResponse
+    public function view(GenerateEventRegistrationFormKitSchema $generateSchema, Event $event): JsonResponse
     {
         $form = $event->eventRegistrationForm;
 
