@@ -42,6 +42,10 @@ use App\Http\Controllers\ViewPublicUserProfileController;
 Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileController::class)
     ->name('users.profile.view.public');
 
+Route::middleware(['auth', 'can:authorization.view_api_documentation'])
+    ->get('/api-docs', fn () => File::get(storage_path('app/api-docs/index.html')))
+    ->name('api-docs');
+
 //TODO: remove
 Route::get('/demo-notification', function () {
     /** @var User $user */

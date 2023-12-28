@@ -40,17 +40,6 @@
     'fi-resource-list-records-page',
     'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
 ])>
-    {{-- TODO: Determine the best way to check if calendar is set up --}}
-    @empty(auth()->user()->calendar?->oauth_token)
-        <div wire:init="mountAction('setupCalendarProviderAction')">
-        </div>
-    @endempty
-
-    @if (auth()->user()->calendar?->oauth_token && !auth()->user()->calendar?->provider_id)
-        <div wire:init="mountAction('selectCalendarAction')">
-        </div>
-    @endif
-
     <div class="flex w-full justify-start">
         <div
             class="grid max-w-xs grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800"

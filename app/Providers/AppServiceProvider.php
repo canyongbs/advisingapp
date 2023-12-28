@@ -37,6 +37,7 @@
 namespace App\Providers;
 
 use App\Models\SystemUser;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use OpenSearch\Migrations\Filesystem\MigrationStorage;
@@ -60,5 +61,9 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'system_user' => SystemUser::class,
         ]);
+
+        if (config('app.force_https')) {
+            URL::forceScheme('https');
+        }
     }
 }

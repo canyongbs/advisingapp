@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Providers;
 
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
@@ -60,6 +61,7 @@ class MeetingCenterServiceProvider extends ServiceProvider
         Relation::morphMap([
             'calendar' => Calendar::class,
             'calendar_event' => CalendarEvent::class,
+            'event' => Event::class,
         ]);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {

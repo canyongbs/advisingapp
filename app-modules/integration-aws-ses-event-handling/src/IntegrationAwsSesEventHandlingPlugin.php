@@ -52,6 +52,11 @@ class IntegrationAwsSesEventHandlingPlugin implements Plugin
             in: __DIR__ . '/Filament/Resources',
             for: 'AdvisingApp\\IntegrationAwsSesEventHandling\\Filament\\Resources'
         );
+
+        $panel->discoverPages(
+            in: __DIR__ . '/Filament/Pages',
+            for: 'AdvisingApp\\IntegrationAwsSesEventHandling\\Filament\\Pages'
+        );
     }
 
     public function boot(Panel $panel): void {}

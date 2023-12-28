@@ -54,7 +54,7 @@ class DataCast implements SettingsCast
         return is_null($payload) ? $payload : $this->type::from($payload);
     }
 
-    public function set($payload): array
+    public function set($payload): ?array
     {
         return is_null($payload) ? $payload : $payload->toArray();
     }

@@ -41,7 +41,15 @@ use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioApiKey;
 
 class TwilioSettings extends Settings
 {
+    public bool $is_enabled;
+
     public ?TwilioApiKey $api_key;
+
+    public ?string $account_sid;
+
+    public ?string $auth_token;
+
+    public ?string $from_number;
 
     public static function group(): string
     {
@@ -52,6 +60,9 @@ class TwilioSettings extends Settings
     {
         return [
             'api_key',
+            'account_sid',
+            'auth_token',
+            'from_number',
         ];
     }
 }

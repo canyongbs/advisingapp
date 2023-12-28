@@ -63,7 +63,7 @@ class ListCalendarEvents extends ListRecords
 
     protected ?string $heading = 'Schedule';
 
-    protected static string $view = 'meeting-center::filament.pages.list-events';
+    protected static string $view = 'meeting-center::filament.pages.list-calendar-events';
 
     #[Url(as: 'view')]
     public string $viewType = 'table';
@@ -170,7 +170,7 @@ class ListCalendarEvents extends ListRecords
 
                 return $query->whereRelation('calendar', 'user_id', $user->id);
             })
-            ->defaultSort('starts_at', 'desc');
+            ->defaultSort('starts_at');
     }
 
     protected function getHeaderActions(): array

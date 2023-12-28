@@ -22,10 +22,6 @@ Once the SNS topic is created, you will need to subscribe to it. You can do this
 
 ## Application Configuration
 
-Once the above steps are completed, you will need to add the following configuration to your application's `.env` file:
-
-```
-MAIL_SES_CONFIGURATION_SET=[your configuration set name]
-```
+Once the above steps are completed, you will need to configure the integration under `Integrations` -> `Amazon SES Settings`.
 
 The application should now be adding that configuration set as a header to all outgoing emails. If things are set up correctly on the AWS end once you send emails you should start seeing SNS webhooks being processed by the application, triggered by the SES events.

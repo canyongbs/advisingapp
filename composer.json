@@ -13,7 +13,7 @@
         "php": "8.2.*",
         "ext-gd": "*",
         "ext-pdo": "*",
-        "awcodes/filament-tiptap-editor": "^3.2",
+        "awcodes/filament-tiptap-editor": "^3.2.14",
         "aws/aws-php-sns-message-validator": "^1.8.0",
         "aws/aws-sdk-php": "^3.293",
         "barryvdh/laravel-debugbar": "^3.9",
@@ -45,12 +45,13 @@
         "canyon-gbs/advising-app-prospect": "*",
         "canyon-gbs/advising-app-service-management": "*",
         "canyon-gbs/advising-app-student-data-model": "*",
+        "canyon-gbs/advising-app-survey": "*",
         "canyon-gbs/advising-app-task": "*",
         "canyon-gbs/advising-app-team": "*",
         "canyon-gbs/advising-app-theme": "*",
         "canyon-gbs/advising-app-timeline": "*",
         "canyon-gbs/advising-app-webhook": "*",
-        "canyon-gbs/advising-app-survey": "*",
+        "canyon-gbs/inventory-management": "*",
         "composer/composer": "^2.6.4",
         "filament/filament": "^3.1",
         "filament/spatie-laravel-media-library-plugin": "^3.1",
@@ -62,7 +63,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "internachi/modular": "^2.0",
         "kirschbaum-development/eloquent-power-joins": "^3.4",
-        "laravel/framework": "^10.38",
+        "laravel/framework": "^10.39",
         "laravel/sanctum": "^3.3",
         "laravel/scout": "^10.6",
         "laravel/socialite": "^5.11",
@@ -208,8 +209,7 @@
             "@php artisan lighthouse:print-schema -W -D public"
         ],
         "generate-api-docs": [
-            "@php artisan lighthouse:ide-helper",
-            "@prettier-format",
+            "./node_modules/.bin/prettier \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --write",
             "@print-schema",
             "npm run api-docs:generate"
         ]

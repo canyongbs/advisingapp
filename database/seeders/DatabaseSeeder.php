@@ -45,11 +45,13 @@ use AdvisingApp\Team\Database\Seeders\TeamSeeder;
 use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
+use AdvisingApp\MeetingCenter\Database\Seeders\EventSeeder;
 use AdvisingApp\Engagement\Database\Seeders\EngagementSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
+use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
 use AdvisingApp\Engagement\Database\Seeders\EngagementResponseSeeder;
 use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
@@ -62,6 +64,7 @@ use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestUpdateSeeder;
+use AdvisingApp\InventoryManagement\Database\Seeders\MaintenanceProviderSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestPrioritySeeder;
 
 class DatabaseSeeder extends Seeder
@@ -103,6 +106,11 @@ class DatabaseSeeder extends Seeder
             SuperAdminSeeder::class,
             StudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,
+            EventSeeder::class,
+            // InventoryManagement
+            ...AssetSeeder::metadataSeeders(),
+            AssetSeeder::class,
+            MaintenanceProviderSeeder::class,
         ]);
     }
 }

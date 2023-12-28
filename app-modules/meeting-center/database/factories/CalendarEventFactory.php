@@ -51,7 +51,7 @@ class CalendarEventFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->words(asText: true),
+            'title' => fake()->catchPhrase(),
             'description' => fake()->optional()->sentence(),
             'starts_at' => fake()->dateTimeBetween('+1 hour', '+1 day'),
             'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->add('1 hour'),

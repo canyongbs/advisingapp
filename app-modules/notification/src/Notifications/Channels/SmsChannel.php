@@ -38,11 +38,11 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use Twilio\Rest\Client;
 use Twilio\Exceptions\TwilioException;
-use AdvisingApp\Notification\Messages\TwilioMessage;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
@@ -69,7 +69,7 @@ class SmsChannel
         /** @var TwilioMessage $twilioMessage */
         $twilioMessage = $notification->toSms($notifiable);
 
-        $client = new Client(config('services.twilio.account_sid'), config('services.twilio.auth_token'));
+        $client = app(Client::class);
 
         $messageContent = [
             'from' => $twilioMessage->getFrom(),

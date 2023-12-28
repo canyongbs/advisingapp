@@ -2,7 +2,7 @@ spectaql:
 #  logoFile: ./test/fixtures/logo.png
 #  faviconFile: ./test/fixtures/favicon.png
   displayAllServers: true
-  targetDir: ./public/api-docs
+  targetDir: ./storage/app/api-docs
   oneFile: true
   themeDir: spectaql
 
@@ -34,6 +34,14 @@ info:
   x-introItems:
     - title: Authorization
       description: Add additional details for authentication. Supports `markdown`, more sections can be added.
+    - title: Querying the same field for different union types
+      description: |
+        When querying a field that returns a union type, you may get back an error "conflict because they return conflicting types". For example, if you query for interactable on a union type of `Student | Prospect` and request `full_name` you may get back this error.
+        
+        This is due to the fields having different type definitions. In order to get around this you will need to define an alias for the field you are querying.
+        
+        For example, you can query for `student_full_name: full_name` and `prospect_full_name: full_name` to get back the data you are looking for.
+
 
 servers:
   - url: ${APP_URL}/graphql
