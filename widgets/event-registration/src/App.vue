@@ -93,10 +93,15 @@ const data = reactive({
             },
             body: JSON.stringify(data),
         })
-            .then((response) => response.json())
-            .then((json) => {
-                if (json.errors) {
-                    node.setErrors([], json.errors);
+            .then((response) => {
+                if (response.status === 500) {
+                    node.setErrors(['An error occurred while submitting the form. Please try again later.']);
+
+                    return;
+                }
+
+                if (response.json().errors) {
+                    node.setErrors([], response.json().errors);
 
                     return;
                 }

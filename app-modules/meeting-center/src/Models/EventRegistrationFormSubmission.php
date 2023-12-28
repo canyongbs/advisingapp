@@ -41,6 +41,7 @@ use AdvisingApp\Form\Models\Submission;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 
@@ -52,6 +53,7 @@ class EventRegistrationFormSubmission extends Submission
     protected $fillable = [
         'canceled_at',
         'form_id',
+        'attendee_status',
         'request_method',
         'request_note',
         'submitted_at',
@@ -61,6 +63,7 @@ class EventRegistrationFormSubmission extends Submission
         'submitted_at' => 'immutable_datetime',
         'canceled_at' => 'immutable_datetime',
         'request_method' => FormSubmissionRequestDeliveryMethod::class,
+        'attendee_status' => EventAttendeeStatus::class,
     ];
 
     public function submissible(): BelongsTo
