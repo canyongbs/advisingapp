@@ -46,6 +46,7 @@ return new class () extends Migration {
 
             $table->foreignUuid('form_id')->constrained('event_registration_forms')->cascadeOnDelete();
             $table->foreignUuid('event_attendee_id')->constrained('event_attendees')->cascadeOnDelete();
+            $table->string('attendee_status');
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('canceled_at')->nullable();
             $table->string('request_method')->nullable();

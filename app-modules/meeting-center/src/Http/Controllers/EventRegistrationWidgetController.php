@@ -37,10 +37,12 @@
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use Closure;
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -153,80 +155,88 @@ class EventRegistrationWidgetController extends Controller
         GenerateSubmissibleValidation $generateValidation,
         Event $event,
     ): JsonResponse {
-        $form = $event->eventRegistrationForm;
+        try {
+            DB::beginTransaction();
 
-        $authentication = $request->query('authentication');
+            $form = $event->eventRegistrationForm;
 
-        if (filled($authentication)) {
-            $authentication = EventRegistrationFormAuthentication::findOrFail($authentication);
-        }
+            $authentication = $request->query('authentication');
 
-        if (
-            ($authentication?->isExpired() ?? true)
-        ) {
-            abort(Response::HTTP_UNAUTHORIZED);
-        }
+            if (filled($authentication)) {
+                $authentication = EventRegistrationFormAuthentication::findOrFail($authentication);
+            }
 
-        // TODO See if we can make attending a bool
+            if (
+                ($authentication?->isExpired() ?? true)
+            ) {
+                abort(Response::HTTP_UNAUTHORIZED);
+            }
 
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'attending' => ['required', 'in:yes,no'],
-                ...$request->get('attending') === 'yes' ? $generateValidation($form) : [],
-            ]
-        );
-
-        //ray($validator->errors());
-
-        if ($validator->fails()) {
-            return response()->json(
+            $validator = Validator::make(
+                $request->all(),
                 [
-                    'errors' => (object) $validator->errors(),
-                ],
-                Response::HTTP_UNPROCESSABLE_ENTITY
+                    'attending' => ['required', 'in:yes,no'],
+                    ...$request->get('attending') === 'yes' ? $generateValidation($form) : [],
+                ]
             );
-        }
 
-        /** @var EventRegistrationFormSubmission $submission */
-        $submission = $form->submissions()->make();
+            if ($validator->fails()) {
+                return response()->json(
+                    [
+                        'errors' => (object) $validator->errors(),
+                    ],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
 
-        $submission->author()->associate($authentication->author);
+            /** @var EventRegistrationFormSubmission $submission */
+            $submission = $form->submissions()->make();
 
-        $authentication->delete();
+            $submission->author()->associate($authentication->author);
 
-        $submission->submitted_at = now();
+            $authentication->delete();
 
-        $submission->save();
+            $submission->submitted_at = now();
 
-        $authentication->author->update(['status' => $request->get('attending') === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending]);
+            $submission->attendee_status = $request->get('attending') === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending;
 
-        $data = $validator->validated();
+            $submission->save();
 
-        // TODO: change the EventFormSubmission to have a column to store the attending data item
+            $authentication->author->update(['status' => $request->get('attending') === 'yes' ? EventAttendeeStatus::Attending : EventAttendeeStatus::NotAttending]);
 
-        if ($data['attending'] === 'yes') {
-            unset($data['recaptcha-token'], $data['attending']);
+            $data = $validator->validated();
 
-            if ($form->is_wizard) {
-                foreach ($form->steps as $step) {
-                    foreach ($data[$step->label] as $fieldId => $response) {
+            if ($data['attending'] === 'yes') {
+                unset($data['recaptcha-token']);
+
+                if ($form->is_wizard) {
+                    foreach ($form->steps as $step) {
+                        foreach ($data[$step->label] as $fieldId => $response) {
+                            $submission->fields()->attach(
+                                $fieldId,
+                                ['id' => Str::orderedUuid(), 'response' => $response],
+                            );
+                        }
+                    }
+                } else {
+                    foreach ($data as $fieldId => $response) {
                         $submission->fields()->attach(
                             $fieldId,
                             ['id' => Str::orderedUuid(), 'response' => $response],
                         );
                     }
                 }
-            } else {
-                foreach ($data as $fieldId => $response) {
-                    $submission->fields()->attach(
-                        $fieldId,
-                        ['id' => Str::orderedUuid(), 'response' => $response],
-                    );
-                }
+
+                $submission->save();
             }
 
-            $submission->save();
+            DB::commit();
+        } catch (Exception $e) {
+            // TODO: Tag and report this exception. Send the tag to the frontend as a reference.
+
+            DB::rollBack();
+
+            throw $e;
         }
 
         return response()->json(
