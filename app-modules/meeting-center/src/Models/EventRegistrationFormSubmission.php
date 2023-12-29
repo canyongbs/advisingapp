@@ -38,8 +38,6 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\User;
 use AdvisingApp\Form\Models\Submission;
-use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -91,48 +89,5 @@ class EventRegistrationFormSubmission extends Submission
     public function author(): BelongsTo
     {
         return $this->belongsTo(EventAttendee::class, 'event_attendee_id');
-    }
-
-    public function deliverRequest(): void
-    {
-        $this->request_method->deliver($this);
-    }
-
-    public function scopeRequested(Builder $query): Builder
-    {
-        return $query->notSubmitted()->notCanceled();
-    }
-
-    public function scopeSubmitted(Builder $query): Builder
-    {
-        return $query->whereNotNull('submitted_at');
-    }
-
-    public function scopeCanceled(Builder $query): Builder
-    {
-        return $query->notSubmitted()->whereNotNull('canceled_at');
-    }
-
-    public function scopeNotSubmitted(Builder $query): Builder
-    {
-        return $query->whereNull('submitted_at');
-    }
-
-    public function scopeNotCanceled(Builder $query): Builder
-    {
-        return $query->whereNull('canceled_at');
-    }
-
-    public function getStatus(): FormSubmissionStatus
-    {
-        if ($this->submitted_at) {
-            return FormSubmissionStatus::Submitted;
-        }
-
-        if ($this->canceled_at) {
-            return FormSubmissionStatus::Canceled;
-        }
-
-        return FormSubmissionStatus::Requested;
     }
 }

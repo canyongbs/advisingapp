@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Providers;
 
 use Filament\Panel;
+use Livewire\Livewire;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Console\Scheduling\Schedule;
@@ -53,6 +54,7 @@ use AdvisingApp\MeetingCenter\Observers\CalendarEventObserver;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 
 class MeetingCenterServiceProvider extends ServiceProvider
@@ -86,6 +88,8 @@ class MeetingCenterServiceProvider extends ServiceProvider
         $this->registerRolesAndPermissions();
 
         $this->registerObservers();
+
+        Livewire::component('event-attendee-submissions-manager', EventAttendeeSubmissionsManager::class);
     }
 
     protected function registerRolesAndPermissions(): void
