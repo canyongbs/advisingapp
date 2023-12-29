@@ -34,27 +34,30 @@ class EventAttendeeSubmissionsManager extends Component implements HasForms, Has
             ->relationship(fn (): HasMany => $this->record->submissions())
             ->inverseRelationship('author')
             ->columns([
+                TextColumn::make('submitted_at')
+                    ->label('Submitted At')
+                    ->dateTime()
+                    ->sortable(),
                 TextColumn::make('attendee_status')
+                    ->label('Submission Status')
                     ->badge(),
             ])
-            ->filters([
-                // ...
-            ])
+            ->defaultSort('submitted_at', 'desc')
             ->actions([
                 ViewAction::make()
                     ->modalHeading(fn (EventRegistrationFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
                     ->infolist(fn (EventRegistrationFormSubmission $record): array => [
-                        Section::make('Authenticated author')
+                        Section::make('Metadata')
                             ->schema([
                                 TextEntry::make('author.email')
-                                    ->label('Email Address'),
+                                    ->label('Author Email Address'),
+                                TextEntry::make('attendee_status')
+                                    ->label('Submission Status')
+                                    ->badge(),
                             ])
                             ->columns(),
-                    ]),
-                //->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record])),
-            ])
-            ->bulkActions([
-                // ...
+                    ])
+                    ->modalContent(fn (EventRegistrationFormSubmission $record) => view('meeting-center::event-registration-submission', ['submission' => $record])),
             ]);
     }
 }
