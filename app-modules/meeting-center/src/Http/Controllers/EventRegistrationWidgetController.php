@@ -206,7 +206,7 @@ class EventRegistrationWidgetController extends Controller
             $data = $validator->validated();
 
             if ($data['attending'] === 'yes') {
-                unset($data['recaptcha-token']);
+                unset($data['recaptcha-token'], $data['attending']);
 
                 if ($form->is_wizard) {
                     foreach ($form->steps as $step) {
