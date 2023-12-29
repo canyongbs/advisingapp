@@ -41,6 +41,7 @@ use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
@@ -83,6 +84,9 @@ class ManageEventAttendees extends ManageRelatedRecords
                                     ->label('Email address'),
                             ])
                             ->columns(),
+                        // TODO: Look into Livewire/Filament bug that prevents us from passing the class here, requiring that we define it in the Service Provider
+                        // TODO: Look into bug where, without lazy load, you have to click view twice to get the modal to show
+                        Livewire::make('event-attendee-submissions-manager')->lazy(),
                     ]),
                 // TODO: Display this Attendees submissions
                 //->modalContent(fn (EventAttendee $record) => view('survey::submission', ['submission' => $record])),
