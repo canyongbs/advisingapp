@@ -43,6 +43,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\InventoryManagement\Models\AssetType;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
+use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\InventoryManagement\Models\AssetLocation;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\InventoryManagement\InventoryManagementPlugin;
@@ -59,6 +61,8 @@ class InventoryManagementServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
+            'asset_check_in' => AssetCheckIn::class,
+            'asset_check_out' => AssetCheckOut::class,
             'asset_location' => AssetLocation::class,
             'asset_status' => AssetStatus::class,
             'asset_type' => AssetType::class,

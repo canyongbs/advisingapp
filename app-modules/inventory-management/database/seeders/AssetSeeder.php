@@ -38,6 +38,8 @@ namespace AdvisingApp\InventoryManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use AdvisingApp\InventoryManagement\Models\Asset;
+use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
+use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
 
 class AssetSeeder extends Seeder
@@ -48,11 +50,16 @@ class AssetSeeder extends Seeder
             ->count(10)
             ->create()
             ->each(function (Asset $asset) {
-                $maintenanceActivitiesCount = rand(0, 10);
+                $entityCount = rand(0, 10);
 
-                for ($i = 0; $i < $maintenanceActivitiesCount; $i++) {
+                for ($i = 0; $i < $entityCount; $i++) {
                     MaintenanceActivity::factory()
                         ->randomizeState()
+                        ->for($asset, 'asset')
+                        ->create();
+
+                    AssetCheckOut::factory()
+                        ->has(AssetCheckIn::factory(), 'checkIn')
                         ->for($asset, 'asset')
                         ->create();
                 }
