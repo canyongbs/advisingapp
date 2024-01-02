@@ -63,14 +63,14 @@ return new class () extends SettingsMigration {
                     'reset_date' => now()->format('m-d'),
                 ],
                 'addons' => [
+                    'online_forms' => true,
+                    'online_surveys' => true,
                     'online_admissions' => true,
-                    'realtime_chat' => true,
-                    'dynamic_forms' => true,
-                    'conduct_surveys' => true,
-                    'personal_assistant' => true,
                     'service_management' => true,
                     'knowledge_management' => true,
-                    'student_and_prospect_portal' => true,
+                    'event_management' => true,
+                    'realtime_chat' => true,
+                    'mobileApps' => true,
                 ],
             ]
         );
