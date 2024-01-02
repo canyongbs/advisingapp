@@ -52,9 +52,9 @@ class AssetFactory extends Factory
             'serial_number' => fake()->isbn13(),
             'name' => fake()->catchPhrase(),
             'description' => fake()->paragraph(),
-            'type_id' => AssetType::factory(),
-            'status_id' => AssetStatus::factory(),
-            'location_id' => AssetLocation::factory(),
+            'type_id' => AssetType::inRandomOrder()->first(),
+            'status_id' => AssetStatus::inRandomOrder()->first(),
+            'location_id' => AssetLocation::inRandomOrder()->first(),
             'purchase_date' => fake()->dateTime(),
         ];
     }

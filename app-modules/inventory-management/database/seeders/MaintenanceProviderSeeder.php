@@ -34,31 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\InventoryManagement\Database\Seeders;
 
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Providers\RouteServiceProvider;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Seeder;
+use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
 
-class RedirectIfAuthenticated
+class MaintenanceProviderSeeder extends Seeder
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next, string ...$guards): Response
+    public function run(): void
     {
-        $guards = empty($guards) ? [null] : $guards;
-
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
-            }
-        }
-
-        return $next($request);
+        MaintenanceProvider::factory()
+            ->count(15)
+            ->create();
     }
 }
