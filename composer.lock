@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4135a59df44c5333303e7a1b6f1ff947",
+    "content-hash": "c6799688b6b1dc6fe5f3e65ef7767624",
     "packages": [
         {
             "name": "amphp/amp",
@@ -2369,6 +2369,41 @@
                     "AdvisingApp\\Webhook\\Tests\\": "tests/",
                     "AdvisingApp\\Webhook\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Webhook\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/analytics",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/analytics",
+                "reference": "ee7fa00ee78ce3e31c49566043aaf89cca68ad6b"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Analytics\\Providers\\AnalyticsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Analytics\\": "src/",
+                    "AdvisingApp\\Analytics\\Tests\\": "tests/",
+                    "AdvisingApp\\Analytics\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Analytics\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -21202,5 +21237,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
