@@ -44,13 +44,13 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class LicenseAddonsData extends Data
 {
     public function __construct(
+        public bool $onlineForms,
+        public bool $onlineSurveys,
         public bool $onlineAdmissions,
-        public bool $realtimeChat,
-        public bool $dynamicForms,
-        public bool $conductSurveys,
-        public bool $personalAssistant,
         public bool $serviceManagement,
         public bool $knowledgeManagement,
-        public bool $studentAndProspectPortal,
+        public bool $eventManagement,
+        public bool $realtimeChat,
+        public bool $mobileApps,
     ) {}
 }
