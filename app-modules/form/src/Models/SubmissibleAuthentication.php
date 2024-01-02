@@ -41,7 +41,6 @@ use Illuminate\Support\Carbon;
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -66,7 +65,7 @@ abstract class SubmissibleAuthentication extends BaseModel
             ->where('created_at', '<', now()->subMonth());
     }
 
-    public function author(): MorphTo|BelongsTo
+    public function author(): BelongsTo
     {
         return $this->morphTo();
     }
