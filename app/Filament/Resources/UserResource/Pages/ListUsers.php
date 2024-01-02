@@ -53,6 +53,8 @@ class ListUsers extends ListRecords
         //    'count' => User::count(),
         //    'max' => app(LicenseSettings::class)->data->limits->crmSeats,
         //])->render());
+
+        return null;
     }
 
     protected function getHeaderActions(): array
