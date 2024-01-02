@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\InventoryManagement\Models;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\InventoryManagement\Enums\AssetExchangeType;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 class Asset extends BaseModel implements Auditable
 {
@@ -79,18 +79,18 @@ class Asset extends BaseModel implements Auditable
         return $this->hasMany(MaintenanceActivity::class, 'asset_id');
     }
 
-    public function exchanges(): HasMany
-    {
-        return $this->hasMany(AssetExchange::class, 'asset_id');
-    }
-
     public function checkOuts(): HasMany
     {
-        return $this->exchanges()->where('type', AssetExchangeType::CheckOut);
+        return $this->hasMany(AssetCheckOut::class, 'asset_id');
     }
 
     public function checkIns(): HasMany
     {
-        return $this->exchanges()->where('type', AssetExchangeType::CheckIn);
+        return $this->hasMany(AssetCheckIn::class, 'asset_id');
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->status->classification === SystemAssetStatusClassification::Available;
     }
 }
