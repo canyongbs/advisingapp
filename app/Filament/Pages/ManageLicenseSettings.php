@@ -96,12 +96,16 @@ class ManageLicenseSettings extends SettingsPage
                     ->columns()
                     ->schema(
                         [
-                            TextInput::make('data.limits.crmSeats')
-                                ->label('CRM Seats')
+                            TextInput::make('data.limits.conversationalAiSeats')
+                                ->label('Artificial Intelligence Seats')
                                 ->numeric()
                                 ->required(),
-                            TextInput::make('data.limits.analyticsSeats')
-                                ->label('Analytics Seats')
+                            TextInput::make('data.limits.retentionCrmSeats')
+                                ->label('Student Success / Retention Seats')
+                                ->numeric()
+                                ->required(),
+                            TextInput::make('data.limits.recruitmentCrmSeats')
+                                ->label('Recruitment CRM Seats')
                                 ->numeric()
                                 ->required(),
                             TextInput::make('data.limits.emails')
