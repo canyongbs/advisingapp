@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Assistant\Policies;
 
-use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
@@ -90,8 +89,7 @@ class AssistantChatMessageLogPolicy implements FeatureAccessEnforcedPolicy
 
     protected function requiredFeatures(): array
     {
-        return [
-            Feature::PersonalAssistant,
-        ];
+        // TODO: Feature/License Gate | if has AI License
+        return [];
     }
 }

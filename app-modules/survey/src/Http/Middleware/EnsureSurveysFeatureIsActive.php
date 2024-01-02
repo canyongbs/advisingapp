@@ -45,7 +45,7 @@ class EnsureSurveysFeatureIsActive
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! app(LicenseSettings::class)->data->addons->conductSurveys) {
+        if (! app(LicenseSettings::class)->data->addons->onlineSurveys) {
             return response()->json(['error' => 'Surveys is not enabled.'], 403);
         }
 
