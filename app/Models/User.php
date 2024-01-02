@@ -53,6 +53,7 @@ use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -193,6 +194,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function caseloads(): HasMany
     {
         return $this->hasMany(Caseload::class);
+    }
+
+    public function licenses(): HasMany
+    {
+        return $this->hasMany(License::class, 'user_id');
     }
 
     public function subscriptions(): HasMany
