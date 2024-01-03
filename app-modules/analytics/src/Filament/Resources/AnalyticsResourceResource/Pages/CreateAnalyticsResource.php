@@ -2,7 +2,6 @@
 
 namespace AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource\Pages;
 
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -10,7 +9,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\Analytics\Enums\AnalyticsResourceCategory;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource;
 
 class CreateAnalyticsResource extends CreateRecord
@@ -31,13 +30,12 @@ class CreateAnalyticsResource extends CreateRecord
                         Textarea::make('description')
                             ->nullable()
                             ->string(),
-                        Select::make('category')
-                            ->required()
-                            ->options(AnalyticsResourceCategory::class)
-                            ->enum(AnalyticsResourceCategory::class),
-                        Select::make('source')
-                            ->relationship(titleAttribute: 'name'),
-                        TextInput::make('Url')
+                        Select::make('category_id')
+                            ->relationship('category', 'name')
+                            ->required(),
+                        Select::make('source_id')
+                            ->relationship('source', 'name'),
+                        TextInput::make('url')
                             ->nullable()
                             ->url(),
                         SpatieMediaLibraryFileUpload::make('thumbnail')

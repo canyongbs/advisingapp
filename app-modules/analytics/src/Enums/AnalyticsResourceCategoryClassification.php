@@ -4,7 +4,7 @@ namespace AdvisingApp\Analytics\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum AnalyticsResourceCategory: string implements HasLabel
+enum AnalyticsResourceCategoryClassification: string implements HasLabel
 {
     case Public = 'public';
 

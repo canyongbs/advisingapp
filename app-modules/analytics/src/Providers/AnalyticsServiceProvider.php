@@ -36,13 +36,14 @@
 
 namespace AdvisingApp\Analytics\Providers;
 
-use AdvisingApp\Analytics\Models\AnalyticsResource;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Analytics\AnalyticsPlugin;
+use AdvisingApp\Analytics\Models\AnalyticsResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
+use AdvisingApp\Analytics\Models\AnalyticsResourceCategory;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AnalyticsServiceProvider extends ServiceProvider
@@ -56,6 +57,7 @@ class AnalyticsServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'analytics_resource_source' => AnalyticsResourceSource::class,
+            'analytics_resource_category' => AnalyticsResourceCategory::class,
             'analytics_resource' => AnalyticsResource::class,
         ]);
 

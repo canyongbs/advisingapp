@@ -7,7 +7,6 @@ use Spatie\MediaLibrary\HasMedia;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Analytics\Enums\AnalyticsResourceCategory;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 class AnalyticsResource extends BaseModel implements Auditable, HasMedia
@@ -19,12 +18,13 @@ class AnalyticsResource extends BaseModel implements Auditable, HasMedia
         'name',
         'description',
         'url',
-        'category',
         'is_active',
+        'is_included_in_data_portal',
+        'category_id',
+        'source_id',
     ];
 
     protected $casts = [
-        'category' => AnalyticsResourceCategory::class,
         'is_active' => 'boolean',
         'is_included_in_data_portal' => 'boolean',
     ];
@@ -38,5 +38,10 @@ class AnalyticsResource extends BaseModel implements Auditable, HasMedia
     public function source(): BelongsTo
     {
         return $this->belongsTo(AnalyticsResourceSource::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(AnalyticsResourceCategory::class);
     }
 }

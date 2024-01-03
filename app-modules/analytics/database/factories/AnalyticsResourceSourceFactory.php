@@ -2,8 +2,8 @@
 
 namespace AdvisingApp\Analytics\Database\Factories;
 
-use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
 
 /**
  * @extends Factory<AnalyticsResourceSource>
@@ -16,7 +16,7 @@ class AnalyticsResourceSourceFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => str(fake()->unique()->word())->ucfirst(),
+            'name' => str(fake()->unique()->word())->ucfirst()->toString(),
         ];
     }
 }

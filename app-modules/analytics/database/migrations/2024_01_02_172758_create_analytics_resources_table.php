@@ -13,11 +13,11 @@ return new class () extends Migration {
             $table->string('name')->unique();
             $table->longText('description')->nullable();
             $table->string('url')->nullable();
-            $table->string('category');
             $table->boolean('is_active');
             $table->boolean('is_included_in_data_portal');
 
             $table->foreignUuid('source_id')->nullable()->constrained('analytics_resource_sources');
+            $table->foreignUuid('category_id')->constrained('analytics_resource_categories');
 
             $table->timestamps();
         });

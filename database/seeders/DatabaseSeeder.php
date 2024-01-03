@@ -58,6 +58,7 @@ use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
 use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceSourceSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
+use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceCategorySeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
@@ -111,6 +112,7 @@ class DatabaseSeeder extends Seeder
             AssetSeeder::class,
             MaintenanceProviderSeeder::class,
             AnalyticsResourceSourceSeeder::class,
+            AnalyticsResourceCategorySeeder::class,
             AnalyticsResourceSeeder::class,
         ]);
     }

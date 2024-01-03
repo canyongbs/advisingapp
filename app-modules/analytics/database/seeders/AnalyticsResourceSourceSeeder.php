@@ -2,9 +2,8 @@
 
 namespace AdvisingApp\Analytics\Database\Seeders;
 
-use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
 
 class AnalyticsResourceSourceSeeder extends Seeder
 {

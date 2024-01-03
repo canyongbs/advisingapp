@@ -1,6 +1,6 @@
 <?php
 
-namespace AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource\Pages;
+namespace AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceCategoryResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -11,20 +11,22 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource;
+use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceCategoryResource;
 
-class ListAnalyticsResourceSources extends ListRecords
+class ListAnalyticsResourceCategories extends ListRecords
 {
-    protected static string $resource = AnalyticsResourceSourceResource::class;
+    protected static string $resource = AnalyticsResourceCategoryResource::class;
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name')
-                    ->searchable()
+                TextColumn::make('name'),
+                TextColumn::make('classification')
                     ->sortable(),
+                TextColumn::make('description')
+                    ->limit(60),
                 TextColumn::make('resources_count')
                     ->label('# of Analytics Resources')
                     ->counts('resources')
