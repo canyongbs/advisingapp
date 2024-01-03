@@ -51,6 +51,7 @@ return new class () extends Migration {
             $table->foreignUuid('location_id')->constrained('asset_locations');
             $table->timestamp('purchase_date');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

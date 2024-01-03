@@ -48,6 +48,12 @@ return [
         'asset_type' => [
             '*',
         ],
+        'asset_check_in' => [
+            '*',
+        ],
+        'asset_check_out' => [
+            '*',
+        ],
         'maintenance_activity' => [
             '*',
         ],

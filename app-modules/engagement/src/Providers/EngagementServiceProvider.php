@@ -84,9 +84,9 @@ class EngagementServiceProvider extends ServiceProvider
                 ->withoutOverlapping();
         });
 
-        $this->registerRolesAndPermissions();
-
         $this->registerObservers();
+
+        $this->registerRolesAndPermissions();
     }
 
     public function registerObservers(): void

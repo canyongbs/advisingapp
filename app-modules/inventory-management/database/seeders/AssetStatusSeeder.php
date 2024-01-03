@@ -38,6 +38,7 @@ namespace AdvisingApp\InventoryManagement\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 class AssetStatusSeeder extends Seeder
 {
@@ -46,16 +47,20 @@ class AssetStatusSeeder extends Seeder
         AssetStatus::factory()
             ->createMany(
                 [
-                    ['name' => 'In Use'],
-                    ['name' => 'Available'],
+                    [
+                        'name' => 'Available',
+                        'classification' => SystemAssetStatusClassification::Available,
+                    ],
+                    [
+                        'name' => 'In Use',
+                        'classification' => SystemAssetStatusClassification::CheckedOut,
+                    ],
                     ['name' => 'Under Maintenance'],
                     ['name' => 'Out of Service'],
                     ['name' => 'Reserved'],
-                    ['name' => 'On Loan'],
                     ['name' => 'Awaiting Repair'],
                     ['name' => 'Lost'],
                     ['name' => 'Damaged'],
-                    ['name' => 'New'],
                 ]
             );
     }

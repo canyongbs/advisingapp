@@ -330,6 +330,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\CalendarEvent> $events
  * @property-read int|null $events_count
  * @property-read mixed $is_admin
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\License> $licenses
+ * @property-read int|null $licenses_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
@@ -822,6 +824,35 @@ namespace AdvisingApp\Audit\Models{
 
 namespace AdvisingApp\Authorization\Models{
 /**
+ * AdvisingApp\Authorization\Models\License
+ *
+ * @property string $id
+ * @property string $user_id
+ * @property \AdvisingApp\Authorization\Enums\LicenseType $type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|License newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|License newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|License onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|License query()
+ * @method static \Illuminate\Database\Eloquent\Builder|License whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|License whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|License whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|License whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|License whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|License whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|License withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|License withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperLicense {}
+}
+
+namespace AdvisingApp\Authorization\Models{
+/**
  * AdvisingApp\Authorization\Models\Permission
  *
  * @property string $id
@@ -1011,7 +1042,7 @@ namespace AdvisingApp\Campaign\Models{
  * @property string $campaign_id
  * @property \AdvisingApp\Campaign\Enums\CampaignActionType $type
  * @property array $data
- * @property string $execute_at
+ * @property \Illuminate\Support\Carbon $execute_at
  * @property string|null $last_execution_attempt_at
  * @property string|null $last_execution_attempt_error
  * @property string|null $successfully_executed_at
@@ -1311,6 +1342,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \AdvisingApp\Engagement\Database\Factories\EngagementFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasBeenDelivered()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement hasNotBeenDelivered()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement isAwaitingDelivery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isScheduled()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
@@ -1984,6 +2016,189 @@ namespace AdvisingApp\Interaction\Models{
  class IdeHelperInteractionType {}
 }
 
+namespace AdvisingApp\InventoryManagement\Models{
+/**
+ * AdvisingApp\InventoryManagement\Models\Asset
+ *
+ * @property string $id
+ * @property string $serial_number
+ * @property string $name
+ * @property string $description
+ * @property string $type_id
+ * @property string $status_id
+ * @property string $location_id
+ * @property string $purchase_date
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\InventoryManagement\Models\AssetLocation $location
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\MaintenanceActivity> $maintenanceActivities
+ * @property-read int|null $maintenance_activities_count
+ * @property-read \AdvisingApp\InventoryManagement\Models\AssetStatus $status
+ * @property-read \AdvisingApp\InventoryManagement\Models\AssetType $type
+ * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset wherePurchaseDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereSerialNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Asset whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAsset {}
+}
+
+namespace AdvisingApp\InventoryManagement\Models{
+/**
+ * AdvisingApp\InventoryManagement\Models\AssetLocation
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
+ * @property-read int|null $assets_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetLocationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetLocation whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAssetLocation {}
+}
+
+namespace AdvisingApp\InventoryManagement\Models{
+/**
+ * AdvisingApp\InventoryManagement\Models\AssetStatus
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
+ * @property-read int|null $assets_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetStatusFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAssetStatus {}
+}
+
+namespace AdvisingApp\InventoryManagement\Models{
+/**
+ * AdvisingApp\InventoryManagement\Models\AssetType
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\Asset> $assets
+ * @property-read int|null $assets_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetTypeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetType whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAssetType {}
+}
+
+namespace AdvisingApp\InventoryManagement\Models{
+/**
+ * AdvisingApp\InventoryManagement\Models\MaintenanceActivity
+ *
+ * @property string $id
+ * @property string $asset_id
+ * @property string|null $maintenance_provider_id
+ * @property string $details
+ * @property \Illuminate\Support\Carbon|null $scheduled_date
+ * @property \Illuminate\Support\Carbon|null $completed_date
+ * @property \AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus $status
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\InventoryManagement\Models\Asset $asset
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\InventoryManagement\Models\MaintenanceProvider|null $maintenanceProvider
+ * @method static \AdvisingApp\InventoryManagement\Database\Factories\MaintenanceActivityFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereAssetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereCompletedDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereDetails($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereMaintenanceProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereScheduledDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperMaintenanceActivity {}
+}
+
+namespace AdvisingApp\InventoryManagement\Models{
+/**
+ * AdvisingApp\InventoryManagement\Models\MaintenanceProvider
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\MaintenanceActivity> $maintenanceActivities
+ * @property-read int|null $maintenance_activities_count
+ * @method static \AdvisingApp\InventoryManagement\Database\Factories\MaintenanceProviderFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceProvider whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperMaintenanceProvider {}
+}
+
 namespace AdvisingApp\KnowledgeBase\Models{
 /**
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory
@@ -2022,8 +2237,8 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @property string $id
  * @property string $question
  * @property bool $public
- * @property string|null $solution
- * @property string|null $notes
+ * @property array|null $solution
+ * @property array|null $notes
  * @property string|null $quality_id
  * @property string|null $status_id
  * @property string|null $category_id
@@ -2194,6 +2409,38 @@ namespace AdvisingApp\MeetingCenter\Models{
  class IdeHelperCalendarEvent {}
 }
 
+namespace AdvisingApp\MeetingCenter\Models{
+/**
+ * AdvisingApp\MeetingCenter\Models\Event
+ *
+ * @property string $id
+ * @property string $title
+ * @property string|null $description
+ * @property string|null $location
+ * @property int|null $capacity
+ * @property \Illuminate\Support\Carbon $starts_at
+ * @property \Illuminate\Support\Carbon $ends_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Event newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Event newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Event query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereCapacity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereStartsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Event whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEvent {}
+}
+
 namespace AdvisingApp\Notification\Models{
 /**
  * AdvisingApp\Notification\Models\OutboundDeliverable
@@ -2290,7 +2537,7 @@ namespace AdvisingApp\Prospect\Models{
  * @property string|null $phone
  * @property string|null $address
  * @property string|null $address_2
- * @property string|null $birthdate
+ * @property \Illuminate\Support\Carbon|null $birthdate
  * @property string|null $hsgrad
  * @property string|null $assigned_to_id
  * @property string|null $created_by_id
@@ -2744,6 +2991,7 @@ namespace AdvisingApp\StudentDataModel\Models{
  * AdvisingApp\StudentDataModel\Models\Student
  *
  * @property string $display_name
+ * @property string $mobile
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Alert\Models\Alert> $alerts
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
