@@ -21,7 +21,6 @@ class AssetCheckOutFactory extends Factory
 
         return [
             'asset_id' => Asset::factory(),
-            // TODO Add variance to this column so that some check outs do not have corresponding check ins
             'asset_check_in_id' => null,
             'checked_out_by_type' => $checkedOutBy->getMorphClass(),
             'checked_out_by_id' => $checkedOutBy->getKey(),
