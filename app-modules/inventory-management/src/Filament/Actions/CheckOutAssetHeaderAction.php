@@ -12,7 +12,6 @@ use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
-use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 class CheckOutAssetHeaderAction extends Action
 {
@@ -83,7 +82,7 @@ class CheckOutAssetHeaderAction extends Action
             ]);
 
             // TODO We may want to move this to an observer in order to clean up...
-            $checkedOutStatus = AssetStatus::where('classification', SystemAssetStatusClassification::CheckedOut)->first();
+            $checkedOutStatus = AssetStatus::checkedOut()->first();
 
             $asset->update([
                 'status_id' => $checkedOutStatus->id,

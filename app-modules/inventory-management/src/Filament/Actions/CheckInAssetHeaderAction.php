@@ -3,10 +3,11 @@
 namespace AdvisingApp\InventoryManagement\Filament\Actions;
 
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
-use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 class CheckInAssetHeaderAction extends Action
 {
@@ -31,6 +32,16 @@ class CheckInAssetHeaderAction extends Action
             Textarea::make('notes')
                 ->autofocus()
                 ->required(),
+            Select::make('status_id')
+                ->relationship('status', 'name')
+                ->preload()
+                ->label('Status')
+                ->default(AssetStatus::available()->first()->id)
+                ->required()
+                ->exists((new AssetStatus())->getTable(), 'id'),
+            DateTimePicker::make('checked_in_at')
+                ->label('Checked in at')
+                ->default(now()),
         ]);
 
         $this->action(function (array $data): void {
@@ -51,11 +62,8 @@ class CheckInAssetHeaderAction extends Action
                 'checked_in_at' => now(),
             ]);
 
-            // TODO We may want to move this to an observer in order to clean up...
-            $checkedInStatus = AssetStatus::where('classification', SystemAssetStatusClassification::Available)->first();
-
             $asset->update([
-                'status_id' => $checkedInStatus->id,
+                'status_id' => $data['status_id'],
             ]);
 
             $this->success();

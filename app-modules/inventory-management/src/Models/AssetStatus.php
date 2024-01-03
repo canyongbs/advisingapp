@@ -64,4 +64,14 @@ class AssetStatus extends BaseModel implements Auditable
     {
         return $this->hasMany(Asset::class, 'status_id');
     }
+
+    public function scopeAvailable(): void
+    {
+        $this->where('classification', SystemAssetStatusClassification::Available);
+    }
+
+    public function scopeCheckedOut(): void
+    {
+        $this->where('classification', SystemAssetStatusClassification::CheckedOut);
+    }
 }
