@@ -80,11 +80,8 @@ class CheckOutAssetHeaderAction extends Action
                 'expected_check_in_at' => $data['expected_check_in_at'],
             ]);
 
-            // TODO We may want to move this to an observer in order to clean up...
-            $checkedOutStatus = AssetStatus::checkedOut()->first();
-
             $asset->update([
-                'status_id' => $checkedOutStatus->id,
+                'status_id' => AssetStatus::checkedOut()->first()->id,
             ]);
 
             $this->success();

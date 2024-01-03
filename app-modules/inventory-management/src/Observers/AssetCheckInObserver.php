@@ -42,9 +42,6 @@ class AssetCheckInObserver
 {
     public function created(AssetCheckIn $checkIn): void
     {
-        ray('AssetCheckInObserver::created()');
-        ray($checkIn->asset->latestCheckOut);
-
         $checkIn->asset->latestCheckOut->update([
             'asset_check_in_id' => $checkIn->id,
         ]);

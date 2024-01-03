@@ -88,6 +88,11 @@ class Asset extends BaseModel implements Auditable
         return $this->hasMany(AssetCheckOut::class, 'asset_id');
     }
 
+    public function checkIns(): HasMany
+    {
+        return $this->hasMany(AssetCheckIn::class, 'asset_id');
+    }
+
     public function latestCheckOut(): HasOne
     {
         return $this->hasOne(AssetCheckOut::class, 'asset_id')
@@ -98,11 +103,6 @@ class Asset extends BaseModel implements Auditable
     {
         return $this->hasOne(AssetCheckIn::class, 'asset_id')
             ->latest('checked_in_at');
-    }
-
-    public function checkIns(): HasMany
-    {
-        return $this->hasMany(AssetCheckIn::class, 'asset_id');
     }
 
     public function isAvailable(): bool
