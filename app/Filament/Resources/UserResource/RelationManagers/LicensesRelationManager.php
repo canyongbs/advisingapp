@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Validation\Rule;
@@ -32,6 +33,12 @@ class LicensesRelationManager extends RelationManager
                             ->whereNull('deleted_at'),
                     )
                     ->rule(new LicenseTypeUsageRule())
+                    ->disableOptionWhen(function (string $value) {
+                        /** @var User $ownerRecord */
+                        $ownerRecord = $this->getOwnerRecord();
+
+                        return ! LicenseType::from($value)->hasAvailableLicenses() || $ownerRecord->licenses()->where('type', $value)->exists();
+                    })
                     ->required(),
             ]);
     }
