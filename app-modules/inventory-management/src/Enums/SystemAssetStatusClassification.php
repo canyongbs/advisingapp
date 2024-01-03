@@ -34,19 +34,27 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\InventoryManagement\Enums;
 
-return new class () extends Migration {
-    public function up(): void
+use Filament\Support\Contracts\HasLabel;
+
+enum SystemAssetStatusClassification: string implements HasLabel
+{
+    // TODO Implement a rule that only one asset status can be classified as this
+    case Available = 'available';
+
+    // TODO Implement a rule that only one asset status can be classified as this
+    case CheckedOut = 'checked_out';
+
+    case Unavailable = 'unavailable';
+
+    case Custom = 'custom';
+
+    public function getLabel(): ?string
     {
-        Schema::create('asset_statuses', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('classification');
-            $table->string('name');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        return match ($this) {
+            self::CheckedOut => 'Checked Out',
+            default => $this->name
+        };
     }
-};
+}

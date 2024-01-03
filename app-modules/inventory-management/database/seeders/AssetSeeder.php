@@ -48,9 +48,9 @@ class AssetSeeder extends Seeder
             ->count(10)
             ->create()
             ->each(function (Asset $asset) {
-                $maintenanceActivitiesCount = rand(0, 10);
+                $entityCount = rand(0, 10);
 
-                for ($i = 0; $i < $maintenanceActivitiesCount; $i++) {
+                for ($i = 0; $i < $entityCount; $i++) {
                     MaintenanceActivity::factory()
                         ->randomizeState()
                         ->for($asset, 'asset')

@@ -34,19 +34,16 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\InventoryManagement\Observers;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
+
+class AssetCheckInObserver
+{
+    public function created(AssetCheckIn $checkIn): void
     {
-        Schema::create('asset_statuses', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('classification');
-            $table->string('name');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        $checkIn->asset->latestCheckOut->update([
+            'asset_check_in_id' => $checkIn->id,
+        ]);
     }
-};
+}
