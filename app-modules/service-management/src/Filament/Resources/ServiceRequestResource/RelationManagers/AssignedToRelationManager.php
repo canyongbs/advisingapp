@@ -46,6 +46,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Query\Expression;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use App\Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
@@ -80,22 +81,21 @@ class AssignedToRelationManager extends RelationManager
                 Action::make('reassign-service-request')
                     ->label('Reassign Service Request')
                     ->color('gray')
-                    ->action(function (array $data): void {
-                        /** @var ServiceRequest $serviceRequest */
-                        $serviceRequest = $this->ownerRecord;
-
-                        $serviceRequest->assignments()->create([
-                            'user_id' => $data['userId'],
-                            'assigned_by_id' => auth()->user()?->id ?? null,
-                            'assigned_at' => now(),
-                            'status' => ServiceRequestAssignmentStatus::Active,
-                        ]);
-                    })
+                    ->action(fn (array $data) => $this->getOwnerRecord()->assignments()->create([
+                        'user_id' => $data['userId'],
+                        'assigned_by_id' => auth()->user()?->id ?? null,
+                        'assigned_at' => now(),
+                        'status' => ServiceRequestAssignmentStatus::Active,
+                    ]))
                     ->form([
                         Select::make('userId')
                             ->label('Reassign Service Request To')
                             ->searchable()
-                            ->getSearchResultsUsing(fn (string $search): array => User::whereRaw('LOWER(name) LIKE ? ', ['%' . str($search)->lower() . '%'])->pluck('name', 'id')->toArray())
+                            ->getSearchResultsUsing(fn (string $search): array => User::query()
+                                ->hasLicense($this->getOwnerRecord()->respondent?->getLicenseType())
+                                ->where(new Expression('lower(name)'), 'like', '%' . str($search)->lower() . '%')
+                                ->pluck('name', 'id')
+                                ->all())
                             ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)
                             ->placeholder('Search for and select a User')
                             ->required(),
@@ -105,5 +105,13 @@ class AssignedToRelationManager extends RelationManager
                 ViewAction::make()
                     ->url(fn (ServiceRequestAssignment $assignment) => UserResource::getUrl('view', ['record' => $assignment->user])),
             ]);
+    }
+
+    public function getOwnerRecord(): ServiceRequest
+    {
+        /** @var ServiceRequest $record */
+        $record = parent::getOwnerRecord();
+
+        return $record;
     }
 }

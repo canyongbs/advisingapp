@@ -52,6 +52,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Actions\DetachBulkAction;
@@ -80,7 +81,11 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->native(false),
                 Select::make('assigned_to')
                     ->label('Assigned To')
-                    ->relationship('assignedTo', 'name')
+                    ->relationship(
+                        'assignedTo',
+                        'name',
+                        fn (Builder $query) => $query->hasLicense($this->getOwnerRecord()->getLicenseType()),
+                    )
                     ->nullable()
                     ->searchable(['name', 'email'])
                     ->default(auth()->id()),
@@ -122,7 +127,11 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ),
                 SelectFilter::make('assignedTo')
                     ->label('Assigned To')
-                    ->relationship('assignedTo', 'name')
+                    ->relationship(
+                        'assignedTo',
+                        'name',
+                        fn (Builder $query) => $query->hasLicense($this->getOwnerRecord()->getLicenseType()),
+                    )
                     ->searchable()
                     ->multiple(),
                 SelectFilter::make('status')

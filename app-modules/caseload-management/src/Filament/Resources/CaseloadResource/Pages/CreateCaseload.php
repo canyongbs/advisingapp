@@ -37,6 +37,7 @@
 namespace AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pages;
 
 use Iterator;
+use Exception;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
@@ -59,6 +60,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Actions\Imports\Jobs\ImportCsv;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Tables\Concerns\InteractsWithTable;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
@@ -98,7 +100,8 @@ class CreateCaseload extends CreateRecord implements HasTable
                             $this->resetTableFiltersForm();
                         }),
                 ])
-                ->columns(2),
+                ->columns(2)
+                ->visible(auth()->user()->hasLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])),
             Step::make('Identify Population')
                 ->schema([
                     Select::make('type')
@@ -121,7 +124,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                         ->required()
                         ->hiddenLabel()
                         ->visible(fn (Get $get): bool => CaseloadType::tryFromCaseOrValue($get('type')) === CaseloadType::Static)
-                        ->helperText(fn (Get $get): string => match (CaseloadModel::tryFromCaseOrValue($get('model'))) {
+                        ->helperText(fn (): string => match ($this->getCaseloadModel()) {
                             CaseloadModel::Student => 'Upload a file of Student IDs or Other IDs, with each on a new line.',
                             CaseloadModel::Prospect => 'Upload a file of prospect email addresses, with each on a new line.',
                         }),
@@ -131,21 +134,25 @@ class CreateCaseload extends CreateRecord implements HasTable
 
     public function table(Table $table): Table
     {
+        $model = $this->getCaseloadModel();
+
         return $table
-            ->columns(CaseloadResource::columns($this->data['model']))
-            ->filters(CaseloadResource::filters($this->data['model']), layout: FiltersLayout::AboveContent)
-            // ->actions(CaseloadResource::actions($this->data['model']))
-            ->query(fn () => $this->data['model']->query());
+            ->columns(CaseloadResource::columns($model))
+            ->filters(CaseloadResource::filters($model), layout: FiltersLayout::AboveContent)
+            // ->actions(CaseloadResource::actions($model))
+            ->query(fn () => $model->query());
     }
 
     public function afterCreate(): void
     {
-        if (CaseloadType::tryFromCaseOrValue($this->data['type']) === CaseloadType::Dynamic) {
+        $data = $this->form->getRawState();
+
+        if (CaseloadType::tryFromCaseOrValue($data['type']) === CaseloadType::Dynamic) {
             return;
         }
 
         /** @var TemporaryUploadedFile $file */
-        $file = Arr::first($this->data['file']);
+        $file = Arr::first($data['file']);
 
         $fileStream = $this->getUploadedFileStream($file);
 
@@ -181,7 +188,7 @@ class CreateCaseload extends CreateRecord implements HasTable
         $import->user()->associate($user);
         $import->file_name = $file->getClientOriginalName();
         $import->file_path = $file->getRealPath();
-        $import->importer = CaseloadModel::tryFromCaseOrValue($this->data['model'])->getSubjectImporter();
+        $import->importer = $this->getCaseloadModel()->getSubjectImporter();
         $import->total_rows = $totalRows;
         $import->save();
 
@@ -289,9 +296,27 @@ class CreateCaseload extends CreateRecord implements HasTable
         ]));
     }
 
+    protected function getCaseloadModel(): CaseloadModel
+    {
+        $hasStudents = auth()->user()->hasLicense(LicenseType::RetentionCrm);
+        $hasProspects = auth()->user()->hasLicense(LicenseType::RecruitmentCrm);
+
+        if ($hasStudents && $hasProspects) {
+            return CaseloadModel::tryFromCaseOrValue($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.');
+        }
+
+        return match (true) {
+            $hasStudents => CaseloadModel::Student,
+            $hasProspects => CaseloadModel::Prospect,
+            default => throw new Exception('User cannot access students or prospects.'),
+        };
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if (CaseloadType::tryFromCaseOrValue($this->data['type']) === CaseloadType::Dynamic) {
+        $data['model'] = $this->getCaseloadModel();
+
+        if (CaseloadType::tryFromCaseOrValue($data['type']) === CaseloadType::Dynamic) {
             $data['filters'] = $this->tableFilters ?? [];
         } else {
             $data['filters'] = [];

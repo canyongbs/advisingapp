@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -366,6 +332,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|User hasAnyLicense(\AdvisingApp\Authorization\Enums\LicenseType|array|string|null $type)
+ * @method static \Illuminate\Database\Eloquent\Builder|User hasLicense(\AdvisingApp\Authorization\Enums\LicenseType|array|string|null $type)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User onlyTrashed()
@@ -434,6 +402,7 @@ namespace AdvisingApp\Alert\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @method static \AdvisingApp\Alert\Database\Factories\AlertFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Alert licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Alert onlyTrashed()
@@ -613,6 +582,7 @@ namespace AdvisingApp\Application\Models{
  * @property-read \AdvisingApp\Application\Models\ApplicationSubmissionState $state
  * @property-read \AdvisingApp\Application\Models\Application $submissible
  * @method static \AdvisingApp\Application\Database\Factories\ApplicationSubmissionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ApplicationSubmission query()
@@ -832,6 +802,8 @@ namespace AdvisingApp\Authorization\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|License newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|License newQuery()
@@ -1345,6 +1317,7 @@ namespace AdvisingApp\Engagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isAwaitingDelivery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isNotPartOfABatch()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement isScheduled()
+ * @method static \Illuminate\Database\Eloquent\Builder|Engagement licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Engagement query()
@@ -1719,6 +1692,7 @@ namespace AdvisingApp\Form\Models{
  * @property-read \AdvisingApp\Form\Models\Form $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission canceled()
  * @method static \AdvisingApp\Form\Database\Factories\FormSubmissionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FormSubmission notCanceled()
@@ -1802,6 +1776,7 @@ namespace AdvisingApp\Interaction\Models{
  * @property-read \AdvisingApp\Interaction\Models\InteractionType|null $type
  * @property-read \App\Models\User|null $user
  * @method static \AdvisingApp\Interaction\Database\Factories\InteractionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Interaction licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Interaction query()
@@ -2501,6 +2476,7 @@ namespace AdvisingApp\Notification\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subscribable
  * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Subscription licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Subscription query()
@@ -2719,6 +2695,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestStatus|null $status
  * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestType|null $type
  * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest onlyTrashed()
@@ -3204,6 +3181,7 @@ namespace AdvisingApp\Survey\Models{
  * @property-read \AdvisingApp\Survey\Models\Survey $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission canceled()
  * @method static \AdvisingApp\Survey\Database\Factories\SurveySubmissionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SurveySubmission notCanceled()
@@ -3252,6 +3230,7 @@ namespace AdvisingApp\Task\Models{
  * @property-read \App\Models\User|null $createdBy
  * @method static \Illuminate\Database\Eloquent\Builder|Task byNextDue()
  * @method static \AdvisingApp\Task\Database\Factories\TaskFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Task licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|Task newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Task onlyTrashed()

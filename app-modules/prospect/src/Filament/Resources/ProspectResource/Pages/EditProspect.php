@@ -47,8 +47,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class EditProspect extends EditRecord
@@ -136,12 +138,16 @@ class EditProspect extends EditRecord
                     ->maxValue(now()->addYears(25)->year),
                 Select::make('assigned_to_id')
                     ->label('Assigned To')
-                    ->relationship('assignedTo', 'name')
+                    ->relationship(
+                        'assignedTo',
+                        'name',
+                        fn (Builder $query) => $query->hasLicense(LicenseType::RecruitmentCrm),
+                    )
                     ->searchable()
                     ->nullable()
                     ->exists(
                         table: (new User())->getTable(),
-                        column: (new User())->getKeyName()
+                        column: (new User())->getKeyName(),
                     ),
                 Select::make('created_by_id')
                     ->label('Created By')

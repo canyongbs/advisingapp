@@ -38,6 +38,7 @@ namespace AdvisingApp\CaseloadManagement\Models;
 
 use App\Models\User;
 use App\Models\BaseModel;
+use App\Models\Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -96,5 +97,23 @@ class Caseload extends BaseModel
                     ->pluck(resolve($class)->getKeyName()),
             )
             ->get();
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            if (! auth()->check()) {
+                return;
+            }
+
+            /** @var Authenticatable $user */
+            $user = auth()->user();
+
+            foreach (CaseloadModel::cases() as $model) {
+                if (! $user->hasLicense($model->getLicenseType())) {
+                    $builder->where('model', '!=', $model);
+                }
+            }
+        });
     }
 }

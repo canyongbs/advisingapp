@@ -47,6 +47,7 @@ use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -71,9 +72,9 @@ class EditInteraction extends EditRecord
                     ->searchable()
                     ->required()
                     ->types([
-                        ...(auth()->user()->canAccessStudents() ? [MorphToSelect\Type::make(Student::class)
+                        ...(auth()->user()->hasLicense(LicenseType::RetentionCrm) ? [MorphToSelect\Type::make(Student::class)
                             ->titleAttribute(Student::displayNameKey())] : []),
-                        ...(auth()->user()->canAccessProspects() ? [MorphToSelect\Type::make(Prospect::class)
+                        ...(auth()->user()->hasLicense(LicenseType::RecruitmentCrm) ? [MorphToSelect\Type::make(Prospect::class)
                             ->titleAttribute(Prospect::displayNameKey())] : []),
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')

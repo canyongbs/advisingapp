@@ -38,13 +38,14 @@ namespace AdvisingApp\StudentDataModel\Policies;
 
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (! $authenticatable->canAccessStudents()) {
+        if (! $authenticatable->hasLicense(LicenseType::RetentionCrm)) {
             return Response::deny('You do not have permission to view students.');
         }
 

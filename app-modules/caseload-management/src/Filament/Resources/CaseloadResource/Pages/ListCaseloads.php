@@ -44,6 +44,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class ListCaseloads extends ListRecords
@@ -59,7 +60,8 @@ class ListCaseloads extends ListRecords
                     ->sortable(),
                 TextColumn::make('model')
                     ->label('Population')
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(auth()->user()->hasLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])),
                 TextColumn::make('type')
                     ->sortable(),
                 TextColumn::make('user.name')

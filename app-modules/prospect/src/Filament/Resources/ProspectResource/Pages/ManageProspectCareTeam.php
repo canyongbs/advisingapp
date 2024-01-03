@@ -45,8 +45,10 @@ use App\Filament\Resources\UserResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
@@ -92,6 +94,9 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->color('primary')
                     ->recordSelect(
                         fn (Select $select) => $select->placeholder('Select a User'),
+                    )
+                    ->recordSelectOptionsQuery(
+                        fn (Builder $query) => $query->hasLicense(LicenseType::RecruitmentCrm),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Prospect $prospect */

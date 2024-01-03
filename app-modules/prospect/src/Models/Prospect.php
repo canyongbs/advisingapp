@@ -39,15 +39,18 @@ namespace AdvisingApp\Prospect\Models;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use Illuminate\Database\Eloquent\Builder;
 use OpenSearch\ScoutDriverPlus\Searchable;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -217,7 +220,8 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
         )
             ->using(CareTeam::class)
             ->withPivot('id')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->hasLicense($this->getLicenseType());
     }
 
     public function formSubmissions(): MorphMany
@@ -259,7 +263,29 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
         )
             ->using(Subscription::class)
             ->withPivot('id')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->hasLicense($this->getLicenseType());
+    }
+
+    public function getLicenseType(): LicenseType
+    {
+        return LicenseType::RecruitmentCrm;
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            if (! auth()->check()) {
+                return;
+            }
+
+            /** @var Authenticatable $user */
+            $user = auth()->user();
+
+            if (! $user->hasLicense(LicenseType::RecruitmentCrm)) {
+                $builder->whereRaw('1 = 0');
+            }
+        });
     }
 
     protected function serializeDate(DateTimeInterface $date): string

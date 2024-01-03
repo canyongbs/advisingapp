@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
-use App\Filament\Fields\EducatableSelect;
 use Filament\Forms\Form;
 use Illuminate\Support\Arr;
 use AdvisingApp\Task\Models\Task;
@@ -44,16 +43,16 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Fields\EducatableSelect;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Forms\Components\MorphToSelect\Type;
+use AdvisingApp\Task\Filament\Concerns\TaskForm;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
 
 class CreateTask extends CreateRecord
 {
+    use TaskForm;
+
     protected static string $resource = TaskResource::class;
 
     public function form(Form $form): Form
@@ -72,12 +71,13 @@ class CreateTask extends CreateRecord
                     ->native(false),
                 Select::make('assigned_to')
                     ->label('Assigned To')
-                    ->relationship('assignedTo', 'name')
+                    ->relationship('assignedTo', 'name', $this->scopeAssignmentRelationshipBasedOnConcern())
                     ->nullable()
                     ->searchable(['name', 'email'])
                     ->default(auth()->id()),
                 EducatableSelect::make('concern')
-                    ->label('Related To'),
+                    ->label('Related To')
+                    ->afterStateUpdated($this->updateAssignmentAfterConcernSelected()),
             ]);
     }
 

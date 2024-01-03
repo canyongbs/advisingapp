@@ -39,11 +39,16 @@ namespace AdvisingApp\Engagement\Policies;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class EngagementPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (! $authenticatable->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
+            return Response::deny('You do not have permission to view engagements.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'engagement.view-any',
             denyResponse: 'You do not have permission to view engagements.'
@@ -52,6 +57,10 @@ class EngagementPolicy
 
     public function view(Authenticatable $authenticatable, Engagement $engagement): Response
     {
+        if (! $authenticatable->hasLicense($engagement->recipient?->getLicenseType())) {
+            return Response::deny('You do not have permission to view this engagement.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['engagement.*.view', "engagement.{$engagement->id}.view"],
             denyResponse: 'You do not have permission to view this engagement.'
@@ -72,6 +81,10 @@ class EngagementPolicy
             return Response::deny('You do not have permission to update this engagement because it has already been delivered.');
         }
 
+        if (! $authenticatable->hasLicense($engagement->recipient?->getLicenseType())) {
+            return Response::deny('You do not have permission to update this engagement.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['engagement.*.update', "engagement.{$engagement->id}.update"],
             denyResponse: 'You do not have permission to update this engagement.'
@@ -84,6 +97,10 @@ class EngagementPolicy
             return Response::deny('You do not have permission to delete this engagement because it has already been delivered.');
         }
 
+        if (! $authenticatable->hasLicense($engagement->recipient?->getLicenseType())) {
+            return Response::deny('You do not have permission to delete this engagement.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['engagement.*.delete', "engagement.{$engagement->id}.delete"],
             denyResponse: 'You do not have permission to delete this engagement.'
@@ -92,6 +109,10 @@ class EngagementPolicy
 
     public function restore(Authenticatable $authenticatable, Engagement $engagement): Response
     {
+        if (! $authenticatable->hasLicense($engagement->recipient?->getLicenseType())) {
+            return Response::deny('You do not have permission to restore this engagement.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['engagement.*.restore', "engagement.{$engagement->id}.restore"],
             denyResponse: 'You do not have permission to restore this engagement.'
@@ -102,6 +123,10 @@ class EngagementPolicy
     {
         if ($engagement->hasBeenDelivered()) {
             return Response::deny('You cannot permanently delete this engagement because it has already been delivered.');
+        }
+
+        if (! $authenticatable->hasLicense($engagement->recipient?->getLicenseType())) {
+            return Response::deny('You do not have permission to permanently delete this engagement.');
         }
 
         return $authenticatable->canOrElse(

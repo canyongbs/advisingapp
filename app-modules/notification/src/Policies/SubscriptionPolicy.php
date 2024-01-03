@@ -52,6 +52,10 @@ class SubscriptionPolicy
 
     public function view(Authenticatable $authenticatable, Subscription $subscription): Response
     {
+        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+            return Response::deny('You do not have permission to view this alert.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['subscription.*.view', "subscription.{$subscription->id}.view"],
             denyResponse: 'You do not have permission to view this subscription.'
@@ -68,6 +72,10 @@ class SubscriptionPolicy
 
     public function update(Authenticatable $authenticatable, Subscription $subscription): Response
     {
+        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+            return Response::deny('You do not have permission to update this subscription.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['subscription.*.update', "subscription.{$subscription->id}.update"],
             denyResponse: 'You do not have permission to update this subscription.'
@@ -76,6 +84,10 @@ class SubscriptionPolicy
 
     public function delete(Authenticatable $authenticatable, Subscription $subscription): Response
     {
+        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+            return Response::deny('You do not have permission to delete this subscription.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['subscription.*.delete', "subscription.{$subscription->id}.delete"],
             denyResponse: 'You do not have permission to delete this subscription.'
@@ -84,6 +96,10 @@ class SubscriptionPolicy
 
     public function restore(Authenticatable $authenticatable, Subscription $subscription): Response
     {
+        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+            return Response::deny('You do not have permission to restore this subscription.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['subscription.*.restore', "subscription.{$subscription->id}.restore"],
             denyResponse: 'You do not have permission to restore this subscription.'
@@ -92,6 +108,10 @@ class SubscriptionPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Subscription $subscription): Response
     {
+        if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
+            return Response::deny('You do not have permission to permanently delete this subscription.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['subscription.*.force-delete', "subscription.{$subscription->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this subscription.'

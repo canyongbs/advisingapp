@@ -2,20 +2,17 @@
 
 namespace App\Filament\Fields;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Closure;
-use Exception;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Concerns\HasName;
-use Filament\Forms\Components\Group;
+use App\Models\Authenticatable;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Forms\Components\Component;
+use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Concerns\HasName;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Forms\Components\MorphToSelect\Type;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class EducatableSelect extends Component
@@ -62,9 +59,12 @@ class EducatableSelect extends Component
 
     public function getChildComponents(): array
     {
+        /** @var Authenticatable $user */
+        $user = auth()->user();
+
         $type = match (true) {
-            auth()->user()->hasLicense(LicenseType::RetentionCrm) => static::getStudentType(),
-            auth()->user()->hasLicense(LicenseType::RecruitmentCrm) => static::getProspectType(),
+            $user->hasLicense(LicenseType::RetentionCrm) => static::getStudentType(),
+            $user->hasLicense(LicenseType::RecruitmentCrm) => static::getProspectType(),
             default => null,
         };
 
@@ -83,7 +83,10 @@ class EducatableSelect extends Component
                 ->getSearchResultsUsing($type->getSearchResultsUsing)
                 ->getOptionLabelUsing($type->getOptionLabelUsing)
                 ->required($this->isRequired())
-                ->searchable(),
+                ->searchable()
+                ->afterStateUpdated(function () {
+                    $this->callAfterStateUpdated();
+                }),
         ];
     }
 

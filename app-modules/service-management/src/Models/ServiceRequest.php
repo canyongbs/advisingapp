@@ -60,6 +60,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Identifiable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
@@ -75,6 +76,7 @@ use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\Servic
  */
 class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubscription, Identifiable, ExecutableFromACampaignAction
 {
+    use BelongsToEducatable;
     use SoftDeletes;
     use PowerJoins;
     use AuditableTrait;
@@ -242,6 +244,13 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         } catch (Exception $e) {
             return $e->getMessage();
         }
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            $builder->licensedToEducatable('respondent');
+        });
     }
 
     protected function serializeDate(DateTimeInterface $date): string

@@ -36,12 +36,11 @@
 
 namespace App\Models;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Panel;
 use DateTimeInterface;
+use Illuminate\Support\Arr;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
-use Illuminate\Support\Arr;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Team\Models\TeamUser;
@@ -50,6 +49,7 @@ use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Models\Role;
 use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
@@ -58,6 +58,7 @@ use AdvisingApp\Authorization\Models\License;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Notification\Models\Subscription;
@@ -376,16 +377,15 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->avatar_url ?: $this->getFirstTemporaryUrl(now()->addMinutes(5), 'avatar', 'avatar-height-250px');
     }
 
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
-    }
-
     /**
-     * @param LicenseType | string | array<LicenseType | string> $type
+     * @param LicenseType | string | array<LicenseType | string> | null $type
      */
-    public function hasLicense(LicenseType | string | array $type): bool
+    public function hasLicense(LicenseType | string | array | null $type): bool
     {
+        if (blank($type)) {
+            return true;
+        }
+
         foreach (Arr::wrap($type) as $type) {
             if (! ($type instanceof LicenseType)) {
                 $type = LicenseType::from($type);
@@ -400,10 +400,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /**
-     * @param LicenseType | string | array<LicenseType | string> $type
+     * @param LicenseType | string | array<LicenseType | string> | null $type
      */
-    public function hasAnyLicense(LicenseType | string | array $type): bool
+    public function hasAnyLicense(LicenseType | string | array | null $type): bool
     {
+        if (blank($type)) {
+            return true;
+        }
+
         foreach (Arr::wrap($type) as $type) {
             if (! ($type instanceof LicenseType)) {
                 $type = LicenseType::from($type);
@@ -415,5 +419,41 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         }
 
         return false;
+    }
+
+    /**
+     * @param LicenseType | string | array<LicenseType | string> | null $type
+     */
+    public function scopeHasLicense(Builder $query, LicenseType | string | array | null $type): Builder
+    {
+        if (blank($type)) {
+            return $query;
+        }
+
+        foreach (Arr::wrap($type) as $type) {
+            $query->whereRelation('licenses', 'type', $type);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param LicenseType | string | array<LicenseType | string> | null $type
+     */
+    public function scopeHasAnyLicense(Builder $query, LicenseType | string | array | null $type): Builder
+    {
+        if (blank($type)) {
+            return $query;
+        }
+
+        return $query->whereHas(
+            'licenses',
+            fn (Builder $query) => $query->whereIn('type', Arr::wrap($type)),
+        );
+    }
+
+    protected function serializeDate(DateTimeInterface $date): string
+    {
+        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 }

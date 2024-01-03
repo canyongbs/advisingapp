@@ -44,8 +44,10 @@ use Filament\Tables\Columns\TextColumn;
 use App\Filament\Resources\UserResource;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -94,6 +96,9 @@ class ManageStudentSubscriptions extends ManageRelatedRecords
                     ->color('primary')
                     ->recordSelect(
                         fn (Select $select) => $select->placeholder('Select a User'),
+                    )
+                    ->recordSelectOptionsQuery(
+                        fn (Builder $query) => $query->hasLicense(LicenseType::RetentionCrm),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Student $student */

@@ -43,9 +43,9 @@ use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Timeline\Models\Timeline;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -56,6 +56,7 @@ use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
 /**
@@ -66,6 +67,7 @@ use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline
 {
     use AuditableTrait;
+    use BelongsToEducatable;
 
     protected $fillable = [
         'user_id',
@@ -204,5 +206,12 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
             'student email' => $this->recipient->getAttribute($this->recipient->displayEmailKey()),
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            $builder->licensedToEducatable('recipient');
+        });
     }
 }

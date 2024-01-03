@@ -39,12 +39,13 @@ namespace AdvisingApp\Prospect\Policies;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class ProspectPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (! $authenticatable->canAccessProspects()) {
+        if (! $authenticatable->hasLicense(LicenseType::RecruitmentCrm)) {
             return Response::deny('You do not have permission to view prospects.');
         }
 

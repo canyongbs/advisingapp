@@ -46,6 +46,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Interaction\Models\InteractionType;
@@ -72,9 +73,9 @@ class CreateInteraction extends CreateRecord
                     ->searchable()
                     ->required()
                     ->types([
-                        ...(auth()->user()->canAccessStudents() ? [MorphToSelect\Type::make(Student::class)
+                        ...(auth()->user()->hasLicense(LicenseType::RetentionCrm) ? [MorphToSelect\Type::make(Student::class)
                             ->titleAttribute(Student::displayNameKey())] : []),
-                        ...(auth()->user()->canAccessProspects() ? [MorphToSelect\Type::make(Prospect::class)
+                        ...(auth()->user()->hasLicense(LicenseType::RecruitmentCrm) ? [MorphToSelect\Type::make(Prospect::class)
                             ->titleAttribute(Prospect::displayNameKey())] : []),
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')
