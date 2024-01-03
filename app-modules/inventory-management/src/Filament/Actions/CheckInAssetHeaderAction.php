@@ -47,14 +47,15 @@ class CheckInAssetHeaderAction extends Action
             /** @var Asset $asset */
             $asset = $this->getRecord();
 
-            if (! $asset->isAvailable()) {
+            if (! $asset->isCheckedOut()) {
                 $this->failure();
             }
 
             $asset->checkIns()->create([
                 'checked_in_by_type' => auth()->user()?->getMorphClass(),
                 'checked_in_by_id' => auth()->user()?->id,
-                // TODO Should we still have this be configurable? Or should the expectation be that this information is the same as the latest check out?
+                // TODO Should this always simply be the latest check out, or do we want to support
+                // The possibility that the person checking in is different than whoever checked out?
                 'checked_in_from_type' => $asset->latestCheckOut->checked_out_to_type,
                 'checked_in_from_id' => $asset->latestCheckOut->checked_out_to_id,
                 'notes' => $data['notes'],
