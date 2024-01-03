@@ -40,8 +40,8 @@ use AdvisingApp\Form\Filament\Blocks\SelectFormFieldBlock;
 
 class SelectSurveyFieldBlock extends SelectFormFieldBlock
 {
-    public static function type(): string
+    public function getLabel(): string
     {
-        return 'choice_(dropdown)';
+        return 'Choice (Dropdown)';
     }
 }

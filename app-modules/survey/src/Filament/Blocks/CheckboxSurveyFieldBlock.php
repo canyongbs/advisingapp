@@ -40,8 +40,8 @@ use AdvisingApp\Form\Filament\Blocks\CheckboxFormFieldBlock;
 
 class CheckboxSurveyFieldBlock extends CheckboxFormFieldBlock
 {
-    public static function type(): string
+    public function getLabel(): string
     {
-        return 'multiple_choice';
+        return 'Multiple Choice';
     }
 }

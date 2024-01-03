@@ -40,8 +40,8 @@ use AdvisingApp\Form\Filament\Blocks\RadioFormFieldBlock;
 
 class RadioSurveyFieldBlock extends RadioFormFieldBlock
 {
-    public static function type(): string
+    public function getLabel(): string
     {
-        return 'choice_(radio)';
+        return 'Choice (Radio)';
     }
 }

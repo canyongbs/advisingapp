@@ -40,8 +40,8 @@ use AdvisingApp\Form\Filament\Blocks\TextInputFormFieldBlock;
 
 class TextInputSurveyFieldBlock extends TextInputFormFieldBlock
 {
-    public static function type(): string
+    public function getLabel(): string
     {
-        return 'question_(single_line)';
+        return 'Question (Single Line)';
     }
 }
