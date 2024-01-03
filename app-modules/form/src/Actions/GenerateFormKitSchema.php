@@ -36,10 +36,13 @@
 
 namespace AdvisingApp\Form\Actions;
 
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
 
 class GenerateFormKitSchema
 {
@@ -58,8 +61,13 @@ class GenerateFormKitSchema
                 'fields',
             ]);
 
+            $blocks = match ($submissible::class) {
+                Form::class => FormFieldBlockRegistry::keyByType(),
+                Survey::class => SurveyFieldBlockRegistry::keyByType(),
+            };
+
             $content = [
-                ...$this->content($submissible->content['content'] ?? [], $submissible->fields->keyBy('id')),
+                ...$this->content($blocks, $submissible->content['content'] ?? [], $submissible->fields->keyBy('id')),
                 [
                     '$formkit' => 'submit',
                     'label' => 'Submit',
@@ -81,21 +89,19 @@ class GenerateFormKitSchema
         ];
     }
 
-    public function content(array $content, ?Collection $fields = null): array
+    public function content(array $blocks, array $content, ?Collection $fields = null): array
     {
-        $blocks = FormFieldBlockRegistry::keyByType();
-
         return array_map(
             fn (array $component): array | string => match ($component['type'] ?? null) {
-                'bulletList' => ['$el' => 'ul', 'children' => $this->content($component['content'] ?? [], $fields)],
+                'bulletList' => ['$el' => 'ul', 'children' => $this->content($blocks, $component['content'] ?? [], $fields)],
                 'grid' => $this->grid($component, $fields),
-                'gridColumn' => ['$el' => 'div', 'children' => $this->content($component['content'], $fields), 'attrs' => ['class' => ['grid-col' => true]]],
-                'heading' => ['$el' => "h{$component['attrs']['level']}", 'children' => $this->content($component['content'], $fields)],
+                'gridColumn' => ['$el' => 'div', 'children' => $this->content($blocks, $component['content'], $fields), 'attrs' => ['class' => ['grid-col' => true]]],
+                'heading' => ['$el' => "h{$component['attrs']['level']}", 'children' => $this->content($blocks, $component['content'], $fields)],
                 'horizontalRule' => ['$el' => 'hr'],
-                'listItem' => ['$el' => 'li', 'children' => $this->content($component['content'] ?? [], $fields)],
-                'orderedList' => ['$el' => 'ol', 'children' => $this->content($component['content'] ?? [], $fields)],
-                'paragraph' => ['$el' => 'p', 'children' => $this->content($component['content'] ?? [], $fields)],
-                'small' => ['$el' => 'small', 'children' => $this->content($component['content'] ?? [], $fields)],
+                'listItem' => ['$el' => 'li', 'children' => $this->content($blocks, $component['content'] ?? [], $fields)],
+                'orderedList' => ['$el' => 'ol', 'children' => $this->content($blocks, $component['content'] ?? [], $fields)],
+                'paragraph' => ['$el' => 'p', 'children' => $this->content($blocks, $component['content'] ?? [], $fields)],
+                'small' => ['$el' => 'small', 'children' => $this->content($blocks, $component['content'] ?? [], $fields)],
                 'text' => $this->text($component),
                 'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field) : [],
                 default => [],
