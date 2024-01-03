@@ -50,6 +50,7 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\InventoryManagement\InventoryManagementPlugin;
 use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
 use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
+use AdvisingApp\InventoryManagement\Observers\AssetCheckInObserver;
 
 class InventoryManagementServiceProvider extends ServiceProvider
 {
@@ -71,7 +72,14 @@ class InventoryManagementServiceProvider extends ServiceProvider
             'maintenance_provider' => MaintenanceProvider::class,
         ]);
 
+        $this->registerObservers();
+
         $this->registerRolesAndPermissions();
+    }
+
+    public function registerObservers(): void
+    {
+        AssetCheckIn::observe(AssetCheckInObserver::class);
     }
 
     protected function registerRolesAndPermissions()
