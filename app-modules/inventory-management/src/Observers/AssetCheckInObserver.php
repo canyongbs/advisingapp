@@ -34,27 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Enums;
+namespace AdvisingApp\InventoryManagement\Observers;
 
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
 
-enum SystemAssetStatusClassification: string implements HasLabel
+class AssetCheckInObserver
 {
-    // TODO Implement a rule that only one asset status can be classified as this
-    case Available = 'available';
-
-    // TODO Implement a rule that only one asset status can be classified as this
-    case CheckedOut = 'checked_out';
-
-    case Unavailable = 'unavailable';
-
-    case Custom = 'custom';
-
-    public function getLabel(): ?string
+    public function created(AssetCheckIn $checkIn): void
     {
-        return match ($this) {
-            self::CheckedOut => 'Checked Out',
-            default => $this->name
-        };
+        ray('AssetCheckInObserver::created()');
+        ray($checkIn->asset->latestCheckOut);
+
+        $checkIn->asset->latestCheckOut->update([
+            'asset_check_in_id' => $checkIn->id,
+        ]);
     }
 }

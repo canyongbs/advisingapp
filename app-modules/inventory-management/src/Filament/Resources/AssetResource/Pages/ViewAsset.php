@@ -43,6 +43,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
+use AdvisingApp\InventoryManagement\Filament\Actions\CheckInAssetHeaderAction;
 use AdvisingApp\InventoryManagement\Filament\Actions\CheckOutAssetHeaderAction;
 
 class ViewAsset extends ViewRecord
@@ -79,6 +80,13 @@ class ViewAsset extends ViewRecord
                     $asset = $this->getRecord();
 
                     return $asset->isAvailable();
+                }),
+            CheckInAssetHeaderAction::make('check-in')
+                ->visible(function () {
+                    /** @var Asset $asset */
+                    $asset = $this->getRecord();
+
+                    return $asset->isCheckedOut();
                 }),
         ];
     }
