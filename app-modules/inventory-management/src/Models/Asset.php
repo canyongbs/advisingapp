@@ -42,6 +42,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperAsset
+ */
 class Asset extends BaseModel implements Auditable
 {
     use AuditableTrait;

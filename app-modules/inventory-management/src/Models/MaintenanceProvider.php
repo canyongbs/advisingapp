@@ -41,6 +41,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperMaintenanceProvider
+ */
 class MaintenanceProvider extends BaseModel implements Auditable
 {
     use AuditableTrait;

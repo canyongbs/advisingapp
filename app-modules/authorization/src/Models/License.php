@@ -10,6 +10,9 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableConcern;
 
+/**
+ * @mixin IdeHelperLicense
+ */
 class License extends BaseModel implements Auditable
 {
     use AuditableConcern;
