@@ -16,12 +16,12 @@ class AssetCheckInFactory extends Factory
 {
     public function definition(): array
     {
-        $checkedOutBy = User::factory()->create();
+        $checkedInBy = User::factory()->create();
 
         return [
             'asset_id' => Asset::factory(),
-            'checked_in_by_type' => $checkedOutBy->getMorphClass(),
-            'checked_in_by_id' => $checkedOutBy->getKey(),
+            'checked_in_by_type' => $checkedInBy->getMorphClass(),
+            'checked_in_by_id' => $checkedInBy->getKey(),
             'checked_in_from_type' => fake()->randomElement([
                 (new Student())->getMorphClass(),
                 (new Prospect())->getMorphClass(),
