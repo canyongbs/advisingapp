@@ -57,8 +57,7 @@ class CheckOutAssetHeaderAction extends Action
                 ->searchable()
                 ->required(),
             Textarea::make('notes')
-                ->autofocus()
-                ->required(),
+                ->autofocus(),
             DateTimePicker::make('expected_check_in_at')
                 ->label('Expected Return Date'),
         ]);
