@@ -45,7 +45,6 @@ use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use OpenSearch\ScoutDriverPlus\Searchable;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Engagement\Models\EngagementFile;
@@ -84,7 +83,6 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
     use HasManyMorphedEngagementResponses;
     use HasManyMorphedInteractions;
     use HasSubscriptions;
-    use Searchable;
     use NotifiableViaSms;
 
     protected $fillable = [
@@ -114,39 +112,6 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
         'email_bounce' => 'boolean',
         'birthdate' => 'date',
     ];
-
-    public function searchableAs(): string
-    {
-        return config('scout.prefix') . 'prospects';
-    }
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => (int) $this->getScoutKey(),
-            'status_id' => $this->status_id,
-            'source_id' => $this->source_id,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'full_name' => $this->full_name,
-            'preferred' => $this->preferred,
-            'description' => $this->description,
-            'email' => $this->email,
-            'email_2' => $this->email_2,
-            'mobile' => $this->mobile,
-            'sms_opt_out' => $this->sms_opt_out,
-            'email_bounce' => $this->email_bounce,
-            'phone' => $this->phone,
-            'address' => $this->address,
-            'address_2' => $this->address_2,
-            'birthdate' => $this->birthdate,
-            'hsgrad' => (int) $this->hsgrad,
-            'assigned_to_id' => $this->assigned_to_id,
-            'created_by_id' => $this->created_by_id,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
-        ];
-    }
 
     public function identifier(): string
     {

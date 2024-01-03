@@ -56,7 +56,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use App\Concerns\FilterTableWithOpenSearch;
 use Filament\Tables\Actions\BulkActionGroup;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -71,14 +70,11 @@ use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\CareTeam\Filament\Actions\ToggleCareTeamBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
-use App\Filament\Columns\OpenSearch\TextColumn as OpenSearchTextColumn;
-use App\Filament\Filters\OpenSearch\SelectFilter as OpenSearchSelectFilter;
 use AdvisingApp\Engagement\Filament\Actions\Contracts\HasBulkEngagementAction;
 use AdvisingApp\Engagement\Filament\Actions\Concerns\ImplementsHasBulkEngagementAction;
 
 class ListProspects extends ListRecords implements HasBulkEngagementAction
 {
-    use FilterTableWithOpenSearch;
     use ImplementsHasBulkEngagementAction;
 
     protected static string $resource = ProspectResource::class;
@@ -88,16 +84,16 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
         return $table
             ->columns([
                 IdColumn::make(),
-                OpenSearchTextColumn::make(Prospect::displayNameKey())
+                TextColumn::make(Prospect::displayNameKey())
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
-                OpenSearchTextColumn::make('email')
+                TextColumn::make('email')
                     ->label('Email')
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
-                OpenSearchTextColumn::make('mobile')
+                TextColumn::make('mobile')
                     ->label('Mobile')
                     ->translateLabel()
                     ->searchable()
@@ -147,11 +143,11 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->searchable()
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->caseloadFilter($query, $data)),
-                OpenSearchSelectFilter::make('status_id')
+                SelectFilter::make('status_id')
                     ->relationship('status', 'name')
                     ->multiple()
                     ->preload(),
-                OpenSearchSelectFilter::make('source_id')
+                SelectFilter::make('source_id')
                     ->relationship('source', 'name')
                     ->multiple()
                     ->preload(),
