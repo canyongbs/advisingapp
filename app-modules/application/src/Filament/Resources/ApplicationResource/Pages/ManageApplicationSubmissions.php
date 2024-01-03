@@ -40,6 +40,7 @@ use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\Action;
 use Maatwebsite\Excel\Facades\Excel;
+use Filament\Resources\Components\Tab;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -67,6 +68,28 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
     protected static ?string $breadcrumb = 'Submissions';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    public function getDefaultActiveTab(): string | int | null
+    {
+        return 'received';
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            'received' => Tab::make('Received')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->received())),
+            'review' => Tab::make('Review')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->review())),
+            'documents_required' => Tab::make('Documents Required')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->documentsRequired())),
+            'admit' => Tab::make('Admit')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->admit())),
+            'deny' => Tab::make('Deny')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->deny())),
+            'all' => Tab::make('All'),
+        ];
+    }
 
     public function table(Table $table): Table
     {

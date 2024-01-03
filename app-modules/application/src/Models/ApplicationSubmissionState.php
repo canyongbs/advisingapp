@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -67,5 +68,30 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     public function submissions(): HasMany
     {
         return $this->hasMany(ApplicationSubmission::class, 'state_id');
+    }
+
+    public function scopeReceived(Builder $query): void
+    {
+        $query->where('classification', ApplicationSubmissionStateClassification::Received);
+    }
+
+    public function scopeReview(Builder $query): void
+    {
+        $query->where('classification', ApplicationSubmissionStateClassification::Review);
+    }
+
+    public function scopeDocumentsRequired(Builder $query): void
+    {
+        $query->where('classification', ApplicationSubmissionStateClassification::DocumentsRequired);
+    }
+
+    public function scopeAdmit(Builder $query): void
+    {
+        $query->where('classification', ApplicationSubmissionStateClassification::Admit);
+    }
+
+    public function scopeDeny(Builder $query): void
+    {
+        $query->where('classification', ApplicationSubmissionStateClassification::Deny);
     }
 }
