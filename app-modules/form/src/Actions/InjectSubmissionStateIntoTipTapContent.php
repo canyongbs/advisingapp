@@ -36,16 +36,17 @@
 
 namespace AdvisingApp\Form\Actions;
 
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
+use AdvisingApp\Survey\Models\Survey;
 
 class InjectSubmissionStateIntoTipTapContent
 {
-    public function __invoke(Submission $submission, array $content, ?array $blocks = null): array
+    public function __invoke(Submission $submission, array $content, array $blocks): array
     {
-        $blocks ??= FormFieldBlockRegistry::keyByType();
-
         foreach ($content as $componentKey => $component) {
             if (! is_array($component)) {
                 continue;
@@ -81,7 +82,7 @@ class InjectSubmissionStateIntoTipTapContent
             }
 
             $content[$componentKey]['attrs']['data'] = [
-                ...$content[$componentKey]['attrs']['data'],
+                ...$component['attrs']['data'],
                 ...$block::getSubmissionState($field->pivot->response),
             ];
         }

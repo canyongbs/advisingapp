@@ -37,10 +37,13 @@
 namespace AdvisingApp\Form\Actions;
 
 use Illuminate\Support\Arr;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
 use AdvisingApp\IntegrationGoogleRecaptcha\Rules\RecaptchaTokenValid;
 
 class GenerateSubmissibleValidation
@@ -57,13 +60,16 @@ class GenerateSubmissibleValidation
             return array_merge($rules, $this->wizardRules($submissible));
         }
 
-        return array_merge($rules, $this->fields($submissible->fields));
+        $blocks = match ($submissible::class) {
+            Form::class => FormFieldBlockRegistry::keyByType(),
+            Survey::class => SurveyFieldBlockRegistry::keyByType(),
+        };
+
+        return array_merge($rules, $this->fields($blocks, $submissible->fields));
     }
 
-    public function fields(Collection $fields): array
+    public function fields(array $blocks, Collection $fields): array
     {
-        $blocks = FormFieldBlockRegistry::keyByType();
-
         return $fields
             ->mapWithKeys(function (SubmissibleField $field) use ($blocks) {
                 $rules = collect();
@@ -85,10 +91,15 @@ class GenerateSubmissibleValidation
     {
         $rules = collect();
 
+        $blocks = match ($submissible::class) {
+            Form::class => FormFieldBlockRegistry::keyByType(),
+            Survey::class => SurveyFieldBlockRegistry::keyByType(),
+        };
+
         foreach ($submissible->steps as $step) {
             $rules = $rules->merge(
                 Arr::prependKeysWith(
-                    $this->fields($step->fields),
+                    $this->fields($blocks, $step->fields),
                     prependWith: "{$step->label}.",
                 ),
             );

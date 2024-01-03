@@ -34,12 +34,20 @@
 @props(['content', 'submission'])
 
 @php
-    use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
+    use AdvisingApp\Form\Models\Form;
+    use AdvisingApp\Survey\Models\Survey;
     use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-    
-    $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content']);
+    use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
+    use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
+
+    $blocks = match ($submission->submissible::class) {
+        Form::class => FormFieldBlockRegistry::keyByType(),
+        Survey::class => SurveyFieldBlockRegistry::keyByType(),
+    };
+
+    $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content'], $blocks);
 @endphp
 
 <div class="prose max-w-none dark:prose-invert">
-    {!! tiptap_converter()->blocks(FormFieldBlockRegistry::get())->asHTML($content) !!}
+    {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
 </div>
