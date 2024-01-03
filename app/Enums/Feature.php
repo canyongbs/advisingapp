@@ -42,21 +42,20 @@ use Illuminate\Support\Facades\Gate;
 
 enum Feature: string
 {
+    case OnlineForms = 'online-forms';
+
+    case OnlineSurveys = 'online-surveys';
+
     case OnlineAdmissions = 'online-admissions';
-
-    case RealtimeChat = 'realtime-chat';
-
-    case DynamicForms = 'dynamic-forms';
-
-    case ConductSurveys = 'conduct-surveys';
-
-    case PersonalAssistant = 'personal-assistant';
 
     case ServiceManagement = 'service-management';
 
     case KnowledgeManagement = 'knowledge-management';
 
-    case StudentAndProspectPortal = 'student-and-prospect-portal';
+    case EventManagement = 'event-management';
+    case RealtimeChat = 'realtime-chat';
+
+    case MobileApps = 'mobile-apps';
 
     public function generateGate(): void
     {

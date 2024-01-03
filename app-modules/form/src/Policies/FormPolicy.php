@@ -105,6 +105,6 @@ class FormPolicy implements FeatureAccessEnforcedPolicy
 
     protected function requiredFeatures(): array
     {
-        return [Feature::DynamicForms];
+        return [Feature::OnlineForms];
     }
 }

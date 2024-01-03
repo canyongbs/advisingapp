@@ -38,6 +38,9 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
 
+/**
+ * @mixin IdeHelperEvent
+ */
 class Event extends BaseModel
 {
     protected $fillable = [

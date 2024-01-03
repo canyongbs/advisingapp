@@ -34,48 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Models;
+namespace AdvisingApp\Authorization\Rules;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Closure;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-/**
- * @mixin IdeHelperAsset
- */
-class Asset extends BaseModel implements Auditable
+class LicenseTypeUsageRule implements ValidationRule
 {
-    use AuditableTrait;
-
-    protected $fillable = [
-        'description',
-        'location_id',
-        'name',
-        'purchase_date',
-        'serial_number',
-        'status_id',
-        'type_id',
-    ];
-
-    public function type(): BelongsTo
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return $this->belongsTo(AssetType::class, 'type_id');
-    }
+        $licenseType = LicenseType::from($value);
 
-    public function location(): BelongsTo
-    {
-        return $this->belongsTo(AssetLocation::class, 'location_id');
-    }
-
-    public function status(): BelongsTo
-    {
-        return $this->belongsTo(AssetStatus::class, 'status_id');
-    }
-
-    public function maintenanceActivities(): HasMany
-    {
-        return $this->hasMany(MaintenanceActivity::class, 'asset_id');
+        if (! $licenseType->hasAvailableLicenses()) {
+            $fail("There are no available {$licenseType->getLabel()} licenses.");
+        }
     }
 }
