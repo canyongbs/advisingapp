@@ -2,6 +2,7 @@
 
 namespace App\Filament\Fields;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Closure;
@@ -32,7 +33,7 @@ class EducatableSelect extends Component
 
     public static function make(string $name): EducatableSelect | MorphToSelect
     {
-        if (auth()->user()->canAccessStudents() && auth()->user()->canAccessProspects()) {
+        if (auth()->user()->hasLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
             return MorphToSelect::make($name)
                 ->searchable()
                 ->types([
@@ -61,16 +62,9 @@ class EducatableSelect extends Component
 
     public function getChildComponents(): array
     {
-        $relationship = $this->getRelationship();
-        $typeColumn = $relationship->getMorphType();
-        $keyColumn = $relationship->getForeignKeyName();
-
-        $canAccessStudents = auth()->user()->canAccessStudents();
-        $canAccessProspects = auth()->user()->canAccessProspects();
-
         $type = match (true) {
-            $canAccessStudents => static::getStudentType(),
-            $canAccessProspects => static::getProspectType(),
+            auth()->user()->hasLicense(LicenseType::RetentionCrm) => static::getStudentType(),
+            auth()->user()->hasLicense(LicenseType::RecruitmentCrm) => static::getProspectType(),
             default => null,
         };
 
@@ -78,10 +72,12 @@ class EducatableSelect extends Component
             return [];
         }
 
+        $relationship = $this->getRelationship();
+
         return [
-            Hidden::make($typeColumn)
+            Hidden::make($relationship->getMorphType())
                 ->dehydrateStateUsing(fn (): string => $type->getAlias()),
-            Select::make($keyColumn)
+            Select::make($relationship->getForeignKeyName())
                 ->label($this->getLabel())
                 ->options($type->getOptionsUsing)
                 ->getSearchResultsUsing($type->getSearchResultsUsing)
@@ -118,6 +114,6 @@ class EducatableSelect extends Component
             return false;
         }
 
-        return ! (auth()->user()->canAccessProspects() || auth()->user()->canAccessStudents());
+        return ! auth()->user()->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
     }
 }

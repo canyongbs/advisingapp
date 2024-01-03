@@ -36,10 +36,12 @@
 
 namespace App\Models;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Panel;
 use DateTimeInterface;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
+use Illuminate\Support\Arr;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Team\Models\TeamUser;
@@ -379,13 +381,39 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
 
-    public function canAccessStudents(): bool
+    /**
+     * @param LicenseType | string | array<LicenseType | string> $type
+     */
+    public function hasLicense(LicenseType | string | array $type): bool
     {
-        return false;
+        foreach (Arr::wrap($type) as $type) {
+            if (! ($type instanceof LicenseType)) {
+                $type = LicenseType::from($type);
+            }
+
+            if ($this->licenses->doesntContain('type', $type)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    public function canAccessProspects(): bool
+    /**
+     * @param LicenseType | string | array<LicenseType | string> $type
+     */
+    public function hasAnyLicense(LicenseType | string | array $type): bool
     {
+        foreach (Arr::wrap($type) as $type) {
+            if (! ($type instanceof LicenseType)) {
+                $type = LicenseType::from($type);
+            }
+
+            if ($this->licenses->contains('type', $type)) {
+                return true;
+            }
+        }
+
         return false;
     }
 }
