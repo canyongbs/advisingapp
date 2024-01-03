@@ -34,48 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Models;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperAsset
- */
-class Asset extends BaseModel implements Auditable
-{
-    use AuditableTrait;
-
-    protected $fillable = [
-        'description',
-        'location_id',
-        'name',
-        'purchase_date',
-        'serial_number',
-        'status_id',
-        'type_id',
-    ];
-
-    public function type(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(AssetType::class, 'type_id');
-    }
+        Schema::create('licenses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('type');
+            $table->timestamps();
+            $table->softDeletes();
 
-    public function location(): BelongsTo
-    {
-        return $this->belongsTo(AssetLocation::class, 'location_id');
+            $table->uniqueIndex(['user_id', 'type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
+        });
     }
-
-    public function status(): BelongsTo
-    {
-        return $this->belongsTo(AssetStatus::class, 'status_id');
-    }
-
-    public function maintenanceActivities(): HasMany
-    {
-        return $this->hasMany(MaintenanceActivity::class, 'asset_id');
-    }
-}
+};

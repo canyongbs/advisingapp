@@ -42,6 +42,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\InventoryManagement\Enums\MaintenanceActivityStatus;
 
+/**
+ * @mixin IdeHelperMaintenanceActivity
+ */
 class MaintenanceActivity extends BaseModel implements Auditable
 {
     use AuditableTrait;

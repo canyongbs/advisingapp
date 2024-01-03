@@ -96,12 +96,16 @@ class ManageLicenseSettings extends SettingsPage
                     ->columns()
                     ->schema(
                         [
-                            TextInput::make('data.limits.crmSeats')
-                                ->label('CRM Seats')
+                            TextInput::make('data.limits.conversationalAiSeats')
+                                ->label('Artificial Intelligence Seats')
                                 ->numeric()
                                 ->required(),
-                            TextInput::make('data.limits.analyticsSeats')
-                                ->label('Analytics Seats')
+                            TextInput::make('data.limits.retentionCrmSeats')
+                                ->label('Student Success / Retention Seats')
+                                ->numeric()
+                                ->required(),
+                            TextInput::make('data.limits.recruitmentCrmSeats')
+                                ->label('Recruitment CRM Seats')
                                 ->numeric()
                                 ->required(),
                             TextInput::make('data.limits.emails')
@@ -121,22 +125,22 @@ class ManageLicenseSettings extends SettingsPage
                     ->columns()
                     ->schema(
                         [
+                            Toggle::make('data.addons.onlineForms')
+                                ->label('Online Forms'),
+                            Toggle::make('data.addons.onlineSurveys')
+                                ->label('Online Surveys'),
                             Toggle::make('data.addons.onlineAdmissions')
                                 ->label('Online Admissions'),
-                            Toggle::make('data.addons.realtimeChat')
-                                ->label('Realtime Chat'),
-                            Toggle::make('data.addons.dynamicForms')
-                                ->label('Dynamic Forms'),
-                            Toggle::make('data.addons.conductSurveys')
-                                ->label('Conduct Surveys'),
-                            Toggle::make('data.addons.personalAssistant')
-                                ->label('Personal Assistant'),
                             Toggle::make('data.addons.serviceManagement')
                                 ->label('Service Management'),
                             Toggle::make('data.addons.knowledgeManagement')
                                 ->label('Knowledge Management'),
-                            Toggle::make('data.addons.studentAndProspectPortal')
-                                ->label('Student and Prospect Portal'),
+                            Toggle::make('data.addons.eventManagement')
+                                ->label('Event Management'),
+                            Toggle::make('data.addons.realtimeChat')
+                                ->label('Realtime Chat'),
+                            Toggle::make('data.addons.mobileApps')
+                                ->label('Mobile Apps'),
                         ]
                     ),
             ]);

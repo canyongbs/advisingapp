@@ -34,48 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Models;
+namespace AdvisingApp\Authorization\Enums;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Settings\LicenseSettings;
+use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Authorization\Models\License;
 
-/**
- * @mixin IdeHelperAsset
- */
-class Asset extends BaseModel implements Auditable
+enum LicenseType: string implements HasLabel
 {
-    use AuditableTrait;
+    case ConversationalAi = 'conversational_ai';
 
-    protected $fillable = [
-        'description',
-        'location_id',
-        'name',
-        'purchase_date',
-        'serial_number',
-        'status_id',
-        'type_id',
-    ];
+    case RetentionCrm = 'retention_crm';
 
-    public function type(): BelongsTo
+    case RecruitmentCrm = 'recruitment_crm';
+
+    public function getLabel(): ?string
     {
-        return $this->belongsTo(AssetType::class, 'type_id');
+        return match ($this) {
+            LicenseType::ConversationalAi => 'Conversational AI',
+            LicenseType::RetentionCrm => 'Retention CRM',
+            LicenseType::RecruitmentCrm => 'Recruitment CRM',
+        };
     }
 
-    public function location(): BelongsTo
+    public function hasAvailableLicenses(): bool
     {
-        return $this->belongsTo(AssetLocation::class, 'location_id');
-    }
+        $totalLicensesInUse = License::query()->where('type', $this)->count();
 
-    public function status(): BelongsTo
-    {
-        return $this->belongsTo(AssetStatus::class, 'status_id');
-    }
+        $licenseSettings = app(LicenseSettings::class);
 
-    public function maintenanceActivities(): HasMany
-    {
-        return $this->hasMany(MaintenanceActivity::class, 'asset_id');
+        $licenseLimit = match ($this) {
+            LicenseType::ConversationalAi => $licenseSettings->data->limits->conversationalAiSeats,
+            LicenseType::RetentionCrm => $licenseSettings->data->limits->retentionCrmSeats,
+            LicenseType::RecruitmentCrm => $licenseSettings->data->limits->recruitmentCrmSeats,
+        };
+
+        return $totalLicensesInUse < $licenseLimit;
     }
 }

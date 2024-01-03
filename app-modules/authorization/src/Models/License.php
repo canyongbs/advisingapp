@@ -34,48 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Models;
+namespace AdvisingApp\Authorization\Models;
 
+use App\Models\User;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableConcern;
 
 /**
- * @mixin IdeHelperAsset
+ * @mixin IdeHelperLicense
  */
-class Asset extends BaseModel implements Auditable
+class License extends BaseModel implements Auditable
 {
-    use AuditableTrait;
+    use AuditableConcern;
+    use SoftDeletes;
 
     protected $fillable = [
-        'description',
-        'location_id',
-        'name',
-        'purchase_date',
-        'serial_number',
-        'status_id',
-        'type_id',
+        'type',
     ];
 
-    public function type(): BelongsTo
-    {
-        return $this->belongsTo(AssetType::class, 'type_id');
-    }
+    protected $casts = [
+        'type' => LicenseType::class,
+    ];
 
-    public function location(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(AssetLocation::class, 'location_id');
-    }
-
-    public function status(): BelongsTo
-    {
-        return $this->belongsTo(AssetStatus::class, 'status_id');
-    }
-
-    public function maintenanceActivities(): HasMany
-    {
-        return $this->hasMany(MaintenanceActivity::class, 'asset_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

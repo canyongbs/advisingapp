@@ -135,12 +135,12 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Files and Documents'),
                         Toggle::make('has_forms')
                             ->label('Forms')
-                            ->disabled(! Gate::check(Feature::DynamicForms->getGateName()))
+                            ->disabled(! Gate::check(Feature::OnlineForms->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Forms are not a part of your current subscription.'),
                         Toggle::make('has_surveys')
                             ->label('Surveys')
-                            ->disabled(! Gate::check(Feature::ConductSurveys->getGateName()))
+                            ->disabled(! Gate::check(Feature::OnlineSurveys->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Surveys are not a part of your current subscription.'),
                     ])
