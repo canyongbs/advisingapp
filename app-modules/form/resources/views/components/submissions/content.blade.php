@@ -36,15 +36,18 @@
 @php
     use AdvisingApp\Form\Models\Form;
     use AdvisingApp\Survey\Models\Survey;
+    use AdvisingApp\Application\Models\Application;
     use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
     use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
     use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
-
-    $blocks = match ($submission->submissible::class) {
-        Form::class => FormFieldBlockRegistry::keyByType(),
+    
+    $submissible = $submission->submissible;
+    
+    $blocks = match ($submissible::class) {
+        Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
         Survey::class => SurveyFieldBlockRegistry::keyByType(),
     };
-
+    
     $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content'], $blocks);
 @endphp
 

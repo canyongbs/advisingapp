@@ -42,6 +42,7 @@ use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
 use AdvisingApp\IntegrationGoogleRecaptcha\Rules\RecaptchaTokenValid;
@@ -61,7 +62,7 @@ class GenerateSubmissibleValidation
         }
 
         $blocks = match ($submissible::class) {
-            Form::class => FormFieldBlockRegistry::keyByType(),
+            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
             Survey::class => SurveyFieldBlockRegistry::keyByType(),
         };
 
@@ -92,7 +93,7 @@ class GenerateSubmissibleValidation
         $rules = collect();
 
         $blocks = match ($submissible::class) {
-            Form::class => FormFieldBlockRegistry::keyByType(),
+            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
             Survey::class => SurveyFieldBlockRegistry::keyByType(),
         };
 

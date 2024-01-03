@@ -41,6 +41,7 @@ use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleStep;
 use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
 
@@ -62,7 +63,7 @@ class GenerateFormKitSchema
             ]);
 
             $blocks = match ($submissible::class) {
-                Form::class => FormFieldBlockRegistry::keyByType(),
+                Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
                 Survey::class => SurveyFieldBlockRegistry::keyByType(),
             };
 
