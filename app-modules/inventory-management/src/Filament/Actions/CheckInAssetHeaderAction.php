@@ -30,8 +30,7 @@ class CheckInAssetHeaderAction extends Action
 
         $this->form([
             Textarea::make('notes')
-                ->autofocus()
-                ->required(),
+                ->autofocus(),
             Select::make('status_id')
                 ->relationship('status', 'name')
                 ->preload()
@@ -59,7 +58,7 @@ class CheckInAssetHeaderAction extends Action
                 'checked_in_from_type' => $asset->latestCheckOut->checked_out_to_type,
                 'checked_in_from_id' => $asset->latestCheckOut->checked_out_to_id,
                 'notes' => $data['notes'],
-                'checked_in_at' => now(),
+                'checked_in_at' => $data['checked_in_at'] ?? now(),
             ]);
 
             $asset->update([
