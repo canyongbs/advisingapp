@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace App\Forms\Components;
+namespace App\Filament\Fields;
 
-use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Select;
+use Filament\Support\Colors\Color;
 
 class ColorSelect extends Select
 {

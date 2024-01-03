@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
 
+use App\Filament\Fields\EducatableSelect;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
@@ -143,16 +144,9 @@ class EditEngagement extends EditRecord
                     ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),
                 EngagementSmsBodyField::make(context: 'edit', form: $form),
-                MorphToSelect::make('recipient')
+                EducatableSelect::make('recipient')
                     ->label('Recipient')
-                    ->searchable()
-                    ->required()
-                    ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
+                    ->required(),
                 Fieldset::make('Send your engagement')
                     ->schema([
                         Toggle::make('send_later')

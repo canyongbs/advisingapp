@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Task\Filament\Concerns;
 
+use App\Filament\Fields\EducatableSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -66,15 +67,8 @@ trait TaskEditForm
                 ->nullable()
                 ->searchable(['name', 'email'])
                 ->default(auth()->id()),
-            MorphToSelect::make('concern')
-                ->label('Related To')
-                ->searchable()
-                ->types([
-                    Type::make(Student::class)
-                        ->titleAttribute(Student::displayNameKey()),
-                    Type::make(Prospect::class)
-                        ->titleAttribute(Prospect::displayNameKey()),
-                ]),
+            EducatableSelect::make('concern')
+                ->label('Related To'),
         ];
     }
 }

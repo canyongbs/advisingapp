@@ -372,4 +372,14 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
     }
+
+    public function canAccessStudents(): bool
+    {
+        return false;
+    }
+
+    public function canAccessProspects(): bool
+    {
+        return false;
+    }
 }

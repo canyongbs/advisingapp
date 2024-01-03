@@ -44,6 +44,10 @@ class ProspectPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (! $authenticatable->canAccessProspects()) {
+            return Response::deny('You do not have permission to view prospects.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'prospect.view-any',
             denyResponse: 'You do not have permission to view prospects.'

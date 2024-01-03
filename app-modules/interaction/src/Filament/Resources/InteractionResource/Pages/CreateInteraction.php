@@ -72,10 +72,10 @@ class CreateInteraction extends CreateRecord
                     ->searchable()
                     ->required()
                     ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
+                        ...(auth()->user()->canAccessStudents() ? [MorphToSelect\Type::make(Student::class)
+                            ->titleAttribute(Student::displayNameKey())] : []),
+                        ...(auth()->user()->canAccessProspects() ? [MorphToSelect\Type::make(Prospect::class)
+                            ->titleAttribute(Prospect::displayNameKey())] : []),
                         MorphToSelect\Type::make(ServiceRequest::class)
                             ->label('Service Request')
                             ->titleAttribute('service_request_number'),

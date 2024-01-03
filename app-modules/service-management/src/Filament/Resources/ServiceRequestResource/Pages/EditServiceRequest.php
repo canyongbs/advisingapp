@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
+use App\Filament\Fields\EducatableSelect;
 use Filament\Actions;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
@@ -93,15 +94,8 @@ class EditServiceRequest extends EditRecord
                     ->label('Internal Service Request Details')
                     ->nullable()
                     ->string(),
-                MorphToSelect::make('respondent')
-                    ->label('Related To')
-                    ->searchable()
-                    ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
+                EducatableSelect::make('respondent')
+                    ->label('Related To'),
             ]);
     }
 

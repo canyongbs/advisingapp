@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Filament\Resources\AlertResource\Pages;
 
+use App\Filament\Fields\EducatableSelect;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use App\Filament\Columns\IdColumn;
@@ -174,15 +175,8 @@ class ListAlerts extends ListRecords
         return [
             CreateAction::make()
                 ->form([
-                    MorphToSelect::make('concern')
+                    EducatableSelect::make('concern')
                         ->label('Related To')
-                        ->types([
-                            Type::make(Student::class)
-                                ->titleAttribute(Student::displayNameKey()),
-                            Type::make(Prospect::class)
-                                ->titleAttribute(Prospect::displayNameKey()),
-                        ])
-                        ->searchable()
                         ->required(),
                     Group::make()
                         ->schema([

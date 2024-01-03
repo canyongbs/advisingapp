@@ -36,24 +36,24 @@
 
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\Concerns;
 
-use Filament\Forms\Get;
-use Filament\Forms\Components\Grid;
-use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Rules\IsDomain;
-use App\Forms\Components\ColorSelect;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Section;
-use FilamentTiptapEditor\TiptapEditor;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\TextInput;
-use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\ApplicationStep;
+use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Form\Rules\IsDomain;
+use App\Filament\Fields\ColorSelect;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
+use FilamentTiptapEditor\Enums\TiptapOutput;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait HasSharedFormConfiguration

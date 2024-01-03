@@ -36,6 +36,7 @@
 
 namespace App\Livewire;
 
+use App\Filament\Fields\EducatableSelect;
 use Exception;
 use Livewire\Component;
 use Illuminate\Support\Arr;
@@ -153,15 +154,8 @@ class TaskKanban extends Component implements HasForms, HasActions
                     ->nullable()
                     ->searchable(['name', 'email'])
                     ->default(auth()->id()),
-                MorphToSelect::make('concern')
-                    ->label('Related To')
-                    ->searchable()
-                    ->types([
-                        Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
+                EducatableSelect::make('concern')
+                    ->label('Related To'),
             ])
             ->action(function (array $data, array $arguments) {
                 $record = new Task(Arr::except($data, 'assigned_to'));

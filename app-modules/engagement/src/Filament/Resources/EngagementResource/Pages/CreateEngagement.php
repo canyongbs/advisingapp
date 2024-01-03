@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementResource\Pages;
 
+use App\Filament\Fields\EducatableSelect;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
@@ -151,16 +152,9 @@ class CreateEngagement extends CreateRecord
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create', form: $form),
                     ]),
-                MorphToSelect::make('recipient')
+                EducatableSelect::make('recipient')
                     ->label('Recipient')
-                    ->searchable()
                     ->required()
-                    ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ])
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                 Fieldset::make('Send your email or text')
                     ->schema([

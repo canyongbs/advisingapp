@@ -44,6 +44,10 @@ class StudentPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
+        if (! $authenticatable->canAccessStudents()) {
+            return Response::deny('You do not have permission to view students.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'student.view-any',
             denyResponse: 'You do not have permission to view students.'

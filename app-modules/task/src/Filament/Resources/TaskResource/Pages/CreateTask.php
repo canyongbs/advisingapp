@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
 
+use App\Filament\Fields\EducatableSelect;
 use Filament\Forms\Form;
 use Illuminate\Support\Arr;
 use AdvisingApp\Task\Models\Task;
@@ -75,15 +76,8 @@ class CreateTask extends CreateRecord
                     ->nullable()
                     ->searchable(['name', 'email'])
                     ->default(auth()->id()),
-                MorphToSelect::make('concern')
-                    ->label('Related To')
-                    ->searchable()
-                    ->types([
-                        Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
+                EducatableSelect::make('concern')
+                    ->label('Related To'),
             ]);
     }
 
