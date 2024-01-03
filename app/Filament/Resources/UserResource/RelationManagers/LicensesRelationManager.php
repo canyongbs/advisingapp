@@ -26,7 +26,11 @@ class LicensesRelationManager extends RelationManager
                 Select::make('type')
                     ->options(LicenseType::class)
                     ->enum(LicenseType::class)
-                    ->rule(Rule::unique('licenses', 'type')->where('user_id', $this->getOwnerRecord()->getKey()))
+                    ->rule(
+                        Rule::unique('licenses', 'type')
+                            ->where('user_id', $this->getOwnerRecord()->getKey())
+                            ->whereNull('deleted_at'),
+                    )
                     ->rule(new LicenseTypeUsageRule())
                     ->required(),
             ]);
