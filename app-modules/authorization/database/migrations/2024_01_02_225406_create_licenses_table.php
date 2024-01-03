@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
@@ -14,7 +15,7 @@ return new class () extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['user_id', 'type']);
+            $table->uniqueIndex(['user_id', 'type'])->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
         });
     }
 };
