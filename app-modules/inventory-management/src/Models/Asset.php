@@ -39,6 +39,7 @@ namespace AdvisingApp\InventoryManagement\Models;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -84,6 +85,18 @@ class Asset extends BaseModel implements Auditable
         return $this->hasMany(AssetCheckOut::class, 'asset_id');
     }
 
+    public function latestCheckOut(): HasOne
+    {
+        return $this->hasOne(AssetCheckOut::class, 'asset_id')
+            ->oldest('checked_out_at');
+    }
+
+    public function latestCheckIn(): HasOne
+    {
+        return $this->hasOne(AssetCheckIn::class, 'asset_id')
+            ->latest('checked_in_at');
+    }
+
     public function checkIns(): HasMany
     {
         return $this->hasMany(AssetCheckIn::class, 'asset_id');
@@ -91,6 +104,7 @@ class Asset extends BaseModel implements Auditable
 
     public function isAvailable(): bool
     {
-        return $this->status->classification === SystemAssetStatusClassification::Available;
+        return $this->status->classification === SystemAssetStatusClassification::Available
+            && is_null($this->latestCheckOut->asset_check_in_id);
     }
 }
