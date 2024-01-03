@@ -42,12 +42,18 @@ enum SystemAssetStatusClassification: string implements HasLabel
 {
     case Available = 'available';
 
+    // TODO Implement a rule that only one asset status can be classified as this
+    case CheckedOut = 'checked_out';
+
     case Unavailable = 'unavailable';
 
     case Custom = 'custom';
 
     public function getLabel(): ?string
     {
-        return $this->name;
+        return match ($this) {
+            self::CheckedOut => 'Checked Out',
+            default => $this->name
+        };
     }
 }
