@@ -34,21 +34,60 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use App\Models\User;
+use AdvisingApp\Form\Models\Submission;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 
-class CreateEvent extends CreateRecord
+/**
+ * @mixin IdeHelperEventRegistrationFormSubmission
+ */
+class EventRegistrationFormSubmission extends Submission
 {
-    use HasSharedEventFormConfiguration;
+    protected $fillable = [
+        'canceled_at',
+        'form_id',
+        'attendee_status',
+        'request_method',
+        'request_note',
+        'submitted_at',
+    ];
 
-    protected static string $resource = EventResource::class;
+    protected $casts = [
+        'submitted_at' => 'immutable_datetime',
+        'canceled_at' => 'immutable_datetime',
+        'request_method' => FormSubmissionRequestDeliveryMethod::class,
+        'attendee_status' => EventAttendeeStatus::class,
+    ];
 
-    public function form(Form $form): Form
+    public function submissible(): BelongsTo
     {
-        return $form->schema($this->fields());
+        return $this
+            ->belongsTo(EventRegistrationForm::class, 'form_id');
+    }
+
+    public function requester(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requester_id');
+    }
+
+    public function fields(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            EventRegistrationFormField::class,
+            'event_registration_form_field_submission',
+            'submission_id',
+            'field_id',
+        )
+            ->withPivot(['id', 'response']);
+    }
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(EventAttendee::class, 'event_attendee_id');
     }
 }

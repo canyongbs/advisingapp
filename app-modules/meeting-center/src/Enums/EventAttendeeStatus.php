@@ -34,21 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Enums;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
 
-class CreateEvent extends CreateRecord
+enum EventAttendeeStatus: string implements HasColor, HasLabel
 {
-    use HasSharedEventFormConfiguration;
+    case Invited = 'invited';
 
-    protected static string $resource = EventResource::class;
+    case Pending = 'pending';
 
-    public function form(Form $form): Form
+    case Attending = 'attending';
+
+    case NotAttending = 'not_attending';
+
+    public function getLabel(): ?string
     {
-        return $form->schema($this->fields());
+        return match ($this) {
+            self::NotAttending => 'Not Attending',
+            default => $this->name,
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::Invited => 'info',
+            self::Pending => 'warning',
+            self::Attending => 'success',
+            self::NotAttending => 'danger',
+        };
     }
 }

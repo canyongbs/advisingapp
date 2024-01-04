@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
@@ -68,6 +70,10 @@ class ViewEvent extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('view')
+                ->url(fn (Event $event) => route('event-registration.show', ['event' => $event]))
+                ->icon('heroicon-m-arrow-top-right-on-square')
+                ->openUrlInNewTab(),
             EditAction::make(),
             DeleteAction::make(),
         ];

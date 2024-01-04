@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\URL;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 
 class GenerateSubmissibleEmbedCode
 {
@@ -72,6 +73,16 @@ class GenerateSubmissibleEmbedCode
 
                 return <<<EOD
                 <survey-embed url="{$surveyDefinitionUrl}"></survey-embed>
+                <script src="{$scriptUrl}"></script>
+                EOD;
+            })(),
+            EventRegistrationForm::class => (function () use ($submissible) {
+                /** @var EventRegistrationForm $submissible */
+                $scriptUrl = url('js/widgets/events/advising-app-event-registration-form-widget.js?');
+                $formDefinitionUrl = URL::signedRoute('event-registration.define', ['event' => $submissible->event]);
+
+                return <<<EOD
+                <event-registration-embed url="{$formDefinitionUrl}"></event-registration-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),

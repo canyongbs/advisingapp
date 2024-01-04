@@ -34,21 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\Survey\Filament\Blocks;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use AdvisingApp\Form\Filament\Blocks\CheckboxFormFieldBlock;
 
-class CreateEvent extends CreateRecord
+class CheckboxSurveyFieldBlock extends CheckboxFormFieldBlock
 {
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
+    public function getLabel(): string
     {
-        return $form->schema($this->fields());
+        return 'Multiple Choice';
     }
 }

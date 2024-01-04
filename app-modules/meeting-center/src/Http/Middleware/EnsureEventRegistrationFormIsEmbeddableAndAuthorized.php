@@ -34,21 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Http\Middleware;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use Closure;
+use Illuminate\Http\Request;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Symfony\Component\HttpFoundation\Response;
 
-class CreateEvent extends CreateRecord
+class EnsureEventRegistrationFormIsEmbeddableAndAuthorized
 {
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
+    public function handle(Request $request, Closure $next, string $binding): Response
     {
-        return $form->schema($this->fields());
+        /** @var Event $event */
+        $event = $request->route($binding);
+
+        $submissible = $event->eventRegistrationForm;
+
+        $referer = $request->headers->get('referer');
+
+        if (! $referer) {
+            return response()->json(['error' => 'Missing referer header.'], 400);
+        }
+
+        $referer = parse_url($referer)['host'];
+
+        if ($referer != parse_url(config('app.url'))['host']) {
+            if (! $submissible->embed_enabled) {
+                return response()->json(['error' => 'Embedding is not enabled for this form.'], 403);
+            }
+
+            $allowedDomains = collect($submissible->allowed_domains ?? []);
+
+            if (! $allowedDomains->contains($referer)) {
+                return response()->json(['error' => 'Referer not allowed. Domain must be added to allowed domains list'], 403);
+            }
+        }
+
+        return $next($request);
     }
 }

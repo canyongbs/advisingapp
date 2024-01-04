@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
-
-class CreateEvent extends CreateRecord
-{
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
+return new class () extends Migration {
+    public function up(): void
     {
-        return $form->schema($this->fields());
+        Schema::create('event_registration_form_authentications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->foreignUuid('event_attendee_id')->constrained('event_attendees')->cascadeOnDelete();
+            $table->string('code')->nullable();
+            $table->foreignUuid('form_id')->constrained('event_registration_forms')->cascadeOnDelete();
+
+            $table->timestamps();
+        });
     }
-}
+};
