@@ -49,7 +49,6 @@ use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Models\Role;
 use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
@@ -419,37 +418,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         }
 
         return false;
-    }
-
-    /**
-     * @param LicenseType | string | array<LicenseType | string> | null $type
-     */
-    public function scopeHasLicense(Builder $query, LicenseType | string | array | null $type): Builder
-    {
-        if (blank($type)) {
-            return $query;
-        }
-
-        foreach (Arr::wrap($type) as $type) {
-            $query->whereRelation('licenses', 'type', $type);
-        }
-
-        return $query;
-    }
-
-    /**
-     * @param LicenseType | string | array<LicenseType | string> | null $type
-     */
-    public function scopeHasAnyLicense(Builder $query, LicenseType | string | array | null $type): Builder
-    {
-        if (blank($type)) {
-            return $query;
-        }
-
-        return $query->whereHas(
-            'licenses',
-            fn (Builder $query) => $query->whereIn('type', Arr::wrap($type)),
-        );
     }
 
     protected function serializeDate(DateTimeInterface $date): string

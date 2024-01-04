@@ -49,6 +49,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
@@ -171,7 +172,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->licensedToEducatable('interactable');
+            $builder->tap(new LicensedToEducatable('interactable'));
         });
     }
 }

@@ -302,11 +302,8 @@ class CreateCaseload extends CreateRecord implements HasTable
         $canAccessStudents = auth()->user()->hasLicense(Student::getLicenseType());
         $canAccessProspects = auth()->user()->hasLicense(Prospect::getLicenseType());
 
-        if ($canAccessStudents && $canAccessProspects) {
-            return CaseloadModel::tryFromCaseOrValue($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.');
-        }
-
         return match (true) {
+            $canAccessStudents && $canAccessProspects => CaseloadModel::tryFromCaseOrValue($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.'),
             $canAccessStudents => CaseloadModel::Student,
             $canAccessProspects => CaseloadModel::Prospect,
             default => throw new Exception('User cannot access students or prospects.'),

@@ -60,6 +60,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Identifiable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
@@ -249,7 +250,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->licensedToEducatable('respondent');
+            $builder->tap(new LicensedToEducatable('respondent'));
         });
     }
 

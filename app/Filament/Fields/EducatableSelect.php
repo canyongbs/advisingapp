@@ -80,13 +80,13 @@ class EducatableSelect extends Component
 
     public static function getStudentType(): Type
     {
-        return MorphToSelect\Type::make(Student::class)
+        return Type::make(Student::class)
             ->titleAttribute(Student::displayNameKey());
     }
 
     public static function getProspectType(): Type
     {
-        return MorphToSelect\Type::make(Prospect::class)
+        return Type::make(Prospect::class)
             ->titleAttribute(Prospect::displayNameKey());
     }
 

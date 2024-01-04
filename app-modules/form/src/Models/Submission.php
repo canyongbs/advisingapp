@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 
 /**
@@ -67,7 +68,7 @@ abstract class Submission extends BaseModel
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->licensedToEducatable('author');
+            $builder->tap(new LicensedToEducatable('author'));
         });
     }
 }

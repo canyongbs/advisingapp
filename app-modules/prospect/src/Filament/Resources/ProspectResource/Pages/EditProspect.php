@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
+use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
@@ -140,7 +141,7 @@ class EditProspect extends EditRecord
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->hasLicense(Prospect::getLicenseType()),
+                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
                     )
                     ->searchable()
                     ->nullable()

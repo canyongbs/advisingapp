@@ -50,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 
@@ -115,7 +116,7 @@ class Subscription extends MorphPivot implements ExecutableFromACampaignAction
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->licensedToEducatable('subscribable');
+            $builder->tap(new LicensedToEducatable('subscribable'));
         });
     }
 

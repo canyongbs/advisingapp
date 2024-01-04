@@ -39,6 +39,7 @@ namespace AdvisingApp\Task\Filament\RelationManagers;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use AdvisingApp\Task\Models\Task;
+use App\Models\Scopes\HasLicense;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
@@ -84,7 +85,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->hasLicense($this->getOwnerRecord()->getLicenseType()),
+                        fn (Builder $query) => $query->tap(new HasLicense($this->getOwnerRecord()->getLicenseType())),
                     )
                     ->nullable()
                     ->searchable(['name', 'email'])
@@ -130,7 +131,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->hasLicense($this->getOwnerRecord()->getLicenseType()),
+                        fn (Builder $query) => $query->tap(new HasLicense($this->getOwnerRecord()->getLicenseType())),
                     )
                     ->searchable()
                     ->multiple(),

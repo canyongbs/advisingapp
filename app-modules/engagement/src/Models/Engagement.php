@@ -56,6 +56,7 @@ use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 
@@ -211,7 +212,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->licensedToEducatable('recipient');
+            $builder->tap(new LicensedToEducatable('recipient'));
         });
     }
 }

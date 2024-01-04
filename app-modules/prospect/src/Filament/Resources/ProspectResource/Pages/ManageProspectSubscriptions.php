@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
+use App\Models\Scopes\HasLicense;
 use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
@@ -97,7 +98,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                         fn (Select $select) => $select->placeholder('Select a User'),
                     )
                     ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->hasLicense(Prospect::getLicenseType()),
+                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Prospect $prospect */

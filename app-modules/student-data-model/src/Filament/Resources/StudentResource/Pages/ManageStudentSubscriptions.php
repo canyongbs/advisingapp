@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
+use App\Models\Scopes\HasLicense;
 use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
@@ -97,7 +98,7 @@ class ManageStudentSubscriptions extends ManageRelatedRecords
                         fn (Select $select) => $select->placeholder('Select a User'),
                     )
                     ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->hasLicense(Student::getLicenseType()),
+                        fn (Builder $query) => $query->tap(new HasLicense(Student::getLicenseType())),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Student $student */

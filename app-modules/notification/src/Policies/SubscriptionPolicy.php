@@ -53,7 +53,7 @@ class SubscriptionPolicy
     public function view(Authenticatable $authenticatable, Subscription $subscription): Response
     {
         if (! $authenticatable->hasLicense($subscription->subscribable?->getLicenseType())) {
-            return Response::deny('You do not have permission to view this alert.');
+            return Response::deny('You do not have permission to view this subscription.');
         }
 
         return $authenticatable->canOrElse(

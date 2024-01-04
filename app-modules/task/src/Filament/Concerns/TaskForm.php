@@ -41,6 +41,7 @@ use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use App\Models\Authenticatable;
+use App\Models\Scopes\HasLicense;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -54,7 +55,7 @@ trait TaskForm
             $concernType = $get('concern_type');
 
             if (filled($concernType = (Relation::getMorphedModel($concernType) ?? $concernType))) {
-                return $query->hasLicense($concernType::getLicenseType());
+                return $query->tap(new HasLicense($concernType::getLicenseType()));
             }
 
             /** @var Authenticatable $user */
@@ -68,8 +69,8 @@ trait TaskForm
             }
 
             return match (true) {
-                $canAccessStudents => $query->hasLicense(Student::getLicenseType()),
-                $canAccessProspects => $query->hasLicense(Prospect::getLicenseType()),
+                $canAccessStudents => $query->tap(new HasLicense(Student::getLicenseType())),
+                $canAccessProspects => $query->tap(new HasLicense(Prospect::getLicenseType())),
                 default => $query,
             };
         };

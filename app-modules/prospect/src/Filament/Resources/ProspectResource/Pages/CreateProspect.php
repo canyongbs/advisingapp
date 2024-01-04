@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
+use App\Models\Scopes\HasLicense;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -137,7 +138,7 @@ class CreateProspect extends CreateRecord
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->hasLicense(Prospect::getLicenseType()),
+                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
                     )
                     ->searchable()
                     ->nullable()

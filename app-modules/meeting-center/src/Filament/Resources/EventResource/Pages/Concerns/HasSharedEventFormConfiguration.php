@@ -41,7 +41,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Components\Grid;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Rules\IsDomain;
-use App\Forms\Components\ColorSelect;
+use App\Filament\Fields\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
