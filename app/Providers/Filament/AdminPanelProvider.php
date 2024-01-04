@@ -116,6 +116,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label('Artificial Intelligence'),
+                NavigationGroup::make()
                     ->label('Record Management'),
                 NavigationGroup::make()
                     ->label('Productivity Tools'),
