@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace App\Forms\Components;
+namespace App\Filament\Fields;
 
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Select;

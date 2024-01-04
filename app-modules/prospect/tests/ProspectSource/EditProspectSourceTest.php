@@ -39,6 +39,9 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use AdvisingApp\Prospect\Models\Prospect;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
@@ -98,7 +101,7 @@ test('EditProspectSource requires valid data', function ($data, $errors) {
 // Permission Tests
 
 test('EditProspectSource is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospectSource = ProspectSource::factory()->create();
 

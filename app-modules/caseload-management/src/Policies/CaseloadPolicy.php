@@ -38,10 +38,21 @@ namespace AdvisingApp\CaseloadManagement\Policies;
 
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 
 class CaseloadPolicy
 {
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
+            return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -52,6 +63,10 @@ class CaseloadPolicy
 
     public function view(Authenticatable $authenticatable, Caseload $caseload): Response
     {
+        if (! $authenticatable->hasLicense($caseload->model?->class()::getLicenseType())) {
+            return Response::deny('You do not have permission to view this caseload.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['caseload.*.view', "caseload.{$caseload->id}.view"],
             denyResponse: 'You do not have permission to view this caseload.'
@@ -68,6 +83,10 @@ class CaseloadPolicy
 
     public function update(Authenticatable $authenticatable, Caseload $caseload): Response
     {
+        if (! $authenticatable->hasLicense($caseload->model?->class()::getLicenseType())) {
+            return Response::deny('You do not have permission to update this caseload.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['caseload.*.update', "caseload.{$caseload->id}.update"],
             denyResponse: 'You do not have permission to update this caseload.'
@@ -76,6 +95,10 @@ class CaseloadPolicy
 
     public function delete(Authenticatable $authenticatable, Caseload $caseload): Response
     {
+        if (! $authenticatable->hasLicense($caseload->model?->class()::getLicenseType())) {
+            return Response::deny('You do not have permission to delete this caseload.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['caseload.*.delete', "caseload.{$caseload->id}.delete"],
             denyResponse: 'You do not have permission to delete this caseload.'
@@ -84,6 +107,10 @@ class CaseloadPolicy
 
     public function restore(Authenticatable $authenticatable, Caseload $caseload): Response
     {
+        if (! $authenticatable->hasLicense($caseload->model?->class()::getLicenseType())) {
+            return Response::deny('You do not have permission to restore this caseload.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['caseload.*.restore', "caseload.{$caseload->id}.restore"],
             denyResponse: 'You do not have permission to restore this caseload.'
@@ -92,6 +119,10 @@ class CaseloadPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Caseload $caseload): Response
     {
+        if (! $authenticatable->hasLicense($caseload->model?->class()::getLicenseType())) {
+            return Response::deny('You do not have permission to permanently delete this caseload.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['caseload.*.force-delete', "caseload.{$caseload->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this caseload.'

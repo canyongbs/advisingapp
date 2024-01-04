@@ -42,6 +42,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
@@ -78,7 +79,7 @@ test('The correct details are displayed on the ViewServiceRequest page', functio
 // Permission Tests
 
 test('ViewServiceRequest is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $serviceRequest = ServiceRequest::factory()->create();
 
@@ -107,7 +108,7 @@ test('ViewServiceRequest is gated with proper feature access control', function 
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('service_request.view-any');
     $user->givePermissionTo('service_request.*.view');

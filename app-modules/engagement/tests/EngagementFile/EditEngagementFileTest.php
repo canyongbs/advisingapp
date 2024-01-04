@@ -39,6 +39,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 
@@ -50,7 +51,7 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 // Permission Tests
 
 test('EditEngagementFile is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $engagementFile = EngagementFile::factory()->create();
 

@@ -46,6 +46,8 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tables\Enums\FiltersLayout;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Concerns\InteractsWithTable;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
@@ -87,8 +89,10 @@ class EditCaseload extends EditRecord implements HasTable
                         Select::make('model')
                             ->label('Population')
                             ->options(CaseloadModel::class)
-                            ->disabled(),
+                            ->disabled()
+                            ->visible(auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])),
                         TextInput::make('user.name')
+                            ->label('User')
                             ->disabled(),
                     ])
                     ->columns(3),

@@ -44,6 +44,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Pest\Laravel\assertDatabaseHas;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestRequestFactory;
@@ -147,7 +148,7 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
 // Permission Tests
 
 test('EditServiceRequest is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $serviceRequest = ServiceRequest::factory()->create();
 
@@ -213,7 +214,7 @@ test('EditServiceRequest is gated with proper feature access control', function 
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('service_request.view-any');
     $user->givePermissionTo('service_request.*.update');

@@ -43,11 +43,14 @@ use AdvisingApp\Task\Models\Task;
 use Illuminate\Validation\Rules\Enum;
 use AdvisingApp\Task\Enums\TaskStatus;
 use Filament\Actions\Imports\Importer;
+use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Validation\ValidationException;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Interaction\Imports\InteractionsImporter;
 
 /**
  * @property ?Task $record
@@ -89,35 +92,48 @@ class TaskImporter extends Importer
             ImportColumn::make('concern')
                 ->label('Related To')
                 ->relationship(
-                    resolveUsing: function (mixed $state) {
-                        $type = str($state)->before(':');
-                        $value = str($state)->after(':');
+                    resolveUsing: function (InteractionsImporter $importer, mixed $state): ?Model {
+                        $resolveFromModel = fn (string $model, string $identifier): ?Model => $model::query()
+                            ->when(
+                                str($identifier)->isUuid(),
+                                fn (Builder $query) => $query->whereKey($identifier),
+                                fn (Builder $query) => $query->where('email', $identifier),
+                            )
+                            ->first();
 
-                        return match ($type->toString()) {
-                            'prospect' => Prospect::query()
-                                ->when(
-                                    str($value)->isUuid(),
-                                    fn (Builder $query) => $query->whereKey($value),
-                                    fn (Builder $query) => $query->where('email', $value),
-                                )
-                                ->first(),
-                            'student' => Student::query()
-                                ->when(
-                                    str($value)->isUuid(),
-                                    fn (Builder $query) => $query->whereKey($value),
-                                    fn (Builder $query) => $query->where('email', $value),
-                                )
-                                ->first(),
+                        if (str($state)->contains(':')) {
+                            return $resolveFromModel(match ((string) str($state)->before(':')) {
+                                'prospect' => Prospect::class,
+                                'student' => Student::class,
+                            }, (string) str($state)->after(':'));
+                        }
+
+                        $user = $importer->getImport()->user;
+
+                        $model = match (true) {
+                            $user->hasLicense(Student::getLicenseType()) => Student::class,
+                            $user->hasLicense(Prospect::getLicenseType()) => Prospect::class,
+                            default => null,
                         };
+
+                        return filled($model) ? $resolveFromModel($model, $state) : null;
                     },
                 )
                 ->requiredMapping()
-                ->rules(
-                    [
-                        'starts_with:prospect:,student:',
-                    ]
-                )
-                ->example('student:johnsmith@gmail.com'),
+                ->rules(function (InteractionsImporter $importer) {
+                    if (! $importer->getImport()->user->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
+                        return [];
+                    }
+
+                    return ['starts_with:prospect:,student:'];
+                })
+                ->example(function () {
+                    if (auth()->user()?->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()]) ?? true) {
+                        return 'student:johnsmith@gmail.com';
+                    }
+
+                    return 'johnsmith@gmail.com';
+                }),
         ];
     }
 
@@ -130,6 +146,18 @@ class TaskImporter extends Importer
     {
         /** @var Task $record */
         $record = $this->record;
+
+        if ($this->import->user->cannot('view', $record->concern)) {
+            throw ValidationException::withMessages([
+                'concern' => 'You do not have permission to create a task for this concern.',
+            ]);
+        }
+
+        if ($record->assignedTo?->cannot('view', $record->concern)) {
+            throw ValidationException::withMessages([
+                'assignedTo' => 'The assigned user does not have permission to view this concern.',
+            ]);
+        }
 
         $query = Task::query();
 

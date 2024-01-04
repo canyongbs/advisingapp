@@ -39,6 +39,7 @@ namespace AdvisingApp\Interaction\Imports;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Filament\Actions\Imports\Importer;
+use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
@@ -63,35 +64,48 @@ class InteractionsImporter extends Importer
         return [
             ImportColumn::make('interactable')
                 ->relationship(
-                    resolveUsing: function (mixed $state) {
-                        $type = str($state)->before(':');
-                        $value = str($state)->after(':');
+                    resolveUsing: function (InteractionsImporter $importer, mixed $state): ?Model {
+                        $resolveFromModel = fn (string $model, string $identifier): ?Model => $model::query()
+                            ->when(
+                                str($identifier)->isUuid(),
+                                fn (Builder $query) => $query->whereKey($identifier),
+                                fn (Builder $query) => $query->where('email', $identifier),
+                            )
+                            ->first();
 
-                        return match ($type->toString()) {
-                            'prospect' => Prospect::query()
-                                ->when(
-                                    str($value)->isUuid(),
-                                    fn (Builder $query) => $query->whereKey($value),
-                                    fn (Builder $query) => $query->where('email', $value),
-                                )
-                                ->first(),
-                            'student' => Student::query()
-                                ->when(
-                                    str($value)->isUuid(),
-                                    fn (Builder $query) => $query->whereKey($value),
-                                    fn (Builder $query) => $query->where('email', $value),
-                                )
-                                ->first(),
+                        if (str($state)->contains(':')) {
+                            return $resolveFromModel(match ((string) str($state)->before(':')) {
+                                'prospect' => Prospect::class,
+                                'student' => Student::class,
+                            }, (string) str($state)->after(':'));
+                        }
+
+                        $user = $importer->getImport()->user;
+
+                        $model = match (true) {
+                            $user->hasLicense(Student::getLicenseType()) => Student::class,
+                            $user->hasLicense(Prospect::getLicenseType()) => Prospect::class,
+                            default => null,
                         };
+
+                        return filled($model) ? $resolveFromModel($model, $state) : null;
                     },
                 )
                 ->requiredMapping()
-                ->rules(
-                    [
-                        'starts_with:prospect:,student:',
-                    ]
-                )
-                ->example('student:johnsmith@gmail.com'),
+                ->rules(function (InteractionsImporter $importer) {
+                    if (! $importer->getImport()->user->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
+                        return [];
+                    }
+
+                    return ['starts_with:prospect:,student:'];
+                })
+                ->example(function () {
+                    if (auth()->user()?->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()]) ?? true) {
+                        return 'student:johnsmith@gmail.com';
+                    }
+
+                    return 'johnsmith@gmail.com';
+                }),
             ImportColumn::make('type')
                 ->relationship(
                     resolveUsing: fn (mixed $state) => InteractionType::query()

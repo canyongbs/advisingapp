@@ -61,14 +61,22 @@ enum LicenseType: string implements HasLabel
     {
         $totalLicensesInUse = License::query()->where('type', $this)->count();
 
+        return $totalLicensesInUse < $this->getSeats();
+    }
+
+    public function isLicenseable(): bool
+    {
+        return $this->getSeats() > 0;
+    }
+
+    public function getSeats(): int
+    {
         $licenseSettings = app(LicenseSettings::class);
 
-        $licenseLimit = match ($this) {
+        return match ($this) {
             LicenseType::ConversationalAi => $licenseSettings->data->limits->conversationalAiSeats,
             LicenseType::RetentionCrm => $licenseSettings->data->limits->retentionCrmSeats,
             LicenseType::RecruitmentCrm => $licenseSettings->data->limits->recruitmentCrmSeats,
         };
-
-        return $totalLicensesInUse < $licenseLimit;
     }
 }
