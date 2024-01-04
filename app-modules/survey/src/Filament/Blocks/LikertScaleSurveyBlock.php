@@ -36,39 +36,51 @@
 
 namespace AdvisingApp\Survey\Filament\Blocks;
 
+use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\NumberFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
-class SurveyFieldBlockRegistry
+class LikertScaleSurveyBlock extends FormFieldBlock
 {
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function get(): array
+    public ?string $label = 'Likert Scale';
+
+    public string $preview = 'survey::blocks.previews.likert';
+
+    public string $rendered = 'survey::blocks.submissions.likert';
+
+    public ?string $icon = 'heroicon-m-list-bullet';
+
+    public static function type(): string
+    {
+        return 'likert';
+    }
+
+    public static function getFormKitSchema(SubmissibleField $field): array
     {
         return [
-            EducatableEmailFormFieldBlock::class,
-            TextInputSurveyFieldBlock::class,
-            TextAreaSurveyFieldBlock::class,
-            SelectSurveyFieldBlock::class,
-            RadioSurveyFieldBlock::class,
-            CheckboxSurveyFieldBlock::class,
-            EmailFormFieldBlock::class,
-            NumberFormFieldBlock::class,
-            LikertScaleSurveyBlock::class,
+            '$formkit' => 'radio',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+            'options' => static::options(),
         ];
     }
 
-    /**
-     * @return array<string, class-string<FormFieldBlock>>
-     */
-    public static function keyByType(): array
+    public static function getValidationRules(SubmissibleField $field): array
     {
-        /** @var FormFieldBlock $block */
-        return collect(static::get())
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
-            ->all();
+        return [
+            'string',
+            'in:' . collect(static::options())->keys()->join(','),
+        ];
+    }
+
+    public static function options(): array
+    {
+        return [
+            'strongly-agree' => 'Strongly agree',
+            'agree' => 'Agree',
+            'neutral' => 'Neither agree nor disagree',
+            'disagree' => 'Disagree',
+            'strongly-disagree' => 'Strongly disagree',
+        ];
     }
 }

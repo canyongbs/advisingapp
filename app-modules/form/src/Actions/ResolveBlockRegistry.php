@@ -36,65 +36,20 @@
 
 namespace AdvisingApp\Form\Actions;
 
-use Illuminate\Support\Arr;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
-use Illuminate\Database\Eloquent\Collection;
-use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\IntegrationGoogleRecaptcha\Rules\RecaptchaTokenValid;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
 
-class GenerateSubmissibleValidation
+class ResolveBlockRegistry
 {
     public function __invoke(Submissible $submissible): array
     {
-        $rules = [];
-
-        if ($submissible->recaptcha_enabled === true) {
-            $rules['recaptcha-token'] = [new RecaptchaTokenValid()];
-        }
-
-        if ($submissible->is_wizard) {
-            return array_merge($rules, $this->wizardRules($submissible));
-        }
-
-        $blocks = app(ResolveBlockRegistry::class)($submissible);
-
-        return array_merge($rules, $this->fields($blocks, $submissible->fields));
-    }
-
-    public function fields(array $blocks, Collection $fields): array
-    {
-        return $fields
-            ->mapWithKeys(function (SubmissibleField $field) use ($blocks) {
-                $rules = collect();
-
-                if ($field->is_required) {
-                    $rules->push('required');
-                }
-
-                return [
-                    $field->getKey() => $rules
-                        ->merge($blocks[$field->type]::getValidationRules($field))
-                        ->all(),
-                ];
-            })
-            ->all();
-    }
-
-    public function wizardRules(Submissible $submissible): array
-    {
-        $rules = collect();
-
-        $blocks = app(ResolveBlockRegistry::class)($submissible);
-
-        foreach ($submissible->steps as $step) {
-            $rules = $rules->merge(
-                Arr::prependKeysWith(
-                    $this->fields($blocks, $step->fields),
-                    prependWith: "{$step->label}.",
-                ),
-            );
-        }
-
-        return $rules->all();
+        return match ($submissible::class) {
+            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
+            Survey::class => SurveyFieldBlockRegistry::keyByType(),
+        };
     }
 }

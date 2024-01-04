@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,43 +30,25 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\Survey\Filament\Blocks;
+@php
+    use AdvisingApp\Survey\Filament\Blocks\LikertScaleSurveyBlock;
+@endphp
 
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\NumberFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+<x-form::blocks.field-wrapper
+    :$label
+    :$isRequired
+>
+    <div class="grid gap-y-2">
+        @foreach (LikertScaleSurveyBlock::options() as $option)
+            <div class="flex items-center gap-2">
+                <div class="h-3 w-3 rounded-full border border-gray-500"></div>
 
-class SurveyFieldBlockRegistry
-{
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function get(): array
-    {
-        return [
-            EducatableEmailFormFieldBlock::class,
-            TextInputSurveyFieldBlock::class,
-            TextAreaSurveyFieldBlock::class,
-            SelectSurveyFieldBlock::class,
-            RadioSurveyFieldBlock::class,
-            CheckboxSurveyFieldBlock::class,
-            EmailFormFieldBlock::class,
-            NumberFormFieldBlock::class,
-            LikertScaleSurveyBlock::class,
-        ];
-    }
-
-    /**
-     * @return array<string, class-string<FormFieldBlock>>
-     */
-    public static function keyByType(): array
-    {
-        /** @var FormFieldBlock $block */
-        return collect(static::get())
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
-            ->all();
-    }
-}
+                <div class="text-sm font-medium leading-6">
+                    {{ $option }}
+                </div>
+            </div>
+        @endforeach
+    </div>
+</x-form::blocks.field-wrapper>
