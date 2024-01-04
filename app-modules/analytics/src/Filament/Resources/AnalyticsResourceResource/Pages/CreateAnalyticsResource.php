@@ -43,6 +43,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\Analytics\Models\AnalyticsResourceCategory;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource;
 
@@ -59,14 +60,15 @@ class CreateAnalyticsResource extends CreateRecord
                     ->schema([
                         TextInput::make('name')
                             ->required()
-                            ->string()
-                            ->unique(ignoreRecord: true),
+                            ->string(),
                         Textarea::make('description')
                             ->nullable()
                             ->string(),
                         Select::make('category_id')
                             ->relationship('category', 'name')
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->helperText(fn ($state) => AnalyticsResourceCategory::find($state)?->description),
                         Select::make('source_id')
                             ->relationship('source', 'name'),
                         TextInput::make('url')

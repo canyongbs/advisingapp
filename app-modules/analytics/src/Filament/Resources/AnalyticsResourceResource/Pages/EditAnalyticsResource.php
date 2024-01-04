@@ -44,6 +44,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Analytics\Models\AnalyticsResourceCategory;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource;
 
@@ -67,7 +68,9 @@ class EditAnalyticsResource extends EditRecord
                             ->string(),
                         Select::make('category_id')
                             ->relationship('category', 'name')
-                            ->required(),
+                            ->required()
+                            ->live()
+                            ->helperText(fn ($state) => AnalyticsResourceCategory::find($state)?->description),
                         Select::make('source_id')
                             ->relationship('source', 'name'),
                         TextInput::make('url')

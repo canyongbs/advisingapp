@@ -53,12 +53,6 @@ class AnalyticsResourceSourceResource extends Resource
 
     protected static ?int $navigationSort = 19;
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
-
     public static function getPages(): array
     {
         return [

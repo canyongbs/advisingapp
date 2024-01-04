@@ -57,19 +57,12 @@ class AnalyticsResourceFactory extends Factory
             'url' => fake()->optional()->url(),
             'is_active' => fake()->boolean(),
             'is_included_in_data_portal' => fake()->boolean(),
+            'source_id' => fake()->optional()->randomElement([
+                AnalyticsResourceSource::query()->inRandomOrder()->first() ?? AnalyticsResourceSource::factory()->create(),
+            ]),
+            'category_id' => fake()->randomElement([
+                AnalyticsResourceCategory::query()->inRandomOrder()->first() ?? AnalyticsResourceCategory::factory()->create(),
+            ]),
         ];
-    }
-
-    public function configure(): AnalyticsResourceFactory|Factory
-    {
-        return $this->afterMaking(function (AnalyticsResource $analyticsResource) {
-            $analyticsResource
-                ->source()
-                ->associate(fake()->optional()->randomElement([AnalyticsResourceSource::inRandomOrder()->first() ?? AnalyticsResourceSource::factory()->create()]));
-
-            $analyticsResource
-                ->category()
-                ->associate(fake()->randomElement([AnalyticsResourceCategory::inRandomOrder()->first() ?? AnalyticsResourceCategory::factory()->create()]));
-        });
     }
 }

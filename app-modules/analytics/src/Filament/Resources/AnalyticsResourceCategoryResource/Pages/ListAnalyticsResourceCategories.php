@@ -66,8 +66,6 @@ class ListAnalyticsResourceCategories extends ListRecords
                     ->counts('resources')
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

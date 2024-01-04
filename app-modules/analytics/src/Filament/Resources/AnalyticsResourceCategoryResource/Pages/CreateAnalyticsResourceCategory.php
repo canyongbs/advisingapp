@@ -58,8 +58,7 @@ class CreateAnalyticsResourceCategory extends CreateRecord
                     ->schema([
                         TextInput::make('name')
                             ->required()
-                            ->string()
-                            ->unique(ignoreRecord: true),
+                            ->string(),
                         Select::make('classification')
                             ->options(AnalyticsResourceCategoryClassification::class)
                             ->enum(AnalyticsResourceCategoryClassification::class)

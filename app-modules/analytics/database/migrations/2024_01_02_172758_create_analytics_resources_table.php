@@ -47,8 +47,8 @@ return new class () extends Migration {
             $table->string('name')->unique();
             $table->longText('description')->nullable();
             $table->string('url')->nullable();
-            $table->boolean('is_active');
-            $table->boolean('is_included_in_data_portal');
+            $table->boolean('is_active')->default(false);
+            $table->boolean('is_included_in_data_portal')->default(false);
 
             $table->foreignUuid('source_id')->nullable()->constrained('analytics_resource_sources');
             $table->foreignUuid('category_id')->constrained('analytics_resource_categories');

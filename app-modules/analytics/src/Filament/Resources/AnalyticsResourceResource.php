@@ -54,12 +54,6 @@ class AnalyticsResourceResource extends Resource
 
     protected static ?string $navigationLabel = 'Analytics Portal';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
