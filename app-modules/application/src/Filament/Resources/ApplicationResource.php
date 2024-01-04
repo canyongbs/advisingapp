@@ -51,11 +51,17 @@ class ApplicationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Forms and Surveys';
+    protected static ?string $navigationGroup = 'Premium Features';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationLabel = 'Manage Admissions';
+    protected static ?string $navigationLabel = 'Online Admissions';
+
+    protected static ?string $breadcrumb = 'Online Admissions';
+
+    protected static ?string $modelLabel = 'Application';
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function getEloquentQuery(): Builder
     {

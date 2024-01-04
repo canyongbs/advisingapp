@@ -124,11 +124,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Engagement Features'),
                 NavigationGroup::make()
-                    ->label('Meeting Center'),
-                NavigationGroup::make()
-                    ->label('Mass Engagement'),
-                NavigationGroup::make()
-                    ->label('Forms and Surveys'),
+                    ->label('Premium Features'),
                 NavigationGroup::make()
                     ->label('Reporting'),
                 NavigationGroup::make()

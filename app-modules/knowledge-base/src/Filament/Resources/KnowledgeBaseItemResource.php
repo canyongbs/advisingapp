@@ -49,21 +49,19 @@ class KnowledgeBaseItemResource extends Resource
 {
     protected static ?string $model = KnowledgeBaseItem::class;
 
-    protected static ?string $navigationLabel = 'Knowledge Base';
+    protected static ?string $navigationLabel = 'Knowledge Management';
+
+    protected static ?string $modelLabel = 'knowledge base item';
+
+    protected static ?string $breadcrumb = 'Knowledge Management';
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
-    protected static ?string $navigationGroup = 'Engagement Features';
+    protected static ?string $navigationGroup = 'Premium Features';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $recordTitleAttribute = 'question';
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
 
     public static function getGloballySearchableAttributes(): array
     {

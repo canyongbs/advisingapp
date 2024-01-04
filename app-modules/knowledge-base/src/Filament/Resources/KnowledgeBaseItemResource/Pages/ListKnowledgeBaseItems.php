@@ -51,6 +51,8 @@ use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 class ListKnowledgeBaseItems extends ListRecords
 {
+    protected ?string $heading = 'Knowledge Management';
+
     protected static string $resource = KnowledgeBaseItemResource::class;
 
     public function table(Table $table): Table
