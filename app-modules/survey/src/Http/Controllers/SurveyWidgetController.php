@@ -53,7 +53,6 @@ use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Survey\Models\SurveyAuthentication;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
-use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Notifications\AuthenticateFormNotification;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
@@ -119,7 +118,7 @@ class SurveyWidgetController extends Controller
         ]);
     }
 
-    public function authenticate(Request $request, Survey $survey, ApplicationAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, Survey $survey, SurveyAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([
@@ -139,8 +138,8 @@ class SurveyWidgetController extends Controller
 
         return response()->json([
             'submission_url' => URL::signedRoute('surveys.submit', [
-                'survey' => $authentication,
-                'application' => $authentication->submissible,
+                'authentication' => $authentication,
+                'survey' => $authentication->submissible,
             ]),
         ]);
     }
@@ -154,7 +153,7 @@ class SurveyWidgetController extends Controller
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
-            $authentication = ApplicationAuthentication::findOrFail($authentication);
+            $authentication = SurveyAuthentication::findOrFail($authentication);
         }
 
         if (

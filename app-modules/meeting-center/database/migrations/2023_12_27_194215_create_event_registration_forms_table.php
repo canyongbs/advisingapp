@@ -34,21 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
-
-class CreateEvent extends CreateRecord
-{
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
+return new class () extends Migration {
+    public function up(): void
     {
-        return $form->schema($this->fields());
+        Schema::create('event_registration_forms', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->foreignUuid('event_id')->constrained('events')->cascadeOnDelete();
+            $table->boolean('embed_enabled')->default(false);
+            $table->json('allowed_domains')->nullable();
+            $table->string('primary_color')->nullable();
+            $table->string('rounding')->nullable();
+            $table->boolean('is_wizard')->default(false);
+            $table->boolean('recaptcha_enabled')->default(false);
+            $table->json('content')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-}
+};

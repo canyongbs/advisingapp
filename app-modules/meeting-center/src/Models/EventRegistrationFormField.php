@@ -34,21 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use AdvisingApp\Form\Models\SubmissibleField;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CreateEvent extends CreateRecord
+/**
+ * @mixin IdeHelperEventRegistrationFormField
+ */
+class EventRegistrationFormField extends SubmissibleField
 {
-    use HasSharedEventFormConfiguration;
+    protected $fillable = [
+        'config',
+        'label',
+        'type',
+        'is_required',
+        'form_id',
+    ];
 
-    protected static string $resource = EventResource::class;
+    protected $casts = [
+        'config' => 'array',
+        'is_required' => 'bool',
+    ];
 
-    public function form(Form $form): Form
+    public function submissible(): BelongsTo
     {
-        return $form->schema($this->fields());
+        return $this
+            ->belongsTo(EventRegistrationForm::class, 'form_id');
+    }
+
+    public function step(): BelongsTo
+    {
+        return $this
+            ->belongsTo(EventRegistrationFormStep::class, 'step_id');
     }
 }

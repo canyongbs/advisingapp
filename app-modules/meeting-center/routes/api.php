@@ -34,21 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+use AdvisingApp\MeetingCenter\Http\Controllers\EventRegistrationWidgetController;
+use AdvisingApp\MeetingCenter\Http\Middleware\EnsureEventRegistrationFormIsEmbeddableAndAuthorized;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
-
-class CreateEvent extends CreateRecord
-{
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form->schema($this->fields());
-    }
-}
+Route::prefix('api')
+    ->middleware([
+        'api',
+        EnsureEventRegistrationFormIsEmbeddableAndAuthorized::class . ':event',
+    ])
+    ->group(function () {
+        Route::prefix('event-registration')
+            ->name('event-registration.')
+            ->group(function () {
+                Route::get('/{event}', [EventRegistrationWidgetController::class, 'view'])
+                    ->middleware(['signed'])
+                    ->name('define');
+                Route::post('/{event}/authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
+                    ->middleware(['signed'])
+                    ->name('request-authentication');
+                Route::post('/{event}/authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
+                    ->middleware(['signed'])
+                    ->name('authenticate');
+                Route::post('/{event}/submit', [EventRegistrationWidgetController::class, 'store'])
+                    ->middleware(['signed'])
+                    ->name('submit');
+            });
+    });

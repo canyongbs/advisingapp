@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,28 @@
 
 </COPYRIGHT>
 */
+import { resolve } from "path";
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
-
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
-
-class CreateEvent extends CreateRecord
-{
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form->schema($this->fields());
-    }
-}
+export default defineConfig({
+    plugins: [vue()],
+    build: {
+        manifest: true,
+        lib: {
+            entry: resolve(__dirname, 'src/widget.js'),
+            name: 'AdvisingAppEventRegistrationFormWidget',
+            fileName: 'advising-app-event-registration-form-widget',
+            formats: ['es'],
+        },
+        outDir: resolve(__dirname, '../../public/js/widgets/events'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});

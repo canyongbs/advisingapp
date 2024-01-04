@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,12 @@
 
 </COPYRIGHT>
 */
-
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
-
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
-
-class CreateEvent extends CreateRecord
-{
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form->schema($this->fields());
-    }
+export default {
+    plugins: {
+        'tailwindcss/nesting': {},
+        tailwindcss: {
+            config: './tailwind.config.js',
+        },
+        autoprefixer: {},
+    },
 }

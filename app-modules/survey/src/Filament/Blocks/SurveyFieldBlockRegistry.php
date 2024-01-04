@@ -34,21 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\Survey\Filament\Blocks;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use AdvisingApp\Form\Filament\Blocks\EmailFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\NumberFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 
-class CreateEvent extends CreateRecord
+class SurveyFieldBlockRegistry
 {
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
+    /**
+     * @return array<class-string<FormFieldBlock>>
+     */
+    public static function get(): array
     {
-        return $form->schema($this->fields());
+        return [
+            EducatableEmailFormFieldBlock::class,
+            TextInputSurveyFieldBlock::class,
+            TextAreaSurveyFieldBlock::class,
+            SelectSurveyFieldBlock::class,
+            RadioSurveyFieldBlock::class,
+            CheckboxSurveyFieldBlock::class,
+            EmailFormFieldBlock::class,
+            NumberFormFieldBlock::class,
+        ];
+    }
+
+    /**
+     * @return array<string, class-string<FormFieldBlock>>
+     */
+    public static function keyByType(): array
+    {
+        /** @var FormFieldBlock $block */
+        return collect(static::get())
+            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
+            ->all();
     }
 }
