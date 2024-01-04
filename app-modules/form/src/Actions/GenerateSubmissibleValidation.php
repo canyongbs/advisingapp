@@ -61,10 +61,7 @@ class GenerateSubmissibleValidation
             return array_merge($rules, $this->wizardRules($submissible));
         }
 
-        $blocks = match ($submissible::class) {
-            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
-            Survey::class => SurveyFieldBlockRegistry::keyByType(),
-        };
+        $blocks = app(ResolveBlockRegistry::class)($submissible);
 
         return array_merge($rules, $this->fields($blocks, $submissible->fields));
     }
@@ -92,10 +89,7 @@ class GenerateSubmissibleValidation
     {
         $rules = collect();
 
-        $blocks = match ($submissible::class) {
-            Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
-            Survey::class => SurveyFieldBlockRegistry::keyByType(),
-        };
+        $blocks = app(ResolveBlockRegistry::class)($submissible);
 
         foreach ($submissible->steps as $step) {
             $rules = $rules->merge(

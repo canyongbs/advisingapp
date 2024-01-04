@@ -62,10 +62,7 @@ class GenerateFormKitSchema
                 'fields',
             ]);
 
-            $blocks = match ($submissible::class) {
-                Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
-                Survey::class => SurveyFieldBlockRegistry::keyByType(),
-            };
+            $blocks = app(ResolveBlockRegistry::class)($submissible);
 
             $content = [
                 ...$this->content($blocks, $submissible->content['content'] ?? [], $submissible->fields->keyBy('id')),
