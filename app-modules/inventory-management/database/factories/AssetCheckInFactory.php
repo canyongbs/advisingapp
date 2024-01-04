@@ -34,50 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource\Pages;
+namespace AdvisingApp\InventoryManagement\Database\Factories;
 
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource;
+use App\Models\User;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\InventoryManagement\Models\Asset;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-class ListAssetStatuses extends ListRecords
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\InventoryManagement\Models\AssetCheckIn>
+ */
+class AssetCheckInFactory extends Factory
 {
-    protected static string $resource = AssetStatusResource::class;
-
-    public function table(Table $table): Table
+    public function definition(): array
     {
-        return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('classification')
-                    ->searchable()
-                    ->sortable(),
-            ])
-            ->filters([
-            ])
-            ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+        $checkedInBy = User::factory()->create();
 
-    protected function getHeaderActions(): array
-    {
         return [
-            CreateAction::make(),
+            'asset_id' => Asset::factory(),
+            'checked_in_by_type' => $checkedInBy->getMorphClass(),
+            'checked_in_by_id' => $checkedInBy->getKey(),
+            'checked_in_from_type' => fake()->randomElement([
+                (new Student())->getMorphClass(),
+                (new Prospect())->getMorphClass(),
+            ]),
+            'checked_in_from_id' => function (array $attributes) {
+                $checkedInFromClass = Relation::getMorphedModel($attributes['checked_in_from_type']);
+
+                /** @var Student|Prospect $senderModel */
+                $checkedInFromModel = new $checkedInFromClass();
+
+                $checkedInFromModel = $checkedInFromClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $checkedInFromModel::factory()->create();
+
+                return $checkedInFromModel->getKey();
+            },
+            'checked_in_at' => fake()->dateTimeBetween('-1 year', 'now'),
+            'notes' => fake()->paragraph(),
         ];
     }
 }

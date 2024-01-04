@@ -40,7 +40,6 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\ServiceManagement\Enums\ColumnColorOptions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -52,7 +51,6 @@ use AdvisingApp\ServiceManagement\Enums\SystemServiceRequestClassification;
 class ServiceRequestStatus extends BaseModel implements Auditable
 {
     use SoftDeletes;
-    use HasUuids;
     use AuditableTrait;
 
     protected $fillable = [

@@ -38,9 +38,12 @@ namespace AdvisingApp\InventoryManagement\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 /**
  * @mixin IdeHelperAsset
@@ -48,6 +51,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 class Asset extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'description',
@@ -77,5 +81,44 @@ class Asset extends BaseModel implements Auditable
     public function maintenanceActivities(): HasMany
     {
         return $this->hasMany(MaintenanceActivity::class, 'asset_id');
+    }
+
+    public function checkOuts(): HasMany
+    {
+        return $this->hasMany(AssetCheckOut::class, 'asset_id');
+    }
+
+    public function checkIns(): HasMany
+    {
+        return $this->hasMany(AssetCheckIn::class, 'asset_id');
+    }
+
+    public function latestCheckOut(): HasOne
+    {
+        return $this->hasOne(AssetCheckOut::class, 'asset_id')
+            ->oldest('checked_out_at');
+    }
+
+    public function latestCheckIn(): HasOne
+    {
+        return $this->hasOne(AssetCheckIn::class, 'asset_id')
+            ->latest('checked_in_at');
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->status->classification === SystemAssetStatusClassification::Available
+            && ! is_null($this->latestCheckOut?->asset_check_in_id);
+    }
+
+    public function isNotAvailable(): bool
+    {
+        return ! $this->isAvailable();
+    }
+
+    public function isCheckedOut(): bool
+    {
+        return $this->status->classification === SystemAssetStatusClassification::CheckedOut
+            && is_null($this->latestCheckOut?->asset_check_in_id);
     }
 }
