@@ -39,6 +39,7 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
@@ -63,7 +64,7 @@ it('will create the appropriate records for educatables in the caseload', functi
         'caseload_id' => $caseload->id,
     ]);
 
-    $users = User::factory()->count(3)->create();
+    $users = User::factory()->licensed(LicenseType::cases())->count(3)->create();
 
     $action = CampaignAction::factory()
         ->for($campaign, 'campaign')
@@ -101,12 +102,12 @@ it('will create the appropriate records for educatables in the caseload', functi
             'removePrior' => true,
         ],
         'prior care team | prospects | remove prior false' => [
-            'priorCareTeam' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
+            'priorCareTeam' => fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
             'educatables' => fn () => Prospect::factory()->count(3)->create(),
             'removePrior' => false,
         ],
         'prior care team | prospects | remove prior true' => [
-            'priorCareTeam' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
+            'priorCareTeam' => fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
             'educatables' => fn () => Prospect::factory()->count(3)->create(),
             'removePrior' => true,
         ],
@@ -121,12 +122,12 @@ it('will create the appropriate records for educatables in the caseload', functi
             'removePrior' => true,
         ],
         'prior care team | students | remove prior false' => [
-            'priorCareTeam' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
+            'priorCareTeam' => fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
             'educatables' => fn () => Student::factory()->count(3)->create(),
             'removePrior' => false,
         ],
         'prior care team | students | remove prior true' => [
-            'priorCareTeam' => fn () => User::factory()->count(3)->create()->pluck('id')->toArray(),
+            'priorCareTeam' => fn () => User::factory()->licensed(LicenseType::cases())->count(3)->create()->pluck('id')->toArray(),
             'educatables' => fn () => Student::factory()->count(3)->create(),
             'removePrior' => true,
         ],

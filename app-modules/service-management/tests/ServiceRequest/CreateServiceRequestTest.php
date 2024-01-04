@@ -44,6 +44,9 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
+
+use AdvisingApp\Authorization\Enums\LicenseType;
+
 use function Pest\Laravel\assertDatabaseMissing;
 
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
@@ -136,7 +139,7 @@ test('CreateServiceRequest requires valid data', function ($data, $errors, $setu
 // Permission Tests
 
 test('CreateServiceRequest is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -194,7 +197,7 @@ test('CreateServiceRequest is gated with proper feature access control', functio
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(

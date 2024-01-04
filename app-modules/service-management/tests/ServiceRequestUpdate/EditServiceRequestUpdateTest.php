@@ -48,6 +48,7 @@ use Illuminate\Validation\Rules\Enum;
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestUpdateRequestFactory;
@@ -112,7 +113,7 @@ test('EditServiceRequestUpdate requires valid data', function ($data, $errors) {
 // Permission Tests
 
 test('EditServiceRequestUpdate is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();
 
@@ -160,7 +161,7 @@ test('EditServiceRequestUpdate is gated with proper feature access control', fun
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('service_request_update.view-any');
     $user->givePermissionTo('service_request_update.*.update');

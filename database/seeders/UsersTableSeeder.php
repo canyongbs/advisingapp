@@ -50,17 +50,13 @@ class UsersTableSeeder extends Seeder
         $superAdminRoleGroup = RoleGroup::where('name', 'Super Administrator')->firstOrFail();
 
         if (app()->environment('local')) {
-            $superAdmin = User::factory()->create([
+            $superAdmin = User::factory()->licensed(LicenseType::cases())->create([
                 'name' => 'Super Admin',
                 'email' => 'sampleadmin@advising.app',
                 'password' => Hash::make('password'),
             ]);
 
             $superAdmin->roleGroups()->sync($superAdminRoleGroup);
-
-            foreach (LicenseType::cases() as $licenseType) {
-                $superAdmin->licenses()->create(['type' => $licenseType]);
-            }
         }
 
         collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRoleGroup) {

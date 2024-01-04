@@ -42,6 +42,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
 
@@ -72,7 +73,7 @@ test('The correct details are displayed on the ViewServiceRequestUpdate page', f
 // Permission Tests
 
 test('ViewServiceRequestUpdate is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $serviceRequestUpdate = ServiceRequestUpdate::factory()->create();
 
@@ -101,7 +102,7 @@ test('ViewServiceRequestUpdate is gated with proper feature access control', fun
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('service_request_update.view-any');
     $user->givePermissionTo('service_request_update.*.view');
