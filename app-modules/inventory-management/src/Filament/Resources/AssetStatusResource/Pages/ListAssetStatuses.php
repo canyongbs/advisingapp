@@ -57,6 +57,9 @@ class ListAssetStatuses extends ListRecords
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('classification')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
             ])

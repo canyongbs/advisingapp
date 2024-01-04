@@ -55,6 +55,7 @@ use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\LicensesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\RoleGroupsRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 
@@ -128,6 +129,7 @@ class UserResource extends Resource
             RoleGroupsRelationManager::class,
             RolesRelationManager::class,
             PermissionsRelationManager::class,
+            LicensesRelationManager::class,
         ];
     }
 

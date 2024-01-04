@@ -37,8 +37,10 @@
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource\Pages;
 
 use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource;
 
 class CreateAssetStatus extends CreateRecord
@@ -50,6 +52,10 @@ class CreateAssetStatus extends CreateRecord
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->required(),
+                Select::make('classification')
+                    ->options(SystemAssetStatusClassification::class)
+                    ->enum(SystemAssetStatusClassification::class)
                     ->required(),
             ]);
     }

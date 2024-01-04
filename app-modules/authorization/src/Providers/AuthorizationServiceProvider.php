@@ -40,6 +40,7 @@ use Filament\Panel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\RoleGroup;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\AuthorizationPlugin;
@@ -48,6 +49,7 @@ use SocialiteProviders\Manager\SocialiteWasCalled;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use SocialiteProviders\Google\GoogleExtendSocialite;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\Observers\LicenseObserver;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AuthorizationServiceProvider extends ServiceProvider
@@ -73,7 +75,10 @@ class AuthorizationServiceProvider extends ServiceProvider
             'role' => Role::class,
             'permission' => Permission::class,
             'role_group' => RoleGroup::class,
+            'license' => License::class,
         ]);
+
+        $this->registerObservers();
 
         $permissionRegistry->registerApiPermissions(
             module: 'authorization',
@@ -104,5 +109,10 @@ class AuthorizationServiceProvider extends ServiceProvider
             events: SocialiteWasCalled::class,
             listener: GoogleExtendSocialite::class . '@handle'
         );
+    }
+
+    public function registerObservers(): void
+    {
+        License::observe(LicenseObserver::class);
     }
 }
