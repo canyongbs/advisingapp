@@ -70,9 +70,9 @@ class MessageCenter extends Page
 
     protected static string $view = 'engagement::filament.pages.message-center';
 
-    protected static ?string $navigationGroup = 'Productivity Tools';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 10;
 
     protected array $modelsToTimeline = [
         Engagement::class,

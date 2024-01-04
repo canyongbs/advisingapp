@@ -120,11 +120,9 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Retention CRM'),
                 NavigationGroup::make()
-                    ->label('Record Management'),
+                    ->label('Recruitment CRM'),
                 NavigationGroup::make()
-                    ->label('Productivity Tools'),
-                NavigationGroup::make()
-                    ->label('Service Management'),
+                    ->label('Engagement Features'),
                 NavigationGroup::make()
                     ->label('Meeting Center'),
                 NavigationGroup::make()
@@ -133,8 +131,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Forms and Surveys'),
                 NavigationGroup::make()
                     ->label('Reporting'),
-                NavigationGroup::make()
-                    ->label('Data and Analytics'),
                 NavigationGroup::make()
                     ->label('Users and Permissions'),
                 NavigationGroup::make()

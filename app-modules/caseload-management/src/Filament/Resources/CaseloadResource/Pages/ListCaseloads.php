@@ -50,6 +50,8 @@ use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class ListCaseloads extends ListRecords
 {
+    protected ?string $heading = 'Caseload Management';
+
     protected static string $resource = CaseloadResource::class;
 
     public function table(Table $table): Table

@@ -34,17 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\Prospect\Filament\Pages;
 
 use Filament\Pages\Page;
 
-class DataLakehouse extends Page
+class RecruitmentCrmDashboard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-home';
 
     protected static string $view = 'filament.pages.coming-soon';
 
-    protected static ?string $navigationGroup = 'Data and Analytics';
+    protected static ?string $navigationGroup = 'Recruitment CRM';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 10;
+
+    protected static ?string $title = 'Dashboard';
 }

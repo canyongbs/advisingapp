@@ -72,7 +72,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public ?string $selectedConversation = null;
 
-    protected static ?string $navigationGroup = 'Productivity Tools';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 2;
 
