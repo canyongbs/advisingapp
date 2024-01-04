@@ -41,6 +41,7 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
+use App\Models\Scopes\HasLicense;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Notifications\Notifiable;
@@ -186,7 +187,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
             ->using(CareTeam::class)
             ->withPivot('id')
             ->withTimestamps()
-            ->hasLicense($this->getLicenseType());
+            ->tap(new HasLicense($this->getLicenseType()));
     }
 
     public function formSubmissions(): MorphMany
@@ -229,7 +230,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
             ->using(Subscription::class)
             ->withPivot('id')
             ->withTimestamps()
-            ->hasLicense($this->getLicenseType());
+            ->tap(new HasLicense($this->getLicenseType()));
     }
 
     public static function getLicenseType(): LicenseType

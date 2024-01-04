@@ -39,6 +39,7 @@ namespace App\Models\Scopes;
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class HasLicense
 {
@@ -49,7 +50,7 @@ class HasLicense
         protected LicenseType | string | array | null $type,
     ) {}
 
-    public function __invoke(Builder $query): void
+    public function __invoke(Builder | Relation $query): void
     {
         if (blank($this->type)) {
             return;

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
+use App\Models\Scopes\HasLicense;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;

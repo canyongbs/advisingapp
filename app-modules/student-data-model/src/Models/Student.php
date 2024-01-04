@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Models;
 use App\Models\User;
 use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
+use App\Models\Scopes\HasLicense;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
@@ -196,7 +197,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
             ->using(CareTeam::class)
             ->withPivot('id')
             ->withTimestamps()
-            ->hasLicense($this->getLicenseType());
+            ->tap(new HasLicense($this->getLicenseType()));
     }
 
     public function subscribedUsers(): MorphToMany
@@ -209,7 +210,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
             ->using(Subscription::class)
             ->withPivot('id')
             ->withTimestamps()
-            ->hasLicense($this->getLicenseType());
+            ->tap(new HasLicense($this->getLicenseType()));
     }
 
     public static function filamentResource(): string
