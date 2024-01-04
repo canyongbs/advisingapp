@@ -34,31 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Audit\Filament\Resources;
+namespace App\Filament\Pages;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Audit\Models\Audit;
-use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
+use Filament\Pages\Page;
+use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
 
-class AuditResource extends Resource
+class UsageAuditing extends Page
 {
-    protected static ?string $model = Audit::class;
-
-    protected static ?string $navigationLabel = 'Other Records';
-
-    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-
-    protected static ?string $navigationParentItem = 'Usage Auditing';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Reporting';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 30;
 
-    public static function getPages(): array
+    protected static ?string $title = 'Usage Auditing';
+
+    protected array $children = [
+        AssistantChatMessageLogResource::class,
+        AuditResource::class,
+    ];
+
+    public function mount()
     {
-        return [
-            'index' => Pages\ListAudits::route('/'),
-            'view' => Pages\ViewAudit::route('/{record}'),
-        ];
+        foreach ($this->children as $child) {
+            ray($child);
+            ray($child::shouldRegisterNavigation());
+
+            if ($child::shouldRegisterNavigation()) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(404);
     }
 }
