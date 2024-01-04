@@ -42,12 +42,17 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentPolicy
 {
-    public function viewAny(Authenticatable $authenticatable): Response
+    public function before(Authenticatable $authenticatable): ?Response
     {
         if (! $authenticatable->hasLicense(Student::getLicenseType())) {
-            return Response::deny('You do not have permission to view students.');
+            return Response::deny('You are not licensed for the retention CRM.');
         }
 
+        return null;
+    }
+
+    public function viewAny(Authenticatable $authenticatable): Response
+    {
         return $authenticatable->canOrElse(
             abilities: 'student.view-any',
             denyResponse: 'You do not have permission to view students.'

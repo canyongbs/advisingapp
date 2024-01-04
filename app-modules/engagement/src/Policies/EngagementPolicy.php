@@ -44,12 +44,17 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class EngagementPolicy
 {
-    public function viewAny(Authenticatable $authenticatable): Response
+    public function before(Authenticatable $authenticatable): ?Response
     {
         if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
-            return Response::deny('You do not have permission to view engagements.');
+            return Response::deny('You do not have permission to view students or prospects.');
         }
 
+        return null;
+    }
+
+    public function viewAny(Authenticatable $authenticatable): Response
+    {
         return $authenticatable->canOrElse(
             abilities: 'engagement.view-any',
             denyResponse: 'You do not have permission to view engagements.'

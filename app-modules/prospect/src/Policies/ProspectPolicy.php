@@ -42,12 +42,17 @@ use AdvisingApp\Prospect\Models\Prospect;
 
 class ProspectPolicy
 {
-    public function viewAny(Authenticatable $authenticatable): Response
+    public function before(Authenticatable $authenticatable): ?Response
     {
         if (! $authenticatable->hasLicense(Prospect::getLicenseType())) {
-            return Response::deny('You do not have permission to view prospects.');
+            return Response::deny('You are not licensed for the recruitment CRM.');
         }
 
+        return null;
+    }
+
+    public function viewAny(Authenticatable $authenticatable): Response
+    {
         return $authenticatable->canOrElse(
             abilities: 'prospect.view-any',
             denyResponse: 'You do not have permission to view prospects.'
