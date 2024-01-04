@@ -34,29 +34,43 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+namespace AdvisingApp\StudentDataModel\Models\Concerns;
 
-use function Pest\Laravel\actingAs;
+use Exception;
+use App\Models\Authenticatable;
+use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
+trait BelongsToEducatable
+{
+    public function scopeLicensedToEducatable(Builder $query, string $relationship): Builder
+    {
+        if (! auth()->check()) {
+            return $query;
+        }
 
-test('EditInteractionStatus is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+        /** @var Authenticatable $user */
+        $user = auth()->user();
 
-    $status = InteractionStatus::factory()->create();
+        if (
+            (! method_exists($this, $relationship)) ||
+            (! ($this->{$relationship}() instanceof MorphTo))
+        ) {
+            throw new Exception('The [' . static::class . "] model does not have a [{$relationship}] [" . MorphTo::class . '] relationship where educatables can be assigned.');
+        }
 
-    actingAs($user)
-        ->get(
-            InteractionStatusResource::getUrl('edit', ['record' => $status])
-        )->assertForbidden();
+        $typeColumn = $this->{$relationship}()->getMorphType();
 
-    $user->givePermissionTo('interaction_status.view-any');
-    $user->givePermissionTo('interaction_status.*.update');
-
-    actingAs($user)
-        ->get(
-            InteractionStatusResource::getUrl('edit', ['record' => $status])
-        )->assertSuccessful();
-});
+        return $query
+            ->when(
+                ! $user->hasLicense(Student::getLicenseType()),
+                fn (Builder $query) => $query->where($typeColumn, '!=', app(Student::class)->getMorphClass()),
+            )
+            ->when(
+                ! $user->hasLicense(Prospect::getLicenseType()),
+                fn (Builder $query) => $query->where($typeColumn, '!=', app(Prospect::class)->getMorphClass()),
+            );
+    }
+}

@@ -41,6 +41,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
+use AdvisingApp\Prospect\Models\Prospect;
 
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
@@ -90,7 +91,7 @@ test('CreateProspectStatus requires valid data', function ($data, $errors) {
 // Permission Tests
 
 test('CreateProspectStatus is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user)
         ->get(

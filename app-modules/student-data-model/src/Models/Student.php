@@ -37,14 +37,18 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use App\Models\User;
+use App\Models\Authenticatable;
 use AdvisingApp\Task\Models\Task;
+use App\Models\Scopes\HasLicense;
 use Illuminate\Support\Collection;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\CareTeam\Models\CareTeam;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Notification\Models\Subscription;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -192,7 +196,8 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
         )
             ->using(CareTeam::class)
             ->withPivot('id')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->tap(new HasLicense($this->getLicenseType()));
     }
 
     public function subscribedUsers(): MorphToMany
@@ -204,7 +209,8 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
         )
             ->using(Subscription::class)
             ->withPivot('id')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->tap(new HasLicense($this->getLicenseType()));
     }
 
     public static function filamentResource(): string
@@ -220,6 +226,27 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     public function getApiPermissions(): Collection
     {
         return collect([]);
+    }
+
+    public static function getLicenseType(): LicenseType
+    {
+        return LicenseType::RetentionCrm;
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            if (! auth()->check()) {
+                return;
+            }
+
+            /** @var Authenticatable $user */
+            $user = auth()->user();
+
+            if (! $user->hasLicense(Student::getLicenseType())) {
+                $builder->whereRaw('1 = 0');
+            }
+        });
     }
 
     protected function displayName(): Attribute

@@ -34,29 +34,30 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+namespace App\Models\Scopes;
 
-use function Pest\Laravel\actingAs;
-
+use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-test('EditInteractionStatus is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+class HasLicense
+{
+    /**
+     * @param LicenseType | string | array<LicenseType | string> | null $type
+     */
+    public function __construct(
+        protected LicenseType | string | array | null $type,
+    ) {}
 
-    $status = InteractionStatus::factory()->create();
+    public function __invoke(Builder | Relation $query): void
+    {
+        if (blank($this->type)) {
+            return;
+        }
 
-    actingAs($user)
-        ->get(
-            InteractionStatusResource::getUrl('edit', ['record' => $status])
-        )->assertForbidden();
-
-    $user->givePermissionTo('interaction_status.view-any');
-    $user->givePermissionTo('interaction_status.*.update');
-
-    actingAs($user)
-        ->get(
-            InteractionStatusResource::getUrl('edit', ['record' => $status])
-        )->assertSuccessful();
-});
+        foreach (Arr::wrap($this->type) as $type) {
+            $query->whereRelation('licenses', 'type', $type);
+        }
+    }
+}

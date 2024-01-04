@@ -39,6 +39,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
 
 // TODO: Write CreateTask page tests
@@ -49,7 +50,7 @@ use AdvisingApp\Task\Filament\Resources\TaskResource;
 // Permission Tests
 
 test('CreateTask is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(

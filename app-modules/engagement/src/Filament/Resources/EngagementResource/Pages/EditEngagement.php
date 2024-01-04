@@ -49,16 +49,14 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Fields\EducatableSelect;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Filament\Forms\Components\MorphToSelect;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Engagement\Models\Engagement;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource;
 use AdvisingApp\Engagement\Filament\Resources\EngagementResource\Fields\EngagementSmsBodyField;
@@ -143,16 +141,9 @@ class EditEngagement extends EditRecord
                     ->helperText('You can insert student information by typing {{ and choosing a merge value to insert.')
                     ->columnSpanFull(),
                 EngagementSmsBodyField::make(context: 'edit', form: $form),
-                MorphToSelect::make('recipient')
+                EducatableSelect::make('recipient')
                     ->label('Recipient')
-                    ->searchable()
-                    ->required()
-                    ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
+                    ->required(),
                 Fieldset::make('Send your engagement')
                     ->schema([
                         Toggle::make('send_later')

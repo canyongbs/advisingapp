@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Tables\Table;
+use App\Models\Scopes\HasLicense;
 use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
@@ -45,6 +46,7 @@ use App\Filament\Resources\UserResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DetachAction;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -92,6 +94,9 @@ class ManageProspectCareTeam extends ManageRelatedRecords
                     ->color('primary')
                     ->recordSelect(
                         fn (Select $select) => $select->placeholder('Select a User'),
+                    )
+                    ->recordSelectOptionsQuery(
+                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Prospect $prospect */

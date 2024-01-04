@@ -38,6 +38,7 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 
 // TODO: Add tests for the ListEngagementFiles
@@ -48,7 +49,7 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource;
 // Permission Tests
 
 test('ListEngagementFiles is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(

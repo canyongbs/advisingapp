@@ -39,6 +39,7 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 
@@ -63,7 +64,7 @@ test('The correct details are displayed on the ViewProspectSource page', functio
 // Permission Tests
 
 test('ViewProspectSource is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospectSource = ProspectSource::factory()->create();
 
