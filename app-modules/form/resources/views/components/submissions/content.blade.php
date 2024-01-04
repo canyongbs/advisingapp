@@ -38,7 +38,7 @@
     use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
     
     $blocks = app(ResolveBlockRegistry::class)($submission->submissible);
-
+    
     $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content'], $blocks);
 @endphp
 
