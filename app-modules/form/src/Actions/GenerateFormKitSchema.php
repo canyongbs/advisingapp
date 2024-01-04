@@ -45,29 +45,6 @@ class GenerateFormKitSchema
 {
     public function __invoke(Submissible $submissible): array
     {
-        if ($submissible->is_wizard) {
-            $submissible->loadMissing([
-                'steps' => [
-                    'fields',
-                ],
-            ]);
-
-            $content = $this->wizardContent($submissible);
-        } else {
-            $submissible->loadMissing([
-                'fields',
-            ]);
-
-            $content = [
-                ...$this->content($submissible->content['content'] ?? [], $submissible->fields->keyBy('id')),
-                [
-                    '$formkit' => 'submit',
-                    'label' => 'Submit',
-                    'disabled' => '$get(form).state.valid !== true',
-                ],
-            ];
-        }
-
         return [
             '$cmp' => 'FormKit',
             'props' => [
@@ -77,7 +54,7 @@ class GenerateFormKitSchema
                 'plugins' => '$plugins',
                 'actions' => false,
             ],
-            'children' => $content,
+            'children' => $this->generateContent($submissible),
         ];
     }
 
@@ -270,5 +247,33 @@ class GenerateFormKitSchema
                 ],
             ],
         ];
+    }
+
+    protected function generateContent(Submissible $submissible): array
+    {
+        if ($submissible->is_wizard) {
+            $submissible->loadMissing([
+                'steps' => [
+                    'fields',
+                ],
+            ]);
+
+            $content = $this->wizardContent($submissible);
+        } else {
+            $submissible->loadMissing([
+                'fields',
+            ]);
+
+            $content = [
+                ...$this->content($submissible->content['content'] ?? [], $submissible->fields->keyBy('id')),
+                [
+                    '$formkit' => 'submit',
+                    'label' => 'Submit',
+                    'disabled' => '$get(form).state.valid !== true',
+                ],
+            ];
+        }
+
+        return $content;
     }
 }

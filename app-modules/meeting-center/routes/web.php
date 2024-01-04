@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
+use AdvisingApp\MeetingCenter\Livewire\RenderEventRegistrationForm;
 use AdvisingApp\MeetingCenter\Http\Controllers\GoogleCalendarController;
 use AdvisingApp\MeetingCenter\Http\Controllers\OutlookCalendarController;
 
@@ -44,4 +45,12 @@ Route::middleware(['web', 'auth'])
     ->group(function () {
         provider_routes(CalendarProvider::Google, GoogleCalendarController::class);
         provider_routes(CalendarProvider::Outlook, OutlookCalendarController::class);
+    });
+
+Route::middleware('web')
+    ->prefix('event-registration')
+    ->name('event-registration.')
+    ->group(function () {
+        Route::get('/{event}/respond', RenderEventRegistrationForm::class)
+            ->name('show');
     });

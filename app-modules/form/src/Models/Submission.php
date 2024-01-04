@@ -40,7 +40,6 @@ use App\Models\BaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -55,7 +54,7 @@ abstract class Submission extends BaseModel
 
     abstract public function fields(): BelongsToMany;
 
-    public function author(): MorphTo
+    public function author(): BelongsTo
     {
         return $this
             ->morphTo('author');

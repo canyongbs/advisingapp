@@ -34,21 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Livewire;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
+use Filament\Forms\Contracts\HasForms;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Filament\Forms\Concerns\InteractsWithForms;
 
-class CreateEvent extends CreateRecord
+class RenderEventRegistrationForm extends Component implements HasForms
 {
-    use HasSharedEventFormConfiguration;
+    use InteractsWithForms;
 
-    protected static string $resource = EventResource::class;
+    public bool $show = true;
 
-    public function form(Form $form): Form
+    public Event $event;
+
+    public ?array $data = [];
+
+    public function render(): View
     {
-        return $form->schema($this->fields());
+        return view('meeting-center::livewire.render-event-registration-form')
+            ->title("{$this->event->title} Registration");
     }
 }
