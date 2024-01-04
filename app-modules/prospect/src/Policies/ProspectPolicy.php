@@ -45,7 +45,7 @@ class ProspectPolicy
     public function before(Authenticatable $authenticatable): ?Response
     {
         if (! $authenticatable->hasLicense(Prospect::getLicenseType())) {
-            return Response::deny('You are not licensed for the recruitment CRM.');
+            return Response::deny('You are not licensed for the Recruitment CRM.');
         }
 
         return null;

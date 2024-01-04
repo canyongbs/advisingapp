@@ -45,7 +45,7 @@ class StudentPolicy
     public function before(Authenticatable $authenticatable): ?Response
     {
         if (! $authenticatable->hasLicense(Student::getLicenseType())) {
-            return Response::deny('You are not licensed for the retention CRM.');
+            return Response::deny('You are not licensed for the Retention CRM.');
         }
 
         return null;

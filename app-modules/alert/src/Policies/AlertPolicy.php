@@ -47,7 +47,7 @@ class AlertPolicy
     public function before(Authenticatable $authenticatable): ?Response
     {
         if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
-            return Response::deny('You do not have permission to view students or prospects.');
+            return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
         }
 
         return null;
