@@ -44,6 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 
 /**
  * @property Student|Prospect|null $author
@@ -129,5 +130,12 @@ class FormSubmission extends Submission
         }
 
         return FormSubmissionStatus::Requested;
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            $builder->tap(new LicensedToEducatable('author'));
+        });
     }
 }
