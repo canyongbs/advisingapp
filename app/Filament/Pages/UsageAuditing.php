@@ -58,9 +58,6 @@ class UsageAuditing extends Page
     public function mount()
     {
         foreach ($this->children as $child) {
-            ray($child);
-            ray($child::shouldRegisterNavigation());
-
             if ($child::shouldRegisterNavigation()) {
                 return redirect($child::getUrl());
             }

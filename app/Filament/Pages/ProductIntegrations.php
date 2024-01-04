@@ -37,18 +37,30 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages\ManageGoogleAnalyticsSettings;
 
-class SLAConfiguration extends Page
+class ProductIntegrations extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationLabel = 'SLA Configuration';
-
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 120;
+    protected static ?int $navigationSort = 2;
 
-    protected ?string $heading = 'SLA Configuration';
+    protected static ?string $title = 'Product Integrations';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected array $children = [
+        ManageGoogleAnalyticsSettings::class,
+    ];
+
+    public function mount()
+    {
+        foreach ($this->children as $child) {
+            if ($child::shouldRegisterNavigation()) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(404);
+    }
 }

@@ -48,15 +48,17 @@ class ManageAuditSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationLabel = 'Audit Configuration';
+    protected static ?string $navigationLabel = 'Auditing';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?string $navigationParentItem = 'Global Settings';
+
+    protected static ?int $navigationSort = 20;
 
     protected static string $settings = AuditSettings::class;
 
-    protected static ?string $title = 'Audit Configuration';
+    protected static ?string $title = 'Auditing';
 
     public static function shouldRegisterNavigation(): bool
     {

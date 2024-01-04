@@ -51,7 +51,11 @@ class EmailConfiguration extends Page
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 110;
+    protected static ?string $navigationParentItem = 'Global Settings';
+
+    protected static ?int $navigationSort = 50;
+
+    protected static ?string $title = 'Communication';
 
     protected static string $view = 'filament.pages.email-configuration';
 

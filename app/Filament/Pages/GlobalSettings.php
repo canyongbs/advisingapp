@@ -34,30 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Webhook\Filament\Resources;
+namespace App\Filament\Pages;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Webhook\Models\InboundWebhook;
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ViewInboundWebhook;
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ListInboundWebhooks;
+use Filament\Pages\Page;
+use AdvisingApp\Audit\Filament\Pages\ManageAuditSettings;
+use AdvisingApp\Portal\Filament\Pages\ManagePortalSettings;
+use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
+use AdvisingApp\Theme\Filament\Pages\ManageBrandConfigurationSettings;
 
-class InboundWebhookResource extends Resource
+class GlobalSettings extends Page
 {
-    protected static ?string $model = InboundWebhook::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-signal';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?string $navigationParentItem = 'Global Settings';
+    protected static ?int $navigationSort = 1;
 
-    protected static ?int $navigationSort = 40;
+    protected static ?string $title = 'Global Settings';
 
-    public static function getPages(): array
+    protected array $children = [
+        ManageLicenseSettings::class,
+        ManageAuditSettings::class,
+        ManageBrandConfigurationSettings::class,
+        InboundWebhookResource::class,
+        EmailConfiguration::class,
+        ManagePortalSettings::class,
+    ];
+
+    public function mount()
     {
-        return [
-            'index' => ListInboundWebhooks::route('/'),
-            'view' => ViewInboundWebhook::route('/{record}'),
-        ];
+        foreach ($this->children as $child) {
+            if ($child::shouldRegisterNavigation()) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(404);
     }
 }
