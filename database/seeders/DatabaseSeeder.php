@@ -46,19 +46,19 @@ use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
 use AdvisingApp\MeetingCenter\Database\Seeders\EventSeeder;
-use AdvisingApp\Engagement\Database\Seeders\EngagementSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
-use AdvisingApp\Engagement\Database\Seeders\EngagementResponseSeeder;
+use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceSeeder;
 use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseItemSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestSeeder;
+use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceSourceSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
-use AdvisingApp\Engagement\Database\Seeders\DemoEducatableEngagementSeeder;
+use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceCategorySeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
@@ -111,6 +111,9 @@ class DatabaseSeeder extends Seeder
             ...AssetSeeder::metadataSeeders(),
             AssetSeeder::class,
             MaintenanceProviderSeeder::class,
+            AnalyticsResourceSourceSeeder::class,
+            AnalyticsResourceCategorySeeder::class,
+            AnalyticsResourceSeeder::class,
         ]);
     }
 }

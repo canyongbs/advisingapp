@@ -34,17 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\Analytics\Models;
 
-use Filament\Pages\Page;
+use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
-class AnalyticsPortal extends Page
+class AnalyticsResourceSource extends BaseModel implements Auditable
 {
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
+    use SoftDeletes;
+    use AuditableTrait;
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected $fillable = [
+        'name',
+    ];
 
-    protected static ?string $navigationGroup = 'Data and Analytics';
-
-    protected static ?int $navigationSort = 1;
+    public function resources(): HasMany
+    {
+        return $this->hasMany(AnalyticsResource::class, 'source_id');
+    }
 }
