@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,44 +30,18 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\Survey\Filament\Blocks;
-
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EmailFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\NumberFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
-
-class SurveyFieldBlockRegistry
-{
-    /**
-     * @return array<class-string<FormFieldBlock>>
-     */
-    public static function get(): array
-    {
-        return [
-            EducatableEmailFormFieldBlock::class,
-            TextInputSurveyFieldBlock::class,
-            TextAreaSurveyFieldBlock::class,
-            SelectSurveyFieldBlock::class,
-            RadioSurveyFieldBlock::class,
-            CheckboxSurveyFieldBlock::class,
-            EmailFormFieldBlock::class,
-            NumberFormFieldBlock::class,
-            LikertScaleSurveyBlock::class,
-            SliderSurveyFieldBlock::class,
-        ];
-    }
-
-    /**
-     * @return array<string, class-string<FormFieldBlock>>
-     */
-    public static function keyByType(): array
-    {
-        /** @var FormFieldBlock $block */
-        return collect(static::get())
-            ->mapWithKeys(fn (string $block): array => [$block::type() => $block])
-            ->all();
-    }
-}
+<x-form::blocks.field-wrapper
+    :$label
+    :$isRequired
+>
+    <div class="grid gap-y-2">
+        <div class="flex items-center gap-2">
+            <span>1</span>
+            <input class="w-full" type="range" min="1" max="5" value="2">
+            <span>5</span>
+            <span class="h-4 w-4 rounded border border-gray-500">2</span>
+        </div>
+    </div>
+</x-form::blocks.field-wrapper>
