@@ -34,21 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use App\Models\Attributes\NoPermissions;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
 
-class CreateEvent extends CreateRecord
+#[NoPermissions]
+/**
+ * @property-read EventRegistrationForm $submissible
+ *
+ * @mixin IdeHelperEventRegistrationFormAuthentication
+ */
+class EventRegistrationFormAuthentication extends SubmissibleAuthentication
 {
-    use HasSharedEventFormConfiguration;
-
-    protected static string $resource = EventResource::class;
-
-    public function form(Form $form): Form
+    public function submissible(): BelongsTo
     {
-        return $form->schema($this->fields());
+        return $this
+            ->belongsTo(EventRegistrationForm::class, 'form_id');
+    }
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(EventAttendee::class, 'event_attendee_id');
     }
 }

@@ -832,6 +832,8 @@ namespace AdvisingApp\Authorization\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|License newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|License newQuery()
@@ -2422,6 +2424,9 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property \Illuminate\Support\Carbon $ends_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventAttendee> $attendees
+ * @property-read int|null $attendees_count
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm|null $eventRegistrationForm
  * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Event newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Event newQuery()
@@ -2439,6 +2444,119 @@ namespace AdvisingApp\MeetingCenter\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperEvent {}
+}
+
+namespace AdvisingApp\MeetingCenter\Models{
+/**
+ * AdvisingApp\MeetingCenter\Models\EventAttendee
+ *
+ * @property \AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus $status
+ * @property-read \AdvisingApp\MeetingCenter\Models\Event|null $event
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
+ * @property-read int|null $prospects_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Student> $students
+ * @property-read int|null $students_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEventAttendee {}
+}
+
+namespace AdvisingApp\MeetingCenter\Models{
+/**
+ * AdvisingApp\MeetingCenter\Models\EventRegistrationForm
+ *
+ * @property \AdvisingApp\Form\Enums\Rounding $rounding
+ * @property-read \AdvisingApp\MeetingCenter\Models\Event|null $event
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep> $steps
+ * @property-read int|null $steps_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEventRegistrationForm {}
+}
+
+namespace AdvisingApp\MeetingCenter\Models{
+/**
+ * AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication
+ *
+ * @property-read EventRegistrationForm $submissible
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventAttendee|null $author
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEventRegistrationFormAuthentication {}
+}
+
+namespace AdvisingApp\MeetingCenter\Models{
+/**
+ * AdvisingApp\MeetingCenter\Models\EventRegistrationFormField
+ *
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep $step
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEventRegistrationFormField {}
+}
+
+namespace AdvisingApp\MeetingCenter\Models{
+/**
+ * AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEventRegistrationFormStep {}
+}
+
+namespace AdvisingApp\MeetingCenter\Models{
+/**
+ * AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission
+ *
+ * @property \AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod $request_method
+ * @property \AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus $attendee_status
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventAttendee|null $author
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \App\Models\User $requester
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission query()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperEventRegistrationFormSubmission {}
 }
 
 namespace AdvisingApp\Notification\Models{

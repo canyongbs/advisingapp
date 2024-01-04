@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,22 +31,32 @@
 
 </COPYRIGHT>
 */
+import { createApp, defineCustomElement, getCurrentInstance, h } from "vue";
+import "./widget.css";
+import App from "./App.vue";
+import { defaultConfig, plugin } from "@formkit/vue";
+import config from "./formkit.config.js";
+import VueSignaturePad from "vue-signature-pad";
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+customElements.define(
+    'event-registration-embed',
+    defineCustomElement({
+        setup(props) {
+            const app = createApp();
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+            // install plugins
+            app.use(plugin, defaultConfig(config));
 
-class CreateEvent extends CreateRecord
-{
-    use HasSharedEventFormConfiguration;
+            app.use(VueSignaturePad);
 
-    protected static string $resource = EventResource::class;
+            app.config.devtools = true;
 
-    public function form(Form $form): Form
-    {
-        return $form->schema($this->fields());
-    }
-}
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
+
+            return () => h(App, props);
+        },
+        props: ['url'],
+    }),
+);

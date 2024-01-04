@@ -34,21 +34,59 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Models;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CreateEvent extends CreateRecord
+/**
+ * @mixin IdeHelperEventRegistrationForm
+ */
+class EventRegistrationForm extends Submissible
 {
-    use HasSharedEventFormConfiguration;
+    use SoftDeletes;
 
-    protected static string $resource = EventResource::class;
+    protected $fillable = [
+        'form_id',
+        'embed_enabled',
+        'allowed_domains',
+        'is_wizard',
+        'recaptcha_enabled',
+        'primary_color',
+        'rounding',
+        'content',
+    ];
 
-    public function form(Form $form): Form
+    protected $casts = [
+        'content' => 'array',
+        'embed_enabled' => 'boolean',
+        'allowed_domains' => 'array',
+        'is_wizard' => 'boolean',
+        'recaptcha_enabled' => 'boolean',
+        'rounding' => Rounding::class,
+    ];
+
+    public function event(): BelongsTo
     {
-        return $form->schema($this->fields());
+        return $this
+            ->belongsTo(Event::class, 'event_id');
+    }
+
+    public function fields(): HasMany
+    {
+        return $this->hasMany(EventRegistrationFormField::class, 'form_id');
+    }
+
+    public function steps(): HasMany
+    {
+        return $this->hasMany(EventRegistrationFormStep::class, 'form_id');
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(EventRegistrationFormSubmission::class, 'form_id');
     }
 }

@@ -34,21 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\MeetingCenter\Notifications;
 
-use Filament\Forms\Form;
-use Filament\Resources\Pages\CreateRecord;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\AnonymousNotifiable;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 
-class CreateEvent extends CreateRecord
+class AuthenticateEventRegistrationFormNotification extends Notification
 {
-    use HasSharedEventFormConfiguration;
+    use Queueable;
 
-    protected static string $resource = EventResource::class;
+    public function __construct(
+        public EventRegistrationFormAuthentication $authentication,
+        public int $code,
+    ) {}
 
-    public function form(Form $form): Form
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        return $form->schema($this->fields());
+        return ['mail'];
+    }
+
+    public function toMail(AnonymousNotifiable $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject("Your authentication code for {$this->authentication->submissible->event->title} registration")
+            ->line("Your code is: {$this->code}.")
+            ->line('You should type this code into the form to authenticate yourself.')
+            ->line('For security reasons, the code will expire in 24 hours, but you can always request another.');
     }
 }
