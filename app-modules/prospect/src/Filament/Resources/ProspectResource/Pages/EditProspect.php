@@ -50,7 +50,6 @@ use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class EditProspect extends EditRecord
@@ -141,7 +140,7 @@ class EditProspect extends EditRecord
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->hasLicense(LicenseType::RecruitmentCrm),
+                        fn (Builder $query) => $query->hasLicense(Prospect::getLicenseType()),
                     )
                     ->searchable()
                     ->nullable()

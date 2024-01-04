@@ -41,6 +41,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class UsersTableSeeder extends Seeder
 {
@@ -56,6 +57,10 @@ class UsersTableSeeder extends Seeder
             ]);
 
             $superAdmin->roleGroups()->sync($superAdminRoleGroup);
+
+            foreach (LicenseType::cases() as $licenseType) {
+                $superAdmin->licenses()->create(['type' => $licenseType]);
+            }
         }
 
         collect(config('internal-users.emails'))->each(function ($email) use ($superAdminRoleGroup) {

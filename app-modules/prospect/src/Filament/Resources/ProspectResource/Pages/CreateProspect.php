@@ -48,7 +48,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
 class CreateProspect extends CreateRecord
@@ -138,7 +137,7 @@ class CreateProspect extends CreateRecord
                     ->relationship(
                         'assignedTo',
                         'name',
-                        fn (Builder $query) => $query->hasLicense(LicenseType::RecruitmentCrm),
+                        fn (Builder $query) => $query->hasLicense(Prospect::getLicenseType()),
                     )
                     ->searchable()
                     ->nullable()

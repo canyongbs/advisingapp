@@ -51,5 +51,5 @@ interface Educatable extends Identifiable
 
     public function careTeam(): MorphToMany;
 
-    public function getLicenseType(): LicenseType;
+    public static function getLicenseType(): LicenseType;
 }

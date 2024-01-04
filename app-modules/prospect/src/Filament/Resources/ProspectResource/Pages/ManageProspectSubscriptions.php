@@ -48,7 +48,6 @@ use Filament\Tables\Actions\DetachAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 
@@ -98,7 +97,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                         fn (Select $select) => $select->placeholder('Select a User'),
                     )
                     ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->hasLicense(LicenseType::RecruitmentCrm),
+                        fn (Builder $query) => $query->hasLicense(Prospect::getLicenseType()),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Prospect $prospect */

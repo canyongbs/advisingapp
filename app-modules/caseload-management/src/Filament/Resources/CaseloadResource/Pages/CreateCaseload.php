@@ -52,6 +52,7 @@ use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Enums\FiltersLayout;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Filament\Forms\Components\Placeholder;
@@ -60,7 +61,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Actions\Imports\Jobs\ImportCsv;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Concerns\InteractsWithTable;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
@@ -101,7 +102,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                         }),
                 ])
                 ->columns(2)
-                ->visible(auth()->user()->hasLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])),
+                ->visible(auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])),
             Step::make('Identify Population')
                 ->schema([
                     Select::make('type')
@@ -298,16 +299,16 @@ class CreateCaseload extends CreateRecord implements HasTable
 
     protected function getCaseloadModel(): CaseloadModel
     {
-        $hasStudents = auth()->user()->hasLicense(LicenseType::RetentionCrm);
-        $hasProspects = auth()->user()->hasLicense(LicenseType::RecruitmentCrm);
+        $canAccessStudents = auth()->user()->hasLicense(Student::getLicenseType());
+        $canAccessProspects = auth()->user()->hasLicense(Prospect::getLicenseType());
 
-        if ($hasStudents && $hasProspects) {
+        if ($canAccessStudents && $canAccessProspects) {
             return CaseloadModel::tryFromCaseOrValue($this->form->getRawState()['model']) ?? throw new Exception('Neither students nor prospects were selected.');
         }
 
         return match (true) {
-            $hasStudents => CaseloadModel::Student,
-            $hasProspects => CaseloadModel::Prospect,
+            $canAccessStudents => CaseloadModel::Student,
+            $canAccessProspects => CaseloadModel::Prospect,
             default => throw new Exception('User cannot access students or prospects.'),
         };
     }

@@ -39,7 +39,6 @@ namespace AdvisingApp\CaseloadManagement\Enums;
 use Filament\Support\Contracts\HasLabel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
 use AdvisingApp\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
@@ -93,14 +92,6 @@ enum CaseloadModel: string implements HasLabel
         return match ($this) {
             CaseloadModel::Prospect => ProspectCaseloadSubjectImporter::class,
             CaseloadModel::Student => StudentCaseloadSubjectImporter::class,
-        };
-    }
-
-    public function getLicenseType(): LicenseType
-    {
-        return match ($this) {
-            CaseloadModel::Student => LicenseType::RetentionCrm,
-            CaseloadModel::Prospect => LicenseType::RecruitmentCrm,
         };
     }
 }

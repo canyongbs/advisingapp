@@ -47,7 +47,6 @@ use Filament\Tables\Actions\DetachAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DetachBulkAction;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -96,7 +95,7 @@ class ManageStudentCareTeam extends ManageRelatedRecords
                         fn (Select $select) => $select->placeholder('Select a User'),
                     )
                     ->recordSelectOptionsQuery(
-                        fn (Builder $query) => $query->hasLicense(LicenseType::RetentionCrm),
+                        fn (Builder $query) => $query->hasLicense(Student::getLicenseType()),
                     )
                     ->successNotificationTitle(function (User $record) {
                         /** @var Student $student */

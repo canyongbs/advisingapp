@@ -43,7 +43,6 @@ use Filament\Forms\Set;
 use App\Models\Authenticatable;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -55,26 +54,22 @@ trait TaskForm
             $concernType = $get('concern_type');
 
             if (filled($concernType = (Relation::getMorphedModel($concernType) ?? $concernType))) {
-                return match ($concernType) {
-                    Student::class => $query->hasLicense(LicenseType::RetentionCrm),
-                    Prospect::class => $query->hasLicense(LicenseType::RecruitmentCrm),
-                    default => $query,
-                };
+                return $query->hasLicense($concernType::getLicenseType());
             }
 
             /** @var Authenticatable $user */
             $user = auth()->user();
 
-            $canAccessStudents = $user->hasLicense(LicenseType::RetentionCrm);
-            $canAccessProspects = $user->hasLicense(LicenseType::RecruitmentCrm);
+            $canAccessStudents = $user->hasLicense(Student::getLicenseType());
+            $canAccessProspects = $user->hasLicense(Prospect::getLicenseType());
 
             if ($canAccessStudents && $canAccessProspects) {
                 return $query;
             }
 
             return match (true) {
-                $canAccessStudents => $query->hasLicense(LicenseType::RetentionCrm),
-                $canAccessProspects => $query->hasLicense(LicenseType::RecruitmentCrm),
+                $canAccessStudents => $query->hasLicense(Student::getLicenseType()),
+                $canAccessProspects => $query->hasLicense(Prospect::getLicenseType()),
                 default => $query,
             };
         };
@@ -98,8 +93,8 @@ trait TaskForm
             /** @var Authenticatable $user */
             $user = auth()->user();
 
-            $canAccessStudents = $user->hasLicense(LicenseType::RetentionCrm);
-            $canAccessProspects = $user->hasLicense(LicenseType::RecruitmentCrm);
+            $canAccessStudents = $user->hasLicense(Student::getLicenseType());
+            $canAccessProspects = $user->hasLicense(Prospect::getLicenseType());
 
             $concernType = $get('concern_type');
 
@@ -115,7 +110,7 @@ trait TaskForm
 
             $assignedTo = User::find($assignedTo);
 
-            if ($assignedTo->hasLicense(app($concernType))->getLicenseType()) {
+            if ($assignedTo->hasLicense($concernType::getLicenseType())) {
                 return;
             }
 

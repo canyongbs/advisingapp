@@ -10,7 +10,6 @@ use Filament\Forms\Components\Component;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Concerns\HasName;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -30,7 +29,7 @@ class EducatableSelect extends Component
 
     public static function make(string $name): EducatableSelect | MorphToSelect
     {
-        if (auth()->user()->hasLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
+        if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return MorphToSelect::make($name)
                 ->searchable()
                 ->types([
@@ -63,8 +62,8 @@ class EducatableSelect extends Component
         $user = auth()->user();
 
         $type = match (true) {
-            $user->hasLicense(LicenseType::RetentionCrm) => static::getStudentType(),
-            $user->hasLicense(LicenseType::RecruitmentCrm) => static::getProspectType(),
+            $user->hasLicense(Student::getLicenseType()) => static::getStudentType(),
+            $user->hasLicense(Prospect::getLicenseType()) => static::getProspectType(),
             default => null,
         };
 
@@ -117,6 +116,6 @@ class EducatableSelect extends Component
             return false;
         }
 
-        return ! auth()->user()->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+        return ! auth()->user()->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()]);
     }
 }

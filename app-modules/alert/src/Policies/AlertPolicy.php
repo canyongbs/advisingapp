@@ -39,13 +39,14 @@ namespace AdvisingApp\Alert\Policies;
 use App\Models\Authenticatable;
 use AdvisingApp\Alert\Models\Alert;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class AlertPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (! $authenticatable->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
+        if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return Response::deny('You do not have permission to view alerts.');
         }
 

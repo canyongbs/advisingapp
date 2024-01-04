@@ -38,14 +38,15 @@ namespace AdvisingApp\Engagement\Policies;
 
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class EngagementPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if (! $authenticatable->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
+        if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
             return Response::deny('You do not have permission to view engagements.');
         }
 

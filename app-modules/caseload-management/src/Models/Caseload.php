@@ -110,7 +110,7 @@ class Caseload extends BaseModel
             $user = auth()->user();
 
             foreach (CaseloadModel::cases() as $model) {
-                if (! $user->hasLicense($model->getLicenseType())) {
+                if (! $user->hasLicense($model->class()::getLicenseType())) {
                     $builder->where('model', '!=', $model);
                 }
             }

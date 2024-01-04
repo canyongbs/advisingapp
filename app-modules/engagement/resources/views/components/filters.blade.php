@@ -31,19 +31,27 @@
 
 </COPYRIGHT>
 --}}
+@php
+    use AdvisingApp\Authorization\Enums\LicenseType;
+    use AdvisingApp\Prospect\Models\Prospect;
+    use AdvisingApp\StudentDataModel\Models\Student;
+@endphp
+
 <div
     class="flex flex-col items-start justify-start space-y-4 bg-white p-4 text-sm font-normal text-gray-700 dark:bg-gray-800 dark:text-gray-400"
     x-show="showFilters"
 >
-    <span>Filter Engagements by:</span>
-    <x-filament::input.wrapper>
+    @if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()]))
+        <span>Filter Engagements by:</span>
 
-        <x-filament::input.select wire:model.live="filterPeopleType">
-            <option value="all">All</option>
-            <option value="students">Students</option>
-            <option value="prospects">Prospects</option>
-        </x-filament::input.select>
-    </x-filament::input.wrapper>
+        <x-filament::input.wrapper>
+            <x-filament::input.select wire:model.live="filterPeopleType">
+                <option value="all">All</option>
+                <option value="students">Students</option>
+                <option value="prospects">Prospects</option>
+            </x-filament::input.select>
+        </x-filament::input.wrapper>
+    @endif
 
     <div class="flex w-full flex-col space-y-2">
         <span>Date Range</span>

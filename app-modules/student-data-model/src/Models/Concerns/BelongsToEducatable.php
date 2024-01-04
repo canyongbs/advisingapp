@@ -6,7 +6,6 @@ use Exception;
 use App\Models\Authenticatable;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -32,11 +31,11 @@ trait BelongsToEducatable
 
         return $query
             ->when(
-                ! $user->hasLicense(LicenseType::RetentionCrm),
+                ! $user->hasLicense(Student::getLicenseType()),
                 fn (Builder $query) => $query->where($typeColumn, '!=', app(Student::class)->getMorphClass()),
             )
             ->when(
-                ! $user->hasLicense(LicenseType::RecruitmentCrm),
+                ! $user->hasLicense(Prospect::getLicenseType()),
                 fn (Builder $query) => $query->where($typeColumn, '!=', app(Prospect::class)->getMorphClass()),
             );
     }

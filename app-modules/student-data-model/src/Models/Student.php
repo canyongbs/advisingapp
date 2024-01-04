@@ -227,7 +227,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
         return collect([]);
     }
 
-    public function getLicenseType(): LicenseType
+    public static function getLicenseType(): LicenseType
     {
         return LicenseType::RetentionCrm;
     }
@@ -242,7 +242,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
             /** @var Authenticatable $user */
             $user = auth()->user();
 
-            if (! $user->hasLicense(LicenseType::RetentionCrm)) {
+            if (! $user->hasLicense(Student::getLicenseType())) {
                 $builder->whereRaw('1 = 0');
             }
         });

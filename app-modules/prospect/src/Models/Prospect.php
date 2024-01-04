@@ -232,7 +232,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
             ->hasLicense($this->getLicenseType());
     }
 
-    public function getLicenseType(): LicenseType
+    public static function getLicenseType(): LicenseType
     {
         return LicenseType::RecruitmentCrm;
     }
@@ -247,7 +247,7 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
             /** @var Authenticatable $user */
             $user = auth()->user();
 
-            if (! $user->hasLicense(LicenseType::RecruitmentCrm)) {
+            if (! $user->hasLicense(Prospect::getLicenseType())) {
                 $builder->whereRaw('1 = 0');
             }
         });
