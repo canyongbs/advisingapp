@@ -39,6 +39,7 @@ namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResourc
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\Scopes\HasLicense;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -92,7 +93,7 @@ class AssignedToRelationManager extends RelationManager
                             ->label('Reassign Service Request To')
                             ->searchable()
                             ->getSearchResultsUsing(fn (string $search): array => User::query()
-                                ->hasLicense($this->getOwnerRecord()->respondent?->getLicenseType())
+                                ->tap(new HasLicense($this->getOwnerRecord()->respondent?->getLicenseType()))
                                 ->where(new Expression('lower(name)'), 'like', '%' . str($search)->lower() . '%')
                                 ->pluck('name', 'id')
                                 ->all())
