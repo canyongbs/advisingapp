@@ -118,6 +118,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Artificial Intelligence'),
                 NavigationGroup::make()
+                    ->label('Retention CRM'),
+                NavigationGroup::make()
                     ->label('Record Management'),
                 NavigationGroup::make()
                     ->label('Productivity Tools'),

@@ -34,30 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel;
+namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use Filament\Panel;
-use Filament\Contracts\Plugin;
+use Filament\Pages\Page;
 
-class StudentDataModelPlugin implements Plugin
+class RetentionCrmDashboard extends Page
 {
-    public function getId(): string
-    {
-        return 'student-data-model';
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-home';
 
-    public function register(Panel $panel): void
-    {
-        $panel
-            ->discoverResources(
-                in: __DIR__ . '/Filament/Resources',
-                for: 'AdvisingApp\\StudentDataModel\\Filament\\Resources'
-            )
-            ->discoverPages(
-                in: __DIR__ . '/Filament/Pages',
-                for: 'AdvisingApp\\StudentDataModel\\Filament\\Pages'
-            );
-    }
+    protected static string $view = 'filament.pages.coming-soon';
 
-    public function boot(Panel $panel): void {}
+    protected static ?string $navigationGroup = 'Retention CRM';
+
+    protected static ?int $navigationSort = 10;
+
+    protected static ?string $title = 'Dashboard';
 }
