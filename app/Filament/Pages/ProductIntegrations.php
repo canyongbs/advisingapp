@@ -37,7 +37,10 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use AdvisingApp\IntegrationTwilio\Filament\Pages\ManageTwilioSettings;
 use AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages\ManageGoogleAnalyticsSettings;
+use AdvisingApp\IntegrationGoogleRecaptcha\Filament\Pages\ManageGoogleRecaptchaSettings;
+use AdvisingApp\IntegrationMicrosoftClarity\Filament\Pages\ManageMicrosoftClaritySettings;
 
 class ProductIntegrations extends Page
 {
@@ -51,6 +54,9 @@ class ProductIntegrations extends Page
 
     protected array $children = [
         ManageGoogleAnalyticsSettings::class,
+        ManageGoogleRecaptchaSettings::class,
+        ManageMicrosoftClaritySettings::class,
+        ManageTwilioSettings::class,
     ];
 
     public function mount()

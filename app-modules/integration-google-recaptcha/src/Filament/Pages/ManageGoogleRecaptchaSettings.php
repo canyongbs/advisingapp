@@ -52,9 +52,11 @@ class ManageGoogleRecaptchaSettings extends SettingsPage
 
     protected static ?string $title = 'Google reCAPTCHA Settings';
 
-    protected static ?string $navigationLabel = 'Google reCAPTCHA';
+    protected static ?string $navigationLabel = 'Google ReCAPTCHA';
 
-    protected static ?string $navigationGroup = 'Integrations';
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationParentItem = 'Product Integrations';
 
     protected static ?int $navigationSort = 20;
 
