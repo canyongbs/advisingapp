@@ -46,9 +46,13 @@ class ProspectSourceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-viewfinder-circle';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Recruitment CRM';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Sources';
+
+    protected static ?int $navigationSort = 2;
 
     public static function getRelations(): array
     {

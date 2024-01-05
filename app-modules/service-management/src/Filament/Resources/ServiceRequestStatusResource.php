@@ -49,15 +49,13 @@ class ServiceRequestStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Service Management';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?string $navigationLabel = 'Statuses';
+
+    protected static ?int $navigationSort = 2;
 
     public static function getPages(): array
     {

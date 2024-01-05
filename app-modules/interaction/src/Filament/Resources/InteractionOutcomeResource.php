@@ -50,9 +50,13 @@ class InteractionOutcomeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-map';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Interaction Management';
 
-    protected static ?int $navigationSort = 13;
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Outcomes';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
@@ -64,12 +68,6 @@ class InteractionOutcomeResource extends Resource
                     ->maxLength(255)
                     ->placeholder('Interaction Outcome Name'),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
     }
 
     public static function getPages(): array

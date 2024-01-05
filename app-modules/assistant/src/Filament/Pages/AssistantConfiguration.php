@@ -46,11 +46,11 @@ class AssistantConfiguration extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
 
-    protected static ?string $navigationLabel = 'Artificial Intelligence';
+    protected static ?string $navigationParentItem = 'Product Integrations';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $navigationLabel = 'AI Settings';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $modelLabel = 'Artificial Intelligence';
 

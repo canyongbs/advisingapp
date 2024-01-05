@@ -38,7 +38,10 @@ namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages\EditKnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages\ViewKnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages\CreateKnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages\ListKnowledgeBaseCategories;
 
 class KnowledgeBaseCategoryResource extends Resource
 {
@@ -46,23 +49,21 @@ class KnowledgeBaseCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Knowledge Management';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?string $navigationLabel = 'Categories';
+
+    protected static ?int $navigationSort = 1;
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKnowledgeBaseCategories::route('/'),
-            'create' => Pages\CreateKnowledgeBaseCategory::route('/create'),
-            'view' => Pages\ViewKnowledgeBaseCategory::route('/{record}'),
-            'edit' => Pages\EditKnowledgeBaseCategory::route('/{record}/edit'),
+            'index' => ListKnowledgeBaseCategories::route('/'),
+            'create' => CreateKnowledgeBaseCategory::route('/create'),
+            'view' => ViewKnowledgeBaseCategory::route('/{record}'),
+            'edit' => EditKnowledgeBaseCategory::route('/{record}/edit'),
         ];
     }
 }

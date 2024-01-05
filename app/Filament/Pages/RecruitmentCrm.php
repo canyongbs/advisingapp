@@ -34,36 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace App\Filament\Pages;
 
-use Filament\Resources\Resource;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\EditServiceRequestType;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\ViewServiceRequestType;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\ListServiceRequestTypes;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\CreateServiceRequestType;
+use Filament\Pages\Page;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
-class ServiceRequestTypeResource extends Resource
+class RecruitmentCrm extends Page
 {
-    protected static ?string $model = ServiceRequestType::class;
-
-    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
-
-    protected static ?string $navigationParentItem = 'Service Management';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?string $navigationLabel = 'Types';
+    protected static ?int $navigationSort = 4;
 
-    protected static ?int $navigationSort = 3;
+    protected static ?string $title = 'Recruitment CRM';
 
-    public static function getPages(): array
+    protected static ?string $breadcrumb = 'Recruitment CRM';
+
+    protected array $children = [
+        ProspectStatusResource::class,
+        ProspectSourceResource::class,
+    ];
+
+    public function mount()
     {
-        return [
-            'index' => ListServiceRequestTypes::route('/'),
-            'create' => CreateServiceRequestType::route('/create'),
-            'view' => ViewServiceRequestType::route('/{record}'),
-            'edit' => EditServiceRequestType::route('/{record}/edit'),
-        ];
+        foreach ($this->children as $child) {
+            if ($child::shouldRegisterNavigation()) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(404);
     }
 }

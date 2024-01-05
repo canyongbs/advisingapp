@@ -49,15 +49,13 @@ class ServiceRequestPriorityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-up-down';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Service Management';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?string $navigationLabel = 'Priorities';
+
+    protected static ?int $navigationSort = 1;
 
     public static function getPages(): array
     {

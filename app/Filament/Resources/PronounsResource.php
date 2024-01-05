@@ -36,13 +36,17 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
 use App\Models\Pronouns;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use App\Filament\Resources\PronounsResource\Pages;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Resources\PronounsResource\Pages\ManagePronouns;
 
 class PronounsResource extends Resource
 {
@@ -50,19 +54,21 @@ class PronounsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Product Settings';
-
     protected static ?string $label = 'User Profile Pronoun';
 
-    protected static ?string $pluralLabel = 'User Profile Pronouns';
+    protected static ?string $navigationParentItem = 'Profile Management';
 
-    protected static ?int $navigationSort = 17;
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Personal Pronouns';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('label')
+                TextInput::make('label')
                     ->placeholder('She/Her')
                     ->required()
                     ->maxLength(255),
@@ -74,16 +80,16 @@ class PronounsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('label'),
+                TextColumn::make('label'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->modalWidth('md'),
-                Tables\Actions\DeleteAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -91,7 +97,7 @@ class PronounsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManagePronouns::route('/'),
+            'index' => ManagePronouns::route('/'),
         ];
     }
 }

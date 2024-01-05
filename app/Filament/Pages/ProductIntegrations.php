@@ -38,6 +38,7 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 use AdvisingApp\IntegrationTwilio\Filament\Pages\ManageTwilioSettings;
+use AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages\ManageAmazonSesSettings;
 use AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages\ManageGoogleAnalyticsSettings;
 use AdvisingApp\IntegrationGoogleRecaptcha\Filament\Pages\ManageGoogleRecaptchaSettings;
 use AdvisingApp\IntegrationMicrosoftClarity\Filament\Pages\ManageMicrosoftClaritySettings;
@@ -57,6 +58,7 @@ class ProductIntegrations extends Page
         ManageGoogleRecaptchaSettings::class,
         ManageMicrosoftClaritySettings::class,
         ManageTwilioSettings::class,
+        ManageAmazonSesSettings::class,
     ];
 
     public function mount()
