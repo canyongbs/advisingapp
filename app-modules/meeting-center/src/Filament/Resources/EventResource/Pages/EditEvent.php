@@ -49,6 +49,9 @@ class EditEvent extends EditRecord
 
     protected static string $resource = EventResource::class;
 
+    // TODO: Automatically set from Filament
+    protected static ?string $navigationLabel = 'Edit';
+
     public function form(Form $form): Form
     {
         return $form->schema($this->fields());

@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 
 /**
  * @property-read Submissible $submissible
@@ -50,6 +51,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 abstract class Submission extends BaseModel
 {
+    use BelongsToEducatable;
+
     abstract public function submissible(): BelongsTo;
 
     abstract public function fields(): BelongsToMany;

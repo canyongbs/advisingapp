@@ -36,7 +36,10 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -75,5 +78,17 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'is_external' => true,
         ]);
+    }
+
+    /**
+     * @param LicenseType | array<LicenseType> $licenseTypes
+     */
+    public function licensed(LicenseType | array $licenseTypes): static
+    {
+        return $this->afterCreating(function (User $user) use ($licenseTypes) {
+            foreach (Arr::wrap($licenseTypes) as $licenseType) {
+                $user->licenses()->create(['type' => $licenseType]);
+            }
+        });
     }
 }

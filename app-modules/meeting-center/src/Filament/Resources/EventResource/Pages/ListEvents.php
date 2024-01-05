@@ -53,6 +53,8 @@ use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 
 class ListEvents extends ListRecords
 {
+    protected ?string $heading = 'Event Management';
+
     protected static string $resource = EventResource::class;
 
     protected static string $view = 'meeting-center::filament.pages.list-events';

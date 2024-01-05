@@ -34,17 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Fields;
 
-use Filament\Pages\Page;
+use Filament\Support\Colors\Color;
+use Filament\Forms\Components\Select;
 
-class DataLakehouse extends Page
+class ColorSelect extends Select
 {
-    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+    protected int $shade = 600;
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    protected static ?string $navigationGroup = 'Data and Analytics';
+        $this->allowHtml()
+            ->native(false)
+            ->shade($this->getShade());
+    }
 
-    protected static ?int $navigationSort = 2;
+    public function shade(int $shade): static
+    {
+        $this->shade = $shade;
+
+        $this->options(
+            collect(Color::all())
+                ->keys()
+                ->sort()
+                ->mapWithKeys(fn (string $color) => [
+                    $color => "<span class='flex items-center gap-x-4'>
+                            <span class='rounded-full w-4 h-4' style='background:rgb(" . Color::all()[$color][$shade] . ")'></span>
+                            <span>" . str($color)->headline() . '</span>
+                            </span>',
+                ])
+        );
+
+        return $this;
+    }
+
+    public function getShade(): int
+    {
+        return $this->shade;
+    }
 }

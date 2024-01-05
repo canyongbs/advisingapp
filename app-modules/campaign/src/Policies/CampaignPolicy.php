@@ -52,6 +52,10 @@ class CampaignPolicy
 
     public function view(Authenticatable $authenticatable, Campaign $campaign): Response
     {
+        if ($authenticatable->cannot('view', $campaign->caseload)) {
+            return Response::deny('You do not have permission to view this campaign.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['campaign.*.view', "campaign.{$campaign->id}.view"],
             denyResponse: 'You do not have permission to view this campaign.'
@@ -68,6 +72,10 @@ class CampaignPolicy
 
     public function update(Authenticatable $authenticatable, Campaign $campaign): Response
     {
+        if ($authenticatable->cannot('view', $campaign->caseload)) {
+            return Response::deny('You do not have permission to update this campaign.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['campaign.*.update', "campaign.{$campaign->id}.update"],
             denyResponse: 'You do not have permission to update this campaign.'
@@ -76,6 +84,10 @@ class CampaignPolicy
 
     public function delete(Authenticatable $authenticatable, Campaign $campaign): Response
     {
+        if ($authenticatable->cannot('view', $campaign->caseload)) {
+            return Response::deny('You do not have permission to delete this campaign.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['campaign.*.delete', "campaign.{$campaign->id}.delete"],
             denyResponse: 'You do not have permission to delete this campaign.'
@@ -84,6 +96,10 @@ class CampaignPolicy
 
     public function restore(Authenticatable $authenticatable, Campaign $campaign): Response
     {
+        if ($authenticatable->cannot('view', $campaign->caseload)) {
+            return Response::deny('You do not have permission to restore this campaign.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['campaign.*.restore', "campaign.{$campaign->id}.restore"],
             denyResponse: 'You do not have permission to restore this campaign.'
@@ -92,6 +108,10 @@ class CampaignPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Campaign $campaign): Response
     {
+        if ($authenticatable->cannot('view', $campaign->caseload)) {
+            return Response::deny('You do not have permission to permanently delete this campaign.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['campaign.*.force-delete', "campaign.{$campaign->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this campaign.'

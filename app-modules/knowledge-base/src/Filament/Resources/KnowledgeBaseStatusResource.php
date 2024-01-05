@@ -38,7 +38,10 @@ namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource\Pages;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource\Pages\EditKnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource\Pages\ViewKnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource\Pages\CreateKnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource\Pages\ListKnowledgeBaseStatuses;
 
 class KnowledgeBaseStatusResource extends Resource
 {
@@ -46,23 +49,21 @@ class KnowledgeBaseStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Knowledge Management';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?string $navigationLabel = 'Statuses';
+
+    protected static ?int $navigationSort = 3;
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKnowledgeBaseStatuses::route('/'),
-            'create' => Pages\CreateKnowledgeBaseStatus::route('/create'),
-            'view' => Pages\ViewKnowledgeBaseStatus::route('/{record}'),
-            'edit' => Pages\EditKnowledgeBaseStatus::route('/{record}/edit'),
+            'index' => ListKnowledgeBaseStatuses::route('/'),
+            'create' => CreateKnowledgeBaseStatus::route('/create'),
+            'view' => ViewKnowledgeBaseStatus::route('/{record}'),
+            'edit' => EditKnowledgeBaseStatus::route('/{record}/edit'),
         ];
     }
 }

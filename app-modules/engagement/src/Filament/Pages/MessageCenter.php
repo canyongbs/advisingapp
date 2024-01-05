@@ -41,6 +41,7 @@ use App\Models\User;
 use Filament\Pages\Page;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
+use App\Models\Authenticatable;
 use Filament\Actions\ViewAction;
 use AdvisingApp\Task\Models\Task;
 use Filament\Actions\CreateAction;
@@ -69,9 +70,9 @@ class MessageCenter extends Page
 
     protected static string $view = 'engagement::filament.pages.message-center';
 
-    protected static ?string $navigationGroup = 'Productivity Tools';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 10;
 
     protected array $modelsToTimeline = [
         Engagement::class,
@@ -133,6 +134,7 @@ class MessageCenter extends Page
 
         $this->timelineRecords = collect();
 
+        $this->authorize('viewAny', Engagement::class);
         $this->authorize('engagement.view_message_center');
     }
 
@@ -316,6 +318,16 @@ class MessageCenter extends Page
         $studentsTable = config('database.adm_materialized_views_enabled')
         ? 'students_local'
         : 'students';
+
+        /** @var Authenticatable $user */
+        $user = auth()->user();
+
+        $canAccessStudents = $user->hasLicense(Student::getLicenseType());
+        $canAccessProspects = $user->hasLicense(Prospect::getLicenseType());
+
+        if (! ($canAccessStudents && $canAccessProspects)) {
+            $this->filterPeopleType = $canAccessStudents ? 'students' : 'prospects';
+        }
 
         if ($this->filterPeopleType === 'students' || $this->filterPeopleType === 'all') {
             $studentIds = $this->getStudentIds();

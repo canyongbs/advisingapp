@@ -37,7 +37,7 @@
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
 use Filament\Forms\Form;
-use App\Forms\Components\ColorSelect;
+use App\Filament\Fields\ColorSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Pages\EmailConfiguration;

@@ -52,7 +52,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 // Permission Tests
 
 test('ListProspects is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user)
         ->get(
@@ -68,7 +68,7 @@ test('ListProspects is gated with proper access control', function () {
 });
 
 test('ListProspects can bulk update characteristics', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $user->givePermissionTo('prospect.view-any');
 

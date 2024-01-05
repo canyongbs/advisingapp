@@ -37,8 +37,10 @@
 namespace AdvisingApp\Application\Models;
 
 use AdvisingApp\Form\Models\Submission;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 
 /**
  * @mixin IdeHelperApplicationSubmission
@@ -67,5 +69,12 @@ class ApplicationSubmission extends Submission
     {
         return $this
             ->belongsTo(ApplicationSubmissionState::class, 'state_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            $builder->tap(new LicensedToEducatable('author'));
+        });
     }
 }

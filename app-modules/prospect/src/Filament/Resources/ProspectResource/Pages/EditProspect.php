@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
+use App\Models\Scopes\HasLicense;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -47,6 +48,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
@@ -136,12 +138,16 @@ class EditProspect extends EditRecord
                     ->maxValue(now()->addYears(25)->year),
                 Select::make('assigned_to_id')
                     ->label('Assigned To')
-                    ->relationship('assignedTo', 'name')
+                    ->relationship(
+                        'assignedTo',
+                        'name',
+                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
+                    )
                     ->searchable()
                     ->nullable()
                     ->exists(
                         table: (new User())->getTable(),
-                        column: (new User())->getKeyName()
+                        column: (new User())->getKeyName(),
                     ),
                 Select::make('created_by_id')
                     ->label('Created By')

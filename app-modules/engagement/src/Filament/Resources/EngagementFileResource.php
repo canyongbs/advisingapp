@@ -50,7 +50,7 @@ class EngagementFileResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    protected static ?string $navigationGroup = 'Productivity Tools';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 7;
 
@@ -62,11 +62,8 @@ class EngagementFileResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Files or Documents';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    // TODO: Look into whether or not we should just delete this resource
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {

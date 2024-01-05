@@ -50,7 +50,7 @@ class ListSystemUsers extends ListRecords
 {
     protected static string $resource = SystemUserResource::class;
 
-    protected ?string $heading = 'Programmatic (API) Users';
+    protected ?string $heading = 'Programmatic Users';
 
     public function table(Table $table): Table
     {

@@ -54,15 +54,17 @@ class ManagePortalSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationLabel = 'Portal Settings';
+    protected static ?string $navigationLabel = 'Portals';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 120;
+    protected static ?string $navigationParentItem = 'Global Settings';
+
+    protected static ?int $navigationSort = 60;
 
     protected static string $settings = PortalSettings::class;
 
-    protected static ?string $title = 'Portal Settings';
+    protected static ?string $title = 'Portals';
 
     public static function shouldRegisterNavigation(): bool
     {

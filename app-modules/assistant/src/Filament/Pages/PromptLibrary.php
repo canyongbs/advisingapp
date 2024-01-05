@@ -34,45 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Forms\Components;
+namespace AdvisingApp\Assistant\Filament\Pages;
 
-use Filament\Support\Colors\Color;
-use Filament\Forms\Components\Select;
+use Filament\Pages\Page;
 
-class ColorSelect extends Select
+class PromptLibrary extends Page
 {
-    protected int $shade = 600;
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    protected static string $view = 'filament.pages.coming-soon';
 
-        $this->allowHtml()
-            ->native(false)
-            ->shade($this->getShade());
-    }
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    public function shade(int $shade): static
-    {
-        $this->shade = $shade;
-
-        $this->options(
-            collect(Color::all())
-                ->keys()
-                ->sort()
-                ->mapWithKeys(fn (string $color) => [
-                    $color => "<span class='flex items-center gap-x-4'>
-                            <span class='rounded-full w-4 h-4' style='background:rgb(" . Color::all()[$color][$shade] . ")'></span>
-                            <span>" . str($color)->headline() . '</span>
-                            </span>',
-                ])
-        );
-
-        return $this;
-    }
-
-    public function getShade(): int
-    {
-        return $this->shade;
-    }
+    protected static ?int $navigationSort = 10;
 }

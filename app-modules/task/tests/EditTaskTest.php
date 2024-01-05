@@ -40,6 +40,7 @@ use AdvisingApp\Task\Models\Task;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
 use AdvisingApp\Task\Tests\RequestFactories\EditTaskRequestFactory;
 
@@ -51,7 +52,7 @@ use AdvisingApp\Task\Tests\RequestFactories\EditTaskRequestFactory;
 // Permission Tests
 
 test('EditTask is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $task = Task::factory()->create();
 

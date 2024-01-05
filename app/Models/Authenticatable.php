@@ -37,6 +37,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\CanOrElse;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Foundation\Auth\User as BaseAuthenticatable;
 use AdvisingApp\Authorization\Models\Concerns\HasRoleGroups;
 use AdvisingApp\Authorization\Models\Concerns\HasRolesWithPivot;
@@ -50,4 +51,14 @@ abstract class Authenticatable extends BaseAuthenticatable
     use HasRolesWithPivot;
     use DefinesPermissions;
     use CanOrElse;
+
+    /**
+     * @param LicenseType | string | array<LicenseType | string> | null $type
+     */
+    abstract public function hasLicense(LicenseType | string | array | null $type): bool;
+
+    /**
+     * @param LicenseType | string | array<LicenseType | string> | null $type
+     */
+    abstract public function hasAnyLicense(LicenseType | string | array | null $type): bool;
 }

@@ -47,4 +47,6 @@ class Reports extends Page
     protected static ?int $navigationSort = 10;
 
     protected static string $view = 'filament.pages.coming-soon';
+
+    protected static ?string $title = 'Report Center';
 }

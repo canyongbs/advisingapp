@@ -38,11 +38,12 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
 
 test('EditInteractionOutcome is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $outcome = InteractionOutcome::factory()->create();
 

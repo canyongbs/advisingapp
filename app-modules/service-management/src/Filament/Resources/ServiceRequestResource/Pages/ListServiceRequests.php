@@ -55,6 +55,8 @@ use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
 class ListServiceRequests extends ListRecords
 {
+    protected ?string $heading = 'Service Management';
+
     protected static string $resource = ServiceRequestResource::class;
 
     public function table(Table $table): Table

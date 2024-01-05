@@ -34,21 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+use App\Models\User;
 
-use Filament\Pages\Page;
+use function Pest\Laravel\actingAs;
 
-class ServiceDashboard extends Page
-{
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
+use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource;
 
-    protected static ?string $navigationGroup = 'Service Management';
+test('ViewAnalyticsResourceCategoryTest is gated with proper access control', function () {
+    $user = User::factory()->create();
 
-    protected static ?int $navigationSort = 1;
+    $analyticsResourceSource = AnalyticsResourceSource::factory()->create();
 
-    protected static ?string $navigationLabel = 'Dashboard';
+    actingAs($user)
+        ->get(
+            AnalyticsResourceSourceResource::getUrl('view', [
+                'record' => $analyticsResourceSource,
+            ])
+        )->assertForbidden();
 
-    protected ?string $heading = 'Dashboard';
+    $user->givePermissionTo('analytics_resource_source.view-any');
+    $user->givePermissionTo('analytics_resource_source.*.view');
 
-    protected static string $view = 'filament.pages.coming-soon';
-}
+    actingAs($user)
+        ->get(
+            AnalyticsResourceSourceResource::getUrl('view', [
+                'record' => $analyticsResourceSource,
+            ])
+        )->assertSuccessful();
+});

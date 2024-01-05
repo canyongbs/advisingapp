@@ -71,7 +71,7 @@ class LicensesRelationManager extends RelationManager
                         /** @var User $ownerRecord */
                         $ownerRecord = $this->getOwnerRecord();
 
-                        return ! LicenseType::from($value)->hasAvailableLicenses() || $ownerRecord->licenses()->where('type', $value)->exists();
+                        return (! LicenseType::from($value)->hasAvailableLicenses()) || $ownerRecord->hasLicense($value);
                     })
                     ->required(),
             ]);

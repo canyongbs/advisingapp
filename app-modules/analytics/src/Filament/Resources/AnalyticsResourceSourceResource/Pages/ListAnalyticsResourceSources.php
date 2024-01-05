@@ -34,17 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource\Pages;
 
-use Filament\Pages\Page;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource;
 
-class AnalyticsPortal extends Page
+class ListAnalyticsResourceSources extends ListRecords
 {
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
+    protected static string $resource = AnalyticsResourceSourceResource::class;
 
-    protected static string $view = 'filament.pages.coming-soon';
+    public function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('resources_count')
+                    ->label('# of Analytics Resources')
+                    ->counts('resources')
+                    ->sortable(),
+            ])
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
 
-    protected static ?string $navigationGroup = 'Data and Analytics';
-
-    protected static ?int $navigationSort = 1;
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
 }

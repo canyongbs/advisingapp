@@ -116,21 +116,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label('Record Management'),
+                    ->label('Artificial Intelligence'),
                 NavigationGroup::make()
-                    ->label('Productivity Tools'),
+                    ->label('Retention CRM'),
                 NavigationGroup::make()
-                    ->label('Service Management'),
+                    ->label('Recruitment CRM'),
                 NavigationGroup::make()
-                    ->label('Meeting Center'),
+                    ->label('Engagement Features'),
                 NavigationGroup::make()
-                    ->label('Mass Engagement'),
-                NavigationGroup::make()
-                    ->label('Forms and Surveys'),
+                    ->label('Premium Features'),
                 NavigationGroup::make()
                     ->label('Reporting'),
-                NavigationGroup::make()
-                    ->label('Data and Analytics'),
                 NavigationGroup::make()
                     ->label('Users and Permissions'),
                 NavigationGroup::make()

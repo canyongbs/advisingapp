@@ -45,8 +45,10 @@ use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\InventoryManagement\Database\Seeders\AssetSeeder;
 use AdvisingApp\Authorization\Console\Commands\SyncRolesAndPermissions;
+use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceSourceSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
+use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceCategorySeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
@@ -83,6 +85,8 @@ class DemoDatabaseSeeder extends Seeder
             ...AssetSeeder::metadataSeeders(),
             AssetSeeder::class,
             MaintenanceProviderSeeder::class,
+            AnalyticsResourceSourceSeeder::class,
+            AnalyticsResourceCategorySeeder::class,
         ]);
     }
 }

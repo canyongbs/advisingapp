@@ -44,19 +44,15 @@ class AuditResource extends Resource
 {
     protected static ?string $model = Audit::class;
 
-    protected static ?string $navigationLabel = 'Record Auditing';
+    protected static ?string $navigationLabel = 'Other Records';
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $navigationParentItem = 'Usage Auditing';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?string $navigationGroup = 'Reporting';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?int $navigationSort = 40;
 
     public static function getPages(): array
     {

@@ -42,6 +42,15 @@ use AdvisingApp\StudentDataModel\Models\Student;
 
 class StudentPolicy
 {
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasLicense(Student::getLicenseType())) {
+            return Response::deny('You are not licensed for the Retention CRM.');
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(

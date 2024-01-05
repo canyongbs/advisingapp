@@ -1,0 +1,26 @@
+{
+  "name": "canyon-gbs/analytics",
+  "description": "",
+  "type": "library",
+  "version": "1.0",
+  "license": "proprietary",
+  "require": {
+    "filament/filament": "^3.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "AdvisingApp\\Analytics\\": "src/",
+      "AdvisingApp\\Analytics\\Tests\\": "tests/",
+      "AdvisingApp\\Analytics\\Database\\Factories\\": "database/factories/",
+      "AdvisingApp\\Analytics\\Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AdvisingApp\\Analytics\\Providers\\AnalyticsServiceProvider"
+      ]
+    }
+  }
+}

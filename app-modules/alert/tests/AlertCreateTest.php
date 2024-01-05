@@ -40,11 +40,12 @@ use AdvisingApp\Alert\Models\Alert;
 use function Pest\Laravel\actingAs;
 
 use Illuminate\Support\Facades\Notification;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 
 it('creates a subscription for the user that created the Alert', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user);
 
@@ -60,7 +61,7 @@ it('creates a subscription for the user that created the Alert', function () {
 it('dispatches the proper notifications to subscribers on created', function () {
     Notification::fake();
 
-    $users = User::factory()->count(5)->create();
+    $users = User::factory()->licensed(LicenseType::cases())->count(5)->create();
 
     /** @var Student $student */
     $student = Student::factory()->create();
