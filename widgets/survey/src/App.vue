@@ -304,7 +304,7 @@ async function authenticate(formData, node) {
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
-            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/form/style.css'" />
+            <link rel="stylesheet" v-bind:href="hostUrl + '/js/widgets/survey/style.css'" />
 
             <h1>
                 {{ formName }}

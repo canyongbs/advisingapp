@@ -32,16 +32,34 @@
 </COPYRIGHT>
 --}}
 
+@php
+    $min = 1;
+    $max = 5;
+    $value = ceil($max / 2);
+@endphp
+
 <x-form::blocks.field-wrapper
     :$label
     :$isRequired
 >
     <div class="grid gap-y-2">
-        <div class="flex items-center gap-2">
-            <span>1</span>
-            <input class="w-full" type="range" min="1" max="5" value="2">
-            <span>5</span>
-            <span class="h-4 w-4 rounded border border-gray-500">2</span>
+        <div class="flex gap-4">
+            <div class="w-full">
+                <div class="flex justify-between">
+                    <span>{{ $min }}</span>
+                    <span>{{ $max }}</span>
+                </div>
+                <input
+                    class="w-full"
+                    type="range"
+                    value={{ $value }}
+                    min={{ $min }}
+                    max={{ $max }}
+                >
+            </div>
+            <div class="flex items-end">
+                <span class="rounded border border-gray-500 p-1">{{ $value }}</span>
+            </div>
         </div>
     </div>
 </x-form::blocks.field-wrapper>

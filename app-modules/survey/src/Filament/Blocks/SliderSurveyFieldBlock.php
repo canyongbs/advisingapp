@@ -2,8 +2,8 @@
 
 namespace AdvisingApp\Survey\Filament\Blocks;
 
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 
 class SliderSurveyFieldBlock extends FormFieldBlock
 {
@@ -21,6 +21,13 @@ class SliderSurveyFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
+        ];
+    }
+
+    public static function getValidationRules(SubmissibleField $field): array
+    {
+        return [
+            'integer',
         ];
     }
 }

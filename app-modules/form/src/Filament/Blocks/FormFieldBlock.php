@@ -38,8 +38,8 @@ namespace AdvisingApp\Form\Filament\Blocks;
 
 use FilamentTiptapEditor\TiptapBlock;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput;
 use AdvisingApp\Form\Models\SubmissibleField;
-use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 abstract class FormFieldBlock extends TiptapBlock
 {
@@ -52,7 +52,7 @@ abstract class FormFieldBlock extends TiptapBlock
     public function getFormSchema(): array
     {
         return [
-            FilamentTextInput::make('label')
+            TextInput::make('label')
                 ->required()
                 ->string()
                 ->maxLength(255),
