@@ -37,7 +37,6 @@
 namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
 use App\Models\User;
-use App\Enums\Feature;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -72,7 +71,9 @@ class ListConsentAgreements extends ListRecords
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can([Feature::PersonalAssistant->getGateName(), 'consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update']);
+        // TODO: Feature/License Gate | if has AI License, may need to prevent mount as well
+
+        return $user->can(['consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update']);
     }
 
     public function form(Form $form): Form

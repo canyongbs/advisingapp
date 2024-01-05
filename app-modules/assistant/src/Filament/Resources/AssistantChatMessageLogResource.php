@@ -56,15 +56,17 @@ class AssistantChatMessageLogResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
-    protected static ?string $navigationLabel = 'Personal Assistant Audit';
+    protected static ?string $navigationLabel = 'Personal Assistant';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $navigationParentItem = 'Usage Auditing';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?string $navigationGroup = 'Reporting';
 
-    protected static ?string $modelLabel = 'Personal Assistant Audit';
+    protected static ?int $navigationSort = 30;
 
-    protected static ?string $pluralLabel = 'Personal Assistant Audit';
+    protected static ?string $modelLabel = 'Personal Assistant';
+
+    protected static ?string $pluralLabel = 'Personal Assistant';
 
     public static function infolist(Infolist $infolist): Infolist
     {

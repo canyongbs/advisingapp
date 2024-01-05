@@ -36,46 +36,25 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
-use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\Concerns\HasSharedEventFormConfiguration;
 
 class EditEvent extends EditRecord
 {
+    use HasSharedEventFormConfiguration;
+
     protected static string $resource = EventResource::class;
+
+    // TODO: Automatically set from Filament
+    protected static ?string $navigationLabel = 'Edit';
 
     public function form(Form $form): Form
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $form->schema([
-            TextInput::make('title')
-                ->string()
-                ->required(),
-            Textarea::make('description')
-                ->string()
-                ->nullable(),
-            TextInput::make('location')
-                ->string()
-                ->nullable(),
-            TextInput::make('capacity')
-                ->integer()
-                ->minValue(1)
-                ->nullable(),
-            DateTimePicker::make('starts_at')
-                ->timezone($user->timezone)
-                ->required(),
-            DateTimePicker::make('ends_at')
-                ->timezone($user->timezone)
-                ->required(),
-        ]);
+        return $form->schema($this->fields());
     }
 
     protected function getHeaderActions(): array

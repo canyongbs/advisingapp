@@ -54,15 +54,17 @@ class ManagePortalSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationLabel = 'Portal Settings';
+    protected static ?string $navigationLabel = 'Portals';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 120;
+    protected static ?string $navigationParentItem = 'Global Settings';
+
+    protected static ?int $navigationSort = 60;
 
     protected static string $settings = PortalSettings::class;
 
-    protected static ?string $title = 'Portal Settings';
+    protected static ?string $title = 'Portals';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -135,12 +137,12 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Files and Documents'),
                         Toggle::make('has_forms')
                             ->label('Forms')
-                            ->disabled(! Gate::check(Feature::DynamicForms->getGateName()))
+                            ->disabled(! Gate::check(Feature::OnlineForms->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Forms are not a part of your current subscription.'),
                         Toggle::make('has_surveys')
                             ->label('Surveys')
-                            ->disabled(! Gate::check(Feature::ConductSurveys->getGateName()))
+                            ->disabled(! Gate::check(Feature::OnlineSurveys->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->hintIconTooltip('Surveys are not a part of your current subscription.'),
                     ])

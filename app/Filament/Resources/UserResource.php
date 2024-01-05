@@ -55,6 +55,7 @@ use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\LicensesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\RoleGroupsRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\PermissionsRelationManager;
 
@@ -66,7 +67,13 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Users and Permissions';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 30;
+
+    protected static ?string $navigationLabel = 'Product Users';
+
+    protected static ?string $breadcrumb = 'Product Users';
+
+    protected static ?string $modelLabel = 'User';
 
     public static function form(Form $form): Form
     {
@@ -128,6 +135,7 @@ class UserResource extends Resource
             RoleGroupsRelationManager::class,
             RolesRelationManager::class,
             PermissionsRelationManager::class,
+            LicensesRelationManager::class,
         ];
     }
 

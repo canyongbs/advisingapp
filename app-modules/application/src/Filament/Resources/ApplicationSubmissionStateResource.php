@@ -49,9 +49,13 @@ class ApplicationSubmissionStateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Online Admissions';
 
-    protected static ?int $navigationSort = 18;
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Application States';
+
+    protected static ?int $navigationSort = 1;
 
     public static function getPages(): array
     {

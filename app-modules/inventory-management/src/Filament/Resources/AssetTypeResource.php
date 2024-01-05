@@ -50,7 +50,13 @@ class AssetTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Asset Management';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Types';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

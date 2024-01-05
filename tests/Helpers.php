@@ -39,10 +39,13 @@ namespace Tests;
 use App\Models\User;
 use App\Actions\Paths\ModulePath;
 use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 function asSuperAdmin(?User $user = null): TestCase
 {
-    $superAdmin = $user ?? User::factory()->create();
+    $superAdmin = $user ?? User::factory()
+        ->licensed(LicenseType::cases())
+        ->create();
 
     $superAdminRoles = Role::superAdmin()->get();
 

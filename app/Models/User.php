@@ -38,6 +38,7 @@ namespace App\Models;
 
 use Filament\Panel;
 use DateTimeInterface;
+use Illuminate\Support\Arr;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
@@ -52,9 +53,11 @@ use AdvisingApp\Authorization\Models\Role;
 use Lab404\Impersonate\Models\Impersonate;
 use Filament\Models\Contracts\FilamentUser;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use AdvisingApp\Authorization\Models\License;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use AdvisingApp\Notification\Models\Subscription;
@@ -193,6 +196,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function caseloads(): HasMany
     {
         return $this->hasMany(Caseload::class);
+    }
+
+    public function licenses(): HasMany
+    {
+        return $this->hasMany(License::class, 'user_id');
     }
 
     public function subscriptions(): HasMany
@@ -366,6 +374,50 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar_url ?: $this->getFirstTemporaryUrl(now()->addMinutes(5), 'avatar', 'avatar-height-250px');
+    }
+
+    /**
+     * @param LicenseType | string | array<LicenseType | string> | null $type
+     */
+    public function hasLicense(LicenseType | string | array | null $type): bool
+    {
+        if (blank($type)) {
+            return true;
+        }
+
+        foreach (Arr::wrap($type) as $type) {
+            if (! ($type instanceof LicenseType)) {
+                $type = LicenseType::from($type);
+            }
+
+            if ($this->licenses->doesntContain('type', $type)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param LicenseType | string | array<LicenseType | string> | null $type
+     */
+    public function hasAnyLicense(LicenseType | string | array | null $type): bool
+    {
+        if (blank($type)) {
+            return true;
+        }
+
+        foreach (Arr::wrap($type) as $type) {
+            if (! ($type instanceof LicenseType)) {
+                $type = LicenseType::from($type);
+            }
+
+            if ($this->licenses->contains('type', $type)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function serializeDate(DateTimeInterface $date): string

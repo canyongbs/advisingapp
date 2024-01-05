@@ -37,7 +37,6 @@
 namespace AdvisingApp\Assistant\Filament\Pages;
 
 use App\Models\User;
-use App\Enums\Feature;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Textarea;
@@ -50,6 +49,8 @@ class ManageAiSettings extends SettingsPage
 
     protected static ?string $title = 'Manage AI Settings';
 
+    protected static ?string $navigationGroup = 'Product Administration';
+
     // We don't want to register the navigation as we will be using the navigation item in a different page.
     public static function registerNavigationItems(): void {}
 
@@ -58,7 +59,9 @@ class ManageAiSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can([Feature::PersonalAssistant->getGateName(), 'assistant.access_ai_settings']);
+        // TODO: Feature/License Gate | if has AI License
+
+        return $user->can(['assistant.access_ai_settings']);
     }
 
     public function mount(): void
@@ -66,7 +69,9 @@ class ManageAiSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        abort_unless($user->can([Feature::PersonalAssistant->getGateName(), 'assistant.access_ai_settings']), 403);
+        // TODO: Feature/License Gate | if has AI License
+
+        abort_unless($user->can(['assistant.access_ai_settings']), 403);
 
         parent::mount();
     }

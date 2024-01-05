@@ -54,7 +54,9 @@ class ManageGoogleAnalyticsSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Google Analytics';
 
-    protected static ?string $navigationGroup = 'Integrations';
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationParentItem = 'Product Integrations';
 
     protected static ?int $navigationSort = 10;
 

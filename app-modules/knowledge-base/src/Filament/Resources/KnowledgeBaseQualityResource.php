@@ -38,7 +38,10 @@ namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\EditKnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\ViewKnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\CreateKnowledgeBaseQuality;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\ListKnowledgeBaseQualities;
 
 class KnowledgeBaseQualityResource extends Resource
 {
@@ -46,23 +49,21 @@ class KnowledgeBaseQualityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Knowledge Management';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?string $navigationLabel = 'Qualities';
+
+    protected static ?int $navigationSort = 2;
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKnowledgeBaseQualities::route('/'),
-            'create' => Pages\CreateKnowledgeBaseQuality::route('/create'),
-            'view' => Pages\ViewKnowledgeBaseQuality::route('/{record}'),
-            'edit' => Pages\EditKnowledgeBaseQuality::route('/{record}/edit'),
+            'index' => ListKnowledgeBaseQualities::route('/'),
+            'create' => CreateKnowledgeBaseQuality::route('/create'),
+            'view' => ViewKnowledgeBaseQuality::route('/{record}'),
+            'edit' => EditKnowledgeBaseQuality::route('/{record}/edit'),
         ];
     }
 }

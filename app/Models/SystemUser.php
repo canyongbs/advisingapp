@@ -36,9 +36,11 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Arr;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -57,4 +59,48 @@ class SystemUser extends Authenticatable implements Auditable
     protected $fillable = [
         'name',
     ];
+
+    /**
+     * @param LicenseType | string | array<LicenseType | string>| null $type
+     */
+    public function hasLicense(LicenseType | string | array | null $type): bool
+    {
+        if (blank($type)) {
+            return true;
+        }
+
+        foreach (Arr::wrap($type) as $type) {
+            if (! ($type instanceof LicenseType)) {
+                $type = LicenseType::from($type);
+            }
+
+            if (! $type->isLicenseable()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param LicenseType | string | array<LicenseType | string> | null $type
+     */
+    public function hasAnyLicense(LicenseType | string | array | null $type): bool
+    {
+        if (blank($type)) {
+            return true;
+        }
+
+        foreach (Arr::wrap($type) as $type) {
+            if (! ($type instanceof LicenseType)) {
+                $type = LicenseType::from($type);
+            }
+
+            if ($type->isLicenseable()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

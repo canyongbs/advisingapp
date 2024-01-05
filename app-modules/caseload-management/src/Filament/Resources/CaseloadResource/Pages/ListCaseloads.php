@@ -42,12 +42,16 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 class ListCaseloads extends ListRecords
 {
+    protected ?string $heading = 'Caseload Management';
+
     protected static string $resource = CaseloadResource::class;
 
     public function table(Table $table): Table
@@ -59,7 +63,8 @@ class ListCaseloads extends ListRecords
                     ->sortable(),
                 TextColumn::make('model')
                     ->label('Population')
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])),
                 TextColumn::make('type')
                     ->sortable(),
                 TextColumn::make('user.name')

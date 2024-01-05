@@ -51,7 +51,7 @@ use AdvisingApp\Prospect\Tests\Prospect\RequestFactories\EditProspectRequestFact
 // Permission Tests
 
 test('EditProspect is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospect = Prospect::factory()->create();
 

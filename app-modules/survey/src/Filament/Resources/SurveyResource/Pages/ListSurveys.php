@@ -50,6 +50,8 @@ use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 
 class ListSurveys extends ListRecords
 {
+    protected ?string $heading = 'Online Surveys';
+
     protected static string $resource = SurveyResource::class;
 
     public function table(Table $table): Table

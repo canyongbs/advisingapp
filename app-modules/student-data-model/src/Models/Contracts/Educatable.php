@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
 use Illuminate\Database\Eloquent\Collection;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
@@ -49,4 +50,6 @@ interface Educatable extends Identifiable
     public static function displayEmailKey(): string;
 
     public function careTeam(): MorphToMany;
+
+    public static function getLicenseType(): LicenseType;
 }

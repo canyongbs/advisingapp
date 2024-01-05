@@ -50,7 +50,13 @@ class AssetStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Asset Management';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Statuses';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

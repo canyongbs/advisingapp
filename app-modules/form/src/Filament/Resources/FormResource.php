@@ -51,11 +51,17 @@ class FormResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Forms and Surveys';
+    protected static ?string $navigationGroup = 'Premium Features';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 60;
 
-    protected static ?string $navigationLabel = 'Manage Forms';
+    protected static ?string $navigationLabel = 'Online Forms';
+
+    protected static ?string $breadcrumb = 'Online Forms';
+
+    protected static ?string $modelLabel = 'Form';
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function getEloquentQuery(): Builder
     {

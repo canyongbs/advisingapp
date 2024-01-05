@@ -40,6 +40,7 @@ use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListProspectSources;
@@ -82,7 +83,7 @@ test('The correct details are displayed on the ListProspectSources page', functi
 // Permission Tests
 
 test('ListProspectSources is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     actingAs($user)
         ->get(

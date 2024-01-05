@@ -54,6 +54,7 @@ class ViewAssetStatus extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
+                        TextEntry::make('classification'),
                     ]),
             ]);
     }

@@ -39,14 +39,13 @@ namespace AdvisingApp\Task\Filament\Concerns;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Prospect\Models\Prospect;
-use Filament\Forms\Components\MorphToSelect;
+use App\Filament\Fields\EducatableSelect;
 use Filament\Forms\Components\DateTimePicker;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Forms\Components\MorphToSelect\Type;
 
 trait TaskEditForm
 {
+    use TaskForm;
+
     public function editFormFields(): array
     {
         return [
@@ -62,19 +61,13 @@ trait TaskEditForm
                 ->native(false),
             Select::make('assigned_to')
                 ->label('Assigned To')
-                ->relationship('assignedTo', 'name')
+                ->relationship('assignedTo', 'name', $this->scopeAssignmentRelationshipBasedOnConcern())
                 ->nullable()
                 ->searchable(['name', 'email'])
                 ->default(auth()->id()),
-            MorphToSelect::make('concern')
+            EducatableSelect::make('concern')
                 ->label('Related To')
-                ->searchable()
-                ->types([
-                    Type::make(Student::class)
-                        ->titleAttribute(Student::displayNameKey()),
-                    Type::make(Prospect::class)
-                        ->titleAttribute(Prospect::displayNameKey()),
-                ]),
+                ->afterStateUpdated($this->updateAssignmentAfterConcernSelected()),
         ];
     }
 }
