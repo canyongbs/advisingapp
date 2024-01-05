@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperAssetCheckIn
+ */
 class AssetCheckIn extends BaseModel implements Auditable
 {
     use AuditableTrait;
