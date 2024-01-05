@@ -49,13 +49,13 @@ class CalendarEventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Meeting Center';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationLabel = 'Schedule';
+    protected static ?string $navigationLabel = 'Schedule & Appointments';
 
-    protected static ?string $breadcrumb = 'Schedule';
+    protected static ?string $breadcrumb = 'Schedule & Appointments';
 
     protected static ?string $modelLabel = 'appointment';
 

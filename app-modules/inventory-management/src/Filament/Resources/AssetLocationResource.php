@@ -50,7 +50,13 @@ class AssetLocationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-map-pin';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Asset Management';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Locations';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

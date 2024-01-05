@@ -37,14 +37,32 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
 
-class DataLakehouse extends Page
+class UsageAuditing extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected static ?string $navigationGroup = 'Reporting';
 
-    protected static ?string $navigationGroup = 'Data and Analytics';
+    protected static ?int $navigationSort = 30;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?string $title = 'Usage Auditing';
+
+    protected array $children = [
+        AssistantChatMessageLogResource::class,
+        AuditResource::class,
+    ];
+
+    public function mount()
+    {
+        foreach ($this->children as $child) {
+            if ($child::shouldRegisterNavigation()) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(404);
+    }
 }

@@ -52,9 +52,13 @@ class InteractionStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Interaction Management';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Statuses';
+
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
@@ -73,12 +77,6 @@ class InteractionStatusResource extends Resource
                     ->required()
                     ->enum(InteractionStatusColorOptions::class),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
     }
 
     public static function getPages(): array

@@ -71,7 +71,7 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->color(fn (ApplicationSubmissionState $applicationState) => $applicationState->color->value),
                 TextColumn::make('applications_count')
                     ->label('# of Applications')
-                    ->counts('applications')
+                    ->counts('submissions')
                     ->sortable(),
             ])
             ->filters([

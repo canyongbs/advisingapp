@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\Assistant\Filament\Pages;
 
 use Filament\Pages\Page;
 
-class ChangeManagement extends Page
+class PromptLibrary extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Service Management';
-
-    protected static ?int $navigationSort = 20;
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
     protected static string $view = 'filament.pages.coming-soon';
+
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
+
+    protected static ?int $navigationSort = 10;
 }

@@ -49,6 +49,8 @@ class ManageAiSettings extends SettingsPage
 
     protected static ?string $title = 'Manage AI Settings';
 
+    protected static ?string $navigationGroup = 'Product Administration';
+
     // We don't want to register the navigation as we will be using the navigation item in a different page.
     public static function registerNavigationItems(): void {}
 

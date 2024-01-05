@@ -53,6 +53,7 @@ use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\ListA
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\CreateAsset;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\ManageAssetMaintenanceActivity;
 
+// TODO: Can delete this and all underlying pages once we fork
 class AssetResource extends Resource
 {
     protected static ?string $model = Asset::class;
@@ -66,6 +67,8 @@ class AssetResource extends Resource
     protected static ?int $navigationSort = 30;
 
     protected static ?string $breadcrumb = 'Asset Management';
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public function getTitle(): string | Htmlable
     {

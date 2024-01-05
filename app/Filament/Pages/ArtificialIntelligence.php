@@ -37,18 +37,30 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
 
-class SLAConfiguration extends Page
+class ArtificialIntelligence extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationLabel = 'SLA Configuration';
-
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 120;
+    protected static ?int $navigationSort = 3;
 
-    protected ?string $heading = 'SLA Configuration';
+    protected static ?string $title = 'Artificial Intelligence';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected array $children = [
+        AssistantConfiguration::class,
+    ];
+
+    public function mount()
+    {
+        foreach ($this->children as $child) {
+            if ($child::shouldRegisterNavigation()) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(404);
+    }
 }

@@ -44,13 +44,16 @@ class AlertResource extends Resource
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Productivity Tools';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 5;
 
     protected static ?string $model = Alert::class;
 
     protected static ?string $label = 'Proactive Alert';
+
+    // TODO: Look into whether or not we should just delete this resource
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {

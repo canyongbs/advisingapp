@@ -50,6 +50,8 @@ use AdvisingApp\Form\Filament\Resources\FormResource;
 
 class ListForms extends ListRecords
 {
+    protected ?string $heading = 'Online Forms';
+
     protected static string $resource = FormResource::class;
 
     public function table(Table $table): Table
@@ -58,8 +60,6 @@ class ListForms extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name'),
-            ])
-            ->filters([
             ])
             ->actions([
                 Action::make('Respond')

@@ -50,9 +50,13 @@ class InteractionDriverResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cursor-arrow-ripple';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Interaction Management';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Drivers';
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
@@ -64,12 +68,6 @@ class InteractionDriverResource extends Resource
                     ->maxLength(255)
                     ->placeholder('Interaction Driver Name'),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
     }
 
     public static function getPages(): array

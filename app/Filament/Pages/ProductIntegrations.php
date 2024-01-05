@@ -34,63 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Models;
+namespace App\Filament\Pages;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Filament\Pages\Page;
+use AdvisingApp\IntegrationTwilio\Filament\Pages\ManageTwilioSettings;
+use AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages\ManageAmazonSesSettings;
+use AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages\ManageGoogleAnalyticsSettings;
+use AdvisingApp\IntegrationGoogleRecaptcha\Filament\Pages\ManageGoogleRecaptchaSettings;
+use AdvisingApp\IntegrationMicrosoftClarity\Filament\Pages\ManageMicrosoftClaritySettings;
 
-/**
- * @mixin IdeHelperAssetCheckIn
- */
-class AssetCheckIn extends BaseModel implements Auditable
+class ProductIntegrations extends Page
 {
-    use AuditableTrait;
-    use SoftDeletes;
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected $fillable = [
-        'asset_id',
-        'checked_in_by_type',
-        'checked_in_by_id',
-        'checked_in_from_type',
-        'checked_in_from_id',
-        'checked_in_at',
-        'notes',
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $title = 'Product Integrations';
+
+    protected array $children = [
+        ManageGoogleAnalyticsSettings::class,
+        ManageGoogleRecaptchaSettings::class,
+        ManageMicrosoftClaritySettings::class,
+        ManageTwilioSettings::class,
+        ManageAmazonSesSettings::class,
     ];
 
-    protected $casts = [
-        'checked_in_at' => 'datetime',
-    ];
-
-    public function asset(): BelongsTo
+    public function mount()
     {
-        return $this->belongsTo(Asset::class, 'asset_id');
-    }
+        foreach ($this->children as $child) {
+            if ($child::shouldRegisterNavigation()) {
+                return redirect($child::getUrl());
+            }
+        }
 
-    public function checkedInBy(): MorphTo
-    {
-        return $this->morphTo(
-            name: 'checked_in_by',
-            type: 'checked_in_by_type',
-            id: 'checked_in_by_id',
-        );
-    }
-
-    public function checkedInFrom(): MorphTo
-    {
-        return $this->morphTo(
-            name: 'checked_in_from',
-            type: 'checked_in_from_type',
-            id: 'checked_in_from_id',
-        );
-    }
-
-    public function checkOut(): HasOne
-    {
-        return $this->hasOne(AssetCheckOut::class);
+        abort(404);
     }
 }

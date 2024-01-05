@@ -37,18 +37,36 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource;
 
-class ServiceDashboard extends Page
+class AssetManagement extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Service Management';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 5;
 
-    protected static ?string $navigationLabel = 'Dashboard';
+    protected static ?string $title = 'Asset Management';
 
-    protected ?string $heading = 'Dashboard';
+    protected static ?string $breadcrumb = 'Asset Management';
 
-    protected static string $view = 'filament.pages.coming-soon';
+    protected array $children = [
+        AssetLocationResource::class,
+        AssetStatusResource::class,
+        AssetTypeResource::class,
+    ];
+
+    public function mount()
+    {
+        foreach ($this->children as $child) {
+            if ($child::shouldRegisterNavigation()) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(404);
+    }
 }

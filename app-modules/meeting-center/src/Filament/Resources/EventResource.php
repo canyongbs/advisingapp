@@ -51,14 +51,17 @@ class EventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Meeting Center';
+    protected static ?string $navigationGroup = 'Premium Features';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 40;
 
-    public static function getRelations(): array
-    {
-        return [];
-    }
+    protected static ?string $navigationLabel = 'Event Management';
+
+    protected static ?string $breadcrumb = 'Event Management';
+
+    protected static ?string $modelLabel = 'Event';
+
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function getRecordSubNavigation(Page $page): array
     {

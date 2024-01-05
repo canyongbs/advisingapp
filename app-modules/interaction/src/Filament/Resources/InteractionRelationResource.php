@@ -50,9 +50,13 @@ class InteractionRelationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Interaction Management';
 
-    protected static ?int $navigationSort = 14;
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationLabel = 'Relations';
+
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
@@ -64,12 +68,6 @@ class InteractionRelationResource extends Resource
                     ->maxLength(255)
                     ->placeholder('Interaction Relation Name'),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
     }
 
     public static function getPages(): array
