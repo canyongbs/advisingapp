@@ -38,12 +38,14 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
 use App\Models\User;
 use Filament\Forms\Form;
+use App\Models\Scopes\HasLicense;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
@@ -133,7 +135,11 @@ class CreateProspect extends CreateRecord
                     ->maxValue(now()->addYears(25)->year),
                 Select::make('assigned_to_id')
                     ->label('Assigned To')
-                    ->relationship('assignedTo', 'name')
+                    ->relationship(
+                        'assignedTo',
+                        'name',
+                        fn (Builder $query) => $query->tap(new HasLicense(Prospect::getLicenseType())),
+                    )
                     ->searchable()
                     ->nullable()
                     ->exists(

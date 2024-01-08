@@ -65,9 +65,17 @@ class CaseloadResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
 
-    protected static ?string $navigationGroup = 'Mass Engagement';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 20;
+
+    protected static ?string $navigationLabel = 'Caseload Management';
+
+    protected static ?string $breadcrumb = 'Caseload Management';
+
+    protected static ?string $modelLabel = 'Caseload';
+
+    protected static ?string $pluralModelLabel = 'Caseloads';
 
     public static function filters(CaseloadModel $subject): array
     {
@@ -94,12 +102,6 @@ class CaseloadResource extends Resource
             CaseloadModel::Prospect => static::prospectActions(),
             default => throw new Exception("{$subject->name} actions not implemented"),
         };
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
     }
 
     public static function getPages(): array

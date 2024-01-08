@@ -40,11 +40,9 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Fields\EducatableSelect;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\MorphToSelect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
@@ -94,15 +92,8 @@ class CreateServiceRequest extends CreateRecord
                     ->label('Internal Service Request Details')
                     ->nullable()
                     ->string(),
-                MorphToSelect::make('respondent')
+                EducatableSelect::make('respondent')
                     ->label('Related To')
-                    ->searchable()
-                    ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ])
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
             ]);
     }

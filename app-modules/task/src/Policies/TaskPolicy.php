@@ -52,6 +52,10 @@ class TaskPolicy
 
     public function view(Authenticatable $authenticatable, Task $task): Response
     {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to view this task.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['task.*.view', "task.{$task->id}.view"],
             denyResponse: 'You do not have permission to view this task.'
@@ -68,6 +72,10 @@ class TaskPolicy
 
     public function update(Authenticatable $authenticatable, Task $task): Response
     {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to update this task.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['task.*.update', "task.{$task->id}.update"],
             denyResponse: 'You do not have permission to update this task.'
@@ -76,6 +84,10 @@ class TaskPolicy
 
     public function delete(Authenticatable $authenticatable, Task $task): Response
     {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to delete this task.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['task.*.delete', "task.{$task->id}.delete"],
             denyResponse: 'You do not have permission to delete this task.'
@@ -84,6 +96,10 @@ class TaskPolicy
 
     public function restore(Authenticatable $authenticatable, Task $task): Response
     {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to restore this task.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['task.*.restore', "task.{$task->id}.restore"],
             denyResponse: 'You do not have permission to restore this task.'
@@ -92,6 +108,10 @@ class TaskPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Task $task): Response
     {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
+            return Response::deny('You do not have permission to permanently delete this task.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['task.*.force-delete', "task.{$task->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this task.'

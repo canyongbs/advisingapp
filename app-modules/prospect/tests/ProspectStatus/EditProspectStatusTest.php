@@ -41,6 +41,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use Illuminate\Validation\Rules\Enum;
+use AdvisingApp\Prospect\Models\Prospect;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
@@ -109,7 +110,7 @@ test('EditProspectStatus requires valid data', function ($data, $errors) {
 // Permission Tests
 
 test('EditProspectStatus is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
 
     $prospectStatus = ProspectStatus::factory()->create();
 

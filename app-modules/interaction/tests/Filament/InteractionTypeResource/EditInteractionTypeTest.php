@@ -38,11 +38,12 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 
 test('EditInteractionType is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $type = InteractionType::factory()->create();
 

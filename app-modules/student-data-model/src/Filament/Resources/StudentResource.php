@@ -61,9 +61,9 @@ class StudentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-users';
 
-    protected static ?string $navigationGroup = 'Record Management';
+    protected static ?string $navigationGroup = 'Retention CRM';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 

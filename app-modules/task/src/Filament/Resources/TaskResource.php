@@ -38,7 +38,9 @@ namespace AdvisingApp\Task\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Task\Filament\Resources\TaskResource\Pages;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
+use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\CreateTask;
 
 class TaskResource extends Resource
 {
@@ -46,22 +48,16 @@ class TaskResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Productivity Tools';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 9;
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?int $navigationSort = 40;
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTasks::route('/'),
-            'create' => Pages\CreateTask::route('/create'),
-            'edit' => Pages\EditTask::route('/{record}/edit'),
+            'index' => ListTasks::route('/'),
+            'create' => CreateTask::route('/create'),
+            'edit' => EditTask::route('/{record}/edit'),
         ];
     }
 }

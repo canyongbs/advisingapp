@@ -50,6 +50,8 @@ use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 class ListApplications extends ListRecords
 {
+    protected ?string $heading = 'Online Admissions';
+
     protected static string $resource = ApplicationResource::class;
 
     public function table(Table $table): Table

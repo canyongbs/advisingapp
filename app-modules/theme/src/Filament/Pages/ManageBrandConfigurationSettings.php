@@ -51,15 +51,17 @@ class ManageBrandConfigurationSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
 
-    protected static ?string $navigationLabel = 'Brand Configuration';
+    protected static ?string $navigationLabel = 'Branding';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?string $navigationParentItem = 'Global Settings';
+
+    protected static ?int $navigationSort = 30;
 
     protected static string $settings = ThemeSettings::class;
 
-    protected static ?string $title = 'Brand Configuration';
+    protected static ?string $title = 'Branding';
 
     public static function shouldRegisterNavigation(): bool
     {

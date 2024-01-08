@@ -64,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
 
         if (config('app.force_https')) {
             URL::forceScheme('https');
+            $this->app['request']->server->set('HTTPS', true);
         }
     }
 }

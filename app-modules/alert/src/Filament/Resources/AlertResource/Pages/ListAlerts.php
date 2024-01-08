@@ -50,16 +50,15 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use AdvisingApp\Alert\Enums\AlertStatus;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Fields\EducatableSelect;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Alert\Enums\AlertSeverity;
-use Filament\Forms\Components\MorphToSelect;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Forms\Components\MorphToSelect\Type;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\Alert\Filament\Resources\AlertResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
@@ -174,15 +173,8 @@ class ListAlerts extends ListRecords
         return [
             CreateAction::make()
                 ->form([
-                    MorphToSelect::make('concern')
+                    EducatableSelect::make('concern')
                         ->label('Related To')
-                        ->types([
-                            Type::make(Student::class)
-                                ->titleAttribute(Student::displayNameKey()),
-                            Type::make(Prospect::class)
-                                ->titleAttribute(Prospect::displayNameKey()),
-                        ])
-                        ->searchable()
                         ->required(),
                     Group::make()
                         ->schema([

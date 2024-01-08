@@ -44,6 +44,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Task\Enums\TaskStatus;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Task\Filament\Resources\TaskResource;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 
@@ -104,7 +105,7 @@ test('ListTasks page displays the correct details for available my tasks', funct
 // Permission Tests
 
 test('ListTasks is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(

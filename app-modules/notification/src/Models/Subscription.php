@@ -40,6 +40,7 @@ use Exception;
 use App\Models\User;
 use DateTimeInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -49,6 +50,8 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use AdvisingApp\Notification\Actions\SubscriptionCreate;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
+use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
+use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
 
 /**
@@ -56,6 +59,7 @@ use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
  */
 class Subscription extends MorphPivot implements ExecutableFromACampaignAction
 {
+    use BelongsToEducatable;
     use HasFactory;
     use DefinesPermissions;
     use HasUuids;
@@ -107,6 +111,13 @@ class Subscription extends MorphPivot implements ExecutableFromACampaignAction
         }
 
         // Do we need to be able to relate campaigns/actions to the RESULT of their actions?
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            $builder->tap(new LicensedToEducatable('subscribable'));
+        });
     }
 
     protected function serializeDate(DateTimeInterface $date): string

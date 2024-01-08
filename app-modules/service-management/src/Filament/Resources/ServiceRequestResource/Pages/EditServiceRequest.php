@@ -42,10 +42,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Fields\EducatableSelect;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\MorphToSelect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
@@ -93,15 +91,8 @@ class EditServiceRequest extends EditRecord
                     ->label('Internal Service Request Details')
                     ->nullable()
                     ->string(),
-                MorphToSelect::make('respondent')
-                    ->label('Related To')
-                    ->searchable()
-                    ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ]),
+                EducatableSelect::make('respondent')
+                    ->label('Related To'),
             ]);
     }
 

@@ -49,6 +49,7 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Notification\Events\TriggeredAutoSubscription;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestUpdateResource;
@@ -112,7 +113,7 @@ test('CreateServiceRequestUpdate is gated with proper access control', function 
     // Preventing the Subscription creation for now
     Event::fake([TriggeredAutoSubscription::class]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -149,7 +150,7 @@ test('CreateServiceRequestUpdate is gated with proper feature access control', f
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('service_request_update.view-any');
     $user->givePermissionTo('service_request_update.create');

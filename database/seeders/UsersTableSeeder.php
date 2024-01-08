@@ -41,6 +41,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class UsersTableSeeder extends Seeder
 {
@@ -49,7 +50,7 @@ class UsersTableSeeder extends Seeder
         $superAdminRoleGroup = RoleGroup::where('name', 'Super Administrator')->firstOrFail();
 
         if (app()->environment('local')) {
-            $superAdmin = User::factory()->create([
+            $superAdmin = User::factory()->licensed(LicenseType::cases())->create([
                 'name' => 'Super Admin',
                 'email' => 'sampleadmin@advising.app',
                 'password' => Hash::make('password'),

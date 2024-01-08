@@ -49,9 +49,11 @@ class ManageLicenseSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-key';
 
-    protected static ?string $navigationLabel = 'Subscription Management';
+    protected static ?string $navigationLabel = 'Subscription';
 
     protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?string $navigationParentItem = 'Global Settings';
 
     protected static ?int $navigationSort = 10;
 

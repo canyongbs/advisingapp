@@ -78,9 +78,9 @@ class PersonalAssistant extends Page
 
     protected static string $view = 'assistant::filament.pages.personal-assistant';
 
-    protected static ?string $navigationGroup = 'Productivity Tools';
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 20;
 
     public Chat $chat;
 

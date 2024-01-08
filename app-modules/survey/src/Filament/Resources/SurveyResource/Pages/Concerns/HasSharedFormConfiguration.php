@@ -40,8 +40,8 @@ use Filament\Forms\Get;
 use Filament\Forms\Components\Grid;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Rules\IsDomain;
+use App\Filament\Fields\ColorSelect;
 use AdvisingApp\Survey\Models\Survey;
-use App\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
@@ -53,8 +53,8 @@ use Filament\Forms\Components\TextInput;
 use AdvisingApp\Survey\Models\SurveyStep;
 use AdvisingApp\Survey\Models\SurveyField;
 use FilamentTiptapEditor\Enums\TiptapOutput;
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 trait HasSharedFormConfiguration
@@ -146,7 +146,7 @@ trait HasSharedFormConfiguration
     {
         return TiptapEditor::make('content')
             ->output(TiptapOutput::Json)
-            ->blocks(FormFieldBlockRegistry::get())
+            ->blocks(SurveyFieldBlockRegistry::get())
             ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
             ->placeholder('Drag blocks here to build your survey')
             ->hiddenLabel()

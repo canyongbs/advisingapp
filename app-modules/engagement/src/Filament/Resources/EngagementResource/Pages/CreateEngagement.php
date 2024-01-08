@@ -45,16 +45,14 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Fields\EducatableSelect;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Forms\Components\MorphToSelect;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\Engagement\Models\EmailTemplate;
-use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
@@ -151,16 +149,9 @@ class CreateEngagement extends CreateRecord
                             ->columnSpanFull(),
                         EngagementSmsBodyField::make(context: 'create', form: $form),
                     ]),
-                MorphToSelect::make('recipient')
+                EducatableSelect::make('recipient')
                     ->label('Recipient')
-                    ->searchable()
                     ->required()
-                    ->types([
-                        MorphToSelect\Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey()),
-                        MorphToSelect\Type::make(Prospect::class)
-                            ->titleAttribute(Prospect::displayNameKey()),
-                    ])
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                 Fieldset::make('Send your email or text')
                     ->schema([

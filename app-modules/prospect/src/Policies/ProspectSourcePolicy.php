@@ -38,10 +38,20 @@ namespace AdvisingApp\Prospect\Policies;
 
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 
 class ProspectSourcePolicy
 {
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasLicense(Prospect::getLicenseType())) {
+            return Response::deny('You are not licensed for the Recruitment CRM.');
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(

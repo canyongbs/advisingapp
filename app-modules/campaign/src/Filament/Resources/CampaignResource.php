@@ -50,9 +50,9 @@ class CampaignResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
 
-    protected static ?string $navigationGroup = 'Mass Engagement';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 30;
 
     public static function getRelations(): array
     {

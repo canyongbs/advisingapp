@@ -49,15 +49,13 @@ class ServiceRequestTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Product Settings';
+    protected static ?string $navigationParentItem = 'Service Management';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?string $navigationLabel = 'Types';
+
+    protected static ?int $navigationSort = 3;
 
     public static function getPages(): array
     {

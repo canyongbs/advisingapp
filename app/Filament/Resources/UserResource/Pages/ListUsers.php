@@ -45,6 +45,8 @@ class ListUsers extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
+    protected ?string $heading = 'Product Users';
+
     public function getSubheading(): string | Htmlable | null
     {
         // TODO: Either remove or change to show all possible seats

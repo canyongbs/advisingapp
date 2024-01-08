@@ -57,6 +57,10 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function view(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+            return Response::deny('You do not have permission to view this service request.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['service_request.*.view', "service_request.{$serviceRequest->id}.view"],
             denyResponse: 'You do not have permission to view this service request.'
@@ -73,6 +77,10 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function update(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+            return Response::deny('You do not have permission to update this service request.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['service_request.*.update', "service_request.{$serviceRequest->id}.update"],
             denyResponse: 'You do not have permission to update this service request.'
@@ -81,6 +89,10 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function delete(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+            return Response::deny('You do not have permission to delete this service request.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['service_request.*.delete', "service_request.{$serviceRequest->id}.delete"],
             denyResponse: 'You do not have permission to delete this service request.'
@@ -89,6 +101,10 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function restore(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+            return Response::deny('You do not have permission to restore this service request.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['service_request.*.restore', "service_request.{$serviceRequest->id}.restore"],
             denyResponse: 'You do not have permission to restore this service request.'
@@ -97,6 +113,10 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function forceDelete(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+            return Response::deny('You do not have permission to permanently delete this service request.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: ['service_request.*.force-delete', "service_request.{$serviceRequest->id}.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this service request.'

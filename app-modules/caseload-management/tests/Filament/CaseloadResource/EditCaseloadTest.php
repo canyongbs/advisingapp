@@ -38,11 +38,12 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource;
 
 test('EditCaseload is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $caseload = Caseload::factory()->create();
 

@@ -37,11 +37,13 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources;
 
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\EditEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ViewEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\CreateEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ManageEventAttendees;
 
 class EventResource extends Resource
 {
@@ -49,13 +51,25 @@ class EventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Meeting Center';
+    protected static ?string $navigationGroup = 'Premium Features';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 40;
 
-    public static function getRelations(): array
+    protected static ?string $navigationLabel = 'Event Management';
+
+    protected static ?string $breadcrumb = 'Event Management';
+
+    protected static ?string $modelLabel = 'Event';
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    public static function getRecordSubNavigation(Page $page): array
     {
-        return [];
+        return $page->generateNavigationItems([
+            ViewEvent::class,
+            EditEvent::class,
+            ManageEventAttendees::class,
+        ]);
     }
 
     public static function getPages(): array
@@ -65,6 +79,7 @@ class EventResource extends Resource
             'create' => CreateEvent::route('/create'),
             'view' => ViewEvent::route('/{record}'),
             'edit' => EditEvent::route('/{record}/edit'),
+            'manage-attendees' => ManageEventAttendees::route('/{record}/manage-attendees'),
         ];
     }
 }
