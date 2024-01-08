@@ -36,10 +36,13 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
+use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TagsInput;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Livewire;
@@ -124,5 +127,40 @@ class ManageEventAttendees extends ManageRelatedRecords
                     ]),
             ])
             ->bulkActions([]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('Invite')
+                ->icon('heroicon-o-envelope')
+                ->form([
+                    TagsInput::make('attendees')
+                        ->placeholder('Add attendee email')
+                        ->nestedRecursiveRules(['email'])
+                        ->required(),
+                ])
+                ->action(function (array $data, Event $record) {
+                    collect($data['attendees'])
+                        ->each(function ($email) use ($record) {
+                            $attendee = EventAttendee::first([
+                                'email' => $email,
+                                'event_id' => $record->id,
+                            ]);
+
+                            if($attendee)
+                            {
+                                return;
+                            }
+
+                            $attendee = new EventAttendee([
+                                'email' => $email,
+                                'event_id' => $record->id,
+                            ]);
+
+
+                        });
+                }),
+        ];
     }
 }
