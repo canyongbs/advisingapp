@@ -43,7 +43,7 @@
     :$isRequired
 >
     <div class="grid gap-y-2">
-        <div class="flex gap-4">
+        <div class="flex gap-4 items-end">
             <div class="w-full">
                 <div class="flex justify-between">
                     <span>{{ $min }}</span>
@@ -57,7 +57,7 @@
                     max={{ $max }}
                 >
             </div>
-            <div class="flex items-end">
+            <div class="flex">
                 <span class="rounded border border-gray-500 p-1">{{ $value }}</span>
             </div>
         </div>
