@@ -36,20 +36,28 @@
 
 namespace AdvisingApp\Consent\Policies;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
-class ConsentAgreementPolicy implements FeatureAccessEnforcedPolicy
+class ConsentAgreementPolicy
 {
-    use FeatureAccessEnforcedPolicyBefore;
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasLicense(LicenseType::ConversationalAi)) {
+            return Response::deny('You are not licensed for the Conversational AI.');
+        }
+
+        return null;
+    }
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'consent_agreement.view-any',
+            abilities: ['consent_agreement.view-any'],
             denyResponse: 'You do not have permission to view consent agreements.'
         );
     }
@@ -88,11 +96,5 @@ class ConsentAgreementPolicy implements FeatureAccessEnforcedPolicy
     public function forceDelete(Authenticatable $authenticatable, ConsentAgreement $agreement): Response
     {
         return Response::deny('Consent Agreements cannot be permanently deleted.');
-    }
-
-    protected function requiredFeatures(): array
-    {
-        // TODO: Feature/License Gate | if has AI License
-        return [];
     }
 }

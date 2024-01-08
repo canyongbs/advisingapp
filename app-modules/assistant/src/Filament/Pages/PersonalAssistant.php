@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Pages\Page;
@@ -108,14 +109,17 @@ class PersonalAssistant extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        // TODO: Feature/License Gate | if has AI License
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
 
         return $user->can('assistant.access');
     }
 
     public function mount(): void
     {
-        // TODO: Feature/License Gate | if has AI License
+        abort_unless(auth()->user()->hasLicense(LicenseType::ConversationalAi), 403);
+
         $this->authorize('assistant.access');
 
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();

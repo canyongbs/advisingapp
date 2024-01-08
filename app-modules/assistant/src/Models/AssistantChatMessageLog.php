@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Models;
 
+use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Support\Collection;
@@ -49,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class AssistantChatMessageLog extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
     use MassPrunable;
 
     protected $fillable = [
@@ -89,5 +91,10 @@ class AssistantChatMessageLog extends BaseModel
     public function getApiPermissions(): Collection
     {
         return collect([]);
+    }
+
+    protected static function booted(): void
+    {
+        static::addAssistantLicenseGlobalScope();
     }
 }

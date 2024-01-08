@@ -36,6 +36,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use Filament\Pages\Page;
 use AdvisingApp\IntegrationTwilio\Filament\Pages\ManageTwilioSettings;
 use AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages\ManageAmazonSesSettings;
@@ -45,6 +46,8 @@ use AdvisingApp\IntegrationMicrosoftClarity\Filament\Pages\ManageMicrosoftClarit
 
 class ProductIntegrations extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -53,22 +56,11 @@ class ProductIntegrations extends Page
 
     protected static ?string $title = 'Product Integrations';
 
-    protected array $children = [
+    protected static array $children = [
         ManageGoogleAnalyticsSettings::class,
         ManageGoogleRecaptchaSettings::class,
         ManageMicrosoftClaritySettings::class,
         ManageTwilioSettings::class,
         ManageAmazonSesSettings::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
@@ -59,7 +60,9 @@ class ManageAiSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        // TODO: Feature/License Gate | if has AI License
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
 
         return $user->can(['assistant.access_ai_settings']);
     }
@@ -69,7 +72,7 @@ class ManageAiSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        // TODO: Feature/License Gate | if has AI License
+        abort_unless($user->hasLicense(LicenseType::ConversationalAi), 403);
 
         abort_unless($user->can(['assistant.access_ai_settings']), 403);
 

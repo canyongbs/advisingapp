@@ -36,12 +36,15 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use Filament\Pages\Page;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
 use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
 
 class UsageAuditing extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Reporting';
@@ -50,19 +53,8 @@ class UsageAuditing extends Page
 
     protected static ?string $title = 'Usage Auditing';
 
-    protected array $children = [
+    protected static array $children = [
         AssistantChatMessageLogResource::class,
         AuditResource::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

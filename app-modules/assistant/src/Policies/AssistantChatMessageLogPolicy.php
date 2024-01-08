@@ -36,15 +36,24 @@
 
 namespace AdvisingApp\Assistant\Policies;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\FeatureAccessEnforcedPolicyBefore;
 use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 
-class AssistantChatMessageLogPolicy implements FeatureAccessEnforcedPolicy
+class AssistantChatMessageLogPolicy
 {
-    use FeatureAccessEnforcedPolicyBefore;
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasLicense(LicenseType::ConversationalAi)) {
+            return Response::deny('You are not licensed for the Conversational AI.');
+        }
+
+        return null;
+    }
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
@@ -85,11 +94,5 @@ class AssistantChatMessageLogPolicy implements FeatureAccessEnforcedPolicy
     public function forceDelete(Authenticatable $authenticatable, AssistantChatMessageLog $assistantChatMessageLog): Response
     {
         return Response::deny('Assistant chat message logs cannot be force deleted.');
-    }
-
-    protected function requiredFeatures(): array
-    {
-        // TODO: Feature/License Gate | if has AI License
-        return [];
     }
 }

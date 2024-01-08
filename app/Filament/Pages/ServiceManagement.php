@@ -36,6 +36,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use Filament\Pages\Page;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
@@ -43,6 +44,8 @@ use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResou
 
 class ServiceManagement extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -53,20 +56,9 @@ class ServiceManagement extends Page
 
     protected static ?string $breadcrumb = 'Service Management';
 
-    protected array $children = [
+    protected static array $children = [
         ServiceRequestPriorityResource::class,
         ServiceRequestStatusResource::class,
         ServiceRequestTypeResource::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

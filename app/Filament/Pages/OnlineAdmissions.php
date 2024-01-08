@@ -36,11 +36,14 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use Filament\Pages\Page;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 
 class OnlineAdmissions extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -51,18 +54,7 @@ class OnlineAdmissions extends Page
 
     protected static ?string $breadcrumb = 'Online Admissions';
 
-    protected array $children = [
+    protected static array $children = [
         ApplicationSubmissionStateResource::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }
