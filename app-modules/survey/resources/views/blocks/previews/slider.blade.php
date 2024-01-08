@@ -43,7 +43,7 @@
     :$isRequired
 >
     <div class="grid gap-y-2">
-        <div class="flex gap-4 items-end">
+        <div class="flex items-end gap-4">
             <div class="w-full">
                 <div class="flex justify-between">
                     <span>{{ $min }}</span>
