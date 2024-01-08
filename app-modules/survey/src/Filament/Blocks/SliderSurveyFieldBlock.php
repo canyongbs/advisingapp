@@ -62,6 +62,8 @@ class SliderSurveyFieldBlock extends FormFieldBlock
     {
         return [
             'integer',
+            'min:1',
+            'max:5',
         ];
     }
 }

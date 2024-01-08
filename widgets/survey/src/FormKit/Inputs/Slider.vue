@@ -59,10 +59,10 @@ watch(value, (value) => {
                     <span>{{ min }}</span>
                     <span>{{ max }}</span>
                 </div>
-                <input class="w-full" type="range" :min=min :max=max v-model="value">
+                <input class="w-full" type="range" :min="min" :max="max" v-model="value">
             </div>
             <div class="flex items-end">
-                <input class="p-1 rounded" type="number" :min=min :max=max v-model="value">
+                <input class="p-1 rounded" type="number" :min="min" :max="max" v-model="value">
             </div>
         </div>
     </div>
