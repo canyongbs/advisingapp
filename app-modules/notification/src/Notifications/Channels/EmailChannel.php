@@ -52,7 +52,7 @@ class EmailChannel extends MailChannel
         $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
 
         if ($deliverable === false) {
-            // Do anything else we need to to notify sending party that notification was not sent
+            // Do anything else we need to notify sending party that notification was not sent
             return;
         }
 
