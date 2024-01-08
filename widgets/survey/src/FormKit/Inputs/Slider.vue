@@ -53,16 +53,16 @@ watch(value, (value) => {
 
 <template>
     <div class="grid gap-y-2">
-        <div class="flex gap-4">
+        <div class="flex gap-4 items-end">
             <div class="w-full">
                 <div class="flex justify-between">
                     <span>{{ min }}</span>
                     <span>{{ max }}</span>
                 </div>
-                <input class="w-full" type="range" :min="min" :max="max" v-model="value">
+                <input class="w-full accent-primary-500" type="range" :min="min" :max="max" v-model="value">
             </div>
-            <div class="flex items-end">
-                <input class="p-1 rounded" type="number" :min="min" :max="max" v-model="value">
+            <div class="flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 rounded">
+                <input class="appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none font-sans w-full px-3 py-2 border-none text-base text-gray-700 placeholder-gray-400" type="number" :min="min" :max="max" v-model="value">
             </div>
         </div>
     </div>
