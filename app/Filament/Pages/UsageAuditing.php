@@ -36,9 +36,9 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use Filament\Pages\Page;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
 
 class UsageAuditing extends Page

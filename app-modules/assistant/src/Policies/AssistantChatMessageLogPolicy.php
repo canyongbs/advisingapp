@@ -36,12 +36,9 @@
 
 namespace AdvisingApp\Assistant\Policies;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use App\Concerns\FeatureAccessEnforcedPolicyBefore;
-use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 
 class AssistantChatMessageLogPolicy

@@ -2,10 +2,9 @@
 
 namespace AdvisingApp\Assistant\Models\Concerns;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 trait CanAddAssistantLicenseGlobalScope
 {

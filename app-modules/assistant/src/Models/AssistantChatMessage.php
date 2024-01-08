@@ -36,13 +36,10 @@
 
 namespace AdvisingApp\Assistant\Models;
 
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\Authenticatable;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 /**
  * @mixin IdeHelperAssistantChatMessage
