@@ -38,13 +38,16 @@ namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
 use Exception;
 use Illuminate\Mail\Events\MessageSending;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 class EnsureSesConfigurationSetHeadersArePresent
 {
     public function handle(MessageSending $event): void
     {
-        if (! $event->message->getHeaders()->has('X-SES-CONFIGURATION-SET') || ! $event->message->getHeaders()->has('X-SES-MESSAGE-TAGS')) {
-            throw new Exception('The X-SES-CONFIGURATION-SET and X-SES-MESSAGE-TAGS headers were not set, please check your configuration.');
+        if (! empty(app(SesSettings::class)->configuration_set)) {
+            if (! $event->message->getHeaders()->has('X-SES-CONFIGURATION-SET') || ! $event->message->getHeaders()->has('X-SES-MESSAGE-TAGS')) {
+                throw new Exception('The X-SES-CONFIGURATION-SET and X-SES-MESSAGE-TAGS headers were not set, please check your configuration.');
+            }
         }
     }
 }
