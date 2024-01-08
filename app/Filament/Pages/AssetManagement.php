@@ -36,8 +36,8 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use Filament\Pages\Page;
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource;

@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Pages\Page;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class PromptLibrary extends Page
 {

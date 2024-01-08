@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Pages\Page;
@@ -55,6 +54,7 @@ use Filament\Support\Enums\ActionSize;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\HasMany;

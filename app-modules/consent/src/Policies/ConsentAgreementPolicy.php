@@ -36,12 +36,10 @@
 
 namespace AdvisingApp\Consent\Policies;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Concerns\FeatureAccessEnforcedPolicyBefore;
-use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
 
 class ConsentAgreementPolicy
 {

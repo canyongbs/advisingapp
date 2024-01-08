@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Assistant\Models;
 
-use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 /**
  * @mixin IdeHelperAssistantChatFolder

@@ -36,7 +36,6 @@
 
 namespace App\Filament\Pages\Concerns;
 
-use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Routing\Redirector;
