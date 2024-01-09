@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources;
 
-use App\Filament\Pages\RecruitmentCrm;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Pages\RecruitmentCrm;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 
@@ -47,8 +47,6 @@ class ProspectStatusResource extends Resource
     protected static ?string $model = ProspectStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Statuses';
 

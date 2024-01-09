@@ -80,16 +80,11 @@ class ProductHealth extends HealthCheckResults
         return 'danger';
     }
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
         return $user->can('authorization.view_product_health_dashboard');
-    }
-
-    public function mount(): void
-    {
-        $this->authorize('authorization.view_product_health_dashboard');
     }
 }

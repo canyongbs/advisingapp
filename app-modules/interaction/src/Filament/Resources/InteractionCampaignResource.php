@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use App\Filament\Pages\InteractionManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\EditInteractionCampaign;
 use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\ListInteractionCampaigns;
@@ -50,8 +50,6 @@ class InteractionCampaignResource extends Resource
     protected static ?string $model = InteractionCampaign::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Campaigns';
 

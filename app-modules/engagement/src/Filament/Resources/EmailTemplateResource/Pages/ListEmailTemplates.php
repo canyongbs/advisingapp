@@ -36,41 +36,18 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages;
 
-use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use App\Filament\Pages\EmailConfiguration;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
-use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource;
 
 class ListEmailTemplates extends ListRecords
 {
     protected static string $resource = EmailTemplateResource::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-envelope';
-
-    protected static ?string $navigationLabel = 'Email Templates';
-
-    public static function shouldRegisterNavigation(array $parameters = []): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('viewAny', EmailTemplate::class);
-    }
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
 
     public function table(Table $table): Table
     {
@@ -89,11 +66,6 @@ class ListEmailTemplates extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public function getSubNavigation(): array
-    {
-        return (new EmailConfiguration())->getSubNavigation();
     }
 
     protected function getHeaderActions(): array

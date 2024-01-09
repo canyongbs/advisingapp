@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use App\Filament\Pages\InteractionManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\EditInteractionStatus;
@@ -52,8 +52,6 @@ class InteractionStatusResource extends Resource
     protected static ?string $model = InteractionStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Statuses';
 

@@ -36,31 +36,13 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
-use AdvisingApp\Audit\Filament\Pages\ManageAuditSettings;
-use AdvisingApp\Portal\Filament\Pages\ManagePortalSettings;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
-use AdvisingApp\Theme\Filament\Pages\ManageBrandConfigurationSettings;
+use Filament\Clusters\Cluster;
 
-class GlobalSettings extends Page
+class GlobalSettings extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 1;
-
-    protected static ?string $title = 'Global Settings';
-
-    protected static array $children = [
-        ManageLicenseSettings::class,
-        ManageAuditSettings::class,
-        ManageBrandConfigurationSettings::class,
-        InboundWebhookResource::class,
-        EmailConfiguration::class,
-        ManagePortalSettings::class,
-    ];
 }

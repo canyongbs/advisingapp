@@ -37,9 +37,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Clusters\Cluster;
-use Filament\Pages\Page;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
 class RecruitmentCrm extends Cluster
 {

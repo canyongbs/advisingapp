@@ -41,7 +41,6 @@ use Filament\Resources\Resource;
 use FilamentTiptapEditor\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\EmailConfiguration;
 use Filament\Resources\Pages\CreateRecord;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
@@ -49,14 +48,6 @@ use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 class CreateSmsTemplate extends CreateRecord
 {
     protected static string $resource = SmsTemplateResource::class;
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
 
     public function form(Form $form): Form
     {

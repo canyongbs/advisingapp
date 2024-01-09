@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use App\Filament\Pages\InteractionManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\EditInteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\ListInteractionTypes;
@@ -50,8 +50,6 @@ class InteractionTypeResource extends Resource
     protected static ?string $model = InteractionType::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Types';
 

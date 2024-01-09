@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
-use App\Filament\Pages\KnowledgeManagement;
 use Filament\Resources\Resource;
+use App\Filament\Pages\KnowledgeManagement;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages\EditKnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages\ViewKnowledgeBaseCategory;
@@ -49,8 +49,6 @@ class KnowledgeBaseCategoryResource extends Resource
     protected static ?string $model = KnowledgeBaseCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Categories';
 

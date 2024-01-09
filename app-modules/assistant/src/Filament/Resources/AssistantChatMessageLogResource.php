@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Assistant\Filament\Resources;
 
-use App\Filament\Pages\UsageAuditing;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use App\Filament\Pages\UsageAuditing;
 use App\Infolists\Components\CodeEntry;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -58,8 +58,6 @@ class AssistantChatMessageLogResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
     protected static ?string $navigationLabel = 'Personal Assistant';
-
-    protected static ?string $navigationGroup = 'Reporting';
 
     protected static ?int $navigationSort = 30;
 

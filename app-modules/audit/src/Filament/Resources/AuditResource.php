@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Audit\Filament\Resources;
 
-use App\Filament\Pages\UsageAuditing;
 use Filament\Resources\Resource;
 use AdvisingApp\Audit\Models\Audit;
+use App\Filament\Pages\UsageAuditing;
 use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 class AuditResource extends Resource
@@ -48,8 +48,6 @@ class AuditResource extends Resource
     protected static ?string $navigationLabel = 'Other Records';
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-
-    protected static ?string $navigationGroup = 'Reporting';
 
     protected static ?int $navigationSort = 40;
 

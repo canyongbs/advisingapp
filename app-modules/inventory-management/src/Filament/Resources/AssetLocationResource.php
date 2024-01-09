@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
-use App\Filament\Pages\AssetManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Pages\AssetManagement;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\InventoryManagement\Models\AssetLocation;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource\Pages\ViewAssetLocation;
@@ -50,8 +50,6 @@ class AssetLocationResource extends Resource
     protected static ?string $model = AssetLocation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-map-pin';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Locations';
 

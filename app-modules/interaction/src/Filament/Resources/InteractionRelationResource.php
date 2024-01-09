@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
-use App\Filament\Pages\InteractionManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages\EditInteractionRelation;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource\Pages\ListInteractionRelations;
@@ -50,8 +50,6 @@ class InteractionRelationResource extends Resource
     protected static ?string $model = InteractionRelation::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Relations';
 

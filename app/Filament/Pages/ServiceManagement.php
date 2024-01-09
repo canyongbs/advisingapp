@@ -37,10 +37,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Clusters\Cluster;
-use Filament\Pages\Page;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 
 class ServiceManagement extends Cluster
 {

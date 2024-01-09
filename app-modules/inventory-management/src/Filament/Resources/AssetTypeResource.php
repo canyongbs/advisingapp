@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
-use App\Filament\Pages\AssetManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Pages\AssetManagement;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\InventoryManagement\Models\AssetType;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource\Pages\ViewAssetType;
@@ -50,8 +50,6 @@ class AssetTypeResource extends Resource
     protected static ?string $model = AssetType::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Types';
 

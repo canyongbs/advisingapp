@@ -37,6 +37,7 @@
 namespace AdvisingApp\Consent\Filament\Resources;
 
 use Filament\Resources\Resource;
+use App\Filament\Pages\ArtificialIntelligence;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
@@ -44,7 +45,9 @@ class ConsentAgreementResource extends Resource
 {
     protected static ?string $model = ConsentAgreement::class;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $cluster = ArtificialIntelligence::class;
+
+    protected static ?string $navigationLabel = 'User Agreement';
 
     public static function getRelations(): array
     {

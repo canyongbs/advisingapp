@@ -41,6 +41,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\ArtificialIntelligence;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
 
@@ -50,12 +51,9 @@ class ManageAiSettings extends SettingsPage
 
     protected static ?string $title = 'Manage AI Settings';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $cluster = ArtificialIntelligence::class;
 
-    // We don't want to register the navigation as we will be using the navigation item in a different page.
-    public static function registerNavigationItems(): void {}
-
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
@@ -65,26 +63,6 @@ class ManageAiSettings extends SettingsPage
         }
 
         return $user->can(['assistant.access_ai_settings']);
-    }
-
-    public function mount(): void
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        abort_unless($user->hasLicense(LicenseType::ConversationalAi), 403);
-
-        abort_unless($user->can(['assistant.access_ai_settings']), 403);
-
-        parent::mount();
-    }
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            AssistantConfiguration::getUrl() => 'Artificial Intelligence',
-            $this::getUrl() => 'Manage AI Settings',
-        ];
     }
 
     public function form(Form $form): Form
@@ -112,10 +90,5 @@ class ManageAiSettings extends SettingsPage
                     ->maxValue(2.0)
                     ->columnSpan('1/2'),
             ]);
-    }
-
-    public function getSubNavigation(): array
-    {
-        return (new AssistantConfiguration())->getSubNavigation();
     }
 }

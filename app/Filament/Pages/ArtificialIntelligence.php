@@ -37,8 +37,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Clusters\Cluster;
-use Filament\Pages\Page;
-use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
 
 class ArtificialIntelligence extends Cluster
 {

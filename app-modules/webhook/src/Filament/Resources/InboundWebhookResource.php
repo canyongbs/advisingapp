@@ -37,6 +37,7 @@
 namespace AdvisingApp\Webhook\Filament\Resources;
 
 use Filament\Resources\Resource;
+use App\Filament\Pages\GlobalSettings;
 use AdvisingApp\Webhook\Models\InboundWebhook;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ViewInboundWebhook;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource\Pages\ListInboundWebhooks;
@@ -47,11 +48,9 @@ class InboundWebhookResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-signal';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?string $navigationParentItem = 'Global Settings';
-
     protected static ?int $navigationSort = 40;
+
+    protected static ?string $cluster = GlobalSettings::class;
 
     public static function getPages(): array
     {

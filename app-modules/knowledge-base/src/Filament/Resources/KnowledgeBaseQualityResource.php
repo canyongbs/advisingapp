@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
-use App\Filament\Pages\KnowledgeManagement;
 use Filament\Resources\Resource;
+use App\Filament\Pages\KnowledgeManagement;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\EditKnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\ViewKnowledgeBaseQuality;
@@ -49,8 +49,6 @@ class KnowledgeBaseQualityResource extends Resource
     protected static ?string $model = KnowledgeBaseQuality::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Qualities';
 

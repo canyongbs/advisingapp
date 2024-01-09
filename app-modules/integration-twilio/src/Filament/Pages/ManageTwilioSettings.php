@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\IntegrationTwilio\Filament\Pages;
 
-use App\Filament\Pages\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
@@ -44,6 +43,7 @@ use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\ProductIntegrations;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 
 class ManageTwilioSettings extends SettingsPage
@@ -56,25 +56,16 @@ class ManageTwilioSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Twilio';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
     protected static ?int $navigationSort = 40;
 
     protected static ?string $cluster = ProductIntegrations::class;
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
         return $user->can('integration-twilio.view_twilio_settings');
-    }
-
-    public function mount(): void
-    {
-        $this->authorize('integration-twilio.view_twilio_settings');
-
-        parent::mount();
     }
 
     public function form(Form $form): Form

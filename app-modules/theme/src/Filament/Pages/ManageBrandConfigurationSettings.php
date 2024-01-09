@@ -43,6 +43,7 @@ use Filament\Forms\Form;
 use App\Models\SettingsProperty;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
+use App\Filament\Pages\GlobalSettings;
 use Filament\Forms\Components\Section;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -53,29 +54,20 @@ class ManageBrandConfigurationSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Branding';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?string $navigationParentItem = 'Global Settings';
-
     protected static ?int $navigationSort = 30;
 
     protected static string $settings = ThemeSettings::class;
 
     protected static ?string $title = 'Branding';
 
-    public static function shouldRegisterNavigation(): bool
+    protected static ?string $cluster = GlobalSettings::class;
+
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
         return $user->can('theme.view_theme_settings');
-    }
-
-    public function mount(): void
-    {
-        $this->authorize('theme.view_theme_settings');
-
-        parent::mount();
     }
 
     public function form(Form $form): Form

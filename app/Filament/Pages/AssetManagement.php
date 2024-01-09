@@ -37,10 +37,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Clusters\Cluster;
-use Filament\Pages\Page;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource;
 
 class AssetManagement extends Cluster
 {

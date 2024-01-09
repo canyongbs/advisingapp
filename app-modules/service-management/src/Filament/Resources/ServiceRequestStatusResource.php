@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
-use App\Filament\Pages\ServiceManagement;
 use Filament\Resources\Resource;
+use App\Filament\Pages\ServiceManagement;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
@@ -49,8 +49,6 @@ class ServiceRequestStatusResource extends Resource
     protected static ?string $model = ServiceRequestStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Statuses';
 

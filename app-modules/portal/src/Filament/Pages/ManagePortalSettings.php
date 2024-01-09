@@ -44,6 +44,7 @@ use Filament\Pages\SettingsPage;
 use Illuminate\Support\Facades\Gate;
 use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Toggle;
+use App\Filament\Pages\GlobalSettings;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\ColorPicker;
 use FilamentTiptapEditor\Enums\TiptapOutput;
@@ -56,29 +57,20 @@ class ManagePortalSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Portals';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?string $navigationParentItem = 'Global Settings';
-
     protected static ?int $navigationSort = 60;
 
     protected static string $settings = PortalSettings::class;
 
     protected static ?string $title = 'Portals';
 
-    public static function shouldRegisterNavigation(): bool
+    protected static ?string $cluster = GlobalSettings::class;
+
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
         return $user->can('portal.view_portal_settings');
-    }
-
-    public function mount(): void
-    {
-        $this->authorize('portal.view_portal_settings');
-
-        parent::mount();
     }
 
     public function form(Form $form): Form

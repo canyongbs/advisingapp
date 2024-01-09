@@ -37,8 +37,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Clusters\Cluster;
-use Filament\Pages\Page;
-use App\Filament\Resources\PronounsResource;
 
 class ProfileManagement extends Cluster
 {

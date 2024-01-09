@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages;
 
-use App\Filament\Pages\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\ProductIntegrations;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 class ManageAmazonSesSettings extends SettingsPage
@@ -54,25 +54,16 @@ class ManageAmazonSesSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Amazon SES';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
     protected static ?int $navigationSort = 50;
 
     protected static ?string $cluster = ProductIntegrations::class;
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
         return $user->can('integration-aws-ses-event-handling.view_ses_settings');
-    }
-
-    public function mount(): void
-    {
-        $this->authorize('integration-aws-ses-event-handling.view_ses_settings');
-
-        parent::mount();
     }
 
     public function form(Form $form): Form

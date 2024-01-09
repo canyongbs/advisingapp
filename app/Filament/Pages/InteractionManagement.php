@@ -37,7 +37,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Clusters\Cluster;
-use Filament\Pages\Page;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;

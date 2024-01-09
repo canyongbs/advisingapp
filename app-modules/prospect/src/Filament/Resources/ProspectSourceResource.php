@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources;
 
-use App\Filament\Pages\RecruitmentCrm;
 use Filament\Resources\Resource;
+use App\Filament\Pages\RecruitmentCrm;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
@@ -47,8 +47,6 @@ class ProspectSourceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-viewfinder-circle';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
     protected static ?string $navigationLabel = 'Sources';
 
     protected static ?int $navigationSort = 2;
@@ -57,8 +55,7 @@ class ProspectSourceResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public static function getPages(): array

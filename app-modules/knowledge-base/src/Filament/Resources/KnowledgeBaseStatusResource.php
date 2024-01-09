@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
-use App\Filament\Pages\KnowledgeManagement;
 use Filament\Resources\Resource;
+use App\Filament\Pages\KnowledgeManagement;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource\Pages\EditKnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource\Pages\ViewKnowledgeBaseStatus;
@@ -49,8 +49,6 @@ class KnowledgeBaseStatusResource extends Resource
     protected static ?string $model = KnowledgeBaseStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Statuses';
 

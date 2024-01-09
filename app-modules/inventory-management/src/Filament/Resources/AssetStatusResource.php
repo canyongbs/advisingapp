@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
-use App\Filament\Pages\AssetManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use App\Filament\Pages\AssetManagement;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource\Pages\ViewAssetStatus;
@@ -50,8 +50,6 @@ class AssetStatusResource extends Resource
     protected static ?string $model = AssetStatus::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Statuses';
 

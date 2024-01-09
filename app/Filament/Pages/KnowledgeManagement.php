@@ -37,10 +37,6 @@
 namespace App\Filament\Pages;
 
 use Filament\Clusters\Cluster;
-use Filament\Pages\Page;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
 class KnowledgeManagement extends Cluster
 {

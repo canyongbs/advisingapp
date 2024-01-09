@@ -36,7 +36,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Pages\ProfileManagement;
 use App\Models\Pronouns;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -44,6 +43,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Pages\ProfileManagement;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -56,8 +56,6 @@ class PronounsResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $label = 'User Profile Pronoun';
-
-    protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Personal Pronouns';
 
