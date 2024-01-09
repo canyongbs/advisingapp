@@ -34,17 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class ArtificialIntelligence extends Cluster
+class AnalyticsResources extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $title = 'Artificial Intelligence';
+    protected static ?int $navigationSort = 60;
 }

@@ -36,13 +36,16 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Clusters\Cluster;
+use Filament\Pages\Page;
+use App\Filament\Clusters\ServiceManagement;
 
-class OnlineAdmissions extends Cluster
+class ChangeManagement extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?int $navigationSort = 30;
 
-    protected static ?int $navigationSort = 10;
+    protected static string $view = 'filament.pages.coming-soon';
+
+    protected static ?string $cluster = ServiceManagement::class;
 }

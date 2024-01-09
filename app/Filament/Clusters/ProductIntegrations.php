@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class ProfileManagement extends Cluster
+class ProductIntegrations extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 2;
 }

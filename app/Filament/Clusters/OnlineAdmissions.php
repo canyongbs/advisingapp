@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class UsageAuditing extends Cluster
+class OnlineAdmissions extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Reporting';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 10;
 }

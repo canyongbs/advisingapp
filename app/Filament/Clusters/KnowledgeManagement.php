@@ -34,15 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class RecruitmentCrm extends Cluster
+class KnowledgeManagement extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 7;
 }

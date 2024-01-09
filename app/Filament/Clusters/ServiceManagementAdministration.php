@@ -34,15 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class AssetManagement extends Cluster
+class ServiceManagementAdministration extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 6;
+
+    protected static ?string $title = 'Service Management';
 }

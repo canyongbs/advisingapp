@@ -34,30 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
-use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 
-class InteractionManagement extends Cluster
+class ArtificialIntelligence extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 3;
 
-    protected array $children = [
-        InteractionCampaignResource::class,
-        InteractionDriverResource::class,
-        InteractionOutcomeResource::class,
-        InteractionRelationResource::class,
-        InteractionStatusResource::class,
-        InteractionTypeResource::class,
-    ];
+    protected static ?string $title = 'Artificial Intelligence';
 }
