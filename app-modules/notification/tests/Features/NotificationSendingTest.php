@@ -48,12 +48,12 @@ use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 it('will create an outbound deliverable for the outbound notification', function () {
     $notifiable = User::factory()->create();
 
-    $notification = new TestEmailNotification();
+    $notification = new Tests\Unit\TestEmailNotification();
 
     $notifiable->notify($notification);
 
     expect(OutboundDeliverable::count())->toBe(1);
-    expect(OutboundDeliverable::first()->notification_class)->toBe(TestEmailNotification::class);
+    expect(OutboundDeliverable::first()->notification_class)->toBe(Tests\Unit\TestEmailNotification::class);
 });
 
 it('will create an outbound deliverable for each of the channels that the notification specifies', function () {
@@ -67,20 +67,6 @@ it('will create an outbound deliverable for each of the channels that the notifi
     expect(OutboundDeliverable::where('channel', NotificationChannel::Email)->count())->toBe(1);
     expect(OutboundDeliverable::where('channel', NotificationChannel::Database)->count())->toBe(1);
 });
-
-class TestEmailNotification extends BaseNotification implements EmailNotification
-{
-    use EmailChannelTrait;
-
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Test Subject')
-            ->greeting('Test Greeting')
-            ->content('This is a test email')
-            ->salutation('Test Salutation');
-    }
-}
 
 class TestMultipleChannelNotification extends BaseNotification implements EmailNotification, DatabaseNotification
 {
