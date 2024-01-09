@@ -39,6 +39,7 @@ use App\Models\User;
 use function Tests\asSuperAdmin;
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Assistant\Filament\Pages\ManageAiSettings;
 
 it('renders successfully', function () {
@@ -49,7 +50,7 @@ it('renders successfully', function () {
 });
 
 it('does not load if you do not have any permissions to access', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     actingAs($user);
 
@@ -58,7 +59,7 @@ it('does not load if you do not have any permissions to access', function () {
 });
 
 it('loads if you have the correct access to ai settings', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['assistant.access_ai_settings']);
 

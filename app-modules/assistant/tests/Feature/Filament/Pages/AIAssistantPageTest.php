@@ -43,12 +43,13 @@ use App\Filament\Pages\Dashboard;
 
 use function Pest\Laravel\{actingAs};
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
 
 it('renders successfully', function () {
-    ConsentAgreement::factory()->create([
+    ConsentAgreement::factory()->licensed(LicenseType::ConversationalAi)->create([
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
@@ -63,7 +64,7 @@ it('is properly gated with access control', function () {
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     actingAs($user);
 
@@ -81,7 +82,7 @@ it('will show a consent modal if the user has not yet agreed to the terms and co
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
     $user->givePermissionTo('assistant.access');
 
     actingAs($user);
@@ -99,7 +100,7 @@ it('will show the AI Assistant interface if the user has agreed to the terms and
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
     $user->givePermissionTo('assistant.access');
 
     $user->consentTo($consentAgreement);
@@ -119,7 +120,7 @@ it('will redirect the user back to the dashboard if they dismiss the consent mod
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
     $user->givePermissionTo('assistant.access');
 
     actingAs($user);
@@ -134,7 +135,7 @@ it('will allow a user to access the AI Assistant interface if they agree to the 
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
     $user->givePermissionTo('assistant.access');
 
     actingAs($user);
