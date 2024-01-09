@@ -71,6 +71,7 @@ class EmailChannel extends MailChannel
 
         if (! is_null($message)) {
             $result->success = true;
+            $result->recipients = $message->getEnvelope()->getRecipients();
         }
 
         return $result;
@@ -81,6 +82,7 @@ class EmailChannel extends MailChannel
         if ($result->success) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::Dispatched,
+                'quota_usage' => sizeof($result->recipients),
             ]);
         } else {
             $deliverable->update([

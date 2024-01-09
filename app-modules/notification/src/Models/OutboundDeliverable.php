@@ -60,6 +60,7 @@ class OutboundDeliverable extends BaseModel
         'recipient_type',
         'related_id',
         'related_type',
+        'quota_usage',
     ];
 
     protected $casts = [
