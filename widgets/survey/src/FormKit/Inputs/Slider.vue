@@ -1,4 +1,4 @@
-/*
+<!--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -30,18 +30,40 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import { generateClasses } from '@formkit/themes';
-import { genesisIcons } from '@formkit/icons';
-import theme from '../../form/src/FormKit/theme';
-import inputs from './FormKit/Inputs/index';
+-->
+<script setup>
 
-export default {
-    icons: {
-        ...genesisIcons,
-    },
-    inputs,
-    config: {
-        classes: generateClasses(theme),
-    },
-};
+import {ref, watch} from "vue";
+
+const props = defineProps({
+    context: Object,
+});
+
+const min = ref(1);
+const max = ref(5);
+const value = ref(Math.ceil(max.value / 2));
+
+props.context.node.input(value);
+
+watch(value, (value) => {
+    props.context.node.input(value);
+})
+
+</script>
+
+<template>
+    <div class="grid gap-y-2">
+        <div class="flex gap-4 items-end">
+            <div class="w-full">
+                <div class="flex justify-between">
+                    <span>{{ min }}</span>
+                    <span>{{ max }}</span>
+                </div>
+                <input class="w-full accent-primary-500" type="range" :min="min" :max="max" v-model="value">
+            </div>
+            <div class="flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 rounded">
+                <input class="appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none font-sans w-full px-3 py-2 border-none text-base text-gray-700 placeholder-gray-400" type="number" :min="min" :max="max" v-model="value">
+            </div>
+        </div>
+    </div>
+</template>

@@ -34,7 +34,7 @@
 import { generateClasses } from '@formkit/themes';
 import { genesisIcons } from '@formkit/icons';
 import theme from './FormKit/theme';
-import inputs from './FormKit/Inputs/index'
+import inputs from './FormKit/Inputs/index';
 
 export default {
     icons: {

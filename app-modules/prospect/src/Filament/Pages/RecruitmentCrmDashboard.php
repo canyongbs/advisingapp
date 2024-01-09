@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Prospect\Filament\Pages;
 
+use App\Models\User;
 use Filament\Pages\Page;
+use AdvisingApp\Prospect\Models\Prospect;
 
 class RecruitmentCrmDashboard extends Page
 {
@@ -49,4 +51,20 @@ class RecruitmentCrmDashboard extends Page
     protected static ?int $navigationSort = 10;
 
     protected static ?string $title = 'Dashboard';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasLicense(Prospect::getLicenseType());
+    }
+
+    public function mount(): void
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        abort_unless($user->hasLicense(Prospect::getLicenseType()), 403);
+    }
 }

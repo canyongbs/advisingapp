@@ -31,17 +31,11 @@
 
 </COPYRIGHT>
 */
-import { generateClasses } from '@formkit/themes';
-import { genesisIcons } from '@formkit/icons';
-import theme from '../../form/src/FormKit/theme';
-import inputs from './FormKit/Inputs/index';
+import { createInput } from '@formkit/vue';
+import Slider from "./Slider.vue";
 
 export default {
-    icons: {
-        ...genesisIcons,
-    },
-    inputs,
-    config: {
-        classes: generateClasses(theme),
-    },
-};
+    'slider': createInput(Slider, {
+        props: [],
+    }),
+}

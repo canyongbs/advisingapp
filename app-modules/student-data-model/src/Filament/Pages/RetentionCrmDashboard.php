@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use App\Models\User;
 use Filament\Pages\Page;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class RetentionCrmDashboard extends Page
 {
@@ -49,4 +51,20 @@ class RetentionCrmDashboard extends Page
     protected static ?int $navigationSort = 10;
 
     protected static ?string $title = 'Dashboard';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasLicense(Student::getLicenseType());
+    }
+
+    public function mount(): void
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        abort_unless($user->hasLicense(Student::getLicenseType()), 403);
+    }
 }
