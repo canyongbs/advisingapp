@@ -36,33 +36,15 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use App\Filament\Resources\PronounsResource;
 
-class ProfileManagement extends Page
+class ProfileManagement extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 9;
-
-    protected static ?string $title = 'Profile Management';
-
-    protected static ?string $breadcrumb = 'Profile Management';
-
-    protected array $children = [
-        PronounsResource::class,
-    ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

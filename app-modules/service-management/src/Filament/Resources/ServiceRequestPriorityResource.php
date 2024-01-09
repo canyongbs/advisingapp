@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
+use App\Filament\Pages\ServiceManagement;
 use Filament\Resources\Resource;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\EditServiceRequestPriority;
@@ -49,13 +50,13 @@ class ServiceRequestPriorityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-up-down';
 
-    protected static ?string $navigationParentItem = 'Service Management';
-
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Priorities';
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $cluster = ServiceManagement::class;
 
     public static function getPages(): array
     {

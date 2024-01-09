@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages;
 
+use App\Filament\Pages\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
@@ -55,9 +56,9 @@ class ManageAmazonSesSettings extends SettingsPage
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?string $navigationParentItem = 'Product Integrations';
-
     protected static ?int $navigationSort = 50;
+
+    protected static ?string $cluster = ProductIntegrations::class;
 
     public static function shouldRegisterNavigation(): bool
     {

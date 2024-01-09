@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources;
 
+use App\Filament\Pages\InteractionManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
@@ -50,13 +51,13 @@ class InteractionRelationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
 
-    protected static ?string $navigationParentItem = 'Interaction Management';
-
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Relations';
 
     protected static ?int $navigationSort = 4;
+
+    protected static ?string $cluster = InteractionManagement::class;
 
     public static function form(Form $form): Form
     {

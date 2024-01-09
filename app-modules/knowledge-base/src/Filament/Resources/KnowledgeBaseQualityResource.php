@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
+use App\Filament\Pages\KnowledgeManagement;
 use Filament\Resources\Resource;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\EditKnowledgeBaseQuality;
@@ -49,13 +50,13 @@ class KnowledgeBaseQualityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationParentItem = 'Knowledge Management';
-
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Qualities';
 
     protected static ?int $navigationSort = 2;
+
+    protected static ?string $cluster = KnowledgeManagement::class;
 
     public static function getPages(): array
     {

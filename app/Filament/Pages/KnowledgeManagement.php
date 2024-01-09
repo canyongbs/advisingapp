@@ -36,37 +36,17 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
-class KnowledgeManagement extends Page
+class KnowledgeManagement extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 7;
-
-    protected static ?string $title = 'Knowledge Management';
-
-    protected static ?string $breadcrumb = 'Knowledge Management';
-
-    protected array $children = [
-        KnowledgeBaseCategoryResource::class,
-        KnowledgeBaseQualityResource::class,
-        KnowledgeBaseStatusResource::class,
-    ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

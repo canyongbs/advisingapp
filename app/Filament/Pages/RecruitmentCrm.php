@@ -36,35 +36,16 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
-class RecruitmentCrm extends Page
+class RecruitmentCrm extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 4;
-
-    protected static ?string $title = 'Recruitment CRM';
-
-    protected static ?string $breadcrumb = 'Recruitment CRM';
-
-    protected array $children = [
-        ProspectStatusResource::class,
-        ProspectSourceResource::class,
-    ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

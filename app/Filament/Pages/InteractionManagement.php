@@ -36,6 +36,7 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
@@ -44,17 +45,13 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 
-class InteractionManagement extends Page
+class InteractionManagement extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 8;
-
-    protected static ?string $title = 'Interaction Management';
-
-    protected static ?string $breadcrumb = 'Interaction Management';
 
     protected array $children = [
         InteractionCampaignResource::class,
@@ -64,15 +61,4 @@ class InteractionManagement extends Page
         InteractionStatusResource::class,
         InteractionTypeResource::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

@@ -36,37 +36,17 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 
-class ServiceManagement extends Page
+class ServiceManagement extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 6;
-
-    protected static ?string $title = 'Service Management';
-
-    protected static ?string $breadcrumb = 'Service Management';
-
-    protected array $children = [
-        ServiceRequestPriorityResource::class,
-        ServiceRequestStatusResource::class,
-        ServiceRequestTypeResource::class,
-    ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

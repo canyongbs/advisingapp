@@ -36,10 +36,11 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
 
-class ArtificialIntelligence extends Page
+class ArtificialIntelligence extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -48,19 +49,4 @@ class ArtificialIntelligence extends Page
     protected static ?int $navigationSort = 3;
 
     protected static ?string $title = 'Artificial Intelligence';
-
-    protected array $children = [
-        AssistantConfiguration::class,
-    ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

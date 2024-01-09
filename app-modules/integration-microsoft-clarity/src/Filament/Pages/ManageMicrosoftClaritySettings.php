@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\IntegrationMicrosoftClarity\Filament\Pages;
 
+use App\Filament\Pages\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
@@ -56,9 +57,9 @@ class ManageMicrosoftClaritySettings extends SettingsPage
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?string $navigationParentItem = 'Product Integrations';
-
     protected static ?int $navigationSort = 30;
+
+    protected static ?string $cluster = ProductIntegrations::class;
 
     public static function shouldRegisterNavigation(): bool
     {

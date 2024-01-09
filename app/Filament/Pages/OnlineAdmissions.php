@@ -36,33 +36,15 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
 
-class OnlineAdmissions extends Page
+class OnlineAdmissions extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 10;
-
-    protected static ?string $title = 'Online Admissions';
-
-    protected static ?string $breadcrumb = 'Online Admissions';
-
-    protected array $children = [
-        ApplicationSubmissionStateResource::class,
-    ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

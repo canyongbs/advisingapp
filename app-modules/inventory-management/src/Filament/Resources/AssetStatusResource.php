@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
+use App\Filament\Pages\AssetManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
@@ -50,13 +51,13 @@ class AssetStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationParentItem = 'Asset Management';
-
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Statuses';
 
     protected static ?int $navigationSort = 2;
+
+    protected static ?string $cluster = AssetManagement::class;
 
     public static function form(Form $form): Form
     {

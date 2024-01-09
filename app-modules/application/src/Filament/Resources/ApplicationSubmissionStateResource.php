@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Application\Filament\Resources;
 
+use App\Filament\Pages\OnlineAdmissions;
 use Filament\Resources\Resource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource\Pages\EditApplicationSubmissionState;
@@ -49,13 +50,13 @@ class ApplicationSubmissionStateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationParentItem = 'Online Admissions';
-
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?string $navigationLabel = 'Application States';
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $cluster = OnlineAdmissions::class;
 
     public static function getPages(): array
     {

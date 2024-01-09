@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
+use App\Filament\Pages\ArtificialIntelligence;
 use Filament\Pages\Page;
 use Filament\Navigation\NavigationItem;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
@@ -46,8 +47,6 @@ class AssistantConfiguration extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-exclamation';
 
-    protected static ?string $navigationParentItem = 'Product Integrations';
-
     protected static ?string $navigationLabel = 'AI Settings';
 
     protected static ?int $navigationSort = 10;
@@ -57,6 +56,8 @@ class AssistantConfiguration extends Page
     protected static ?string $pluralModelLabel = 'Artificial Intelligence';
 
     protected static ?string $title = 'Artificial Intelligence';
+
+    protected static ?string $cluster = ArtificialIntelligence::class;
 
     public function getBreadcrumbs(): array
     {

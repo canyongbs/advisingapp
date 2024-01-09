@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Filament\Resources;
 
+use App\Filament\Pages\UsageAuditing;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -58,8 +59,6 @@ class AssistantChatMessageLogResource extends Resource
 
     protected static ?string $navigationLabel = 'Personal Assistant';
 
-    protected static ?string $navigationParentItem = 'Usage Auditing';
-
     protected static ?string $navigationGroup = 'Reporting';
 
     protected static ?int $navigationSort = 30;
@@ -67,6 +66,8 @@ class AssistantChatMessageLogResource extends Resource
     protected static ?string $modelLabel = 'Personal Assistant';
 
     protected static ?string $pluralLabel = 'Personal Assistant';
+
+    protected static ?string $cluster = UsageAuditing::class;
 
     public static function infolist(Infolist $infolist): Infolist
     {

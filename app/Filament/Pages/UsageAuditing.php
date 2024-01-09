@@ -36,33 +36,16 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use AdvisingApp\Audit\Filament\Resources\AuditResource;
 use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
 
-class UsageAuditing extends Page
+class UsageAuditing extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Reporting';
 
     protected static ?int $navigationSort = 30;
-
-    protected static ?string $title = 'Usage Auditing';
-
-    protected array $children = [
-        AssistantChatMessageLogResource::class,
-        AuditResource::class,
-    ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

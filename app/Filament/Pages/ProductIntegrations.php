@@ -36,6 +36,7 @@
 
 namespace App\Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
 use AdvisingApp\IntegrationTwilio\Filament\Pages\ManageTwilioSettings;
 use AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages\ManageAmazonSesSettings;
@@ -43,32 +44,11 @@ use AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages\ManageGoogleAnalyticsS
 use AdvisingApp\IntegrationGoogleRecaptcha\Filament\Pages\ManageGoogleRecaptchaSettings;
 use AdvisingApp\IntegrationMicrosoftClarity\Filament\Pages\ManageMicrosoftClaritySettings;
 
-class ProductIntegrations extends Page
+class ProductIntegrations extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
     protected static ?int $navigationSort = 2;
-
-    protected static ?string $title = 'Product Integrations';
-
-    protected array $children = [
-        ManageGoogleAnalyticsSettings::class,
-        ManageGoogleRecaptchaSettings::class,
-        ManageMicrosoftClaritySettings::class,
-        ManageTwilioSettings::class,
-        ManageAmazonSesSettings::class,
-    ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }
