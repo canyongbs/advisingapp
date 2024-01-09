@@ -123,6 +123,6 @@ class EmailChannel extends MailChannel
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 
-        return $currentQuoteUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->email;
+        return $currentQuoteUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->emails;
     }
 }
