@@ -63,7 +63,7 @@ class InteractionPolicy
 
     public function view(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if ($authenticatable->can('view', $interaction->interactable)) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to view this interaction.');
         }
 
@@ -83,7 +83,7 @@ class InteractionPolicy
 
     public function update(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if ($authenticatable->can('view', $interaction->interactable)) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to update this interaction.');
         }
 
@@ -95,7 +95,7 @@ class InteractionPolicy
 
     public function delete(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if ($authenticatable->can('view', $interaction->interactable)) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to delete this interaction.');
         }
 
@@ -107,7 +107,7 @@ class InteractionPolicy
 
     public function restore(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if ($authenticatable->can('view', $interaction->interactable)) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to restore this interaction.');
         }
 
@@ -119,7 +119,7 @@ class InteractionPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if ($authenticatable->can('view', $interaction->interactable)) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to permanently delete this interaction.');
         }
 

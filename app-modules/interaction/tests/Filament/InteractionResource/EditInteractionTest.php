@@ -45,12 +45,17 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
 test('EditInteraction is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
+    $user->givePermissionTo('student.*.view');
+    $user->givePermissionTo('prospect.*.view');
+    $user->givePermissionTo('service_request.*.view');
+
     $interaction = Interaction::factory()->create();
 
     actingAs($user)
         ->get(
             InteractionResource::getUrl('edit', ['record' => $interaction])
-        )->assertForbidden();
+        )
+        ->assertForbidden();
 
     $user->givePermissionTo('interaction.view-any');
     $user->givePermissionTo('interaction.*.update');
@@ -58,5 +63,6 @@ test('EditInteraction is gated with proper access control', function () {
     actingAs($user)
         ->get(
             InteractionResource::getUrl('edit', ['record' => $interaction])
-        )->assertSuccessful();
+        )
+        ->assertSuccessful();
 });
