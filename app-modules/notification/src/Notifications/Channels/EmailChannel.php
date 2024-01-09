@@ -38,6 +38,7 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 
 use Exception;
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Channels\MailChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
@@ -51,29 +52,39 @@ class EmailChannel extends MailChannel
 {
     public function send($notifiable, Notification $notification): void
     {
-        if (! $notification instanceof EmailNotification) {
-            return;
+        try {
+            DB::beginTransaction();
+
+            if (! $notification instanceof EmailNotification) {
+                return;
+            }
+
+            /** @var BaseNotification $notification */
+            $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
+
+            if ($deliverable === false) {
+                // Do anything else we need to notify sending party that notification was not sent
+                return;
+            }
+
+            if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
+                $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+
+                // Do anything else we need to notify sending party that notification was not sent
+
+                return;
+            }
+
+            $result = $this->handle($notifiable, $notification);
+
+            $notification->afterSend($notifiable, $deliverable, $result);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            throw $e;
         }
-
-        /** @var BaseNotification $notification */
-        $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
-
-        if ($deliverable === false) {
-            // Do anything else we need to notify sending party that notification was not sent
-            return;
-        }
-
-        if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
-            $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
-
-            // Do anything else we need to notify sending party that notification was not sent
-
-            return;
-        }
-
-        $result = $this->handle($notifiable, $notification);
-
-        $notification->afterSend($notifiable, $deliverable, $result);
     }
 
     public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
