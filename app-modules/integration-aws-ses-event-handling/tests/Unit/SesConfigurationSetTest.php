@@ -39,7 +39,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Mail\Events\MessageSent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
-it('sets the X-SES-CONFIGURATION-SET header if mail.mailers.ses.configuration_set is set', function () {
+it('Does not send the message if configuration_set is set in settings but is not present in mail', function () {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -53,10 +53,10 @@ it('sets the X-SES-CONFIGURATION-SET header if mail.mailers.ses.configuration_se
         fn ($message) => $message->to('test@test.com')->subject('Test')
     );
 
-    Event::assertDispatched(
+    Event::assertNotDispatched(
         fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
     );
-});
+})->expectExceptionMessage('The X-SES-CONFIGURATION-SET and X-SES-MESSAGE-TAGS headers were not set, please check your configuration.');
 
 it('X-SES-CONFIGURATION-SET is not present if mail.mailers.ses.configuration_set is not', function () {
     Event::fake(MessageSent::class);
