@@ -52,9 +52,11 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Filters\OpenSearch\SelectFilter;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Actions\ApplicationAdmissionActions;
 
 class ManageApplicationSubmissions extends ManageRelatedRecords
@@ -79,17 +81,17 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
     {
         return [
             'received' => Tab::make('Received')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->received())),
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Received)))),
             'review' => Tab::make('Review')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->review())),
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Review)))),
             'documents_required' => Tab::make('Documents Required')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->documentsRequired())),
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::DocumentsRequired)))),
             'complete' => Tab::make('Complete')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->complete())),
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Complete)))),
             'admit' => Tab::make('Admit')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->admit())),
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Admit)))),
             'deny' => Tab::make('Deny')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->deny())),
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Deny)))),
             'all' => Tab::make('All'),
         ];
     }

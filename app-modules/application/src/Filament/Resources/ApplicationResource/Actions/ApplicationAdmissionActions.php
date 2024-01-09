@@ -3,6 +3,7 @@
 namespace AdvisingApp\Application\Filament\Resources\ApplicationResource\Actions;
 
 use Filament\Tables\Actions\Action;
+use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
@@ -18,7 +19,7 @@ class ApplicationAdmissionActions
                 ->label('Mark as Reviewed')
                 ->action(
                     fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::review()->first(), ApplicationSubmissionStateClassification::Review)
+                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Review))->first(), ApplicationSubmissionStateClassification::Review)
                 )
                 ->cancelParentActions()
                 ->visible(function (ApplicationSubmission $record) {
@@ -28,7 +29,7 @@ class ApplicationAdmissionActions
                 ->label('Mark as Complete')
                 ->action(
                     fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::complete()->first(), ApplicationSubmissionStateClassification::Complete)
+                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Complete))->first(), ApplicationSubmissionStateClassification::Complete)
                 )
                 ->cancelParentActions()
                 ->visible(function (ApplicationSubmission $record) {
@@ -38,7 +39,7 @@ class ApplicationAdmissionActions
                 ->label('Mark as Documents Required')
                 ->action(
                     fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::documentsRequired()->first(), ApplicationSubmissionStateClassification::DocumentsRequired)
+                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::DocumentsRequired))->first(), ApplicationSubmissionStateClassification::DocumentsRequired)
                 )
                 ->cancelParentActions()
                 ->visible(function (ApplicationSubmission $record) {
@@ -48,7 +49,7 @@ class ApplicationAdmissionActions
                 ->label('Mark as Deny')
                 ->action(
                     fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::deny()->first(), ApplicationSubmissionStateClassification::Deny)
+                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Deny))->first(), ApplicationSubmissionStateClassification::Deny)
                 )
                 ->cancelParentActions()
                 ->visible(function (ApplicationSubmission $record) {
@@ -58,7 +59,7 @@ class ApplicationAdmissionActions
                 ->label('Mark as Admit')
                 ->action(
                     fn (ApplicationSubmission $record) => $record->getStateMachine(ApplicationSubmissionStateClassification::class, 'state.classification')
-                        ->transitionTo(ApplicationSubmissionState::admit()->first(), ApplicationSubmissionStateClassification::Admit)
+                        ->transitionTo(ApplicationSubmissionState::tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Admit))->first(), ApplicationSubmissionStateClassification::Admit)
                 )
                 ->cancelParentActions()
                 ->visible(function (ApplicationSubmission $record) {
