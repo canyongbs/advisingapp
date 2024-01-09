@@ -94,11 +94,6 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
         $this->beforeSendHook($notifiable, $deliverable, $channel);
 
-        // TODO Check License Limits / update deliverable status / etc...
-        // This will be completed in:
-        // https://canyongbs.atlassian.net/browse/ADVAPP-1
-        // https://canyongbs.atlassian.net/browse/ADVAPP-2
-
         return $deliverable;
     }
 
