@@ -37,8 +37,8 @@
 namespace AdvisingApp\Consent\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Pages\ArtificialIntelligence;
 use AdvisingApp\Consent\Models\ConsentAgreement;
+use App\Filament\Clusters\ArtificialIntelligence;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
 class ConsentAgreementResource extends Resource

@@ -39,7 +39,7 @@ namespace AdvisingApp\Interaction\Filament\Resources;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\InteractionManagement;
+use App\Filament\Clusters\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\EditInteractionType;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource\Pages\ListInteractionTypes;

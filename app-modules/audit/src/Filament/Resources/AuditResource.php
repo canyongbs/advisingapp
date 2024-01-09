@@ -38,7 +38,7 @@ namespace AdvisingApp\Audit\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Audit\Models\Audit;
-use App\Filament\Pages\UsageAuditing;
+use App\Filament\Clusters\UsageAuditing;
 use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 class AuditResource extends Resource

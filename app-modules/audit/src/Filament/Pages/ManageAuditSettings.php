@@ -40,8 +40,8 @@ use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Select;
-use App\Filament\Pages\GlobalSettings;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Audit\Settings\AuditSettings;
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 

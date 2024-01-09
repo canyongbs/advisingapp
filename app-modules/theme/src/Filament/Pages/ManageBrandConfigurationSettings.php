@@ -43,8 +43,8 @@ use Filament\Forms\Form;
 use App\Models\SettingsProperty;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
-use App\Filament\Pages\GlobalSettings;
 use Filament\Forms\Components\Section;
+use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 

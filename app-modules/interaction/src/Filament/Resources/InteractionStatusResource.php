@@ -40,7 +40,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\InteractionManagement;
+use App\Filament\Clusters\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\EditInteractionStatus;

@@ -37,7 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Pages\ServiceManagement;
+use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\EditServiceRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\ViewServiceRequestType;
@@ -54,7 +54,7 @@ class ServiceRequestTypeResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $cluster = ServiceManagement::class;
+    protected static ?string $cluster = ServiceManagementAdministration::class;
 
     public static function getPages(): array
     {

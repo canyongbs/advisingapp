@@ -37,7 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Pages\ServiceManagement;
+use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
@@ -54,7 +54,7 @@ class ServiceRequestStatusResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $cluster = ServiceManagement::class;
+    protected static ?string $cluster = ServiceManagementAdministration::class;
 
     public static function getPages(): array
     {

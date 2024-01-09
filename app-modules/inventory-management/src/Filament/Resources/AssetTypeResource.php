@@ -38,8 +38,8 @@ namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use App\Filament\Pages\AssetManagement;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\AssetManagement;
 use AdvisingApp\InventoryManagement\Models\AssetType;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource\Pages\ViewAssetType;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource\Pages\ListAssetTypes;

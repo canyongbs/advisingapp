@@ -37,7 +37,7 @@
 namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Pages\KnowledgeManagement;
+use App\Filament\Clusters\KnowledgeManagement;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\EditKnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource\Pages\ViewKnowledgeBaseQuality;

@@ -42,7 +42,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\ProductIntegrations;
+use App\Filament\Clusters\ProductIntegrations;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class ManageGoogleRecaptchaSettings extends SettingsPage

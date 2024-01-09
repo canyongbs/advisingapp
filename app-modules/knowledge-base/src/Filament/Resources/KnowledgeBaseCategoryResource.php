@@ -37,7 +37,7 @@
 namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
 use Filament\Resources\Resource;
-use App\Filament\Pages\KnowledgeManagement;
+use App\Filament\Clusters\KnowledgeManagement;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages\EditKnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource\Pages\ViewKnowledgeBaseCategory;

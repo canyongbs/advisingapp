@@ -38,7 +38,7 @@ namespace App\Filament\Resources;
 
 use Filament\Resources\Resource;
 use App\Models\NotificationSetting;
-use App\Filament\Pages\GlobalSettings;
+use App\Filament\Clusters\GlobalSettings;
 use App\Filament\Resources\NotificationSettingResource\Pages\EditNotificationSetting;
 use App\Filament\Resources\NotificationSettingResource\Pages\ListNotificationSettings;
 use App\Filament\Resources\NotificationSettingResource\Pages\CreateNotificationSetting;

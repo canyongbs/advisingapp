@@ -38,7 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources;
 
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use App\Filament\Pages\RecruitmentCrm;
+use App\Filament\Clusters\RecruitmentCrm;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
 

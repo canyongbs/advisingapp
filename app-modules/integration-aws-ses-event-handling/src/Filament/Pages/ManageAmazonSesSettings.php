@@ -41,7 +41,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\ProductIntegrations;
+use App\Filament\Clusters\ProductIntegrations;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 class ManageAmazonSesSettings extends SettingsPage

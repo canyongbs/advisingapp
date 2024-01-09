@@ -41,8 +41,8 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\ArtificialIntelligence;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Clusters\ArtificialIntelligence;
 use AdvisingApp\IntegrationAI\Settings\AISettings;
 
 class ManageAiSettings extends SettingsPage

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Analytics\Filament\Resources;
 
 use Filament\Resources\Resource;
+use App\Filament\Clusters\AnalyticsResources;
 use AdvisingApp\Analytics\Models\AnalyticsResourceCategory;
 use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceCategoryResource\Pages\EditAnalyticsResourceCategory;
 use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceCategoryResource\Pages\ViewAnalyticsResourceCategory;
@@ -47,11 +48,9 @@ class AnalyticsResourceCategoryResource extends Resource
 {
     protected static ?string $model = AnalyticsResourceCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 30;
 
-    protected static ?string $navigationGroup = 'Product Settings';
-
-    protected static ?int $navigationSort = 20;
+    protected static ?string $cluster = AnalyticsResources::class;
 
     public static function getPages(): array
     {
