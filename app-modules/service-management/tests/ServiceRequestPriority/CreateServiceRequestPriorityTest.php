@@ -42,10 +42,14 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use AdvisingApp\Prospect\Models\Prospect;
+
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\CreateServiceRequestPriorityRequestFactory;
@@ -91,7 +95,7 @@ test('CreateServiceRequestPriority requires valid data', function ($data, $error
 // Permission Tests
 
 test('CreateServiceRequestPriority is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     actingAs($user)
         ->get(
@@ -128,7 +132,7 @@ test('CreateServiceRequestPriority is gated with proper feature access control',
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     $user->givePermissionTo('service_request_priority.view-any');
     $user->givePermissionTo('service_request_priority.create');

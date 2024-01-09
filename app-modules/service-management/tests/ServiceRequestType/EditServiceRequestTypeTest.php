@@ -42,9 +42,13 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use AdvisingApp\Prospect\Models\Prospect;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function PHPUnit\Framework\assertEquals;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 use AdvisingApp\ServiceManagement\Tests\RequestFactories\EditServiceRequestTypeRequestFactory;
@@ -102,7 +106,7 @@ test('EditServiceRequestType requires valid data', function ($data, $errors) {
 // Permission Tests
 
 test('EditServiceRequestType is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     $serviceRequestType = ServiceRequestType::factory()->create();
 
@@ -147,7 +151,7 @@ test('EditServiceRequestType is gated with proper feature access control', funct
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     $user->givePermissionTo('service_request_type.view-any');
     $user->givePermissionTo('service_request_type.*.update');
