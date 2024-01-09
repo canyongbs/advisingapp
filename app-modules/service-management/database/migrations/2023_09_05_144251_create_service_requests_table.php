@@ -45,8 +45,8 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->string('service_request_number')->unique();
-            $table->string('respondent_type')->nullable();
-            $table->string('respondent_id')->nullable();
+            $table->string('respondent_type');
+            $table->string('respondent_id');
             $table->longText('close_details')->nullable();
             $table->longText('res_details')->nullable();
 
