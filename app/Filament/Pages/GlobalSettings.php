@@ -39,11 +39,14 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use AdvisingApp\Audit\Filament\Pages\ManageAuditSettings;
 use AdvisingApp\Portal\Filament\Pages\ManagePortalSettings;
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
 use AdvisingApp\Theme\Filament\Pages\ManageBrandConfigurationSettings;
 
 class GlobalSettings extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -52,7 +55,7 @@ class GlobalSettings extends Page
 
     protected static ?string $title = 'Global Settings';
 
-    protected array $children = [
+    protected static array $children = [
         ManageLicenseSettings::class,
         ManageAuditSettings::class,
         ManageBrandConfigurationSettings::class,
@@ -60,15 +63,4 @@ class GlobalSettings extends Page
         EmailConfiguration::class,
         ManagePortalSettings::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

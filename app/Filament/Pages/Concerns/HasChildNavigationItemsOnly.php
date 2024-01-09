@@ -34,36 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace App\Filament\Pages\Concerns;
 
-use App\Models\User;
 use Filament\Pages\Page;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Resources\Resource;
+use Illuminate\Routing\Redirector;
 
-class PromptLibrary extends Page
+trait HasChildNavigationItemsOnly
 {
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
-
-    protected static string $view = 'filament.pages.coming-soon';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
     public static function shouldRegisterNavigation(): bool
     {
-        /** @var User $user */
-        $user = auth()->user();
+        foreach (static::$children as $child) {
+            if (static::canAccessChildPage($child)) {
+                return true;
+            }
+        }
 
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+        return false;
+    }
+
+    public function mount(): Redirector
+    {
+        foreach (static::$children as $child) {
+            if (static::canAccessChildPage($child)) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(403);
+    }
+
+    /**
+     * @param class-string<Page | Resource> $child
+     */
+    protected static function canAccessChildPage(string $child): bool
+    {
+        if (! $child::shouldRegisterNavigation()) {
             return false;
         }
 
-        return $user->can('assistant.access');
-    }
+        if (! is_subclass_of($child, Resource::class)) {
+            return true;
+        }
 
-    public function mount(): void
-    {
-        abort_unless(auth()->user()->hasLicense(LicenseType::ConversationalAi), 403);
+        return $child::canViewAny();
     }
 }

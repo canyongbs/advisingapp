@@ -43,12 +43,14 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Audit\Settings\AuditSettings;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 /**
  * @mixin IdeHelperAssistantChatMessageLog
  */
 class AssistantChatMessageLog extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
     use MassPrunable;
 
     protected $fillable = [
@@ -89,5 +91,10 @@ class AssistantChatMessageLog extends BaseModel
     public function getApiPermissions(): Collection
     {
         return collect([]);
+    }
+
+    protected static function booted(): void
+    {
+        static::addAssistantLicenseGlobalScope();
     }
 }
