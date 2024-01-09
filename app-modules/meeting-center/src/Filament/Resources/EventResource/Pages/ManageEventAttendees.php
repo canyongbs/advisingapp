@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
 
-use AdvisingApp\MeetingCenter\Models\Event;
+use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use App\Filament\Columns\IdColumn;
@@ -44,6 +44,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TagsInput;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Livewire;
 use Filament\Infolists\Components\TextEntry;
@@ -51,6 +52,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
@@ -141,25 +143,10 @@ class ManageEventAttendees extends ManageRelatedRecords
                         ->required(),
                 ])
                 ->action(function (array $data, Event $record) {
-                    collect($data['attendees'])
-                        ->each(function ($email) use ($record) {
-                            $attendee = EventAttendee::first([
-                                'email' => $email,
-                                'event_id' => $record->id,
-                            ]);
+                    /** @var User $user */
+                    $user = auth()->user();
 
-                            if($attendee)
-                            {
-                                return;
-                            }
-
-                            $attendee = new EventAttendee([
-                                'email' => $email,
-                                'event_id' => $record->id,
-                            ]);
-
-
-                        });
+                    dispatch(new CreateEventAttendees($record, $data['attendees'], $user));
                 }),
         ];
     }
