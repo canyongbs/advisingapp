@@ -49,7 +49,7 @@ use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Assistant\Filament\Pages\PersonalAssistant;
 
 it('renders successfully', function () {
-    ConsentAgreement::factory()->licensed(LicenseType::ConversationalAi)->create([
+    ConsentAgreement::factory()->create([
         'type' => ConsentAgreementType::AzureOpenAI,
     ]);
 
