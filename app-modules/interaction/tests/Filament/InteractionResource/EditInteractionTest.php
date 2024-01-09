@@ -50,7 +50,7 @@ test('EditInteraction is gated with proper access control', function () {
     actingAs($user)
         ->get(
             InteractionResource::getUrl('edit', ['record' => $interaction])
-        )->assertForbidden();
+        )->assertNotFound();
 
     $user->givePermissionTo('interaction.view-any');
     $user->givePermissionTo('interaction.*.update');
