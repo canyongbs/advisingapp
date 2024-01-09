@@ -58,6 +58,7 @@ class SurveyFieldBlockRegistry
             EmailFormFieldBlock::class,
             NumberFormFieldBlock::class,
             LikertScaleSurveyBlock::class,
+            SliderSurveyFieldBlock::class,
         ];
     }
 

@@ -1,4 +1,4 @@
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -30,18 +30,36 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import { generateClasses } from '@formkit/themes';
-import { genesisIcons } from '@formkit/icons';
-import theme from '../../form/src/FormKit/theme';
-import inputs from './FormKit/Inputs/index';
+--}}
 
-export default {
-    icons: {
-        ...genesisIcons,
-    },
-    inputs,
-    config: {
-        classes: generateClasses(theme),
-    },
-};
+@php
+    $min = 1;
+    $max = 5;
+    $value = ceil($max / 2);
+@endphp
+
+<x-form::blocks.field-wrapper
+    :$label
+    :$isRequired
+>
+    <div class="grid gap-y-2">
+        <div class="flex items-end gap-4">
+            <div class="w-full">
+                <div class="flex justify-between">
+                    <span>{{ $min }}</span>
+                    <span>{{ $max }}</span>
+                </div>
+                <input
+                    class="w-full"
+                    type="range"
+                    value={{ $value }}
+                    min={{ $min }}
+                    max={{ $max }}
+                >
+            </div>
+            <div class="flex">
+                <span class="rounded border border-gray-500 p-1">{{ $value }}</span>
+            </div>
+        </div>
+    </div>
+</x-form::blocks.field-wrapper>
