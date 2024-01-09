@@ -30,20 +30,38 @@ class CreateEventAttendees implements ShouldQueue
     {
         $sender = $this->sender;
 
-        Bus::batch(collect($this->emails)->map(fn ($email) => new CreateEventAttendee($this->event, $email, $sender)))
+        $batch = Bus::batch(collect($this->emails)->map(fn ($email) => new CreateEventAttendee($this->event, $email, $sender)))
             ->name("Invite Attendees to Event: {$this->event->getKey()}")
             ->finally(function (Batch $batch) use ($sender) {
-                if ($batch->hasFailures()) {
-                    Notification::make()
-                        ->warning()
-                        ->title("{$batch->failedJobs} attendees failed to be invited.")
-                        ->sendToDatabase($sender);
-                } else {
-                    Notification::make()
-                        ->success()
-                        ->title('All attendees have been invited.')
-                        ->sendToDatabase($sender);
+                $successfulJobsCount = number_format($batch->totalJobs - $batch->failedJobs);
+
+                $body = 'The'
+                    . ' ' . str('invitation')->plural($batch->totalJobs)
+                    . ' ' . ($batch->totalJobs > 1 ? 'have' : 'has')
+                    . ' been sent and ' . $successfulJobsCount
+                    . ' ' . ($successfulJobsCount == 1 ? 'email was' : 'emails were')
+                    . ' successful.';
+
+                if ($failedJobsCount = $batch->failedJobs) {
+                    $body .= ' ' . number_format($failedJobsCount) . ' ' . str('email')->plural($failedJobsCount) . ' failed to send.';
                 }
+
+                Notification::make()
+                    ->title($batch->totalJobs > 1 ? 'The invitations have been sent' : 'The invitation has been sent')
+                    ->body($body)
+                    ->when(
+                        ! $failedJobsCount,
+                        fn (Notification $notification) => $notification->success(),
+                    )
+                    ->when(
+                        $failedJobsCount && ($failedJobsCount < $batch->totalJobs),
+                        fn (Notification $notification) => $notification->warning(),
+                    )
+                    ->when(
+                        $failedJobsCount === $batch->totalJobs,
+                        fn (Notification $notification) => $notification->danger(),
+                    )
+                    ->sendToDatabase($sender);
             })
             ->dispatch();
     }

@@ -2,21 +2,16 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 
-use App\Models\User;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
-use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
+use AdvisingApp\MeetingCenter\Filament\Actions\Table\InviteAttendeeAction;
 
 class ManageProspectEvents extends ManageRelatedRecords
 {
@@ -44,29 +39,7 @@ class ManageProspectEvents extends ManageRelatedRecords
                     ->badge(),
             ])
             ->headerActions([
-                Action::make('Invite')
-                    ->icon('heroicon-o-envelope')
-                    ->form([
-                        Select::make('event')
-                            ->options(function () {
-                                /** @var Educatable $record */
-                                $record = $this->getRecord();
-
-                                return Event::whereNotIn('id', $record->eventAttendeeRecords()->pluck('event_id'))
-                                    ->pluck('title', 'id');
-                            })
-                            ->searchable()
-                            ->required(),
-                    ])
-                    ->action(function (array $data) {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        /** @var Educatable $record */
-                        $record = $this->getRecord();
-
-                        dispatch(new CreateEventAttendees(Event::find($data['event']), [$record->email], $user));
-                    }),
+                InviteAttendeeAction::make(),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [
                 EventAttendeeStatus::Invited,
