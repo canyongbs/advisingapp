@@ -41,12 +41,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
+use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 
 /**
  * @mixin IdeHelperApplicationSubmission
  */
 class ApplicationSubmission extends Submission
 {
+    use HasRelationBasedStateMachine;
+
     public function submissible(): BelongsTo
     {
         return $this
@@ -69,6 +72,13 @@ class ApplicationSubmission extends Submission
     {
         return $this
             ->belongsTo(ApplicationSubmissionState::class, 'state_id');
+    }
+
+    public function getStateMachineFields(): array
+    {
+        return [
+            'state.classification',
+        ];
     }
 
     protected static function booted(): void

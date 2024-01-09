@@ -85,6 +85,11 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
         $query->where('classification', ApplicationSubmissionStateClassification::DocumentsRequired);
     }
 
+    public function scopeComplete(Builder $query): void
+    {
+        $query->where('classification', ApplicationSubmissionStateClassification::Complete);
+    }
+
     public function scopeAdmit(Builder $query): void
     {
         $query->where('classification', ApplicationSubmissionStateClassification::Admit);
