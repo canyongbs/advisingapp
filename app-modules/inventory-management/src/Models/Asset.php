@@ -108,7 +108,7 @@ class Asset extends BaseModel implements Auditable
     public function isAvailable(): bool
     {
         return $this->status->classification === SystemAssetStatusClassification::Available
-            && ! is_null($this->latestCheckOut?->asset_check_in_id);
+            && (is_null($this->latestCheckOut) || ! is_null($this->latestCheckOut?->asset_check_in_id));
     }
 
     public function isNotAvailable(): bool
