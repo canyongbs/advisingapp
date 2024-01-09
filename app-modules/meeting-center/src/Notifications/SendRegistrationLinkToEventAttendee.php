@@ -39,12 +39,12 @@ namespace AdvisingApp\MeetingCenter\Notifications;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use App\Models\NotificationSetting;
-use Illuminate\Notifications\Notification;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 
-class SendRegistrationLinkToEventAttendee extends Notification
+class SendRegistrationLinkToEventAttendee extends BaseNotification
 {
     use Queueable;
 
@@ -56,7 +56,7 @@ class SendRegistrationLinkToEventAttendee extends Notification
     /**
      * @return array<int, string>
      */
-    public function via(EventAttendee $notifiable): array
+    public function via(object $notifiable): array
     {
         return ['mail'];
     }
