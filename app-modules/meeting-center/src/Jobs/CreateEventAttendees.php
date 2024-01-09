@@ -30,7 +30,7 @@ class CreateEventAttendees implements ShouldQueue
     {
         $sender = $this->sender;
 
-        $batch = Bus::batch(collect($this->emails)->map(fn ($email) => new CreateEventAttendee($this->event, $email, $sender)))
+        Bus::batch(collect($this->emails)->map(fn ($email) => new CreateEventAttendee($this->event, $email, $sender)))
             ->name("Invite Attendees to Event: {$this->event->getKey()}")
             ->finally(function (Batch $batch) use ($sender) {
                 $successfulJobsCount = number_format($batch->totalJobs - $batch->failedJobs);
