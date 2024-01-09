@@ -86,7 +86,7 @@ test('The correct details are displayed on the ListServiceRequestType page', fun
 // Permission Tests
 
 test('ListServiceRequestTypes is gated with proper access control', function () {
-    User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     actingAs($user)
         ->get(
