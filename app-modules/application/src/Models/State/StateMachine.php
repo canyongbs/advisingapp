@@ -142,7 +142,6 @@ class StateMachine
         if ($this->targetingRelationship($this->state)) {
             $stateInPieces = explode('.', $this->state);
 
-            // TODO Ensure the field is a backed enum
             $field = array_pop($stateInPieces);
 
             $modelWithState = $this->accessNestedRelations($this->model, $stateInPieces);
