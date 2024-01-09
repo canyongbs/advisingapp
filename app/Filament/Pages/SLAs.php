@@ -44,13 +44,15 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Clusters\ServiceManagement;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-class ChangeManagement extends Page
+class SLAs extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     protected static string $view = 'filament.pages.coming-soon';
+
+    protected static ?string $title = 'SLAs';
 
     protected static ?string $cluster = ServiceManagement::class;
 
