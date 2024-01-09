@@ -23,21 +23,11 @@ class StateMachine
         $this->config = ConfigLoader::load($enumClass);
     }
 
-    /**
-     * @return Collection
-     */
     public function getAllStates(): Collection
     {
         return $this->config->states->keys();
     }
 
-    /**
-     * @param BackedEnum|string|null $state
-     *
-     * @throws \Exception
-     *
-     * @return Collection
-     */
     public function getStateTransitions(BackedEnum|string|null $state = null): Collection
     {
         $state ??= $this->currentState();
@@ -59,10 +49,8 @@ class StateMachine
             ->pluck('to');
     }
 
-    public function transitionTo(Model $contextModel, Model $relatedModel, BackedEnum|string $newState, array $additionalData = [])
+    public function transitionTo(Model $relatedModel, BackedEnum|string $newState, array $additionalData = [])
     {
-        ray('transitionTo()', $contextModel, $relatedModel, $newState, $additionalData);
-
         $newStateVal = $newState;
 
         if (! is_string($newState)) {
@@ -72,9 +60,6 @@ class StateMachine
 
         $currentState = $this->currentState();
 
-        ray('currentState value', $currentState);
-        ray('newState value', $newStateVal);
-
         $this->validateTransitionExistence($currentState, $newStateVal);
 
         $stateTransitionConfig = $this->config->getStateTransitionConfig($currentState, $newStateVal);
@@ -83,7 +68,7 @@ class StateMachine
         $destinationStateActions = $this->config->getStateActions($newStateVal);
         $actions = $transitionActions->concat($destinationStateActions);
 
-        $stateMachineTransition = new TransitionManager($contextModel, $actions, $additionalData);
+        $stateMachineTransition = new TransitionManager($this->model, $actions, $additionalData);
         $stateMachineTransition->transit();
 
         if ($this->targetingRelationship($this->state)) {
@@ -92,52 +77,19 @@ class StateMachine
             array_pop($stateInPieces);
 
             // We should probably offload this to a transition
-            $chain = $this->accessNestedRelations($contextModel, $stateInPieces);
+            $chain = $this->dynamicMethodChain($this->model, $stateInPieces);
             $chain->associate($relatedModel);
-            $contextModel->save();
+            $this->model->save();
         } else {
             $stateTransitionConfig->getStateTransition()->commitTransition($newState, $this->model, $this->state, $additionalData);
         }
     }
 
-    public function accessNestedRelations($model, $relations)
-    {
-        $current = $model;
-
-        foreach ($relations as $relation) {
-            if (! method_exists($current, $relation)) {
-                throw new \Exception("Relation '{$relation}' does not exist on " . get_class($current));
-            }
-
-            $current = $current->{$relation};
-
-            if ($current === null) {
-                return null;
-            }
-        }
-
-        return $current;
-    }
-
-    /**
-     * @param  string  $sourceState
-     * @param  string  $destinationState
-     *
-     * @throws Exception
-     *
-     * @return bool
-     */
     protected function isValidTransition(string $sourceState, string $destinationState): bool
     {
         return $this->getStateTransitions($sourceState)->contains($destinationState);
     }
 
-    /**
-     * @param string $sourceState
-     * @param string $destinationState
-     *
-     * @throws \Exception
-     */
     private function validateTransitionExistence(string $sourceState, string $destinationState): void
     {
         $states = $this->config->states;
@@ -159,9 +111,9 @@ class StateMachine
             // TODO Ensure the field is a backed enum
             $field = array_pop($stateInPieces);
 
-            $model = $this->accessNestedRelations($this->model, $stateInPieces);
+            $modelWithState = $this->accessNestedRelations($this->model, $stateInPieces);
 
-            return $model->{$field}->value;
+            return $modelWithState->{$field}->value;
         }
 
         $state = $this->model->{$this->state};
