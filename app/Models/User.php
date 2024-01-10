@@ -420,6 +420,28 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return false;
     }
 
+    public function grantLicense(LicenseType $type): bool
+    {
+        if ($this->hasLicense($type)) {
+            return false;
+        }
+
+        return cache()
+            ->lock('licenses', 5)
+            ->get(function () use ($type) {
+                if (! $type->hasAvailableLicenses()) {
+                    return false;
+                }
+
+                return (bool) $this->licenses()->create(['type' => $type]);
+            });
+    }
+
+    public function revokeLicense(LicenseType $type): bool
+    {
+        return (bool) $this->licenses()->where('type', $type)->delete();
+    }
+
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
