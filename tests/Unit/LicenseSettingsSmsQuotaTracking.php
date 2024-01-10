@@ -34,4 +34,90 @@
 </COPYRIGHT>
 */
 
-// TODO: Test Sms Quota tracking once we have a Twilio Mock
+use Twilio\Rest\Client;
+use Tests\Unit\ClientMock;
+use Twilio\Rest\Api\V2010;
+use Twilio\Rest\MessagingBase;
+use AdvisingApp\Prospect\Models\Prospect;
+use Twilio\Rest\Api\V2010\Account\MessageList;
+use Twilio\Rest\Api\V2010\Account\MessageInstance;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+
+it('An sms is allowed to be sent if there is available quota and it\'s quota usage is tracked', function () {
+    $notifiable = Prospect::factory()->create();
+
+    $notification = new Tests\Unit\TestSmsNotification();
+
+    $settings = $this->app->make(TwilioSettings::class);
+
+    $settings->account_sid = 'abc123';
+    $settings->auth_token = 'abc123';
+    $settings->from_number = '+11231231234';
+
+    $settings->save();
+
+    $mockMessageList = mock(MessageList::class);
+
+    $numSegments = rand(1, 5);
+
+    $mockMessageList->shouldReceive('create')->andReturn(
+        new MessageInstance(
+            new V2010(new MessagingBase(new Client())),
+            [
+                'sid' => 'abc123',
+                'status' => 'queued',
+                'from' => '+11231231234',
+                'to' => '+11231231234',
+                'body' => 'test',
+                'num_segments' => $numSegments,
+            ],
+            'abc123'
+        )
+    );
+
+    $this->app->bind(Client::class, fn () => new ClientMock(
+        messageList: $mockMessageList,
+        username: $settings->account_sid,
+        password: $settings->auth_token,
+    ));
+
+    $notifiable->notify($notification);
+
+    $outboundDeliverable = OutboundDeliverable::first();
+
+    expect($outboundDeliverable->quota_usage)
+        ->toBe($numSegments)
+        ->and($outboundDeliverable->delivery_status)
+        ->toBe(NotificationDeliveryStatus::Dispatched);
+});
+
+//it('An email is prevented from being sent if there is no available quota', function () {
+//    Event::fake(MessageSent::class);
+//
+//    $configurationSet = 'test';
+//
+//    $settings = app(SesSettings::class);
+//    $settings->configuration_set = $configurationSet;
+//    $settings->save();
+//
+//    $licenseSettings = app(LicenseSettings::class);
+//
+//    $licenseSettings->data->limits->emails = 0;
+//    $licenseSettings->save();
+//
+//    $notifiable = User::factory()->create();
+//
+//    $notification = new Tests\Unit\TestEmailNotification();
+//
+//    $notifiable->notify($notification);
+//
+//    Event::assertNotDispatched(MessageSent::class);
+//
+//    assertDatabaseCount(OutboundDeliverable::class, 1);
+//
+//    $outboundDeliverable = OutboundDeliverable::first();
+//
+//    expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::RateLimited);
+//});
