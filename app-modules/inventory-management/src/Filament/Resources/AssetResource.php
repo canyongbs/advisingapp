@@ -133,8 +133,8 @@ class AssetResource extends Resource
                             ->setTimezone($user->timezone)
                             ->diff();
 
-                        return $diff->y . ' ' . ($diff->y == 1 ? 'Year' : 'Years') . ' ' .
-                            $diff->m . ' ' . ($diff->m == 1 ? 'Month' : 'Months');
+                        return $diff->y . ' ' . ($diff->y === 1 ? 'Year' : 'Years') . ' ' .
+                            $diff->m . ' ' . ($diff->m === 1 ? 'Month' : 'Months');
                     }),
             ]);
     }
