@@ -34,18 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Actions\Table;
+namespace AdvisingApp\MeetingCenter\Filament\Actions;
 
 use App\Models\User;
-use Livewire\Component;
-use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Select;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TagsInput;
 use Filament\Notifications\Notification;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 
-class InviteAttendeeAction extends Action
+class InviteEventAttendeesAction extends Action
 {
     protected function setUp(): void
     {
@@ -54,26 +52,21 @@ class InviteAttendeeAction extends Action
         $this->label('Invite')
             ->icon('heroicon-o-envelope')
             ->form([
-                Select::make('event')
-                    ->options(function (Component $livewire, ?Educatable $record) {
-                        $record ??= $livewire->getRecord();
-
-                        return Event::whereNotIn('id', $record->eventAttendeeRecords()->pluck('event_id'))
-                            ->pluck('title', 'id');
-                    })
-                    ->searchable()
+                TagsInput::make('attendees')
+                    ->placeholder('Add attendee email')
+                    ->nestedRecursiveRules(['email'])
                     ->required(),
             ])
-            ->action(function (array $data, Component $livewire, ?Educatable $record) {
+            ->action(function (array $data, Event $record) {
                 /** @var User $user */
                 $user = auth()->user();
 
-                $record ??= $livewire->getRecord();
+                $emails = $data['attendees'];
 
-                dispatch(new CreateEventAttendees(Event::find($data['event']), [$record->email], $user));
+                dispatch(new CreateEventAttendees($record, $emails, $user));
 
                 Notification::make()
-                    ->title('The invitation is being sent')
+                    ->title(count($emails) > 1 ? 'The invitations are being sent' : 'The invitation is being sent')
                     ->success()
                     ->send();
             });

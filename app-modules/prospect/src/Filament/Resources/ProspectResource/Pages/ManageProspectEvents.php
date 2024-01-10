@@ -45,7 +45,8 @@ use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Actions\Table\InviteAttendeeAction;
+use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
+use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
 
 class ManageProspectEvents extends ManageRelatedRecords
 {
@@ -72,12 +73,19 @@ class ManageProspectEvents extends ManageRelatedRecords
                 TextColumn::make('status')
                     ->badge(),
             ])
-            ->headerActions([
-                InviteAttendeeAction::make(),
+            ->actions([
+                ViewEventAttendeeAction::make(),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [
                 EventAttendeeStatus::Invited,
                 EventAttendeeStatus::Attending,
             ]));
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            InviteEventAttendeeAction::make(),
+        ];
     }
 }
