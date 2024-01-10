@@ -64,7 +64,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
     {
         $traits = collect(class_uses_recursive(static::class));
 
-        $channels = $traits
+        return $traits
             ->filter(function ($traitName) {
                 return in_array(ChannelTrait::class, class_uses($traitName));
             })
@@ -82,8 +82,6 @@ abstract class BaseNotification extends Notification implements ShouldQueue
             ->unique()
             ->values()
             ->toArray();
-
-        return $channels;
     }
 
     public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false
@@ -95,11 +93,6 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         ];
 
         $this->beforeSendHook($notifiable, $deliverable, $channel);
-
-        // TODO Check License Limits / update deliverable status / etc...
-        // This will be completed in:
-        // https://canyongbs.atlassian.net/browse/ADVAPP-1
-        // https://canyongbs.atlassian.net/browse/ADVAPP-2
 
         return $deliverable;
     }

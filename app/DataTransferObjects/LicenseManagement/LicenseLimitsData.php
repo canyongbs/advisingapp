@@ -37,6 +37,7 @@
 namespace App\DataTransferObjects\LicenseManagement;
 
 use Spatie\LaravelData\Data;
+use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Attributes\MapInputName;
 use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 
@@ -51,4 +52,23 @@ class LicenseLimitsData extends Data
         public int $sms,
         public string $resetDate,
     ) {}
+
+    public function getResetWindow(): array
+    {
+        $resetDateCurrentYear = Carbon::createFromFormat('m-d-Y', $this->resetDate . '-' . now()->year);
+
+        if ($resetDateCurrentYear->isPast() || $resetDateCurrentYear->isCurrentDay()) {
+            $quotaWindowStart = $resetDateCurrentYear->copy()->startOfDay();
+            $quotaWindowEnd = Carbon::createFromFormat('m-d-Y', $this->resetDate . '-' . now()->addYear()->year)->subDay()->endOfDay();
+        } else {
+            // Reset date is in the future
+            $quotaWindowStart = Carbon::createFromFormat('m-d-Y', $this->resetDate . '-' . now()->subYear()->year)->startOfDay();
+            $quotaWindowEnd = $resetDateCurrentYear->copy()->startOfDay();
+        }
+
+        return [
+            'start' => $quotaWindowStart,
+            'end' => $quotaWindowEnd,
+        ];
+    }
 }

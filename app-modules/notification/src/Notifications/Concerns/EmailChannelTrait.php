@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Notification\Notifications\Concerns;
 
+use Symfony\Component\Mime\Email;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 trait EmailChannelTrait
 {
@@ -51,8 +53,22 @@ trait EmailChannelTrait
     public function toMail(object $notifiable): MailMessage
     {
         return $this->toEmail($notifiable)
-            ->withSymfonyMessage(function ($message) {
-                $message->metadata = $this->metadata;
+            ->withSymfonyMessage(function (Email $message) {
+                $settings = app(SesSettings::class);
+
+                if (! empty($settings->configuration_set)) {
+                    $message->getHeaders()->addTextHeader(
+                        'X-SES-CONFIGURATION-SET',
+                        $settings->configuration_set
+                    );
+                }
+
+                if (! empty($this->metadata['outbound_deliverable_id'])) {
+                    $message->getHeaders()->addTextHeader(
+                        'X-SES-MESSAGE-TAGS',
+                        "outbound_deliverable_id={$this->metadata['outbound_deliverable_id']}"
+                    );
+                }
             });
     }
 }

@@ -42,7 +42,10 @@ class EmailChannelResultData extends NotificationResultData
 {
     public function __construct(
         public bool $success,
+        public array $recipients = [],
         public ?SentMessage $message = null,
         public ?string $error = null,
-    ) {}
+    ) {
+        parent::__construct();
+    }
 }

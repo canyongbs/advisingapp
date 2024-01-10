@@ -34,18 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
+namespace Tests\Unit;
 
-use Illuminate\Mail\Events\MessageSending;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class AddSesMessageTagsToEmailHeaders
+class TestEmailNotification extends BaseNotification implements EmailNotification
 {
-    public function handle(MessageSending $event): void
+    use EmailChannelTrait;
+
+    public function toEmail(object $notifiable): MailMessage
     {
-        if (property_exists($event->message, 'metadata') && is_array($event->message->metadata)) {
-            foreach ($event->message->metadata as $key => $value) {
-                $event->message->getHeaders()->addTextHeader('X-SES-MESSAGE-TAGS', $key . '=' . $value);
-            }
-        }
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email')
+            ->salutation('Test Salutation');
     }
 }

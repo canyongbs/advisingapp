@@ -35,36 +35,16 @@
 */
 
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Event;
+use App\Settings\LicenseSettings;
 use Illuminate\Mail\Events\MessageSent;
+
+use function Pest\Laravel\assertDatabaseCount;
+
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-it('Does not send the message if configuration_set is set in settings but is not present in mail', function () {
-    Event::fake(MessageSent::class);
-
-    $configurationSet = 'test';
-
-    $settings = app(SesSettings::class);
-    $settings->configuration_set = $configurationSet;
-    $settings->save();
-
-    Mail::raw(
-        'Hello, welcome to Laravel!',
-        fn ($message) => $message->to('test@test.com')->subject('Test')
-    );
-
-    Event::assertNotDispatched(
-        fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
-    );
-})->expectExceptionMessage('The X-SES-CONFIGURATION-SET and X-SES-MESSAGE-TAGS headers were not set, please check your configuration.');
-
-it('The configuration set headers are present and emails are sent if configuration_set is set in setting', function () {
+it('An email is allowed to be sent if there is available quota and it\'s quota usage is tracked', function () {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -75,39 +55,48 @@ it('The configuration set headers are present and emails are sent if configurati
 
     $notifiable = User::factory()->create();
 
-    $notification = new TestEmailNotification();
+    $notification = new Tests\Unit\TestEmailNotification();
 
     $notifiable->notify($notification);
 
     Event::assertDispatched(
-        fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
-            && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === 'outbound_deliverable_id=' . OutboundDeliverable::first()->getKey()
+        function (MessageSent $event) use ($configurationSet) {
+            assertDatabaseCount(OutboundDeliverable::class, 1);
+
+            $outboundDeliverable = OutboundDeliverable::first();
+
+            return $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
+                && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === 'outbound_deliverable_id=' . $outboundDeliverable->getKey()
+                && $outboundDeliverable->quota_usage === 1;
+        }
     );
 });
 
-it('X-SES-CONFIGURATION-SET is not present if mail.mailers.ses.configuration_set is not', function () {
+it('An email is prevented from being sent if there is no available quota', function () {
     Event::fake(MessageSent::class);
 
-    Mail::raw(
-        'Hello, welcome to Laravel!',
-        fn ($message) => $message->to('test@test.com')->subject('Test')
-    );
+    $configurationSet = 'test';
 
-    Event::assertDispatched(
-        fn (MessageSent $event) => is_null($event->message->getHeaders()->get('X-SES-CONFIGURATION-SET'))
-    );
+    $settings = app(SesSettings::class);
+    $settings->configuration_set = $configurationSet;
+    $settings->save();
+
+    $licenseSettings = app(LicenseSettings::class);
+
+    $licenseSettings->data->limits->emails = 0;
+    $licenseSettings->save();
+
+    $notifiable = User::factory()->create();
+
+    $notification = new Tests\Unit\TestEmailNotification();
+
+    $notifiable->notify($notification);
+
+    Event::assertNotDispatched(MessageSent::class);
+
+    assertDatabaseCount(OutboundDeliverable::class, 1);
+
+    $outboundDeliverable = OutboundDeliverable::first();
+
+    expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::RateLimited);
 });
-
-class TestEmailNotification extends BaseNotification implements EmailNotification
-{
-    use EmailChannelTrait;
-
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Test Subject')
-            ->greeting('Test Greeting')
-            ->content('This is a test email')
-            ->salutation('Test Salutation');
-    }
-}
