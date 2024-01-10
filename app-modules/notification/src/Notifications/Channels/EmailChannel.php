@@ -130,10 +130,10 @@ class EmailChannel extends MailChannel
 
         $resetWindow = $licenseSettings->data->limits->getResetWindow();
 
-        $currentQuoteUsage = OutboundDeliverable::where('channel', 'email')
+        $currentQuotaUsage = OutboundDeliverable::where('channel', 'email')
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 
-        return $currentQuoteUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->emails;
+        return $currentQuotaUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->emails;
     }
 }
