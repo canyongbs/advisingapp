@@ -34,21 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects;
+namespace App\Filament\Pages\Concerns;
 
-use Livewire\Wireable;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\DataCollection;
-use Spatie\LaravelData\Concerns\WireableData;
-use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Filament\Pages\Page;
+use Filament\Resources\Resource;
+use Illuminate\Routing\Redirector;
 
-class Chat extends Data implements Wireable
+trait HasChildNavigationItemsOnly
 {
-    use WireableData;
+    public static function shouldRegisterNavigation(): bool
+    {
+        foreach (static::$children as $child) {
+            if (static::canAccessChildPage($child)) {
+                return true;
+            }
+        }
 
-    public function __construct(
-        public ?string $id,
-        #[DataCollectionOf(ChatMessage::class)]
-        public DataCollection $messages,
-    ) {}
+        return false;
+    }
+
+    public function mount(): Redirector
+    {
+        foreach (static::$children as $child) {
+            if (static::canAccessChildPage($child)) {
+                return redirect($child::getUrl());
+            }
+        }
+
+        abort(403);
+    }
+
+    /**
+     * @param class-string<Page | Resource> $child
+     */
+    protected static function canAccessChildPage(string $child): bool
+    {
+        if (! $child::shouldRegisterNavigation()) {
+            return false;
+        }
+
+        if (! is_subclass_of($child, Resource::class)) {
+            return true;
+        }
+
+        return $child::canViewAny();
+    }
 }

@@ -40,12 +40,15 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 /**
  * @mixin IdeHelperAssistantChatFolder
  */
 class AssistantChatFolder extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
+
     protected $fillable = [
         'name',
     ];
@@ -63,5 +66,10 @@ class AssistantChatFolder extends BaseModel
     public static function defaults(): array
     {
         return config('assistant.default_chat_folders');
+    }
+
+    protected static function booted(): void
+    {
+        static::addAssistantLicenseGlobalScope();
     }
 }

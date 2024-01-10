@@ -54,6 +54,7 @@ use Filament\Support\Enums\ActionSize;
 use Illuminate\Validation\Rules\Unique;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Assistant\Models\AssistantChat;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -108,14 +109,17 @@ class PersonalAssistant extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        // TODO: Feature/License Gate | if has AI License
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
 
         return $user->can('assistant.access');
     }
 
     public function mount(): void
     {
-        // TODO: Feature/License Gate | if has AI License
+        abort_unless(auth()->user()->hasLicense(LicenseType::ConversationalAi), 403);
+
         $this->authorize('assistant.access');
 
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();

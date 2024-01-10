@@ -37,10 +37,13 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
 
 class ArtificialIntelligence extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -49,18 +52,7 @@ class ArtificialIntelligence extends Page
 
     protected static ?string $title = 'Artificial Intelligence';
 
-    protected array $children = [
+    protected static array $children = [
         AssistantConfiguration::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

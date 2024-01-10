@@ -37,6 +37,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
@@ -46,6 +47,8 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 
 class InteractionManagement extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -56,7 +59,7 @@ class InteractionManagement extends Page
 
     protected static ?string $breadcrumb = 'Interaction Management';
 
-    protected array $children = [
+    protected static array $children = [
         InteractionCampaignResource::class,
         InteractionDriverResource::class,
         InteractionOutcomeResource::class,
@@ -64,15 +67,4 @@ class InteractionManagement extends Page
         InteractionStatusResource::class,
         InteractionTypeResource::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

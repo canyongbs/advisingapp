@@ -37,12 +37,15 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
 class KnowledgeManagement extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -53,20 +56,9 @@ class KnowledgeManagement extends Page
 
     protected static ?string $breadcrumb = 'Knowledge Management';
 
-    protected array $children = [
+    protected static array $children = [
         KnowledgeBaseCategoryResource::class,
         KnowledgeBaseQualityResource::class,
         KnowledgeBaseStatusResource::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

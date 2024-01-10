@@ -39,12 +39,15 @@ namespace AdvisingApp\Assistant\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Assistant\Services\AIInterface\Enums\AIChatMessageFrom;
+use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 /**
  * @mixin IdeHelperAssistantChatMessage
  */
 class AssistantChatMessage extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
+
     protected $fillable = [
         'message',
         'from',
@@ -57,5 +60,10 @@ class AssistantChatMessage extends BaseModel
     public function chat(): BelongsTo
     {
         return $this->belongsTo(AssistantChat::class, 'assistant_chat_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::addAssistantLicenseGlobalScope();
     }
 }

@@ -40,12 +40,15 @@ use App\Models\User;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Assistant\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 
 /**
  * @mixin IdeHelperAssistantChat
  */
 class AssistantChat extends BaseModel
 {
+    use CanAddAssistantLicenseGlobalScope;
+
     protected $fillable = [
         'name',
     ];
@@ -63,5 +66,10 @@ class AssistantChat extends BaseModel
     public function folder(): BelongsTo
     {
         return $this->belongsTo(AssistantChatFolder::class, 'assistant_chat_folder_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::addAssistantLicenseGlobalScope();
     }
 }

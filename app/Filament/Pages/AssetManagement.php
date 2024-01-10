@@ -37,12 +37,15 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource;
 
 class AssetManagement extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -53,20 +56,9 @@ class AssetManagement extends Page
 
     protected static ?string $breadcrumb = 'Asset Management';
 
-    protected array $children = [
+    protected static array $children = [
         AssetLocationResource::class,
         AssetStatusResource::class,
         AssetTypeResource::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }

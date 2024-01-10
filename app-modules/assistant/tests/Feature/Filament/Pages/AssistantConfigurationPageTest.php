@@ -38,12 +38,13 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Assistant\Filament\Pages\ManageAiSettings;
 use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 
 it('does not load if you do not have any permissions to access', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     actingAs($user);
 
@@ -52,7 +53,7 @@ it('does not load if you do not have any permissions to access', function () {
 });
 
 it('redirects if you have the correct access to consent agreements', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update']);
 
@@ -63,7 +64,7 @@ it('redirects if you have the correct access to consent agreements', function ()
 });
 
 it('redirects if you have the correct access to ai settings', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['assistant.access_ai_settings']);
 
@@ -74,7 +75,7 @@ it('redirects if you have the correct access to ai settings', function () {
 });
 
 it('redirects if you have access for both ai settings and consent agreements', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update', 'assistant.access_ai_settings']);
 

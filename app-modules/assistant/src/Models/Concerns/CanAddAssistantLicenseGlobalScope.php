@@ -34,21 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Services\AIInterface\DataTransferObjects;
+namespace AdvisingApp\Assistant\Models\Concerns;
 
-use Livewire\Wireable;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\DataCollection;
-use Spatie\LaravelData\Concerns\WireableData;
-use Spatie\LaravelData\Attributes\DataCollectionOf;
+use App\Models\Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
-class Chat extends Data implements Wireable
+trait CanAddAssistantLicenseGlobalScope
 {
-    use WireableData;
+    protected static function addAssistantLicenseGlobalScope(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            if (! auth()->check()) {
+                return;
+            }
 
-    public function __construct(
-        public ?string $id,
-        #[DataCollectionOf(ChatMessage::class)]
-        public DataCollection $messages,
-    ) {}
+            /** @var Authenticatable $user */
+            $user = auth()->user();
+
+            if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+                $builder->whereRaw('1 = 0');
+            }
+        });
+    }
 }

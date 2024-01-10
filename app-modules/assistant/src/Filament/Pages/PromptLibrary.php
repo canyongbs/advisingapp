@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
+use App\Models\User;
 use Filament\Pages\Page;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
 class PromptLibrary extends Page
 {
@@ -47,4 +49,21 @@ class PromptLibrary extends Page
     protected static ?string $navigationGroup = 'Artificial Intelligence';
 
     protected static ?int $navigationSort = 10;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
+            return false;
+        }
+
+        return $user->can('assistant.access');
+    }
+
+    public function mount(): void
+    {
+        abort_unless(auth()->user()->hasLicense(LicenseType::ConversationalAi), 403);
+    }
 }

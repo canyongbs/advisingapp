@@ -71,8 +71,6 @@ class ListConsentAgreements extends ListRecords
         /** @var User $user */
         $user = auth()->user();
 
-        // TODO: Feature/License Gate | if has AI License, may need to prevent mount as well
-
         return $user->can(['consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update']);
     }
 

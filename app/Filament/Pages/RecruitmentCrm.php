@@ -37,11 +37,14 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
 
 class RecruitmentCrm extends Page
 {
+    use HasChildNavigationItemsOnly;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
@@ -52,19 +55,8 @@ class RecruitmentCrm extends Page
 
     protected static ?string $breadcrumb = 'Recruitment CRM';
 
-    protected array $children = [
+    protected static array $children = [
         ProspectStatusResource::class,
         ProspectSourceResource::class,
     ];
-
-    public function mount()
-    {
-        foreach ($this->children as $child) {
-            if ($child::shouldRegisterNavigation()) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(404);
-    }
 }
