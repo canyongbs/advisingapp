@@ -40,6 +40,9 @@ use Twilio\Rest\Api\V2010;
 use Twilio\Rest\MessagingBase;
 use App\Settings\LicenseSettings;
 use AdvisingApp\Prospect\Models\Prospect;
+
+use function Pest\Laravel\assertDatabaseCount;
+
 use Twilio\Rest\Api\V2010\Account\MessageList;
 use Twilio\Rest\Api\V2010\Account\MessageInstance;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
@@ -138,12 +141,8 @@ it('An sms is prevented from being sent if there is no available quota', functio
         password: $settings->auth_token,
     ));
 
-    $notifiable->notify($notification);
+    expect(fn () => $notifiable->notify($notification))
+        ->toThrow(NotificationQuotaExceeded::class);
 
-    $outboundDeliverable = OutboundDeliverable::first();
-
-    expect($outboundDeliverable->quota_usage)
-        ->toBe(0)
-        ->and($outboundDeliverable->delivery_status)
-        ->toBe(NotificationDeliveryStatus::RateLimited);
-})->expectException(NotificationQuotaExceeded::class);
+    assertDatabaseCount(OutboundDeliverable::class, 0);
+});
