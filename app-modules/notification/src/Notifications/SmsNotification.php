@@ -39,6 +39,9 @@ namespace AdvisingApp\Notification\Notifications;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 
+/**
+ * @mixin BaseNotification
+ */
 interface SmsNotification
 {
     public function toSms(NotifiableInterface $notifiable): TwilioMessage;
