@@ -34,31 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+use Filament\Clusters\Cluster;
 
-class KnowledgeManagement extends Page
+class ServiceManagement extends Cluster
 {
-    use HasChildNavigationItemsOnly;
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationGroup = 'Premium Features';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 7;
-
-    protected static ?string $title = 'Knowledge Management';
-
-    protected static ?string $breadcrumb = 'Knowledge Management';
-
-    protected static array $children = [
-        KnowledgeBaseCategoryResource::class,
-        KnowledgeBaseQualityResource::class,
-        KnowledgeBaseStatusResource::class,
-    ];
+    protected static ?int $navigationSort = 30;
 }

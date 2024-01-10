@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Resources;
 
 use Filament\Resources\Resource;
+use App\Filament\Clusters\RecruitmentCrm;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
 
@@ -46,18 +47,15 @@ class ProspectSourceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-viewfinder-circle';
 
-    protected static ?string $navigationParentItem = 'Recruitment CRM';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
     protected static ?string $navigationLabel = 'Sources';
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $cluster = RecruitmentCrm::class;
+
     public static function getRelations(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public static function getPages(): array

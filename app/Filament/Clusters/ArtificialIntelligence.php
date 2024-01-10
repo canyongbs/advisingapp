@@ -34,33 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\IntegrationTwilio\Filament\Pages\ManageTwilioSettings;
-use AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages\ManageAmazonSesSettings;
-use AdvisingApp\IntegrationGoogleAnalytics\Filament\Pages\ManageGoogleAnalyticsSettings;
-use AdvisingApp\IntegrationGoogleRecaptcha\Filament\Pages\ManageGoogleRecaptchaSettings;
-use AdvisingApp\IntegrationMicrosoftClarity\Filament\Pages\ManageMicrosoftClaritySettings;
+use Filament\Clusters\Cluster;
 
-class ProductIntegrations extends Page
+class ArtificialIntelligence extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
-    protected static ?string $title = 'Product Integrations';
-
-    protected static array $children = [
-        ManageGoogleAnalyticsSettings::class,
-        ManageGoogleRecaptchaSettings::class,
-        ManageMicrosoftClaritySettings::class,
-        ManageTwilioSettings::class,
-        ManageAmazonSesSettings::class,
-    ];
+    protected static ?string $title = 'Artificial Intelligence';
 }

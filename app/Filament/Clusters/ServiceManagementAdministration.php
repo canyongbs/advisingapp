@@ -34,29 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use Filament\Clusters\Cluster;
 
-class RecruitmentCrm extends Page
+class ServiceManagementAdministration extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 6;
 
-    protected static ?string $title = 'Recruitment CRM';
-
-    protected static ?string $breadcrumb = 'Recruitment CRM';
-
-    protected static array $children = [
-        ProspectStatusResource::class,
-        ProspectSourceResource::class,
-    ];
+    protected static ?string $title = 'Service Management';
 }

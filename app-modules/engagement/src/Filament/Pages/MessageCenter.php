@@ -117,10 +117,14 @@ class MessageCenter extends Page
 
     public int $inboxPerPage = 10;
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
+
+        if (! $user->can('viewAny', Engagement::class)) {
+            return false;
+        }
 
         return $user->can('engagement.view_message_center');
     }
@@ -133,9 +137,6 @@ class MessageCenter extends Page
         $this->user = $user;
 
         $this->timelineRecords = collect();
-
-        $this->authorize('viewAny', Engagement::class);
-        $this->authorize('engagement.view_message_center');
     }
 
     public function updated($property): void

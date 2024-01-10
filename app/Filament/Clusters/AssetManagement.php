@@ -34,27 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
+use Filament\Clusters\Cluster;
 
-class OnlineAdmissions extends Page
+class AssetManagement extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 10;
-
-    protected static ?string $title = 'Online Admissions';
-
-    protected static ?string $breadcrumb = 'Online Admissions';
-
-    protected static array $children = [
-        ApplicationSubmissionStateResource::class,
-    ];
+    protected static ?int $navigationSort = 5;
 }

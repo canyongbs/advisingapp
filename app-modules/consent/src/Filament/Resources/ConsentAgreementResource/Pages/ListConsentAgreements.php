@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
 
-use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
@@ -47,32 +46,13 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
-use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource;
 
 class ListConsentAgreements extends ListRecords
 {
     protected static string $resource = ConsentAgreementResource::class;
 
-    protected static ?string $navigationLabel = 'User Agreement';
-
     protected static ?string $title = 'User Agreement';
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            AssistantConfiguration::getUrl() => 'Artificial Intelligence',
-            $this::getUrl() => 'User Agreement',
-        ];
-    }
-
-    public static function shouldRegisterNavigation(array $parameters = []): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can(['consent_agreement.view-any', 'consent_agreement.*.view', 'consent_agreement.*.update']);
-    }
 
     public function form(Form $form): Form
     {
@@ -127,11 +107,6 @@ class ListConsentAgreements extends ListRecords
                     ),
             ])
             ->bulkActions([]);
-    }
-
-    public function getSubNavigation(): array
-    {
-        return (new AssistantConfiguration())->getSubNavigation();
     }
 
     protected function getHeaderActions(): array

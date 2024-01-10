@@ -42,6 +42,8 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
@@ -66,7 +68,7 @@ test('The correct details are displayed on the ViewServiceRequestType page', fun
 // Permission Tests
 
 test('ViewServiceRequestType is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     $serviceRequestType = ServiceRequestType::factory()->create();
 
@@ -95,7 +97,7 @@ test('ViewServiceRequestType is gated with proper feature access control', funct
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     $user->givePermissionTo('service_request_type.view-any');
     $user->givePermissionTo('service_request_type.*.view');

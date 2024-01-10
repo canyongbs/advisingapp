@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -30,7 +32,32 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-<x-filament-panels::page>
+*/
 
-</x-filament-panels::page>
+namespace App\Filament\Clusters;
+
+use Filament\Clusters\Cluster;
+use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
+
+class InteractionManagement extends Cluster
+{
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 8;
+
+    protected array $children = [
+        InteractionCampaignResource::class,
+        InteractionDriverResource::class,
+        InteractionOutcomeResource::class,
+        InteractionRelationResource::class,
+        InteractionStatusResource::class,
+        InteractionTypeResource::class,
+    ];
+}

@@ -34,27 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use App\Filament\Resources\PronounsResource;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
+use Filament\Clusters\Cluster;
 
-class ProfileManagement extends Page
+class AnalyticsResources extends Cluster
 {
-    use HasChildNavigationItemsOnly;
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationGroup = 'Engagement Features';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 9;
-
-    protected static ?string $title = 'Profile Management';
-
-    protected static ?string $breadcrumb = 'Profile Management';
-
-    protected static array $children = [
-        PronounsResource::class,
-    ];
+    protected static ?int $navigationSort = 60;
 }

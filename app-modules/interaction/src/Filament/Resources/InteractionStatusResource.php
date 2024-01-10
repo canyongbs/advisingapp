@@ -40,6 +40,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Enums\InteractionStatusColorOptions;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource\Pages\EditInteractionStatus;
@@ -52,13 +53,11 @@ class InteractionStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationParentItem = 'Interaction Management';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
     protected static ?string $navigationLabel = 'Statuses';
 
     protected static ?int $navigationSort = 5;
+
+    protected static ?string $cluster = InteractionManagement::class;
 
     public static function form(Form $form): Form
     {

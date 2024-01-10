@@ -34,37 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
+use Filament\Clusters\Cluster;
 
-class InteractionManagement extends Page
+class KnowledgeManagement extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 8;
-
-    protected static ?string $title = 'Interaction Management';
-
-    protected static ?string $breadcrumb = 'Interaction Management';
-
-    protected static array $children = [
-        InteractionCampaignResource::class,
-        InteractionDriverResource::class,
-        InteractionOutcomeResource::class,
-        InteractionRelationResource::class,
-        InteractionStatusResource::class,
-        InteractionTypeResource::class,
-    ];
+    protected static ?int $navigationSort = 7;
 }
