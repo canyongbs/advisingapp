@@ -38,7 +38,6 @@ namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
 use App\Models\User;
 use Filament\Forms\Form;
-use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
@@ -120,13 +119,22 @@ class AssetResource extends Resource
                             return null;
                         }
 
+                        $date = Carbon::parse($state);
+
+                        if ($date->isFuture()) {
+                            return '0 Years 0 Months';
+                        }
+
                         /** @var User $user */
                         $user = auth()->user();
 
-                        return str(Carbon::parse($state)
+                        $diff = $date
+                            ->roundMonth()
                             ->setTimezone($user->timezone)
-                            ->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, parts: 2))
-                            ->headline();
+                            ->diff();
+
+                        return $diff->y . ' ' . ($diff->y == 1 ? 'Year' : 'Years') . ' ' .
+                            $diff->m . ' ' . ($diff->m == 1 ? 'Month' : 'Months');
                     }),
             ]);
     }

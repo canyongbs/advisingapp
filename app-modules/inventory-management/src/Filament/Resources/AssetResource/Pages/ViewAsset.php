@@ -37,7 +37,6 @@
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
 use App\Models\User;
-use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
@@ -71,13 +70,22 @@ class ViewAsset extends ViewRecord
                         TextEntry::make('purchase_date')
                             ->label('Device Age')
                             ->formatStateUsing(function (string $state) {
+                                $date = Carbon::parse($state);
+
+                                if ($date->isFuture()) {
+                                    return '0 Years 0 Months';
+                                }
+
                                 /** @var User $user */
                                 $user = auth()->user();
 
-                                return str(Carbon::parse($state)
+                                $diff = $date
+                                    ->roundMonth()
                                     ->setTimezone($user->timezone)
-                                    ->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, parts: 2))
-                                    ->headline();
+                                    ->diff();
+
+                                return $diff->y . ' ' . ($diff->y == 1 ? 'Year' : 'Years') . ' ' .
+                                    $diff->m . ' ' . ($diff->m == 1 ? 'Month' : 'Months');
                             })
                             ->helperText(fn (Asset $record) => $record->purchase_date->format('M j, Y')),
                     ]),
