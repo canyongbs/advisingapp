@@ -38,6 +38,7 @@ namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages
 
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
+use Filament\Resources\Components\Tab;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\DeleteAction;
@@ -45,11 +46,30 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use AdvisingApp\InventoryManagement\Models\Scopes\ClassifiedAs;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 class ListAssets extends ListRecords
 {
     protected static string $resource = AssetResource::class;
+
+    public function getDefaultActiveTab(): string | int | null
+    {
+        return 'all';
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            'all' => Tab::make('All'),
+            'available' => Tab::make('Available')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('status', fn (Builder $query) => $query->tap(new ClassifiedAs(SystemAssetStatusClassification::Available)))),
+            'checked_out' => Tab::make('Checked Out')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('status', fn (Builder $query) => $query->tap(new ClassifiedAs(SystemAssetStatusClassification::CheckedOut)))),
+        ];
+    }
 
     public function table(Table $table): Table
     {
@@ -90,7 +110,8 @@ class ListAssets extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->poll('60s');
     }
 
     protected function getHeaderActions(): array
