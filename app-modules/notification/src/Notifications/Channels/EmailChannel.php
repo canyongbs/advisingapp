@@ -46,6 +46,7 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
@@ -74,7 +75,7 @@ class EmailChannel extends MailChannel
 
                 // Do anything else we need to notify sending party that notification was not sent
 
-                return;
+                throw new NotificationQuotaExceeded();
             }
 
             $result = $this->handle($notifiable, $notification);
