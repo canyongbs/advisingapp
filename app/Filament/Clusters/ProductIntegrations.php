@@ -34,31 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetTypeResource;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetStatusResource;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource;
+use Filament\Clusters\Cluster;
 
-class AssetManagement extends Page
+class ProductIntegrations extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 5;
-
-    protected static ?string $title = 'Asset Management';
-
-    protected static ?string $breadcrumb = 'Asset Management';
-
-    protected static array $children = [
-        AssetLocationResource::class,
-        AssetStatusResource::class,
-        AssetTypeResource::class,
-    ];
+    protected static ?int $navigationSort = 2;
 }

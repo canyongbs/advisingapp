@@ -92,6 +92,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('/images/default-favicon.png'))
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->maxContentWidth('full')
+            ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -131,11 +132,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Users and Permissions'),
                 NavigationGroup::make()
                     ->label('Product Administration'),
-                NavigationGroup::make()
-                    ->label('Integrations'),
-                NavigationGroup::make()
-                    ->label('Product Settings')
-                    ->collapsed(),
             ])
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()
@@ -145,7 +141,11 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->url(fn () => EditProfile::getUrl()),
-            ]);
+            ])
+            ->renderHook(
+                'panels::scripts.before',
+                fn () => view('filament.scripts.scroll-sidebar-to-active-menu-item'),
+            );
     }
 
     public function boot(): void {}

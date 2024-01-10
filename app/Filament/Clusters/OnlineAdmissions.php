@@ -34,27 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use AdvisingApp\Audit\Filament\Resources\AuditResource;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
+use Filament\Clusters\Cluster;
 
-class UsageAuditing extends Page
+class OnlineAdmissions extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Reporting';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 30;
-
-    protected static ?string $title = 'Usage Auditing';
-
-    protected static array $children = [
-        AssistantChatMessageLogResource::class,
-        AuditResource::class,
-    ];
+    protected static ?int $navigationSort = 10;
 }

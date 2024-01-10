@@ -42,21 +42,12 @@ use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Pages\EmailConfiguration;
 use FilamentTiptapEditor\Enums\TiptapOutput;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplateResource;
 
 class EditSmsTemplate extends EditRecord
 {
     protected static string $resource = SmsTemplateResource::class;
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
 
     public function form(Form $form): Form
     {

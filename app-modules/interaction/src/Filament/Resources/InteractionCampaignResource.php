@@ -39,6 +39,7 @@ namespace AdvisingApp\Interaction\Filament\Resources;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\EditInteractionCampaign;
 use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource\Pages\ListInteractionCampaigns;
@@ -50,13 +51,11 @@ class InteractionCampaignResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
 
-    protected static ?string $navigationParentItem = 'Interaction Management';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
     protected static ?string $navigationLabel = 'Campaigns';
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $cluster = InteractionManagement::class;
 
     public static function form(Form $form): Form
     {

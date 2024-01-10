@@ -41,6 +41,7 @@ use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Audit\Settings\AuditSettings;
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 
@@ -50,29 +51,20 @@ class ManageAuditSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Auditing';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?string $navigationParentItem = 'Global Settings';
-
     protected static ?int $navigationSort = 20;
 
     protected static string $settings = AuditSettings::class;
 
     protected static ?string $title = 'Auditing';
 
-    public static function shouldRegisterNavigation(): bool
+    protected static ?string $cluster = GlobalSettings::class;
+
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
 
         return $user->can('audit.view_audit_settings');
-    }
-
-    public function mount(): void
-    {
-        $this->authorize('audit.view_audit_settings');
-
-        parent::mount();
     }
 
     public function form(Form $form): Form

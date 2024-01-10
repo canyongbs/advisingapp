@@ -36,31 +36,35 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\Feature;
 use Filament\Pages\Page;
-use AdvisingApp\Audit\Filament\Pages\ManageAuditSettings;
-use AdvisingApp\Portal\Filament\Pages\ManagePortalSettings;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
-use AdvisingApp\Theme\Filament\Pages\ManageBrandConfigurationSettings;
+use App\Models\Authenticatable;
+use Illuminate\Support\Facades\Gate;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Clusters\ServiceManagement;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-class GlobalSettings extends Page
+class SLAs extends Page
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?int $navigationSort = 40;
 
-    protected static ?int $navigationSort = 1;
+    protected static string $view = 'filament.pages.coming-soon';
 
-    protected static ?string $title = 'Global Settings';
+    protected static ?string $title = 'SLAs';
 
-    protected static array $children = [
-        ManageLicenseSettings::class,
-        ManageAuditSettings::class,
-        ManageBrandConfigurationSettings::class,
-        InboundWebhookResource::class,
-        EmailConfiguration::class,
-        ManagePortalSettings::class,
-    ];
+    protected static ?string $cluster = ServiceManagement::class;
+
+    public static function canAccess(): bool
+    {
+        if (! Gate::check(Feature::ServiceManagement->getGateName())) {
+            return false;
+        }
+
+        /** @var Authenticatable $user */
+        $user = auth()->user();
+
+        return $user->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()]);
+    }
 }

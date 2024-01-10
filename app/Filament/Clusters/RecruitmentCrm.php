@@ -34,25 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
+use Filament\Clusters\Cluster;
 
-class ArtificialIntelligence extends Page
+class RecruitmentCrm extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $title = 'Artificial Intelligence';
-
-    protected static array $children = [
-        AssistantConfiguration::class,
-    ];
+    protected static ?int $navigationSort = 4;
 }

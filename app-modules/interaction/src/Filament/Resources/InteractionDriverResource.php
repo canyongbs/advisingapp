@@ -39,6 +39,7 @@ namespace AdvisingApp\Interaction\Filament\Resources;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\InteractionManagement;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\EditInteractionDriver;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource\Pages\ListInteractionDrivers;
@@ -50,13 +51,11 @@ class InteractionDriverResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cursor-arrow-ripple';
 
-    protected static ?string $navigationParentItem = 'Interaction Management';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
     protected static ?string $navigationLabel = 'Drivers';
 
     protected static ?int $navigationSort = 2;
+
+    protected static ?string $cluster = InteractionManagement::class;
 
     public static function form(Form $form): Form
     {

@@ -34,49 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages\Concerns;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use Filament\Resources\Resource;
-use Illuminate\Routing\Redirector;
+use Filament\Clusters\Cluster;
 
-trait HasChildNavigationItemsOnly
+class ProfileManagement extends Cluster
 {
-    public static function shouldRegisterNavigation(): bool
-    {
-        foreach (static::$children as $child) {
-            if (static::canAccessChildPage($child)) {
-                return true;
-            }
-        }
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-        return false;
-    }
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public function mount(): Redirector
-    {
-        foreach (static::$children as $child) {
-            if (static::canAccessChildPage($child)) {
-                return redirect($child::getUrl());
-            }
-        }
-
-        abort(403);
-    }
-
-    /**
-     * @param class-string<Page | Resource> $child
-     */
-    protected static function canAccessChildPage(string $child): bool
-    {
-        if (! $child::shouldRegisterNavigation()) {
-            return false;
-        }
-
-        if (! is_subclass_of($child, Resource::class)) {
-            return true;
-        }
-
-        return $child::canViewAny();
-    }
+    protected static ?int $navigationSort = 9;
 }

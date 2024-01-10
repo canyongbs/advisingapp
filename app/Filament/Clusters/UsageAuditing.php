@@ -34,45 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources;
+namespace App\Filament\Clusters;
 
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\AssetManagement;
-use AdvisingApp\InventoryManagement\Models\AssetLocation;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource\Pages\ViewAssetLocation;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource\Pages\ListAssetLocations;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetLocationResource\Pages\CreateAssetLocation;
+use Filament\Clusters\Cluster;
 
-class AssetLocationResource extends Resource
+class UsageAuditing extends Cluster
 {
-    protected static ?string $model = AssetLocation::class;
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
+    protected static ?string $navigationGroup = 'Reporting';
 
-    protected static ?string $navigationLabel = 'Locations';
-
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $cluster = AssetManagement::class;
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->autofocus()
-                    ->required(),
-            ]);
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListAssetLocations::route('/'),
-            'create' => CreateAssetLocation::route('/create'),
-            'view' => ViewAssetLocation::route('/{record}'),
-        ];
-    }
+    protected static ?int $navigationSort = 30;
 }

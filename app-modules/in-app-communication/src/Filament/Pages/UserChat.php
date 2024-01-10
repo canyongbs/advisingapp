@@ -82,7 +82,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     protected static ?string $title = 'Realtime Chat';
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
@@ -92,9 +92,6 @@ class UserChat extends Page implements HasForms, HasActions
 
     public function mount()
     {
-        $this->authorize(Feature::RealtimeChat->getGateName());
-        $this->authorize('in-app-communication.realtime-chat.access');
-
         /** @var User $user */
         $user = auth()->user();
 

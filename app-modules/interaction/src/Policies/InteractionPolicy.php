@@ -38,11 +38,21 @@ namespace AdvisingApp\Interaction\Policies;
 
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 
 class InteractionPolicy
 {
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
+            return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -53,10 +63,7 @@ class InteractionPolicy
 
     public function view(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if (
-            ($interaction->interactable instanceof Educatable) &&
-            (! $authenticatable->hasLicense($interaction->interactable->getLicenseType()))
-        ) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to view this interaction.');
         }
 
@@ -76,10 +83,7 @@ class InteractionPolicy
 
     public function update(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if (
-            ($interaction->interactable instanceof Educatable) &&
-            (! $authenticatable->hasLicense($interaction->interactable->getLicenseType()))
-        ) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to update this interaction.');
         }
 
@@ -91,10 +95,7 @@ class InteractionPolicy
 
     public function delete(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if (
-            ($interaction->interactable instanceof Educatable) &&
-            (! $authenticatable->hasLicense($interaction->interactable->getLicenseType()))
-        ) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to delete this interaction.');
         }
 
@@ -106,10 +107,7 @@ class InteractionPolicy
 
     public function restore(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if (
-            ($interaction->interactable instanceof Educatable) &&
-            (! $authenticatable->hasLicense($interaction->interactable->getLicenseType()))
-        ) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to restore this interaction.');
         }
 
@@ -121,10 +119,7 @@ class InteractionPolicy
 
     public function forceDelete(Authenticatable $authenticatable, Interaction $interaction): Response
     {
-        if (
-            ($interaction->interactable instanceof Educatable) &&
-            (! $authenticatable->hasLicense($interaction->interactable->getLicenseType()))
-        ) {
+        if (! $authenticatable->can('view', $interaction->interactable)) {
             return Response::deny('You do not have permission to permanently delete this interaction.');
         }
 

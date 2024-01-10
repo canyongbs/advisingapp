@@ -50,7 +50,7 @@ class PromptLibrary extends Page
 
     protected static ?int $navigationSort = 10;
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
@@ -60,10 +60,5 @@ class PromptLibrary extends Page
         }
 
         return $user->can('assistant.access');
-    }
-
-    public function mount(): void
-    {
-        abort_unless(auth()->user()->hasLicense(LicenseType::ConversationalAi), 403);
     }
 }

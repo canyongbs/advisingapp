@@ -43,6 +43,8 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
@@ -106,7 +108,7 @@ test('The correct details are displayed on the ListServiceRequests page', functi
 // Permission Tests
 
 test('ListServiceRequests is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     actingAs($user)
         ->get(
@@ -128,7 +130,7 @@ test('ListServiceRequests is gated with proper feature access control', function
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
 
     $user->givePermissionTo('service_request.view-any');
 

@@ -38,6 +38,7 @@ namespace AdvisingApp\Audit\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Audit\Models\Audit;
+use App\Filament\Clusters\UsageAuditing;
 use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
 
 class AuditResource extends Resource
@@ -48,11 +49,9 @@ class AuditResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationParentItem = 'Usage Auditing';
-
-    protected static ?string $navigationGroup = 'Reporting';
-
     protected static ?int $navigationSort = 40;
+
+    protected static ?string $cluster = UsageAuditing::class;
 
     public static function getPages(): array
     {

@@ -94,6 +94,7 @@ class CreateServiceRequest extends CreateRecord
                     ->string(),
                 EducatableSelect::make('respondent')
                     ->label('Related To')
+                    ->required()
                     ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
             ]);
     }

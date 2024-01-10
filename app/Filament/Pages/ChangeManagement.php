@@ -36,29 +36,33 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\Feature;
 use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use App\Models\Authenticatable;
+use Illuminate\Support\Facades\Gate;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Clusters\ServiceManagement;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-class ServiceManagement extends Page
+class ChangeManagement extends Page
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?int $navigationSort = 30;
 
-    protected static ?int $navigationSort = 6;
+    protected static string $view = 'filament.pages.coming-soon';
 
-    protected static ?string $title = 'Service Management';
+    protected static ?string $cluster = ServiceManagement::class;
 
-    protected static ?string $breadcrumb = 'Service Management';
+    public static function canAccess(): bool
+    {
+        if (! Gate::check(Feature::ServiceManagement->getGateName())) {
+            return false;
+        }
 
-    protected static array $children = [
-        ServiceRequestPriorityResource::class,
-        ServiceRequestStatusResource::class,
-        ServiceRequestTypeResource::class,
-    ];
+        /** @var Authenticatable $user */
+        $user = auth()->user();
+
+        return $user->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()]);
+    }
 }
