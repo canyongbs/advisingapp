@@ -34,57 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+namespace AdvisingApp\Application\Models\Scopes;
 
-use AdvisingApp\Form\Models\Submission;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
-use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 
-/**
- * @mixin IdeHelperApplicationSubmission
- */
-class ApplicationSubmission extends Submission
+class ClassifiedAs
 {
-    use HasRelationBasedStateMachine;
+    public function __construct(
+        protected ApplicationSubmissionStateClassification $classification,
+    ) {}
 
-    public function submissible(): BelongsTo
+    public function __invoke(Builder $query): void
     {
-        return $this
-            ->belongsTo(Application::class, 'application_id');
-    }
-
-    public function fields(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(
-                ApplicationField::class,
-                'application_field_submission',
-                'submission_id',
-                'field_id'
-            )
-            ->withPivot(['id', 'response']);
-    }
-
-    public function state(): BelongsTo
-    {
-        return $this
-            ->belongsTo(ApplicationSubmissionState::class, 'state_id');
-    }
-
-    public function getStateMachineFields(): array
-    {
-        return [
-            'state.classification',
-        ];
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->tap(new LicensedToEducatable('author'));
-        });
+        $query->where('classification', $this->classification);
     }
 }

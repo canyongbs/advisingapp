@@ -37,16 +37,26 @@
 namespace AdvisingApp\Application\Enums;
 
 use Filament\Support\Contracts\HasLabel;
+use Bvtterfly\ModelStateMachine\Attributes\InitialState;
+use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
 
 enum ApplicationSubmissionStateClassification: string implements HasLabel
 {
+    #[InitialState]
+    #[AllowTransitionTo(self::Review)]
     case Received = 'received';
 
+    #[AllowTransitionTo(self::Complete)]
+    #[AllowTransitionTo(self::DocumentsRequired)]
     case Review = 'review';
 
-    case Complete = 'complete';
-
+    #[AllowTransitionTo(self::Admit)]
+    #[AllowTransitionTo(self::Deny)]
     case DocumentsRequired = 'documents_required';
+
+    #[AllowTransitionTo(self::Admit)]
+    #[AllowTransitionTo(self::Deny)]
+    case Complete = 'complete';
 
     case Admit = 'admit';
 

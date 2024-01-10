@@ -34,57 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+namespace AdvisingApp\Application\Models\Concerns;
 
-use AdvisingApp\Form\Models\Submission;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
-use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
+use Exception;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 
-/**
- * @mixin IdeHelperApplicationSubmission
- */
-class ApplicationSubmission extends Submission
+trait TargetsRelationships
 {
-    use HasRelationBasedStateMachine;
-
-    public function submissible(): BelongsTo
+    public function targetingRelationship(string $state): bool
     {
-        return $this
-            ->belongsTo(Application::class, 'application_id');
+        return Str::contains($state, '.');
     }
 
-    public function fields(): BelongsToMany
+    public function accessNestedRelations(Model $model, array $relations)
     {
-        return $this
-            ->belongsToMany(
-                ApplicationField::class,
-                'application_field_submission',
-                'submission_id',
-                'field_id'
-            )
-            ->withPivot(['id', 'response']);
+        $current = $model;
+
+        foreach ($relations as $relation) {
+            if (! method_exists($current, $relation)) {
+                throw new Exception("Relation '{$relation}' does not exist on " . get_class($current));
+            }
+
+            $current = $current->{$relation};
+
+            if ($current === null) {
+                return null;
+            }
+        }
+
+        return $current;
     }
 
-    public function state(): BelongsTo
+    public function dynamicMethodChain(Model $model, array $methods)
     {
-        return $this
-            ->belongsTo(ApplicationSubmissionState::class, 'state_id');
-    }
+        $current = $model;
 
-    public function getStateMachineFields(): array
-    {
-        return [
-            'state.classification',
-        ];
-    }
+        foreach ($methods as $method) {
+            if (! method_exists($current, $method)) {
+                throw new Exception("Method '{$method}' does not exist on " . get_class($current));
+            }
 
-    protected static function booted(): void
-    {
-        static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->tap(new LicensedToEducatable('author'));
-        });
+            $current = $current->$method();
+        }
+
+        return $current;
     }
 }
