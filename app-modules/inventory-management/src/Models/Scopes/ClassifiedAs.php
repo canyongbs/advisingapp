@@ -34,34 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Models;
+namespace AdvisingApp\InventoryManagement\Models\Scopes;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
-/**
- * @mixin IdeHelperAssetStatus
- */
-class AssetStatus extends BaseModel implements Auditable
+class ClassifiedAs
 {
-    use AuditableTrait;
-    use SoftDeletes;
+    public function __construct(
+        protected SystemAssetStatusClassification $classification
+    ) {}
 
-    protected $fillable = [
-        'classification',
-        'name',
-    ];
-
-    protected $casts = [
-        'classification' => SystemAssetStatusClassification::class,
-    ];
-
-    public function assets(): HasMany
+    public function __invoke(Builder $query): void
     {
-        return $this->hasMany(Asset::class, 'status_id');
+        $query->where('classification', $this->classification);
     }
 }

@@ -75,11 +75,11 @@ class ViewAsset extends ViewRecord
         return [
             EditAction::make(),
             CheckOutAssetHeaderAction::make('check-out')
-                ->visible(function () {
+                ->disabled(function () {
                     /** @var Asset $asset */
                     $asset = $this->getRecord();
 
-                    return $asset->isAvailable();
+                    return ! $asset->isAvailable();
                 }),
             CheckInAssetHeaderAction::make('check-in')
                 ->visible(function () {

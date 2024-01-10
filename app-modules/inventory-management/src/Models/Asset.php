@@ -96,7 +96,7 @@ class Asset extends BaseModel implements Auditable
     public function latestCheckOut(): HasOne
     {
         return $this->hasOne(AssetCheckOut::class, 'asset_id')
-            ->oldest('checked_out_at');
+            ->latest('checked_out_at');
     }
 
     public function latestCheckIn(): HasOne
@@ -108,7 +108,7 @@ class Asset extends BaseModel implements Auditable
     public function isAvailable(): bool
     {
         return $this->status->classification === SystemAssetStatusClassification::Available
-            && ! is_null($this->latestCheckOut?->asset_check_in_id);
+            && (is_null($this->latestCheckOut) || ! is_null($this->latestCheckOut?->asset_check_in_id));
     }
 
     public function isNotAvailable(): bool
