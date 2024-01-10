@@ -55,7 +55,7 @@ it('An sms is allowed to be sent if there is available quota and it\'s quota usa
 
     $notification = new Tests\Unit\TestSmsNotification();
 
-    $settings = $this->app->make(TwilioSettings::class);
+    $settings = app()->make(TwilioSettings::class);
 
     $settings->account_sid = 'abc123';
     $settings->auth_token = 'abc123';
@@ -82,7 +82,7 @@ it('An sms is allowed to be sent if there is available quota and it\'s quota usa
         )
     );
 
-    $this->app->bind(Client::class, fn () => new ClientMock(
+    app()->bind(Client::class, fn () => new ClientMock(
         messageList: $mockMessageList,
         username: $settings->account_sid,
         password: $settings->auth_token,
@@ -103,7 +103,7 @@ it('An sms is prevented from being sent if there is no available quota', functio
 
     $notification = new Tests\Unit\TestSmsNotification();
 
-    $settings = $this->app->make(TwilioSettings::class);
+    $settings = app()->make(TwilioSettings::class);
 
     $settings->account_sid = 'abc123';
     $settings->auth_token = 'abc123';
@@ -135,7 +135,7 @@ it('An sms is prevented from being sent if there is no available quota', functio
         )
     );
 
-    $this->app->bind(Client::class, fn () => new ClientMock(
+    app()->bind(Client::class, fn () => new ClientMock(
         messageList: $mockMessageList,
         username: $settings->account_sid,
         password: $settings->auth_token,
