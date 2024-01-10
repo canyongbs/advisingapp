@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
+use App\Models\User;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -65,7 +68,18 @@ class ViewAsset extends ViewRecord
                             ->label('Location'),
                         TextEntry::make('status.name')
                             ->label('Status'),
-                        TextEntry::make('purchase_date'),
+                        TextEntry::make('purchase_date')
+                            ->label('Device Age')
+                            ->formatStateUsing(function (string $state) {
+                                /** @var User $user */
+                                $user = auth()->user();
+
+                                return str(Carbon::parse($state)
+                                    ->setTimezone($user->timezone)
+                                    ->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, parts: 2))
+                                    ->headline();
+                            })
+                            ->helperText(fn (Asset $record) => $record->purchase_date->format('M j, Y')),
                     ]),
             ]);
     }

@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
+use App\Models\User;
 use Filament\Forms\Form;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Select;
@@ -67,8 +70,6 @@ class AssetResource extends Resource
     protected static ?int $navigationSort = 30;
 
     protected static ?string $breadcrumb = 'Asset Management';
-
-    protected static bool $shouldRegisterNavigation = false;
 
     public function getTitle(): string | Htmlable
     {
@@ -112,7 +113,21 @@ class AssetResource extends Resource
                     ->required()
                     ->exists((new AssetLocation())->getTable(), 'id'),
                 DatePicker::make('purchase_date')
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->helperText(function (?string $state) {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        return str(Carbon::parse($state)
+                            ->setTimezone($user->timezone)
+                            ->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, parts: 2))
+                            ->headline();
+                    }),
             ]);
     }
 

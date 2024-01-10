@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
@@ -45,6 +48,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
+use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
 
 class ListAssets extends ListRecords
@@ -65,8 +69,18 @@ class ListAssets extends ListRecords
                 TextColumn::make('status.name'),
                 TextColumn::make('location.name'),
                 TextColumn::make('purchase_date')
-                    ->searchable()
-                    ->sortable(),
+                    ->label('Device Age')
+                    ->sortable()
+                    ->formatStateUsing(function (string $state) {
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        return str(Carbon::parse($state)
+                            ->setTimezone($user->timezone)
+                            ->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, parts: 2))
+                            ->headline();
+                    })
+                    ->tooltip(fn (Asset $record) => $record->purchase_date->format('M j, Y')),
             ])
             ->filters([
                 SelectFilter::make('type')

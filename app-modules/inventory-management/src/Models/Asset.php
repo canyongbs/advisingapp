@@ -63,6 +63,10 @@ class Asset extends BaseModel implements Auditable
         'type_id',
     ];
 
+    protected $casts = [
+        'purchase_date' => 'datetime',
+    ];
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(AssetType::class, 'type_id');

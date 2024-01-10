@@ -36,7 +36,10 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
+use App\Models\User;
 use Filament\Forms\Form;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -80,7 +83,21 @@ class CreateAsset extends CreateRecord
                     ->required()
                     ->exists((new AssetLocation())->getTable(), 'id'),
                 DatePicker::make('purchase_date')
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->helperText(function (?string $state) {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        return str(Carbon::parse($state)
+                            ->setTimezone($user->timezone)
+                            ->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, parts: 2))
+                            ->headline();
+                    }),
             ]);
     }
 }
