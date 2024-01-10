@@ -43,6 +43,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperAnalyticsResource
+ */
 class AnalyticsResource extends BaseModel implements Auditable, HasMedia
 {
     use AuditableTrait;

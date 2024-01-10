@@ -134,7 +134,7 @@ class GenerateFormKitSchema
         return $component['text'];
     }
 
-    public function wizardContent(Submissible $submissible): array
+    public function wizardContent(array $blocks, Submissible $submissible): array
     {
         return [
             [
@@ -192,7 +192,7 @@ class GenerateFormKitSchema
                                 '$formkit' => 'group',
                                 'id' => $step->label,
                                 'name' => $step->label,
-                                'children' => $this->content($step->content['content'] ?? [], $step->fields->keyBy('id')),
+                                'children' => $this->content($blocks, $step->content['content'] ?? [], $step->fields->keyBy('id')),
                             ],
                         ],
                     ]),
@@ -248,6 +248,8 @@ class GenerateFormKitSchema
 
     protected function generateContent(Submissible $submissible): array
     {
+        $blocks = app(ResolveBlockRegistry::class)($submissible);
+
         if ($submissible->is_wizard) {
             $submissible->loadMissing([
                 'steps' => [
@@ -255,13 +257,11 @@ class GenerateFormKitSchema
                 ],
             ]);
 
-            $content = $this->wizardContent($submissible);
+            $content = $this->wizardContent($blocks, $submissible);
         } else {
             $submissible->loadMissing([
                 'fields',
             ]);
-
-            $blocks = app(ResolveBlockRegistry::class)($submissible);
 
             $content = [
                 ...$this->content($blocks, $submissible->content['content'] ?? [], $submissible->fields->keyBy('id')),

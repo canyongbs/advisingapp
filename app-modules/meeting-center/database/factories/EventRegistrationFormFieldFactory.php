@@ -34,22 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class EventSeeder extends Seeder
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\MeetingCenter\Models\Model>
+ */
+class EventRegistrationFormFieldFactory extends Factory
 {
-    public function run(): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Event::factory()
-            ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+        return [
+            'label' => str(fake()->word())->ucfirst(),
+            'type' => fake()->randomElement(['text_input', 'text_area']),
+            'is_required' => fake()->boolean(),
+            'config' => [],
+        ];
     }
 }

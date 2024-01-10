@@ -47,6 +47,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\CreateProspec
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFiles;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectAlerts;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
@@ -84,6 +85,7 @@ class ProspectResource extends Resource
             ManageProspectFormSubmissions::class,
             ManageProspectApplicationSubmissions::class,
             ManageProspectServiceRequests::class,
+            ManageProspectEvents::class,
         ]);
     }
 
@@ -120,6 +122,7 @@ class ProspectResource extends Resource
             'timeline' => ProspectEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
             'manage-service-requests' => ManageProspectServiceRequests::route('/{record}/service-requests'),
+            'events' => ManageProspectEvents::route('/{record}/events'),
         ];
     }
 }

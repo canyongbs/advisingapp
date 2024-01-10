@@ -366,8 +366,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User admins()
  * @method static \Illuminate\Database\Eloquent\Builder|User advancedFilter($data)
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|User hasAnyLicense(\AdvisingApp\Authorization\Enums\LicenseType|array|string|null $type)
- * @method static \Illuminate\Database\Eloquent\Builder|User hasLicense(\AdvisingApp\Authorization\Enums\LicenseType|array|string|null $type)
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User onlyTrashed()
@@ -458,6 +456,112 @@ namespace AdvisingApp\Alert\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperAlert {}
+}
+
+namespace AdvisingApp\Analytics\Models{
+/**
+ * AdvisingApp\Analytics\Models\AnalyticsResource
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property string|null $url
+ * @property bool $is_active
+ * @property bool $is_included_in_data_portal
+ * @property string|null $source_id
+ * @property string $category_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\Analytics\Models\AnalyticsResourceCategory $category
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \AdvisingApp\Analytics\Models\AnalyticsResourceSource|null $source
+ * @method static \AdvisingApp\Analytics\Database\Factories\AnalyticsResourceFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereCategoryId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereIsIncludedInDataPortal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereSourceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResource whereUrl($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAnalyticsResource {}
+}
+
+namespace AdvisingApp\Analytics\Models{
+/**
+ * AdvisingApp\Analytics\Models\AnalyticsResourceCategory
+ *
+ * @property string $id
+ * @property string $name
+ * @property string|null $description
+ * @property \AdvisingApp\Analytics\Enums\AnalyticsResourceCategoryClassification $classification
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Analytics\Models\AnalyticsResource> $resources
+ * @property-read int|null $resources_count
+ * @method static \AdvisingApp\Analytics\Database\Factories\AnalyticsResourceCategoryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceCategory withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAnalyticsResourceCategory {}
+}
+
+namespace AdvisingApp\Analytics\Models{
+/**
+ * AdvisingApp\Analytics\Models\AnalyticsResourceSource
+ *
+ * @property string $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Analytics\Models\AnalyticsResource> $resources
+ * @property-read int|null $resources_count
+ * @method static \AdvisingApp\Analytics\Database\Factories\AnalyticsResourceSourceFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource query()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AnalyticsResourceSource withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperAnalyticsResourceSource {}
 }
 
 namespace AdvisingApp\Application\Models{
@@ -2591,8 +2695,13 @@ namespace AdvisingApp\MeetingCenter\Models{
 /**
  * AdvisingApp\MeetingCenter\Models\EventAttendee
  *
+ * @property string $id
  * @property \AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus $status
- * @property-read \AdvisingApp\MeetingCenter\Models\Event|null $event
+ * @property string $email
+ * @property string $event_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\MeetingCenter\Models\Event $event
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Prospect\Models\Prospect> $prospects
@@ -2604,6 +2713,12 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee whereEventId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -2614,8 +2729,19 @@ namespace AdvisingApp\MeetingCenter\Models{
 /**
  * AdvisingApp\MeetingCenter\Models\EventRegistrationForm
  *
- * @property \AdvisingApp\Form\Enums\Rounding $rounding
- * @property-read \AdvisingApp\MeetingCenter\Models\Event|null $event
+ * @property string $id
+ * @property string $event_id
+ * @property bool $embed_enabled
+ * @property array|null $allowed_domains
+ * @property string|null $primary_color
+ * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
+ * @property bool $is_wizard
+ * @property bool $recaptcha_enabled
+ * @property array|null $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \AdvisingApp\MeetingCenter\Models\Event $event
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormField> $fields
  * @property-read int|null $fields_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep> $steps
@@ -2626,6 +2752,18 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereAllowedDomains($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereEmbedEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereEventId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereIsWizard($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereRecaptchaEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereRounding($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm withoutTrashed()
  * @mixin \Eloquent
@@ -2639,10 +2777,22 @@ namespace AdvisingApp\MeetingCenter\Models{
  * AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication
  *
  * @property-read EventRegistrationForm $submissible
- * @property-read \AdvisingApp\MeetingCenter\Models\EventAttendee|null $author
+ * @property string $id
+ * @property string $event_attendee_id
+ * @property string|null $code
+ * @property string $form_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventAttendee $author
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication whereEventAttendeeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormAuthentication whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -2653,11 +2803,29 @@ namespace AdvisingApp\MeetingCenter\Models{
 /**
  * AdvisingApp\MeetingCenter\Models\EventRegistrationFormField
  *
- * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep $step
+ * @property string $id
+ * @property string $label
+ * @property string $type
+ * @property bool $is_required
+ * @property array $config
+ * @property string $form_id
+ * @property string|null $step_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep|null $step
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereConfig($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereIsRequired($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereStepId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -2668,12 +2836,26 @@ namespace AdvisingApp\MeetingCenter\Models{
 /**
  * AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep
  *
+ * @property string $id
+ * @property string $label
+ * @property array|null $content
+ * @property string $form_id
+ * @property int $sort
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormField> $fields
  * @property-read int|null $fields_count
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep whereSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -2684,16 +2866,32 @@ namespace AdvisingApp\MeetingCenter\Models{
 /**
  * AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission
  *
- * @property \AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod $request_method
+ * @property string $id
+ * @property string $form_id
+ * @property string $event_attendee_id
  * @property \AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus $attendee_status
- * @property-read \AdvisingApp\MeetingCenter\Models\EventAttendee|null $author
+ * @property \Carbon\CarbonImmutable|null $submitted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property \AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod $request_method
+ * @property-read \AdvisingApp\MeetingCenter\Models\EventAttendee $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormField> $fields
  * @property-read int|null $fields_count
  * @property-read \App\Models\User $requester
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereAttendeeStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereEventAttendeeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereSubmittedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -2820,6 +3018,8 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $engagement_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Engagement\Models\Engagement> $engagements
  * @property-read int|null $engagements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventAttendee> $eventAttendeeRecords
+ * @property-read int|null $event_attendee_records_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions
@@ -3269,6 +3469,8 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $engagements_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\StudentDataModel\Models\Enrollment> $enrollments
  * @property-read int|null $enrollments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventAttendee> $eventAttendeeRecords
+ * @property-read int|null $event_attendee_records_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormSubmission> $formSubmissions
  * @property-read int|null $form_submissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Interaction\Models\Interaction> $interactions

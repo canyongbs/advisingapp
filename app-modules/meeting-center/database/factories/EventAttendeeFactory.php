@@ -34,22 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Illuminate\Database\Seeder;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 
-class EventSeeder extends Seeder
+/**
+ * @extends Factory<EventAttendee>
+ */
+class EventAttendeeFactory extends Factory
 {
-    public function run(): void
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        Event::factory()
-            ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+        return [
+            'status' => fake()->randomElement(EventAttendeeStatus::class),
+            'email' => fake()->unique()->randomElement([
+                fake()->email(),
+                Student::inRandomOrder()->value('email'),
+                Prospect::inRandomOrder()->value('email'),
+            ]),
+            'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
+        ];
     }
 }
