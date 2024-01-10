@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
@@ -172,7 +173,15 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     protected static function booted(): void
     {
         static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->tap(new LicensedToEducatable('interactable'));
+            $builder
+                ->tap(new LicensedToEducatable('interactable'))
+                ->where(fn (Builder $builder) => $builder
+                    ->where('interactable_type', '!=', app(ServiceRequest::class)->getMorphClass())
+                    ->orWhereDoesntHaveMorph(
+                        'interactable',
+                        ServiceRequest::class,
+                        fn (Builder $builder) => $builder->tap(new LicensedToEducatable('respondent')),
+                    ));
         });
     }
 }

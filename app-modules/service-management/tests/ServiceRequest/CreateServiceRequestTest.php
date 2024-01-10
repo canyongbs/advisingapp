@@ -42,6 +42,9 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use AdvisingApp\Prospect\Models\Prospect;
+
 use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 
@@ -65,6 +68,9 @@ test('A successful action on the CreateServiceRequest page', function () {
 
     livewire(ServiceRequestResource\Pages\CreateServiceRequest::class)
         ->fillForm($request->toArray())
+        ->fillForm([
+            'respondent_id' => Prospect::factory()->create()->getKey(),
+        ])
         ->call('create')
         ->assertHasNoFormErrors();
 
@@ -78,6 +84,7 @@ test('A successful action on the CreateServiceRequest page', function () {
                 'status_id',
                 'priority_id',
                 'type_id',
+                'respondent_id',
             ]
         )->toArray()
     );
@@ -161,6 +168,9 @@ test('CreateServiceRequest is gated with proper access control', function () {
 
     livewire(ServiceRequestResource\Pages\CreateServiceRequest::class)
         ->fillForm($request->toArray())
+        ->fillForm([
+            'respondent_id' => Prospect::factory()->create()->getKey(),
+        ])
         ->call('create')
         ->assertHasNoFormErrors();
 
@@ -174,6 +184,7 @@ test('CreateServiceRequest is gated with proper access control', function () {
                 'status_id',
                 'priority_id',
                 'type_id',
+                'respondent_id',
             ]
         )->toArray()
     );
@@ -223,12 +234,15 @@ test('CreateServiceRequest is gated with proper feature access control', functio
 
     livewire(CreateServiceRequest::class)
         ->fillForm($request->toArray())
+        ->fillForm([
+            'respondent_id' => Prospect::factory()->create()->getKey(),
+        ])
         ->call('create')
         ->assertHasNoFormErrors();
 
     assertCount(1, ServiceRequest::all());
 
-    assertDatabaseHas(ServiceRequest::class, $request->except('division_id')->toArray());
+    assertDatabaseHas(ServiceRequest::class, $request->except(['division_id', 'respondent_id'])->toArray());
 
     $serviceRequest = ServiceRequest::first();
 

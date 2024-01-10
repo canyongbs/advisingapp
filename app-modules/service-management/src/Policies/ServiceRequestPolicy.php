@@ -72,7 +72,7 @@ class ServiceRequestPolicy
 
     public function view(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to view this service request.');
         }
 
@@ -92,7 +92,7 @@ class ServiceRequestPolicy
 
     public function update(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to update this service request.');
         }
 
@@ -104,7 +104,7 @@ class ServiceRequestPolicy
 
     public function delete(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to delete this service request.');
         }
 
@@ -116,7 +116,7 @@ class ServiceRequestPolicy
 
     public function restore(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to restore this service request.');
         }
 
@@ -128,7 +128,7 @@ class ServiceRequestPolicy
 
     public function forceDelete(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to permanently delete this service request.');
         }
 
