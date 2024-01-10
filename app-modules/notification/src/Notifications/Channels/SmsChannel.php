@@ -42,6 +42,7 @@ use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Twilio\Exceptions\TwilioException;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
 use AdvisingApp\Notification\Notifications\SmsNotification;
@@ -60,15 +61,16 @@ class SmsChannel
 
             $deliverable = $notification->beforeSend($notifiable, SmsChannel::class);
 
-            if ($deliverable === false) {
-                // Do anything else we need to notify sending party that notification was not sent
-                return;
-            }
-
             if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
                 $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
 
                 // Do anything else we need to notify sending party that notification was not sent
+
+                if ($deliverable->related instanceof EngagementDeliverable) {
+                    $deliverable->related->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+                }
+
+                DB::commit();
 
                 throw new NotificationQuotaExceeded();
             }
@@ -147,10 +149,10 @@ class SmsChannel
 
         $resetWindow = $licenseSettings->data->limits->getResetWindow();
 
-        $currentQuoteUsage = OutboundDeliverable::where('channel', NotificationChannel::Sms)
+        $currentQuotaUsage = OutboundDeliverable::where('channel', NotificationChannel::Sms)
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 
-        return $currentQuoteUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->sms;
+        return $currentQuotaUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->sms;
     }
 }

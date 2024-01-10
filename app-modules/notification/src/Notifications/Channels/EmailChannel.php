@@ -41,6 +41,7 @@ use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Channels\MailChannel;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
@@ -65,15 +66,16 @@ class EmailChannel extends MailChannel
             /** @var BaseNotification $notification */
             $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
 
-            if ($deliverable === false) {
-                // Do anything else we need to notify sending party that notification was not sent
-                return;
-            }
-
             if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
                 $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
 
                 // Do anything else we need to notify sending party that notification was not sent
+
+                if ($deliverable->related instanceof EngagementDeliverable) {
+                    $deliverable->related->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+                }
+
+                DB::commit();
 
                 throw new NotificationQuotaExceeded();
             }
