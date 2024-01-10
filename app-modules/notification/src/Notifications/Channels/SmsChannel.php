@@ -47,6 +47,7 @@ use Talkroute\MessageSegmentCalculator\SegmentCalculator;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
@@ -69,7 +70,7 @@ class SmsChannel
 
                 // Do anything else we need to notify sending party that notification was not sent
 
-                return;
+                throw new NotificationQuotaExceeded();
             }
 
             $smsData = $this->handle($notifiable, $notification);
@@ -150,6 +151,6 @@ class SmsChannel
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 
-        return $currentQuoteUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->emails;
+        return $currentQuoteUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->sms;
     }
 }
