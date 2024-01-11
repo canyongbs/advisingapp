@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Components;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource;
 
 use Filament\Actions\ViewAction;
 use AdvisingApp\InventoryManagement\Filament\Concerns\AssetCheckOutInfolist;
