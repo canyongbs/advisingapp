@@ -36,7 +36,6 @@
 
 namespace App\Models;
 
-use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use Filament\Panel;
 use DateTimeInterface;
 use Illuminate\Support\Arr;
@@ -80,6 +79,7 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
