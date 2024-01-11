@@ -34,61 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\MeetingCenter\Jobs;
 
-use App\Models\BaseModel;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Notifications\Notifiable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 
-#[NoPermissions]
-/**
- * @mixin IdeHelperEventAttendee
- */
-class EventAttendee extends BaseModel implements NotifiableInterface
+class RefreshCalendarRefreshToken implements ShouldQueue
 {
-    use Notifiable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected $fillable = [
-        'status',
-        'email',
-        'event_id',
-    ];
+    public function __construct(public Calendar $calendar) {}
 
-    protected $casts = [
-        'status' => EventAttendeeStatus::class,
-    ];
-
-    public function event(): BelongsTo
+    public function handle(): void
     {
-        return $this->belongsTo(Event::class, 'event_id');
-    }
+        /** @var CalendarInterface $calendarManager */
+        $calendarManager = resolve(CalendarManager::class)
+            ->driver($this->calendar->provider_type->value);
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
-    }
-
-    public function prospects(): HasMany
-    {
-        return $this->hasMany(
-            related: Prospect::class,
-            foreignKey: 'email',
-            localKey: 'email',
-        );
-    }
-
-    public function students(): HasMany
-    {
-        return $this->hasMany(
-            related: Student::class,
-            foreignKey: 'email',
-            localKey: 'email',
-        );
+        $calendarManager->refreshToken($this->calendar);
     }
 }

@@ -49,12 +49,12 @@ return new class () extends Migration {
             $table->string('provider_type');
             $table->text('provider_id')->nullable();
             $table->text('provider_email');
-            $table->text('oauth_token');
-            $table->text('oauth_refresh_token');
+            $table->text('oauth_token')->nullable();
+            $table->text('oauth_refresh_token')->nullable();
 
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
 
-            $table->timestamp('oauth_token_expires_at');
+            $table->timestamp('oauth_token_expires_at')->nullable();
 
             $table->timestamps();
         });

@@ -82,6 +82,10 @@ class Kernel extends ConsoleKernel
                     ->runInBackground()
             );
 
+        $schedule->command('meeting-center:refresh-calendar-refresh-tokens')
+            ->daily()
+            ->onOneServer();
+
         // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
         $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
     }
