@@ -34,18 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
+namespace App\Filament\Clusters;
 
-use Illuminate\Mail\Events\MessageSending;
+use Filament\Clusters\Cluster;
 
-class AddSesMessageTagsToEmailHeaders
+class RecruitmentCrm extends Cluster
 {
-    public function handle(MessageSending $event): void
-    {
-        if (property_exists($event->message, 'metadata') && is_array($event->message->metadata)) {
-            foreach ($event->message->metadata as $key => $value) {
-                $event->message->getHeaders()->addTextHeader('X-SES-MESSAGE-TAGS', $key . '=' . $value);
-            }
-        }
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 4;
 }

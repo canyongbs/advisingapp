@@ -36,13 +36,10 @@
 
 namespace App\Filament\Resources\NotificationSettingResource\Pages;
 
-use App\Models\User;
 use Filament\Tables\Table;
 use Filament\Actions\CreateAction;
-use App\Models\NotificationSetting;
 use Filament\Tables\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use App\Filament\Pages\EmailConfiguration;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
@@ -51,28 +48,6 @@ use App\Filament\Resources\NotificationSettingResource;
 class ListNotificationSettings extends ListRecords
 {
     protected static string $resource = NotificationSettingResource::class;
-
-    protected static ?string $navigationLabel = 'Notification Settings';
-
-    protected static ?string $title = 'Notification Settings';
-
-    protected static ?string $navigationIcon = 'heroicon-o-bell';
-
-    public static function shouldRegisterNavigation(array $parameters = []): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->can('viewAny', NotificationSetting::class);
-    }
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
 
     public function table(Table $table): Table
     {
@@ -91,11 +66,6 @@ class ListNotificationSettings extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public function getSubNavigation(): array
-    {
-        return (new EmailConfiguration())->getSubNavigation();
     }
 
     protected function getHeaderActions(): array

@@ -38,6 +38,7 @@ namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
+use App\Filament\Clusters\ServiceManagement;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\EditServiceRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ViewServiceRequest;
@@ -54,15 +55,9 @@ class ServiceRequestResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
-    protected static ?string $navigationGroup = 'Premium Features';
+    protected static ?int $navigationSort = 10;
 
-    protected static ?int $navigationSort = 30;
-
-    protected static ?string $navigationLabel = 'Service Management';
-
-    protected static ?string $modelLabel = 'Service Request';
-
-    protected static ?string $breadcrumb = 'Service Management';
+    protected static ?string $cluster = ServiceManagement::class;
 
     public static function getRecordSubNavigation(Page $page): array
     {

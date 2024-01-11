@@ -34,33 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use Filament\Pages\Page;
-use AdvisingApp\Audit\Filament\Pages\ManageAuditSettings;
-use AdvisingApp\Portal\Filament\Pages\ManagePortalSettings;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Webhook\Filament\Resources\InboundWebhookResource;
-use AdvisingApp\Theme\Filament\Pages\ManageBrandConfigurationSettings;
+use Filament\Clusters\Cluster;
+use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
 
-class GlobalSettings extends Page
+class InteractionManagement extends Cluster
 {
-    use HasChildNavigationItemsOnly;
-
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Product Administration';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 8;
 
-    protected static ?string $title = 'Global Settings';
-
-    protected static array $children = [
-        ManageLicenseSettings::class,
-        ManageAuditSettings::class,
-        ManageBrandConfigurationSettings::class,
-        InboundWebhookResource::class,
-        EmailConfiguration::class,
-        ManagePortalSettings::class,
+    protected array $children = [
+        InteractionCampaignResource::class,
+        InteractionDriverResource::class,
+        InteractionOutcomeResource::class,
+        InteractionRelationResource::class,
+        InteractionStatusResource::class,
+        InteractionTypeResource::class,
     ];
 }

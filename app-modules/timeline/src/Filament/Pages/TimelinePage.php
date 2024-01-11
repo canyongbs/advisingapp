@@ -39,9 +39,7 @@ namespace AdvisingApp\Timeline\Filament\Pages;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
-use AdvisingApp\Timeline\Models\Timeline;
 use App\Actions\GetRecordFromMorphAndKey;
-use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\Timeline\Actions\SyncTimelineData;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use AdvisingApp\Timeline\Filament\Pages\Concerns\LoadsTimelineRecords;
@@ -69,8 +67,6 @@ abstract class TimelinePage extends Page
     {
         $this->recordModel = $this->record = $this->resolveRecord($record);
 
-        $this->authorizeAccess();
-
         $this->timelineRecords = collect();
 
         resolve(SyncTimelineData::class)->now($this->recordModel, $this->modelsToTimeline);
@@ -92,38 +88,22 @@ abstract class TimelinePage extends Page
             ->modalViewAction($this->currentRecordToView);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function getSubNavigationParameters(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
-    }
-
-    public function getSubNavigation(): array
-    {
-        return static::getResource()::getRecordSubNavigation($this);
-    }
-
-    public static function shouldRegisterNavigation(array $parameters = []): bool
+    public static function canAccess(array $parameters = []): bool
     {
         if (auth()->user()->cannot('timeline.access')) {
             return false;
         }
 
-        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canView($parameters['record']);
-    }
+        if (! parent::canAccess($parameters)) {
+            return false;
+        }
 
-    protected function authorizeAccess(): void
-    {
-        static::authorizeResourceAccess();
+        $record = $parameters['record'] ?? null;
 
-        abort_unless(auth()->user()->can('timeline.access'), Response::HTTP_FORBIDDEN);
+        if (! $record) {
+            return false;
+        }
 
-        // TODO We also need to check access for the other entities that are going to be included in the timeline
-        // We probably just need to establish that the user can view any of a model, but might need to be more specific
-        abort_unless(static::getResource()::canView($this->getRecord()), Response::HTTP_FORBIDDEN);
+        return static::getResource()::canView($record);
     }
 }

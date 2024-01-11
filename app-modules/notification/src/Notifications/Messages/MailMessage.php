@@ -65,4 +65,20 @@ class MailMessage extends BaseMailMessage
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'level' => $this->level,
+            'subject' => $this->subject,
+            'greeting' => $this->greeting,
+            'salutation' => $this->salutation,
+            'introLines' => $this->introLines,
+            'outroLines' => $this->outroLines,
+            'actionText' => $this->actionText,
+            'actionUrl' => $this->actionUrl,
+            'displayableActionUrl' => str_replace(['mailto:', 'tel:'], '', $this->actionUrl ?? ''),
+            'viewData' => $this->viewData,
+        ];
+    }
 }

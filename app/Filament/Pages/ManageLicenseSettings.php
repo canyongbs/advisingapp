@@ -42,6 +42,7 @@ use App\Settings\LicenseSettings;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use App\Filament\Clusters\GlobalSettings;
 use Filament\Forms\Components\DatePicker;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 
@@ -51,13 +52,11 @@ class ManageLicenseSettings extends SettingsPage
 
     protected static ?string $navigationLabel = 'Subscription';
 
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?string $navigationParentItem = 'Global Settings';
-
     protected static ?int $navigationSort = 10;
 
     protected static string $settings = LicenseSettings::class;
+
+    protected static ?string $cluster = GlobalSettings::class;
 
     public function form(Form $form): Form
     {

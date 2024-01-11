@@ -93,7 +93,7 @@ class AssignedToRelationManager extends RelationManager
                             ->label('Reassign Service Request To')
                             ->searchable()
                             ->getSearchResultsUsing(fn (string $search): array => User::query()
-                                ->tap(new HasLicense($this->getOwnerRecord()->respondent?->getLicenseType()))
+                                ->tap(new HasLicense($this->getOwnerRecord()->respondent->getLicenseType()))
                                 ->where(new Expression('lower(name)'), 'like', '%' . str($search)->lower() . '%')
                                 ->pluck('name', 'id')
                                 ->all())

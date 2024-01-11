@@ -45,6 +45,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ListSt
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFiles;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentTasks;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentAlerts;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEvents;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
@@ -83,6 +84,7 @@ class StudentResource extends Resource
             ManageStudentFormSubmissions::class,
             ManageStudentApplicationSubmissions::class,
             ManageStudentServiceRequests::class,
+            ManageStudentEvents::class,
         ]);
     }
 
@@ -119,6 +121,7 @@ class StudentResource extends Resource
             'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
             'manage-service-requests' => ManageStudentServiceRequests::route('/{record}/service-requests'),
+            'events' => ManageStudentEvents::route('/{record}/events'),
         ];
     }
 }

@@ -34,27 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\InventoryManagement\Models\Scopes;
 
-use Filament\Pages\Page;
-use AdvisingApp\Audit\Filament\Resources\AuditResource;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Assistant\Filament\Resources\AssistantChatMessageLogResource;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
-class UsageAuditing extends Page
+class ClassifiedAs
 {
-    use HasChildNavigationItemsOnly;
+    public function __construct(
+        protected SystemAssetStatusClassification $classification
+    ) {}
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Reporting';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static ?string $title = 'Usage Auditing';
-
-    protected static array $children = [
-        AssistantChatMessageLogResource::class,
-        AuditResource::class,
-    ];
+    public function __invoke(Builder $query): void
+    {
+        $query->where('classification', $this->classification);
+    }
 }

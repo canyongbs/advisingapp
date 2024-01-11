@@ -34,12 +34,18 @@
 </COPYRIGHT>
 */
 
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Mail\Events\MessageSent;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-it('sets the X-SES-CONFIGURATION-SET header if mail.mailers.ses.configuration_set is set', function () {
+it('Does not send the message if configuration_set is set in settings but is not present in mail', function () {
     Event::fake(MessageSent::class);
 
     $configurationSet = 'test';
@@ -53,8 +59,29 @@ it('sets the X-SES-CONFIGURATION-SET header if mail.mailers.ses.configuration_se
         fn ($message) => $message->to('test@test.com')->subject('Test')
     );
 
+    Event::assertNotDispatched(
+        fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
+    );
+})->expectExceptionMessage('The X-SES-CONFIGURATION-SET and X-SES-MESSAGE-TAGS headers were not set, please check your configuration.');
+
+it('The configuration set headers are present and emails are sent if configuration_set is set in setting', function () {
+    Event::fake(MessageSent::class);
+
+    $configurationSet = 'test';
+
+    $settings = app(SesSettings::class);
+    $settings->configuration_set = $configurationSet;
+    $settings->save();
+
+    $notifiable = User::factory()->create();
+
+    $notification = new TestEmailNotification();
+
+    $notifiable->notify($notification);
+
     Event::assertDispatched(
         fn (MessageSent $event) => $event->message->getHeaders()->get('X-SES-CONFIGURATION-SET')->getBody() === $configurationSet
+            && $event->message->getHeaders()->get('X-SES-MESSAGE-TAGS')->getBody() === 'outbound_deliverable_id=' . OutboundDeliverable::first()->getKey()
     );
 });
 
@@ -70,3 +97,17 @@ it('X-SES-CONFIGURATION-SET is not present if mail.mailers.ses.configuration_set
         fn (MessageSent $event) => is_null($event->message->getHeaders()->get('X-SES-CONFIGURATION-SET'))
     );
 });
+
+class TestEmailNotification extends BaseNotification implements EmailNotification
+{
+    use EmailChannelTrait;
+
+    public function toEmail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email')
+            ->salutation('Test Salutation');
+    }
+}

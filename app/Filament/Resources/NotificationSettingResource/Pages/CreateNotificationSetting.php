@@ -40,7 +40,6 @@ use Filament\Forms\Form;
 use App\Filament\Fields\ColorSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Pages\EmailConfiguration;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\NotificationSettingResource;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -48,14 +47,6 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 class CreateNotificationSetting extends CreateRecord
 {
     protected static string $resource = NotificationSettingResource::class;
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
 
     public function form(Form $form): Form
     {

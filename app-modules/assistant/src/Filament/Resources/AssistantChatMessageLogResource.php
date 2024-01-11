@@ -42,6 +42,7 @@ use Filament\Resources\Resource;
 use App\Infolists\Components\CodeEntry;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use App\Filament\Clusters\UsageAuditing;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Infolists\Components\TextEntry;
@@ -58,15 +59,13 @@ class AssistantChatMessageLogResource extends Resource
 
     protected static ?string $navigationLabel = 'Personal Assistant';
 
-    protected static ?string $navigationParentItem = 'Usage Auditing';
-
-    protected static ?string $navigationGroup = 'Reporting';
-
     protected static ?int $navigationSort = 30;
 
     protected static ?string $modelLabel = 'Personal Assistant';
 
     protected static ?string $pluralLabel = 'Personal Assistant';
+
+    protected static ?string $cluster = UsageAuditing::class;
 
     public static function infolist(Infolist $infolist): Infolist
     {

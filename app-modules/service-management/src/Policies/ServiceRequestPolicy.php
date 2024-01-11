@@ -39,13 +39,28 @@ namespace AdvisingApp\ServiceManagement\Policies;
 use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use App\Concerns\FeatureAccessEnforcedPolicyBefore;
-use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
+use Illuminate\Support\Facades\Gate;
+use App\Support\FeatureAccessResponse;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
-class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
+class ServiceRequestPolicy
 {
-    use FeatureAccessEnforcedPolicyBefore;
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
+            return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
+        }
+
+        if (! Gate::check(
+            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+        )) {
+            return FeatureAccessResponse::deny();
+        }
+
+        return null;
+    }
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
@@ -57,7 +72,7 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function view(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to view this service request.');
         }
 
@@ -77,7 +92,7 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function update(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to update this service request.');
         }
 
@@ -89,7 +104,7 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function delete(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to delete this service request.');
         }
 
@@ -101,7 +116,7 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function restore(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to restore this service request.');
         }
 
@@ -113,7 +128,7 @@ class ServiceRequestPolicy implements FeatureAccessEnforcedPolicy
 
     public function forceDelete(Authenticatable $authenticatable, ServiceRequest $serviceRequest): Response
     {
-        if (! $authenticatable->hasLicense($serviceRequest->respondent?->getLicenseType())) {
+        if (! $authenticatable->hasLicense($serviceRequest->respondent->getLicenseType())) {
             return Response::deny('You do not have permission to permanently delete this service request.');
         }
 

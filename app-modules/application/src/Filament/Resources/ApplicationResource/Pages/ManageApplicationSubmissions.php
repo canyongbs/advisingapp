@@ -40,6 +40,7 @@ use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\Action;
 use Maatwebsite\Excel\Facades\Excel;
+use Filament\Resources\Components\Tab;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -51,9 +52,12 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Filters\OpenSearch\SelectFilter;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\Application\Models\Scopes\ClassifiedAs;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource\Actions\ApplicationAdmissionActions;
 
 class ManageApplicationSubmissions extends ManageRelatedRecords
 {
@@ -67,6 +71,30 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
     protected static ?string $breadcrumb = 'Submissions';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    public function getDefaultActiveTab(): string | int | null
+    {
+        return 'received';
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            'received' => Tab::make('Received')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Received)))),
+            'review' => Tab::make('Review')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Review)))),
+            'documents_required' => Tab::make('Documents Required')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::DocumentsRequired)))),
+            'complete' => Tab::make('Complete')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Complete)))),
+            'admit' => Tab::make('Admit')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Admit)))),
+            'deny' => Tab::make('Deny')
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('state', fn (Builder $query) => $query->tap(new ClassifiedAs(ApplicationSubmissionStateClassification::Deny)))),
+            'all' => Tab::make('All'),
+        ];
+    }
 
     public function table(Table $table): Table
     {
@@ -138,7 +166,8 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                     ])
                     ->modalContent(
                         fn (ApplicationSubmission $record) => view('application::submission', ['submission' => $record])
-                    ),
+                    )
+                    ->extraModalFooterActions(ApplicationAdmissionActions::get()),
                 DeleteAction::make(),
             ])
             ->bulkActions([

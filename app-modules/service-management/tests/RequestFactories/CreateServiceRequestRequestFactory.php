@@ -37,6 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Tests\RequestFactories;
 
 use AdvisingApp\Division\Models\Division;
+use AdvisingApp\Prospect\Models\Prospect;
 use Worksome\RequestFactories\RequestFactory;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
@@ -50,6 +51,8 @@ class CreateServiceRequestRequestFactory extends RequestFactory
             'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id,
             'status_id' => ServiceRequestStatus::factory()->create()->id,
             'priority_id' => ServiceRequestPriority::factory()->create()->id,
+            'respondent_id' => Prospect::factory()->create()->getKey(),
+            'respondent_type' => app(Prospect::class)->getMorphClass(),
             'type_id' => ServiceRequestType::factory()->create()->id,
             'close_details' => $this->faker->sentence,
             'res_details' => $this->faker->sentence,

@@ -34,27 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStateResource;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OnlineAdmissions extends Page
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\MeetingCenter\Models\Model>
+ */
+class EventRegistrationFormFieldFactory extends Factory
 {
-    use HasChildNavigationItemsOnly;
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 10;
-
-    protected static ?string $title = 'Online Admissions';
-
-    protected static ?string $breadcrumb = 'Online Admissions';
-
-    protected static array $children = [
-        ApplicationSubmissionStateResource::class,
-    ];
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'label' => str(fake()->word())->ucfirst(),
+            'type' => fake()->randomElement(['text_input', 'text_area']),
+            'is_required' => fake()->boolean(),
+            'config' => [],
+        ];
+    }
 }

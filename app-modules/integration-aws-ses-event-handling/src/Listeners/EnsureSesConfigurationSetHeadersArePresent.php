@@ -34,31 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use Exception;
+use Illuminate\Mail\Events\MessageSending;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
-class ServiceManagement extends Page
+class EnsureSesConfigurationSetHeadersArePresent
 {
-    use HasChildNavigationItemsOnly;
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 6;
-
-    protected static ?string $title = 'Service Management';
-
-    protected static ?string $breadcrumb = 'Service Management';
-
-    protected static array $children = [
-        ServiceRequestPriorityResource::class,
-        ServiceRequestStatusResource::class,
-        ServiceRequestTypeResource::class,
-    ];
+    public function handle(MessageSending $event): void
+    {
+        if (! empty(app(SesSettings::class)->configuration_set)) {
+            if (! $event->message->getHeaders()->has('X-SES-CONFIGURATION-SET') || ! $event->message->getHeaders()->has('X-SES-MESSAGE-TAGS')) {
+                throw new Exception('The X-SES-CONFIGURATION-SET and X-SES-MESSAGE-TAGS headers were not set, please check your configuration.');
+            }
+        }
+    }
 }

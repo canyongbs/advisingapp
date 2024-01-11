@@ -55,9 +55,9 @@ class ManageServiceRequestAssignment extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    public static function canAccess(?Model $record = null): bool
+    public static function canAccess(array $arguments = []): bool
     {
-        return (bool) count(static::managers($record));
+        return (bool) count(static::managers($arguments['record'] ?? null));
     }
 
     public function getRelationManagers(): array
@@ -65,13 +65,13 @@ class ManageServiceRequestAssignment extends ManageRelatedRecords
         return static::managers($this->getRecord());
     }
 
-    private static function managers(Model $record): array
+    private static function managers(?Model $record = null): array
     {
         return collect([
             AssignedToRelationManager::class,
             CreatedByRelationManager::class,
         ])
-            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
+            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();
     }
 }

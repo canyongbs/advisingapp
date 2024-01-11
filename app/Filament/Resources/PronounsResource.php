@@ -44,6 +44,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\DeleteAction;
+use App\Filament\Clusters\ProfileManagement;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\PronounsResource\Pages\ManagePronouns;
@@ -56,13 +57,11 @@ class PronounsResource extends Resource
 
     protected static ?string $label = 'User Profile Pronoun';
 
-    protected static ?string $navigationParentItem = 'Profile Management';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
     protected static ?string $navigationLabel = 'Personal Pronouns';
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $cluster = ProfileManagement::class;
 
     public static function form(Form $form): Form
     {

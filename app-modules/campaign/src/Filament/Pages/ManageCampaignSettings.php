@@ -38,7 +38,6 @@ namespace AdvisingApp\Campaign\Filament\Pages;
 
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use App\Filament\Pages\EmailConfiguration;
 use AdvisingApp\Campaign\Settings\CampaignSettings;
 use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 
@@ -71,10 +70,5 @@ class ManageCampaignSettings extends SettingsPage
                     ->label('Journey step execution timezone')
                     ->placeholder(fn (TimezoneSelect $component): string => $component->getOptions()[config('app.timezone')]),
             ]);
-    }
-
-    public function getSubNavigation(): array
-    {
-        return (new EmailConfiguration())->getSubNavigation();
     }
 }

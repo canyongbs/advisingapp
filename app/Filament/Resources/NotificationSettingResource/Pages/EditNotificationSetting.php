@@ -42,21 +42,12 @@ use App\Filament\Fields\ColorSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use App\Filament\Pages\EmailConfiguration;
 use App\Filament\Resources\NotificationSettingResource;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class EditNotificationSetting extends EditRecord
 {
     protected static string $resource = NotificationSettingResource::class;
-
-    public function getBreadcrumbs(): array
-    {
-        return [
-            ...(new EmailConfiguration())->getBreadcrumbs(),
-            ...parent::getBreadcrumbs(),
-        ];
-    }
 
     public function form(Form $form): Form
     {

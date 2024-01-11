@@ -39,8 +39,11 @@ namespace AdvisingApp\Notification\Actions;
 use Exception;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 
@@ -55,21 +58,19 @@ class CreateOutboundDeliverable
             default => throw new Exception('Invalid notification channel.'),
         };
 
-        $content = match ($channel) {
-            NotificationChannel::Sms => $notification->toSms($notifiable)->toArray(),
-            NotificationChannel::Email => $notification->toMail($notifiable)->toArray(),
-            NotificationChannel::Database => $notification->toDatabase($notifiable),
+        $content = match (true) {
+            $channel == NotificationChannel::Sms && $notification instanceof SmsNotification => $notification->toSms($notifiable)->toArray(),
+            $channel == NotificationChannel::Email && $notification instanceof EmailNotification => $notification->toMail($notifiable)->toArray(),
+            $channel == NotificationChannel::Database && $notification instanceof DatabaseNotification => $notification->toDatabase($notifiable),
             default => throw new Exception('Invalid notification channel.'),
         };
 
-        $deliverable = OutboundDeliverable::create([
+        return OutboundDeliverable::create([
             'channel' => $channel,
             'notification_class' => get_class($notification),
             'content' => json_encode($content),
             'recipient_id' => $notifiable->getKey(),
             'recipient_type' => $notifiable->getMorphClass(),
         ]);
-
-        return $deliverable;
     }
 }
