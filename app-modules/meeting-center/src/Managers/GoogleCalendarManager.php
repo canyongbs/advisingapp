@@ -216,11 +216,11 @@ class GoogleCalendarManager implements CalendarInterface
                 ],
             ]);
 
-            if ($calendar->oauth_token_expiress_at < now()) {
-                static::refreshToken($calendar, $client);
-            } else {
-                $client->setAccessToken($calendar->oauth_token);
+            if ($calendar->oauth_token_expires_at < now()) {
+                $calendar = static::refreshToken($calendar);
             }
+
+            $client->setAccessToken($calendar->oauth_token);
         } else {
             $client = new Client([
                 'client_id' => config('services.google_calendar.client_id'),
@@ -241,19 +241,17 @@ class GoogleCalendarManager implements CalendarInterface
         return $client;
     }
 
-    public function refreshToken(Calendar $calendar, ?Client $client = null): void
+    public function refreshToken(Calendar $calendar): Calendar
     {
         try {
-            if (! $client) {
-                $client = new Client([
-                    'client_id' => config('services.google_calendar.client_id'),
-                    'client_secret' => config('services.google_calendar.client_secret'),
-                    'scopes' => [
-                        GoogleCalendar::CALENDAR,
-                        GoogleCalendar::CALENDAR_EVENTS,
-                    ],
-                ]);
-            }
+            $client = new Client([
+                'client_id' => config('services.google_calendar.client_id'),
+                'client_secret' => config('services.google_calendar.client_secret'),
+                'scopes' => [
+                    GoogleCalendar::CALENDAR,
+                    GoogleCalendar::CALENDAR_EVENTS,
+                ],
+            ]);
 
             $token = $client->fetchAccessTokenWithRefreshToken($calendar->oauth_refresh_token);
 
@@ -276,6 +274,8 @@ class GoogleCalendarManager implements CalendarInterface
 
             throw $e;
         }
+
+        return $calendar;
     }
 
     private function toGoogleEvent(CalendarEvent $event): Event

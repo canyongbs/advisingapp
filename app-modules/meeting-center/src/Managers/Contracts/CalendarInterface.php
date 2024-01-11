@@ -57,5 +57,7 @@ interface CalendarInterface
 
     public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void;
 
+    public function refreshToken(Calendar $calendar): Calendar;
+
     public function revokeToken(Calendar $calendar): bool;
 }
