@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Database\Factories;
 
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 
@@ -49,6 +50,7 @@ class ServiceRequestPriorityFactory extends Factory
         return [
             'name' => $this->faker->name,
             'order' => $this->faker->randomNumber(1),
+            'type_id' => ServiceRequestType::factory(),
         ];
     }
 

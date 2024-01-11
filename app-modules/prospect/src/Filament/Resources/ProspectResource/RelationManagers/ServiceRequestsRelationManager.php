@@ -45,7 +45,9 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ViewServiceRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\CreateServiceRequest;
 
@@ -84,7 +86,8 @@ class ServiceRequestsRelationManager extends RelationManager
             ])
             ->filters([
                 SelectFilter::make('priority')
-                    ->relationship('priority', 'name')
+                    ->relationship('priority', 'name', fn (Builder $query) => $query->with('type'))
+                    ->getOptionLabelFromRecordUsing(fn (ServiceRequestPriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('status')

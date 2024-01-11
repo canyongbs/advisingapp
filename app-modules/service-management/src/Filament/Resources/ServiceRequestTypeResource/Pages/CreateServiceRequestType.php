@@ -55,4 +55,15 @@ class CreateServiceRequestType extends CreateRecord
                     ->string(),
             ]);
     }
+
+    protected function afterCreate(): void
+    {
+        $this->getRecord()->priorities()->createMany(
+            [
+                ['name' => 'High', 'order' => 1],
+                ['name' => 'Medium', 'order' => 2],
+                ['name' => 'Low', 'order' => 3],
+            ]
+        );
+    }
 }

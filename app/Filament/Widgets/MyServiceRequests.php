@@ -46,6 +46,7 @@ use Illuminate\Database\Query\JoinClause;
 use Filament\Widgets\TableWidget as BaseWidget;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
@@ -92,7 +93,8 @@ class MyServiceRequests extends BaseWidget
             ])
             ->filters([
                 SelectFilter::make('priority')
-                    ->relationship('priority', 'name')
+                    ->relationship('priority', 'name', fn (Builder $query) => $query->with('type'))
+                    ->getOptionLabelFromRecordUsing(fn (ServiceRequestPriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('status')

@@ -70,7 +70,7 @@ class ViewServiceRequest extends ViewRecord
                         TextEntry::make('priority.name')
                             ->label('Priority')
                             ->translateLabel(),
-                        TextEntry::make('type.name')
+                        TextEntry::make('priority.type.name')
                             ->label('Type')
                             ->translateLabel(),
                         TextEntry::make('close_details')

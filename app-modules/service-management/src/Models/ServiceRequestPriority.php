@@ -42,6 +42,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -61,6 +62,11 @@ class ServiceRequestPriority extends BaseModel implements Auditable
     public function serviceRequests(): HasMany
     {
         return $this->hasMany(ServiceRequest::class, 'priority_id');
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(ServiceRequestType::class, 'type_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string

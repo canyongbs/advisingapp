@@ -83,8 +83,8 @@ test('A successful action on the CreateServiceRequest page', function () {
                 'division_id',
                 'status_id',
                 'priority_id',
-                'type_id',
                 'respondent_id',
+                'type_id',
             ]
         )->toArray()
     );
@@ -96,9 +96,7 @@ test('A successful action on the CreateServiceRequest page', function () {
         ->and($serviceRequest->status->id)
         ->toEqual($request->get('status_id'))
         ->and($serviceRequest->priority->id)
-        ->toEqual($request->get('priority_id'))
-        ->and($serviceRequest->type->id)
-        ->toEqual($request->get('type_id'));
+        ->toEqual($request->get('priority_id'));
 });
 
 test('CreateServiceRequest requires valid data', function ($data, $errors, $setup = null) {
@@ -115,7 +113,7 @@ test('CreateServiceRequest requires valid data', function ($data, $errors, $setu
         ->call('create')
         ->assertHasFormErrors($errors);
 
-    assertDatabaseMissing(ServiceRequest::class, $request->except(['division', 'status', 'priority', 'type'])->toArray());
+    assertDatabaseMissing(ServiceRequest::class, $request->except(['division_id', 'status_id', 'priority_id', 'type_id'])->toArray());
 })->with(
     [
         'division_id missing' => [CreateServiceRequestRequestFactory::new()->without('division_id'), ['division_id' => 'required']],
@@ -132,11 +130,6 @@ test('CreateServiceRequest requires valid data', function ($data, $errors, $setu
         'priority_id does not exist' => [
             CreateServiceRequestRequestFactory::new()->state(['priority_id' => fake()->uuid()]),
             ['priority_id' => 'exists'],
-        ],
-        'type_id missing' => [CreateServiceRequestRequestFactory::new()->without('type_id'), ['type_id' => 'required']],
-        'type_id does not exist' => [
-            CreateServiceRequestRequestFactory::new()->state(['type_id' => fake()->uuid()]),
-            ['type_id' => 'exists'],
         ],
         'close_details is not a string' => [CreateServiceRequestRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],
         'res_details is not a string' => [CreateServiceRequestRequestFactory::new()->state(['res_details' => 1]), ['res_details' => 'string']],
@@ -183,8 +176,8 @@ test('CreateServiceRequest is gated with proper access control', function () {
                 'division_id',
                 'status_id',
                 'priority_id',
-                'type_id',
                 'respondent_id',
+                'type_id',
             ]
         )->toArray()
     );
@@ -196,9 +189,7 @@ test('CreateServiceRequest is gated with proper access control', function () {
         ->and($serviceRequest->status->id)
         ->toEqual($request->get('status_id'))
         ->and($serviceRequest->priority->id)
-        ->toEqual($request->get('priority_id'))
-        ->and($serviceRequest->type->id)
-        ->toEqual($request->get('type_id'));
+        ->toEqual($request->get('priority_id'));
 });
 
 test('CreateServiceRequest is gated with proper feature access control', function () {
@@ -242,7 +233,7 @@ test('CreateServiceRequest is gated with proper feature access control', functio
 
     assertCount(1, ServiceRequest::all());
 
-    assertDatabaseHas(ServiceRequest::class, $request->except(['division_id', 'respondent_id'])->toArray());
+    assertDatabaseHas(ServiceRequest::class, $request->except(['division_id', 'respondent_id', 'type_id'])->toArray());
 
     $serviceRequest = ServiceRequest::first();
 
