@@ -48,6 +48,8 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 /**
+ * @property string $purchase_age
+ *
  * @mixin IdeHelperAsset
  */
 class Asset extends BaseModel implements Auditable

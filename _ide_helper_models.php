@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -2133,6 +2099,7 @@ namespace AdvisingApp\InventoryManagement\Models{
 /**
  * AdvisingApp\InventoryManagement\Models\Asset
  *
+ * @property string $purchase_age
  * @property string $id
  * @property string $serial_number
  * @property string $name
@@ -2140,7 +2107,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @property string $type_id
  * @property string $status_id
  * @property string $location_id
- * @property string $purchase_date
+ * @property \Illuminate\Support\Carbon $purchase_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -2320,8 +2287,6 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @property-read int|null $assets_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus available()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus checkedOut()
  * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newQuery()
@@ -2710,6 +2675,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property-read int|null $students_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission> $submissions
  * @property-read int|null $submissions_count
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventAttendeeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee query()
@@ -2748,6 +2714,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission> $submissions
  * @property-read int|null $submissions_count
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventRegistrationFormFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm onlyTrashed()
@@ -2814,6 +2781,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep|null $step
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventRegistrationFormFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField query()
@@ -2846,6 +2814,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormField> $fields
  * @property-read int|null $fields_count
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventRegistrationFormStepFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep query()
@@ -2880,6 +2849,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property-read int|null $fields_count
  * @property-read \App\Models\User $requester
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventRegistrationFormSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission newQuery()
