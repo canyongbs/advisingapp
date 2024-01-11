@@ -10,6 +10,8 @@ class UnlicensedNotice extends Widget
 {
     protected static string $view = 'authorization::filament.widgets.unlicensed-notice';
 
+    protected static bool $isLazy = false;
+
     protected int | string | array $columnSpan = 'full';
 
     public static function canView(): bool
