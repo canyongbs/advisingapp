@@ -120,22 +120,9 @@ class AssetResource extends Resource
                             return null;
                         }
 
-                        $date = Carbon::parse($state);
-
-                        if ($date->isFuture()) {
-                            return '0 Years 0 Months';
-                        }
-
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        $diff = $date
-                            ->roundMonth()
-                            ->setTimezone($user->timezone)
-                            ->diff();
-
-                        return $diff->y . ' ' . ($diff->y === 1 ? 'Year' : 'Years') . ' ' .
-                            $diff->m . ' ' . ($diff->m === 1 ? 'Month' : 'Months');
+                        return (new Asset([
+                            'purchase_date' => Carbon::parse($state),
+                        ]))->purchase_age;
                     }),
             ]);
     }

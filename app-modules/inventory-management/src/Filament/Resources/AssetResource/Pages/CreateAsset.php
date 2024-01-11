@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
-use App\Models\User;
 use Filament\Forms\Form;
 use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
@@ -44,6 +43,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Models\AssetType;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
 use AdvisingApp\InventoryManagement\Models\AssetLocation;
@@ -84,27 +84,18 @@ class CreateAsset extends CreateRecord
                 DatePicker::make('purchase_date')
                     ->required()
                     ->live()
-                    ->helperText(function (?string $state) {
+                    ->helperText(function (?string $state, ?Asset $record) {
                         if (blank($state)) {
                             return null;
                         }
 
-                        $date = Carbon::parse($state);
-
-                        if ($date->isFuture()) {
-                            return '0 Years 0 Months';
+                        if ($record) {
+                            return $record->purchase_age;
                         }
 
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        $diff = $date
-                            ->roundMonth()
-                            ->setTimezone($user->timezone)
-                            ->diff();
-
-                        return $diff->y . ' ' . ($diff->y === 1 ? 'Year' : 'Years') . ' ' .
-                            $diff->m . ' ' . ($diff->m === 1 ? 'Month' : 'Months');
+                        return (new Asset([
+                            'purchase_date' => Carbon::parse($state),
+                        ]))->purchase_age;
                     }),
             ]);
     }

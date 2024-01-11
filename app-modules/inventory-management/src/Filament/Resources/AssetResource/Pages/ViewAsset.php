@@ -67,26 +67,8 @@ class ViewAsset extends ViewRecord
                             ->label('Location'),
                         TextEntry::make('status.name')
                             ->label('Status'),
-                        TextEntry::make('purchase_date') //Strict
+                        TextEntry::make('purchase_age')
                             ->label('Device Age')
-                            ->formatStateUsing(function (string $state) {
-                                $date = Carbon::parse($state);
-
-                                if ($date->isFuture()) {
-                                    return '0 Years 0 Months';
-                                }
-
-                                /** @var User $user */
-                                $user = auth()->user();
-
-                                $diff = $date
-                                    ->roundMonth()
-                                    ->setTimezone($user->timezone)
-                                    ->diff();
-
-                                return $diff->y . ' ' . ($diff->y === 1 ? 'Year' : 'Years') . ' ' .
-                                    $diff->m . ' ' . ($diff->m === 1 ? 'Month' : 'Months');
-                            })
                             ->helperText(fn (Asset $record) => $record->purchase_date->format('M j, Y')),
                     ]),
             ]);

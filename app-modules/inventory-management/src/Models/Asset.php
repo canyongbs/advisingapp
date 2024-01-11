@@ -37,6 +37,9 @@
 namespace AdvisingApp\InventoryManagement\Models;
 
 use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -124,5 +127,26 @@ class Asset extends BaseModel implements Auditable
     {
         return $this->status->classification === SystemAssetStatusClassification::CheckedOut
             && is_null($this->latestCheckOut?->asset_check_in_id);
+    }
+
+    protected function purchaseAge(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->purchase_date->isFuture()) {
+                return '0 Years 0 Months';
+            }
+
+            /** @var User $user */
+            $user = auth()->user();
+
+            $diff = $this
+                ->purchase_date
+                ->roundMonth()
+                ->setTimezone($user->timezone)
+                ->diff();
+
+            return $diff->y . ' ' . ($diff->y === 1 ? 'Year' : 'Years') . ' ' .
+                $diff->m . ' ' . ($diff->m === 1 ? 'Month' : 'Months');
+        });
     }
 }
