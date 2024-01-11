@@ -47,8 +47,8 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 

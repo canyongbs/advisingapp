@@ -46,8 +46,8 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
