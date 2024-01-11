@@ -54,6 +54,7 @@ use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnect;
 
 class OutlookCalendarManager implements CalendarInterface
 {
@@ -254,7 +255,13 @@ class OutlookCalendarManager implements CalendarInterface
 
         if ($response->clientError() || $response->serverError()) {
             if ($response->status() === Response::HTTP_UNAUTHORIZED) {
-                // TODO: Handle informing the User that the token is invalid and they need to re-authenticate and clearing the token out of our storage
+                $calendar->update([
+                    'oauth_token' => null,
+                    'oauth_refresh_token' => null,
+                    'oauth_token_expires_at' => null,
+                ]);
+
+                $calendar->user->notify(new CalendarRequiresReconnect($calendar));
             }
 
             $response->throw();

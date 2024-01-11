@@ -36,11 +36,15 @@
 
 namespace AdvisingApp\Notification\Notifications;
 
+use App\Models\User;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 
 interface EmailNotification
 {
-    public function toEmail(object $notifiable): MailMessage;
+    public function toEmail(User|Student|Prospect|EventAttendee $notifiable): MailMessage;
 
     public function toMail(object $notifiable): MailMessage;
 }
