@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Concerns;
 
+use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 
 // TODO Re-use this trait across other places where infolist is rendered
@@ -44,13 +45,20 @@ trait MaintenanceActivityInfolist
     public function renderInfolist(): array
     {
         return [
-            TextEntry::make('details'),
-            TextEntry::make('maintenanceProvider.name'),
             TextEntry::make('status'),
-            TextEntry::make('scheduled_date')
-                ->label('Scheduled For'),
-            TextEntry::make('completed_date')
-                ->label('Completed On'),
+            Fieldset::make('Nature of Work')
+                ->schema([
+                    TextEntry::make('details'),
+                    TextEntry::make('maintenanceProvider.name'),
+                    TextEntry::make('notes'),
+                ]),
+            Fieldset::make('')
+                ->schema([
+                    TextEntry::make('scheduled_date')
+                        ->label('Scheduled For'),
+                    TextEntry::make('completed_date')
+                        ->label('Completed On'),
+                ]),
         ];
     }
 }

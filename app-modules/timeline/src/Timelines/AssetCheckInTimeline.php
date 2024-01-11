@@ -39,6 +39,7 @@ namespace AdvisingApp\Timeline\Timelines;
 use Filament\Actions\ViewAction;
 use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Components\AssetCheckInViewAction;
 
 // TODO Decide where these belong - might want to keep these in the context of the original module
 class AssetCheckInTimeline extends CustomTimeline

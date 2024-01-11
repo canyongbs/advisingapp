@@ -47,6 +47,8 @@ class MaintenanceActivityViewAction extends ViewAction
     {
         parent::setUp();
 
+        $this->modalHeading('View Maintenance Activity');
+
         $this->infolist($this->renderInfolist());
     }
 }

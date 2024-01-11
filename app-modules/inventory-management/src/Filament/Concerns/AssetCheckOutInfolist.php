@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Concerns;
 
+use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 
 // TODO Re-use this trait across other places where infolist is rendered
@@ -44,7 +45,19 @@ trait AssetCheckOutInfolist
     public function renderInfolist(): array
     {
         return [
-            TextEntry::make('checked_out_at'),
+            Fieldset::make('Involved Parties')
+                ->schema([
+                    TextEntry::make('checkedOutBy.name')
+                        ->label('Performed By'),
+                    TextEntry::make('checkedOutTo.full_name')
+                        ->label('Checked Out to'),
+                ]),
+            Fieldset::make('')
+                ->schema([
+                    TextEntry::make('checked_out_at'),
+                    TextEntry::make('expected_check_in_at'),
+                    TextEntry::make('notes'),
+                ]),
         ];
     }
 }
