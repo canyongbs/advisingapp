@@ -34,11 +34,45 @@
 
 <div>
     <div class="flex flex-row justify-between">
-        Check In {{ $record->id }}
+        <h3 class="mb-1 text-lg font-semibold text-gray-500 dark:text-gray-100">
+            Asset Checked In from
+
+            <a
+                class="underline"
+                href="{{ $record->checkedInFrom->filamentResource()::getUrl('view', ['record' => $record->checkedInFrom]) }}"
+            >
+                {{ $record->checkedInFrom->full_name }}
+            </a>
+        </h3>
 
         <div>
             {{ $viewRecordIcon }}
         </div>
     </div>
+
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        {{ $record->checked_in_at->diffForHumans() }}
+    </time>
+
+    <div class="mt-2">
+        <div class="flex flex-col">
+            <div>
+                <span class="font-semibold">Checked in by:</span>
+                <a
+                    class="underline"
+                    href="{{ $record->checkedInBy->filamentResource()::getUrl('view', ['record' => $record->checkedInBy]) }}"
+                >
+                    {{ $record->checkedInBy->name }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if ($record->notes)
+        <div
+            class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+            {{ $record->notes }}
+        </div>
+    @endif
 
 </div>

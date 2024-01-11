@@ -42,6 +42,13 @@ use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
 
 class MaintenanceActivityObserver
 {
+    public function creating(MaintenanceActivity $maintenanceActivity): void
+    {
+        if (is_null($maintenanceActivity->scheduled_date) && ! is_null($maintenanceActivity->completed_date)) {
+            $maintenanceActivity->scheduled_date = $maintenanceActivity->completed_date;
+        }
+    }
+
     public function created(MaintenanceActivity $maintenanceActivity): void
     {
         TimelineableRecordCreated::dispatch($maintenanceActivity->asset, $maintenanceActivity);

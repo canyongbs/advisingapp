@@ -64,9 +64,11 @@
         {{ $record->details }}
     </h2>
 
-    <div
-        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
-        {{ $record->notes }}
-    </div>
+    @if ($record->notes)
+        <div
+            class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+            {{ $record->notes }}
+        </div>
+    @endif
 
 </div>
