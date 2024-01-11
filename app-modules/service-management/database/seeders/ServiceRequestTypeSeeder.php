@@ -60,6 +60,15 @@ class ServiceRequestTypeSeeder extends Seeder
                     ['name' => 'Tutoring'],
                     ['name' => 'Veterans'],
                 ]
-            );
+            )
+            ->each(function (ServiceRequestType $type) {
+                $type->priorities()->createMany(
+                    [
+                        ['name' => 'High', 'order' => 1],
+                        ['name' => 'Medium', 'order' => 2],
+                        ['name' => 'Low', 'order' => 3],
+                    ]
+                );
+            });
     }
 }

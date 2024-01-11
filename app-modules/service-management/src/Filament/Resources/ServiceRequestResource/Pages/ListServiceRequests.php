@@ -50,6 +50,7 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
 
@@ -104,7 +105,8 @@ class ListServiceRequests extends ListRecords
             ])
             ->filters([
                 SelectFilter::make('priority')
-                    ->relationship('priority', 'name')
+                    ->relationship('priority', 'name', fn (Builder $query) => $query->with('type'))
+                    ->getOptionLabelFromRecordUsing(fn (ServiceRequestPriority $record) => "{$record->type->name} - {$record->name}")
                     ->multiple()
                     ->preload(),
                 SelectFilter::make('status')

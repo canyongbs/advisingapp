@@ -77,7 +77,6 @@ test('A successful action on the EditServiceRequest page', function () {
                 'division_id',
                 'status_id',
                 'priority_id',
-                'type_id',
             ]
         )->toArray()
     );
@@ -89,9 +88,7 @@ test('A successful action on the EditServiceRequest page', function () {
         ->and($serviceRequest->status->id)
         ->toEqual($request->get('status_id'))
         ->and($serviceRequest->priority->id)
-        ->toEqual($request->get('priority_id'))
-        ->and($serviceRequest->type->id)
-        ->toEqual($request->get('type_id'));
+        ->toEqual($request->get('priority_id'));
 });
 
 test('EditServiceRequest requires valid data', function ($data, $errors) {
@@ -115,9 +112,7 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
         ->and($serviceRequest->fresh()->status->id)
         ->toEqual($serviceRequest->status->id)
         ->and($serviceRequest->fresh()->priority->id)
-        ->toEqual($serviceRequest->priority->id)
-        ->and($serviceRequest->fresh()->type->id)
-        ->toEqual($serviceRequest->type->id);
+        ->toEqual($serviceRequest->priority->id);
 })->with(
     [
         'division_id missing' => [EditServiceRequestRequestFactory::new()->state(['division_id' => null]), ['division_id' => 'required']],
@@ -134,11 +129,6 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
         'priority_id does not exist' => [
             EditServiceRequestRequestFactory::new()->state(['priority_id' => fake()->uuid()]),
             ['priority_id' => 'exists'],
-        ],
-        'type_id missing' => [EditServiceRequestRequestFactory::new()->state(['type_id' => null]), ['type_id' => 'required']],
-        'type_id does not exist' => [
-            EditServiceRequestRequestFactory::new()->state(['type_id' => fake()->uuid()]),
-            ['type_id' => 'exists'],
         ],
         'close_details is not a string' => [EditServiceRequestRequestFactory::new()->state(['close_details' => 1]), ['close_details' => 'string']],
         'res_details is not a string' => [EditServiceRequestRequestFactory::new()->state(['res_details' => 1]), ['res_details' => 'string']],
@@ -188,9 +178,8 @@ test('EditServiceRequest is gated with proper access control', function () {
         $request->except(
             [
                 'division_id',
-                'status',
+                'status_id',
                 'priority',
-                'type',
             ]
         )->toArray()
     );
@@ -202,9 +191,7 @@ test('EditServiceRequest is gated with proper access control', function () {
         ->and($serviceRequest->status->id)
         ->toEqual($request->get('status_id'))
         ->and($serviceRequest->priority->id)
-        ->toEqual($request->get('priority_id'))
-        ->and($serviceRequest->type->id)
-        ->toEqual($request->get('type_id'));
+        ->toEqual($request->get('priority_id'));
 });
 
 test('EditServiceRequest is gated with proper feature access control', function () {

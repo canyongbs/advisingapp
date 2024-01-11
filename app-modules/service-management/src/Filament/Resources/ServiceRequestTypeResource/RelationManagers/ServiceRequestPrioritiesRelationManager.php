@@ -34,17 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\RelationManagers;
 
-use Filament\Actions;
 use Filament\Forms\Form;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use App\Filament\Resources\RelationManagers\RelationManager;
 
-class EditServiceRequestPriority extends EditRecord
+class ServiceRequestPrioritiesRelationManager extends RelationManager
 {
-    protected static string $resource = ServiceRequestPriorityResource::class;
+    protected static string $relationship = 'priorities';
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public function form(Form $form): Form
     {
@@ -59,15 +66,39 @@ class EditServiceRequestPriority extends EditRecord
                     ->required()
                     ->integer()
                     ->numeric()
-                    ->disabled(),
+                    ->disabledOn('edit'),
             ]);
     }
 
-    protected function getHeaderActions(): array
+    public function table(Table $table): Table
     {
-        return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
-        ];
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('order')
+                    ->label('Priority Order')
+                    ->sortable(),
+                TextColumn::make('service_requests_count')
+                    ->label('# of Service Requests')
+                    ->counts('serviceRequests')
+                    ->sortable(),
+            ])
+            ->defaultSort('order')
+            ->reorderable('order')
+            ->paginated(false)
+            ->headerActions([
+                CreateAction::make(),
+            ])
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(),
+            ])
+            ->groupedBulkActions([
+                DeleteBulkAction::make(),
+            ]);
     }
 }
