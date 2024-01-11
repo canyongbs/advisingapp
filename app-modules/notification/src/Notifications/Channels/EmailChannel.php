@@ -36,10 +36,14 @@
 
 namespace AdvisingApp\Notification\Notifications\Channels;
 
+use Exception;
+use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Channels\MailChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
@@ -48,17 +52,39 @@ class EmailChannel extends MailChannel
 {
     public function send($notifiable, Notification $notification): void
     {
-        /** @var BaseNotification $notification */
-        $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
+        try {
+            DB::beginTransaction();
 
-        if ($deliverable === false) {
-            // Do anything else we need to to notify sending party that notification was not sent
-            return;
+            if (! $notification instanceof EmailNotification) {
+                return;
+            }
+
+            /** @var BaseNotification $notification */
+            $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
+
+            if ($deliverable === false) {
+                // Do anything else we need to notify sending party that notification was not sent
+                return;
+            }
+
+            if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
+                $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+
+                // Do anything else we need to notify sending party that notification was not sent
+
+                return;
+            }
+
+            $result = $this->handle($notifiable, $notification);
+
+            $notification->afterSend($notifiable, $deliverable, $result);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            throw $e;
         }
-
-        $result = $this->handle($notifiable, $notification);
-
-        $notification->afterSend($notifiable, $deliverable, $result);
     }
 
     public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
@@ -71,6 +97,7 @@ class EmailChannel extends MailChannel
 
         if (! is_null($message)) {
             $result->success = true;
+            $result->recipients = $message->getEnvelope()->getRecipients();
         }
 
         return $result;
@@ -81,11 +108,32 @@ class EmailChannel extends MailChannel
         if ($result->success) {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::Dispatched,
+                'quota_usage' => count($result->recipients),
             ]);
         } else {
             $deliverable->update([
                 'delivery_status' => NotificationDeliveryStatus::DispatchFailed,
             ]);
         }
+    }
+
+    public function canSendWithinQuotaLimits(Notification $notification, object $notifiable): bool
+    {
+        if (! $notification instanceof EmailNotification) {
+            throw new Exception('Invalid notification type.');
+        }
+
+        // 1 for the primary recipient, plus the number of cc and bcc recipients
+        $estimatedQuotaUsage = 1 + count($notification->toMail($notifiable)->cc) + count($notification->toMail($notifiable)->bcc);
+
+        $licenseSettings = app(LicenseSettings::class);
+
+        $resetWindow = $licenseSettings->data->limits->getResetWindow();
+
+        $currentQuotaUsage = OutboundDeliverable::where('channel', 'email')
+            ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
+            ->sum('quota_usage');
+
+        return $currentQuotaUsage + $estimatedQuotaUsage <= $licenseSettings->data->limits->emails;
     }
 }

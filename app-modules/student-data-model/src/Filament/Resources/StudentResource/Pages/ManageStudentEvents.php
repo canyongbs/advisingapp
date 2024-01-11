@@ -34,49 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeesAction;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
 
-class ManageEventAttendees extends ManageRelatedRecords
+class ManageStudentEvents extends ManageRelatedRecords
 {
-    protected static string $resource = EventResource::class;
+    protected static string $resource = StudentResource::class;
 
-    // TODO: Obsolete when there is no table, remove from Filament
-    protected static string $relationship = 'attendees';
+    protected static string $relationship = 'eventAttendeeRecords';
 
-    protected static ?string $navigationLabel = 'Attendees';
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $navigationLabel = 'Events';
 
-    protected static ?string $breadcrumb = 'Attendees';
+    // TODO: Automatically set from Filament based on relationship name
+    protected static ?string $breadcrumb = 'Events';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
                 IdColumn::make(),
+                TextColumn::make('event.title')
+                    ->url(fn (EventAttendee $record) => EventResource::getUrl('view', ['record' => $record->event]))
+                    ->color('primary'),
                 TextColumn::make('status')
                     ->badge(),
-                TextColumn::make('email'),
-            ])
-            ->headerActions([
             ])
             ->actions([
                 ViewEventAttendeeAction::make(),
-            ]);
+            ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', [
+                EventAttendeeStatus::Invited,
+                EventAttendeeStatus::Attending,
+            ]));
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            InviteEventAttendeesAction::make(),
+            InviteEventAttendeeAction::make(),
         ];
     }
 }

@@ -34,22 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use Exception;
+use Illuminate\Mail\Events\MessageSending;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
-class EventSeeder extends Seeder
+class EnsureSesConfigurationSetHeadersArePresent
 {
-    public function run(): void
+    public function handle(MessageSending $event): void
     {
-        Event::factory()
-            ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+        if (! empty(app(SesSettings::class)->configuration_set)) {
+            if (! $event->message->getHeaders()->has('X-SES-CONFIGURATION-SET') || ! $event->message->getHeaders()->has('X-SES-MESSAGE-TAGS')) {
+                throw new Exception('The X-SES-CONFIGURATION-SET and X-SES-MESSAGE-TAGS headers were not set, please check your configuration.');
+            }
+        }
     }
 }

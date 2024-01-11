@@ -42,6 +42,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
+use AdvisingApp\InventoryManagement\Models\Scopes\ClassifiedAs;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 class CheckInAssetHeaderAction extends Action
 {
@@ -69,7 +71,7 @@ class CheckInAssetHeaderAction extends Action
                 ->relationship('status', 'name')
                 ->preload()
                 ->label('Status')
-                ->default(AssetStatus::available()->first()->id)
+                ->default(AssetStatus::tap(new ClassifiedAs(SystemAssetStatusClassification::Available))->first()->id)
                 ->required()
                 ->exists((new AssetStatus())->getTable(), 'id'),
             DateTimePicker::make('checked_in_at')

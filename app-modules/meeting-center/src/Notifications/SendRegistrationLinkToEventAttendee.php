@@ -34,22 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\MeetingCenter\Notifications;
 
-use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use App\Models\NotificationSetting;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 
-class EventSeeder extends Seeder
+class SendRegistrationLinkToEventAttendee extends BaseNotification
 {
-    public function run(): void
+    use Queueable;
+
+    public function __construct(
+        protected Event $event,
+        protected User $sender
+    ) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        Event::factory()
-            ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+        return ['mail'];
+    }
+
+    public function toMail(EventAttendee $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
+            ->subject('You have been invited to an event!')
+            ->line("You have been invited to {$this->event->title}.")
+            ->action('Register', route('event-registration.show', ['event' => $this->event]));
+    }
+
+    private function resolveNotificationSetting(EventAttendee $notifiable): ?NotificationSetting
+    {
+        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
     }
 }

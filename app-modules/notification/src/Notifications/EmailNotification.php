@@ -41,4 +41,6 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 interface EmailNotification
 {
     public function toEmail(object $notifiable): MailMessage;
+
+    public function toMail(object $notifiable): MailMessage;
 }

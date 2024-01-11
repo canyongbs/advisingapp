@@ -34,22 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\Application\Models\Scopes;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 
-class EventSeeder extends Seeder
+class ClassifiedAs
 {
-    public function run(): void
+    public function __construct(
+        protected ApplicationSubmissionStateClassification $classification,
+    ) {}
+
+    public function __invoke(Builder $query): void
     {
-        Event::factory()
-            ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+        $query->where('classification', $this->classification);
     }
 }

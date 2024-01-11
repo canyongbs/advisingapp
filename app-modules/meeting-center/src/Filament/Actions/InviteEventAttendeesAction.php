@@ -34,22 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace AdvisingApp\MeetingCenter\Filament\Actions;
 
-use Illuminate\Database\Seeder;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TagsInput;
+use Filament\Notifications\Notification;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 
-class EventSeeder extends Seeder
+class InviteEventAttendeesAction extends Action
 {
-    public function run(): void
+    protected function setUp(): void
     {
-        Event::factory()
-            ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+        parent::setUp();
+
+        $this->label('Invite')
+            ->icon('heroicon-o-envelope')
+            ->form([
+                TagsInput::make('attendees')
+                    ->placeholder('Add attendee email')
+                    ->nestedRecursiveRules(['email'])
+                    ->required(),
+            ])
+            ->action(function (array $data, Event $record) {
+                /** @var User $user */
+                $user = auth()->user();
+
+                $emails = $data['attendees'];
+
+                dispatch(new CreateEventAttendees($record, $emails, $user));
+
+                Notification::make()
+                    ->title(count($emails) > 1 ? 'The invitations are being sent' : 'The invitation is being sent')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return 'invite';
     }
 }

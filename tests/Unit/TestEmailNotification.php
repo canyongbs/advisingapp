@@ -34,22 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Database\Seeders;
+namespace Tests\Unit;
 
-use Illuminate\Database\Seeder;
-use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class EventSeeder extends Seeder
+class TestEmailNotification extends BaseNotification implements EmailNotification
 {
-    public function run(): void
+    use EmailChannelTrait;
+
+    public function toEmail(object $notifiable): MailMessage
     {
-        Event::factory()
-            ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email')
+            ->salutation('Test Salutation');
     }
 }

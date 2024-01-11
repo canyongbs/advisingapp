@@ -34,18 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
+namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Illuminate\Mail\Events\MessageSending;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 
-class AddSesMessageTagsToEmailHeaders
+/**
+ * @extends Factory<EventAttendee>
+ */
+class EventAttendeeFactory extends Factory
 {
-    public function handle(MessageSending $event): void
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        if (property_exists($event->message, 'metadata') && is_array($event->message->metadata)) {
-            foreach ($event->message->metadata as $key => $value) {
-                $event->message->getHeaders()->addTextHeader('X-SES-MESSAGE-TAGS', $key . '=' . $value);
-            }
-        }
+        return [
+            'status' => fake()->randomElement(EventAttendeeStatus::class),
+            'email' => fake()->unique()->randomElement([
+                fake()->email(),
+                Student::inRandomOrder()->value('email'),
+                Prospect::inRandomOrder()->value('email'),
+            ]),
+            'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
+        ];
     }
 }

@@ -36,15 +36,14 @@
 
 namespace AdvisingApp\MeetingCenter\Database\Factories;
 
-use Illuminate\Support\Carbon;
-use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 
 /**
- * @extends Factory<Event>
+ * @extends Factory<EventRegistrationFormStep>
  */
-class EventFactory extends Factory
+class EventRegistrationFormStepFactory extends Factory
 {
     /**
      * @return array<string, mixed>
@@ -52,21 +51,43 @@ class EventFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->catchPhrase(),
-            'description' => fake()->optional()->paragraphs(asText: true),
-            'location' => fake()->address(),
-            'capacity' => fake()->numberBetween(1, 5000),
-            'starts_at' => fake()->dateTimeBetween('-1 week', '+1 week'),
-            'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->add('1 hour'),
+            'label' => str(fake()->word())->ucfirst(),
         ];
     }
 
-    public function configure(): EventFactory|Factory
+    public function configure(): EventRegistrationFormStepFactory|Factory
     {
-        return $this->afterCreating(function (Event $event) {
-            EventRegistrationForm::factory()->create([
-                'event_id' => $event->getKey(),
-            ]);
+        return $this->afterCreating(function (EventRegistrationFormStep $eventRegistrationFormStep) {
+            $fields = $this->createFields($eventRegistrationFormStep, rand(1, 3));
+
+            $eventRegistrationFormStep->content = [
+                'type' => 'doc',
+                'content' => $fields,
+            ];
+
+            $eventRegistrationFormStep->save();
         });
+    }
+
+    private function createFields(EventRegistrationFormStep $eventRegistrationFormStep, int $count = 3): array
+    {
+        return EventRegistrationFormField::factory()
+            ->count($count)
+            ->create([
+                'form_id' => $eventRegistrationFormStep->submissible->getKey(),
+                'step_id' => $eventRegistrationFormStep->getKey(),
+            ])
+            ->map(fn (EventRegistrationFormField $field) => [
+                'type' => 'tiptapBlock',
+                'attrs' => [
+                    'type' => $field->type,
+                    'data' => [
+                        'label' => $field->label,
+                        'isRequired' => $field->is_required,
+                    ],
+                    'id' => $field->getKey(),
+                ],
+            ])
+            ->toArray();
     }
 }

@@ -34,19 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
+namespace AdvisingApp\MeetingCenter\Jobs;
 
-use Illuminate\Mail\Events\MessageSending;
-use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use App\Models\User;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Notifications\SendRegistrationLinkToEventAttendee;
 
-class AddSesConfigurationSetToEmailHeaders
+class CreateEventAttendee implements ShouldQueue
 {
-    public function handle(MessageSending $event): void
-    {
-        $settings = app(SesSettings::class);
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Batchable;
 
-        if ($settings->configuration_set) {
-            $event->message->getHeaders()->addTextHeader('X-SES-CONFIGURATION-SET', $settings->configuration_set);
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(
+        protected Event $event,
+        protected string $email,
+        protected User $sender
+    ) {}
+
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        if ($this->batch()->cancelled()) {
+            return;
         }
+
+        if ($this->event->attendees()->where('email', $this->email)->exists()) {
+            $this->fail("{$this->email} has already been invited to this event.");
+
+            return;
+        }
+
+        /** @var EventAttendee $attendee */
+        $attendee = $this->event->attendees()->create([
+            'email' => $this->email,
+            'status' => EventAttendeeStatus::Invited,
+        ]);
+
+        $attendee->notify(new SendRegistrationLinkToEventAttendee($this->event, $this->sender));
     }
 }

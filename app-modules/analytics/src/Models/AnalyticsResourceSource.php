@@ -42,6 +42,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperAnalyticsResourceSource
+ */
 class AnalyticsResourceSource extends BaseModel implements Auditable
 {
     use SoftDeletes;
