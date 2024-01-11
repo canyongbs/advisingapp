@@ -3,6 +3,7 @@
 namespace App\Forms\Components;
 
 use App\Models\User;
+use Filament\Forms\Components\Grid;
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
@@ -39,7 +40,7 @@ class Licenses extends Section
                 Placeholder::make("{$licenseType->value}_count")
                     ->extraAttributes(['class' => 'grid justify-items-center'])
                     ->hiddenLabel()
-                    ->content(fn () => "{$licenseType->getSeatsInUse()} / {$licenseType->getSeats()}"),
+                    ->content(fn () => "{$licenseType->getAvailableSeats()} / {$licenseType->getSeats()}"),
                 Toggle::make("{$licenseType->value}_enabled")
                     ->hiddenLabel()
                     ->offColor(Color::Red)

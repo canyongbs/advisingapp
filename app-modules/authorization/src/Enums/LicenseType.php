@@ -59,7 +59,7 @@ enum LicenseType: string implements HasLabel
 
     public function hasAvailableLicenses(): bool
     {
-        return $this->getSeatsInUse() < $this->getSeats();
+        return $this->getAvailableSeats() > 0;
     }
 
     public function isLicensable(): bool
@@ -81,5 +81,10 @@ enum LicenseType: string implements HasLabel
     public function getSeatsInUse(): int
     {
         return License::query()->where('type', $this)->count();
+    }
+
+    public function getAvailableSeats(): int
+    {
+        return $this->getSeats() - $this->getSeatsInUse();
     }
 }
