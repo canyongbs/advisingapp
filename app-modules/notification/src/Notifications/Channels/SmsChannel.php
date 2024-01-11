@@ -48,7 +48,7 @@ use Talkroute\MessageSegmentCalculator\SegmentCalculator;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
-use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
@@ -89,9 +89,6 @@ class SmsChannel
 
     public function handle(NotifiableInterface $notifiable, SmsNotification $notification): NotificationResultData
     {
-        /** @var SmsNotification $notification */
-
-        /** @var TwilioMessage $twilioMessage */
         $twilioMessage = $notification->toSms($notifiable);
 
         $client = app(Client::class);
