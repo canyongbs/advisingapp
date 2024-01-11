@@ -3,11 +3,11 @@
 namespace App\Forms\Components;
 
 use App\Models\User;
-use Filament\Forms\Set;
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Fieldset;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\Placeholder;
 use AdvisingApp\Authorization\Enums\LicenseType;
 
@@ -44,21 +44,28 @@ class Licenses extends Section
                     ->hiddenLabel()
                     ->offColor(Color::Red)
                     ->onColor(Color::Green)
-                    ->formatStateUsing(function () use ($licenseType) {
-                        /** @var User $user */
-                        $user = auth()->user();
+                    ->formatStateUsing(function (User $record) use ($licenseType) {
+                        return $record->hasLicense($licenseType);
+                    })
+                    ->afterStateUpdated(function (bool $state, User $record) use ($licenseType) {
+                        $notification = Notification::make();
 
-                        return $user->hasLicense($licenseType);
+                        if ($state) {
+                            $record->grantLicense($licenseType);
+                            $notification->title("Granted license for {$licenseType->getLabel()}")
+                                ->success();
+                        } else {
+                            $record->revokeLicense($licenseType);
+                            $notification->title("Revoked license for {$licenseType->getLabel()}")
+                                ->danger();
+                        }
+
+                        $notification->send();
                     })
                     ->disabled(fn (bool $state) => ! $state && ! $licenseType->hasAvailableLicenses())
-                    ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
+                    ->hintIcon(fn (Toggle $component, string $operation) => $component->isDisabled() && $operation === 'edit' ? 'heroicon-m-lock-closed' : null)
                     ->hintIconTooltip("You are out of available {$licenseType->getLabel()} licenses.")
-                    ->dehydrateStateUsing(function (bool $state, Set $set) use ($licenseType) {
-                        /** @var User $user */
-                        $user = auth()->user();
-
-                        $state ? $user->grantLicense($licenseType) : $user->revokeLicense($licenseType);
-                    })
+                    ->dehydrated(false)
                     ->live(),
             ])
             ->columnSpan(1);
