@@ -50,7 +50,7 @@ class AssetCheckInTimeline extends CustomTimeline
 
     public function icon(): string
     {
-        return 'heroicon-o-arrow-small-right';
+        return 'heroicon-o-arrow-small-left';
     }
 
     public function sortableBy(): string

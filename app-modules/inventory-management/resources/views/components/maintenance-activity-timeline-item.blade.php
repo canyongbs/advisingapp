@@ -34,41 +34,48 @@
 
 <div>
     <div class="flex flex-row justify-between">
-        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
-            Maintenance Activity Scheduled - {{ $record->scheduled_date->format('M, d Y g:i A') }}
+        <x-timeline::timeline.heading>
+            <div class="flex">
+                Maintenance Activity Scheduled - {{ $record->scheduled_date->format('M, d Y g:i A') }}
 
-            <span class="ml-2 flex">
-                @if ($record->isCompleted())
-                    <x-filament::badge color="success">
-                        {{ $record->status->getLabel() }} {{ $record->completed_date?->format('M, d Y g:i A') }}
-                    </x-filament::badge>
-                @else
-                    <x-filament::badge>
-                        {{ $record->status->getLabel() }}
-                    </x-filament::badge>
-                @endif
+                <span class="ml-2 flex">
+                    @if ($record->isCompleted())
+                        <x-filament::badge color="success">
+                            {{ $record->status->getLabel() }} {{ $record->completed_date?->format('M, d Y g:i A') }}
+                        </x-filament::badge>
+                    @else
+                        <x-filament::badge>
+                            {{ $record->status->getLabel() }}
+                        </x-filament::badge>
+                    @endif
+                </span>
+            </div>
 
-            </span>
-        </h3>
+        </x-timeline::timeline.heading>
 
         <div>
             {{ $viewRecordIcon }}
         </div>
     </div>
 
-    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+    <x-timeline::timeline.time>
         Created {{ $record->created_at->diffForHumans() }}
-    </time>
+    </x-timeline::timeline.time>
 
-    <h2 class="text-md font-regular mb-1 flex items-center text-gray-500 dark:text-gray-100">
-        {{ $record->details }}
-    </h2>
+    <div class="mt-4 flex flex-col space-y-2">
+        <x-timeline::timeline.labeled-field>
+            <x-slot:label>
+                Details
+            </x-slot:label>
+
+            {{ $record->details }}
+        </x-timeline::timeline.labeled-field>
+    </div>
 
     @if ($record->notes)
-        <div
-            class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+        <x-timeline::timeline.content>
             {{ $record->notes }}
-        </div>
+        </x-timeline::timeline.content>
     @endif
 
 </div>
