@@ -4492,7 +4492,7 @@
         },
         {
             "name": "filament/actions",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
@@ -4543,7 +4543,7 @@
         },
         {
             "name": "filament/filament",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
@@ -4608,7 +4608,7 @@
         },
         {
             "name": "filament/forms",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
@@ -4664,7 +4664,7 @@
         },
         {
             "name": "filament/infolists",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
@@ -4715,7 +4715,7 @@
         },
         {
             "name": "filament/notifications",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
@@ -4767,7 +4767,7 @@
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -4804,7 +4804,7 @@
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
@@ -4851,16 +4851,16 @@
         },
         {
             "name": "filament/support",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
-                "reference": "247b4699937a63f1777b27c092a294b886f8fda6"
+                "reference": "954fdfb81f6f59dadef8c94ddebd667d8ea1ac17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/support/zipball/247b4699937a63f1777b27c092a294b886f8fda6",
-                "reference": "247b4699937a63f1777b27c092a294b886f8fda6",
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/954fdfb81f6f59dadef8c94ddebd667d8ea1ac17",
+                "reference": "954fdfb81f6f59dadef8c94ddebd667d8ea1ac17",
                 "shasum": ""
             },
             "require": {
@@ -4904,11 +4904,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2024-01-11T16:19:25+00:00"
+            "time": "2024-01-11T16:43:44+00:00"
         },
         {
             "name": "filament/tables",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
@@ -4961,7 +4961,7 @@
         },
         {
             "name": "filament/widgets",
-            "version": "v3.1.44",
+            "version": "v3.1.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
