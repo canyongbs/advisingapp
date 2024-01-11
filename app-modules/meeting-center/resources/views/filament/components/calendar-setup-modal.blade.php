@@ -32,7 +32,9 @@
 </COPYRIGHT>
 --}}
 
-@php use AdvisingApp\MeetingCenter\Enums\CalendarProvider; @endphp
+@php
+    use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
+@endphp
 
 <div class="flex justify-evenly">
     @if (is_null($calendar->provider_type) || $calendar->provider_type === CalendarProvider::Google)
