@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Managers;
 
 use DateTime;
+use Exception;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Microsoft\Graph\Graph;
@@ -253,13 +254,23 @@ class OutlookCalendarManager implements CalendarInterface
             ]
         );
 
+        $calendar->oauth_token = null;
+        $calendar->oauth_refresh_token = null;
+        $calendar->oauth_token_expires_at = null;
+
+        $calendar->save();
+
+        $calendar->user->notify(new CalendarRequiresReconnect($calendar));
+
+        throw new Exception($response->body());
+
         if ($response->clientError() || $response->serverError()) {
             if ($response->status() === Response::HTTP_UNAUTHORIZED) {
-                $calendar->update([
-                    'oauth_token' => null,
-                    'oauth_refresh_token' => null,
-                    'oauth_token_expires_at' => null,
-                ]);
+                $calendar->oauth_token = null;
+                $calendar->oauth_refresh_token = null;
+                $calendar->oauth_token_expires_at = null;
+
+                $calendar->save();
 
                 $calendar->user->notify(new CalendarRequiresReconnect($calendar));
             }

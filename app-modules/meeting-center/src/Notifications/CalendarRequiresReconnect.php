@@ -3,9 +3,9 @@
 namespace AdvisingApp\MeetingCenter\Notifications;
 
 use App\Models\User;
-use Filament\Actions\Action;
 use App\Models\NotificationSetting;
 use AdvisingApp\Prospect\Models\Prospect;
+use Filament\Notifications\Actions\Action;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
@@ -16,10 +16,12 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
 class CalendarRequiresReconnect extends BaseNotification implements EmailNotification, DatabaseNotification
 {
     use EmailChannelTrait;
+    use DatabaseChannelTrait;
 
     public function __construct(public Calendar $calendar) {}
 
@@ -35,7 +37,7 @@ class CalendarRequiresReconnect extends BaseNotification implements EmailNotific
     public function toDatabase(object $notifiable): array
     {
         return FilamentNotification::make()
-            ->success()
+            ->danger()
             ->title('Your calendar connection needs to be reconnected.')
             ->body('Please reconnect your calendar connection to continue using the calendar for schedules and appointments.')
             ->actions([

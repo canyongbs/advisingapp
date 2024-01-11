@@ -31,18 +31,25 @@
 
 </COPYRIGHT>
 --}}
-<div class="flex justify-evenly">
-    <a href="{{ route('calendar.google.login') }}">
-        <x-filament::icon
-            class="h-16 w-16"
-            icon="icon-google"
-        />
-    </a>
 
-    <a href="{{ route('calendar.outlook.login') }}">
-        <x-filament::icon
-            class="h-16 w-16"
-            icon="icon-outlook"
-        />
-    </a>
+@php use AdvisingApp\MeetingCenter\Enums\CalendarProvider; @endphp
+
+<div class="flex justify-evenly">
+    @if(is_null($calendar->provider_type) || $calendar->provider_type === CalendarProvider::Google)
+        <a href="{{ route('calendar.google.login') }}">
+            <x-filament::icon
+                    class="h-16 w-16"
+                    icon="icon-google"
+            />
+        </a>
+    @endif
+
+    @if(is_null($calendar->provider_type) || $calendar->provider_type === CalendarProvider::Outlook)
+        <a href="{{ route('calendar.outlook.login') }}">
+            <x-filament::icon
+                    class="h-16 w-16"
+                    icon="icon-outlook"
+            />
+        </a>
+    @endif
 </div>
