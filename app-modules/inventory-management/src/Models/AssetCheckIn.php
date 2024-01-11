@@ -37,17 +37,23 @@
 namespace AdvisingApp\InventoryManagement\Models;
 
 use App\Models\BaseModel;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Timeline\Timelines\AssetCheckInTimeline;
+use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
  * @mixin IdeHelperAssetCheckIn
  */
-class AssetCheckIn extends BaseModel implements Auditable
+class AssetCheckIn extends BaseModel implements Auditable, ProvidesATimeline
 {
     use AuditableTrait;
     use SoftDeletes;
@@ -92,5 +98,20 @@ class AssetCheckIn extends BaseModel implements Auditable
     public function checkOut(): HasOne
     {
         return $this->hasOne(AssetCheckOut::class);
+    }
+
+    public function timelineRecord(): MorphOne
+    {
+        return $this->morphOne(Timeline::class, 'timelineable');
+    }
+
+    public function timeline(): AssetCheckInTimeline
+    {
+        return new AssetCheckInTimeline($this);
+    }
+
+    public static function getTimelineData(Model $forModel): Collection
+    {
+        return $forModel->checkIns()->get();
     }
 }
