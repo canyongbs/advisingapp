@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,27 +30,52 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\InventoryManagement\Observers;
+<div>
+    <div class="flex flex-row justify-between">
+        <x-timeline::timeline.heading>
+            <div class="flex">
+                Maintenance Activity Scheduled - {{ $record->scheduled_date->format('M, d Y g:i A') }}
 
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+                <span class="ml-2 flex">
+                    @if ($record->isCompleted())
+                        <x-filament::badge color="success">
+                            {{ $record->status->getLabel() }} {{ $record->completed_date?->format('M, d Y g:i A') }}
+                        </x-filament::badge>
+                    @else
+                        <x-filament::badge>
+                            {{ $record->status->getLabel() }}
+                        </x-filament::badge>
+                    @endif
+                </span>
+            </div>
 
-class AssetCheckInObserver
-{
-    public function created(AssetCheckIn $checkIn): void
-    {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
+        </x-timeline::timeline.heading>
 
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
-    }
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-    public function deleted(AssetCheckIn $checkIn): void
-    {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
-    }
-}
+    <x-timeline::timeline.time>
+        Created {{ $record->created_at->diffForHumans() }}
+    </x-timeline::timeline.time>
+
+    <div class="mt-4 flex flex-col space-y-2">
+        <x-timeline::timeline.labeled-field>
+            <x-slot:label>
+                Details
+            </x-slot:label>
+
+            {{ $record->details }}
+        </x-timeline::timeline.labeled-field>
+    </div>
+
+    @if ($record->notes)
+        <x-timeline::timeline.content>
+            {{ $record->notes }}
+        </x-timeline::timeline.content>
+    @endif
+
+</div>

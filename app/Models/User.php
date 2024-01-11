@@ -44,6 +44,7 @@ use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Team\Models\TeamUser;
+use App\Filament\Resources\UserResource;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -419,6 +420,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         }
 
         return false;
+    }
+
+    public static function filamentResource(): string
+    {
+        return UserResource::class;
     }
 
     public function grantLicense(LicenseType $type): bool

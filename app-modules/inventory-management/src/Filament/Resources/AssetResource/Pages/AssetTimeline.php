@@ -34,25 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Observers;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
+use AdvisingApp\Timeline\Filament\Pages\TimelinePage;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
+use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
 
-class AssetCheckInObserver
+class AssetTimeline extends TimelinePage
 {
-    public function created(AssetCheckIn $checkIn): void
-    {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
+    protected static string $resource = AssetResource::class;
 
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
-    }
+    protected static ?string $navigationLabel = 'Timeline';
 
-    public function deleted(AssetCheckIn $checkIn): void
-    {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
-    }
+    public string $emptyStateMessage = 'There are no maintenance or activity records to show for this asset.';
+
+    public string $noMoreRecordsMessage = "You have reached the end of this asset's maintenance and activity timeline.";
+
+    public array $modelsToTimeline = [
+        MaintenanceActivity::class,
+        AssetCheckOut::class,
+        AssetCheckIn::class,
+    ];
 }

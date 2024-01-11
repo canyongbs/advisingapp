@@ -34,25 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Observers;
+namespace AdvisingApp\Timeline\Timelines;
 
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use Filament\Actions\ViewAction;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
+use AdvisingApp\InventoryManagement\Filament\Resources\MaintenanceActivityResource\MaintenanceActivityViewAction;
 
-class AssetCheckInObserver
+// TODO Decide where these belong - might want to keep these in the context of the original module
+class MaintenanceActivityTimeline extends CustomTimeline
 {
-    public function created(AssetCheckIn $checkIn): void
-    {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
+    public function __construct(
+        public MaintenanceActivity $maintenanceActivity
+    ) {}
 
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
+    public function icon(): string
+    {
+        return 'heroicon-o-clock';
     }
 
-    public function deleted(AssetCheckIn $checkIn): void
+    public function sortableBy(): string
     {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
+        return $this->maintenanceActivity->scheduled_date;
+    }
+
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return 'inventory-management::maintenance-activity-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return MaintenanceActivityViewAction::make()->record($this->maintenanceActivity);
     }
 }

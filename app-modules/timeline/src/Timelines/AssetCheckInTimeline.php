@@ -34,25 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Observers;
+namespace AdvisingApp\Timeline\Timelines;
 
+use Filament\Actions\ViewAction;
+use AdvisingApp\Timeline\Models\CustomTimeline;
 use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\AssetCheckInViewAction;
 
-class AssetCheckInObserver
+// TODO Decide where these belong - might want to keep these in the context of the original module
+class AssetCheckInTimeline extends CustomTimeline
 {
-    public function created(AssetCheckIn $checkIn): void
-    {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
+    public function __construct(
+        public AssetCheckIn $assetCheckIn
+    ) {}
 
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
+    public function icon(): string
+    {
+        return 'heroicon-o-arrow-small-left';
     }
 
-    public function deleted(AssetCheckIn $checkIn): void
+    public function sortableBy(): string
     {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
+        return $this->assetCheckIn->checked_in_at;
+    }
+
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return 'inventory-management::asset-check-in-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return AssetCheckInViewAction::make()->record($this->assetCheckIn);
     }
 }
