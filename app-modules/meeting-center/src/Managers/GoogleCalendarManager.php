@@ -217,27 +217,7 @@ class GoogleCalendarManager implements CalendarInterface
             ]);
 
             if ($calendar->oauth_token_expiress_at < now()) {
-                try {
-                    $token = $client->fetchAccessTokenWithRefreshToken($calendar->oauth_refresh_token);
-
-                    if (empty($token['access_token']) || empty($token['expires_in']) || empty($token['created'])) {
-                        throw new Exception('fetchAccessTokenWithRefreshToken did not return a valid token');
-                    }
-
-                    $calendar->oauth_token = $token['access_token'];
-                    $calendar->oauth_token_expires_at = Carbon::parse($token['created'] + $token['expires_in']);
-                    $calendar->save();
-                } catch (Exception $e) {
-                    $calendar->update([
-                        'oauth_token' => null,
-                        'oauth_refresh_token' => null,
-                        'oauth_token_expires_at' => null,
-                    ]);
-
-                    $calendar->user->notify(new CalendarRequiresReconnect($calendar));
-
-                    throw $e;
-                }
+                static::refreshToken($calendar, $client);
             } else {
                 $client->setAccessToken($calendar->oauth_token);
             }
@@ -259,6 +239,43 @@ class GoogleCalendarManager implements CalendarInterface
         }
 
         return $client;
+    }
+
+    public function refreshToken(Calendar $calendar, ?Client $client = null): void
+    {
+        try {
+            if (! $client) {
+                $client = new Client([
+                    'client_id' => config('services.google_calendar.client_id'),
+                    'client_secret' => config('services.google_calendar.client_secret'),
+                    'scopes' => [
+                        GoogleCalendar::CALENDAR,
+                        GoogleCalendar::CALENDAR_EVENTS,
+                    ],
+                ]);
+            }
+
+            $token = $client->fetchAccessTokenWithRefreshToken($calendar->oauth_refresh_token);
+
+            if (empty($token['access_token']) || empty($token['expires_in']) || empty($token['created']) || empty($token['refresh_token'])) {
+                throw new Exception('fetchAccessTokenWithRefreshToken did not return a valid token');
+            }
+
+            $calendar->oauth_token = $token['access_token'];
+            $calendar->oauth_token_expires_at = Carbon::parse($token['created'] + $token['expires_in']);
+            $calendar->oauth_refresh_token = $token['refresh_token'];
+            $calendar->save();
+        } catch (Exception $e) {
+            $calendar->update([
+                'oauth_token' => null,
+                'oauth_refresh_token' => null,
+                'oauth_token_expires_at' => null,
+            ]);
+
+            $calendar->user->notify(new CalendarRequiresReconnect($calendar));
+
+            throw $e;
+        }
     }
 
     private function toGoogleEvent(CalendarEvent $event): Event
