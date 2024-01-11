@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
-use App\Models\User;
 use Filament\Forms\Form;
 use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
