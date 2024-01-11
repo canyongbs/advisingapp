@@ -36,6 +36,7 @@
 
 namespace App\Models;
 
+use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use Filament\Panel;
 use DateTimeInterface;
 use Illuminate\Support\Arr;
@@ -89,7 +90,7 @@ use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface
+class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource
 {
     use HasFactory;
     use HasAdvancedFilter;
