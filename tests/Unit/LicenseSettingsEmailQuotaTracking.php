@@ -41,7 +41,7 @@ use Illuminate\Mail\Events\MessageSent;
 use function Pest\Laravel\assertDatabaseCount;
 
 use AdvisingApp\Notification\Models\OutboundDeliverable;
-use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 it('An email is allowed to be sent if there is available quota and it\'s quota usage is tracked', function () {
@@ -90,13 +90,9 @@ it('An email is prevented from being sent if there is no available quota', funct
 
     $notification = new Tests\Unit\TestEmailNotification();
 
-    $notifiable->notify($notification);
+    expect(fn () => $notifiable->notify($notification))->toThrow(NotificationQuotaExceeded::class);
 
     Event::assertNotDispatched(MessageSent::class);
 
-    assertDatabaseCount(OutboundDeliverable::class, 1);
-
-    $outboundDeliverable = OutboundDeliverable::first();
-
-    expect($outboundDeliverable->delivery_status)->toBe(NotificationDeliveryStatus::RateLimited);
+    assertDatabaseCount(OutboundDeliverable::class, 0);
 });

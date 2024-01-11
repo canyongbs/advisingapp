@@ -41,10 +41,13 @@ use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Channels\MailChannel;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
@@ -52,6 +55,7 @@ class EmailChannel extends MailChannel
 {
     public function send($notifiable, Notification $notification): void
     {
+        /** @var NotifiableInterface $notifiable */
         try {
             DB::beginTransaction();
 
@@ -62,17 +66,18 @@ class EmailChannel extends MailChannel
             /** @var BaseNotification $notification */
             $deliverable = $notification->beforeSend($notifiable, EmailChannel::class);
 
-            if ($deliverable === false) {
-                // Do anything else we need to notify sending party that notification was not sent
-                return;
-            }
-
             if (! $this->canSendWithinQuotaLimits($notification, $notifiable)) {
                 $deliverable->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
 
                 // Do anything else we need to notify sending party that notification was not sent
 
-                return;
+                if ($deliverable->related instanceof EngagementDeliverable) {
+                    $deliverable->related->update(['delivery_status' => NotificationDeliveryStatus::RateLimited]);
+                }
+
+                DB::commit();
+
+                throw new NotificationQuotaExceeded();
             }
 
             $result = $this->handle($notifiable, $notification);

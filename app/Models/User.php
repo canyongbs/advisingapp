@@ -82,6 +82,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
@@ -89,7 +90,7 @@ use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, HasFilamentResource
+class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource
 {
     use HasFactory;
     use HasAdvancedFilter;

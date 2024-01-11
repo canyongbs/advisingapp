@@ -44,6 +44,7 @@ use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
@@ -56,7 +57,7 @@ class EngagementEmailSentNotification extends BaseNotification implements EmailN
         public Engagement $engagement
     ) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    public function toEmail(NotifiableInterface $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -64,7 +65,7 @@ class EngagementEmailSentNotification extends BaseNotification implements EmailN
             ->line("Your engagement was successfully delivered to {$this->engagement->recipient->display_name}.");
     }
 
-    public function toDatabase(object $notifiable): array
+    public function toDatabase(NotifiableInterface $notifiable): array
     {
         return FilamentNotification::make()
             ->success()
@@ -73,8 +74,8 @@ class EngagementEmailSentNotification extends BaseNotification implements EmailN
             ->getDatabaseMessage();
     }
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
     {
-        return $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting;
+        return $notifiable instanceof User ? $this->engagement->createdBy->teams()->first()?->division?->notificationSetting?->setting : null;
     }
 }

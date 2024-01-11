@@ -91,13 +91,13 @@ class EngagementsRelationManager extends RelationManager
                         IconEntry::make('deliverable.delivery_status')
                             ->icon(fn (EngagementDeliveryStatus $state): string => match ($state) {
                                 EngagementDeliveryStatus::Successful => 'heroicon-o-check-circle',
-                                EngagementDeliveryStatus::Awaiting => 'heroicon-o-clock',
-                                EngagementDeliveryStatus::Failed => 'heroicon-o-x-circle',
+                                EngagementDeliveryStatus::Awaiting, EngagementDeliveryStatus::Dispatched => 'heroicon-o-clock',
+                                EngagementDeliveryStatus::Failed, EngagementDeliveryStatus::DispatchFailed, EngagementDeliveryStatus::RateLimited => 'heroicon-o-x-circle',
                             })
                             ->color(fn (EngagementDeliveryStatus $state): string => match ($state) {
                                 EngagementDeliveryStatus::Successful => 'success',
-                                EngagementDeliveryStatus::Awaiting => 'info',
-                                EngagementDeliveryStatus::Failed => 'danger',
+                                EngagementDeliveryStatus::Awaiting, EngagementDeliveryStatus::Dispatched => 'info',
+                                EngagementDeliveryStatus::Failed, EngagementDeliveryStatus::DispatchFailed, EngagementDeliveryStatus::RateLimited => 'danger',
                             })
                             ->label('Status'),
                         TextEntry::make('deliverable.delivered_at')

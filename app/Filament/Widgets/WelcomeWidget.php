@@ -42,5 +42,7 @@ class WelcomeWidget extends Widget
 {
     protected static string $view = 'filament.widgets.welcome-widget';
 
+    protected static bool $isLazy = false;
+
     protected int | string | array $columnSpan = 'full';
 }

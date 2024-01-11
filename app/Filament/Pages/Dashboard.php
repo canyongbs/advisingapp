@@ -48,6 +48,7 @@ use App\Filament\Widgets\MyServiceRequests;
 use App\Filament\Widgets\ProspectGrowthChart;
 use App\Filament\Widgets\RecentProspectsList;
 use App\Filament\Widgets\RecentKnowledgeBaseArticlesList;
+use AdvisingApp\Authorization\Filament\Widgets\UnlicensedNotice;
 
 class Dashboard extends BasePage
 {
@@ -60,25 +61,35 @@ class Dashboard extends BasePage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('authorization.view_dashboard') ? [
-            //1
-            WelcomeWidget::class,
-            //2
-            TotalStudents::class,
-            TotalProspects::class,
-            MyStudents::class,
-            MyProspects::class,
-            //3
-            ProspectGrowthChart::class,
-            //4
-            RecentProspectsList::class,
-            RecentKnowledgeBaseArticlesList::class,
-            //5
-            MyServiceRequests::class,
-            MyTasks::class,
-        ] : [
+        $widgets = [
             WelcomeWidget::class,
         ];
+
+        if (UnlicensedNotice::canView()) {
+            $widgets[] = UnlicensedNotice::class;
+        }
+
+        if ($user->can('authorization.view_dashboard')) {
+            $widgets = [
+                // 1
+                ...$widgets,
+                // 2
+                TotalStudents::class,
+                TotalProspects::class,
+                MyStudents::class,
+                MyProspects::class,
+                // 3
+                ProspectGrowthChart::class,
+                // 4
+                RecentProspectsList::class,
+                RecentKnowledgeBaseArticlesList::class,
+                // 5
+                MyServiceRequests::class,
+                MyTasks::class,
+            ];
+        }
+
+        return $widgets;
     }
 
     public function getColumns(): int | string | array

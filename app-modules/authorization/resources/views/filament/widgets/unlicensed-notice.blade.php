@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,63 +30,20 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-filament-widgets::widget>
+    <x-filament::section class="!bg-warning-50 dark:!bg-gray-900">
+        <div class="flex gap-3">
+            <div class="flex-shrink-0">
+                <x-heroicon-o-exclamation-triangle
+                    class="h-5 w-5 text-warning-400"
+                    aria-hidden="true"
+                />
+            </div>
 
-namespace AdvisingApp\MeetingCenter\Models;
-
-use App\Models\BaseModel;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Notifications\Notifiable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-
-#[NoPermissions]
-/**
- * @mixin IdeHelperEventAttendee
- */
-class EventAttendee extends BaseModel implements NotifiableInterface
-{
-    use Notifiable;
-
-    protected $fillable = [
-        'status',
-        'email',
-        'event_id',
-    ];
-
-    protected $casts = [
-        'status' => EventAttendeeStatus::class,
-    ];
-
-    public function event(): BelongsTo
-    {
-        return $this->belongsTo(Event::class, 'event_id');
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
-    }
-
-    public function prospects(): HasMany
-    {
-        return $this->hasMany(
-            related: Prospect::class,
-            foreignKey: 'email',
-            localKey: 'email',
-        );
-    }
-
-    public function students(): HasMany
-    {
-        return $this->hasMany(
-            related: Student::class,
-            foreignKey: 'email',
-            localKey: 'email',
-        );
-    }
-}
+            <h3 class="text-sm font-medium text-warning-800 dark:text-warning-200">
+                Your account currently does not have a license to access features in Advising App.
+            </h3>
+        </div>
+    </x-filament::section>
+</x-filament-widgets::widget>
