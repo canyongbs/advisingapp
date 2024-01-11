@@ -48,7 +48,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 /**
- * @property string $purchase_age
+ * @property-read string $purchase_age
  *
  * @mixin IdeHelperAsset
  */
@@ -137,13 +137,13 @@ class Asset extends BaseModel implements Auditable
                 return '0 Years 0 Months';
             }
 
-            /** @var User $user */
+            /** @var ?User $user */
             $user = auth()->user();
 
             $diff = $this
                 ->purchase_date
                 ->roundMonth()
-                ->setTimezone($user->timezone)
+                ->setTimezone($user?->timezone)
                 ->diff();
 
             return $diff->y . ' ' . ($diff->y === 1 ? 'Year' : 'Years') . ' ' .
