@@ -54,7 +54,6 @@ class EmailChannel extends MailChannel
     public function send($notifiable, Notification $notification): void
     {
         /** @var NotifiableInterface $notifiable */
-
         try {
             DB::beginTransaction();
 
