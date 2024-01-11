@@ -65,7 +65,6 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestUpdateSeeder;
 use AdvisingApp\InventoryManagement\Database\Seeders\MaintenanceProviderSeeder;
-use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestPrioritySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -80,7 +79,6 @@ class DatabaseSeeder extends Seeder
             SuperAdminProfileSeeder::class,
             UsersTableSeeder::class,
             DivisionSeeder::class,
-            ServiceRequestPrioritySeeder::class,
             ServiceRequestStatusSeeder::class,
             ServiceRequestTypeSeeder::class,
             ProspectStatusSeeder::class,

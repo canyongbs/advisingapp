@@ -43,6 +43,7 @@ use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\ViewServiceRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\ListServiceRequestTypes;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages\CreateServiceRequestType;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\RelationManagers\ServiceRequestPrioritiesRelationManager;
 
 class ServiceRequestTypeResource extends Resource
 {
@@ -55,6 +56,13 @@ class ServiceRequestTypeResource extends Resource
     protected static ?int $navigationSort = 3;
 
     protected static ?string $cluster = ServiceManagementAdministration::class;
+
+    public static function getRelations(): array
+    {
+        return [
+            ServiceRequestPrioritiesRelationManager::class,
+        ];
+    }
 
     public static function getPages(): array
     {
