@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 
 class EventSeeder extends Seeder
 {
