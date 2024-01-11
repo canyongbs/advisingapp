@@ -2133,6 +2133,7 @@ namespace AdvisingApp\InventoryManagement\Models{
 /**
  * AdvisingApp\InventoryManagement\Models\Asset
  *
+ * @property string $purchase_age
  * @property string $id
  * @property string $serial_number
  * @property string $name
@@ -2140,7 +2141,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @property string $type_id
  * @property string $status_id
  * @property string $location_id
- * @property string $purchase_date
+ * @property \Illuminate\Support\Carbon $purchase_date
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -2320,8 +2321,6 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @property-read int|null $assets_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus available()
- * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus checkedOut()
  * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetStatusFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssetStatus newQuery()
@@ -2710,6 +2709,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property-read int|null $students_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission> $submissions
  * @property-read int|null $submissions_count
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventAttendeeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventAttendee query()
@@ -2748,6 +2748,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property-read int|null $steps_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission> $submissions
  * @property-read int|null $submissions_count
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventRegistrationFormFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationForm onlyTrashed()
@@ -2814,6 +2815,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep|null $step
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventRegistrationFormFieldFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormField query()
@@ -2846,6 +2848,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\EventRegistrationFormField> $fields
  * @property-read int|null $fields_count
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventRegistrationFormStepFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormStep query()
@@ -2880,6 +2883,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property-read int|null $fields_count
  * @property-read \App\Models\User $requester
  * @property-read \AdvisingApp\MeetingCenter\Models\EventRegistrationForm $submissible
+ * @method static \AdvisingApp\MeetingCenter\Database\Factories\EventRegistrationFormSubmissionFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EventRegistrationFormSubmission newQuery()

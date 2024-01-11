@@ -45,6 +45,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Columns\OpenSearch\TextColumn;
+use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
 
 class ListAssets extends ListRecords
@@ -64,9 +65,10 @@ class ListAssets extends ListRecords
                 TextColumn::make('type.name'),
                 TextColumn::make('status.name'),
                 TextColumn::make('location.name'),
-                TextColumn::make('purchase_date')
-                    ->searchable()
-                    ->sortable(),
+                TextColumn::make('purchase_age')
+                    ->label('Device Age')
+                    ->sortable(['purchase_date'])
+                    ->tooltip(fn (Asset $record) => $record->purchase_date->format('M j, Y')),
             ])
             ->filters([
                 SelectFilter::make('type')
