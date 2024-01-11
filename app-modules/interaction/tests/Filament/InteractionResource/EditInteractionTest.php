@@ -40,7 +40,7 @@ use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Interaction\Filament\Resources\InteractionResource;
+use AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages\EditInteraction;
 
 test('EditInteraction is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -53,7 +53,7 @@ test('EditInteraction is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            InteractionResource::getUrl('edit', ['record' => $interaction])
+            EditInteraction::getUrl(['record' => $interaction])
         )
         ->assertForbidden();
 
@@ -62,7 +62,7 @@ test('EditInteraction is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            InteractionResource::getUrl('edit', ['record' => $interaction])
+            EditInteraction::getUrl(['record' => $interaction])
         )
         ->assertSuccessful();
 });
