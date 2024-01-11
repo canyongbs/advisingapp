@@ -43,6 +43,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Fieldset;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Placeholder;
+use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Enums\LicenseType;
 
 class Licenses extends Section
@@ -99,7 +100,16 @@ class Licenses extends Section
                     })
                     ->disabled(fn (bool $state) => ! $state && ! $licenseType->hasAvailableLicenses())
                     ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                    ->hintIconTooltip("You are out of available {$licenseType->getLabel()} licenses.")
+                    ->hintIconTooltip(function () use ($licenseType) {
+                        /** @var User $user */
+                        $user = auth()->user();
+
+                        if ($user->cannot('create', License::class)) {
+                            return 'You do not have permission to change licenses.';
+                        }
+
+                        return "You are out of available {$licenseType->getLabel()} licenses.";
+                    })
                     ->dehydrated(false)
                     ->live(),
             ])
