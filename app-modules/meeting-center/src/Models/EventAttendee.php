@@ -44,12 +44,13 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 
 #[NoPermissions]
 /**
  * @mixin IdeHelperEventAttendee
  */
-class EventAttendee extends BaseModel
+class EventAttendee extends BaseModel implements NotifiableInterface
 {
     use Notifiable;
 

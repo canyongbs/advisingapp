@@ -41,6 +41,7 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
 class EngagementEmailNotification extends BaseNotification implements EmailNotification
@@ -51,7 +52,7 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
         public EngagementDeliverable $deliverable
     ) {}
 
-    public function toEmail(object $notifiable): MailMessage
+    public function toEmail(NotifiableInterface $notifiable): MailMessage
     {
         return MailMessage::make()
             ->subject($this->deliverable->engagement->subject)
@@ -60,7 +61,7 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
             ->salutation("Regards, {$this->deliverable->engagement->user->name}");
     }
 
-    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    public function beforeSendHook(NotifiableInterface $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
         $deliverable->update([
             'related_id' => $this->deliverable->id,
@@ -68,7 +69,7 @@ class EngagementEmailNotification extends BaseNotification implements EmailNotif
         ]);
     }
 
-    public function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+    public function afterSendHook(NotifiableInterface $notifiable, OutboundDeliverable $deliverable): void
     {
         $updateData = array_filter([
             'external_reference_id' => $deliverable->external_reference_id,

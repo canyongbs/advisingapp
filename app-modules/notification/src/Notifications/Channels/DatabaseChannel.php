@@ -39,6 +39,7 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 use Illuminate\Notifications\Notification;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 use Illuminate\Notifications\Channels\DatabaseChannel as BaseDatabaseChannel;
@@ -51,7 +52,7 @@ class DatabaseChannel extends BaseDatabaseChannel
         $deliverable = $notification->beforeSend($notifiable, DatabaseChannel::class);
 
         if ($deliverable === false) {
-            // Do anything else we need to to notify sending party that notification was not sent
+            // Do anything else we need to notify sending party that notification was not sent
             return;
         }
 
@@ -60,7 +61,7 @@ class DatabaseChannel extends BaseDatabaseChannel
         $notification->afterSend($notifiable, $deliverable, $result);
     }
 
-    public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
+    public function handle(NotifiableInterface $notifiable, BaseNotification $notification): NotificationResultData
     {
         parent::send($notifiable, $notification);
 
@@ -69,7 +70,7 @@ class DatabaseChannel extends BaseDatabaseChannel
         );
     }
 
-    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, DatabaseChannelResultData $result): void
+    public static function afterSending(NotifiableInterface $notifiable, OutboundDeliverable $deliverable, DatabaseChannelResultData $result): void
     {
         if ($result->success) {
             $deliverable->markDeliverySuccessful();

@@ -38,16 +38,14 @@ namespace AdvisingApp\MeetingCenter\Notifications;
 
 use App\Models\User;
 use App\Models\NotificationSetting;
-use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Notifications\Actions\Action;
 use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEventResource;
 use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
@@ -59,7 +57,7 @@ class CalendarRequiresReconnect extends BaseNotification implements EmailNotific
 
     public function __construct(public Calendar $calendar) {}
 
-    public function toEmail(User|Student|Prospect|EventAttendee $notifiable): MailMessage
+    public function toEmail(NotifiableInterface $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -68,7 +66,7 @@ class CalendarRequiresReconnect extends BaseNotification implements EmailNotific
             ->action('View Schedule and Appointments', CalendarEventResource::getUrl());
     }
 
-    public function toDatabase(object $notifiable): array
+    public function toDatabase(NotifiableInterface $notifiable): array
     {
         return FilamentNotification::make()
             ->danger()
@@ -82,8 +80,8 @@ class CalendarRequiresReconnect extends BaseNotification implements EmailNotific
             ->getDatabaseMessage();
     }
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
     {
-        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
+        return $notifiable instanceof User ? $notifiable->teams()->first()?->division?->notificationSetting?->setting : null;
     }
 }

@@ -217,7 +217,7 @@ class GoogleCalendarManager implements CalendarInterface
             ]);
 
             if ($calendar->oauth_token_expires_at < now()) {
-                $calendar = static::refreshToken($calendar);
+                $calendar = (new self())->refreshToken($calendar);
             }
 
             $client->setAccessToken($calendar->oauth_token);

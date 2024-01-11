@@ -37,31 +37,25 @@
 namespace AdvisingApp\MeetingCenter\Notifications;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
 use App\Models\NotificationSetting;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class SendRegistrationLinkToEventAttendee extends BaseNotification
+class SendRegistrationLinkToEventAttendee extends BaseNotification implements EmailNotification
 {
-    use Queueable;
+    use EmailChannelTrait;
 
     public function __construct(
         protected Event $event,
         protected User $sender
     ) {}
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(EventAttendee $notifiable): MailMessage
+    public function toEmail(NotifiableInterface $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
@@ -70,8 +64,8 @@ class SendRegistrationLinkToEventAttendee extends BaseNotification
             ->action('Register', route('event-registration.show', ['event' => $this->event]));
     }
 
-    private function resolveNotificationSetting(EventAttendee $notifiable): ?NotificationSetting
+    private function resolveNotificationSetting(NotifiableInterface $notifiable): ?NotificationSetting
     {
-        return $this->sender->teams()->first()?->division?->notificationSetting?->setting;
+        return $notifiable instanceof EventAttendee ? $this->sender->teams()->first()?->division?->notificationSetting?->setting : null;
     }
 }

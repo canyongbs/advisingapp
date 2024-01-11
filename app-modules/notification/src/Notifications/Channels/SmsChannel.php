@@ -42,18 +42,19 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Enums\NotificationDeliveryStatus;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
 class SmsChannel
 {
-    public function send(object $notifiable, BaseNotification $notification): void
+    public function send(NotifiableInterface $notifiable, BaseNotification $notification): void
     {
         $deliverable = $notification->beforeSend($notifiable, SmsChannel::class);
 
         if ($deliverable === false) {
-            // Do anything else we need to to notify sending party that notification was not sent
+            // Do anything else we need to notify sending party that notification was not sent
             return;
         }
 
@@ -62,7 +63,7 @@ class SmsChannel
         $notification->afterSend($notifiable, $deliverable, $smsData);
     }
 
-    public function handle(object $notifiable, BaseNotification $notification): NotificationResultData
+    public function handle(NotifiableInterface $notifiable, BaseNotification $notification): NotificationResultData
     {
         /** @var SmsNotification $notification */
 
@@ -99,7 +100,7 @@ class SmsChannel
         return $result;
     }
 
-    public static function afterSending(object $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
+    public static function afterSending(NotifiableInterface $notifiable, OutboundDeliverable $deliverable, SmsChannelResultData $result): void
     {
         if ($result->success) {
             $deliverable->update([

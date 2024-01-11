@@ -67,6 +67,7 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
@@ -78,7 +79,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
  *
  * @mixin IdeHelperStudent
  */
-class Student extends Model implements Auditable, Subscribable, Educatable, HasFilamentResource
+class Student extends Model implements Auditable, Subscribable, Educatable, HasFilamentResource, NotifiableInterface
 {
     use AuditableTrait;
     use HasFactory;
