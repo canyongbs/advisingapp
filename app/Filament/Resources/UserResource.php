@@ -102,13 +102,6 @@ class UserResource extends Resource
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ])
-                    // TODO: Figure out if any fields should be hidden
-                    // ->hidden(function (User $record) {
-                    //     /** @var User $user */
-                    //     $user = auth()->user();
-                    //
-                    //     return $user->cannot('update', $record);
-                    // })
                     ->disabled(fn (string $operation) => $operation !== 'edit'),
                 Licenses::make()
                     ->disabled(function () {

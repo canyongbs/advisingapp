@@ -45,7 +45,7 @@ class UserPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['user.view-any', 'license.create'],
+            abilities: ['user.view-any'],
             denyResponse: 'You do not have permission to view users.'
         );
     }
@@ -53,7 +53,7 @@ class UserPolicy
     public function view(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['user.*.view', "user.{$model->id}.view", 'license.create'],
+            abilities: ['user.*.view', "user.{$model->id}.view"],
             denyResponse: 'You do not have permission to view this user.'
         );
     }
