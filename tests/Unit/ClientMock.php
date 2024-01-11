@@ -34,15 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+namespace Tests\Unit;
 
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use Twilio\Rest\Client;
+use AllowDynamicProperties;
+use Twilio\Http\Client as HttpClient;
 
-/**
- * @mixin BaseNotification
- */
-interface SmsNotification
+#[AllowDynamicProperties]
+class ClientMock extends Client
 {
-    public function toSms(NotifiableInterface $notifiable): TwilioMessage;
+    public function __construct(
+        $messageList,
+        string $username = null,
+        string $password = null,
+        string $accountSid = null,
+        string $region = null,
+        HttpClient $httpClient = null,
+        array $environment = null,
+        array $userAgentExtensions = null,
+    ) {
+        parent::__construct(
+            $username,
+            $password,
+            $accountSid,
+            $region,
+            $httpClient,
+            $environment,
+            $userAgentExtensions
+        );
+        $this->messages = $messageList;
+    }
 }

@@ -34,15 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+namespace Tests\Unit;
 
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Notifications\SmsNotification;
+use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
 
-/**
- * @mixin BaseNotification
- */
-interface SmsNotification
+class TestSmsNotification extends BaseNotification implements SmsNotification
 {
-    public function toSms(NotifiableInterface $notifiable): TwilioMessage;
+    use SmsChannelTrait;
+
+    public function toSms(object $notifiable): TwilioMessage
+    {
+        return TwilioMessage::make($notifiable)
+            ->content('This is a test');
+    }
 }

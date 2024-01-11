@@ -34,15 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Notification\Notifications;
+namespace AdvisingApp\Notification\Exceptions;
 
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
-use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use Exception;
 
-/**
- * @mixin BaseNotification
- */
-interface SmsNotification
+class NotificationQuotaExceeded extends Exception
 {
-    public function toSms(NotifiableInterface $notifiable): TwilioMessage;
+    protected $message = 'Notification quota exceeded';
 }
