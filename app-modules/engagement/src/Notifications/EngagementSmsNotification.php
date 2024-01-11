@@ -40,6 +40,7 @@ use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\SmsNotification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
 
@@ -51,13 +52,13 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
         public EngagementDeliverable $deliverable
     ) {}
 
-    public function toSms(object $notifiable): TwilioMessage
+    public function toSms(NotifiableInterface $notifiable): TwilioMessage
     {
         return TwilioMessage::make($notifiable)
             ->content($this->deliverable->engagement->getBody());
     }
 
-    public function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void
+    public function beforeSendHook(NotifiableInterface $notifiable, OutboundDeliverable $deliverable, string $channel): void
     {
         $deliverable->update([
             'related_id' => $this->deliverable->id,
@@ -65,7 +66,7 @@ class EngagementSmsNotification extends BaseNotification implements SmsNotificat
         ]);
     }
 
-    public function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void
+    public function afterSendHook(NotifiableInterface $notifiable, OutboundDeliverable $deliverable): void
     {
         $this->deliverable->update([
             'external_reference_id' => $deliverable->external_reference_id,

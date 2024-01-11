@@ -34,61 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\Authorization\Filament\Widgets;
 
-use App\Models\BaseModel;
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Notifications\Notifiable;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use Filament\Widgets\Widget;
+use App\Models\Authenticatable;
+use AdvisingApp\Authorization\Enums\LicenseType;
 
-#[NoPermissions]
-/**
- * @mixin IdeHelperEventAttendee
- */
-class EventAttendee extends BaseModel implements NotifiableInterface
+class UnlicensedNotice extends Widget
 {
-    use Notifiable;
+    protected static string $view = 'authorization::filament.widgets.unlicensed-notice';
 
-    protected $fillable = [
-        'status',
-        'email',
-        'event_id',
-    ];
+    protected static bool $isLazy = false;
 
-    protected $casts = [
-        'status' => EventAttendeeStatus::class,
-    ];
+    protected int | string | array $columnSpan = 'full';
 
-    public function event(): BelongsTo
+    public static function canView(): bool
     {
-        return $this->belongsTo(Event::class, 'event_id');
-    }
+        /** @var Authenticatable $user */
+        $user = auth()->user();
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(EventRegistrationFormSubmission::class, 'event_attendee_id');
-    }
-
-    public function prospects(): HasMany
-    {
-        return $this->hasMany(
-            related: Prospect::class,
-            foreignKey: 'email',
-            localKey: 'email',
-        );
-    }
-
-    public function students(): HasMany
-    {
-        return $this->hasMany(
-            related: Student::class,
-            foreignKey: 'email',
-            localKey: 'email',
-        );
+        return ! $user->hasAnyLicense(LicenseType::cases());
     }
 }

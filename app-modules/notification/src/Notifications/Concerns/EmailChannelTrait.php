@@ -39,6 +39,7 @@ namespace AdvisingApp\Notification\Notifications\Concerns;
 use Symfony\Component\Mime\Email;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 
 trait EmailChannelTrait
@@ -50,7 +51,7 @@ trait EmailChannelTrait
         return EmailChannel::class;
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(NotifiableInterface $notifiable): MailMessage
     {
         return $this->toEmail($notifiable)
             ->withSymfonyMessage(function (Email $message) {
