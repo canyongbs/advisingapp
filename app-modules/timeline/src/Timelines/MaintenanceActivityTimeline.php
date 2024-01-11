@@ -55,7 +55,7 @@ class MaintenanceActivityTimeline extends CustomTimeline
 
     public function sortableBy(): string
     {
-        return $this->maintenanceActivity->scheduled_at;
+        return $this->maintenanceActivity->scheduled_date;
     }
 
     public function providesCustomView(): bool

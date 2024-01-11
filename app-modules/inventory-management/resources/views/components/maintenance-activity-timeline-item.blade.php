@@ -34,13 +34,39 @@
 
 <div>
     <div class="flex flex-row justify-between">
-        Maintenance Activity {{ $record->id }}
+        <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
+            Maintenance Activity Scheduled - {{ $record->scheduled_date->format('M, d Y g:i A') }}
 
-        {{ $record->status }}
+            <span class="ml-2 flex">
+                @if ($record->isCompleted())
+                    <x-filament::badge color="success">
+                        {{ $record->status->getLabel() }} {{ $record->completed_date?->format('M, d Y g:i A') }}
+                    </x-filament::badge>
+                @else
+                    <x-filament::badge>
+                        {{ $record->status->getLabel() }}
+                    </x-filament::badge>
+                @endif
+
+            </span>
+        </h3>
 
         <div>
             {{ $viewRecordIcon }}
         </div>
+    </div>
+
+    <time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+        Created {{ $record->created_at->diffForHumans() }}
+    </time>
+
+    <h2 class="text-md font-regular mb-1 flex items-center text-gray-500 dark:text-gray-100">
+        {{ $record->details }}
+    </h2>
+
+    <div
+        class="my-4 rounded-lg border-2 border-gray-200 p-2 text-base font-normal text-gray-500 dark:border-gray-800 dark:text-gray-400">
+        {{ $record->notes }}
     </div>
 
 </div>

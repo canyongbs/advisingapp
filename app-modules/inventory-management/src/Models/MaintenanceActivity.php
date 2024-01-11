@@ -97,4 +97,9 @@ class MaintenanceActivity extends BaseModel implements Auditable, ProvidesATimel
     {
         return $forModel->maintenanceActivities()->get();
     }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === MaintenanceActivityStatus::Completed;
+    }
 }
