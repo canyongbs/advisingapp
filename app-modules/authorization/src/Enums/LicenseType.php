@@ -85,6 +85,6 @@ enum LicenseType: string implements HasLabel
 
     public function getAvailableSeats(): int
     {
-        return $this->getSeats() - $this->getSeatsInUse();
+        return max($this->getSeats() - $this->getSeatsInUse(), 0);
     }
 }
