@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\ServiceManagement\Database\Factories;
 
-use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 
 /**
