@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,17 +30,20 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+<x-filament-widgets::widget>
+    <x-filament::section class="!bg-warning-50 dark:!bg-gray-900">
+        <div class="flex gap-3">
+            <div class="flex-shrink-0">
+                <x-heroicon-o-exclamation-triangle
+                    class="h-5 w-5 text-warning-400"
+                    aria-hidden="true"
+                />
+            </div>
 
-namespace App\Filament\Widgets;
-
-use Filament\Widgets\Widget;
-
-class WelcomeWidget extends Widget
-{
-    protected static string $view = 'filament.widgets.welcome-widget';
-
-    protected static bool $isLazy = false;
-
-    protected int | string | array $columnSpan = 'full';
-}
+            <h3 class="text-sm font-medium text-warning-800 dark:text-warning-200">
+                Your account currently does not have a license to access features in Advising App.
+            </h3>
+        </div>
+    </x-filament::section>
+</x-filament-widgets::widget>

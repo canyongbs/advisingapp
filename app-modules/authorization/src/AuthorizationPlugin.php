@@ -58,6 +58,10 @@ class AuthorizationPlugin implements Plugin
                 in: __DIR__ . '/Filament/Resources',
                 for: 'AdvisingApp\\Authorization\\Filament\\Resources'
             )
+            ->discoverWidgets(
+                in: __DIR__ . '/Filament/Widgets',
+                for: 'AdvisingApp\\Authorization\\Filament\\Widgets'
+            )
             ->databaseNotifications()
             ->databaseNotificationsPolling('10s')
             ->authMiddleware([
