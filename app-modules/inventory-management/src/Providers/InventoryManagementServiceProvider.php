@@ -51,6 +51,8 @@ use AdvisingApp\InventoryManagement\InventoryManagementPlugin;
 use AdvisingApp\InventoryManagement\Models\MaintenanceActivity;
 use AdvisingApp\InventoryManagement\Models\MaintenanceProvider;
 use AdvisingApp\InventoryManagement\Observers\AssetCheckInObserver;
+use AdvisingApp\InventoryManagement\Observers\AssetCheckOutObserver;
+use AdvisingApp\InventoryManagement\Observers\MaintenanceActivityObserver;
 
 class InventoryManagementServiceProvider extends ServiceProvider
 {
@@ -80,6 +82,8 @@ class InventoryManagementServiceProvider extends ServiceProvider
     public function registerObservers(): void
     {
         AssetCheckIn::observe(AssetCheckInObserver::class);
+        AssetCheckOut::observe(AssetCheckOutObserver::class);
+        MaintenanceActivity::observe(MaintenanceActivityObserver::class);
     }
 
     protected function registerRolesAndPermissions()

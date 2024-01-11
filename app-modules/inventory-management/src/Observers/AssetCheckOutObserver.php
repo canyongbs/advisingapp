@@ -36,23 +36,19 @@
 
 namespace AdvisingApp\InventoryManagement\Observers;
 
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
+use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
 use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
 
-class AssetCheckInObserver
+class AssetCheckOutObserver
 {
-    public function created(AssetCheckIn $checkIn): void
+    public function created(AssetCheckOut $checkOut): void
     {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
-
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
+        TimelineableRecordCreated::dispatch($checkOut->asset, $checkOut);
     }
 
-    public function deleted(AssetCheckIn $checkIn): void
+    public function deleted(AssetCheckOut $checkOut): void
     {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
+        TimelineableRecordDeleted::dispatch($checkOut->asset, $checkOut);
     }
 }
