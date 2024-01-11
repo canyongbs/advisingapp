@@ -46,10 +46,6 @@ class EventSeeder extends Seeder
     {
         Event::factory()
             ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+            ->create();
     }
 }
