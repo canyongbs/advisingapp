@@ -210,6 +210,10 @@ class EventRegistrationWidgetController extends Controller
 
                 if ($form->is_wizard) {
                     foreach ($form->steps as $step) {
+                        if (! array_key_exists($step->label, $data)) {
+                            continue;
+                        }
+
                         foreach ($data[$step->label] as $fieldId => $response) {
                             $submission->fields()->attach(
                                 $fieldId,

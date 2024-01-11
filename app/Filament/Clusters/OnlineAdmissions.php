@@ -34,19 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
+namespace App\Filament\Clusters;
 
-use Illuminate\Mail\Events\MessageSending;
-use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use Filament\Clusters\Cluster;
 
-class AddSesConfigurationSetToEmailHeaders
+class OnlineAdmissions extends Cluster
 {
-    public function handle(MessageSending $event): void
-    {
-        $settings = app(SesSettings::class);
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-        if ($settings->configuration_set) {
-            $event->message->getHeaders()->addTextHeader('X-SES-CONFIGURATION-SET', $settings->configuration_set);
-        }
-    }
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 10;
 }

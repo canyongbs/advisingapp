@@ -46,6 +46,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Clusters\ServiceManagement;
 use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Models\AssetType;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
@@ -64,11 +65,11 @@ class AssetResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
-    protected static ?string $navigationGroup = 'Service Management';
-
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $breadcrumb = 'Asset Management';
+
+    protected static ?string $cluster = ServiceManagement::class;
 
     public function getTitle(): string | Htmlable
     {

@@ -34,37 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\MeetingCenter\Filament\Actions;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Interaction\Filament\Resources\InteractionTypeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionDriverResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionStatusResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomeResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionCampaignResource;
-use AdvisingApp\Interaction\Filament\Resources\InteractionRelationResource;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TagsInput;
+use Filament\Notifications\Notification;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 
-class InteractionManagement extends Page
+class InviteEventAttendeesAction extends Action
 {
-    use HasChildNavigationItemsOnly;
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+        $this->label('Invite')
+            ->icon('heroicon-o-envelope')
+            ->form([
+                TagsInput::make('attendees')
+                    ->placeholder('Add attendee email')
+                    ->nestedRecursiveRules(['email'])
+                    ->required(),
+            ])
+            ->action(function (array $data, Event $record) {
+                /** @var User $user */
+                $user = auth()->user();
 
-    protected static ?string $navigationGroup = 'Product Administration';
+                $emails = $data['attendees'];
 
-    protected static ?int $navigationSort = 8;
+                dispatch(new CreateEventAttendees($record, $emails, $user));
 
-    protected static ?string $title = 'Interaction Management';
+                Notification::make()
+                    ->title(count($emails) > 1 ? 'The invitations are being sent' : 'The invitation is being sent')
+                    ->success()
+                    ->send();
+            });
+    }
 
-    protected static ?string $breadcrumb = 'Interaction Management';
-
-    protected static array $children = [
-        InteractionCampaignResource::class,
-        InteractionDriverResource::class,
-        InteractionOutcomeResource::class,
-        InteractionRelationResource::class,
-        InteractionStatusResource::class,
-        InteractionTypeResource::class,
-    ];
+    public static function getDefaultName(): ?string
+    {
+        return 'invite';
+    }
 }

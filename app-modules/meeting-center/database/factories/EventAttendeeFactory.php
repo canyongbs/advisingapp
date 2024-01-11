@@ -1,4 +1,6 @@
-{{--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -30,7 +32,35 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-<x-filament-panels::page>
+*/
 
-</x-filament-panels::page>
+namespace AdvisingApp\MeetingCenter\Database\Factories;
+
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+
+/**
+ * @extends Factory<EventAttendee>
+ */
+class EventAttendeeFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'status' => fake()->randomElement(EventAttendeeStatus::class),
+            'email' => fake()->unique()->randomElement([
+                fake()->email(),
+                Student::inRandomOrder()->value('email'),
+                Prospect::inRandomOrder()->value('email'),
+            ]),
+            'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
+        ];
+    }
+}

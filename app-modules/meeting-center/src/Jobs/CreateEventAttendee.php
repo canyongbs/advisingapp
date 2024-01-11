@@ -34,25 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\MeetingCenter\Jobs;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Assistant\Filament\Pages\AssistantConfiguration;
+use App\Models\User;
+use Illuminate\Bus\Batchable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Notifications\SendRegistrationLinkToEventAttendee;
 
-class ArtificialIntelligence extends Page
+class CreateEventAttendee implements ShouldQueue
 {
-    use HasChildNavigationItemsOnly;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+    use Batchable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(
+        protected Event $event,
+        protected string $email,
+        protected User $sender
+    ) {}
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        if ($this->batch()->cancelled()) {
+            return;
+        }
 
-    protected static ?int $navigationSort = 3;
+        if ($this->event->attendees()->where('email', $this->email)->exists()) {
+            $this->fail("{$this->email} has already been invited to this event.");
 
-    protected static ?string $title = 'Artificial Intelligence';
+            return;
+        }
 
-    protected static array $children = [
-        AssistantConfiguration::class,
-    ];
+        /** @var EventAttendee $attendee */
+        $attendee = $this->event->attendees()->create([
+            'email' => $this->email,
+            'status' => EventAttendeeStatus::Invited,
+        ]);
+
+        $attendee->notify(new SendRegistrationLinkToEventAttendee($this->event, $this->sender));
+    }
 }

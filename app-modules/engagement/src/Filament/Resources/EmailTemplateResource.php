@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Filament\Resources;
 
 use Filament\Resources\Resource;
+use App\Filament\Clusters\GlobalSettings;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\EditEmailTemplate;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplateResource\Pages\ListEmailTemplates;
@@ -46,13 +47,13 @@ class EmailTemplateResource extends Resource
 {
     protected static ?string $model = EmailTemplate::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-envelope';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected static ?string $navigationGroup = 'Communication';
 
     protected static ?int $navigationSort = 120;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $cluster = GlobalSettings::class;
 
     public static function getPages(): array
     {

@@ -43,6 +43,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Analytics\Enums\AnalyticsResourceCategoryClassification;
 
+/**
+ * @mixin IdeHelperAnalyticsResourceCategory
+ */
 class AnalyticsResourceCategory extends BaseModel implements Auditable
 {
     use SoftDeletes;

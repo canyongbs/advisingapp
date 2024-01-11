@@ -57,6 +57,7 @@ return new class () extends Migration {
             $table->timestamp('delivered_at')->nullable();
             $table->timestamp('last_delivery_attempt')->nullable();
             $table->longText('delivery_response')->nullable();
+            $table->integer('quota_usage')->default(0);
             $table->timestamps();
         });
     }

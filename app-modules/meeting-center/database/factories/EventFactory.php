@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Database\Factories;
 use Illuminate\Support\Carbon;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 
 /**
  * @extends Factory<Event>
@@ -58,5 +59,14 @@ class EventFactory extends Factory
             'starts_at' => fake()->dateTimeBetween('-1 week', '+1 week'),
             'ends_at' => fn (array $attributes) => Carbon::parse($attributes['starts_at'])->add('1 hour'),
         ];
+    }
+
+    public function configure(): EventFactory|Factory
+    {
+        return $this->afterCreating(function (Event $event) {
+            EventRegistrationForm::factory()->create([
+                'event_id' => $event->getKey(),
+            ]);
+        });
     }
 }

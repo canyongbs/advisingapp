@@ -56,9 +56,9 @@ class ManageStudentInformation extends ManageRelatedRecords
 
     protected static ?string $navigationIcon = 'heroicon-o-information-circle';
 
-    public static function canAccess(?Model $record = null): bool
+    public static function canAccess(array $arguments = []): bool
     {
-        return (bool) count(static::managers($record));
+        return (bool) count(static::managers($arguments['record'] ?? null));
     }
 
     public function getRelationManagers(): array
@@ -66,14 +66,14 @@ class ManageStudentInformation extends ManageRelatedRecords
         return static::managers($this->getRecord());
     }
 
-    private static function managers(Model $record): array
+    private static function managers(?Model $record = null): array
     {
         return collect([
             ProgramsRelationManager::class,
             EnrollmentsRelationManager::class,
             PerformanceRelationManager::class,
         ])
-            ->reject(fn ($relationManager) => ! $relationManager::canViewForRecord($record, static::class))
+            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();
     }
 }

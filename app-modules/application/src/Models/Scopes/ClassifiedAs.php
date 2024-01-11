@@ -34,29 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\Application\Models\Scopes;
 
-use Filament\Pages\Page;
-use App\Filament\Pages\Concerns\HasChildNavigationItemsOnly;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource;
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 
-class RecruitmentCrm extends Page
+class ClassifiedAs
 {
-    use HasChildNavigationItemsOnly;
+    public function __construct(
+        protected ApplicationSubmissionStateClassification $classification,
+    ) {}
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?string $navigationGroup = 'Product Administration';
-
-    protected static ?int $navigationSort = 4;
-
-    protected static ?string $title = 'Recruitment CRM';
-
-    protected static ?string $breadcrumb = 'Recruitment CRM';
-
-    protected static array $children = [
-        ProspectStatusResource::class,
-        ProspectSourceResource::class,
-    ];
+    public function __invoke(Builder $query): void
+    {
+        $query->where('classification', $this->classification);
+    }
 }

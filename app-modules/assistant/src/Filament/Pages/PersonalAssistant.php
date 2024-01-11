@@ -104,7 +104,7 @@ class PersonalAssistant extends Page
 
     public bool $loading = true;
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         /** @var User $user */
         $user = auth()->user();
@@ -118,10 +118,6 @@ class PersonalAssistant extends Page
 
     public function mount(): void
     {
-        abort_unless(auth()->user()->hasLicense(LicenseType::ConversationalAi), 403);
-
-        $this->authorize('assistant.access');
-
         $this->consentAgreement = ConsentAgreement::where('type', ConsentAgreementType::AzureOpenAI)->first();
 
         /** @var AssistantChat $chat */

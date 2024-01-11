@@ -46,6 +46,8 @@ use Filament\Forms\Components\DateTimePicker;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
+use AdvisingApp\InventoryManagement\Models\Scopes\ClassifiedAs;
+use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 class CheckOutAssetHeaderAction extends Action
 {
@@ -114,9 +116,8 @@ class CheckOutAssetHeaderAction extends Action
                 'expected_check_in_at' => $data['expected_check_in_at'],
             ]);
 
-            $asset->update([
-                'status_id' => AssetStatus::checkedOut()->first()->id,
-            ]);
+            $asset->status()->associate(AssetStatus::tap(new ClassifiedAs(SystemAssetStatusClassification::CheckedOut))->first());
+            $asset->save();
 
             $this->success();
         });

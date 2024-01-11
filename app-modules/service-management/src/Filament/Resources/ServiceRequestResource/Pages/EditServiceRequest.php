@@ -92,7 +92,8 @@ class EditServiceRequest extends EditRecord
                     ->nullable()
                     ->string(),
                 EducatableSelect::make('respondent')
-                    ->label('Related To'),
+                    ->label('Related To')
+                    ->required(),
             ]);
     }
 
