@@ -37,6 +37,7 @@
 namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
 use Filament\Forms\Form;
+use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Select;
@@ -111,7 +112,17 @@ class AssetResource extends Resource
                     ->required()
                     ->exists((new AssetLocation())->getTable(), 'id'),
                 DatePicker::make('purchase_date')
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->helperText(function (?string $state) {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        return (new Asset([
+                            'purchase_date' => Carbon::parse($state),
+                        ]))->purchase_age;
+                    }),
             ]);
     }
 
