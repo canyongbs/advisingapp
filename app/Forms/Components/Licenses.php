@@ -3,7 +3,6 @@
 namespace App\Forms\Components;
 
 use App\Models\User;
-use Filament\Forms\Components\Grid;
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
@@ -41,6 +40,7 @@ class Licenses extends Section
                     ->extraAttributes(['class' => 'grid justify-items-center'])
                     ->hiddenLabel()
                     ->content(fn () => "{$licenseType->getAvailableSeats()} / {$licenseType->getSeats()}"),
+                // ->content(fn () => "{$licenseType->getSeatsInUse()} / {$licenseType->getSeats()}"),
                 Toggle::make("{$licenseType->value}_enabled")
                     ->hiddenLabel()
                     ->offColor(Color::Red)
@@ -64,7 +64,7 @@ class Licenses extends Section
                         $notification->send();
                     })
                     ->disabled(fn (bool $state) => ! $state && ! $licenseType->hasAvailableLicenses())
-                    ->hintIcon(fn (Toggle $component, string $operation) => $component->isDisabled() && $operation === 'edit' ? 'heroicon-m-lock-closed' : null)
+                    ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                     ->hintIconTooltip("You are out of available {$licenseType->getLabel()} licenses.")
                     ->dehydrated(false)
                     ->live(),
