@@ -34,25 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Observers;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource;
 
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use Filament\Actions\ViewAction;
+use AdvisingApp\InventoryManagement\Filament\Concerns\AssetCheckOutInfolist;
 
-class AssetCheckInObserver
+class AssetCheckOutViewAction extends ViewAction
 {
-    public function created(AssetCheckIn $checkIn): void
-    {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
+    use AssetCheckOutInfolist;
 
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
-    }
-
-    public function deleted(AssetCheckIn $checkIn): void
+    protected function setUp(): void
     {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
+        parent::setUp();
+
+        $this->modalHeading('View Asset Check Out');
+
+        $this->infolist($this->renderInfolist());
     }
 }

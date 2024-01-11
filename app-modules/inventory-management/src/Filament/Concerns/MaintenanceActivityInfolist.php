@@ -34,25 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Observers;
+namespace AdvisingApp\InventoryManagement\Filament\Concerns;
 
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
 
-class AssetCheckInObserver
+// TODO Re-use this trait across other places where infolist is rendered
+trait MaintenanceActivityInfolist
 {
-    public function created(AssetCheckIn $checkIn): void
+    public function renderInfolist(): array
     {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
-
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
-    }
-
-    public function deleted(AssetCheckIn $checkIn): void
-    {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
+        return [
+            TextEntry::make('status'),
+            Fieldset::make('Nature of Work')
+                ->schema([
+                    TextEntry::make('details'),
+                    TextEntry::make('maintenanceProvider.name'),
+                    TextEntry::make('notes'),
+                ]),
+            Fieldset::make('')
+                ->schema([
+                    TextEntry::make('scheduled_date')
+                        ->label('Scheduled For'),
+                    TextEntry::make('completed_date')
+                        ->label('Completed On'),
+                ]),
+        ];
     }
 }

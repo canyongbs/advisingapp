@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,27 +30,49 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
 
-namespace AdvisingApp\InventoryManagement\Observers;
+<div>
+    <div class="flex flex-row justify-between">
+        <x-timeline::timeline.heading>
+            Asset Checked In from
 
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
+            <a
+                class="underline"
+                href="{{ $record->checkedInFrom->filamentResource()::getUrl('view', ['record' => $record->checkedInFrom]) }}"
+            >
+                {{ $record->checkedInFrom->full_name }}
+            </a>
+        </x-timeline::timeline.heading>
 
-class AssetCheckInObserver
-{
-    public function created(AssetCheckIn $checkIn): void
-    {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
+        <div>
+            {{ $viewRecordIcon }}
+        </div>
+    </div>
 
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
-    }
+    <x-timeline::timeline.time>
+        {{ $record->checked_in_at->diffForHumans() }}
+    </x-timeline::timeline.time>
 
-    public function deleted(AssetCheckIn $checkIn): void
-    {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
-    }
-}
+    <div class="mt-4 flex flex-col space-y-2">
+        <x-timeline::timeline.labeled-field>
+            <x-slot:label>
+                Performed By
+            </x-slot:label>
+
+            <a
+                class="underline"
+                href="{{ $record->checkedInBy->filamentResource()::getUrl('view', ['record' => $record->checkedInBy]) }}"
+            >
+                {{ $record->checkedInBy->name }}
+            </a>
+        </x-timeline::timeline.labeled-field>
+    </div>
+
+    @if ($record->notes)
+        <x-timeline::timeline.content>
+            {{ $record->notes }}
+        </x-timeline::timeline.content>
+    @endif
+
+</div>

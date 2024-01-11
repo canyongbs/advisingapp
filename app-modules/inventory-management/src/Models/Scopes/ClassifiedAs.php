@@ -36,13 +36,14 @@
 
 namespace AdvisingApp\InventoryManagement\Models\Scopes;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
+// TODO Make this somewhat re-usable across any system classifications
 class ClassifiedAs
 {
     public function __construct(
-        protected SystemAssetStatusClassification $classification
+        protected SystemAssetStatusClassification $classification,
     ) {}
 
     public function __invoke(Builder $query): void

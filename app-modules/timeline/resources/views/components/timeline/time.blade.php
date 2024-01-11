@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,27 +30,7 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\InventoryManagement\Observers;
-
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\Timeline\Events\TimelineableRecordCreated;
-use AdvisingApp\Timeline\Events\TimelineableRecordDeleted;
-
-class AssetCheckInObserver
-{
-    public function created(AssetCheckIn $checkIn): void
-    {
-        $checkIn->asset->latestCheckOut->update([
-            'asset_check_in_id' => $checkIn->id,
-        ]);
-
-        TimelineableRecordCreated::dispatch($checkIn->asset, $checkIn);
-    }
-
-    public function deleted(AssetCheckIn $checkIn): void
-    {
-        TimelineableRecordDeleted::dispatch($checkIn->asset, $checkIn);
-    }
-}
+--}}
+<time class="mb-2 block text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+    {{ $slot }}
+</time>
