@@ -49,11 +49,11 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\Manage
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentCareTeam;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentEngagement;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInformation;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\StudentServiceManagement;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentInteractions;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\StudentEngagementTimeline;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentSubscriptions;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentFormSubmissions;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentServiceRequests;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages\ManageStudentApplicationSubmissions;
 
 class StudentResource extends Resource
@@ -83,7 +83,7 @@ class StudentResource extends Resource
             ManageStudentCareTeam::class,
             ManageStudentFormSubmissions::class,
             ManageStudentApplicationSubmissions::class,
-            ManageStudentServiceRequests::class,
+            StudentServiceManagement::class,
             ManageStudentEvents::class,
         ]);
     }
@@ -120,7 +120,7 @@ class StudentResource extends Resource
             'view' => ViewStudent::route('/{record}'),
             'timeline' => StudentEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
-            'manage-service-requests' => ManageStudentServiceRequests::route('/{record}/service-requests'),
+            'service-management' => StudentServiceManagement::route('/{record}/service-management'),
             'events' => ManageStudentEvents::route('/{record}/events'),
         ];
     }

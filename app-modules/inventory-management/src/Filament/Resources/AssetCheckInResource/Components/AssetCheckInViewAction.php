@@ -34,42 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Timelines;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Components;
 
 use Filament\Actions\ViewAction;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Components\AssetCheckInViewAction;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Concerns\HasAssetCheckInInfolist;
 
-// TODO Decide where these belong - might want to keep these in the context of the original module
-class AssetCheckInTimeline extends CustomTimeline
+class AssetCheckInViewAction extends ViewAction
 {
-    public function __construct(
-        public AssetCheckIn $assetCheckIn
-    ) {}
+    use HasAssetCheckInInfolist;
 
-    public function icon(): string
+    protected function setUp(): void
     {
-        return 'heroicon-o-arrow-small-left';
-    }
+        parent::setUp();
 
-    public function sortableBy(): string
-    {
-        return $this->assetCheckIn->checked_in_at;
-    }
+        $this->modalHeading('View Asset Check In');
 
-    public function providesCustomView(): bool
-    {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return 'inventory-management::asset-check-in-timeline-item';
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return AssetCheckInViewAction::make()->record($this->assetCheckIn);
+        $this->infolist($this->renderInfolist());
     }
 }

@@ -34,49 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ServiceRequestsRelationManager;
+use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use App\Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
 
-class ManageStudentServiceRequests extends ManageRelatedRecords
+class AssetCheckOutRelationManager extends RelationManager
 {
-    protected static string $resource = StudentResource::class;
+    use HasAssetCheckOutInfolist;
 
-    protected static string $relationship = 'serviceRequests';
+    protected static string $relationship = 'assetCheckOuts';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Service Requests';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Service Requests';
-
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-
-    public function getTitle(): string | Htmlable
+    public function infolist(Infolist $infolist): Infolist
     {
-        return 'Manage Student Service Requests';
+        return $infolist->schema($this->renderInfolist());
     }
 
-    public static function canAccess(array $arguments = []): bool
+    public function table(Table $table): Table
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
-    }
-
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            ServiceRequestsRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
+        return (resolve(ListAssetCheckOuts::class))->table($table);
     }
 }

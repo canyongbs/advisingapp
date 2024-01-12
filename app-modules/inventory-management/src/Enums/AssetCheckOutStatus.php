@@ -34,42 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Timelines;
+namespace AdvisingApp\InventoryManagement\Enums;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Components\AssetCheckInViewAction;
+use Filament\Support\Contracts\HasLabel;
 
-// TODO Decide where these belong - might want to keep these in the context of the original module
-class AssetCheckInTimeline extends CustomTimeline
+enum AssetCheckOutStatus: string implements HasLabel
 {
-    public function __construct(
-        public AssetCheckIn $assetCheckIn
-    ) {}
+    case Returned = 'returned';
+    case InGoodStanding = 'in_good_standing';
+    case PastDue = 'past_due';
 
-    public function icon(): string
+    public function getLabel(): ?string
     {
-        return 'heroicon-o-arrow-small-left';
-    }
-
-    public function sortableBy(): string
-    {
-        return $this->assetCheckIn->checked_in_at;
-    }
-
-    public function providesCustomView(): bool
-    {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return 'inventory-management::asset-check-in-timeline-item';
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return AssetCheckInViewAction::make()->record($this->assetCheckIn);
+        return match ($this) {
+            self::InGoodStanding => 'In Good Standing',
+            self::PastDue => 'Past Due',
+            default => $this->name,
+        };
     }
 }

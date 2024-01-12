@@ -34,21 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\InventoryManagement\Filament\Concerns\AssetCheckInInfolist;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
+use AdvisingApp\InventoryManagement\Enums\AssetCheckOutStatus;
 
-class AssetCheckInViewAction extends ViewAction
+trait HasAssetCheckOutInfolist
 {
-    use AssetCheckInInfolist;
-
-    protected function setUp(): void
+    public function renderInfolist(): array
     {
-        parent::setUp();
-
-        $this->modalHeading('View Asset Check In');
-
-        $this->infolist($this->renderInfolist());
+        return [
+            TextEntry::make('asset_check_in_id')
+                ->label('Status')
+                ->state(fn (AssetCheckOut $record): AssetCheckOutStatus => $record->status)
+                ->formatStateUsing(fn (AssetCheckOutStatus $state) => $state->getLabel())
+                ->badge()
+                ->color(fn (AssetCheckOutStatus $state): string => match ($state) {
+                    AssetCheckOutStatus::Returned => 'success',
+                    AssetCheckOutStatus::InGoodStanding => 'info',
+                    default => 'danger',
+                }),
+            Fieldset::make('Involved Parties')
+                ->schema([
+                    TextEntry::make('checkedOutBy.name')
+                        ->label('Performed By'),
+                    TextEntry::make('checkedOutTo.full_name')
+                        ->label('Checked Out to'),
+                ]),
+            Fieldset::make('')
+                ->schema([
+                    TextEntry::make('checked_out_at'),
+                    TextEntry::make('expected_check_in_at'),
+                    TextEntry::make('notes'),
+                ]),
+        ];
     }
 }

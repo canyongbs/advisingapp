@@ -34,14 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Components;
 
 use Filament\Actions\ViewAction;
-use AdvisingApp\InventoryManagement\Filament\Concerns\AssetCheckOutInfolist;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
 
 class AssetCheckOutViewAction extends ViewAction
 {
-    use AssetCheckOutInfolist;
+    use HasAssetCheckOutInfolist;
 
     protected function setUp(): void
     {
