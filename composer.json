@@ -86,6 +86,7 @@
         "spatie/laravel-cookie-consent": "^3.2",
         "spatie/laravel-data": "^3.10",
         "spatie/laravel-medialibrary": "^10.15",
+        "spatie/laravel-multitenancy": "^3.0",
         "spatie/laravel-settings": "^3.2",
         "sqids/sqids": "^0.4.1",
         "staudenmeir/eloquent-has-many-deep": "^1.19",
