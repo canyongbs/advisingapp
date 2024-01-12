@@ -36,9 +36,8 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages;
 
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource;
 
 class CreateAssetCheckOut extends CreateRecord
 {
