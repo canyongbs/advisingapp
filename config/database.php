@@ -96,6 +96,36 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
+
+        'landlord' => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('LANDLORD_DB_HOST', '127.0.0.1'),
+            'port' => env('LANDLORD_DB_PORT', '5432'),
+            'database' => env('LANDLORD_DB_DATABASE', 'forge'),
+            'username' => env('LANDLORD_DB_USERNAME', 'forge'),
+            'password' => env('LANDLORD_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
+        'tenant' => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('TENANT_DB_HOST', '127.0.0.1'),
+            'port' => env('TENANT_DB_PORT', '5432'),
+            'database' => null,
+            'username' => env('TENANT_DB_USERNAME', 'forge'),
+            'password' => env('TENANT_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
     ],
 
     /*
