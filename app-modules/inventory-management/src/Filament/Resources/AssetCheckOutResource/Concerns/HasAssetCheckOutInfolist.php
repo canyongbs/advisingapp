@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns;
 
+use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
@@ -59,14 +60,18 @@ trait HasAssetCheckOutInfolist
             Fieldset::make('Involved Parties')
                 ->schema([
                     TextEntry::make('checkedOutBy.name')
-                        ->label('Performed By'),
+                        ->label('Performed By')
+                        ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->checkedOutBy]))
+                        ->color('primary'),
                     TextEntry::make('checkedOutTo.full_name')
                         ->label('Checked Out to'),
                 ]),
             Fieldset::make('')
                 ->schema([
-                    TextEntry::make('checked_out_at'),
-                    TextEntry::make('expected_check_in_at'),
+                    TextEntry::make('checked_out_at')
+                        ->dateTime('g:ia - M j, Y'),
+                    TextEntry::make('expected_check_in_at')
+                        ->dateTime('g:ia - M j, Y'),
                     TextEntry::make('notes'),
                 ]),
         ];

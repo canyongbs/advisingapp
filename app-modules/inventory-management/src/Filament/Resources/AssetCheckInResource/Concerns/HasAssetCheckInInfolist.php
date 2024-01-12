@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Concerns;
 
+use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 
@@ -47,13 +48,16 @@ trait HasAssetCheckInInfolist
             Fieldset::make('Involved Parties')
                 ->schema([
                     TextEntry::make('checkedInBy.name')
-                        ->label('Performed By'),
+                        ->label('Performed By')
+                        ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->checkedInBy]))
+                        ->color('primary'),
                     TextEntry::make('checkedInFrom.full_name')
                         ->label('Checked In From'),
                 ]),
             Fieldset::make('')
                 ->schema([
-                    TextEntry::make('checked_in_at'),
+                    TextEntry::make('checked_in_at')
+                        ->dateTime('g:ia - M j, Y'),
                     TextEntry::make('notes'),
                 ]),
         ];

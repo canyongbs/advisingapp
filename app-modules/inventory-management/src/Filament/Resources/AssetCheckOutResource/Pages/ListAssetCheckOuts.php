@@ -9,6 +9,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\InventoryManagement\Enums\AssetCheckOutStatus;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource;
 
 class ListAssetCheckOuts extends ListRecords
@@ -21,13 +22,15 @@ class ListAssetCheckOuts extends ListRecords
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('asset.name')
+                    ->url(fn ($record) => AssetResource::getUrl('view', ['record' => $record->asset]))
+                    ->color('primary')
                     ->searchable(),
                 TextColumn::make('asset.type.name')
                     ->searchable(),
                 TextColumn::make('checked_out_at')
-                    ->dateTime(),
+                    ->dateTime('g:ia - M j, Y'),
                 TextColumn::make('expected_check_in_at')
-                    ->dateTime(),
+                    ->dateTime('g:ia - M j, Y'),
                 TextColumn::make('asset_check_in_id')
                     ->label('Status')
                     ->state(fn (AssetCheckOut $record): AssetCheckOutStatus => $record->status)
