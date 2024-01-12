@@ -41,7 +41,6 @@ use AdvisingApp\Division\Models\Division;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 
@@ -61,7 +60,6 @@ class ServiceRequestFactory extends Factory
             'res_details' => $this->faker->sentence(),
             'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
             'status_id' => ServiceRequestStatus::inRandomOrder()->first() ?? ServiceRequestStatus::factory(),
-            'type_id' => ServiceRequestType::inRandomOrder()->first() ?? ServiceRequestType::factory(),
             'priority_id' => ServiceRequestPriority::inRandomOrder()->first() ?? ServiceRequestPriority::factory(),
             'created_by_id' => User::factory(),
         ];

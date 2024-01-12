@@ -37,6 +37,7 @@
 namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
 use Filament\Forms\Form;
+use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Select;
@@ -52,6 +53,7 @@ use AdvisingApp\InventoryManagement\Models\AssetLocation;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\ViewAsset;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\ListAssets;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\CreateAsset;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\AssetTimeline;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages\ManageAssetMaintenanceActivity;
 
 // TODO: Can delete this and all underlying pages once we fork
@@ -79,6 +81,7 @@ class AssetResource extends Resource
         return $page->generateNavigationItems([
             ViewAsset::class,
             ManageAssetMaintenanceActivity::class,
+            AssetTimeline::class,
         ]);
     }
 
@@ -111,7 +114,17 @@ class AssetResource extends Resource
                     ->required()
                     ->exists((new AssetLocation())->getTable(), 'id'),
                 DatePicker::make('purchase_date')
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->helperText(function (?string $state) {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        return (new Asset([
+                            'purchase_date' => Carbon::parse($state),
+                        ]))->purchase_age;
+                    }),
             ]);
     }
 
@@ -122,6 +135,7 @@ class AssetResource extends Resource
             'create' => CreateAsset::route('/create'),
             'view' => ViewAsset::route('/{record}'),
             'manage-maintenance-activity' => ManageAssetMaintenanceActivity::route('/{record}/maintenance-activity'),
+            'asset-timeline' => AssetTimeline::route('/{record}/timeline'),
         ];
     }
 }

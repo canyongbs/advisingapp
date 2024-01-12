@@ -34,40 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages;
+namespace AdvisingApp\InventoryManagement\Filament\Concerns;
 
-use Filament\Actions;
-use Filament\Forms\Form;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
 
-class EditServiceRequestPriority extends EditRecord
+// TODO Re-use this trait across other places where infolist is rendered
+trait MaintenanceActivityInfolist
 {
-    protected static string $resource = ServiceRequestPriorityResource::class;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                TextInput::make('order')
-                    ->label('Priority Order')
-                    ->required()
-                    ->integer()
-                    ->numeric()
-                    ->disabled(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
+    public function renderInfolist(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            TextEntry::make('status'),
+            Fieldset::make('Nature of Work')
+                ->schema([
+                    TextEntry::make('details'),
+                    TextEntry::make('maintenanceProvider.name'),
+                    TextEntry::make('notes'),
+                ]),
+            Fieldset::make('')
+                ->schema([
+                    TextEntry::make('scheduled_date')
+                        ->label('Scheduled For'),
+                    TextEntry::make('completed_date')
+                        ->label('Completed On'),
+                ]),
         ];
     }
 }

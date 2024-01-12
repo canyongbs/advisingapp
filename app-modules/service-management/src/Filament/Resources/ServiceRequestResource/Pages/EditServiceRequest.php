@@ -37,7 +37,10 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
 use Filament\Actions;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\EditRecord;
@@ -68,21 +71,26 @@ class EditServiceRequest extends EditRecord
                     ->label('Status')
                     ->required()
                     ->exists((new ServiceRequestStatus())->getTable(), 'id'),
-                Select::make('priority_id')
-                    ->relationship(
-                        name: 'priority',
-                        titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('order'),
-                    )
-                    ->label('Priority')
-                    ->required()
-                    ->exists((new ServiceRequestPriority())->getTable(), 'id'),
-                Select::make('type_id')
-                    ->relationship('type', 'name')
-                    ->preload()
-                    ->label('Type')
-                    ->required()
-                    ->exists((new ServiceRequestType())->getTable(), 'id'),
+                Grid::make(2)
+                    ->schema([
+                        Select::make('type_id')
+                            ->options(ServiceRequestType::query()->pluck('name', 'id'))
+                            ->afterStateUpdated(fn (Set $set) => $set('priority_id', null))
+                            ->label('Type')
+                            ->required()
+                            ->live()
+                            ->exists(ServiceRequestType::class, 'id'),
+                        Select::make('priority_id')
+                            ->relationship(
+                                name: 'priority',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn (Get $get, Builder $query, $record) => $query->where('type_id', $get('type_id'))->orderBy('order'),
+                            )
+                            ->label('Priority')
+                            ->required()
+                            ->exists(ServiceRequestPriority::class, 'id')
+                            ->visible(fn (Get $get): bool => filled($get('type_id'))),
+                    ]),
                 Textarea::make('close_details')
                     ->label('Close Details/Description')
                     ->nullable()
@@ -102,5 +110,12 @@ class EditServiceRequest extends EditRecord
         return [
             Actions\DeleteAction::make(),
         ];
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['type_id'] = $this->getRecord()->priority->type_id;
+
+        return $data;
     }
 }

@@ -34,40 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages;
+namespace AdvisingApp\Timeline\Timelines;
 
-use Filament\Actions;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource;
+use Filament\Actions\ViewAction;
+use AdvisingApp\Timeline\Models\CustomTimeline;
+use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\AssetCheckOutViewAction;
 
-class ViewServiceRequestPriority extends ViewRecord
+// TODO Decide where these belong - might want to keep these in the context of the original module
+class AssetCheckOutTimeline extends CustomTimeline
 {
-    protected static string $resource = ServiceRequestPriorityResource::class;
+    public function __construct(
+        public AssetCheckOut $assetCheckOut
+    ) {}
 
-    public function infolist(Infolist $infolist): Infolist
+    public function icon(): string
     {
-        return $infolist
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name')
-                            ->label('Name')
-                            ->translateLabel(),
-                        TextEntry::make('order')
-                            ->label('Order')
-                            ->translateLabel(),
-                    ])
-                    ->columns(),
-            ]);
+        return 'heroicon-o-arrow-small-right';
     }
 
-    protected function getHeaderActions(): array
+    public function sortableBy(): string
     {
-        return [
-            Actions\EditAction::make(),
-        ];
+        return $this->assetCheckOut->checked_out_at;
+    }
+
+    public function providesCustomView(): bool
+    {
+        return true;
+    }
+
+    public function renderCustomView(): string
+    {
+        return 'inventory-management::asset-check-out-timeline-item';
+    }
+
+    public function modalViewAction(): ViewAction
+    {
+        return AssetCheckOutViewAction::make()->record($this->assetCheckOut);
     }
 }

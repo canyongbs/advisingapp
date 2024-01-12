@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,24 +30,12 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace AdvisingApp\ServiceManagement\Database\Seeders;
-
-use Illuminate\Database\Seeder;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
-
-class ServiceRequestPrioritySeeder extends Seeder
-{
-    public function run(): void
-    {
-        ServiceRequestPriority::factory()
-            ->createMany(
-                [
-                    ['name' => 'High', 'order' => 1],
-                    ['name' => 'Medium', 'order' => 2],
-                    ['name' => 'Low', 'order' => 3],
-                ]
-            );
-    }
-}
+--}}
+<div class="flex flex-col">
+    <span class="text-sm text-gray-400 dark:text-gray-500">
+        {{ $label }}
+    </span>
+    <span>
+        {{ $slot }}
+    </span>
+</div>

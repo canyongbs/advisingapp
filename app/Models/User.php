@@ -44,6 +44,7 @@ use AdvisingApp\Team\Models\Team;
 use Spatie\MediaLibrary\HasMedia;
 use App\Support\HasAdvancedFilter;
 use AdvisingApp\Team\Models\TeamUser;
+use App\Filament\Resources\UserResource;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Notifications\Notifiable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -78,6 +79,7 @@ use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
+use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
@@ -88,7 +90,7 @@ use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface
+class User extends Authenticatable implements HasLocalePreference, FilamentUser, Auditable, HasMedia, HasAvatar, NotifiableInterface, HasFilamentResource
 {
     use HasFactory;
     use HasAdvancedFilter;
@@ -419,6 +421,33 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         }
 
         return false;
+    }
+
+    public static function filamentResource(): string
+    {
+        return UserResource::class;
+    }
+
+    public function grantLicense(LicenseType $type): bool
+    {
+        if ($this->hasLicense($type)) {
+            return false;
+        }
+
+        return cache()
+            ->lock('licenses', 5)
+            ->get(function () use ($type) {
+                if (! $type->hasAvailableLicenses()) {
+                    return false;
+                }
+
+                return (bool) $this->licenses()->create(['type' => $type]);
+            });
+    }
+
+    public function revokeLicense(LicenseType $type): bool
+    {
+        return (bool) $this->licenses()->where('type', $type)->delete();
     }
 
     protected function serializeDate(DateTimeInterface $date): string

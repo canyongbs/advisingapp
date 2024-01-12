@@ -74,7 +74,7 @@ class SystemUser extends Authenticatable implements Auditable
                 $type = LicenseType::from($type);
             }
 
-            if (! $type->isLicenseable()) {
+            if (! $type->isLicensable()) {
                 return false;
             }
         }
@@ -96,7 +96,7 @@ class SystemUser extends Authenticatable implements Auditable
                 $type = LicenseType::from($type);
             }
 
-            if ($type->isLicenseable()) {
+            if ($type->isLicensable()) {
                 return true;
             }
         }

@@ -90,7 +90,6 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         'respondent_id',
         'division_id',
         'status_id',
-        'type_id',
         'priority_id',
         'assigned_to_id',
         'close_details',
@@ -169,11 +168,6 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return $this->belongsTo(ServiceRequestStatus::class);
     }
 
-    public function type(): BelongsTo
-    {
-        return $this->belongsTo(ServiceRequestType::class);
-    }
-
     public function priority(): BelongsTo
     {
         return $this->belongsTo(ServiceRequestPriority::class);
@@ -226,7 +220,6 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
                     'res_details' => $action->data['res_details'],
                     'division_id' => $action->data['division_id'],
                     'status_id' => $action->data['status_id'],
-                    'type_id' => $action->data['type_id'],
                     'priority_id' => $action->data['priority_id'],
                     'created_by_id' => $action->campaign->user->id,
                 ]);

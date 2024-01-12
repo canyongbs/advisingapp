@@ -34,35 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\InventoryManagement\Filament\Concerns;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\EditServiceRequestPriority;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\ViewServiceRequestPriority;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\CreateServiceRequestPriority;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestPriorityResource\Pages\ListServiceRequestPriorities;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
 
-class ServiceRequestPriorityResource extends Resource
+// TODO Re-use this trait across other places where infolist is rendered
+trait AssetCheckInInfolist
 {
-    protected static ?string $model = ServiceRequestPriority::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-arrows-up-down';
-
-    protected static ?string $navigationLabel = 'Priorities';
-
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getPages(): array
+    public function renderInfolist(): array
     {
         return [
-            'index' => ListServiceRequestPriorities::route('/'),
-            'create' => CreateServiceRequestPriority::route('/create'),
-            'view' => ViewServiceRequestPriority::route('/{record}'),
-            'edit' => EditServiceRequestPriority::route('/{record}/edit'),
+            Fieldset::make('Involved Parties')
+                ->schema([
+                    TextEntry::make('checkedInBy.name')
+                        ->label('Performed By'),
+                    TextEntry::make('checkedInFrom.full_name')
+                        ->label('Checked In From'),
+                ]),
+            Fieldset::make('')
+                ->schema([
+                    TextEntry::make('checked_in_at'),
+                    TextEntry::make('notes'),
+                ]),
         ];
     }
 }

@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 
 class EventSeeder extends Seeder
 {
@@ -46,10 +45,6 @@ class EventSeeder extends Seeder
     {
         Event::factory()
             ->count(20)
-            ->create()
-            ->each(
-                fn (Event $event) => $event->eventRegistrationForm()
-                    ->create(EventRegistrationForm::factory()->make()->toArray())
-            );
+            ->create();
     }
 }

@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\InventoryManagement\Models;
 
+use App\Models\User;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,6 +48,8 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\InventoryManagement\Enums\SystemAssetStatusClassification;
 
 /**
+ * @property-read string $purchase_age
+ *
  * @mixin IdeHelperAsset
  */
 class Asset extends BaseModel implements Auditable
@@ -61,6 +65,10 @@ class Asset extends BaseModel implements Auditable
         'serial_number',
         'status_id',
         'type_id',
+    ];
+
+    protected $casts = [
+        'purchase_date' => 'datetime',
     ];
 
     public function type(): BelongsTo
@@ -120,5 +128,26 @@ class Asset extends BaseModel implements Auditable
     {
         return $this->status->classification === SystemAssetStatusClassification::CheckedOut
             && is_null($this->latestCheckOut?->asset_check_in_id);
+    }
+
+    protected function purchaseAge(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->purchase_date->isFuture()) {
+                return '0 Years 0 Months';
+            }
+
+            /** @var ?User $user */
+            $user = auth()->user();
+
+            $diff = $this
+                ->purchase_date
+                ->roundMonth()
+                ->setTimezone($user?->timezone)
+                ->diff();
+
+            return $diff->y . ' ' . ($diff->y === 1 ? 'Year' : 'Years') . ' ' .
+                $diff->m . ' ' . ($diff->m === 1 ? 'Month' : 'Months');
+        });
     }
 }

@@ -45,7 +45,7 @@ class UserPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'user.view-any',
+            abilities: ['user.view-any'],
             denyResponse: 'You do not have permission to view users.'
         );
     }

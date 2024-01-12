@@ -37,11 +37,13 @@
 namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetResource\Pages;
 
 use Filament\Forms\Form;
+use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\InventoryManagement\Models\Asset;
 use AdvisingApp\InventoryManagement\Models\AssetType;
 use AdvisingApp\InventoryManagement\Models\AssetStatus;
 use AdvisingApp\InventoryManagement\Models\AssetLocation;
@@ -80,7 +82,21 @@ class CreateAsset extends CreateRecord
                     ->required()
                     ->exists((new AssetLocation())->getTable(), 'id'),
                 DatePicker::make('purchase_date')
-                    ->required(),
+                    ->required()
+                    ->live()
+                    ->helperText(function (?string $state, ?Asset $record) {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        if ($record) {
+                            return $record->purchase_age;
+                        }
+
+                        return (new Asset([
+                            'purchase_date' => Carbon::parse($state),
+                        ]))->purchase_age;
+                    }),
             ]);
     }
 }
