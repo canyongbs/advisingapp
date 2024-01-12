@@ -60,9 +60,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Engagement\Models\EngagementFileEntities;
+use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -242,6 +244,28 @@ class Prospect extends BaseModel implements Auditable, Subscribable, Educatable,
             related: EventAttendee::class,
             foreignKey: 'email',
             localKey: 'email',
+        );
+    }
+
+    public function assetCheckIns(): MorphMany
+    {
+        return $this->morphMany(
+            related: AssetCheckIn::class,
+            name: 'checked_in_from',
+            type: 'checked_in_from_type',
+            id: 'checked_in_from_id',
+            localKey: 'id'
+        );
+    }
+
+    public function assetCheckOuts(): MorphMany
+    {
+        return $this->morphMany(
+            related: AssetCheckOut::class,
+            name: 'checked_out_to',
+            type: 'checked_out_to_type',
+            id: 'checked_out_to_id',
+            localKey: 'id'
         );
     }
 
