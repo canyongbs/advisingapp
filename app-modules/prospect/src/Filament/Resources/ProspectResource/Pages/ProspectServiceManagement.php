@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Concerns\FiltersManagersFromGroups;
 use Filament\Resources\RelationManagers\RelationGroup;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
@@ -47,6 +48,8 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\Se
 
 class ProspectServiceManagement extends ManageRelatedRecords
 {
+    use FiltersManagersFromGroups;
+
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'serviceRequests';
@@ -80,21 +83,8 @@ class ProspectServiceManagement extends ManageRelatedRecords
                 AssetCheckOutRelationManager::class,
                 AssetCheckInRelationManager::class,
             ]),
-        ])->map(function ($relationManager) use ($record) {
-            if ($relationManager instanceof RelationGroup) {
-                $filteredManagers = collect($relationManager->getManagers())
-                    ->reject(fn ($relationManager) => $record && ! $relationManager::canViewForRecord($record, static::class))
-                    ->all();
-
-                return RelationGroup::make($relationManager->getLabel(), $filteredManagers);
-            }
-
-            if ($record && ! $relationManager::canViewForRecord($record, static::class)) {
-                return null;
-            }
-
-            return $relationManager;
-        })
+        ])
+            ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
             ->filter()
             ->toArray();
     }
