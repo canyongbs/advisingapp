@@ -83,6 +83,7 @@ class ListAssetsFromAssetCheckOuts extends ListRecords
                 ViewAction::make()
                     ->modalHeading('View Asset'),
             ])
+            ->emptyStateHeading('There is no asset history to show.')
             ->defaultSort('checked_out_at', 'desc');
     }
 }
