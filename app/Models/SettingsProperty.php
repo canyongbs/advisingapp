@@ -40,6 +40,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
 
 /**
@@ -49,6 +50,7 @@ class SettingsProperty extends BaseSettingsProperty implements HasMedia
 {
     use HasUuids;
     use InteractsWithMedia;
+    use UsesTenantConnection;
 
     public static function getInstance(string $property): ?static
     {

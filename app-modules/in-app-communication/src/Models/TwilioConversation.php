@@ -40,12 +40,15 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
  * @mixin IdeHelperTwilioConversation
  */
 class TwilioConversation extends Model
 {
+    use UsesTenantConnection;
+
     protected $primaryKey = 'sid';
 
     protected $keyType = 'string';

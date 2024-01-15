@@ -105,10 +105,10 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([])
             ->middleware([
                 NeedsTenant::class,
+                StartSession::class,
                 EnsureValidTenantSession::class,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
-                StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
