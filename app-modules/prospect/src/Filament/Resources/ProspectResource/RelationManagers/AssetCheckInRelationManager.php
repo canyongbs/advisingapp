@@ -34,42 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Timelines;
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Components\AssetCheckInViewAction;
+use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use App\Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Pages\ListAssetCheckIns;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Concerns\HasAssetCheckInInfolist;
 
-// TODO Decide where these belong - might want to keep these in the context of the original module
-class AssetCheckInTimeline extends CustomTimeline
+class AssetCheckInRelationManager extends RelationManager
 {
-    public function __construct(
-        public AssetCheckIn $assetCheckIn
-    ) {}
+    use HasAssetCheckInInfolist;
 
-    public function icon(): string
+    protected static string $relationship = 'assetCheckIns';
+
+    public function infolist(Infolist $infolist): Infolist
     {
-        return 'heroicon-o-arrow-small-left';
+        return $infolist->schema($this->renderInfolist());
     }
 
-    public function sortableBy(): string
+    public function table(Table $table): Table
     {
-        return $this->assetCheckIn->checked_in_at;
-    }
-
-    public function providesCustomView(): bool
-    {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return 'inventory-management::asset-check-in-timeline-item';
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return AssetCheckInViewAction::make()->record($this->assetCheckIn);
+        return (resolve(ListAssetCheckIns::class))->table($table);
     }
 }

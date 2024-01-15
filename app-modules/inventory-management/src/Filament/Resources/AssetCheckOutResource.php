@@ -34,42 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Timelines;
+namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Components\AssetCheckInViewAction;
+use Filament\Resources\Resource;
+use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\EditAssetCheckOut;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ViewAssetCheckOut;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\CreateAssetCheckOut;
 
-// TODO Decide where these belong - might want to keep these in the context of the original module
-class AssetCheckInTimeline extends CustomTimeline
+class AssetCheckOutResource extends Resource
 {
-    public function __construct(
-        public AssetCheckIn $assetCheckIn
-    ) {}
+    protected static ?string $model = AssetCheckOut::class;
 
-    public function icon(): string
-    {
-        return 'heroicon-o-arrow-small-left';
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public function sortableBy(): string
-    {
-        return $this->assetCheckIn->checked_in_at;
-    }
+    protected static bool $shouldRegisterNavigation = false;
 
-    public function providesCustomView(): bool
+    public static function getPages(): array
     {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return 'inventory-management::asset-check-in-timeline-item';
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return AssetCheckInViewAction::make()->record($this->assetCheckIn);
+        return [
+            'index' => ListAssetCheckOuts::route('/'),
+            // 'create' => CreateAssetCheckOut::route('/create'),
+            // 'view' => ViewAssetCheckOut::route('/{record}'),
+            // 'edit' => EditAssetCheckOut::route('/{record}/edit'),
+        ];
     }
 }

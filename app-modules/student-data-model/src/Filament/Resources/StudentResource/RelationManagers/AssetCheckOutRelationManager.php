@@ -34,21 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\InventoryManagement\Filament\Concerns\AssetCheckInInfolist;
+use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use App\Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
 
-class AssetCheckInViewAction extends ViewAction
+class AssetCheckOutRelationManager extends RelationManager
 {
-    use AssetCheckInInfolist;
+    use HasAssetCheckOutInfolist;
 
-    protected function setUp(): void
+    protected static string $relationship = 'assetCheckOuts';
+
+    public function infolist(Infolist $infolist): Infolist
     {
-        parent::setUp();
+        return $infolist->schema($this->renderInfolist());
+    }
 
-        $this->modalHeading('View Asset Check In');
-
-        $this->infolist($this->renderInfolist());
+    public function table(Table $table): Table
+    {
+        return (resolve(ListAssetCheckOuts::class))->table($table);
     }
 }

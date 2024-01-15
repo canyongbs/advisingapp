@@ -34,28 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Concerns;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Concerns;
 
+use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 
-// TODO Re-use this trait across other places where infolist is rendered
-trait AssetCheckOutInfolist
+trait HasAssetCheckInInfolist
 {
     public function renderInfolist(): array
     {
         return [
             Fieldset::make('Involved Parties')
                 ->schema([
-                    TextEntry::make('checkedOutBy.name')
-                        ->label('Performed By'),
-                    TextEntry::make('checkedOutTo.full_name')
-                        ->label('Checked Out to'),
+                    TextEntry::make('checkedInBy.name')
+                        ->label('Performed By')
+                        ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->checkedInBy]))
+                        ->color('primary'),
+                    TextEntry::make('checkedInFrom.full_name')
+                        ->label('Checked In From'),
                 ]),
             Fieldset::make('')
                 ->schema([
-                    TextEntry::make('checked_out_at'),
-                    TextEntry::make('expected_check_in_at'),
+                    TextEntry::make('checked_in_at')
+                        ->dateTime('g:ia - M j, Y'),
                     TextEntry::make('notes'),
                 ]),
         ];

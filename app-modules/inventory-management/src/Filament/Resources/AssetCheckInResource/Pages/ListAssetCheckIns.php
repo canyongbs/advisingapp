@@ -34,42 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Timeline\Timelines;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Pages;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\Timeline\Models\CustomTimeline;
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Components\AssetCheckInViewAction;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource;
 
-// TODO Decide where these belong - might want to keep these in the context of the original module
-class AssetCheckInTimeline extends CustomTimeline
+class ListAssetCheckIns extends ListRecords
 {
-    public function __construct(
-        public AssetCheckIn $assetCheckIn
-    ) {}
+    protected static string $resource = AssetCheckInResource::class;
 
-    public function icon(): string
+    public function table(Table $table): Table
     {
-        return 'heroicon-o-arrow-small-left';
-    }
-
-    public function sortableBy(): string
-    {
-        return $this->assetCheckIn->checked_in_at;
-    }
-
-    public function providesCustomView(): bool
-    {
-        return true;
-    }
-
-    public function renderCustomView(): string
-    {
-        return 'inventory-management::asset-check-in-timeline-item';
-    }
-
-    public function modalViewAction(): ViewAction
-    {
-        return AssetCheckInViewAction::make()->record($this->assetCheckIn);
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('asset.name')
+                    ->url(fn ($record) => AssetResource::getUrl('view', ['record' => $record->asset]))
+                    ->color('primary')
+                    ->searchable(),
+                TextColumn::make('asset.type.name')
+                    ->searchable(),
+                TextColumn::make('checked_in_at')
+                    ->dateTime('g:ia - M j, Y'),
+            ])
+            ->actions([
+                ViewAction::make(),
+            ]);
     }
 }

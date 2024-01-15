@@ -50,11 +50,11 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspec
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEvents;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectCareTeam;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectEngagement;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectServiceManagement;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectInteractions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ProspectEngagementTimeline;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectSubscriptions;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectFormSubmissions;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectServiceRequests;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages\ManageProspectApplicationSubmissions;
 
 class ProspectResource extends Resource
@@ -84,7 +84,7 @@ class ProspectResource extends Resource
             ManageProspectCareTeam::class,
             ManageProspectFormSubmissions::class,
             ManageProspectApplicationSubmissions::class,
-            ManageProspectServiceRequests::class,
+            ProspectServiceManagement::class,
             ManageProspectEvents::class,
         ]);
     }
@@ -121,7 +121,7 @@ class ProspectResource extends Resource
             'view' => ViewProspect::route('/{record}'),
             'timeline' => ProspectEngagementTimeline::route('/{record}/timeline'),
             'care-team' => ManageProspectCareTeam::route('/{record}/care-team'),
-            'manage-service-requests' => ManageProspectServiceRequests::route('/{record}/service-requests'),
+            'service-management' => ProspectServiceManagement::route('/{record}/service-management'),
             'events' => ManageProspectEvents::route('/{record}/events'),
         ];
     }

@@ -42,11 +42,13 @@ use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Timeline\Models\Timeline;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Timeline\Timelines\AssetCheckOutTimeline;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
+use AdvisingApp\InventoryManagement\Enums\AssetCheckOutStatus;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -99,7 +101,7 @@ class AssetCheckOut extends BaseModel implements Auditable, ProvidesATimeline
 
     public function checkIn(): BelongsTo
     {
-        return $this->belongsTo(AssetCheckIn::class);
+        return $this->belongsTo(AssetCheckIn::class, 'asset_check_in_id');
     }
 
     public function timelineRecord(): MorphOne
@@ -115,5 +117,20 @@ class AssetCheckOut extends BaseModel implements Auditable, ProvidesATimeline
     public static function getTimelineData(Model $forModel): Collection
     {
         return $forModel->checkOuts()->get();
+    }
+
+    protected function status(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->checkIn()->exists()) {
+                return AssetCheckOutStatus::Returned;
+            }
+
+            if ($this->expected_check_in_at->isPast()) {
+                return AssetCheckOutStatus::PastDue;
+            }
+
+            return AssetCheckOutStatus::InGoodStanding;
+        });
     }
 }

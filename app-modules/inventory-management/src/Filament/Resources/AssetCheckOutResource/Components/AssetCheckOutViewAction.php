@@ -34,49 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Components;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\ServiceRequestsRelationManager;
+use Filament\Actions\ViewAction;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
 
-class ManageProspectServiceRequests extends ManageRelatedRecords
+class AssetCheckOutViewAction extends ViewAction
 {
-    protected static string $resource = ProspectResource::class;
+    use HasAssetCheckOutInfolist;
 
-    protected static string $relationship = 'serviceRequests';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Service Requests';
-
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Service Requests';
-
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-
-    public function getTitle(): string | Htmlable
+    protected function setUp(): void
     {
-        return 'Manage Prospect Service Requests';
-    }
+        parent::setUp();
 
-    public static function canAccess(array $arguments = []): bool
-    {
-        return (bool) count(static::managers($arguments['record'] ?? null));
-    }
+        $this->modalHeading('View Asset Check Out');
 
-    public function getRelationManagers(): array
-    {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            ServiceRequestsRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
+        $this->infolist($this->renderInfolist());
     }
 }

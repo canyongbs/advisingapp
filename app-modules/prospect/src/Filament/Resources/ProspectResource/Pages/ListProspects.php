@@ -118,7 +118,6 @@ class ListProspects extends ListRecords implements HasBulkEngagementAction
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Created')
-                    ->translateLabel()
                     ->dateTime('g:ia - M j, Y')
                     ->sortable(),
             ])
