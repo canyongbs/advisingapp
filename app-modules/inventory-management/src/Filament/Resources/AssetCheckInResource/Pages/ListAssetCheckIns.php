@@ -78,7 +78,8 @@ class ListAssetCheckIns extends ListRecords
                     }),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading('View Returned Asset'),
             ]);
     }
 }

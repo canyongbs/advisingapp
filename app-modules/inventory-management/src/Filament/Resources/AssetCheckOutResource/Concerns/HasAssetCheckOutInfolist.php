@@ -47,6 +47,7 @@ trait HasAssetCheckOutInfolist
     public function renderInfolist(): array
     {
         return [
+            TextEntry::make('asset.name'),
             TextEntry::make('asset_check_in_id')
                 ->label('Status')
                 ->state(fn (AssetCheckOut $record): AssetCheckOutStatus => $record->status)

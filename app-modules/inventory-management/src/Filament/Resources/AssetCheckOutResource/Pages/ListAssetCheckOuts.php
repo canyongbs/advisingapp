@@ -78,7 +78,8 @@ class ListAssetCheckOuts extends ListRecords
                     }),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading('View Checked Out Asset'),
             ])
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutReturned());
     }
