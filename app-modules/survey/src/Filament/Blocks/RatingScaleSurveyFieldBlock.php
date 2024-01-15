@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,15 +33,41 @@
 
 </COPYRIGHT>
 */
-import { createInput } from '@formkit/vue';
-import Slider from "./Slider.vue";
-import Rating from "./Rating.vue";
 
-export default {
-    'slider': createInput(Slider, {
-        props: [],
-    }),
-    'rating': createInput(Rating, {
-        props: [],
-    }),
+namespace AdvisingApp\Survey\Filament\Blocks;
+
+use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
+
+class RatingScaleSurveyFieldBlock extends FormFieldBlock
+{
+    public ?string $label = 'Rating Scale';
+
+    public string $preview = 'survey::blocks.previews.rating';
+
+    public ?string $icon = 'heroicon-m-scale';
+
+    public static function type(): string
+    {
+        return 'rating';
+    }
+
+    public static function getFormKitSchema(SubmissibleField $field): array
+    {
+        return [
+            '$formkit' => 'rating',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+        ];
+    }
+
+    public static function getValidationRules(SubmissibleField $field): array
+    {
+        return [
+            'integer',
+            'min:0',
+            'max:10',
+        ];
+    }
 }

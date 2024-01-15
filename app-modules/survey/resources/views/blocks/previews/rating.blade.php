@@ -1,4 +1,4 @@
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -30,16 +30,34 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import { createInput } from '@formkit/vue';
-import Slider from "./Slider.vue";
-import Rating from "./Rating.vue";
+--}}
 
-export default {
-    'slider': createInput(Slider, {
-        props: [],
-    }),
-    'rating': createInput(Rating, {
-        props: [],
-    }),
-}
+@php
+    $min = 0;
+    $max = 10;
+@endphp
+
+<x-form::blocks.field-wrapper
+    :$label
+    :$isRequired
+>
+    <div class="grid gap-y-2">
+        <div class="flex items-end gap-4">
+            <div class="w-full">
+                <div class="flex justify-between">
+                    <span>NOT AT ALL LIKELY</span>
+                    <span>EXTREMELY LIKELY</span>
+                </div>
+                <div
+                    class="grid grid-flow-col justify-stretch"
+                >
+                    <div class="grid justify-items-center rounded-l border border-gray-500">{{ $min }}</div>
+                    @foreach(range($min + 1, $max - 1) as $value)
+                        <div class="grid justify-items-center border border-gray-500">{{ $value }}</div>
+                    @endforeach
+                    <div class="grid justify-items-center rounded-r border border-gray-500">{{ $max }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-form::blocks.field-wrapper>
