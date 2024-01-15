@@ -39,8 +39,10 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationGroup;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetRelationManager;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckOutRelationManager;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\ServiceRequestsRelationManager;
 
 class ProspectServiceManagement extends ManageRelatedRecords
@@ -74,9 +76,26 @@ class ProspectServiceManagement extends ManageRelatedRecords
     {
         return collect([
             ServiceRequestsRelationManager::class,
-            AssetRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
+            RelationGroup::make('Assets', [
+                AssetCheckOutRelationManager::class,
+                AssetCheckInRelationManager::class,
+            ]),
+        ])->map(function ($relationManager) use ($record) {
+            if ($relationManager instanceof RelationGroup) {
+                $filteredManagers = collect($relationManager->getManagers())
+                    ->reject(fn ($relationManager) => $record && ! $relationManager::canViewForRecord($record, static::class))
+                    ->all();
+
+                return RelationGroup::make($relationManager->getLabel(), $filteredManagers);
+            }
+
+            if ($record && ! $relationManager::canViewForRecord($record, static::class)) {
+                return null;
+            }
+
+            return $relationManager;
+        })
+            ->filter()
             ->toArray();
     }
 }
