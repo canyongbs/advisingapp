@@ -34,24 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources;
+namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers;
 
-use Filament\Resources\Resource;
-use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Pages\ListAssetCheckIns;
+use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Illuminate\Database\Eloquent\Model;
+use App\Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetsFromAssetCheckOuts;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetFromAssetCheckOutInfolist;
 
-class AssetCheckInResource extends Resource
+class AssetRelationManager extends RelationManager
 {
-    protected static ?string $model = AssetCheckIn::class;
+    use HasAssetFromAssetCheckOutInfolist;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string $relationship = 'assetCheckOuts';
 
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function getPages(): array
+    public function infolist(Infolist $infolist): Infolist
     {
-        return [
-            'index' => ListAssetCheckIns::route('/'),
-        ];
+        return $infolist->schema($this->renderInfolist());
+    }
+
+    public function table(Table $table): Table
+    {
+        return (resolve(ListAssetsFromAssetCheckOuts::class))->table($table);
+    }
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Assets';
     }
 }

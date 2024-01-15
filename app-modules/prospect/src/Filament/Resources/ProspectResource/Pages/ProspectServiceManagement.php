@@ -40,8 +40,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckOutRelationManager;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetRelationManager;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\ServiceRequestsRelationManager;
 
 class ProspectServiceManagement extends ManageRelatedRecords
@@ -50,10 +49,8 @@ class ProspectServiceManagement extends ManageRelatedRecords
 
     protected static string $relationship = 'serviceRequests';
 
-    // TODO: Automatically set from Filament based on relationship name
     protected static ?string $navigationLabel = 'Service Management';
 
-    // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Service Management';
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
@@ -77,8 +74,7 @@ class ProspectServiceManagement extends ManageRelatedRecords
     {
         return collect([
             ServiceRequestsRelationManager::class,
-            AssetCheckOutRelationManager::class,
-            AssetCheckInRelationManager::class,
+            AssetRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();

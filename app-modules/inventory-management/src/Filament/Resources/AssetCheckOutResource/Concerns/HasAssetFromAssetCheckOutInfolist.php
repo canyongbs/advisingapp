@@ -34,24 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns;
 
-use Filament\Resources\Resource;
+use App\Filament\Resources\UserResource;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
+use AdvisingApp\InventoryManagement\Enums\AssetCheckOutStatus;
 
-class AssetCheckOutResource extends Resource
+trait HasAssetFromAssetCheckOutInfolist
 {
-    protected static ?string $model = AssetCheckOut::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function getPages(): array
+    public function renderInfolist(): array
     {
         return [
-            'index' => ListAssetCheckOuts::route('/'),
+            TextEntry::make('asset.name'),
+            TextEntry::make('asset_check_in_id')
+                ->label('Status')
+                ->state(fn (AssetCheckOut $record): AssetCheckOutStatus => $record->status)
+                ->formatStateUsing(fn (AssetCheckOutStatus $state) => $state->getLabel())
+                ->badge()
+                ->color(fn (AssetCheckOutStatus $state): string => match ($state) {
+                    AssetCheckOutStatus::Returned => 'success',
+                    AssetCheckOutStatus::InGoodStanding => 'info',
+                    default => 'danger',
+                }),
+            Fieldset::make('Transaction Details')
+                ->schema([
+                    TextEntry::make('checkedOutBy.name')
+                        ->label('Performed By')
+                        ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->checkedOutBy]))
+                        ->color('primary'),
+                    TextEntry::make('checked_out_at')
+                        ->dateTime('g:ia - M j, Y'),
+                    TextEntry::make('expected_check_in_at')
+                        ->dateTime('g:ia - M j, Y'),
+                    TextEntry::make('notes'),
+                ]),
         ];
     }
 }

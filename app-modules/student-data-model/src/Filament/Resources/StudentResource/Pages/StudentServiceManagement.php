@@ -40,8 +40,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\AssetCheckInRelationManager;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\AssetCheckOutRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\AssetRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ServiceRequestsRelationManager;
 
 class StudentServiceManagement extends ManageRelatedRecords
@@ -77,8 +76,7 @@ class StudentServiceManagement extends ManageRelatedRecords
     {
         return collect([
             ServiceRequestsRelationManager::class,
-            AssetCheckOutRelationManager::class,
-            AssetCheckInRelationManager::class,
+            AssetRelationManager::class,
         ])
             ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
             ->toArray();
