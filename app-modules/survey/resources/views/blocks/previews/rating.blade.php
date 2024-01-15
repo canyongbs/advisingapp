@@ -48,11 +48,9 @@
                     <span>NOT AT ALL LIKELY</span>
                     <span>EXTREMELY LIKELY</span>
                 </div>
-                <div
-                    class="grid grid-flow-col justify-stretch"
-                >
+                <div class="grid grid-flow-col justify-stretch">
                     <div class="grid justify-items-center rounded-l border border-gray-500">{{ $min }}</div>
-                    @foreach(range($min + 1, $max - 1) as $value)
+                    @foreach (range($min + 1, $max - 1) as $value)
                         <div class="grid justify-items-center border border-gray-500">{{ $value }}</div>
                     @endforeach
                     <div class="grid justify-items-center rounded-r border border-gray-500">{{ $max }}</div>
