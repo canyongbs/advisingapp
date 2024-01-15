@@ -76,12 +76,8 @@ class ListAssetCheckOuts extends ListRecords
                         default => 'danger',
                     }),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
-            ])
-            ->bulkActions([
             ]);
     }
 }

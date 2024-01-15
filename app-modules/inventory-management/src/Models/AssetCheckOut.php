@@ -122,7 +122,7 @@ class AssetCheckOut extends BaseModel implements Auditable, ProvidesATimeline
     protected function status(): Attribute
     {
         return Attribute::get(function () {
-            if (($this->checkIn()->exists())) {
+            if ($this->checkIn()->exists()) {
                 return AssetCheckOutStatus::Returned;
             }
 

@@ -62,12 +62,8 @@ class ListAssetCheckIns extends ListRecords
                 TextColumn::make('checked_in_at')
                     ->dateTime('g:ia - M j, Y'),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
-            ])
-            ->bulkActions([
             ]);
     }
 }
