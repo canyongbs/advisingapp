@@ -54,7 +54,7 @@ trait HasAssetCheckOutInfolist
                 ->badge()
                 ->color(fn (AssetCheckOutStatus $state): string => match ($state) {
                     AssetCheckOutStatus::Returned => 'success',
-                    AssetCheckOutStatus::InGoodStanding => 'info',
+                    AssetCheckOutStatus::Active => 'info',
                     default => 'danger',
                 }),
             Fieldset::make('Involved Parties')

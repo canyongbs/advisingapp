@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManag
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
@@ -48,6 +49,11 @@ class AssetCheckOutRelationManager extends RelationManager
 
     protected static string $relationship = 'assetCheckOuts';
 
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Checked Out Assets';
+    }
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist->schema($this->renderInfolist());
@@ -55,6 +61,7 @@ class AssetCheckOutRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
-        return (resolve(ListAssetCheckOuts::class))->table($table);
+        return (resolve(ListAssetCheckOuts::class))
+            ->table($table);
     }
 }

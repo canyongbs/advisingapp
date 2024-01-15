@@ -75,7 +75,7 @@ class ListAssetsFromAssetCheckOuts extends ListRecords
                     ->badge()
                     ->color(fn (AssetCheckOutStatus $state): string => match ($state) {
                         AssetCheckOutStatus::Returned => 'success',
-                        AssetCheckOutStatus::InGoodStanding => 'info',
+                        AssetCheckOutStatus::Active => 'info',
                         default => 'danger',
                     }),
             ])

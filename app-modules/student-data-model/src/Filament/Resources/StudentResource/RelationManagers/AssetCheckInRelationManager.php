@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Relati
 
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Pages\ListAssetCheckIns;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Concerns\HasAssetCheckInInfolist;
@@ -47,6 +48,11 @@ class AssetCheckInRelationManager extends RelationManager
     use HasAssetCheckInInfolist;
 
     protected static string $relationship = 'assetCheckIns';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Returned Assets';
+    }
 
     public function infolist(Infolist $infolist): Infolist
     {
