@@ -40,6 +40,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use AdvisingApp\Survey\Models\Survey;
 use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\EditSurvey;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\ListSurveys;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\CreateSurvey;
@@ -62,6 +63,14 @@ class SurveyResource extends Resource
     protected static ?string $modelLabel = 'Survey';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+    }
 
     public static function getEloquentQuery(): Builder
     {

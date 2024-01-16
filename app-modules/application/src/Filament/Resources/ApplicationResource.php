@@ -40,6 +40,7 @@ use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\EditApplication;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\ListApplications;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource\Pages\CreateApplication;
@@ -62,6 +63,14 @@ class ApplicationResource extends Resource
     protected static ?string $modelLabel = 'Application';
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+    }
 
     public static function getEloquentQuery(): Builder
     {
