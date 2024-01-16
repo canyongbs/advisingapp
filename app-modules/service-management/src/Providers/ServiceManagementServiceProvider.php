@@ -39,6 +39,7 @@ namespace AdvisingApp\ServiceManagement\Providers;
 use Filament\Panel;
 use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\ServiceManagement\Models\Sla;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
@@ -78,6 +79,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
             'service_request_type' => ServiceRequestType::class,
             'service_request_update' => ServiceRequestUpdate::class,
             'service_request' => ServiceRequest::class,
+            'sla' => Sla::class,
         ]);
 
         $this->registerRolesAndPermissions();

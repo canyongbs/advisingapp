@@ -34,56 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\RelationManagers;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\RelationManagers;
 
-use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
 use App\Filament\Columns\IdColumn;
 use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\AssociateAction;
+use Filament\Tables\Actions\DissociateAction;
+use Filament\Tables\Actions\DissociateBulkAction;
 use App\Filament\Resources\RelationManagers\RelationManager;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
-use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
 class ServiceRequestPrioritiesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'priorities';
+    protected static string $relationship = 'serviceRequestPriorities';
 
     protected static ?string $recordTitleAttribute = 'name';
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
-                TextInput::make('order')
-                    ->label('Priority Order')
-                    ->required()
-                    ->integer()
-                    ->numeric()
-                    ->disabledOn('edit'),
-                Select::make('sla_id')
-                    ->label('SLA')
-                    ->relationship('sla', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->createOptionForm(fn (Form $form) => SlaResource::form($form)),
-            ]);
-    }
 
     public function table(Table $table): Table
     {
         return $table
+            ->inverseRelationship('sla')
             ->columns([
                 IdColumn::make(),
+                TextColumn::make('type.name')
+                    ->url(fn (ServiceRequestPriority $record): string => ServiceRequestTypeResource::getUrl('edit', ['record' => $record->type]))
+                    ->searchable(),
                 TextColumn::make('name')
                     ->label('Name')
                     ->searchable()
@@ -91,27 +72,35 @@ class ServiceRequestPrioritiesRelationManager extends RelationManager
                 TextColumn::make('order')
                     ->label('Priority Order')
                     ->sortable(),
-                TextColumn::make('sla.name')
-                    ->label('SLA')
-                    ->url(fn (ServiceRequestPriority $record): ?string => $record->sla ? SlaResource::getUrl('edit', ['record' => $record->sla]) : null)
-                    ->searchable(),
                 TextColumn::make('service_requests_count')
                     ->label('# of Service Requests')
                     ->counts('serviceRequests')
                     ->sortable(),
             ])
-            ->defaultSort('order')
-            ->reorderable('order')
-            ->paginated(false)
             ->headerActions([
-                CreateAction::make(),
+                AssociateAction::make()
+                    ->recordSelectOptionsQuery(fn (Builder $query, AssociateAction $action) => $query->where('type_id', Arr::last($this->mountedTableActionsData)['type_id'] ?? null))
+                    ->preloadRecordSelect()
+                    ->form(fn (AssociateAction $action): array => [
+                        Select::make('type_id')
+                            ->relationship(
+                                'type',
+                                'name',
+                                fn (Builder $query) => $query->whereRelation('priorities', 'sla_id', null),
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->live(),
+                        $action->getRecordSelect()
+                            ->visible(fn (Get $get): bool => filled($get('type_id'))),
+                    ]),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                DissociateAction::make(),
             ])
             ->groupedBulkActions([
-                DeleteBulkAction::make(),
+                DissociateBulkAction::make(),
             ]);
     }
 }
