@@ -64,6 +64,7 @@ class EventResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    // TODO Move into policy once created...
     public static function canAccess(): bool
     {
         /** @var User $user */

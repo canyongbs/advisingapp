@@ -40,9 +40,9 @@ use App\Enums\Feature;
 use Illuminate\Support\Facades\Gate;
 use App\Support\FeatureAccessResponse;
 
-trait FeatureAccessEnforcedPolicyBefore
+trait PerformsFeatureChecks
 {
-    public function before(): FeatureAccessResponse | null | bool
+    public function hasFeatures(): FeatureAccessResponse | null | bool
     {
         return Gate::check(
             collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())

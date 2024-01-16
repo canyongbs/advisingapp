@@ -36,9 +36,10 @@
 
 namespace App\Policies\Contracts;
 
-use App\Support\FeatureAccessResponse;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
-interface FeatureAccessEnforcedPolicy
+interface PerformsChecksBeforeAuthorization
 {
-    public function before(): FeatureAccessResponse | null | bool;
+    public function before(Authenticatable $authenticatable): ?Response;
 }
