@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\MassPrunable;
 use OwenIt\Auditing\Models\Audit as BaseAudit;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
@@ -53,6 +54,7 @@ class Audit extends BaseAudit
     use DefinesPermissions;
     use MassPrunable;
     use HasUuids;
+    use UsesTenantConnection;
 
     public function prunable(): Builder
     {
