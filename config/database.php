@@ -164,7 +164,7 @@ return [
     ],
 
     'fdw' => [
-        'connection' => env('FDW_CONNECTION', 'pgsql'),
+        'connection' => env('FDW_CONNECTION', 'tenant'),
         'server_name' => env('FDW_SERVER_NAME', 'sis_bridge'),
         'external_host' => env('FDW_EXTERNAL_HOST', 'redshift'),
         'external_port' => env('FDW_EXTERNAL_PORT', '5433'),

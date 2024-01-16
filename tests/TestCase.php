@@ -52,7 +52,7 @@ abstract class TestCase extends BaseTestCase
     use CanConfigureMigrationCommands;
     use LoadsFixtures;
 
-    protected array $connectionsToTransact = ['pgsql', 'sis'];
+    protected array $connectionsToTransact = ['tenant', 'sis'];
 
     protected function setUp(): void
     {

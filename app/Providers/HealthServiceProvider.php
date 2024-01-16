@@ -64,7 +64,8 @@ class HealthServiceProvider extends ServiceProvider
             CacheCheck::new(),
             OptimizedAppCheck::new(),
             DatabaseCheck::new()
-                ->name('pgsql')
+                ->name('tenant')
+                ->connectionName('tenant')
                 ->label('PostgreSQL Database'),
             DatabaseCheck::new()
                 ->name('sis')
