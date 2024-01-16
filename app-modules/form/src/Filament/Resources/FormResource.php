@@ -40,7 +40,6 @@ use Filament\Resources\Resource;
 use AdvisingApp\Form\Models\Form;
 use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\EditForm;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ListForms;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\CreateForm;
@@ -63,14 +62,6 @@ class FormResource extends Resource
     protected static ?string $modelLabel = 'Form';
 
     protected static ?string $recordTitleAttribute = 'name';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-    }
 
     public static function getEloquentQuery(): Builder
     {

@@ -34,17 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseCategory\RequestFactories\CreateKnowledgeBaseCategoryRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
-use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseCategory\RequestFactories\CreateKnowledgeBaseCategoryRequestFactory;
+use function Pest\Livewire\livewire;
 
 // TODO: Write CreateKnowledgeBaseCategory tests
 //test('A successful action on the CreateKnowledgeBaseCategory page', function () {});
@@ -54,7 +55,7 @@ use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseCategory\RequestFactories\Creat
 // Permission Tests
 
 test('CreateKnowledgeBaseCategory is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -91,7 +92,7 @@ test('CreateKnowledgeBaseCategory is gated with proper feature access control', 
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_category.view-any');
     $user->givePermissionTo('knowledge_base_category.create');

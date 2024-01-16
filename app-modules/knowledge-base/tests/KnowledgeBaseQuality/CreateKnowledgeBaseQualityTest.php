@@ -42,6 +42,7 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
 use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseQuality\RequestFactories\CreateKnowledgeBaseQualityRequestFactory;
@@ -54,7 +55,7 @@ use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseQuality\RequestFactories\Create
 // Permission Tests
 
 test('CreateKnowledgeBaseQuality is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -91,7 +92,7 @@ test('CreateKnowledgeBaseQuality is gated with proper feature ccess control', fu
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_quality.view-any');
     $user->givePermissionTo('knowledge_base_quality.create');
