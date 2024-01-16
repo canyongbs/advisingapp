@@ -41,6 +41,8 @@ use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
+use AdvisingApp\InventoryManagement\Enums\AssetCheckOutStatus;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource;
 
@@ -59,11 +61,25 @@ class ListAssetCheckIns extends ListRecords
                     ->searchable(),
                 TextColumn::make('asset.type.name')
                     ->searchable(),
+                TextColumn::make('checkOut.checked_out_at')
+                    ->label('Checked out at')
+                    ->dateTime('g:ia - M j, Y'),
                 TextColumn::make('checked_in_at')
                     ->dateTime('g:ia - M j, Y'),
+                TextColumn::make('created_at')
+                    ->label('Status')
+                    ->state(fn (AssetCheckIn $record): AssetCheckOutStatus => $record->checkOut->status)
+                    ->formatStateUsing(fn (AssetCheckOutStatus $state) => $state->getLabel())
+                    ->badge()
+                    ->color(fn (AssetCheckOutStatus $state): string => match ($state) {
+                        AssetCheckOutStatus::Returned => 'success',
+                        AssetCheckOutStatus::Active => 'info',
+                        default => 'danger',
+                    }),
             ])
             ->actions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading('View Returned Asset'),
             ]);
     }
 }

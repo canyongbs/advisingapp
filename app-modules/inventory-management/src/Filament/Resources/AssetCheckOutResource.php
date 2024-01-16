@@ -38,10 +38,7 @@ namespace AdvisingApp\InventoryManagement\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\EditAssetCheckOut;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ViewAssetCheckOut;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\CreateAssetCheckOut;
 
 class AssetCheckOutResource extends Resource
 {
@@ -55,9 +52,6 @@ class AssetCheckOutResource extends Resource
     {
         return [
             'index' => ListAssetCheckOuts::route('/'),
-            // 'create' => CreateAssetCheckOut::route('/create'),
-            // 'view' => ViewAssetCheckOut::route('/{record}'),
-            // 'edit' => EditAssetCheckOut::route('/{record}/edit'),
         ];
     }
 }

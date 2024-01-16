@@ -34,15 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Survey\Filament\Blocks;
 
-use Filament\Clusters\Cluster;
+use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 
-class RecruitmentCrm extends Cluster
+class RatingScaleSurveyFieldBlock extends FormFieldBlock
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    public ?string $label = 'Rating Scale';
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    public string $preview = 'survey::blocks.previews.rating';
 
-    protected static ?int $navigationSort = 4;
+    public ?string $icon = 'heroicon-m-scale';
+
+    public static function type(): string
+    {
+        return 'rating';
+    }
+
+    public static function getFormKitSchema(SubmissibleField $field): array
+    {
+        return [
+            '$formkit' => 'rating',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+        ];
+    }
+
+    public static function getValidationRules(SubmissibleField $field): array
+    {
+        return [
+            'integer',
+            'min:0',
+            'max:10',
+        ];
+    }
 }

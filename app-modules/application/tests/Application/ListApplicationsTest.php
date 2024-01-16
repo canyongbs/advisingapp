@@ -39,6 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 // TODO: Write ListApplications tests
@@ -49,7 +50,7 @@ use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 // Permission Tests
 
 test('ListApplications is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -71,7 +72,7 @@ test('ListApplications is gated with proper feature access control', function ()
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('application.view-any');
 

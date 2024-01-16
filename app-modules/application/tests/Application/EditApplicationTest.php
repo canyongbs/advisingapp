@@ -34,18 +34,19 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 
-use function Pest\Laravel\seed;
-
-use App\Settings\LicenseSettings;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
+use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Filament\Resources\ApplicationResource;
-use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+
+use App\Settings\LicenseSettings;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\seed;
+use function Pest\Livewire\livewire;
 
 // TODO: Write EditApplication tests
 //test('A successful action on the EditApplication page', function () {});
@@ -57,7 +58,7 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 test('EditApplication is gated with proper access control', function () {
     seed(ApplicationSubmissionStateSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $application = Application::factory()->create();
 
@@ -95,7 +96,7 @@ test('EditApplication is gated with proper feature access control', function () 
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('application.view-any');
     $user->givePermissionTo('application.*.update');

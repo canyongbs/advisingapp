@@ -34,34 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
+namespace App\Filament\Clusters;
 
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
-use Illuminate\Database\Eloquent\Model;
-use App\Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
+use Filament\Clusters\Cluster;
 
-class AssetCheckOutRelationManager extends RelationManager
+class ProspectManagement extends Cluster
 {
-    use HasAssetCheckOutInfolist;
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $relationship = 'assetCheckOuts';
+    protected static ?string $navigationGroup = 'Product Administration';
 
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
-    {
-        return 'Checked Out Assets';
-    }
-
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist->schema($this->renderInfolist());
-    }
-
-    public function table(Table $table): Table
-    {
-        return (resolve(ListAssetCheckOuts::class))
-            ->table($table);
-    }
+    protected static ?int $navigationSort = 4;
 }

@@ -41,13 +41,13 @@ use Filament\Support\Contracts\HasLabel;
 enum AssetCheckOutStatus: string implements HasLabel
 {
     case Returned = 'returned';
-    case InGoodStanding = 'in_good_standing';
+    case Active = 'active';
     case PastDue = 'past_due';
 
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::InGoodStanding => 'In Good Standing',
+            self::Active => 'Active',
             self::PastDue => 'Past Due',
             default => $this->name,
         };

@@ -39,13 +39,17 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Concerns\FiltersManagersFromGroups;
+use Filament\Resources\RelationManagers\RelationGroup;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
-use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\AssetCheckInRelationManager;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\AssetCheckOutRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource\RelationManagers\ServiceRequestsRelationManager;
 
 class StudentServiceManagement extends ManageRelatedRecords
 {
+    use FiltersManagersFromGroups;
+
     protected static string $resource = StudentResource::class;
 
     protected static string $relationship = 'serviceRequests';
@@ -77,10 +81,13 @@ class StudentServiceManagement extends ManageRelatedRecords
     {
         return collect([
             ServiceRequestsRelationManager::class,
-            AssetCheckOutRelationManager::class,
-            AssetCheckInRelationManager::class,
+            RelationGroup::make('Assets', [
+                AssetCheckOutRelationManager::class,
+                AssetCheckInRelationManager::class,
+            ]),
         ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
+            ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
+            ->filter()
             ->toArray();
     }
 }

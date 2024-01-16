@@ -34,34 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
+namespace App\Filament\Concerns;
 
-use Filament\Tables\Table;
-use Filament\Infolists\Infolist;
-use Illuminate\Database\Eloquent\Model;
-use App\Filament\Resources\RelationManagers\RelationManager;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages\ListAssetCheckOuts;
-use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
+use Filament\Resources\RelationManagers\RelationGroup;
 
-class AssetCheckOutRelationManager extends RelationManager
+trait FiltersManagersFromGroups
 {
-    use HasAssetCheckOutInfolist;
-
-    protected static string $relationship = 'assetCheckOuts';
-
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    public static function filterRelationManagers($relationManager, $record)
     {
-        return 'Checked Out Assets';
-    }
+        if ($relationManager instanceof RelationGroup) {
+            $filteredManagers = collect($relationManager->getManagers())
+                ->reject(fn ($manager) => $record && ! $manager::canViewForRecord($record, static::class))
+                ->all();
 
-    public function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist->schema($this->renderInfolist());
-    }
+            return RelationGroup::make($relationManager->getLabel(), $filteredManagers);
+        }
 
-    public function table(Table $table): Table
-    {
-        return (resolve(ListAssetCheckOuts::class))
-            ->table($table);
+        if ($record && ! $relationManager::canViewForRecord($record, static::class)) {
+            return null;
+        }
+
+        return $relationManager;
     }
 }
