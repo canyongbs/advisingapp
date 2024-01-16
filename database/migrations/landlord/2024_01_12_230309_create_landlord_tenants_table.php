@@ -12,7 +12,16 @@ return new class () extends Migration {
             $table->id();
             $table->string('name');
             $table->string('domain')->unique();
-            $table->string('database')->unique();
+            $table->string('db_host');
+            $table->string('db_port');
+            $table->string('database');
+            $table->string('db_username');
+            $table->string('db_password');
+            $table->string('sis_db_host');
+            $table->string('sis_db_port');
+            $table->string('sis_database');
+            $table->string('sis_db_username');
+            $table->string('sis_db_password');
             $table->timestamps();
         });
     }
