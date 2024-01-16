@@ -41,6 +41,7 @@ use App\Filament\Columns\IdColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\InventoryManagement\Enums\AssetCheckOutStatus;
 use AdvisingApp\InventoryManagement\Filament\Resources\AssetResource;
@@ -72,12 +73,14 @@ class ListAssetCheckOuts extends ListRecords
                     ->badge()
                     ->color(fn (AssetCheckOutStatus $state): string => match ($state) {
                         AssetCheckOutStatus::Returned => 'success',
-                        AssetCheckOutStatus::InGoodStanding => 'info',
+                        AssetCheckOutStatus::Active => 'info',
                         default => 'danger',
                     }),
             ])
             ->actions([
-                ViewAction::make(),
-            ]);
+                ViewAction::make()
+                    ->modalHeading('View Checked Out Asset'),
+            ])
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutReturned());
     }
 }

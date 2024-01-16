@@ -39,6 +39,8 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Concerns\FiltersManagersFromGroups;
+use Filament\Resources\RelationManagers\RelationGroup;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckInRelationManager;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\AssetCheckOutRelationManager;
@@ -46,14 +48,14 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\Se
 
 class ProspectServiceManagement extends ManageRelatedRecords
 {
+    use FiltersManagersFromGroups;
+
     protected static string $resource = ProspectResource::class;
 
     protected static string $relationship = 'serviceRequests';
 
-    // TODO: Automatically set from Filament based on relationship name
     protected static ?string $navigationLabel = 'Service Management';
 
-    // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Service Management';
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
@@ -77,10 +79,13 @@ class ProspectServiceManagement extends ManageRelatedRecords
     {
         return collect([
             ServiceRequestsRelationManager::class,
-            AssetCheckOutRelationManager::class,
-            AssetCheckInRelationManager::class,
+            RelationGroup::make('Assets', [
+                AssetCheckOutRelationManager::class,
+                AssetCheckInRelationManager::class,
+            ]),
         ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
+            ->map(fn ($relationManager) => self::filterRelationManagers($relationManager, $record))
+            ->filter()
             ->toArray();
     }
 }

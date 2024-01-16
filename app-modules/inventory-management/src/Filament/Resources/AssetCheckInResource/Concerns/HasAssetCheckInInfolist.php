@@ -39,12 +39,25 @@ namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResourc
 use App\Filament\Resources\UserResource;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
+use AdvisingApp\InventoryManagement\Enums\AssetCheckOutStatus;
 
 trait HasAssetCheckInInfolist
 {
     public function renderInfolist(): array
     {
         return [
+            TextEntry::make('asset.name'),
+            TextEntry::make('created_at')
+                ->label('Status')
+                ->state(fn (AssetCheckIn $record): AssetCheckOutStatus => $record->checkOut->status)
+                ->formatStateUsing(fn (AssetCheckOutStatus $state) => $state->getLabel())
+                ->badge()
+                ->color(fn (AssetCheckOutStatus $state): string => match ($state) {
+                    AssetCheckOutStatus::Returned => 'success',
+                    AssetCheckOutStatus::Active => 'info',
+                    default => 'danger',
+                }),
             Fieldset::make('Involved Parties')
                 ->schema([
                     TextEntry::make('checkedInBy.name')
