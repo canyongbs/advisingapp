@@ -34,21 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource;
+namespace App\Filament\Concerns;
 
-use Filament\Actions\ViewAction;
-use AdvisingApp\InventoryManagement\Filament\Concerns\AssetCheckInInfolist;
+use Filament\Resources\RelationManagers\RelationGroup;
 
-class AssetCheckInViewAction extends ViewAction
+trait FiltersManagersFromGroups
 {
-    use AssetCheckInInfolist;
-
-    protected function setUp(): void
+    public static function filterRelationManagers($relationManager, $record)
     {
-        parent::setUp();
+        if ($relationManager instanceof RelationGroup) {
+            $filteredManagers = collect($relationManager->getManagers())
+                ->reject(fn ($manager) => $record && ! $manager::canViewForRecord($record, static::class))
+                ->all();
 
-        $this->modalHeading('View Asset Check In');
+            return RelationGroup::make($relationManager->getLabel(), $filteredManagers);
+        }
 
-        $this->infolist($this->renderInfolist());
+        if ($record && ! $relationManager::canViewForRecord($record, static::class)) {
+            return null;
+        }
+
+        return $relationManager;
     }
 }

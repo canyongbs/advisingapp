@@ -86,8 +86,8 @@ class CheckOutAssetHeaderAction extends Action
                 ->visible(fn (Get $get): bool => filled($get('checked_out_to_type')))
                 ->getSearchResultsUsing(function (string $search, Get $get) {
                     return match ($get('checked_out_to_type')) {
-                        Student::class => Student::where('full_name', 'like', "%{$search}%")->pluck('full_name', 'sisid')->toArray(),
-                        Prospect::class => Prospect::where('full_name', 'like', "%{$search}%")->pluck('full_name', 'id')->toArray(),
+                        Student::class => Student::where('full_name', 'like', "%{$search}%")->orWhere('first', 'like', "{$search}")->orWhere('last', 'like', "{$search}")->pluck('full_name', 'sisid')->toArray(),
+                        Prospect::class => Prospect::where('full_name', 'like', "%{$search}%")->orWhere('first_name', 'like', "{$search}")->orWhere('last_name', 'like', "{$search}")->pluck('full_name', 'id')->toArray(),
                     };
                 })
                 ->searchable()

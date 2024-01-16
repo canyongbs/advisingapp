@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,15 +33,22 @@
 
 </COPYRIGHT>
 */
-import { createInput } from '@formkit/vue';
-import Slider from "./Slider.vue";
-import Rating from "./Rating.vue";
 
-export default {
-    'slider': createInput(Slider, {
-        props: [],
-    }),
-    'rating': createInput(Rating, {
-        props: [],
-    }),
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Pages;
+
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Concerns\HasAssetCheckInInfolist;
+
+class ViewAssetCheckIn extends ViewRecord
+{
+    use HasAssetCheckInInfolist;
+
+    protected static string $resource = AssetCheckInResource::class;
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist($this->renderInfolist());
+    }
 }

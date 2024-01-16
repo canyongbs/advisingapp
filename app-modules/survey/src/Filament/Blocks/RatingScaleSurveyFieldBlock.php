@@ -34,49 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\Pages;
+namespace AdvisingApp\Survey\Filament\Blocks;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Support\Htmlable;
-use Filament\Resources\Pages\ManageRelatedRecords;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers\ServiceRequestsRelationManager;
+use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 
-class ManageProspectServiceRequests extends ManageRelatedRecords
+class RatingScaleSurveyFieldBlock extends FormFieldBlock
 {
-    protected static string $resource = ProspectResource::class;
+    public ?string $label = 'Rating Scale';
 
-    protected static string $relationship = 'serviceRequests';
+    public string $preview = 'survey::blocks.previews.rating';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Service Requests';
+    public ?string $icon = 'heroicon-m-scale';
 
-    // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Service Requests';
-
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-
-    public function getTitle(): string | Htmlable
+    public static function type(): string
     {
-        return 'Manage Prospect Service Requests';
+        return 'rating';
     }
 
-    public static function canAccess(array $arguments = []): bool
+    public static function getFormKitSchema(SubmissibleField $field): array
     {
-        return (bool) count(static::managers($arguments['record'] ?? null));
+        return [
+            '$formkit' => 'rating',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+        ];
     }
 
-    public function getRelationManagers(): array
+    public static function getValidationRules(SubmissibleField $field): array
     {
-        return static::managers($this->getRecord());
-    }
-
-    private static function managers(?Model $record = null): array
-    {
-        return collect([
-            ServiceRequestsRelationManager::class,
-        ])
-            ->reject(fn ($relationManager) => $record && (! $relationManager::canViewForRecord($record, static::class)))
-            ->toArray();
+        return [
+            'integer',
+            'min:0',
+            'max:10',
+        ];
     }
 }

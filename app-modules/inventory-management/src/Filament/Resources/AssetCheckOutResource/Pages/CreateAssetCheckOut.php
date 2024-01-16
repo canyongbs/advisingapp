@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,15 +33,13 @@
 
 </COPYRIGHT>
 */
-import { createInput } from '@formkit/vue';
-import Slider from "./Slider.vue";
-import Rating from "./Rating.vue";
 
-export default {
-    'slider': createInput(Slider, {
-        props: [],
-    }),
-    'rating': createInput(Rating, {
-        props: [],
-    }),
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Pages;
+
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource;
+
+class CreateAssetCheckOut extends CreateRecord
+{
+    protected static string $resource = AssetCheckOutResource::class;
 }

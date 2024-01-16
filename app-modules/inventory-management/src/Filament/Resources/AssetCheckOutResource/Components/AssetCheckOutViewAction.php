@@ -34,15 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Components;
 
-use Filament\Clusters\Cluster;
+use Filament\Actions\ViewAction;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckOutResource\Concerns\HasAssetCheckOutInfolist;
 
-class RecruitmentCrm extends Cluster
+class AssetCheckOutViewAction extends ViewAction
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    use HasAssetCheckOutInfolist;
 
-    protected static ?string $navigationGroup = 'Product Administration';
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    protected static ?int $navigationSort = 4;
+        $this->modalHeading('View Asset Check Out');
+
+        $this->infolist($this->renderInfolist());
+    }
 }

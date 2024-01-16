@@ -67,6 +67,8 @@ class Dashboard extends BasePage
 
         if (UnlicensedNotice::canView()) {
             $widgets[] = UnlicensedNotice::class;
+
+            return $widgets;
         }
 
         if ($user->can('authorization.view_dashboard')) {

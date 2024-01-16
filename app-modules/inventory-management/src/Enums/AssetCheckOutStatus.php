@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,15 +33,23 @@
 
 </COPYRIGHT>
 */
-import { createInput } from '@formkit/vue';
-import Slider from "./Slider.vue";
-import Rating from "./Rating.vue";
 
-export default {
-    'slider': createInput(Slider, {
-        props: [],
-    }),
-    'rating': createInput(Rating, {
-        props: [],
-    }),
+namespace AdvisingApp\InventoryManagement\Enums;
+
+use Filament\Support\Contracts\HasLabel;
+
+enum AssetCheckOutStatus: string implements HasLabel
+{
+    case Returned = 'returned';
+    case Active = 'active';
+    case PastDue = 'past_due';
+
+    public function getLabel(): ?string
+    {
+        return match ($this) {
+            self::Active => 'Active',
+            self::PastDue => 'Past Due',
+            default => $this->name,
+        };
+    }
 }

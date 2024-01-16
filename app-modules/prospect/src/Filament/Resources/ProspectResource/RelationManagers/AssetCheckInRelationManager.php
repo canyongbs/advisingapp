@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,15 +33,34 @@
 
 </COPYRIGHT>
 */
-import { createInput } from '@formkit/vue';
-import Slider from "./Slider.vue";
-import Rating from "./Rating.vue";
 
-export default {
-    'slider': createInput(Slider, {
-        props: [],
-    }),
-    'rating': createInput(Rating, {
-        props: [],
-    }),
+namespace AdvisingApp\Prospect\Filament\Resources\ProspectResource\RelationManagers;
+
+use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Illuminate\Database\Eloquent\Model;
+use App\Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Pages\ListAssetCheckIns;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Concerns\HasAssetCheckInInfolist;
+
+class AssetCheckInRelationManager extends RelationManager
+{
+    use HasAssetCheckInInfolist;
+
+    protected static string $relationship = 'assetCheckIns';
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return 'Returned Assets';
+    }
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema($this->renderInfolist());
+    }
+
+    public function table(Table $table): Table
+    {
+        return (resolve(ListAssetCheckIns::class))->table($table);
+    }
 }

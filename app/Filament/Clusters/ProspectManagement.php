@@ -34,30 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InventoryManagement\Filament\Concerns;
+namespace App\Filament\Clusters;
 
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Clusters\Cluster;
 
-// TODO Re-use this trait across other places where infolist is rendered
-trait AssetCheckOutInfolist
+class ProspectManagement extends Cluster
 {
-    public function renderInfolist(): array
-    {
-        return [
-            Fieldset::make('Involved Parties')
-                ->schema([
-                    TextEntry::make('checkedOutBy.name')
-                        ->label('Performed By'),
-                    TextEntry::make('checkedOutTo.full_name')
-                        ->label('Checked Out to'),
-                ]),
-            Fieldset::make('')
-                ->schema([
-                    TextEntry::make('checked_out_at'),
-                    TextEntry::make('expected_check_in_at'),
-                    TextEntry::make('notes'),
-                ]),
-        ];
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Product Administration';
+
+    protected static ?int $navigationSort = 4;
 }

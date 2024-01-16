@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,15 +33,25 @@
 
 </COPYRIGHT>
 */
-import { createInput } from '@formkit/vue';
-import Slider from "./Slider.vue";
-import Rating from "./Rating.vue";
 
-export default {
-    'slider': createInput(Slider, {
-        props: [],
-    }),
-    'rating': createInput(Rating, {
-        props: [],
-    }),
+namespace AdvisingApp\InventoryManagement\Filament\Resources;
+
+use Filament\Resources\Resource;
+use AdvisingApp\InventoryManagement\Models\AssetCheckIn;
+use AdvisingApp\InventoryManagement\Filament\Resources\AssetCheckInResource\Pages\ListAssetCheckIns;
+
+class AssetCheckInResource extends Resource
+{
+    protected static ?string $model = AssetCheckIn::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListAssetCheckIns::route('/'),
+        ];
+    }
 }
