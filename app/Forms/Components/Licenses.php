@@ -80,8 +80,8 @@ class Licenses extends Section
                     ->hiddenLabel()
                     ->offColor(Color::Red)
                     ->onColor(Color::Green)
-                    ->formatStateUsing(function (User $record) use ($licenseType) {
-                        return $record->hasLicense($licenseType);
+                    ->formatStateUsing(function (?User $record) use ($licenseType) {
+                        return $record?->hasLicense($licenseType);
                     })
                     ->afterStateUpdated(function (bool $state, User $record) use ($licenseType) {
                         $notification = Notification::make();
@@ -98,7 +98,7 @@ class Licenses extends Section
 
                         $notification->send();
                     })
-                    ->disabled(fn (bool $state) => ! $state && ! $licenseType->hasAvailableLicenses())
+                    ->disabled(fn (?bool $state) => ! $state && ! $licenseType->hasAvailableLicenses())
                     ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                     ->hintIconTooltip(function () use ($licenseType) {
                         /** @var User $user */
