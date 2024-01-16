@@ -64,18 +64,22 @@ sail up -d
 Finally, we will set up the application by running the following commands:
 ```bash
 sail artisan key:generate
-sail artisan migrate:fresh
-sail artisan migrate:fresh --database=sis --path=app-modules/student-data-model/database/migrations/sis
-sail artisan db:seed
+sail artisan migrate:landlord:fresh
 sail npm install
-sail npm run dev
+sail npm run build
 ```
 
-Note: `npm run dev` will run vite in watch mode. If you wish to run it in production mode, you can run `npm run build` instead.
+These commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
 
-Note: It can be quicker to run `npm run dev` on your host machine if you have the correct node version installed.
+```bash
+sail artisan tenant:create [A Name for the Tenant] [A domain for the tenant]
+sail artisan sis:refresh
+sail composer refresh-database
+```
 
-After this the application should be accessible at `localhost` in your browser.
+These commands will create a new tenant with the name and domain you supplied, seed some did into it's sis database, and then refresh and seed the tenant's database.
+
+After this the application should be accessible at the domain you supplied.
 
 Sail can be stopped by running `sail stop` and turning back on by running `sail up -d`
 
