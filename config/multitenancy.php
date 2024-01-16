@@ -1,6 +1,6 @@
 <?php
 
-use Spatie\Multitenancy\Models\Tenant;
+use App\Models\Tenant;
 use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Queue\CallQueuedClosure;
 use App\Multitenancy\Tasks\SwitchAppUrl;
@@ -8,8 +8,8 @@ use Illuminate\Events\CallQueuedListener;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Spatie\Multitenancy\Tasks\PrefixCacheTask;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
+use App\Multitenancy\Tasks\SwitchTenantDatabasesTask;
 use Illuminate\Notifications\SendQueuedNotifications;
-use Spatie\Multitenancy\Tasks\SwitchTenantDatabaseTask;
 use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
 use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
 use Spatie\Multitenancy\Actions\ForgetCurrentTenantAction;
@@ -39,7 +39,7 @@ return [
      */
     'switch_tenant_tasks' => [
         PrefixCacheTask::class,
-        SwitchTenantDatabaseTask::class,
+        SwitchTenantDatabasesTask::class,
         SwitchAppUrl::class,
         //\Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
     ],

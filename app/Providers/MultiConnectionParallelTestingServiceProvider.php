@@ -118,7 +118,7 @@ class MultiConnectionParallelTestingServiceProvider extends ServiceProvider
                             });
                         }
 
-                        Config::set('database.fdw.external_database', "testing_test_{$token}");
+                        Config::set('database.connections.sis.database', "testing_test_{$token}");
                     });
                 }
             });

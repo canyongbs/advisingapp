@@ -12,7 +12,7 @@ return new class () extends Migration {
             $table->id();
             $table->string('name');
             $table->string('domain')->unique();
-            $table->string('key')->unique();
+            $table->string('key')->nullable();
             $table->string('db_host');
             $table->string('db_port');
             $table->string('database');
