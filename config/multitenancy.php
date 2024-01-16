@@ -3,6 +3,7 @@
 use Spatie\Multitenancy\Models\Tenant;
 use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Queue\CallQueuedClosure;
+use App\Multitenancy\Tasks\SwitchAppUrl;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
@@ -38,6 +39,7 @@ return [
     'switch_tenant_tasks' => [
         // \Spatie\Multitenancy\Tasks\PrefixCacheTask::class,
         SwitchTenantDatabaseTask::class,
+        SwitchAppUrl::class,
         // \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
     ],
 
