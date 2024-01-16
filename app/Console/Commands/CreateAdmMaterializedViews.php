@@ -38,10 +38,13 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Actions\Setup\SetupAdmMaterializedViews;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class CreateAdmMaterializedViews extends Command
 {
-    protected $signature = 'app:create-adm-materialized-views';
+    use TenantAware;
+
+    protected $signature = 'app:create-adm-materialized-views {--tenant=*}';
 
     protected $description = 'Creates the materialized views for the ADM tables';
 
@@ -54,25 +57,25 @@ class CreateAdmMaterializedViews extends Command
         }
 
         resolve(SetupAdmMaterializedViews::class)->handle(
-            connection: 'pgsql',
+            connection: config('multitenancy.tenant_database_connection_name'),
             remoteTable: 'students',
             indexColumn: 'sisid',
         );
 
         resolve(SetupAdmMaterializedViews::class)->handle(
-            connection: 'pgsql',
+            connection: config('multitenancy.tenant_database_connection_name'),
             remoteTable: 'programs',
             indexColumn: 'sisid',
         );
 
         resolve(SetupAdmMaterializedViews::class)->handle(
-            connection: 'pgsql',
+            connection: config('multitenancy.tenant_database_connection_name'),
             remoteTable: 'enrollments',
             indexColumn: 'sisid',
         );
 
         resolve(SetupAdmMaterializedViews::class)->handle(
-            connection: 'pgsql',
+            connection: config('multitenancy.tenant_database_connection_name'),
             remoteTable: 'performance',
             indexColumn: 'sisid',
         );

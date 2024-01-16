@@ -41,26 +41,21 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Benchmark;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class RefreshAdmMaterializedView extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:refresh-adm-materialized-view {remoteTable} {--indexColumn=sisid} {--connection=pgsql}';
+    use TenantAware;
+
+    protected $signature = 'app:refresh-adm-materialized-view {remoteTable} {--indexColumn=sisid} {--tenant=*}';
 
     protected $description = 'Command description';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function handle(): void
     {
         try {
             $benchmark = Benchmark::measure(function () {
-                $database = DB::connection($this->option('connection'));
+                $database = DB::connection(config('multitenancy.tenant_database_connection_name'));
 
                 $remoteTable = $this->argument('remoteTable');
 

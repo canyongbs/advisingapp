@@ -149,11 +149,11 @@
             "@php artisan migrate:fresh --database=sis --path=app-modules/student-data-model/database/migrations/sis"
         ],
         "refresh-database": [
-            "@php artisan migrate:fresh",
+            "@php artisan tenants:artisan \"migrate:fresh --database=tenant\"",
             "@php artisan app:remove-foreign-data-wrapper",
             "@php artisan app:setup-foreign-data-wrapper",
             "@php artisan app:create-adm-materialized-views",
-            "@php artisan db:seed"
+            "@php artisan tenants:artisan \"db:seed --database=tenant\""
         ],
         "refresh-sis": [
             "./refresh-and-seed-sis.sh"

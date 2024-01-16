@@ -38,16 +38,20 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\DataTransferObjects\ForeignDataWrapperData;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use App\Actions\Setup\SetupForeignDataWrapper as SetupForeignDataWrapperAction;
 
 class SetupForeignDataWrapper extends Command
 {
-    protected $signature = 'app:setup-foreign-data-wrapper';
+    use TenantAware;
+
+    protected $signature = 'app:setup-foreign-data-wrapper {--tenant=*}';
 
     protected $description = 'Setup foreign data wrapper for SIS database';
 
     public function handle(): void
     {
-        resolve(\App\Actions\Setup\SetupForeignDataWrapper::class)->handle(
+        resolve(SetupForeignDataWrapperAction::class)->handle(
             new ForeignDataWrapperData(
                 connection: config('database.fdw.connection'),
                 localServerName: config('database.fdw.server_name'),

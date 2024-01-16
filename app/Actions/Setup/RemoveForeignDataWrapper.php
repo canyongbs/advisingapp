@@ -42,7 +42,7 @@ class RemoveForeignDataWrapper
 {
     public function handle(): void
     {
-        $database = DB::connection('pgsql');
+        $database = DB::connection(config('multitenancy.tenant_database_connection_name'));
 
         $database->statement('DROP EXTENSION IF EXISTS postgres_fdw CASCADE;');
     }
