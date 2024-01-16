@@ -6,6 +6,7 @@ use Illuminate\Queue\CallQueuedClosure;
 use App\Multitenancy\Tasks\SwitchAppUrl;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Broadcasting\BroadcastEvent;
+use Spatie\Multitenancy\Tasks\PrefixCacheTask;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
 use Illuminate\Notifications\SendQueuedNotifications;
 use Spatie\Multitenancy\Tasks\SwitchTenantDatabaseTask;
@@ -37,10 +38,10 @@ return [
      * A valid task is any class that implements Spatie\Multitenancy\Tasks\SwitchTenantTask
      */
     'switch_tenant_tasks' => [
-        // \Spatie\Multitenancy\Tasks\PrefixCacheTask::class,
+        PrefixCacheTask::class,
         SwitchTenantDatabaseTask::class,
         SwitchAppUrl::class,
-        // \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
+        //\Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
     ],
 
     /*
