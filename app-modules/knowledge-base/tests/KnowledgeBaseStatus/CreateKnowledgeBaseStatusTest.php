@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
-
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
-use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseStatus\RequestFactories\CreateKnowledgeBaseStatusRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
-use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
+use function PHPUnit\Framework\assertCount;
+use function Pest\Laravel\assertDatabaseHas;
+
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
+use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseStatus\RequestFactories\CreateKnowledgeBaseStatusRequestFactory;
 
 // TODO: Write CreateKnowledgeBaseStatus tests
 //test('A successful action on the CreateKnowledgeBaseStatus page', function () {});
