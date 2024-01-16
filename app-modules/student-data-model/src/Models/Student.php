@@ -64,6 +64,7 @@ use AdvisingApp\Engagement\Models\EngagementFileEntities;
 use AdvisingApp\InventoryManagement\Models\AssetCheckOut;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
@@ -92,6 +93,7 @@ class Student extends Model implements Auditable, Subscribable, Educatable, HasF
     use HasManyMorphedInteractions;
     use HasSubscriptions;
     use NotifiableViaSms;
+    use UsesTenantConnection;
 
     protected $primaryKey = 'sisid';
 
