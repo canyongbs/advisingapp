@@ -40,6 +40,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 
 // TODO: Write CreateApplication tests
@@ -50,7 +51,7 @@ use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 // Permission Tests
 
 test('CreateApplication is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -78,7 +79,7 @@ test('CreateApplication is gated with proper feature access control', function (
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
