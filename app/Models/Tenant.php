@@ -5,6 +5,9 @@ namespace App\Models;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 
+/**
+ * @mixin IdeHelperTenant
+ */
 class Tenant extends SpatieTenant
 {
     use UsesLandlordConnection;
