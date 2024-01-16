@@ -195,12 +195,9 @@
             "rm -rf ./vendor",
             "composer install"
         ],
-        "print-schema": [
-            "@php artisan lighthouse:print-schema -W -D public"
-        ],
         "generate-api-docs": [
             "./node_modules/.bin/prettier \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --write",
-            "@print-schema",
+            "@php artisan api:print-schema",
             "npm run api-docs:generate"
         ]
     },
