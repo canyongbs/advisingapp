@@ -12,6 +12,7 @@ return new class () extends Migration {
             $table->id();
             $table->string('name');
             $table->string('domain')->unique();
+            $table->string('key')->unique();
             $table->string('db_host');
             $table->string('db_port');
             $table->string('database');
@@ -23,6 +24,9 @@ return new class () extends Migration {
             $table->string('sis_db_username');
             $table->string('sis_db_password');
             $table->timestamps();
+
+            $table->unique(['db_host', 'db_port', 'database', 'db_username', 'db_password']);
+            $table->unique(['sis_db_host', 'sis_db_port', 'sis_database', 'sis_db_username', 'sis_db_password']);
         });
     }
 };
