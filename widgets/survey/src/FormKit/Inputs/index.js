@@ -33,9 +33,13 @@
 */
 import { createInput } from '@formkit/vue';
 import Slider from "./Slider.vue";
+import Rating from "./Rating.vue";
 
 export default {
     'slider': createInput(Slider, {
+        props: [],
+    }),
+    'rating': createInput(Rating, {
         props: [],
     }),
 }

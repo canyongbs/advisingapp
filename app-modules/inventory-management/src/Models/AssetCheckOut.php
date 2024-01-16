@@ -41,6 +41,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Timeline\Models\Timeline;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -119,6 +120,11 @@ class AssetCheckOut extends BaseModel implements Auditable, ProvidesATimeline
         return $forModel->checkOuts()->get();
     }
 
+    public function scopeWithoutReturned(Builder $query): Builder
+    {
+        return $query->whereNull('asset_check_in_id');
+    }
+
     protected function status(): Attribute
     {
         return Attribute::get(function () {
@@ -130,7 +136,7 @@ class AssetCheckOut extends BaseModel implements Auditable, ProvidesATimeline
                 return AssetCheckOutStatus::PastDue;
             }
 
-            return AssetCheckOutStatus::InGoodStanding;
+            return AssetCheckOutStatus::Active;
         });
     }
 }

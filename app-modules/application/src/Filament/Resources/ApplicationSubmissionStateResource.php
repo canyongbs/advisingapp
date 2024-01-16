@@ -50,9 +50,11 @@ class ApplicationSubmissionStateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'Application States';
+    protected static ?string $navigationLabel = 'Submission States';
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $modelLabel = 'submission state';
 
     protected static ?string $cluster = OnlineAdmissions::class;
 

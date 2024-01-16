@@ -577,7 +577,7 @@ export default {
     removeSelection: 'block w-2.5 my-1 cursor-pointer',
   },
   rating: {
-    inner: 'relative flex items-center w-[8em] formkit-disabled:bg-transparent',
+    inner: 'relative flex items-center formkit-disabled:bg-transparent',
     itemsWrapper: 'w-full',
     onItems: 'text-yellow-400',
     onItemWrapper:
@@ -604,7 +604,6 @@ export default {
       'hover:text-primary-500 disabled:hover:text-inherit disabled:opacity-25',
   },
   slider: {
-    outer: 'max-w-md',
     help: 'mt-0 mb-1',
     sliderInner:
       'flex items-center py-1 [&>.formkit-max-value]:mb-0 [&>.formkit-max-value]:ml-8 [&>.formkit-max-value]:shrink [&>.formkit-max-value]:grow-0 [&>.formkit-icon]:bg-none [&>.formkit-icon]:border-none [&>.formkit-icon]:p-0 [&>.formkit-icon]:w-4 [&>.formkit-prefix-icon]:mr-2 [&>.formkit-suffix-icon]:ml-2 [&[data-has-mark-labels="true"]_.formkit-track]:mb-4',

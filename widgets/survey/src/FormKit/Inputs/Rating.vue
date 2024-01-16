@@ -39,11 +39,11 @@ const props = defineProps({
     context: Object,
 });
 
-const min = ref(1);
-const max = ref(5);
-const value = ref(Math.ceil(max.value / 2));
+const min = ref(0);
+const max = ref(10);
+const value = ref(null);
 
-props.context.node.input(value.value);
+props.context.node.input(value);
 
 watch(value, (value) => {
     props.context.node.input(value);
@@ -52,17 +52,28 @@ watch(value, (value) => {
 </script>
 
 <template>
-    <div class="grid gap-y-2 max-w-md">
+    <div class="grid gap-y-2 w-full max-w-md">
         <div class="flex gap-4 items-end">
             <div class="w-full">
                 <div class="flex justify-between text-sm">
-                    <span>{{ min }}</span>
-                    <span>{{ max }}</span>
+                    <span>NOT AT ALL LIKELY</span>
+                    <span>EXTREMELY LIKELY</span>
                 </div>
-                <input class="w-full accent-primary-500" type="range" :min="min" :max="max" v-model="value">
-            </div>
-            <div class="flex items-center max-w-md ring-1 ring-gray-400 focus-within:ring-primary-500 focus-within:ring-2 rounded">
-                <input class="appearance-none bg-transparent focus:outline-none focus:ring-0 focus:shadow-none font-sans w-full px-3 py-2 border-none text-sm text-gray-700 placeholder-gray-400" type="number" :min="min" :max="max" v-model="value">
+                <div class="w-full grid grid-flow-col justify-stretch">
+                    <button class="ring-1 ring-gray-400 ring-inset rounded-l appearance-none bg-transparent w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-400"
+                            :class="{'ring-primary-500 ring-2' : value === min}"
+                            type="button"
+                            @click="value = min"> {{ min }} </button>
+                    <button v-for="number in max - 1"
+                            class="ring-1 ring-gray-400 ring-inset appearance-none bg-transparent w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-400"
+                            :class="{'ring-primary-500 ring-2' : value === number}"
+                            type="button"
+                            @click="value = number">{{ number }}</button>
+                    <button class="ring-1 ring-gray-400 ring-inset focus-within:ring-primary-500 focus-within:ring-2 rounded-r appearance-none bg-transparent w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-400"
+                            :class="{'ring-primary-500 ring-2' : value === max}"
+                            type="button"
+                            @click="value = max">{{ max }}</button>
+                </div>
             </div>
         </div>
     </div>

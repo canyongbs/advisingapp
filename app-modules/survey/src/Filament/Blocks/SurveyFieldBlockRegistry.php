@@ -59,6 +59,7 @@ class SurveyFieldBlockRegistry
             NumberFormFieldBlock::class,
             LikertScaleSurveyBlock::class,
             SliderSurveyFieldBlock::class,
+            RatingScaleSurveyFieldBlock::class,
         ];
     }
 
