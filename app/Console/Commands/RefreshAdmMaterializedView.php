@@ -49,13 +49,13 @@ class RefreshAdmMaterializedView extends Command
 
     protected $signature = 'app:refresh-adm-materialized-view {remoteTable} {--indexColumn=sisid} {--tenant=*}';
 
-    protected $description = 'Command description';
+    protected $description = 'Refresh ADM materialized view';
 
     public function handle(): void
     {
         try {
             $benchmark = Benchmark::measure(function () {
-                $database = DB::connection(config('multitenancy.tenant_database_connection_name'));
+                $database = DB::connection(config('database.default'));
 
                 $remoteTable = $this->argument('remoteTable');
 
@@ -73,14 +73,14 @@ class RefreshAdmMaterializedView extends Command
             Log::channel('amd_refresh')->info($benchmark, [
                 'remoteTable' => $this->argument('remoteTable'),
                 'indexColumn' => $this->option('indexColumn'),
-                'connection' => $this->option('connection'),
+                'connection' => config('database.default'),
             ]);
         } catch (Exception $e) {
             // TODO: Notify someone
             Log::channel('amd_refresh')->error($e->getMessage(), [
                 'remoteTable' => $this->argument('remoteTable'),
                 'indexColumn' => $this->option('indexColumn'),
-                'connection' => $this->option('connection'),
+                'connection' => config('database.default'),
             ]);
         }
     }
