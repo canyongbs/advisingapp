@@ -34,16 +34,17 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use App\Settings\LicenseSettings;
-
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-use function PHPUnit\Framework\assertEquals;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseCategory\RequestFactories\EditKnowledgeBaseCategoryRequestFactory;
+use App\Models\User;
+
+use App\Settings\LicenseSettings;
+use function PHPUnit\Framework\assertEquals;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 // TODO: Write EditKnowledgeBaseCategory tests
 //test('A successful action on the EditKnowledgeBaseCategory page', function () {});
@@ -53,7 +54,7 @@ use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseCategory\RequestFactories\EditK
 // Permission Tests
 
 test('EditKnowledgeBaseCategory is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $knowledgeBaseCategory = KnowledgeBaseCategory::factory()->create();
 
@@ -98,7 +99,7 @@ test('EditKnowledgeBaseCategory is gated with proper feature access control', fu
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_category.view-any');
     $user->givePermissionTo('knowledge_base_category.*.update');

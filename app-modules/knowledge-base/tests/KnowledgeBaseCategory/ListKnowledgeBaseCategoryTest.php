@@ -34,12 +34,13 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
-use App\Settings\LicenseSettings;
-
-use function Pest\Laravel\actingAs;
-
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
+
+use App\Models\User;
+
+use App\Settings\LicenseSettings;
+use function Pest\Laravel\actingAs;
 
 // TODO: Write ListKnowledgeBaseCategory tests
 //test('The correct details are displayed on the ListKnowledgeBaseCategory page', function () {});
@@ -49,7 +50,7 @@ use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 // Permission Tests
 
 test('ListKnowledgeBaseCategory is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -71,7 +72,7 @@ test('ListKnowledgeBaseCategory is gated with proper feature access control', fu
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_category.view-any');
 

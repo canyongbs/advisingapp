@@ -39,6 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 // TODO: Write ListKnowledgeBaseItems tests
@@ -49,7 +50,7 @@ use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 // Permission Tests
 
 test('ListKnowledgeBaseItems is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -71,7 +72,7 @@ test('ListKnowledgeBaseItems is gated with proper feature access control', funct
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_item.view-any');
 
