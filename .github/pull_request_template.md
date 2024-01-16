@@ -1,6 +1,6 @@
 ### Ticket(s) or GitHub Issue
 
-- [LINK_TO_TICKET] OR [LINK_TO_GITHUB_ISSUE]
+- https://canyongbs.atlassian.net/browse/ADVAPP-
 
 ### Technical Description
 
