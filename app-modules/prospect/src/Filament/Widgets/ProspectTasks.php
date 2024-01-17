@@ -34,40 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Enums;
+namespace AdvisingApp\Prospect\Filament\Widgets;
 
-use Filament\Support\Contracts\HasColor;
-use Filament\Support\Contracts\HasLabel;
-use Bvtterfly\ModelStateMachine\Attributes\InitialState;
-use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Task\Filament\Widgets\TasksWidget;
 
-enum TaskStatus: string implements HasColor, HasLabel
+class ProspectTasks extends TasksWidget
 {
-    #[InitialState]
-    #[AllowTransitionTo(self::InProgress)]
-    #[AllowTransitionTo(self::Cancelled)]
-    case Pending = 'pending';
-
-    #[AllowTransitionTo(self::Completed)]
-    #[AllowTransitionTo(self::Cancelled)]
-    case InProgress = 'in_progress';
-
-    case Completed = 'completed';
-
-    case Cancelled = 'cancelled';
-
-    public function getColor(): string
+    public function title(): string
     {
-        return match ($this) {
-            self::Pending => 'gray',
-            self::InProgress => 'primary',
-            self::Completed => 'success',
-            self::Cancelled => 'danger',
-        };
+        return 'My Tasks for Prospects';
     }
 
-    public function getLabel(): string
+    public function concern(): string
     {
-        return str($this->value)->headline()->toString();
+        return Prospect::class;
     }
 }

@@ -56,6 +56,10 @@ class ProspectPlugin implements Plugin
             ->discoverPages(
                 in: __DIR__ . '/Filament/Pages',
                 for: 'AdvisingApp\\Prospect\\Filament\\Pages'
+            )
+            ->discoverWidgets(
+                in: __DIR__ . '/Filament/Widgets',
+                for: 'AdvisingApp\\Prospect\\Filament\\Widgets'
             );
     }
 

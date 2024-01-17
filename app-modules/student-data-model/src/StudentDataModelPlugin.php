@@ -56,6 +56,10 @@ class StudentDataModelPlugin implements Plugin
             ->discoverPages(
                 in: __DIR__ . '/Filament/Pages',
                 for: 'AdvisingApp\\StudentDataModel\\Filament\\Pages'
+            )
+            ->discoverWidgets(
+                in: __DIR__ . '/Filament/Widgets',
+                for: 'AdvisingApp\\StudentDataModel\\Filament\\Widgets'
             );
     }
 

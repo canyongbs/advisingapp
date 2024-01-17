@@ -34,40 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Enums;
+namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
-use Filament\Support\Contracts\HasColor;
-use Filament\Support\Contracts\HasLabel;
-use Bvtterfly\ModelStateMachine\Attributes\InitialState;
-use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
+use App\Models\User;
+use AdvisingApp\Alert\Enums\AlertStatus;
+use App\Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-enum TaskStatus: string implements HasColor, HasLabel
+class StudentAlertCount extends StatsOverviewWidget
 {
-    #[InitialState]
-    #[AllowTransitionTo(self::InProgress)]
-    #[AllowTransitionTo(self::Cancelled)]
-    case Pending = 'pending';
-
-    #[AllowTransitionTo(self::Completed)]
-    #[AllowTransitionTo(self::Cancelled)]
-    case InProgress = 'in_progress';
-
-    case Completed = 'completed';
-
-    case Cancelled = 'cancelled';
-
-    public function getColor(): string
+    protected function getStats(): array
     {
-        return match ($this) {
-            self::Pending => 'gray',
-            self::InProgress => 'primary',
-            self::Completed => 'success',
-            self::Cancelled => 'danger',
-        };
-    }
+        /** @var User $user */
+        $user = auth()->user();
 
-    public function getLabel(): string
-    {
-        return str($this->value)->headline()->toString();
+        return [
+            Stat::make('Alerts', $user->studentAlerts()->status(AlertStatus::Active)->count()),
+        ];
     }
 }

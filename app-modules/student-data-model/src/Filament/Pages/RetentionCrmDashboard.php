@@ -37,20 +37,26 @@
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
 use App\Models\User;
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentCount;
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentTasks;
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentAlertCount;
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentCaseloadCount;
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentSubscriptionCount;
 
-class RetentionCrmDashboard extends Page
+class RetentionCrmDashboard extends BaseDashboard
 {
-    protected static ?string $navigationIcon = 'heroicon-o-home';
-
-    protected static string $view = 'filament.pages.coming-soon';
-
     protected static ?string $navigationGroup = 'Retention CRM';
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $title = 'Dashboard';
+    protected static ?string $navigationLabel = 'Dashboard';
+
+    protected static ?string $title = 'Retention CRM Dashboard';
+
+    protected static string $routePath = 'retention-crm-dashboard';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -65,6 +71,28 @@ class RetentionCrmDashboard extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        abort_unless($user->hasLicense(Student::getLicenseType()), 403);
+        abort_unless($user->hasLicense(Student::getLicenseType()), Response::HTTP_FORBIDDEN);
+    }
+
+    public function getWidgets(): array
+    {
+        return [
+            //1
+            StudentCount::class,
+            StudentSubscriptionCount::class,
+            StudentAlertCount::class,
+            StudentCaseloadCount::class,
+            //2
+            StudentTasks::class,
+        ];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 1,
+            'md' => 2,
+            'lg' => 4,
+        ];
     }
 }

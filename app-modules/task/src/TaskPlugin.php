@@ -48,13 +48,18 @@ class TaskPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\Task\\Filament\\Resources'
-        )
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'AdvisingApp\\Task\\Filament\\Resources'
+            )
             ->discoverPages(
                 in: __DIR__ . '/Filament/Pages',
                 for: 'AdvisingApp\\Task\\Filament\\Pages'
+            )
+            ->discoverWidgets(
+                in: __DIR__ . '/Filament/Widgets',
+                for: 'AdvisingApp\\Task\\Filament\\Widgets'
             );
     }
 
