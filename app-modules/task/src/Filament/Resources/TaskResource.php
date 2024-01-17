@@ -38,7 +38,6 @@ namespace AdvisingApp\Task\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\EditTask;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\ListTasks;
 use AdvisingApp\Task\Filament\Resources\TaskResource\Pages\CreateTask;
@@ -52,14 +51,6 @@ class TaskResource extends Resource
     protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 40;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-    }
 
     public static function getPages(): array
     {

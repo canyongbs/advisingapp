@@ -37,7 +37,6 @@
 namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
-use AdvisingApp\Authorization\Enums\LicenseType;
 
 class AnalyticsResources extends Cluster
 {
@@ -46,12 +45,4 @@ class AnalyticsResources extends Cluster
     protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 60;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-    }
 }

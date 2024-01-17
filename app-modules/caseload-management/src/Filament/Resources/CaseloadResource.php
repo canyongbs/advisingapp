@@ -45,7 +45,6 @@ use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Tables\Filters\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
@@ -77,14 +76,6 @@ class CaseloadResource extends Resource
     protected static ?string $modelLabel = 'Caseload';
 
     protected static ?string $pluralModelLabel = 'Caseloads';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-    }
 
     public static function filters(CaseloadModel $subject): array
     {

@@ -38,7 +38,6 @@ namespace AdvisingApp\Campaign\Filament\Resources;
 
 use Filament\Resources\Resource;
 use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\EditCampaign;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ViewCampaign;
 use AdvisingApp\Campaign\Filament\Resources\CampaignResource\Pages\ListCampaigns;
@@ -54,14 +53,6 @@ class CampaignResource extends Resource
     protected static ?string $navigationGroup = 'Engagement Features';
 
     protected static ?int $navigationSort = 30;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-    }
 
     public static function getRelations(): array
     {

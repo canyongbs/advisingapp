@@ -38,16 +38,19 @@ namespace AdvisingApp\CaseloadManagement\Policies;
 
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
+use App\Concerns\PerformsLicenseChecks;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
+use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
-class CaseloadPolicy
+class CaseloadPolicy implements PerformsChecksBeforeAuthorization
 {
+    use PerformsLicenseChecks;
+
     public function before(Authenticatable $authenticatable): ?Response
     {
-        if (! $authenticatable->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
-            return Response::deny('You are not licensed for the Retention or Recruitment CRM.');
+        if (! is_null($response = $this->hasAnyLicense($authenticatable, [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]))) {
+            return $response;
         }
 
         return null;
