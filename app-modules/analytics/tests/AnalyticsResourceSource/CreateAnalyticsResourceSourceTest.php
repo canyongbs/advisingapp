@@ -34,19 +34,20 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource;
+
+use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource\Pages\CreateAnalyticsResourceSource;
+use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-
-use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
-use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource;
-use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource\Pages\CreateAnalyticsResourceSource;
+use function Pest\Livewire\livewire;
 
 test('CreateAnalyticsResourceSourceTest is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(

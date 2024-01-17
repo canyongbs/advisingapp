@@ -34,17 +34,18 @@
 </COPYRIGHT>
 */
 
-use App\Models\User;
+use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource;
 
+use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource\Pages\EditAnalyticsResource;
+use AdvisingApp\Analytics\Models\AnalyticsResource;
+
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-use AdvisingApp\Analytics\Models\AnalyticsResource;
-use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource;
-use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceResource\Pages\EditAnalyticsResource;
-
 test('EditAnalyticsResourceTest is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $analyticsResource = AnalyticsResource::factory()->create();
 
