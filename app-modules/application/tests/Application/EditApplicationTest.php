@@ -44,6 +44,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Application\Filament\Resources\ApplicationResource;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 
@@ -57,7 +58,7 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 test('EditApplication is gated with proper access control', function () {
     seed(ApplicationSubmissionStateSeeder::class);
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $application = Application::factory()->create();
 
@@ -95,7 +96,7 @@ test('EditApplication is gated with proper feature access control', function () 
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('application.view-any');
     $user->givePermissionTo('application.*.update');

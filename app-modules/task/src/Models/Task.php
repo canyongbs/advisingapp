@@ -123,7 +123,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
 
     public function scopeByNextDue(Builder $query): void
     {
-        $query->orderBy('due', 'asc');
+        $query->orderBy('due');
     }
 
     public function scopeOpen(Builder $query): void

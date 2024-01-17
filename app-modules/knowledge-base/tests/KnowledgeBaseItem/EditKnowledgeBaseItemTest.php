@@ -40,6 +40,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories\EditKnowledgeBaseItemRequestFactory;
@@ -52,7 +53,7 @@ use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories\EditKnowl
 // Permission Tests
 
 test('EditKnowledgeBaseItem is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
 
@@ -99,7 +100,7 @@ test('EditKnowledgeBaseItem is gated with proper feature access control', functi
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_item.view-any');
     $user->givePermissionTo('knowledge_base_item.*.update');

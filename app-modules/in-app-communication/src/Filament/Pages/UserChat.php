@@ -53,6 +53,7 @@ use Filament\Notifications\Notification;
 use Filament\Actions\Contracts\HasActions;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Forms\Concerns\InteractsWithForms;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
@@ -86,6 +87,10 @@ class UserChat extends Page implements HasForms, HasActions
     {
         /** @var User $user */
         $user = auth()->user();
+
+        if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
+            return false;
+        }
 
         return Gate::check(Feature::RealtimeChat->getGateName()) && $user->can('in-app-communication.realtime-chat.access');
     }

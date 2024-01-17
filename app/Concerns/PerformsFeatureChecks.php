@@ -34,4 +34,25 @@
 </COPYRIGHT>
 */
 
-return [];
+namespace App\Concerns;
+
+use App\Enums\Feature;
+use Illuminate\Support\Facades\Gate;
+use App\Support\FeatureAccessResponse;
+
+trait PerformsFeatureChecks
+{
+    public function hasFeatures(): FeatureAccessResponse | null | bool
+    {
+        return Gate::check(
+            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
+        )
+            ? null
+            : FeatureAccessResponse::deny();
+    }
+
+    /**
+     * @return array<Feature>
+     */
+    abstract protected function requiredFeatures(): array;
+}

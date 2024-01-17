@@ -45,7 +45,7 @@ class EnsureFormsFeatureIsActive
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! app(LicenseSettings::class)->data->addons->dynamicForms) {
+        if (! app(LicenseSettings::class)->data->addons->onlineForms) {
             if ($request->wantsJson() || $request->fullUrlIs('*/api/forms/*')) {
                 return response()->json(['error' => 'Dynamic Forms are not enabled.'], Response::HTTP_FORBIDDEN);
             }

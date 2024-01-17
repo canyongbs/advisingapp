@@ -105,7 +105,7 @@ class TaskKanban extends Component implements HasForms, HasActions
         } catch (InvalidTransition $e) {
             return response()->json([
                 'success' => false,
-                'message' => "Cannot transition from \"{$fromStatus->displayName()}\" to \"{$toStatus->displayName()}\".",
+                'message' => "Cannot transition from \"{$fromStatus->getLabel()}\" to \"{$toStatus->getLabel()}\".",
             ], ResponseAlias::HTTP_BAD_REQUEST);
         } catch (Exception $e) {
             report($e);

@@ -34,25 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Concerns;
+namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
-use App\Enums\Feature;
-use Illuminate\Support\Facades\Gate;
-use App\Support\FeatureAccessResponse;
+use Illuminate\Support\Number;
+use App\Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-trait FeatureAccessEnforcedPolicyBefore
+class StudentCount extends StatsOverviewWidget
 {
-    public function before(): FeatureAccessResponse | null | bool
+    protected function getStats(): array
     {
-        return Gate::check(
-            collect($this->requiredFeatures())->map(fn (Feature $feature) => $feature->getGateName())
-        )
-            ? null
-            : FeatureAccessResponse::deny();
+        return [
+            Stat::make('Students', Number::abbreviate(Student::count(), maxPrecision: 2)),
+        ];
     }
-
-    /**
-     * @return array<Feature>
-     */
-    abstract protected function requiredFeatures(): array;
 }
