@@ -2,6 +2,7 @@
 
 namespace App\Multitenancy\Tasks;
 
+use App\Actions\ChangeAppKey;
 use Spatie\Multitenancy\Models\Tenant;
 use Spatie\Multitenancy\Tasks\SwitchTenantTask;
 
@@ -25,6 +26,6 @@ class SwitchAppKey implements SwitchTenantTask
 
     protected function setAppKey(string $appKey): void
     {
-        config()->set('app.key', $appKey);
+        app(ChangeAppKey::class)($appKey);
     }
 }

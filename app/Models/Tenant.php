@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\Encrypted;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 
@@ -30,16 +29,16 @@ class Tenant extends SpatieTenant
     ];
 
     protected $casts = [
-        'key' => Encrypted::class,
-        'db_host' => Encrypted::class,
-        'db_port' => Encrypted::class,
-        'database' => Encrypted::class,
-        'db_username' => Encrypted::class,
-        'db_password' => Encrypted::class,
-        'sis_db_host' => Encrypted::class,
-        'sis_db_port' => Encrypted::class,
-        'sis_database' => Encrypted::class,
-        'sis_db_username' => Encrypted::class,
-        'sis_db_password' => Encrypted::class,
+        'key' => 'encrypted',
+        'db_host' => 'encrypted',
+        'db_port' => 'encrypted',
+        'database' => 'encrypted',
+        'db_username' => 'encrypted',
+        'db_password' => 'encrypted',
+        'sis_db_host' => 'encrypted',
+        'sis_db_port' => 'encrypted',
+        'sis_database' => 'encrypted',
+        'sis_db_username' => 'encrypted',
+        'sis_db_password' => 'encrypted',
     ];
 }

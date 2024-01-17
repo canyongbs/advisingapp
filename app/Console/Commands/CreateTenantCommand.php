@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Tenant;
 use Illuminate\Support\Str;
+use App\Actions\ChangeAppKey;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Encryption\Encrypter;
@@ -41,7 +42,7 @@ class CreateTenantCommand extends Command
 
         $oldAppKey = config('app.key');
 
-        config()->set('app.key', $tenant->key);
+        app(ChangeAppKey::class)($tenant->key);
 
         $tenant->update(
             [
@@ -58,6 +59,6 @@ class CreateTenantCommand extends Command
             ]
         );
 
-        config()->set('app.key', $oldAppKey);
+        app(ChangeAppKey::class)($oldAppKey);
     }
 }
