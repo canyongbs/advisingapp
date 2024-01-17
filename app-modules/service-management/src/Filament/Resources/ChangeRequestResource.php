@@ -45,6 +45,7 @@ class ChangeRequestResource extends Resource
                             ->label('Status')
                             ->columnSpan(3),
                         TextEntry::make('reason')
+                            ->label('Reason for change')
                             ->columnSpanFull(),
                         TextEntry::make('backout_strategy')
                             ->columnSpanFull(),

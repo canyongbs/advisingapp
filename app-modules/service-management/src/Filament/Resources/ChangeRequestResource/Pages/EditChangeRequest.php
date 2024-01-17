@@ -43,6 +43,7 @@ class EditChangeRequest extends EditRecord
                             ->required()
                             ->columnSpan(1),
                         Textarea::make('reason')
+                            ->label('Reason for change')
                             ->rows(5)
                             ->required()
                             ->columnSpanFull(),
