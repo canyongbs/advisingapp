@@ -31,7 +31,9 @@
 
 </COPYRIGHT>
 --}}
-@php use AdvisingApp\Task\Enums\TaskStatus; @endphp
+@php
+    use AdvisingApp\Task\Enums\TaskStatus;
+@endphp
 <div>
     <div class="mt-2 flex flex-col">
         <div class="overflow-x-auto">
@@ -48,7 +50,7 @@
                             <div class="min-w-kanban">
                                 <div class="flex items-center justify-between gap-3">
                                     <div class="py-4 text-base font-semibold text-gray-900 dark:text-gray-300">
-                                        {{ $status->getLabeldisplayName() }}
+                                        {{ $status->getLabel() }}
                                     </div>
 
                                     <x-filament::link

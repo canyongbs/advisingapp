@@ -132,11 +132,6 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
             ->orWhere('status', '=', TaskStatus::InProgress);
     }
 
-    // public function scopeConcernType(Builder $query,  $class): void
-    // {
-    //     $query->concern()
-    // }
-
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {
         try {
