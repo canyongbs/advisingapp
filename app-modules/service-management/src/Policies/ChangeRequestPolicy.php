@@ -39,10 +39,30 @@ namespace AdvisingApp\ServiceManagement\Policies;
 use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use App\Concerns\PerformsFeatureChecks;
+use App\Concerns\PerformsLicenseChecks;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
-class ChangeRequestPolicy
+class ChangeRequestPolicy implements PerformsChecksBeforeAuthorization
 {
+    use PerformsFeatureChecks;
+    use PerformsLicenseChecks;
+
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! is_null($response = $this->hasAnyLicense($authenticatable, [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]))) {
+            return $response;
+        }
+
+        if (! is_null($response = $this->hasFeatures())) {
+            return $response;
+        }
+
+        return null;
+    }
+
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
