@@ -55,20 +55,20 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
     {
         $this->setTenantDatabase(
             connectionName: $this->tenantConnectionName,
-            host: $tenant->db_host,
-            port: $tenant->db_port,
-            database: $tenant->database,
-            username: $tenant->db_username,
-            password: $tenant->db_password,
+            host: $tenant->config->database->host,
+            port: $tenant->config->database->port,
+            database: $tenant->config->database->database,
+            username: $tenant->config->database->username,
+            password: $tenant->config->database->password,
         );
 
         $this->setTenantDatabase(
             connectionName: 'sis',
-            host: $tenant->sis_db_host,
-            port: $tenant->sis_db_port,
-            database: $tenant->sis_database,
-            username: $tenant->sis_db_username,
-            password: $tenant->sis_db_password,
+            host: $tenant->config->sisDatabase->host,
+            port: $tenant->config->sisDatabase->port,
+            database: $tenant->config->sisDatabase->database,
+            username: $tenant->config->sisDatabase->username,
+            password: $tenant->config->sisDatabase->password,
         );
 
         config([

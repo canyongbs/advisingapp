@@ -2,12 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Tenant;
 use Illuminate\Support\Str;
-use App\Actions\ChangeAppKey;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Encryption\Encrypter;
+use App\Multitenancy\Actions\CreateTenant;
+use App\Multitenancy\DataTransferObjects\TenantConfig;
+use App\Multitenancy\DataTransferObjects\TenantMailConfig;
+use App\Multitenancy\DataTransferObjects\TenantMailersConfig;
+use App\Multitenancy\DataTransferObjects\TenantDatabaseConfig;
+use App\Multitenancy\DataTransferObjects\TenantSmtpMailerConfig;
+use App\Multitenancy\DataTransferObjects\TenantSisDatabaseConfig;
+use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 
 class CreateTenantCommand extends Command
 {
@@ -28,37 +33,51 @@ class CreateTenantCommand extends Command
 
         DB::connection('sis')->statement("CREATE DATABASE {$sisDatabase}");
 
-        /** @var Tenant $tenant */
-        $tenant = Tenant::query()
-            ->create(
-                [
-                    'name' => $name,
-                    'domain' => $domain,
-                    'key' => 'base64:' . base64_encode(
-                        Encrypter::generateKey($this->laravel['config']['app.cipher'])
+        app(CreateTenant::class)(
+            $name,
+            $domain,
+            new TenantConfig(
+                database: new TenantDatabaseConfig(
+                    host: config('database.connections.landlord.host'),
+                    port: config('database.connections.landlord.port'),
+                    database: $database,
+                    username: config('database.connections.landlord.username'),
+                    password: config('database.connections.landlord.password'),
+                ),
+                sisDatabase: new TenantSisDatabaseConfig(
+                    host: config('database.connections.sis.host'),
+                    port: config('database.connections.sis.port'),
+                    database: $sisDatabase,
+                    username: config('database.connections.sis.username'),
+                    password: config('database.connections.sis.password'),
+                ),
+                s3Filesystem: new TenantS3FilesystemConfig(
+                    key: config('filesystems.disks.s3.key'),
+                    secret: config('filesystems.disks.s3.secret'),
+                    region: config('filesystems.disks.s3.region'),
+                    bucket: config('filesystems.disks.s3.bucket'),
+                ),
+                s3PublicFilesystem: new TenantS3FilesystemConfig(
+                    key: config('filesystems.disks.s3_public.key'),
+                    secret: config('filesystems.disks.s3_public.secret'),
+                    region: config('filesystems.disks.s3_public.region'),
+                    bucket: config('filesystems.disks.s3_public.bucket'),
+                ),
+                mail: new TenantMailConfig(
+                    mailers: new TenantMailersConfig(
+                        smtp: new TenantSmtpMailerConfig(
+                            host: config('mail.mailers.smtp.host'),
+                            port: config('mail.mailers.smtp.port'),
+                            encryption: config('mail.mailers.smtp.encryption'),
+                            username: config('mail.mailers.smtp.username'),
+                            password: config('mail.mailers.smtp.password'),
+                        )
                     ),
-                ]
-            );
-
-        $oldAppKey = config('app.key');
-
-        app(ChangeAppKey::class)($tenant->key);
-
-        $tenant->update(
-            [
-                'db_host' => config('database.connections.landlord.host'),
-                'db_port' => config('database.connections.landlord.port'),
-                'database' => $database,
-                'db_username' => config('database.connections.landlord.username'),
-                'db_password' => config('database.connections.landlord.password'),
-                'sis_db_host' => config('database.connections.sis.host'),
-                'sis_db_port' => config('database.connections.sis.port'),
-                'sis_database' => $sisDatabase,
-                'sis_db_username' => config('database.connections.sis.username'),
-                'sis_db_password' => config('database.connections.sis.password'),
-            ]
+                    mailer: config('mail.default'),
+                    fromAddress: config('mail.from.address'),
+                    fromName: config('mail.from.name')
+                ),
+            )
         );
-
-        app(ChangeAppKey::class)($oldAppKey);
     }
 }
