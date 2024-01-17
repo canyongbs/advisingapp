@@ -11,6 +11,18 @@ class ChangeRequest extends BaseModel implements Auditable
 {
     use AuditableTrait;
 
+    protected $fillable = [
+        'backout_strategy',
+        'change_request_status_id',
+        'change_request_type_id',
+        'created_by',
+        'description',
+        'end_time',
+        'reason',
+        'start_time',
+        'title',
+    ];
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(ChangeRequestType::class, 'change_request_type_id');

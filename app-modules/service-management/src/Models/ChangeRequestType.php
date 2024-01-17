@@ -13,6 +13,10 @@ class ChangeRequestType extends BaseModel implements Auditable
 {
     use AuditableTrait;
 
+    protected $fillable = [
+        'name',
+    ];
+
     public function userApprovers(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
