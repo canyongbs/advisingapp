@@ -3,6 +3,7 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
 use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -28,6 +29,18 @@ class CreateChangeRequest extends CreateRecord
                         TextInput::make('description')
                             ->required()
                             ->columnSpanFull(),
+                        Select::make('change_request_type_id')
+                            ->relationship('type', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->columnSpan(1),
+                        Select::make('change_request_status_id')
+                            ->relationship('status', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->columnSpan(1),
                         Textarea::make('reason')
                             ->rows(5)
                             ->required()

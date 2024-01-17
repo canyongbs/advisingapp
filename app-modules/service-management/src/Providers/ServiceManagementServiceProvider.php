@@ -53,6 +53,7 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\ServiceManagement\Observers\ChangeRequestObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;
@@ -94,6 +95,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
 
     protected function registerObservers(): void
     {
+        ChangeRequest::observe(ChangeRequestObserver::class);
         ServiceRequest::observe(ServiceRequestObserver::class);
         ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
         ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);
