@@ -59,5 +59,7 @@ class ChangeRequest extends BaseModel implements Auditable
                 return $classes;
             }
         }
+
+        return '';
     }
 }

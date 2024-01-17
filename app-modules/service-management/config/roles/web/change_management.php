@@ -34,30 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Enums;
-
-use Filament\Support\Contracts\HasLabel;
-
-enum SystemChangeRequestClassification: string implements HasLabel
-{
-    case New = 'new';
-
-    case Approved = 'approved';
-
-    case InProgress = 'in_progress';
-
-    case Completed = 'completed';
-
-    case FailedOrReverted = 'failed_or_reverted';
-
-    case Custom = 'custom';
-
-    public function getLabel(): ?string
-    {
-        return match ($this) {
-            SystemChangeRequestClassification::InProgress => 'In Progress',
-            SystemChangeRequestClassification::FailedOrReverted => 'Failed/Reverted',
-            default => $this->name,
-        };
-    }
-}
+return [
+    'model' => [
+        'change_request' => [
+            '*',
+        ],
+        'change_request_type' => [
+            '*',
+        ],
+        'change_request_status' => [
+            '*',
+        ],
+    ],
+];
