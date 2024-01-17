@@ -13,7 +13,7 @@ return new class () extends Migration {
             $table->string('name');
             $table->string('domain')->unique();
             $table->text('key');
-            $table->json('config');
+            $table->text('config');
             $table->timestamps();
         });
     }

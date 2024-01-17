@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Multitenancy\DataTransferObjects\TenantConfig;
+use App\Casts\TenantEncrypted;
+use App\Casts\LandlordEncrypted;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 
@@ -21,7 +22,7 @@ class Tenant extends SpatieTenant
     ];
 
     protected $casts = [
-        //'key' => 'encrypted',
-        'config' => TenantConfig::class,
+        'key' => LandlordEncrypted::class,
+        'config' => TenantEncrypted::class,
     ];
 }

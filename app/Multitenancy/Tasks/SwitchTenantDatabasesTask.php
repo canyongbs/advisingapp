@@ -53,22 +53,24 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
 
     public function makeCurrent(Tenant $tenant): void
     {
+        $config = $tenant->config;
+
         $this->setTenantDatabase(
             connectionName: $this->tenantConnectionName,
-            host: $tenant->config->database->host,
-            port: $tenant->config->database->port,
-            database: $tenant->config->database->database,
-            username: $tenant->config->database->username,
-            password: $tenant->config->database->password,
+            host: $config->database->host,
+            port: $config->database->port,
+            database: $config->database->database,
+            username: $config->database->username,
+            password: $config->database->password,
         );
 
         $this->setTenantDatabase(
             connectionName: 'sis',
-            host: $tenant->config->sisDatabase->host,
-            port: $tenant->config->sisDatabase->port,
-            database: $tenant->config->sisDatabase->database,
-            username: $tenant->config->sisDatabase->username,
-            password: $tenant->config->sisDatabase->password,
+            host: $config->sisDatabase->host,
+            port: $config->sisDatabase->port,
+            database: $config->sisDatabase->database,
+            username: $config->sisDatabase->username,
+            password: $config->sisDatabase->password,
         );
 
         config([
