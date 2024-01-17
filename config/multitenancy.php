@@ -7,6 +7,7 @@ use App\Multitenancy\Tasks\SwitchAppKey;
 use App\Multitenancy\Tasks\SwitchAppUrl;
 use App\Multitenancy\Tasks\SwitchAppName;
 use Illuminate\Events\CallQueuedListener;
+use App\Multitenancy\Tasks\SwitchMailTask;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Spatie\Multitenancy\Tasks\PrefixCacheTask;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
@@ -45,6 +46,7 @@ return [
         SwitchTenantDatabasesTask::class,
         SwitchAppUrl::class,
         SwitchAppName::class,
+        SwitchMailTask::class,
         //\Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
     ],
 
