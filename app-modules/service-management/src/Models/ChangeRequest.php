@@ -18,6 +18,8 @@ class ChangeRequest extends BaseModel implements Auditable
         'created_by',
         'description',
         'end_time',
+        'impact',
+        'likelihood',
         'reason',
         'start_time',
         'title',

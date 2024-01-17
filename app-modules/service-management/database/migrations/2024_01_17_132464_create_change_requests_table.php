@@ -17,6 +17,8 @@ return new class () extends Migration {
             $table->text('description');
             $table->longText('reason');
             $table->longText('backout_strategy');
+            $table->integer('impact');
+            $table->integer('likelihood');
             $table->timestamp('start_time');
             $table->timestamp('end_time');
             $table->timestamps();
