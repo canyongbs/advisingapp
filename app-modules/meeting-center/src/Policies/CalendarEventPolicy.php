@@ -34,16 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Analytics\Policies;
+namespace AdvisingApp\MeetingCenter\Policies;
 
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Analytics\Models\AnalyticsResourceCategory;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
-class AnalyticsResourceCategoryPolicy implements PerformsChecksBeforeAuthorization
+class CalendarEventPolicy implements PerformsChecksBeforeAuthorization
 {
     use PerformsLicenseChecks;
 
@@ -59,56 +59,56 @@ class AnalyticsResourceCategoryPolicy implements PerformsChecksBeforeAuthorizati
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'analytics_resource_category.view-any',
-            denyResponse: 'You do not have permission to view analytics resource categories.'
+            abilities: 'calendar_event.view-any',
+            denyResponse: 'You do not have permission to view calendar events.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, AnalyticsResourceCategory $analyticsResourceCategory): Response
+    public function view(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['analytics_resource_category.*.view', "analytics_resource_category.{$analyticsResourceCategory->id}.view"],
-            denyResponse: 'You do not have permission to view this analytics resource category.'
+            abilities: ['calendar_event.*.view', "calendar_event.{$calendarEvent->id}.view"],
+            denyResponse: 'You do not have permission to view this engagement response.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'analytics_resource_category.create',
-            denyResponse: 'You do not have permission to create analytics resource categories.'
+            abilities: 'calendar_event.create',
+            denyResponse: 'You do not have permission to create calendar events.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, AnalyticsResourceCategory $analyticsResourceCategory): Response
+    public function update(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['analytics_resource_category.*.update', "analytics_resource_category.{$analyticsResourceCategory->id}.update"],
-            denyResponse: 'You do not have permission to update this analytics resource category.'
+            abilities: ['calendar_event.*.update', "calendar_event.{$calendarEvent->id}.update"],
+            denyResponse: 'You do not have permission to update this engagement response.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, AnalyticsResourceCategory $analyticsResourceCategory): Response
+    public function delete(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['analytics_resource_category.*.delete', "analytics_resource_category.{$analyticsResourceCategory->id}.delete"],
-            denyResponse: 'You do not have permission to delete this analytics resource category.'
+            abilities: ['calendar_event.*.delete', "calendar_event.{$calendarEvent->id}.delete"],
+            denyResponse: 'You do not have permission to delete this engagement response.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, AnalyticsResourceCategory $analyticsResourceCategory): Response
+    public function restore(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['analytics_resource_category.*.restore', "analytics_resource_category.{$analyticsResourceCategory->id}.restore"],
-            denyResponse: 'You do not have permission to restore this analytics resource category.'
+            abilities: ['calendar_event.*.restore', "calendar_event.{$calendarEvent->id}.restore"],
+            denyResponse: 'You do not have permission to restore this engagement response.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, AnalyticsResourceCategory $analyticsResourceCategory): Response
+    public function forceDelete(Authenticatable $authenticatable, CalendarEvent $calendarEvent): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['analytics_resource_category.*.force-delete', "analytics_resource_category.{$analyticsResourceCategory->id}.force-delete"],
-            denyResponse: 'You do not have permission to force delete this analytics resource category.'
+            abilities: ['calendar_event.*.force-delete', "calendar_event.{$calendarEvent->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this engagement response.'
         );
     }
 }

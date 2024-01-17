@@ -41,12 +41,13 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Pest\Laravel\assertDatabaseHas;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Analytics\Models\AnalyticsResourceSource;
 use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource;
 use AdvisingApp\Analytics\Filament\Resources\AnalyticsResourceSourceResource\Pages\CreateAnalyticsResourceSource;
 
 test('CreateAnalyticsResourceSourceTest is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
