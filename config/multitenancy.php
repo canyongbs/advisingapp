@@ -5,6 +5,7 @@ use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Queue\CallQueuedClosure;
 use App\Multitenancy\Tasks\SwitchAppKey;
 use App\Multitenancy\Tasks\SwitchAppUrl;
+use App\Multitenancy\Tasks\SwitchAppName;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Spatie\Multitenancy\Tasks\PrefixCacheTask;
@@ -43,6 +44,7 @@ return [
         PrefixCacheTask::class,
         SwitchTenantDatabasesTask::class,
         SwitchAppUrl::class,
+        SwitchAppName::class,
         //\Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
     ],
 
