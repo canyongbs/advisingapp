@@ -39,6 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
@@ -48,7 +49,7 @@ use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 // Permission Tests
 
 test('ViewKnowledgeBaseCategory is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $knowledgeBaseCategory = KnowledgeBaseCategory::factory()->create();
 
@@ -77,7 +78,7 @@ test('ViewKnowledgeBaseCategory is gated with proper feature access control', fu
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_category.view-any');
     $user->givePermissionTo('knowledge_base_category.*.view');

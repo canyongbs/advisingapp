@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources;
 use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\EditEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ViewEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\EventResource\Pages\ListEvents;
@@ -62,6 +63,15 @@ class EventResource extends Resource
     protected static ?string $modelLabel = 'Event';
 
     protected static ?string $recordTitleAttribute = 'title';
+
+    // TODO Move into policy once created...
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+    }
 
     public static function getRecordSubNavigation(Page $page): array
     {

@@ -39,6 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
 
@@ -48,7 +49,7 @@ use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseStatusResource;
 // Permission Tests
 
 test('ViewKnowledgeBaseStatus is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $knowledgeBaseStatus = KnowledgeBaseStatus::factory()->create();
 
@@ -77,7 +78,7 @@ test('ViewKnowledgeBaseStatus is gated with proper feature access control', func
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_status.view-any');
     $user->givePermissionTo('knowledge_base_status.*.view');

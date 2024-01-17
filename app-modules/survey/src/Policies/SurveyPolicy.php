@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\KnowledgeBase\Policies;
+namespace AdvisingApp\Survey\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Survey\Models\Survey;
 use App\Concerns\PerformsFeatureChecks;
 use App\Concerns\PerformsLicenseChecks;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
-class KnowledgeBaseStatusPolicy implements PerformsChecksBeforeAuthorization
+class SurveyPolicy implements PerformsChecksBeforeAuthorization
 {
     use PerformsLicenseChecks;
     use PerformsFeatureChecks;
@@ -66,61 +66,61 @@ class KnowledgeBaseStatusPolicy implements PerformsChecksBeforeAuthorization
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'knowledge_base_status.view-any',
-            denyResponse: 'You do not have permission to view any knowledge base statuses.'
+            abilities: 'survey.view-any',
+            denyResponse: 'You do not have permission to view surveys.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function view(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_status.*.view', "knowledge_base_status.{$knowledgeBaseStatus->id}.view"],
-            denyResponse: 'You do not have permission to view this knowledge base status.'
+            abilities: ['survey.*.view', "survey.{$survey->id}.view"],
+            denyResponse: 'You do not have permission to view this survey.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'knowledge_base_status.create',
-            denyResponse: 'You do not have permission to create knowledge base statuses.'
+            abilities: 'survey.create',
+            denyResponse: 'You do not have permission to create surveys.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function update(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_status.*.update', "knowledge_base_status.{$knowledgeBaseStatus->id}.update"],
-            denyResponse: 'You do not have permission to update this knowledge base status.'
+            abilities: ['survey.*.update', "survey.{$survey->id}.update"],
+            denyResponse: 'You do not have permission to update this survey.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function delete(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_status.*.delete', "knowledge_base_status.{$knowledgeBaseStatus->id}.delete"],
-            denyResponse: 'You do not have permission to delete this knowledge base status.'
+            abilities: ['survey.*.delete', "survey.{$survey->id}.delete"],
+            denyResponse: 'You do not have permission to delete this survey.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function restore(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_status.*.restore', "knowledge_base_status.{$knowledgeBaseStatus->id}.restore"],
-            denyResponse: 'You do not have permission to restore this knowledge base status.'
+            abilities: ['survey.*.restore', "survey.{$survey->id}.restore"],
+            denyResponse: 'You do not have permission to restore this survey.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, KnowledgeBaseStatus $knowledgeBaseStatus): Response
+    public function forceDelete(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['knowledge_base_status.*.force-delete', "knowledge_base_status.{$knowledgeBaseStatus->id}.force-delete"],
-            denyResponse: 'You do not have permission to permanently delete this knowledge base status.'
+            abilities: ['survey.*.force-delete', "survey.{$survey->id}.force-delete"],
+            denyResponse: 'You do not have permission to permanently delete this survey.'
         );
     }
 
     protected function requiredFeatures(): array
     {
-        return [Feature::KnowledgeManagement];
+        return [Feature::OnlineSurveys];
     }
 }

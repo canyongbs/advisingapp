@@ -34,25 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace App\Concerns;
 
-use Filament\Clusters\Cluster;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 use AdvisingApp\Authorization\Enums\LicenseType;
 
-class ServiceManagement extends Cluster
+trait PerformsLicenseChecks
 {
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-
-    protected static ?string $navigationGroup = 'Premium Features';
-
-    protected static ?int $navigationSort = 30;
-
-    // TODO Move into policy once created...
-    public static function canAccess(): bool
+    public function hasLicenses(Authenticatable $authenticatable, LicenseType | string | array $licenses): ?Response
     {
-        /** @var User $user */
-        $user = auth()->user();
+        return $authenticatable->hasLicense($licenses)
+            ? null
+            : Response::deny('You are not licensed to access this resource.');
+    }
 
-        return $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+    public function hasAnyLicense(Authenticatable $authenticatable, LicenseType | string | array $licenses): ?Response
+    {
+        return $authenticatable->hasAnyLicense($licenses)
+            ? null
+            : Response::deny('You are not licensed to access this resource.');
     }
 }

@@ -36,7 +36,19 @@
 
 return [
     'model' => [
-        'form' => [
+        'application' => [
+            '*',
+        ],
+        'application_field' => [
+            '*',
+        ],
+        'application_submission' => [
+            '*',
+        ],
+        'application_step' => [
+            '*',
+        ],
+        'application_authentication' => [
             '*',
         ],
     ],
