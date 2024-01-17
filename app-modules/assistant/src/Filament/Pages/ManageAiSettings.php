@@ -53,6 +53,8 @@ class ManageAiSettings extends SettingsPage
 
     protected static ?string $cluster = ArtificialIntelligence::class;
 
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+
     public static function canAccess(): bool
     {
         /** @var User $user */

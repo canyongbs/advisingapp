@@ -43,9 +43,11 @@ use AdvisingApp\Form\Database\Seeders\FormSeeder;
 use AdvisingApp\Task\Database\Seeders\TaskSeeder;
 use AdvisingApp\Team\Database\Seeders\TeamSeeder;
 use AdvisingApp\Alert\Database\Seeders\AlertSeeder;
+use AdvisingApp\Assistant\Database\Seeders\PromptSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSeeder;
 use AdvisingApp\MeetingCenter\Database\Seeders\EventSeeder;
+use AdvisingApp\Assistant\Database\Seeders\PromptTypeSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectSourceSeeder;
 use AdvisingApp\Prospect\Database\Seeders\ProspectStatusSeeder;
@@ -112,6 +114,8 @@ class DatabaseSeeder extends Seeder
             AnalyticsResourceSourceSeeder::class,
             AnalyticsResourceCategorySeeder::class,
             AnalyticsResourceSeeder::class,
+            PromptTypeSeeder::class,
+            PromptSeeder::class,
         ]);
     }
 }
