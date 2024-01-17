@@ -6,6 +6,7 @@ use App\Models\Tenant;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Encryption\Encrypter;
 
 class CreateTenantCommand extends Command
 {
@@ -26,22 +27,37 @@ class CreateTenantCommand extends Command
 
         DB::connection('sis')->statement("CREATE DATABASE {$sisDatabase}");
 
-        Tenant::query()
+        /** @var Tenant $tenant */
+        $tenant = Tenant::query()
             ->create(
                 [
                     'name' => $name,
                     'domain' => $domain,
-                    'db_host' => config('database.connections.landlord.host'),
-                    'db_port' => config('database.connections.landlord.port'),
-                    'database' => $database,
-                    'db_username' => config('database.connections.landlord.username'),
-                    'db_password' => config('database.connections.landlord.password'),
-                    'sis_db_host' => config('database.connections.sis.host'),
-                    'sis_db_port' => config('database.connections.sis.port'),
-                    'sis_database' => $sisDatabase,
-                    'sis_db_username' => config('database.connections.sis.username'),
-                    'sis_db_password' => config('database.connections.sis.password'),
+                    'key' => 'base64:' . base64_encode(
+                        Encrypter::generateKey($this->laravel['config']['app.cipher'])
+                    ),
                 ]
             );
+
+        $oldAppKey = config('app.key');
+
+        config()->set('app.key', $tenant->key);
+
+        $tenant->update(
+            [
+                'db_host' => config('database.connections.landlord.host'),
+                'db_port' => config('database.connections.landlord.port'),
+                'database' => $database,
+                'db_username' => config('database.connections.landlord.username'),
+                'db_password' => config('database.connections.landlord.password'),
+                'sis_db_host' => config('database.connections.sis.host'),
+                'sis_db_port' => config('database.connections.sis.port'),
+                'sis_database' => $sisDatabase,
+                'sis_db_username' => config('database.connections.sis.username'),
+                'sis_db_password' => config('database.connections.sis.password'),
+            ]
+        );
+
+        config()->set('app.key', $oldAppKey);
     }
 }
