@@ -50,9 +50,7 @@ class ServiceRequestStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationLabel = 'Statuses';
-
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $cluster = ServiceManagementAdministration::class;
 
