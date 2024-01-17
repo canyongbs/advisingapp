@@ -36,11 +36,14 @@
 
 namespace AdvisingApp\Notification\Listeners;
 
-use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Events\SubscriptionDeleted;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class NotifyUserOfSubscriptionDeleted implements ShouldQueue
 {
@@ -50,7 +53,10 @@ class NotifyUserOfSubscriptionDeleted implements ShouldQueue
 
         $name = $subscribable->{$subscribable->displayNameKey()};
 
-        $target = resolve(Filament::getModelResource($subscribable));
+        $target = match ($subscribable::class) {
+            Prospect::class => ProspectResource::class,
+            Student::class => StudentResource::class,
+        };
 
         $url = $target::getUrl('view', ['record' => $subscribable]);
 

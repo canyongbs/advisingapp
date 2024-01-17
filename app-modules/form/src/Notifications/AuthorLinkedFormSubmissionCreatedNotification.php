@@ -38,12 +38,15 @@ namespace AdvisingApp\Form\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Notifications\Notification;
 use AdvisingApp\Form\Models\FormSubmission;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class AuthorLinkedFormSubmissionCreatedNotification extends Notification implements ShouldQueue
 {
@@ -62,7 +65,10 @@ class AuthorLinkedFormSubmissionCreatedNotification extends Notification impleme
 
         $name = $author->{$author->displayNameKey()};
 
-        $target = resolve(Filament::getModelResource($author));
+        $target = match ($author::class) {
+            Prospect::class => ProspectResource::class,
+            Student::class => StudentResource::class,
+        };
 
         $formSubmissionUrl = $target::getUrl('manage-form-submissions', ['record' => $author]);
 

@@ -38,12 +38,15 @@ namespace AdvisingApp\Alert\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
 use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 
 class AlertCreatedNotification extends Notification implements ShouldQueue
 {
@@ -62,7 +65,10 @@ class AlertCreatedNotification extends Notification implements ShouldQueue
 
         $name = $concern->{$concern->displayNameKey()};
 
-        $target = resolve(Filament::getModelResource($concern));
+        $target = match ($concern::class) {
+            Prospect::class => ProspectResource::class,
+            Student::class => StudentResource::class,
+        };
 
         $alertUrl = $target::getUrl('manage-alerts', ['record' => $concern]);
 
