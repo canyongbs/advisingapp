@@ -2,12 +2,16 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use App\Filament\Resources\UserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource\Pages\ListChangeRequestTypes;
@@ -29,8 +33,15 @@ class ChangeRequestTypeResource extends Resource
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
+                        RepeatableEntry::make('userApprovers')
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->hiddenLabel()
+                                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
+                                    ->color('primary'),
+                            ]),
                     ])
-                    ->columns(),
+                    ->columns(1),
             ]);
     }
 
@@ -41,6 +52,12 @@ class ChangeRequestTypeResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->string(),
+                Select::make('userApprovers')
+                    ->label('User approvers')
+                    ->relationship('userApprovers', 'name')
+                    ->preload()
+                    ->multiple()
+                    ->exists((new User())->getTable(), 'id'),
             ]);
     }
 
