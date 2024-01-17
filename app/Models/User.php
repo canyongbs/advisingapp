@@ -77,6 +77,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
@@ -284,6 +285,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function serviceRequests(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->serviceRequestAssignments(), (new ServiceRequestAssignment())->serviceRequest());
+    }
+
+    public function changeRequestTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(ChangeRequestType::class);
     }
 
     public function getIsAdminAttribute()
