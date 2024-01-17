@@ -77,7 +77,8 @@ class CreateChangeRequest extends CreateRecord
                             ->maxValue(5)
                             ->columnSpan(1),
                         ViewField::make('risk_score')
-                            ->view('filament.forms.components.change-request.calculated-risk-score'),
+                            ->view('filament.forms.components.change-request.calculated-risk-score')
+                            ->columnSpan(1),
                     ])
                     ->columns(3),
             ]);

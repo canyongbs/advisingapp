@@ -14,7 +14,6 @@ class ChangeRequestStatusFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            // TODO Add classification
             'classification' => fake()->randomElement(SystemChangeRequestClassification::cases()),
         ];
     }

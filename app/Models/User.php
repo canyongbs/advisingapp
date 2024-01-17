@@ -73,6 +73,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -295,6 +296,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function serviceRequests(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->serviceRequestAssignments(), (new ServiceRequestAssignment())->serviceRequest());
+    }
+
+    public function changeRequests(): HasMany
+    {
+        return $this->hasMany(ChangeRequest::class, 'created_by');
     }
 
     public function changeRequestTypes(): BelongsToMany

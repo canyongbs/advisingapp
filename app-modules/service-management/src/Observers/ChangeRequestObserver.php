@@ -40,6 +40,13 @@ use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 
 class ChangeRequestObserver
 {
+    public function creating(ChangeRequest $changeRequest): void
+    {
+        if (is_null($changeRequest->created_by) && ! is_null(auth()->user())) {
+            $changeRequest->created_by = auth()->user()->id;
+        }
+    }
+
     public function saving(ChangeRequest $changeRequest): void
     {
         $changeRequest->risk_score = $changeRequest->impact * $changeRequest->likelihood;

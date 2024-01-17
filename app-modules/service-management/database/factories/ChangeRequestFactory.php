@@ -22,6 +22,8 @@ class ChangeRequestFactory extends Factory
             'description' => fake()->text(),
             'reason' => fake()->paragraphs(1),
             'backout_strategy' => fake()->paragraphs(1),
+            'impact' => fake()->numberBetween(1, 5),
+            'likelihood' => fake()->numberBetween(1, 5),
             'start_time' => fake()->dateTime(),
             'end_time' => fake()->dateTime(),
         ];
