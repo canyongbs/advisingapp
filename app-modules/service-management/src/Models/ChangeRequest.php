@@ -25,6 +25,14 @@ class ChangeRequest extends BaseModel implements Auditable
         'title',
     ];
 
+    protected $casts = [
+        'end_time' => 'datetime',
+        'impact' => 'integer',
+        'likelihood' => 'integer',
+        'risk_score' => 'integer',
+        'start_time' => 'datetime',
+    ];
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(ChangeRequestType::class, 'change_request_type_id');
