@@ -48,7 +48,7 @@
                             <div class="min-w-kanban">
                                 <div class="flex items-center justify-between gap-3">
                                     <div class="py-4 text-base font-semibold text-gray-900 dark:text-gray-300">
-                                        {{ $status->displayName() }}
+                                        {{ $status->getLabeldisplayName() }}
                                     </div>
 
                                     <x-filament::link

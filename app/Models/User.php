@@ -235,6 +235,16 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withTimestamps();
     }
 
+    public function studentAlerts(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->studentSubscriptions(), (new Student())->alerts());
+    }
+
+    public function prospectAlerts(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->prospectSubscriptions(), (new Prospect())->alerts());
+    }
+
     public function prospectCareTeams(): MorphToMany
     {
         return $this->morphedByMany(

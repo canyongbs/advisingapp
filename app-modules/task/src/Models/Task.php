@@ -123,7 +123,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
 
     public function scopeByNextDue(Builder $query): void
     {
-        $query->orderBy('due', 'asc');
+        $query->orderBy('due');
     }
 
     public function scopeOpen(Builder $query): void
@@ -131,6 +131,11 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, E
         $query->where('status', '=', TaskStatus::Pending)
             ->orWhere('status', '=', TaskStatus::InProgress);
     }
+
+    // public function scopeConcernType(Builder $query,  $class): void
+    // {
+    //     $query->concern()
+    // }
 
     public static function executeFromCampaignAction(CampaignAction $action): bool|string
     {

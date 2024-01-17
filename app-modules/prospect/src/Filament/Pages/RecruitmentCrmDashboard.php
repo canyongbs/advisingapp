@@ -37,20 +37,27 @@
 namespace AdvisingApp\Prospect\Filament\Pages;
 
 use App\Models\User;
-use Filament\Pages\Page;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Filament\Widgets\ProspectGrowthChart;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectCount;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectTasks;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectAlertCount;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectCaseloadCount;
+use AdvisingApp\Prospect\Filament\Widgets\ProspectSubscriptionCount;
 
-class RecruitmentCrmDashboard extends Page
+class RecruitmentCrmDashboard extends BaseDashboard
 {
-    protected static ?string $navigationIcon = 'heroicon-o-home';
-
-    protected static string $view = 'filament.pages.coming-soon';
-
     protected static ?string $navigationGroup = 'Recruitment CRM';
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $title = 'Dashboard';
+    protected static ?string $navigationLabel = 'Dashboard';
+
+    protected static ?string $title = 'Recruitment CRM Dashboard';
+
+    protected static string $routePath = 'recruitment-crm-dashboard';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -65,6 +72,30 @@ class RecruitmentCrmDashboard extends Page
         /** @var User $user */
         $user = auth()->user();
 
-        abort_unless($user->hasLicense(Prospect::getLicenseType()), 403);
+        abort_unless($user->hasLicense(Prospect::getLicenseType()), Response::HTTP_FORBIDDEN);
+    }
+
+    public function getWidgets(): array
+    {
+        return [
+            //1
+            ProspectCount::class,
+            ProspectSubscriptionCount::class,
+            ProspectAlertCount::class,
+            ProspectCaseloadCount::class,
+            //2
+            ProspectGrowthChart::class,
+            //3
+            ProspectTasks::class,
+        ];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return [
+            'sm' => 1,
+            'md' => 2,
+            'lg' => 4,
+        ];
     }
 }

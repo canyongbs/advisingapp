@@ -1,39 +1,5 @@
 <?php
 
-/*
-<COPYRIGHT>
-
-    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
-
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
-    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
-
-    Notice:
-
-    - You may not provide the software to third parties as a hosted or managed
-      service, where the service provides users with access to any substantial set of
-      the features or functionality of the software.
-    - You may not move, change, disable, or circumvent the license key functionality
-      in the software, and you may not remove or obscure any functionality in the
-      software that is protected by the license key.
-    - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
-      to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
-      vigorously.
-    - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
-    - Use of this software implies agreement to the license terms and conditions as stated
-      in the Elastic License 2.0.
-
-    For more information or inquiries please visit our website at
-    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
-
-</COPYRIGHT>
-*/
-
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -359,6 +325,10 @@ namespace App\Models{
  * @property-read int|null $teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Authorization\Models\RoleGroup> $traitRoleGroups
  * @property-read int|null $trait_role_groups_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Models\Alert[] $studentAlerts
+ * @property-read int|null $student_alerts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Alert\Models\Alert[] $prospectAlerts
+ * @property-read int|null $prospect_alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\Authorization\Models\Permission[] $permissionsFromRoles
  * @property-read int|null $permissions_from_roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\AdvisingApp\ServiceManagement\Models\ServiceRequest[] $serviceRequests
@@ -1233,6 +1203,7 @@ namespace AdvisingApp\CaseloadManagement\Models{
  * @property-read int|null $subjects_count
  * @property-read \App\Models\User $user
  * @method static \AdvisingApp\CaseloadManagement\Database\Factories\CaseloadFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Caseload model(\AdvisingApp\CaseloadManagement\Enums\CaseloadModel $model)
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Caseload query()
@@ -2133,7 +2104,7 @@ namespace AdvisingApp\InventoryManagement\Models{
 /**
  * AdvisingApp\InventoryManagement\Models\Asset
  *
- * @property string $purchase_age
+ * @property-read string $purchase_age
  * @property string $id
  * @property string $serial_number
  * @property string $name
@@ -2203,6 +2174,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckOut|null $checkOut
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedInBy
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedInFrom
+ * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetCheckInFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckIn newQuery()
@@ -2250,6 +2222,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @property-read \AdvisingApp\InventoryManagement\Models\AssetCheckIn|null $checkIn
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedOutBy
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $checkedOutTo
+ * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @method static \AdvisingApp\InventoryManagement\Database\Factories\AssetCheckOutFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut newQuery()
@@ -2269,6 +2242,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withoutReturned()
  * @method static \Illuminate\Database\Eloquent\Builder|AssetCheckOut withoutTrashed()
  * @mixin \Eloquent
  */
@@ -2390,6 +2364,7 @@ namespace AdvisingApp\InventoryManagement\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \AdvisingApp\InventoryManagement\Models\MaintenanceProvider|null $maintenanceProvider
+ * @property-read \AdvisingApp\Timeline\Models\Timeline|null $timelineRecord
  * @method static \AdvisingApp\InventoryManagement\Database\Factories\MaintenanceActivityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MaintenanceActivity newQuery()
@@ -2590,10 +2565,10 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property \AdvisingApp\MeetingCenter\Enums\CalendarProvider $provider_type
  * @property mixed|null $provider_id
  * @property mixed $provider_email
- * @property mixed $oauth_token
- * @property mixed $oauth_refresh_token
+ * @property mixed|null $oauth_token
+ * @property mixed|null $oauth_refresh_token
  * @property string $user_id
- * @property \Illuminate\Support\Carbon $oauth_token_expires_at
+ * @property \Illuminate\Support\Carbon|null $oauth_token_expires_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\CalendarEvent> $events
@@ -2920,6 +2895,7 @@ namespace AdvisingApp\Notification\Models{
  * @property \Illuminate\Support\Carbon|null $delivered_at
  * @property \Illuminate\Support\Carbon|null $last_delivery_attempt
  * @property string|null $delivery_response
+ * @property int $quota_usage
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $recipient
@@ -2939,6 +2915,7 @@ namespace AdvisingApp\Notification\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereLastDeliveryAttempt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereNotificationClass($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereQuotaUsage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRecipientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRecipientType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|OutboundDeliverable whereRelatedId($value)
@@ -3010,6 +2987,10 @@ namespace AdvisingApp\Prospect\Models{
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
  * @property-read int|null $application_submissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckIn> $assetCheckIns
+ * @property-read int|null $asset_check_ins_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $assetCheckOuts
+ * @property-read int|null $asset_check_outs_count
  * @property-read \App\Models\User|null $assignedTo
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
@@ -3153,13 +3134,12 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read Student|Prospect $respondent
  * @property string $id
  * @property string $service_request_number
- * @property string|null $respondent_type
- * @property string|null $respondent_id
+ * @property string $respondent_type
+ * @property string $respondent_id
  * @property string|null $close_details
  * @property string|null $res_details
  * @property string|null $division_id
  * @property string|null $status_id
- * @property string|null $type_id
  * @property string|null $priority_id
  * @property string|null $created_by_id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -3181,7 +3161,6 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
  * @property-read int|null $service_request_updates_count
  * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestStatus|null $status
- * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestType|null $type
  * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest licensedToEducatable(string $relationship)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest newModelQuery()
@@ -3201,7 +3180,6 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereRespondentType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereServiceRequestNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest withoutTrashed()
@@ -3280,6 +3258,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property string $id
  * @property string $name
  * @property int $order
+ * @property string $type_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -3287,6 +3266,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestType $type
  * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestPriorityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority newQuery()
@@ -3297,6 +3277,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereTypeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestPriority withoutTrashed()
@@ -3352,6 +3333,8 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority> $priorities
+ * @property-read int|null $priorities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
  * @property-read int|null $service_requests_count
  * @method static \AdvisingApp\ServiceManagement\Database\Factories\ServiceRequestTypeFactory factory($count = null, $state = [])
@@ -3461,6 +3444,10 @@ namespace AdvisingApp\StudentDataModel\Models{
  * @property-read int|null $alerts_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Application\Models\ApplicationSubmission> $applicationSubmissions
  * @property-read int|null $application_submissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckIn> $assetCheckIns
+ * @property-read int|null $asset_check_ins_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\InventoryManagement\Models\AssetCheckOut> $assetCheckOuts
+ * @property-read int|null $asset_check_outs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $careTeam

@@ -77,6 +77,11 @@ class Caseload extends BaseModel
         return $this->hasMany(CaseloadSubject::class);
     }
 
+    public function scopeModel(Builder $query, CaseloadModel $model): void
+    {
+        $query->where('model', $model);
+    }
+
     public function retrieveRecords(): Collection
     {
         if (count($this->subjects) > 0) {
