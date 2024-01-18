@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Campaign\Actions;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Campaign\Models\CampaignAction;
@@ -43,6 +45,8 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 class ExecuteCampaignActions implements ShouldQueue
 {
     use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
 
     public function handle(): void
     {
