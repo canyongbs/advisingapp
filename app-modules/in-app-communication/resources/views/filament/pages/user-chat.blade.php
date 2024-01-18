@@ -35,7 +35,7 @@
     use AdvisingApp\InAppCommunication\Enums\ConversationType;
     use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-    
+
     $conversationGroups = $this->getConversations()->reduce(
         function (array $carry, TwilioConversation $conversation): array {
             if ($conversation->type === ConversationType::Channel) {
@@ -43,7 +43,7 @@
             } else {
                 $carry[1][] = $conversation;
             }
-    
+
             return $carry;
         },
         [[], []],
@@ -54,10 +54,7 @@
     <div class="flex h-full flex-col">
         <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
             <div class="col-span-1">
-                <div
-                    class="flex flex-col gap-y-6"
-                    wire:poll.10s
-                >
+                <div class="flex flex-col gap-y-6">
                     @foreach ($conversationGroups as $conversations)
                         <div class="flex flex-col gap-1">
                             <div class="flex items-center justify-between">
@@ -92,7 +89,7 @@
                                             <button
                                                 type="button"
                                                 @class([
-                                                    'relative flex flex-1 items-center justify-start text-start gap-x-3 rounded-lg py-2 text-sm',
+                                                    'relative flex flex-1 items-center justify-between text-start gap-x-3 rounded-lg py-2 text-sm',
                                                 ])
                                                 wire:click="selectConversation('{{ $conversation['sid'] }}')"
                                             >
@@ -109,6 +106,15 @@
                                                         {{ $conversation->participants->where('id', '!=', auth()->id())->first()?->name }}
                                                     @endif
                                                 </span>
+
+                                                <x-filament::loading-indicator
+                                                    :attributes="
+                                                        (new \Illuminate\View\ComponentAttributeBag([
+                                                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                                            'wire:target' => 'selectConversation(\'' . $conversation['sid'] . '\')',
+                                                        ]))->class(['w-5 h-5'])
+                                                    "
+                                                />
                                             </button>
                                         </li>
                                     @endforeach
