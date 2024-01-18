@@ -60,6 +60,8 @@ class TwilioConversation extends Model
         'sid',
         'friendly_name',
         'type',
+        'channel_name',
+        'is_private_channel',
     ];
 
     public function participants(): BelongsToMany

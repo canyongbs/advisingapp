@@ -36,9 +36,14 @@
 
 namespace AdvisingApp\InAppCommunication\Filament\Pages;
 
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use Exception;
 use App\Models\User;
 use App\Enums\Feature;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Str;
 use Twilio\Rest\Client;
 use Filament\Pages\Page;
 use Twilio\Jwt\AccessToken;
@@ -100,41 +105,116 @@ class UserChat extends Page implements HasForms, HasActions
         /** @var User $user */
         $user = auth()->user();
 
-        $this->conversations = $user->conversations;
+        $this->conversations = $user->conversations()
+            ->with(['participants'])
+            ->get();
     }
 
-    public function newChatAction()
+    public function newUserToUserChatAction()
     {
-        return Action::make('newChat')
-            ->label('New Chat')
-            ->icon('heroicon-m-plus')
+        $usersQuery = User::query()
+            ->where('id', '!=', auth()->id())
+            ->whereDoesntHave(
+                'conversations',
+                fn ($query) => $query
+                    ->where('type', ConversationType::UserToUser)
+                    ->whereHas(
+                        'participants',
+                        fn ($query) => $query->where('user_id', auth()->id())
+                    )
+            );
+
+        return Action::make('newUserToUserChat')
+            ->label('New Direct Message')
+            ->icon('heroicon-m-user-plus')
             ->modalWidth('sm')
+            ->modalSubmitActionLabel('Start chat')
             ->form([
                 Select::make('user')
+                    ->label('Pick a user to chat with')
                     ->options(
-                        User::where('id', '!=', auth()->user()->id)
-                            ->whereDoesntHave(
-                                'conversations',
-                                fn ($query) => $query
-                                    ->where('type', ConversationType::UserToUser)
-                                    ->whereHas(
-                                        'participants',
-                                        fn ($query) => $query->where('user_id', auth()->user()->id)
-                                    )
-                            )
+                        fn (): array => $usersQuery
+                            ->limit(50)
                             ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getSearchResultsUsing(
+                        fn (string $search): array => $usersQuery
+                            ->where(new Expression('lower(\'name\')'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getOptionLabelUsing(
+                        fn ($value) => $usersQuery->find($value)->getKey(),
                     )
                     ->searchable(),
             ])
             ->action(function (array $data) {
-                $users = collect(
-                    [
+                $conversation = app(CreateTwilioConversation::class)(
+                    type: ConversationType::Channel,
+                    users: [
                         auth()->user(),
                         User::findOrFail($data['user']),
-                    ]
+                    ],
                 );
 
-                $conversation = app(CreateTwilioConversation::class)(type: ConversationType::UserToUser, users: $users);
+                $this->conversations->push($conversation);
+                $this->selectedConversation = $conversation->sid;
+            });
+    }
+
+    public function newChannelAction()
+    {
+        $usersQuery = User::query()
+            ->where('id', '!=', auth()->id());
+
+        return Action::make('newChannel')
+            ->label('New Channel')
+            ->icon('heroicon-m-plus-circle')
+            ->modalWidth('sm')
+            ->modalSubmitActionLabel('Create channel')
+            ->form([
+                TextInput::make('name')
+                    ->label('Channel name')
+                    ->required()
+                    ->unique(TwilioConversation::class, 'channel_name'),
+                Select::make('users')
+                    ->label('Pick users to invite')
+                    ->multiple()
+                    ->options(
+                        fn (): array => $usersQuery
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getSearchResultsUsing(
+                        fn (string $search): array => $usersQuery
+                            ->where(new Expression('lower(\'name\')'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getOptionLabelsUsing(
+                        fn (array $values): array => $usersQuery
+                            ->whereKey($values)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->searchable(),
+                Checkbox::make('is_private')
+                    ->label('Invite only'),
+            ])
+            ->action(function (array $data) {
+                $conversation = app(CreateTwilioConversation::class)(
+                    type: ConversationType::Channel,
+                    users: [
+                        auth()->user(),
+                        ...User::find($data['users'])->all(),
+                    ],
+                    channelName: $data['name'],
+                    isPrivateChannel: $data['is_private'],
+                );
 
                 $this->conversations->push($conversation);
                 $this->selectedConversation = $conversation->sid;

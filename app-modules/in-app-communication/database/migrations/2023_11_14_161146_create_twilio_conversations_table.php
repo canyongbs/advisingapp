@@ -45,6 +45,8 @@ return new class () extends Migration {
             $table->string('sid')->primary();
             $table->string('friendly_name')->nullable();
             $table->string('type');
+            $table->string('channel_name')->nullable();
+            $table->boolean('is_private_channel')->default(false);
             $table->timestamps();
         });
     }

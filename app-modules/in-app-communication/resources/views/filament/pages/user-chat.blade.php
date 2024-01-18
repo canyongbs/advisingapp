@@ -31,19 +31,19 @@
 
 </COPYRIGHT>
 --}}
-<?php
-
+@php
+use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use Filament\Support\Facades\FilamentAsset;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-
-?>
+@endphp
 
 <x-filament-panels::page full-height="true">
     <div class="flex h-full flex-col">
         <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
             <div class="col-span-1">
                 <div class="flex flex-col gap-y-2">
-                    {{ $this->newChatAction }}
+                    {{ $this->newUserToUserChatAction }}
+                    {{ $this->newChannelAction }}
 
                     @if ($this->conversations->isNotEmpty())
                         <ul
@@ -57,26 +57,25 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
                                     'bg-gray-100 dark:bg-white/5' =>
                                         $selectedConversation === $conversation['sid'],
                                 ])>
-                                    <a
+                                    <button
                                         @class([
                                             'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm',
                                         ])
+                                        type="button"
                                         wire:click="selectConversation('{{ $conversation['sid'] }}')"
                                     >
                                         <span @class([
                                             'fi-sidebar-item-label flex-1 truncate',
-                                            'text-gray-700 dark:text-gray-200' =>
-                                                !$selectedConversation === $conversation['sid'],
-                                            'text-primary-600 dark:text-primary-400' =>
-                                                $selectedConversation === $conversation['sid'],
+                                            'text-gray-700 dark:text-gray-200' => $selectedConversation !== $conversation['sid'],
+                                            'text-primary-600 dark:text-primary-400' => $selectedConversation === $conversation['sid'],
                                         ])>
-                                            {{ $conversation->participants()->where('user_id', '!=', auth()->id())->first()->name }}
+                                            @if (filled($conversation->channel_name))
+                                                {{ $conversation->channel_name }}
+                                            @else
+                                                {{ $conversation->participants->where('user_id', '!=', auth()->id())->first()->name }}
+                                            @endif
                                         </span>
-                                    </a>
-                                    {{-- TODO: Will look into this later --}}
-                                    {{--                                <div> --}}
-                                    {{--                                    {{ ($this->deleteChatAction)(['chat' => $chatItem->id]) }} --}}
-                                    {{--                                </div> --}}
+                                    </button>
                                 </li>
                             @endforeach
                         </ul>
@@ -95,7 +94,7 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500"/>
                         <p
                             class="text-center"
                             x-text="loadingMessage"
@@ -115,7 +114,8 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
                             <x-filament::button
                                 class="mt-2"
                                 x-on:click="errorRetry"
-                            >Retry</x-filament::button>
+                            >Retry
+                            </x-filament::button>
                         </div>
                     </template>
                     <div
