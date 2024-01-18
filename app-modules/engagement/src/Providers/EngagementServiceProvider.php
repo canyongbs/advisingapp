@@ -80,7 +80,6 @@ class EngagementServiceProvider extends ServiceProvider
         ]);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
             $schedule->call(function () {
                 /** @var TenantCollection $tenants */
                 $tenants = Tenant::all();
@@ -90,6 +89,7 @@ class EngagementServiceProvider extends ServiceProvider
                 });
             })
                 ->everyMinute()
+                ->onOneServer()
                 ->name('DeliverEngagements')
                 ->withoutOverlapping();
         });
