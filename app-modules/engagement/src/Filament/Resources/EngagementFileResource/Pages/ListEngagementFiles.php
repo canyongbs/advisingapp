@@ -61,8 +61,6 @@ class ListEngagementFiles extends ListRecords
                     ->searchable()
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

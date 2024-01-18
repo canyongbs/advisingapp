@@ -65,8 +65,6 @@ class ListEngagements extends ListRecords
                 TextColumn::make('created_at')
                     ->dateTime(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make()

@@ -42,7 +42,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\EditEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ViewEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ListEngagementFiles;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\CreateEngagementFile;
 
 class EngagementFileResource extends Resource
 {
@@ -90,10 +93,10 @@ class EngagementFileResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEngagementFiles::route('/'),
-            'create' => Pages\CreateEngagementFile::route('/create'),
-            'view' => Pages\ViewEngagementFile::route('/{record}'),
-            'edit' => Pages\EditEngagementFile::route('/{record}/edit'),
+            'index' => ListEngagementFiles::route('/'),
+            'create' => CreateEngagementFile::route('/create'),
+            'view' => ViewEngagementFile::route('/{record}'),
+            'edit' => EditEngagementFile::route('/{record}/edit'),
         ];
     }
 }

@@ -124,8 +124,6 @@ class EngagementsRelationManager extends RelationManager
                 TextColumn::make('created_at')
                     ->dateTime(),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 CreateAction::make()
                     ->label('New Email or Text')

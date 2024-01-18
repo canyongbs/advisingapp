@@ -58,7 +58,6 @@ class EditServiceRequestStatus extends EditRecord
                     ->required()
                     ->string(),
                 Select::make('classification')
-                    ->label('classification')
                     ->searchable()
                     ->options(SystemServiceRequestClassification::class)
                     ->required()

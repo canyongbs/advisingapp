@@ -40,7 +40,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use App\Filament\Clusters\ProspectManagement;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\EditProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ViewProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\CreateProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ListProspectStatuses;
 
 class ProspectStatusResource extends Resource
 {
@@ -70,10 +73,10 @@ class ProspectStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProspectStatuses::route('/'),
-            'create' => Pages\CreateProspectStatus::route('/create'),
-            'view' => Pages\ViewProspectStatus::route('/{record}'),
-            'edit' => Pages\EditProspectStatus::route('/{record}/edit'),
+            'index' => ListProspectStatuses::route('/'),
+            'create' => CreateProspectStatus::route('/create'),
+            'view' => ViewProspectStatus::route('/{record}'),
+            'edit' => EditProspectStatus::route('/{record}/edit'),
         ];
     }
 }

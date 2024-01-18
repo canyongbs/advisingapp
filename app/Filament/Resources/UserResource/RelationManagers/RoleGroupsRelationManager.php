@@ -77,8 +77,6 @@ class RoleGroupsRelationManager extends RelationManager implements HasActions
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 AttachAction::make()->recordTitle(function ($record) {
                     return Str::of($record->name);

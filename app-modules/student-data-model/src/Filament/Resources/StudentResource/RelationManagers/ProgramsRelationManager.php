@@ -90,8 +90,6 @@ class ProgramsRelationManager extends RelationManager
                 TextColumn::make('declare_dt')
                     ->label('Start Date'),
             ])
-            ->filters([
-            ])
             ->headerActions([])
             ->actions([
                 ViewAction::make(),

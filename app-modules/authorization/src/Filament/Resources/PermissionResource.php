@@ -89,8 +89,6 @@ class PermissionResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
             ]);

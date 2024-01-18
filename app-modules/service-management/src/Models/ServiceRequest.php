@@ -40,6 +40,7 @@ use Exception;
 use App\Models\User;
 use DateTimeInterface;
 use App\Models\BaseModel;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\PowerJoins\PowerJoins;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -57,11 +58,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use Illuminate\Database\UniqueConstraintViolationException;
+use AdvisingApp\ServiceManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Identifiable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
+use AdvisingApp\ServiceManagement\Enums\ServiceRequestUpdateDirection;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\ServiceManagement\Enums\ServiceRequestAssignmentStatus;
 use AdvisingApp\Campaign\Models\Contracts\ExecutableFromACampaignAction;
@@ -95,6 +98,11 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         'close_details',
         'res_details',
         'created_by_id',
+        'status_updated_at',
+    ];
+
+    protected $casts = [
+        'status_updated_at' => 'immutable_datetime',
     ];
 
     public function save(array $options = [])
@@ -238,6 +246,116 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         } catch (Exception $e) {
             return $e->getMessage();
         }
+    }
+
+    public function latestInboundServiceRequestUpdate(): HasOne
+    {
+        return $this->hasOne(ServiceRequestUpdate::class, 'service_request_id')
+            ->ofMany([
+                'created_at' => 'max',
+            ], function (Builder $query) {
+                $query
+                    ->where('direction', ServiceRequestUpdateDirection::Inbound)
+                    ->where('internal', false);
+            });
+    }
+
+    public function latestOutboundServiceRequestUpdate(): HasOne
+    {
+        return $this->hasOne(ServiceRequestUpdate::class, 'service_request_id')
+            ->ofMany([
+                'created_at' => 'max',
+            ], function (Builder $query) {
+                $query
+                    ->where('direction', ServiceRequestUpdateDirection::Outbound)
+                    ->where('internal', false);
+            });
+    }
+
+    public function getLatestResponseSeconds(): ?int
+    {
+        if (! $this->latestInboundServiceRequestUpdate) {
+            return null;
+        }
+
+        if (
+            $this->isResolved() &&
+            ($resolvedAt = $this->getResolvedAt())->isAfter($this->latestInboundServiceRequestUpdate->created_at)
+        ) {
+            return $resolvedAt->diffInSeconds($this->latestInboundServiceRequestUpdate->created_at);
+        }
+
+        if (
+            $this->latestOutboundServiceRequestUpdate &&
+            $this->latestOutboundServiceRequestUpdate->created_at->isAfter(
+                $this->latestInboundServiceRequestUpdate->created_at,
+            )
+        ) {
+            return $this->latestOutboundServiceRequestUpdate->created_at->diffInSeconds(
+                $this->latestInboundServiceRequestUpdate->created_at,
+            );
+        }
+
+        return $this->latestInboundServiceRequestUpdate->created_at->diffInSeconds();
+    }
+
+    public function getResolutionSeconds(): int
+    {
+        if (! $this->isResolved()) {
+            return $this->created_at->diffInSeconds();
+        }
+
+        return $this->created_at->diffInSeconds($this->getResolvedAt());
+    }
+
+    public function getSlaResponseSeconds(): ?int
+    {
+        return $this->priority?->sla?->response_seconds;
+    }
+
+    public function getSlaResolutionSeconds(): ?int
+    {
+        return $this->priority?->sla?->resolution_seconds;
+    }
+
+    public function getResponseSlaComplianceStatus(): ?SlaComplianceStatus
+    {
+        $slaResponseSeconds = $this->getSlaResponseSeconds();
+
+        if (! $slaResponseSeconds) {
+            return null;
+        }
+
+        $latestResponseSeconds = $this->getLatestResponseSeconds();
+
+        return ($latestResponseSeconds <= $slaResponseSeconds)
+            ? SlaComplianceStatus::Compliant
+            : SlaComplianceStatus::NonCompliant;
+    }
+
+    public function getResolutionSlaComplianceStatus(): ?SlaComplianceStatus
+    {
+        $slaResolutionSeconds = $this->getSlaResolutionSeconds();
+
+        if (! $slaResolutionSeconds) {
+            return null;
+        }
+
+        $resolutionSeconds = $this->getResolutionSeconds();
+
+        return ($resolutionSeconds <= $slaResolutionSeconds)
+            ? SlaComplianceStatus::Compliant
+            : SlaComplianceStatus::NonCompliant;
+    }
+
+    public function getResolvedAt(): CarbonInterface
+    {
+        return $this->status_updated_at ?? $this->updated_at ?? $this->created_at;
+    }
+
+    public function isResolved(): bool
+    {
+        return $this->status->classification === SystemServiceRequestClassification::Closed;
     }
 
     protected static function booted(): void

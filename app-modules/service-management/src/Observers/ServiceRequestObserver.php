@@ -64,6 +64,13 @@ class ServiceRequestObserver
         throw_if($serviceRequest->isDirty('service_request_number'), new ServiceRequestNumberUpdateAttemptException());
     }
 
+    public function saving(ServiceRequest $serviceRequest): void
+    {
+        if ($serviceRequest->wasChanged('status_id')) {
+            $serviceRequest->status_updated_at = now();
+        }
+    }
+
     public function saved(ServiceRequest $serviceRequest): void
     {
         CreateServiceRequestHistory::dispatch($serviceRequest, $serviceRequest->getChanges(), $serviceRequest->getOriginal());

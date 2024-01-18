@@ -65,8 +65,6 @@ class UserRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->filters([
-            ])
             ->headerActions([
             ])
             ->actions([

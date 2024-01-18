@@ -47,7 +47,7 @@ interface CalendarInterface
      */
     public function getCalendars(Calendar $calendar): array;
 
-    public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): array;
+    public function getEvents(Calendar $calendar, ?DateTime $start = null, ?DateTime $end = null, ?int $perPage = null): array;
 
     public function createEvent(CalendarEvent $event): void;
 
@@ -55,7 +55,7 @@ interface CalendarInterface
 
     public function deleteEvent(CalendarEvent $event): void;
 
-    public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void;
+    public function syncEvents(Calendar $calendar, ?DateTime $start = null, ?DateTime $end = null, ?int $perPage = null): void;
 
     public function refreshToken(Calendar $calendar): Calendar;
 

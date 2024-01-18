@@ -179,7 +179,7 @@ class CaseloadResource extends Resource
                     TextConstraint::make('programDescr')
                         ->label('Program Description')
                         ->relationship('programs', 'descr'),
-                    QueryBuilder\Constraints\TextConstraint::make('programFoi')
+                    TextConstraint::make('programFoi')
                         ->label('Program Field of Interest')
                         ->relationship('programs', 'foi'),
                     NumberConstraint::make('programCumGpa')

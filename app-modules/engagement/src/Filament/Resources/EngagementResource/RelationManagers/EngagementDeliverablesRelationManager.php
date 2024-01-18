@@ -89,8 +89,6 @@ class EngagementDeliverablesRelationManager extends RelationManager
                         EngagementDeliveryStatus::Failed => 'danger',
                     }),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 CreateAction::make(),
             ])

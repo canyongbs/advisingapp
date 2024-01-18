@@ -78,8 +78,6 @@ class ManageStudentCareTeam extends ManageRelatedRecords
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record]))
                     ->color('primary'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 AttachAction::make()
                     ->label('Add to Care Team')

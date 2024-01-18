@@ -76,8 +76,6 @@ class EngagementResponsesRelationManager extends RelationManager
                 TextColumn::make('sent_at')
                     ->dateTime('Y-m-d H:i:s'),
             ])
-            ->filters([
-            ])
             ->headerActions([
             ])
             ->actions([

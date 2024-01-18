@@ -74,8 +74,6 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->counts('submissions')
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

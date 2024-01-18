@@ -65,8 +65,6 @@ class ListProspectSources extends ListRecords
                     ->counts('prospects')
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),
