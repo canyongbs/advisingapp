@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Audit\Filament\Resources;
 
+use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ListAudits;
+use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ViewAudit;
 use Filament\Resources\Resource;
 use AdvisingApp\Audit\Models\Audit;
 use App\Filament\Clusters\UsageAuditing;
@@ -56,8 +58,8 @@ class AuditResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAudits::route('/'),
-            'view' => Pages\ViewAudit::route('/{record}'),
+            'index' => ListAudits::route('/'),
+            'view' => ViewAudit::route('/{record}'),
         ];
     }
 }

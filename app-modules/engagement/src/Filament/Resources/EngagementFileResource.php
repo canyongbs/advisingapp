@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources;
 
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\CreateEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\EditEngagementFile;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ListEngagementFiles;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFileResource\Pages\ViewEngagementFile;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\TextInput;
@@ -90,10 +94,10 @@ class EngagementFileResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEngagementFiles::route('/'),
-            'create' => Pages\CreateEngagementFile::route('/create'),
-            'view' => Pages\ViewEngagementFile::route('/{record}'),
-            'edit' => Pages\EditEngagementFile::route('/{record}/edit'),
+            'index' => ListEngagementFiles::route('/'),
+            'create' => CreateEngagementFile::route('/create'),
+            'view' => ViewEngagementFile::route('/{record}'),
+            'edit' => EditEngagementFile::route('/{record}/edit'),
         ];
     }
 }

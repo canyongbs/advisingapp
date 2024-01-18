@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Alert\Filament\Resources;
 
+use AdvisingApp\Alert\Filament\Resources\AlertResource\Pages\ListAlerts;
 use Filament\Resources\Resource;
 use AdvisingApp\Alert\Models\Alert;
 use AdvisingApp\Alert\Filament\Resources\AlertResource\Pages;
@@ -58,7 +59,7 @@ class AlertResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAlerts::route('/'),
+            'index' => ListAlerts::route('/'),
         ];
     }
 }

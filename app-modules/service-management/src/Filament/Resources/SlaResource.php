@@ -36,6 +36,9 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
+use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\CreateSla;
+use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\EditSla;
+use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\ListSlas;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
@@ -91,9 +94,9 @@ class SlaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSlas::route('/'),
-            'create' => Pages\CreateSla::route('/create'),
-            'edit' => Pages\EditSla::route('/{record}/edit'),
+            'index' => ListSlas::route('/'),
+            'create' => CreateSla::route('/create'),
+            'edit' => EditSla::route('/{record}/edit'),
         ];
     }
 }

@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources;
 
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\CreateProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\EditProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListProspectSources;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ViewProspectSource;
 use Filament\Resources\Resource;
 use App\Filament\Clusters\ProspectManagement;
 use AdvisingApp\Prospect\Models\ProspectSource;
@@ -61,10 +65,10 @@ class ProspectSourceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProspectSources::route('/'),
-            'create' => Pages\CreateProspectSource::route('/create'),
-            'view' => Pages\ViewProspectSource::route('/{record}'),
-            'edit' => Pages\EditProspectSource::route('/{record}/edit'),
+            'index' => ListProspectSources::route('/'),
+            'create' => CreateProspectSource::route('/create'),
+            'view' => ViewProspectSource::route('/{record}'),
+            'edit' => EditProspectSource::route('/{record}/edit'),
         ];
     }
 }
