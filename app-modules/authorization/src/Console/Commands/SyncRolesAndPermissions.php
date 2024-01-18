@@ -57,12 +57,22 @@ class SyncRolesAndPermissions extends Command
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Seed roles and permissions
-        Artisan::call(SetupRoles::class);
-        Artisan::call(SetupPermissions::class);
+        Artisan::call(
+            command: SetupRoles::class,
+            outputBuffer: $this->output,
+        );
+        Artisan::call(
+            command: SetupPermissions::class,
+            outputBuffer: $this->output,
+        );
 
+        $this->line('Syncing Web permissions...');
         $this->syncWebPermissions();
+        $this->info('Web permissions synced successfully!');
 
+        $this->line('Syncing API permissions...');
         $this->syncApiPermissions();
+        $this->info('API permissions synced successfully!');
 
         // TODO We might just leave this command out for now, and just allow for manual creation of role groups per org
         // Artisan::call(SetupRoleGroups::class);
@@ -72,22 +82,28 @@ class SyncRolesAndPermissions extends Command
 
     protected function syncWebPermissions(): void
     {
-        Role::where('guard_name', 'web')
-            ->where('name', '!=', 'authorization.super_admin')
-            ->cursor()
-            ->each(function (Role $role) {
+        $this->withProgressBar(
+            Role::where('guard_name', 'web')
+                ->where('name', '!=', 'authorization.super_admin')
+                ->cursor(),
+            function (Role $role) {
                 $this->syncPermissionFor('web', $role);
-            });
+            }
+        );
+        $this->newLine();
     }
 
     protected function syncApiPermissions(): void
     {
-        Role::where('guard_name', 'api')
-            ->where('name', '!=', 'authorization.super_admin')
-            ->cursor()
-            ->each(function (Role $role) {
+        $this->withProgressBar(
+            Role::where('guard_name', 'api')
+                ->where('name', '!=', 'authorization.super_admin')
+                ->cursor(),
+            function (Role $role) {
                 $this->syncPermissionFor('api', $role);
-            });
+            }
+        );
+        $this->newLine();
     }
 
     protected function syncPermissionFor(string $guard, Role $role): void

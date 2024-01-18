@@ -64,7 +64,10 @@ class DemoDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Artisan::call(SyncRolesAndPermissions::class);
+        Artisan::call(
+            command: SyncRolesAndPermissions::class,
+            outputBuffer: $this->command->getOutput(),
+        );
 
         $this->call([
             SuperAdminProfileSeeder::class,

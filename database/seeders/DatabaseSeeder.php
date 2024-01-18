@@ -77,7 +77,10 @@ class DatabaseSeeder extends Seeder
         // Reduce notifications sent during seeding
         Notification::fake();
 
-        Artisan::call(SyncRolesAndPermissions::class);
+        Artisan::call(
+            command: SyncRolesAndPermissions::class,
+            outputBuffer: $this->command->getOutput(),
+        );
 
         $this->call([
             SuperAdminProfileSeeder::class,
