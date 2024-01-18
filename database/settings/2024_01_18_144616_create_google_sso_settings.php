@@ -6,11 +6,10 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
+        $this->migrator->inGroup('google_sso', function (SettingsBlueprint $blueprint): void {
             $blueprint->add('is_enabled', false);
             $blueprint->addEncrypted('client_id');
             $blueprint->addEncrypted('client_secret');
-            $blueprint->addEncrypted('tenant_id');
         });
     }
 };

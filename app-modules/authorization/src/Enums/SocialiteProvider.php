@@ -42,6 +42,7 @@ use SocialiteProviders\Manager\Config;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Contracts\Provider;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 
 enum SocialiteProvider: string
 {
@@ -66,11 +67,13 @@ enum SocialiteProvider: string
     {
         $azureSsoSettings = app(AzureSsoSettings::class);
 
+        $googleSsoSettings = app(GoogleSsoSettings::class);
+
         return match ($this->value) {
             'azure' => new Config(
                 $azureSsoSettings->client_id,
                 $azureSsoSettings->client_secret,
-                $azureSsoSettings->redirect,
+                route('socialite.callback', ['provider' => 'azure']),
                 ['tenant' => $azureSsoSettings->tenant_id ?? 'common']
             ),
             'azure_calendar' => new Config(
@@ -80,9 +83,9 @@ enum SocialiteProvider: string
                 additionalProviderConfig: ['tenant' => config('services.azure_calendar.tenant_id', 'common')]
             ),
             'google' => new Config(
-                config('services.google.client_id'),
-                config('services.google.client_secret'),
-                config('services.google.redirect'),
+                $googleSsoSettings->client_id,
+                $googleSsoSettings->client_secret,
+                route('socialite.callback', ['provider' => 'google'])
             ),
             default => throw new Exception('Invalid socialite provider'),
         };

@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 use Filament\Actions\Action;
 use Filament\Pages\Auth\Login as FilamentLogin;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 
 class Login extends FilamentLogin
 {
@@ -59,7 +60,9 @@ class Login extends FilamentLogin
                 ->size('sm');
         }
 
-        if (! empty(config('services.google.client_id'))) {
+        $googleSsoSettings = app(GoogleSsoSettings::class);
+
+        if ($googleSsoSettings->is_enabled && ! empty($googleSsoSettings->client_id)) {
             $ssoActions[] = Action::make('google_sso')
                 ->label(__('Login with Google SSO'))
                 ->url(route('socialite.redirect', ['provider' => 'google']))

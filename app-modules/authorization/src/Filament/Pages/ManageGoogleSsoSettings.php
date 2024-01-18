@@ -9,25 +9,25 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\ProductIntegrations;
-use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 
-class ManageAzureSsoSettings extends SettingsPage
+class ManageGoogleSsoSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static string $settings = AzureSsoSettings::class;
+    protected static string $settings = GoogleSsoSettings::class;
 
-    protected static ?string $title = 'Azure SSO Settings';
+    protected static ?string $title = 'Google SSO Settings';
 
-    protected static ?string $navigationLabel = 'Azure SSO';
+    protected static ?string $navigationLabel = 'Google SSO';
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 70;
 
     protected static ?string $cluster = ProductIntegrations::class;
 
     public static function canAccess(): bool
     {
-        return auth()->user()->can('authorization.view_azure_sso_settings');
+        return auth()->user()->can('authorization.view_google_sso_settings');
     }
 
     public function form(Form $form): Form
@@ -47,12 +47,6 @@ class ManageAzureSsoSettings extends SettingsPage
                             ->password()
                             ->revealable(),
                         TextInput::make('client_secret')
-                            ->string()
-                            ->required(fn (Get $get) => $get('is_enabled'))
-                            ->password()
-                            ->revealable(),
-                        TextInput::make('tenant_id')
-                            ->label('Tenant ID')
                             ->string()
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->password()

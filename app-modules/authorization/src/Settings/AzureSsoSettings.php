@@ -46,8 +46,6 @@ class AzureSsoSettings extends Settings
 
     public ?string $client_secret;
 
-    public ?string $redirect;
-
     public ?string $tenant_id;
 
     public static function group(): string
@@ -60,7 +58,6 @@ class AzureSsoSettings extends Settings
         return [
             'client_id',
             'client_secret',
-            'redirect',
             'tenant_id',
         ];
     }
