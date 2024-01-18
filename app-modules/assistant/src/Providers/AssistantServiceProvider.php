@@ -40,8 +40,10 @@ use Filament\Panel;
 use Filament\Support\Assets\Js;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Assistant\Models\Prompt;
 use AdvisingApp\Assistant\AssistantPlugin;
 use Filament\Support\Facades\FilamentAsset;
+use AdvisingApp\Assistant\Models\PromptType;
 use AdvisingApp\Assistant\Models\AssistantChat;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Assistant\Models\AssistantChatFolder;
@@ -54,18 +56,20 @@ use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
 class AssistantServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new AssistantPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'assistant_chat' => AssistantChat::class,
             'assistant_chat_message' => AssistantChatMessage::class,
             'assistant_chat_message_log' => AssistantChatMessageLog::class,
             'assistant_chat_folder' => AssistantChatFolder::class,
+            'prompt_type' => PromptType::class,
+            'prompt' => Prompt::class,
         ]);
 
         $this->registerEvents();

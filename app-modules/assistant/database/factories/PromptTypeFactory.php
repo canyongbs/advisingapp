@@ -34,33 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+namespace AdvisingApp\Assistant\Database\Factories;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Assistant\Models\PromptType;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ConsentAgreementResource extends Resource
+/**
+ * @extends Factory<PromptType>
+ */
+class PromptTypeFactory extends Factory
 {
-    protected static ?string $model = ConsentAgreement::class;
-
-    protected static ?string $cluster = ArtificialIntelligence::class;
-
-    protected static ?string $navigationLabel = 'User Agreement';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
-    public static function getRelations(): array
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
         return [
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListConsentAgreements::route('/'),
+            'title' => str(fake()->unique()->words(asText: true))->ucfirst()->toString(),
+            'description' => fake()->optional()->sentences(asText: true),
         ];
     }
 }

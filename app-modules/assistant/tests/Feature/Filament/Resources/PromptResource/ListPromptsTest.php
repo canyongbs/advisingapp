@@ -34,33 +34,69 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+use function Pest\Laravel\get;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Assistant\Models\Prompt;
 
-class ConsentAgreementResource extends Resource
-{
-    protected static ?string $model = ConsentAgreement::class;
+use function Pest\Laravel\assertDatabaseCount;
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\ListPrompts;
 
-    protected static ?string $navigationLabel = 'User Agreement';
+/** @var array<LicenseType> $licenses */
+$licenses = [
+    LicenseType::ConversationalAi,
+];
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+$roles = [
+    'assistant.assistant_prompt_management',
+];
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+it('cannot render without a license', function () use ($roles) {
+    actingAs(user(
+        roles: $roles
+    ));
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListConsentAgreements::route('/'),
-        ];
-    }
-}
+    get(PromptResource::getUrl())
+        ->assertForbidden();
+});
+
+it('cannot render without permissions', function () use ($licenses) {
+    actingAs(user(
+        licenses: $licenses,
+    ));
+
+    get(PromptResource::getUrl())
+        ->assertForbidden();
+});
+
+it('can render', function () use ($licenses, $roles) {
+    actingAs(user(
+        licenses: $licenses,
+        roles: $roles
+    ));
+
+    get(PromptResource::getUrl())
+        ->assertSuccessful();
+});
+
+it('can list records', function () use ($licenses, $roles) {
+    actingAs(user(
+        licenses: $licenses,
+        roles: $roles
+    ));
+
+    assertDatabaseCount(Prompt::class, 0);
+
+    $records = Prompt::factory()->count(10)->create();
+
+    assertDatabaseCount(Prompt::class, $records->count());
+
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertCountTableRecords($records->count())
+        ->assertCanSeeTableRecords($records);
+});

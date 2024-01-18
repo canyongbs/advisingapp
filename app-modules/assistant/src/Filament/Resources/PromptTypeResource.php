@@ -34,33 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+namespace AdvisingApp\Assistant\Filament\Resources;
 
 use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
+use AdvisingApp\Assistant\Models\PromptType;
 use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\Pages\EditPromptType;
+use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\Pages\ViewPromptType;
+use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\Pages\ListPromptTypes;
+use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\Pages\CreatePromptType;
+use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\RelationManagers\PromptsRelationManager;
 
-class ConsentAgreementResource extends Resource
+class PromptTypeResource extends Resource
 {
-    protected static ?string $model = ConsentAgreement::class;
+    protected static ?string $model = PromptType::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?int $navigationSort = 20;
 
     protected static ?string $cluster = ArtificialIntelligence::class;
-
-    protected static ?string $navigationLabel = 'User Agreement';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     public static function getRelations(): array
     {
         return [
+            PromptsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListConsentAgreements::route('/'),
+            'index' => ListPromptTypes::route('/'),
+            'create' => CreatePromptType::route('/create'),
+            'view' => ViewPromptType::route('/{record}'),
+            'edit' => EditPromptType::route('/{record}/edit'),
         ];
     }
 }

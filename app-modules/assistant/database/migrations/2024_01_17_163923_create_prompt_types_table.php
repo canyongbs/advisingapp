@@ -34,33 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
-
-class ConsentAgreementResource extends Resource
-{
-    protected static ?string $model = ConsentAgreement::class;
-
-    protected static ?string $cluster = ArtificialIntelligence::class;
-
-    protected static ?string $navigationLabel = 'User Agreement';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
-    public static function getRelations(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-        ];
-    }
+        Schema::create('prompt_types', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListConsentAgreements::route('/'),
-        ];
+            $table->string('title')->unique();
+            $table->longText('description')->nullable();
+
+            $table->timestamps();
+        });
     }
-}
+};
