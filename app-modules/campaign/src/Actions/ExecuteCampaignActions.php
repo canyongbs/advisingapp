@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Campaign\Actions;
 
+use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Campaign\Models\CampaignAction;
-use Illuminate\Bus\Queueable;
 
 class ExecuteCampaignActions implements ShouldQueue
 {
