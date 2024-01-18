@@ -36,13 +36,11 @@
 
 namespace AdvisingApp\InAppCommunication\Actions;
 
-use Exception;
 use App\Models\User;
 use Twilio\Rest\Client;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-class AddUserToConversation
+class RemoveUserFromConversation
 {
     public function __construct(
         public Client $twilioClient,
@@ -50,27 +48,21 @@ class AddUserToConversation
 
     public function __invoke(User $user, TwilioConversation $conversation): void
     {
-        throw_if(
-            ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
-            new Exception('User to User conversations can only have 2 participants.')
-        );
+        $participant = $conversation
+            ->participants()
+            ->find($user);
 
-        if ($conversation->participants()->whereKey($user)->exists()) {
+        if (! $participant) {
             return;
         }
 
-        $participant = $this->twilioClient
+        $this->twilioClient
             ->conversations
             ->v1
-            ->conversations($conversation->sid)
-            ->participants
-            ->create([
-                'identity' => $user->id,
-            ]);
+            ->users($user->id)
+            ->userConversations($conversation->sid)
+            ->delete();
 
-        $conversation->participants()->attach(
-            $user,
-            ['participant_sid' => $participant->sid]
-        );
+        $conversation->participants()->detach($user);
     }
 }

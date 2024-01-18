@@ -39,4 +39,6 @@ namespace AdvisingApp\InAppCommunication\Enums;
 enum ConversationType: string
 {
     case UserToUser = 'user_to_user';
+
+    case Channel = 'channel';
 }

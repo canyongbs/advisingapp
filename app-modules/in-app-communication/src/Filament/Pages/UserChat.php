@@ -43,14 +43,19 @@ use Twilio\Rest\Client;
 use Filament\Pages\Page;
 use Twilio\Jwt\AccessToken;
 use Filament\Actions\Action;
+use Livewire\Attributes\Url;
 use Twilio\Jwt\Grants\ChatGrant;
 use Livewire\Attributes\Renderless;
 use Illuminate\Support\Facades\Gate;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Forms\Concerns\InteractsWithForms;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -58,7 +63,10 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use AdvisingApp\InAppCommunication\Actions\AddUserToConversation;
 use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
+use AdvisingApp\InAppCommunication\Actions\RemoveUserFromConversation;
 
 class UserChat extends Page implements HasForms, HasActions
 {
@@ -71,6 +79,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public Collection $conversations;
 
+    #[Url(as: 'conversation', except: 'null')]
     public ?string $selectedConversation = null;
 
     protected static ?string $navigationGroup = 'Premium Features';
@@ -95,55 +104,273 @@ class UserChat extends Page implements HasForms, HasActions
         return Gate::check(Feature::RealtimeChat->getGateName()) && $user->can('in-app-communication.realtime-chat.access');
     }
 
-    public function mount()
+    public function getConversations(): Collection
     {
         /** @var User $user */
         $user = auth()->user();
 
-        $this->conversations = $user->conversations;
+        return $user->conversations()
+            ->with(['participants'])
+            ->get();
     }
 
-    public function newChatAction()
+    public function newUserToUserChatAction()
     {
-        return Action::make('newChat')
-            ->label('New Chat')
-            ->icon('heroicon-m-plus')
+        $usersQuery = User::query()
+            ->where('id', '!=', auth()->id())
+            ->whereDoesntHave(
+                'conversations',
+                fn ($query) => $query
+                    ->where('type', ConversationType::UserToUser)
+                    ->whereHas(
+                        'participants',
+                        fn ($query) => $query->where('user_id', auth()->id())
+                    )
+            );
+
+        return Action::make('newUserToUserChat')
+            ->label('New Direct Message')
             ->modalWidth('sm')
+            ->modalSubmitActionLabel('Start chat')
             ->form([
                 Select::make('user')
+                    ->label('Pick a user to chat with')
                     ->options(
-                        User::where('id', '!=', auth()->user()->id)
-                            ->whereDoesntHave(
-                                'conversations',
-                                fn ($query) => $query
-                                    ->where('type', ConversationType::UserToUser)
-                                    ->whereHas(
-                                        'participants',
-                                        fn ($query) => $query->where('user_id', auth()->user()->id)
-                                    )
-                            )
+                        fn (): array => $usersQuery
+                            ->limit(50)
                             ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getSearchResultsUsing(
+                        fn (string $search): array => $usersQuery
+                            ->where('name', 'ilike', "%{$search}%")
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getOptionLabelUsing(
+                        fn ($value) => $usersQuery->find($value)->getKey(),
                     )
                     ->searchable(),
             ])
-            ->action(function (array $data) {
-                $users = collect(
-                    [
+            ->action(function (CreateTwilioConversation $createTwilioConversation, array $data) {
+                $conversation = $createTwilioConversation(
+                    type: ConversationType::UserToUser,
+                    users: [
                         auth()->user(),
                         User::findOrFail($data['user']),
-                    ]
+                    ],
                 );
 
-                $conversation = app(CreateTwilioConversation::class)(type: ConversationType::UserToUser, users: $users);
-
-                $this->conversations->push($conversation);
                 $this->selectedConversation = $conversation->sid;
+            });
+    }
+
+    public function newChannelAction()
+    {
+        $usersQuery = User::query()
+            ->where('id', '!=', auth()->id());
+
+        return Action::make('newChannel')
+            ->label('New Channel')
+            ->modalWidth('sm')
+            ->modalSubmitActionLabel('Create channel')
+            ->form([
+                TextInput::make('name')
+                    ->label('Channel name')
+                    ->required(),
+                Select::make('users')
+                    ->label('Pick users to invite')
+                    ->multiple()
+                    ->options(
+                        fn (): array => $usersQuery
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getSearchResultsUsing(
+                        fn (string $search): array => $usersQuery
+                            ->where('name', 'ilike', "%{$search}%")
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getOptionLabelsUsing(
+                        fn (array $values): array => $usersQuery
+                            ->whereKey($values)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->searchable(),
+                Checkbox::make('is_private')
+                    ->label('Invite only')
+                    ->default(true)
+                    ->helperText('If not checked, the channel will be public and anyone can join.'),
+            ])
+            ->action(function (CreateTwilioConversation $createTwilioConversation, array $data) {
+                $conversation = $createTwilioConversation(
+                    type: ConversationType::Channel,
+                    users: [
+                        auth()->user(),
+                        ...User::find($data['users'])->all(),
+                    ],
+                    channelName: $data['name'],
+                    isPrivateChannel: $data['is_private'],
+                );
+
+                $this->selectedConversation = $conversation->sid;
+            });
+    }
+
+    public function joinChannelsAction()
+    {
+        $channels = TwilioConversation::query()
+            ->whereDoesntHave('participants', fn (Builder $query) => $query->whereKey(auth()->id()))
+            ->where('type', ConversationType::Channel)
+            ->where('is_private_channel', false)
+            ->whereNotNull('channel_name')
+            ->orderBy('channel_name')
+            ->pluck('channel_name', 'sid')
+            ->all();
+
+        return Action::make('joinChannels')
+            ->label('Join Channels')
+            ->modalWidth('md')
+            ->modalSubmitActionLabel('Join channels')
+            ->modalDescription(empty($channels) ? 'There are no channels to join.' : null)
+            ->when(empty($channels), fn (Action $action) => $action->modalSubmitAction(false))
+            ->form([
+                CheckboxList::make('channels')
+                    ->hiddenLabel()
+                    ->searchable()
+                    ->options($channels)
+                    ->columns(2)
+                    ->hidden(empty($channels)),
+            ])
+            ->action(function (AddUserToConversation $addUserToConversation, array $data) {
+                $channels = TwilioConversation::find($data['channels'] ?? []);
+
+                foreach ($channels as $channel) {
+                    if ($channel->type !== ConversationType::Channel) {
+                        continue;
+                    }
+
+                    if ($channel->is_private_channel) {
+                        continue;
+                    }
+
+                    $addUserToConversation(
+                        user: auth()->user(),
+                        conversation: $channel,
+                    );
+                }
+
+                Notification::make()
+                    ->title('Channels joined.')
+                    ->success()
+                    ->send();
+
+                if ($channels->count() === 1) {
+                    $this->selectedConversation = $channels->first()->getKey();
+                }
+            });
+    }
+
+    public function leaveConversationAction(): Action
+    {
+        return Action::make('leaveConversation')
+            ->label('Leave conversation')
+            ->color('danger')
+            ->link()
+            ->icon('heroicon-m-arrow-right-start-on-rectangle')
+            ->requiresConfirmation()
+            ->modalHeading('Are you sure you want to leave?')
+            ->modalDescription('You will no longer have access to these messages, unless you are invited back.')
+            ->action(function (RemoveUserFromConversation $removeUserFromConversation) {
+                $conversation = $this->getSelectedConversation();
+
+                if ($conversation->type !== ConversationType::Channel) {
+                    return;
+                }
+
+                $removeUserFromConversation(
+                    user: auth()->user(),
+                    conversation: $conversation,
+                );
+
+                $this->selectedConversation = null;
+            });
+    }
+
+    public function addUserToChannelAction(): Action
+    {
+        $usersQuery = User::query()
+            ->where('id', '!=', auth()->id())
+            ->whereDoesntHave('conversations', fn (Builder $query) => $query->whereKey($this->selectedConversation));
+
+        return Action::make('addUserToChannel')
+            ->label('Invite users')
+            ->link()
+            ->icon('heroicon-m-user-plus')
+            ->modalWidth('sm')
+            ->modalDescription('They will have access to the entire conversation history.')
+            ->modalSubmitActionLabel('Invite')
+            ->form([
+                Select::make('users')
+                    ->label('Pick users to invite')
+                    ->multiple()
+                    ->options(
+                        fn (): array => $usersQuery
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getSearchResultsUsing(
+                        fn (string $search): array => $usersQuery
+                            ->where('name', 'ilike', "%{$search}%")
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getOptionLabelsUsing(
+                        fn (array $values): array => $usersQuery
+                            ->whereKey($values)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->searchable(),
+            ])
+            ->action(function (AddUserToConversation $addUserToConversation, array $data) {
+                $conversation = $this->getSelectedConversation();
+
+                if ($conversation->type !== ConversationType::Channel) {
+                    return;
+                }
+
+                $users = User::find($data['users']);
+
+                foreach ($users as $user) {
+                    $addUserToConversation(
+                        user: $user,
+                        conversation: $conversation,
+                    );
+                }
+
+                Notification::make()
+                    ->title('Users invited to channel.')
+                    ->success()
+                    ->send();
             });
     }
 
     public function selectConversation(string $conversationSid): void
     {
         $this->selectedConversation = $conversationSid;
+    }
+
+    public function getSelectedConversation(): ?TwilioConversation
+    {
+        return auth()->user()->conversations()->find($this->selectedConversation);
     }
 
     #[Renderless]
@@ -177,9 +404,27 @@ class UserChat extends Page implements HasForms, HasActions
     }
 
     #[Renderless]
-    public function getUserAvatarUrl(string $userId): string
+    public function getUserAvatarUrl(string $userId): ?string
     {
-        return filament()->getUserAvatarUrl(User::findOrFail($userId));
+        $user = User::find($userId);
+
+        if (! $user) {
+            return null;
+        }
+
+        return filament()->getUserAvatarUrl($user);
+    }
+
+    #[Renderless]
+    public function getUserName(string $userId): ?string
+    {
+        $user = User::find($userId);
+
+        if (! $user) {
+            return null;
+        }
+
+        return $user->name;
     }
 
     #[Renderless]
