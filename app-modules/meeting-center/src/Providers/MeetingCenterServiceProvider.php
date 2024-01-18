@@ -90,8 +90,8 @@ class MeetingCenterServiceProvider extends ServiceProvider
                 });
             })
                 ->everyMinute()
-                ->onOneServer()
                 ->name('SyncCalendars')
+                ->onOneServer()
                 ->withoutOverlapping();
         });
 

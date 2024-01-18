@@ -89,8 +89,8 @@ class EngagementServiceProvider extends ServiceProvider
                 });
             })
                 ->everyMinute()
-                ->onOneServer()
                 ->name('DeliverEngagements')
+                ->onOneServer()
                 ->withoutOverlapping();
         });
 
