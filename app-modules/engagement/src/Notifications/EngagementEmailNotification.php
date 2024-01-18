@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
+use App\Models\Tenant;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
@@ -44,13 +46,18 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class EngagementEmailNotification extends BaseNotification implements EmailNotification
+class EngagementEmailNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
 {
     use EmailChannelTrait;
 
     public function __construct(
         public EngagementDeliverable $deliverable
     ) {}
+
+    public function uniqueId(): string
+    {
+        return Tenant::current()->id . ':' . $this->deliverable->id;
+    }
 
     public function toEmail(NotifiableInterface $notifiable): MailMessage
     {

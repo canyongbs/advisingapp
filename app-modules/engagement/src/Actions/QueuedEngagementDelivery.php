@@ -36,16 +36,18 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
+use App\Models\Tenant;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Engagement\Actions\Contracts\EngagementChannel;
 
-abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue
+abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueue, ShouldBeUnique
 {
     use Batchable;
     use Dispatchable;
@@ -56,6 +58,11 @@ abstract class QueuedEngagementDelivery implements EngagementChannel, ShouldQueu
     public function __construct(
         public EngagementDeliverable $deliverable
     ) {}
+
+    public function uniqueId(): string
+    {
+        return Tenant::current()->id . ':' . $this->deliverable->id;
+    }
 
     public function handle(): void
     {

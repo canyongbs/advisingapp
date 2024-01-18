@@ -41,6 +41,7 @@ use App\Models\Tenant;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Campaign\CampaignPlugin;
 use AdvisingApp\Campaign\Models\Campaign;
+use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Observers\CampaignObserver;
@@ -66,7 +67,10 @@ class CampaignServiceProvider extends ServiceProvider
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
             $schedule->call(function () {
-                Tenant::all()->eachCurrent(function (Tenant $tenant) {
+                /** @var TenantCollection $tenants */
+                $tenants = Tenant::all();
+
+                $tenants->eachCurrent(function (Tenant $tenant) {
                     dispatch(new ExecuteCampaignActions());
                 });
             })

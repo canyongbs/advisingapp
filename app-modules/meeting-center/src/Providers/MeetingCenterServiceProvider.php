@@ -40,6 +40,7 @@ use Filament\Panel;
 use App\Models\Tenant;
 use Livewire\Livewire;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Multitenancy\TenantCollection;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -82,7 +83,10 @@ class MeetingCenterServiceProvider extends ServiceProvider
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
             $schedule->call(function () {
-                Tenant::all()->eachCurrent(function (Tenant $tenant) {
+                /** @var TenantCollection $tenants */
+                $tenants = Tenant::all();
+
+                $tenants->eachCurrent(function (Tenant $tenant) {
                     dispatch(new SyncCalendars());
                 });
             })
