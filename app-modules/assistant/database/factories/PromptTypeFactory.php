@@ -16,7 +16,7 @@ class PromptTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => str(fake()->unique()->words(asText: true))->ucfirst(),
+            'title' => str(fake()->unique()->words(asText: true))->ucfirst()->toString(),
             'description' => fake()->optional()->sentences(asText: true),
         ];
     }

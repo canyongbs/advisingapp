@@ -84,7 +84,7 @@ abstract class TestCase extends BaseTestCase
         $this->app[Kernel::class]->setArtisan(null);
     }
 
-    protected function refreshTestDatabase()
+    protected function refreshTestDatabase(): void
     {
         if (! RefreshDatabaseState::$migrated) {
             $this->createTestingEnvironment();

@@ -5,6 +5,9 @@ namespace AdvisingApp\Assistant\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @mixin IdeHelperPromptType
+ */
 class PromptType extends BaseModel
 {
     protected $fillable = [

@@ -45,6 +45,10 @@
 |
 */
 
+use App\Models\User;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use Illuminate\Support\Collection;
+
 uses(Tests\TestCase::class)->in('../tests', '../app-modules/*/tests');
 
 /*
@@ -73,7 +77,19 @@ uses(Tests\TestCase::class)->in('../tests', '../app-modules/*/tests');
 |
 */
 
-function something()
+/**
+ * @var array<string> | string | null $permissions
+ * @var array<LicenseType> | LicenseType | null $licenses
+ */
+function user(array | null | string $permissions = null, LicenseType | array | null $licenses = null): User
 {
-    // ..
+    $user = User::factory()->create();
+
+    $user->givePermissionTo($permissions);
+
+    collect($licenses)
+        ->each(fn (LicenseType $licenseType) => $user->grantLicense($licenseType))
+        ->whenNotEmpty(fn () => $user->refresh());
+
+    return $user;
 }
