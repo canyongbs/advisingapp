@@ -88,7 +88,8 @@ class PermissionResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            actions([
+            ])
+            ->actions([
                 ViewAction::make(),
             ]);
     }

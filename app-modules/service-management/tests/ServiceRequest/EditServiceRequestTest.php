@@ -63,7 +63,7 @@ test('A successful action on the EditServiceRequest page', function () {
 
     $request = collect(EditServiceRequestRequestFactory::new()->create());
 
-    livewire(ServiceRequestResource\Pages\EditServiceRequest::class, [
+    livewire(EditServiceRequest::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -98,7 +98,7 @@ test('EditServiceRequest requires valid data', function ($data, $errors) {
 
     $request = collect(EditServiceRequestRequestFactory::new($data)->create());
 
-    livewire(ServiceRequestResource\Pages\EditServiceRequest::class, [
+    livewire(EditServiceRequest::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -149,7 +149,7 @@ test('EditServiceRequest is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(ServiceRequestResource\Pages\EditServiceRequest::class, [
+    livewire(EditServiceRequest::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->assertForbidden();
@@ -166,7 +166,7 @@ test('EditServiceRequest is gated with proper access control', function () {
 
     $request = collect(EditServiceRequestRequestFactory::new()->create());
 
-    livewire(ServiceRequestResource\Pages\EditServiceRequest::class, [
+    livewire(EditServiceRequest::class, [
         'record' => $serviceRequest->getRouteKey(),
     ])
         ->fillForm($request->toArray())

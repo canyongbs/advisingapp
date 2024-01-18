@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
-use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\CreateSla;
-use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\EditSla;
-use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\ListSlas;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
@@ -46,7 +43,9 @@ use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\ServiceManagement;
 use AdvisingApp\ServiceManagement\Models\Sla;
 use App\Filament\Fields\SecondsDurationInput;
-use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages;
+use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\EditSla;
+use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\ListSlas;
+use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\CreateSla;
 use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\RelationManagers\ServiceRequestPrioritiesRelationManager;
 
 class SlaResource extends Resource

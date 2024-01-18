@@ -36,15 +36,14 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\CreateProspectStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\EditProspectStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ListProspectStatuses;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ViewProspectStatus;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use App\Filament\Clusters\ProspectManagement;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\EditProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ViewProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\CreateProspectStatus;
+use AdvisingApp\Prospect\Filament\Resources\ProspectStatusResource\Pages\ListProspectStatuses;
 
 class ProspectStatusResource extends Resource
 {

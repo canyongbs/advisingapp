@@ -36,12 +36,11 @@
 
 namespace AdvisingApp\Audit\Filament\Resources;
 
-use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ListAudits;
-use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ViewAudit;
 use Filament\Resources\Resource;
 use AdvisingApp\Audit\Models\Audit;
 use App\Filament\Clusters\UsageAuditing;
-use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages;
+use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ViewAudit;
+use AdvisingApp\Audit\Filament\Resources\AuditResource\Pages\ListAudits;
 
 class AuditResource extends Resource
 {

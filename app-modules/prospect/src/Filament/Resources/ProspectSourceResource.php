@@ -36,14 +36,13 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\CreateProspectSource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\EditProspectSource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListProspectSources;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ViewProspectSource;
 use Filament\Resources\Resource;
 use App\Filament\Clusters\ProspectManagement;
 use AdvisingApp\Prospect\Models\ProspectSource;
-use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\EditProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ViewProspectSource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\ListProspectSources;
+use AdvisingApp\Prospect\Filament\Resources\ProspectSourceResource\Pages\CreateProspectSource;
 
 class ProspectSourceResource extends Resource
 {
