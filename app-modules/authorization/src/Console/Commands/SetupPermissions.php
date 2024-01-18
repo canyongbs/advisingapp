@@ -37,11 +37,13 @@
 namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\Authorization\Actions\CreatePermissions;
 
-class SetupPermissions extends Command implements TenantAware
+class SetupPermissions extends Command
 {
+    use TenantAware;
+
     protected $signature = 'permissions:setup {--tenant=*}';
 
     protected $description = 'This command will create all of the permissions in our custom and model permission definitions.';

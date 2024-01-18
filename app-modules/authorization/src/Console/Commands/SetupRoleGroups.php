@@ -37,11 +37,13 @@
 namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
-use Spatie\Multitenancy\Jobs\TenantAware;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\Authorization\Actions\CreateAndSyncRoleGroups;
 
-class SetupRoleGroups extends Command implements TenantAware
+class SetupRoleGroups extends Command
 {
+    use TenantAware;
+
     protected $signature = 'role-groups:setup {--tenant=*}';
 
     protected $description = 'This command will create all of the role groups defined in the role_groups config directory.';

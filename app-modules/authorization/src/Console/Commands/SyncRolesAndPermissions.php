@@ -36,16 +36,20 @@
 
 namespace AdvisingApp\Authorization\Console\Commands;
 
+use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
 use AdvisingApp\Authorization\Models\Permission;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class SyncRolesAndPermissions extends Command
 {
-    protected $signature = 'roles-and-permissions:sync';
+    use TenantAware;
+
+    protected $signature = 'roles-and-permissions:sync {--tenant=*}';
 
     protected $description = 'This command will sync all roles and permissions defined in the roles and permissions config files.';
 
@@ -56,13 +60,22 @@ class SyncRolesAndPermissions extends Command
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        $currentTenant = Tenant::current();
+
         // Seed roles and permissions
         Artisan::call(
             command: SetupRoles::class,
+            parameters: [
+                '--tenant' => $currentTenant->id,
+            ],
             outputBuffer: $this->output,
         );
+
         Artisan::call(
             command: SetupPermissions::class,
+            parameters: [
+                '--tenant' => $currentTenant->id,
+            ],
             outputBuffer: $this->output,
         );
 

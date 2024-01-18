@@ -38,18 +38,18 @@ namespace AdvisingApp\CaseloadManagement\Console\Commands;
 
 use Illuminate\Console\Command;
 use AdvisingApp\CaseloadManagement\Models\Caseload;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\CaseloadManagement\Actions\TranslateCaseloadFilters;
 
 class TranslateCaseload extends Command
 {
-    protected $signature = 'caseloads:translate';
+    use TenantAware;
+
+    protected $signature = 'caseloads:translat {--tenant=*}';
 
     protected $description = 'Translate caseload filters.';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function handle(): void
     {
         Caseload::all()
             ->each(function (Caseload $caseload) {

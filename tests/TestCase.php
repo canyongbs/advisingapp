@@ -36,6 +36,7 @@
 
 namespace Tests;
 
+use App\Models\Tenant;
 use Tests\Concerns\LoadsFixtures;
 use Illuminate\Contracts\Console\Kernel;
 use Spatie\Permission\PermissionRegistrar;
@@ -79,7 +80,14 @@ abstract class TestCase extends BaseTestCase
             $this->artisan('app:create-adm-materialized-views');
         }
 
-        $this->artisan(SyncRolesAndPermissions::class);
+        $currentTenant = Tenant::current();
+
+        $this->artisan(
+            command: SyncRolesAndPermissions::class,
+            parameters: [
+                "--tenant={$currentTenant->id}",
+            ],
+        );
 
         $this->app[Kernel::class]->setArtisan(null);
     }

@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Authorization\Models\Role;
@@ -66,8 +67,15 @@ it('will assign permissions to roles as defined in our configuration', function 
         'model' => [],
     ]);
 
+    $currentTenant = Tenant::current();
+
     // When we run the SyncRolesAndPermissions command
-    Artisan::call(SyncRolesAndPermissions::class);
+    Artisan::call(
+        command: SyncRolesAndPermissions::class,
+        parameters: [
+            "--tenant={$currentTenant->id}",
+        ],
+    );
 
     // Our roles we have defined should have attached the corresponding permissions defined in configuration
     $webAdmin = Role::web()->firstWhere('name', 'admin');
