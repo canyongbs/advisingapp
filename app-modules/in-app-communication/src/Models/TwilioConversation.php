@@ -53,6 +53,7 @@ class TwilioConversation extends Model
     public $incrementing = false;
 
     protected $casts = [
+        'is_private_channel' => 'boolean',
         'type' => ConversationType::class,
     ];
 

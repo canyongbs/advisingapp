@@ -71,7 +71,7 @@ class OutlookCalendarManager implements CalendarInterface
             ->toArray();
     }
 
-    public function getEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): array
+    public function getEvents(Calendar $calendar, ?DateTime $start = null, ?DateTime $end = null, ?int $perPage = null): array
     {
         $client = $this->makeClient($calendar);
 
@@ -200,7 +200,7 @@ class OutlookCalendarManager implements CalendarInterface
         }
     }
 
-    public function syncEvents(Calendar $calendar, ?Datetime $start = null, ?Datetime $end = null, ?int $perPage = null): void
+    public function syncEvents(Calendar $calendar, ?DateTime $start = null, ?DateTime $end = null, ?int $perPage = null): void
     {
         $providerEvents = collect($this->getEvents($calendar, $start, $end, $perPage));
 

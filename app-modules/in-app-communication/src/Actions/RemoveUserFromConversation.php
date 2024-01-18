@@ -34,30 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Managers\Contracts;
+namespace AdvisingApp\InAppCommunication\Actions;
 
-use DateTime;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Models\User;
+use Twilio\Rest\Client;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-interface CalendarInterface
+class RemoveUserFromConversation
 {
-    /**
-     * @return array<string, string>
-     */
-    public function getCalendars(Calendar $calendar): array;
+    public function __construct(
+        public Client $twilioClient,
+    ) {}
 
-    public function getEvents(Calendar $calendar, ?DateTime $start = null, ?DateTime $end = null, ?int $perPage = null): array;
+    public function __invoke(User $user, TwilioConversation $conversation): void
+    {
+        $participant = $conversation
+            ->participants()
+            ->find($user);
 
-    public function createEvent(CalendarEvent $event): void;
+        if (! $participant) {
+            return;
+        }
 
-    public function updateEvent(CalendarEvent $event): void;
+        $this->twilioClient
+            ->conversations
+            ->v1
+            ->users($user->id)
+            ->userConversations($conversation->sid)
+            ->delete();
 
-    public function deleteEvent(CalendarEvent $event): void;
-
-    public function syncEvents(Calendar $calendar, ?DateTime $start = null, ?DateTime $end = null, ?int $perPage = null): void;
-
-    public function refreshToken(Calendar $calendar): Calendar;
-
-    public function revokeToken(Calendar $calendar): bool;
+        $conversation->participants()->detach($user);
+    }
 }

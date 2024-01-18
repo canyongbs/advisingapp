@@ -32,69 +32,118 @@
 </COPYRIGHT>
 --}}
 @php
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
-use Filament\Support\Facades\FilamentAsset;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+    use AdvisingApp\InAppCommunication\Enums\ConversationType;
+    use Filament\Support\Facades\FilamentAsset;
+    use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+    
+    $conversationGroups = $this->getConversations()->reduce(
+        function (array $carry, TwilioConversation $conversation): array {
+            if ($conversation->type === ConversationType::Channel) {
+                $carry[0][] = $conversation;
+            } else {
+                $carry[1][] = $conversation;
+            }
+    
+            return $carry;
+        },
+        [[], []],
+    );
 @endphp
 
 <x-filament-panels::page full-height="true">
     <div class="flex h-full flex-col">
         <div class="grid flex-1 grid-cols-1 gap-6 md:grid-cols-4">
             <div class="col-span-1">
-                <div class="flex flex-col gap-y-2">
-                    {{ $this->newUserToUserChatAction }}
-                    {{ $this->newChannelAction }}
+                <div
+                    class="flex flex-col gap-y-6"
+                    wire:poll.10s
+                >
+                    @foreach ($conversationGroups as $conversations)
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center justify-between">
+                                <span class="flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400">
+                                    {{ $loop->first ? 'Channels' : 'Direct messages' }}
+                                </span>
 
-                    @if ($this->conversations->isNotEmpty())
-                        <ul
-                            class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                            @foreach ($this->conversations as $conversation)
-                                @php
-                                    /** @var TwilioConversation $conversation */
-                                @endphp
-                                <li @class([
-                                    'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
-                                    'bg-gray-100 dark:bg-white/5' =>
-                                        $selectedConversation === $conversation['sid'],
-                                ])>
-                                    <button
-                                        @class([
-                                            'fi-sidebar-item-button relative flex flex-1 items-center justify-center gap-x-3 rounded-lg py-2 text-sm',
-                                        ])
-                                        type="button"
-                                        wire:click="selectConversation('{{ $conversation['sid'] }}')"
-                                    >
-                                        <span @class([
-                                            'fi-sidebar-item-label flex-1 truncate',
-                                            'text-gray-700 dark:text-gray-200' => $selectedConversation !== $conversation['sid'],
-                                            'text-primary-600 dark:text-primary-400' => $selectedConversation === $conversation['sid'],
+                                @if (count($conversations))
+                                    @if ($loop->first)
+                                        <div class="flex items-center gap-1">
+                                            {{ (clone $this->joinChannelsAction)->iconButton()->size('sm')->tooltip('Join channels')->icon('heroicon-m-list-bullet') }}
+                                            {{ (clone $this->newChannelAction)->iconButton()->size('sm')->tooltip('Create a channel')->icon('heroicon-m-plus') }}
+                                        </div>
+                                    @else
+                                        {{ (clone $this->newUserToUserChatAction)->iconButton()->size('sm')->tooltip('Start a chat')->icon('heroicon-m-plus') }}
+                                    @endif
+                                @endif
+                            </div>
+
+                            @if (count($conversations))
+                                <ul
+                                    class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
+                                    @foreach ($conversations as $conversation)
+                                        @php
+                                            /** @var TwilioConversation $conversation */
+                                        @endphp
+                                        <li @class([
+                                            'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
+                                            'bg-gray-100 dark:bg-white/5' =>
+                                                $this->selectedConversation === $conversation['sid'],
                                         ])>
-                                            @if (filled($conversation->channel_name))
-                                                {{ $conversation->channel_name }}
-                                            @else
-                                                {{ $conversation->participants->where('user_id', '!=', auth()->id())->first()->name }}
-                                            @endif
-                                        </span>
-                                    </button>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
+                                            <button
+                                                type="button"
+                                                @class([
+                                                    'relative flex flex-1 items-center justify-start text-start gap-x-3 rounded-lg py-2 text-sm',
+                                                ])
+                                                wire:click="selectConversation('{{ $conversation['sid'] }}')"
+                                            >
+                                                <span @class([
+                                                    'flex-1 truncate',
+                                                    'text-gray-700 dark:text-gray-200' =>
+                                                        $this->selectedConversation !== $conversation['sid'],
+                                                    'text-primary-600 dark:text-primary-400' =>
+                                                        $this->selectedConversation === $conversation['sid'],
+                                                ])>
+                                                    @if (filled($conversation->channel_name))
+                                                        {{ $conversation->channel_name }}
+                                                    @else
+                                                        {{ $conversation->participants->where('id', '!=', auth()->id())->first()?->name }}
+                                                    @endif
+                                                </span>
+                                            </button>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @elseif ($loop->first)
+                                <div class="text-sm">
+                                    You do not belong to any channels yet.
+                                    You can
+                                    {{ (clone $this->joinChannelsAction)->link()->label('browse a list')->tooltip(null)->icon(null) }}
+                                    or
+                                    {{ (clone $this->newChannelAction)->link()->label('create a new one')->tooltip(null)->icon(null) }}.
+                                </div>
+                            @else
+                                <div class="text-sm">
+                                    You do not have any direct messages yet. You can
+                                    {{ (clone $this->newUserToUserChatAction)->link()->label('start one')->tooltip(null)->icon(null) }}.
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
-            @if (!is_null($selectedConversation))
+            @if ($selectedConversation = $this->getSelectedConversation())
                 <div
                     class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
-                    x-data="userToUserChat(`{{ $selectedConversation }}`)"
-                    wire:key="conversation-{{ $selectedConversation }}"
+                    x-data="userToUserChat(`{{ $selectedConversation->getKey() }}`)"
+                    wire:key="conversation-{{ $selectedConversation->getKey() }}"
                 >
                     <div
                         class="flex flex-col items-center self-center"
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500"/>
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
                         <p
                             class="text-center"
                             x-text="loadingMessage"
@@ -131,21 +180,31 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
                                     :key="message.message.index"
                                 >
                                     <div class="group w-full dark:bg-gray-800">
-                                        <div class="m-auto justify-center p-4 text-base md:gap-6 md:py-6">
+                                        <div class="m-auto justify-center px-6 py-3 text-base md:gap-6">
                                             <div
-                                                class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
-                                                <div class="relative flex flex-shrink-0 flex-col items-end">
-                                                    <div>
-                                                        <x-filament::avatar
-                                                            class="rounded-full"
-                                                            alt="User Avatar"
-                                                            x-bind:src="message.avatar"
-                                                        />
-                                                    </div>
+                                                class="mx-auto flex flex-1 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                <div class="relative mt-1 flex flex-shrink-0 flex-col items-end">
+                                                    <x-filament::avatar
+                                                        class="rounded-full"
+                                                        alt="User Avatar"
+                                                        x-bind:src="message.avatar"
+                                                        size="lg"
+                                                    />
                                                 </div>
                                                 <div
-                                                    class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                                                    <div class="flex max-w-full flex-grow flex-col gap-3">
+                                                    class="relative flex w-[calc(100%-50px)] flex-col lg:w-[calc(100%-115px)]">
+                                                    <div class="flex max-w-full flex-grow flex-col gap-y-1">
+                                                        <div class="flex items-center gap-2 text-sm">
+                                                            <span
+                                                                class="font-medium text-gray-700 dark:text-gray-300"
+                                                                x-text="message.author"
+                                                            ></span>
+                                                            <span
+                                                                class="text-gray-500 dark:text-gray-500"
+                                                                x-text="formatDate(message.date)"
+                                                            ></span>
+                                                        </div>
+
                                                         <div
                                                             class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words">
                                                             <div x-text="message.message.body"></div>
@@ -220,6 +279,13 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
                                 </div>
                             </div>
                         </form>
+                        @if ($selectedConversation?->type === ConversationType::Channel)
+                            <div class="flex items-center justify-end gap-3">
+                                {{ $this->addUserToChannelAction }}
+
+                                {{ $this->leaveConversationAction }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             @else

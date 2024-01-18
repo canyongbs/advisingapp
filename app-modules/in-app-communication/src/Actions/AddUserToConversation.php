@@ -55,6 +55,10 @@ class AddUserToConversation
             new Exception('User to User conversations can only have 2 participants.')
         );
 
+        if ($conversation->participants()->whereKey($user)->exists()) {
+            return;
+        }
+
         $participant = $this->twilioClient
             ->conversations
             ->v1
