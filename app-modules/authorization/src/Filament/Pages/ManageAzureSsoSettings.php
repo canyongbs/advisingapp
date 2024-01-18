@@ -43,22 +43,22 @@ class ManageAzureSsoSettings extends SettingsPage
                         TextInput::make('client_id')
                             ->label('Client ID')
                             ->string()
-                            ->required()
+                            ->required(fn (Get $get) => $get('is_enabled'))
                             ->password()
                             ->revealable(),
                         TextInput::make('client_secret')
                             ->string()
-                            ->required()
+                            ->required(fn (Get $get) => $get('is_enabled'))
                             ->password()
                             ->revealable(),
                         TextInput::make('redirect')
                             ->string()
                             ->url()
-                            ->required(),
+                            ->required(fn (Get $get) => $get('is_enabled')),
                         TextInput::make('tenant_id')
                             ->label('Tenant ID')
                             ->string()
-                            ->required()
+                            ->required(fn (Get $get) => $get('is_enabled'))
                             ->password()
                             ->revealable(),
                     ])->visible(fn (Get $get) => $get('is_enabled')),
