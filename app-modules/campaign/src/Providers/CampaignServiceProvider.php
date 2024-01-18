@@ -65,11 +65,14 @@ class CampaignServiceProvider extends ServiceProvider
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
-            Tenant::all()->eachCurrent(function (Tenant $tenant) use ($schedule) {
-                $schedule->job(ExecuteCampaignActions::class)
-                    ->everyMinute()
-                    ->withoutOverlapping();
-            });
+            $schedule->call(function () {
+                Tenant::all()->eachCurrent(function (Tenant $tenant) {
+                    dispatch(new ExecuteCampaignActions());
+                });
+            })
+                ->everyMinute()
+                ->name('ExecuteCampaignActions')
+                ->withoutOverlapping();
         });
 
         $this->registerRolesAndPermissions();

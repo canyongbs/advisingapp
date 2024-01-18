@@ -62,35 +62,17 @@ class Kernel extends ConsoleKernel
         }
 
         $tenants->each(function (Tenant $tenant) use ($schedule) {
-            $schedule->command(
-                command: 'tenants:artisan',
-                parameters: [
-                    'artisanCommand' => 'cache:prune-stale-tags',
-                    '--tenant' => $tenant->id,
-                ]
-            )
+            $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                 ->hourly()
                 ->onOneServer()
                 ->runInBackground();
 
-            $schedule->command(
-                command: 'tenants:artisan',
-                parameters: [
-                    'artisanCommand' => 'health:check',
-                    '--tenant' => $tenant->id,
-                ]
-            )
+            $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                 ->everyMinute()
                 ->onOneServer()
                 ->runInBackground();
 
-            $schedule->command(
-                command: 'tenants:artisan',
-                parameters: [
-                    'artisanCommand' => 'health:queue-check-heartbeat',
-                    '--tenant' => $tenant->id,
-                ]
-            )
+            $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
                 ->everyMinute()
                 ->onOneServer()
                 ->runInBackground();
@@ -103,33 +85,18 @@ class Kernel extends ConsoleKernel
                 FormAuthentication::class,
             ])
                 ->each(
-                    fn ($model) => $schedule->command('tenants:artisan', [
-                        'artisanCommand' => "model:prune --model={$model}",
-                        '--tenant' => $tenant->id,
-                    ])
+                    fn ($model) => $schedule->command("tenants:artisan \"model:prune --model={$model}\" --tenant={$tenant->id}")
                         ->daily()
                         ->onOneServer()
                         ->runInBackground()
                 );
 
-            $schedule->command(
-                command: 'tenants:artisan',
-                parameters: [
-                    'artisanCommand' => 'meeting-center:refresh-calendar-refresh-tokens',
-                    '--tenant' => $tenant->id,
-                ]
-            )
+            $schedule->command("tenants:artisan \"meeting-center:refresh-calendar-refresh-tokens\" --tenant={$tenant->id}")
                 ->daily()
                 ->onOneServer()
                 ->runInBackground();
 
-            $schedule->command(
-                command: 'tenants:artisan',
-                parameters: [
-                    'artisanCommand' => 'health:schedule-check-heartbeat',
-                    '--tenant' => $tenant->id,
-                ]
-            )
+            $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
                 ->everyMinute()
                 ->onOneServer()
                 ->runInBackground();
@@ -142,8 +109,8 @@ class Kernel extends ConsoleKernel
             $schedule->command(
                 command: RefreshAdmMaterializedView::class,
                 parameters: [
-                    'remoteTable' => 'students',
-                    '--tenant' => $tenant->id,
+                    'students',
+                    "--tenant={$tenant->id}",
                 ]
             )
                 ->everyMinute()
@@ -154,8 +121,8 @@ class Kernel extends ConsoleKernel
             $schedule->command(
                 command: RefreshAdmMaterializedView::class,
                 parameters: [
-                    'remoteTable' => 'enrollments',
-                    '--tenant' => $tenant->id,
+                    'enrollments',
+                    "--tenant={$tenant->id}",
                 ]
             )
                 ->everyMinute()
@@ -166,8 +133,8 @@ class Kernel extends ConsoleKernel
             $schedule->command(
                 command: RefreshAdmMaterializedView::class,
                 parameters: [
-                    'remoteTable' => 'performance',
-                    '--tenant' => $tenant->id,
+                    'performance',
+                    "--tenant={$tenant->id}",
                 ]
             )
                 ->everyMinute()
@@ -178,8 +145,8 @@ class Kernel extends ConsoleKernel
             $schedule->command(
                 command: RefreshAdmMaterializedView::class,
                 parameters: [
-                    'remoteTable' => 'programs',
-                    '--tenant' => $tenant->id,
+                    'programs',
+                    "--tenant={$tenant->id}",
                 ]
             )
                 ->everyMinute()
@@ -188,8 +155,6 @@ class Kernel extends ConsoleKernel
                 ->runInBackground();
         });
     }
-
-    protected function pruning(Schedule $schedule) {}
 
     /**
      * Register the commands for the application.

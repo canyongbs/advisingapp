@@ -36,19 +36,26 @@
 
 namespace AdvisingApp\Engagement\Actions;
 
+use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Engagement\Models\Engagement;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class DeliverEngagements implements ShouldQueue
+class DeliverEngagements implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    public function uniqueId(): string
+    {
+        return Tenant::current()->id;
+    }
 
     public function handle(): void
     {
