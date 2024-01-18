@@ -52,6 +52,7 @@ use Microsoft\Graph\Model\DateTimeTimeZone;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use Symfony\Component\HttpFoundation\Response;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
 use Microsoft\Graph\Model\Calendar as MicrosoftGraphCalendar;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnect;
@@ -242,11 +243,13 @@ class OutlookCalendarManager implements CalendarInterface
 
     public function refreshToken(Calendar $calendar): Calendar
     {
+        $azureCalendarSettings = app(AzureCalendarSettings::class);
+
         $response = Http::asForm()->post(
-            'https://login.microsoftonline.com/' . config('services.azure_calendar.tenant_id') . '/oauth2/token?api-version=v1.0',
+            'https://login.microsoftonline.com/' . $azureCalendarSettings->tenant_id . '/oauth2/token?api-version=v1.0',
             [
-                'client_id' => config('services.azure_calendar.client_id'),
-                'client_secret' => config('services.azure_calendar.client_secret'),
+                'client_id' => $azureCalendarSettings->client_id,
+                'client_secret' => $azureCalendarSettings->client_secret,
                 'grant_type' => 'refresh_token',
                 'scope' => ['Calendars.ReadWrite', 'User.Read', 'offline_access'],
                 'refresh_token' => $calendar->oauth_refresh_token,

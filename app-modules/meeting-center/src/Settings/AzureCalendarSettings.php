@@ -34,6 +34,31 @@
 </COPYRIGHT>
 */
 
-return [
-    'view_azure_calendar_settings',
-];
+namespace AdvisingApp\MeetingCenter\Settings;
+
+use Spatie\LaravelSettings\Settings;
+
+class AzureCalendarSettings extends Settings
+{
+    public bool $is_enabled;
+
+    public ?string $client_id;
+
+    public ?string $client_secret;
+
+    public ?string $tenant_id;
+
+    public static function group(): string
+    {
+        return 'azure_calendar';
+    }
+
+    public static function encrypted(): array
+    {
+        return [
+            'client_id',
+            'client_secret',
+            'tenant_id',
+        ];
+    }
+}

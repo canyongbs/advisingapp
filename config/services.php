@@ -83,7 +83,6 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    // TODO Find a way to move this setting to the Integration Twilio module
     'twilio' => [
         'test_from_number' => env('TWILIO_TEST_FROM_NUMBER'),
         'test_to_number' => env('TWILIO_TEST_TO_NUMBER'),

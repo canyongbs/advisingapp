@@ -43,6 +43,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Contracts\Provider;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
 
 enum SocialiteProvider: string
 {
@@ -67,6 +68,8 @@ enum SocialiteProvider: string
     {
         $azureSsoSettings = app(AzureSsoSettings::class);
 
+        $azureCalendarSettings = app(AzureCalendarSettings::class);
+
         $googleSsoSettings = app(GoogleSsoSettings::class);
 
         return match ($this->value) {
@@ -77,10 +80,10 @@ enum SocialiteProvider: string
                 ['tenant' => $azureSsoSettings->tenant_id ?? 'common']
             ),
             'azure_calendar' => new Config(
-                key: config('services.azure_calendar.client_id'),
-                secret: config('services.azure_calendar.client_secret'),
-                callbackUri: route('calendar.outlook.callback'),
-                additionalProviderConfig: ['tenant' => config('services.azure_calendar.tenant_id', 'common')]
+                key: $azureCalendarSettings->client_id,
+                secret: $azureCalendarSettings->client_secret,
+                callbackUri: route('socialite.callback', ['provider' => 'azure_calendar']),
+                additionalProviderConfig: ['tenant' => $azureCalendarSettings->tenant_id ?? 'common']
             ),
             'google' => new Config(
                 $googleSsoSettings->client_id,

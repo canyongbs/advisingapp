@@ -48,15 +48,19 @@ class MeetingCenterPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->discoverResources(
-            in: __DIR__ . '/Filament/Resources',
-            for: 'AdvisingApp\\MeetingCenter\\Filament\\Resources'
-        );
-
-        $panel->discoverWidgets(
-            in: __DIR__ . '/Filament/Widgets',
-            for: 'AdvisingApp\\MeetingCenter\\Filament\\Widgets'
-        );
+        $panel
+            ->discoverResources(
+                in: __DIR__ . '/Filament/Resources',
+                for: 'AdvisingApp\\MeetingCenter\\Filament\\Resources'
+            )
+            ->discoverWidgets(
+                in: __DIR__ . '/Filament/Widgets',
+                for: 'AdvisingApp\\MeetingCenter\\Filament\\Widgets'
+            )
+            ->discoverPages(
+                in: __DIR__ . '/Filament/Pages',
+                for: 'AdvisingApp\\MeetingCenter\\Filament\\Pages'
+            );
     }
 
     public function boot(Panel $panel): void {}
