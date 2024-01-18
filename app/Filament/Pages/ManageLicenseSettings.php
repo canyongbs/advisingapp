@@ -150,7 +150,7 @@ class ManageLicenseSettings extends SettingsPage
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return [
-            'data' => Licensedata::from(
+            'data' => LicenseData::from(
                 [
                     'updatedAt' => now(),
                     ...$data['data'],

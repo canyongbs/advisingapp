@@ -131,8 +131,6 @@ class UserResource extends Resource
                     ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 Impersonate::make(),
                 ViewAction::make(),

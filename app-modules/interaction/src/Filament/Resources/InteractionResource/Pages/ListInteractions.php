@@ -87,8 +87,6 @@ class ListInteractions extends ListRecords
                 TextColumn::make('description')
                     ->searchable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make(),
             ])

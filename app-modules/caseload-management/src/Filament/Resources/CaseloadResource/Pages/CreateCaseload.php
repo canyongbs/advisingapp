@@ -39,6 +39,7 @@ namespace AdvisingApp\CaseloadManagement\Filament\Resources\CaseloadResource\Pag
 use Iterator;
 use Exception;
 use App\Models\User;
+use App\Models\Import;
 use Filament\Forms\Get;
 use Filament\Tables\Table;
 use Illuminate\Support\Arr;
@@ -59,7 +60,6 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Support\Htmlable;
-use Filament\Actions\Imports\Models\Import;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Concerns\InteractsWithTable;

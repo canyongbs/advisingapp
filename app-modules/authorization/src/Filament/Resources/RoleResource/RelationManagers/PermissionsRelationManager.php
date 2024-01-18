@@ -71,8 +71,6 @@ class PermissionsRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 CreateAction::make(),
             ])

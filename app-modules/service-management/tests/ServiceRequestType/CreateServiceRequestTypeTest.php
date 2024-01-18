@@ -64,7 +64,7 @@ test('A successful action on the CreateServiceRequestType page', function () {
 
     $editRequest = CreateServiceRequestTypeRequestFactory::new()->create();
 
-    livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
+    livewire(CreateServiceRequestType::class)
         ->fillForm($editRequest)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -77,7 +77,7 @@ test('A successful action on the CreateServiceRequestType page', function () {
 test('CreateServiceRequestType requires valid data', function ($data, $errors) {
     asSuperAdmin();
 
-    livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
+    livewire(CreateServiceRequestType::class)
         ->fillForm(CreateServiceRequestTypeRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -100,7 +100,7 @@ test('CreateServiceRequestType is gated with proper access control', function ()
             ServiceRequestTypeResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
+    livewire(CreateServiceRequestType::class)
         ->assertForbidden();
 
     $user->givePermissionTo('service_request_type.view-any');
@@ -113,7 +113,7 @@ test('CreateServiceRequestType is gated with proper access control', function ()
 
     $request = collect(CreateServiceRequestTypeRequestFactory::new()->create());
 
-    livewire(ServiceRequestTypeResource\Pages\CreateServiceRequestType::class)
+    livewire(CreateServiceRequestType::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

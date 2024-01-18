@@ -57,7 +57,6 @@ class CreateServiceRequestStatus extends CreateRecord
                     ->required()
                     ->string(),
                 Select::make('classification')
-                    ->label('Classification')
                     ->searchable()
                     ->options(SystemServiceRequestClassification::class)
                     ->required()

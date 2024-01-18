@@ -63,8 +63,6 @@ class ListInteractionStatuses extends ListRecords
                     ->badge()
                     ->color(fn (InteractionStatus $interactionStatus) => $interactionStatus->color->value),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make(),
             ])

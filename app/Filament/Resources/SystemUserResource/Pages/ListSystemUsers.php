@@ -61,8 +61,6 @@ class ListSystemUsers extends ListRecords
                     ->state(fn (?SystemUser $record) => $record?->tokens()->where('name', 'api')->first()?->last_used_at)
                     ->dateTime(),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make(),
             ])

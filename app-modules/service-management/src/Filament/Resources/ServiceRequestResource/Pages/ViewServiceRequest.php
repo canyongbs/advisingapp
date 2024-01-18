@@ -36,14 +36,17 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages;
 
+use Carbon\CarbonInterval;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\Group;
 use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource;
@@ -54,6 +57,8 @@ class ViewServiceRequest extends ViewRecord
 
     public function infolist(Infolist $infolist): Infolist
     {
+        $formatSecondsAsInterval = fn (?int $state): ?string => $state ? CarbonInterval::seconds($state)->cascade()->forHumans(short: true) : null;
+
         return $infolist
             ->schema([
                 Section::make()
@@ -104,7 +109,44 @@ class ViewServiceRequest extends ViewRecord
                                 };
                             }),
                     ])
-                    ->columns(),
+                    ->columns(2),
+                Section::make('SLA Management')
+                    ->visible(fn (ServiceRequest $record): bool => $record->priority?->sla !== null)
+                    ->schema([
+                        Group::make([
+                            TextEntry::make('sla_response_seconds')
+                                ->label('Response agreement')
+                                ->state(fn (ServiceRequest $record): ?int => $record->getSlaResponseSeconds())
+                                ->formatStateUsing($formatSecondsAsInterval)
+                                ->placeholder('-'),
+                            TextEntry::make('response_age')
+                                ->label('Response age')
+                                ->state(fn (ServiceRequest $record): ?int => $record->getLatestResponseSeconds())
+                                ->formatStateUsing($formatSecondsAsInterval)
+                                ->placeholder('-'),
+                            TextEntry::make('response_sla_compliance')
+                                ->label('Response compliance')
+                                ->badge()
+                                ->state(fn (ServiceRequest $record): ?SlaComplianceStatus => $record->getResponseSlaComplianceStatus()),
+                        ]),
+                        Group::make([
+                            TextEntry::make('sla_resolution_seconds')
+                                ->label('Resolution agreement')
+                                ->state(fn (ServiceRequest $record): ?int => $record->getSlaResolutionSeconds())
+                                ->formatStateUsing($formatSecondsAsInterval)
+                                ->placeholder('-'),
+                            TextEntry::make('resolution_seconds')
+                                ->label('Resolution age')
+                                ->state(fn (ServiceRequest $record): int => $record->getResolutionSeconds())
+                                ->formatStateUsing($formatSecondsAsInterval)
+                                ->placeholder('-'),
+                            TextEntry::make('resolution_sla_compliance')
+                                ->label('Resolution compliance')
+                                ->badge()
+                                ->state(fn (ServiceRequest $record): ?SlaComplianceStatus => $record->getResolutionSlaComplianceStatus()),
+                        ]),
+                    ])
+                    ->columns(2),
             ]);
     }
 

@@ -58,8 +58,6 @@ class ListInteractionRelations extends ListRecords
                 TextColumn::make('name')
                     ->searchable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make(),
             ])

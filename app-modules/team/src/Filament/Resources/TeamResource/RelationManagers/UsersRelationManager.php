@@ -71,8 +71,6 @@ class UsersRelationManager extends RelationManager
                 TextColumn::make('name'),
                 TextColumn::make('email'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 AttachAction::make()
                     ->label('Add user to this team')

@@ -58,8 +58,6 @@ class ListInteractionOutcomes extends ListRecords
                 TextColumn::make('name')
                     ->searchable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make(),
             ])

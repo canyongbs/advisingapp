@@ -41,6 +41,7 @@ use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
@@ -49,6 +50,7 @@ use Illuminate\Database\Query\JoinClause;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
+use AdvisingApp\ServiceManagement\Enums\SlaComplianceStatus;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSort;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\StudentDataModel\Models\Scopes\EducatableSearch;
@@ -63,6 +65,14 @@ class ListServiceRequests extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with([
+                'latestInboundServiceRequestUpdate',
+                'latestOutboundServiceRequestUpdate',
+                'priority' => [
+                    'sla',
+                ],
+                'status',
+            ]))
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('service_request_number')
@@ -102,6 +112,14 @@ class ListServiceRequests extends ListRecords
                     ->label('Assigned to')
                     ->searchable()
                     ->sortable(),
+                IconColumn::make('response_sla_compliance')
+                    ->label('SLA Response')
+                    ->state(fn (ServiceRequest $record): ?SlaComplianceStatus => $record->getResponseSlaComplianceStatus())
+                    ->tooltip(fn (ServiceRequest $record): ?string => $record->getResponseSlaComplianceStatus()?->getLabel()),
+                IconColumn::make('resolution_sla_compliance')
+                    ->label('SLA Resolution')
+                    ->state(fn (ServiceRequest $record): ?SlaComplianceStatus => $record->getResolutionSlaComplianceStatus())
+                    ->tooltip(fn (ServiceRequest $record): ?string => $record->getResolutionSlaComplianceStatus()?->getLabel()),
             ])
             ->filters([
                 SelectFilter::make('priority')
@@ -122,7 +140,8 @@ class ListServiceRequests extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->poll('60s');
     }
 
     protected function getHeaderActions(): array

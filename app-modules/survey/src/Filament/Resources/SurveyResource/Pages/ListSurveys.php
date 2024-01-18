@@ -61,8 +61,6 @@ class ListSurveys extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->filters([
-            ])
             ->actions([
                 Action::make('Respond')
                     ->url(fn (Survey $survey) => route('surveys.show', ['survey' => $survey]))

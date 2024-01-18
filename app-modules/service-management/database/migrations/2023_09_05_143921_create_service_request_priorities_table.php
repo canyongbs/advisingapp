@@ -45,6 +45,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->integer('order');
+            $table->foreignUuid('sla_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignUuid('type_id')->constrained('service_request_types')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();

@@ -111,8 +111,6 @@ class HasManyMorphedInteractionsRelationManager extends RelationManager
                 TextColumn::make('subject'),
                 TextColumn::make('description'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 CreateAction::make(),
             ])
