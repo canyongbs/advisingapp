@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,35 +30,32 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php
+    use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+    
+    $classes = match (ChangeRequest::getColorBasedOnRisk($getState())) {
+        'green' => 'border-green-500 bg-green-400/10 text-green-500 ring-green-500 dark:border-green-500 dark:bg-green-400/10 dark:text-green-500 dark:ring-green-500',
+        'yellow' => 'border-yellow-500 bg-yellow-400/10 text-yellow-500 ring-yellow-500 dark:border-yellow-500 dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-500',
+        'orange' => 'border-orange-500 bg-orange-400/10 text-orange-500 ring-orange-500 dark:border-orange-500 dark:bg-orange-400/10 dark:text-orange-500 dark:ring-orange-500',
+        'red' => 'border-red-600 bg-red-400/10 text-red-600 ring-red-600 dark:border-red-600 dark:bg-red-400/10 dark:text-red-600 dark:ring-red-600',
+        default => '',
+    };
+@endphp
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+<div>
+    <div class="flex flex-col">
+        <label class="fi-fo-field-wrp-label inline-flex items-center gap-x-3">
+            <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+                Risk Score
+            </span>
+        </label>
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+        <div class="mt-1">
+            <div class="{{ $classes }} mt-0 flex items-center justify-center rounded-xl border-2 p-4 text-lg">
+                {{ $getState() }}
+            </div>
+        </div>
+    </div>
 
-class ServiceRequestStatusResource extends Resource
-{
-    protected static ?string $model = ServiceRequestStatus::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
-        ];
-    }
-}
+</div>

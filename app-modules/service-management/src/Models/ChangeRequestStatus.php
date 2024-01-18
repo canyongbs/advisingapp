@@ -34,33 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Models;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
-class ServiceRequestStatusResource extends Resource
+class ChangeRequestStatus extends BaseModel implements Auditable
 {
-    protected static ?string $model = ServiceRequestStatus::class;
+    use AuditableTrait;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected $fillable = [
+        'name',
+        'classification',
+    ];
 
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
-        ];
-    }
+    protected $casts = [
+        'classification' => SystemChangeRequestClassification::class,
+    ];
 }

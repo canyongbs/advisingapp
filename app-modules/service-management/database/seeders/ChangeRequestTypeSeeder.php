@@ -34,33 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Database\Seeders;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+use Illuminate\Database\Seeder;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 
-class ServiceRequestStatusResource extends Resource
+class ChangeRequestTypeSeeder extends Seeder
 {
-    protected static ?string $model = ServiceRequestStatus::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getPages(): array
+    public function run(): void
     {
-        return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
-        ];
+        $types = ['Standard Change', 'Normal Change', 'Emergency Change'];
+
+        foreach ($types as $type) {
+            ChangeRequestType::factory()
+                ->create([
+                    'name' => $type,
+                ]);
+        }
     }
 }

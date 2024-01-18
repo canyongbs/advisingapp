@@ -34,33 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Database\Factories;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
 
-class ServiceRequestStatusResource extends Resource
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\ServiceManagement\Models\ChangeRequest>
+ */
+class ChangeRequestFactory extends Factory
 {
-    protected static ?string $model = ServiceRequestStatus::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getPages(): array
+    public function definition(): array
     {
         return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
+            'created_by' => User::factory(),
+            'change_request_type_id' => ChangeRequestType::factory(),
+            'change_request_status_id' => ChangeRequestStatus::factory(),
+            'title' => fake()->sentence(),
+            'description' => fake()->text(),
+            'reason' => fake()->paragraphs(1),
+            'backout_strategy' => fake()->paragraphs(1),
+            'impact' => fake()->numberBetween(1, 5),
+            'likelihood' => fake()->numberBetween(1, 5),
+            'start_time' => fake()->dateTime(),
+            'end_time' => fake()->dateTime(),
         ];
     }
 }

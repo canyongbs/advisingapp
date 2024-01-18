@@ -41,16 +41,20 @@ use App\Concerns\GraphSchemaDiscovery;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\ServiceManagement\Models\Sla;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\ServiceManagementPlugin;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
+use AdvisingApp\ServiceManagement\Observers\ChangeRequestObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;
@@ -72,6 +76,9 @@ class ServiceManagementServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
+            'change_request_status' => ChangeRequestStatus::class,
+            'change_request_type' => ChangeRequestType::class,
+            'change_request' => ChangeRequest::class,
             'service_request_assignment' => ServiceRequestAssignment::class,
             'service_request_history' => ServiceRequestHistory::class,
             'service_request_priority' => ServiceRequestPriority::class,
@@ -90,6 +97,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
 
     protected function registerObservers(): void
     {
+        ChangeRequest::observe(ChangeRequestObserver::class);
         ServiceRequest::observe(ServiceRequestObserver::class);
         ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
         ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);

@@ -34,33 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Database\Seeders;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+use Illuminate\Database\Seeder;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
-class ServiceRequestStatusResource extends Resource
+class ChangeRequestStatusSeeder extends Seeder
 {
-    protected static ?string $model = ServiceRequestStatus::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getPages(): array
+    public function run(): void
     {
-        return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
-        ];
+        foreach (SystemChangeRequestClassification::cases() as $status) {
+            ChangeRequestStatus::factory()
+                ->create([
+                    'name' => $status->getLabel(),
+                    'classification' => $status,
+                ]);
+        }
     }
 }

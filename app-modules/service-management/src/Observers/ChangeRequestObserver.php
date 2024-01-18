@@ -34,33 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Observers;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 
-class ServiceRequestStatusResource extends Resource
+class ChangeRequestObserver
 {
-    protected static ?string $model = ServiceRequestStatus::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getPages(): array
+    public function creating(ChangeRequest $changeRequest): void
     {
-        return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
-        ];
+        if (is_null($changeRequest->created_by) && ! is_null(auth()->user())) {
+            $changeRequest->created_by = auth()->user()->id;
+        }
+    }
+
+    public function saving(ChangeRequest $changeRequest): void
+    {
+        $changeRequest->risk_score = $changeRequest->impact * $changeRequest->likelihood;
     }
 }

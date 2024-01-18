@@ -62,7 +62,9 @@ use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseStatusSeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseQualitySeeder;
 use AdvisingApp\Analytics\Database\Seeders\AnalyticsResourceCategorySeeder;
 use AdvisingApp\KnowledgeBase\Database\Seeders\KnowledgeBaseCategorySeeder;
+use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestTypeSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestTypeSeeder;
+use AdvisingApp\ServiceManagement\Database\Seeders\ChangeRequestStatusSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestStatusSeeder;
 use AdvisingApp\ServiceManagement\Database\Seeders\ServiceRequestUpdateSeeder;
@@ -107,13 +109,20 @@ class DatabaseSeeder extends Seeder
             StudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,
             EventSeeder::class,
+
             // InventoryManagement
             ...AssetSeeder::metadataSeeders(),
             AssetSeeder::class,
+
             MaintenanceProviderSeeder::class,
             AnalyticsResourceSourceSeeder::class,
             AnalyticsResourceCategorySeeder::class,
             AnalyticsResourceSeeder::class,
+
+            // Change Request
+            ChangeRequestTypeSeeder::class,
+            ChangeRequestStatusSeeder::class,
+
             PromptTypeSeeder::class,
             PromptSeeder::class,
         ]);

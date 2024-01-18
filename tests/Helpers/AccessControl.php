@@ -34,33 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace Tests\Helpers;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+use App\Models\User;
 
-class ServiceRequestStatusResource extends Resource
+use function Pest\Laravel\actingAs;
+
+use AdvisingApp\Authorization\Enums\LicenseType;
+
+function testResourceRequiresPermissionForAccess(string $resource, string $permission, string $method)
 {
-    protected static ?string $model = ServiceRequestStatus::class;
+    test("{$resource} {$method} is gated with proper access control", function () use ($permission, $resource, $method) {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+        actingAs($user)
+            ->get(
+                $resource::getUrl($method)
+            )->assertForbidden();
 
-    protected static ?int $navigationSort = 20;
+        $user->givePermissionTo($permission);
 
-    protected static ?string $cluster = ServiceManagementAdministration::class;
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
-        ];
-    }
+        actingAs($user)
+            ->get(
+                $resource::getUrl($method)
+            )->assertSuccessful();
+    });
 }

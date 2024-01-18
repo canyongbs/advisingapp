@@ -34,33 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Filament\Resources;
+namespace AdvisingApp\ServiceManagement\Enums;
 
-use Filament\Resources\Resource;
-use App\Filament\Clusters\ServiceManagementAdministration;
-use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\EditServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ViewServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\CreateServiceRequestStatus;
-use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestStatusResource\Pages\ListServiceRequestStatuses;
+use Filament\Support\Contracts\HasLabel;
 
-class ServiceRequestStatusResource extends Resource
+enum SystemChangeRequestClassification: string implements HasLabel
 {
-    protected static ?string $model = ServiceRequestStatus::class;
+    case New = 'new';
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    case Approved = 'approved';
 
-    protected static ?int $navigationSort = 20;
+    case InProgress = 'in_progress';
 
-    protected static ?string $cluster = ServiceManagementAdministration::class;
+    case Completed = 'completed';
 
-    public static function getPages(): array
+    case FailedOrReverted = 'failed_or_reverted';
+
+    case Custom = 'custom';
+
+    public function getLabel(): ?string
     {
-        return [
-            'index' => ListServiceRequestStatuses::route('/'),
-            'create' => CreateServiceRequestStatus::route('/create'),
-            'view' => ViewServiceRequestStatus::route('/{record}'),
-            'edit' => EditServiceRequestStatus::route('/{record}/edit'),
-        ];
+        return match ($this) {
+            SystemChangeRequestClassification::InProgress => 'In Progress',
+            SystemChangeRequestClassification::FailedOrReverted => 'Failed/Reverted',
+            default => $this->name,
+        };
     }
 }
