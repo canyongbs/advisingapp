@@ -17,44 +17,60 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource;
 use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\Pages\EditPromptType;
 
-it('cannot render without a license', function () {
-    actingAs(user([
-        'prompt_type.view-any',
-        'prompt_type.*.update',
-    ]));
+/** @var array<LicenseType> $licenses */
+$licenses = [
+    LicenseType::ConversationalAi,
+];
+
+$roles = [
+    'assistant.assistant_prompt_management',
+];
+
+it('cannot render without a license', function () use ($roles) {
+    actingAs(user(
+        roles: $roles
+    ));
 
     $record = PromptType::factory()->create();
 
-    get(PromptTypeResource::getUrl('edit', ['record' => $record]))
+    get(PromptTypeResource::getUrl('edit', [
+        'record' => $record->getRouteKey(),
+    ]))
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () {
-    actingAs(user(licenses: LicenseType::ConversationalAi));
+it('cannot render without permissions', function () use ($licenses) {
+    actingAs(user(
+        licenses: $licenses,
+    ));
 
     $record = PromptType::factory()->create();
 
-    get(PromptTypeResource::getUrl('edit', ['record' => $record]))
+    get(PromptTypeResource::getUrl('edit', [
+        'record' => $record->getRouteKey(),
+    ]))
         ->assertForbidden();
 });
 
-it('can render', function () {
-    actingAs(user([
-        'prompt_type.view-any',
-        'prompt_type.*.update',
-    ], LicenseType::ConversationalAi));
+it('can render', function () use ($licenses, $roles) {
+    actingAs(user(
+        licenses: $licenses,
+        roles: $roles
+    ));
 
     $record = PromptType::factory()->create();
 
-    get(PromptTypeResource::getUrl('edit', ['record' => $record]))
+    get(PromptTypeResource::getUrl('edit', [
+        'record' => $record->getRouteKey(),
+    ]))
         ->assertSuccessful();
 });
 
-it('can edit a record', function () {
-    actingAs(user([
-        'prompt_type.view-any',
-        'prompt_type.*.update',
-    ], LicenseType::ConversationalAi));
+it('can edit a record', function () use ($licenses, $roles) {
+    actingAs(user(
+        licenses: $licenses,
+        roles: $roles
+    ));
 
     $record = PromptType::factory()->make();
 
@@ -71,12 +87,11 @@ it('can edit a record', function () {
     assertDatabaseHas(PromptType::class, $record->toArray());
 });
 
-it('can delete a record', function () {
-    actingAs(user([
-        'prompt_type.view-any',
-        'prompt_type.*.update',
-        'prompt_type.*.delete',
-    ], LicenseType::ConversationalAi));
+it('can delete a record', function () use ($licenses, $roles) {
+    actingAs(user(
+        licenses: $licenses,
+        roles: $roles
+    ));
 
     $record = PromptType::factory()->create();
 

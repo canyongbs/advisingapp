@@ -13,44 +13,60 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource;
 use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\Pages\ViewPromptType;
 
-it('cannot render without a license', function () {
-    actingAs(user([
-        'prompt_type.view-any',
-        'prompt_type.*.view',
-    ]));
+/** @var array<LicenseType> $licenses */
+$licenses = [
+    LicenseType::ConversationalAi,
+];
+
+$roles = [
+    'assistant.assistant_prompt_management',
+];
+
+it('cannot render without a license', function () use ($roles) {
+    actingAs(user(
+        roles: $roles
+    ));
 
     $record = PromptType::factory()->create();
 
-    get(PromptTypeResource::getUrl('view', ['record' => $record]))
+    get(PromptTypeResource::getUrl('view', [
+        'record' => $record->getRouteKey(),
+    ]))
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () {
-    actingAs(user(licenses: LicenseType::ConversationalAi));
+it('cannot render without permissions', function () use ($licenses) {
+    actingAs(user(
+        licenses: $licenses,
+    ));
 
     $record = PromptType::factory()->create();
 
-    get(PromptTypeResource::getUrl('view', ['record' => $record]))
+    get(PromptTypeResource::getUrl('view', [
+        'record' => $record->getRouteKey(),
+    ]))
         ->assertForbidden();
 });
 
-it('can render', function () {
-    actingAs(user([
-        'prompt_type.view-any',
-        'prompt_type.*.view',
-    ], LicenseType::ConversationalAi));
+it('can render', function () use ($licenses, $roles) {
+    actingAs(user(
+        licenses: $licenses,
+        roles: $roles
+    ));
 
     $record = PromptType::factory()->create();
 
-    get(PromptTypeResource::getUrl('view', ['record' => $record]))
+    get(PromptTypeResource::getUrl('view', [
+        'record' => $record->getRouteKey(),
+    ]))
         ->assertSuccessful();
 });
 
-it('can view a record', function () {
-    actingAs(user([
-        'prompt_type.view-any',
-        'prompt_type.*.view',
-    ], LicenseType::ConversationalAi));
+it('can view a record', function () use ($licenses, $roles) {
+    actingAs(user(
+        licenses: $licenses,
+        roles: $roles
+    ));
 
     assertDatabaseCount(PromptType::class, 0);
 

@@ -12,38 +12,47 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Assistant\Filament\Resources\PromptResource;
 use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\ListPrompts;
 
-it('cannot render without a license', function () {
+/** @var array<LicenseType> $licenses */
+$licenses = [
+    LicenseType::ConversationalAi,
+];
+
+$roles = [
+    'assistant.assistant_prompt_management',
+];
+
+it('cannot render without a license', function () use ($roles) {
     actingAs(user(
-        'prompt.view-any',
+        roles: $roles
     ));
 
     get(PromptResource::getUrl())
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () {
+it('cannot render without permissions', function () use ($licenses) {
     actingAs(user(
-        licenses: LicenseType::ConversationalAi
+        licenses: $licenses,
     ));
 
     get(PromptResource::getUrl())
         ->assertForbidden();
 });
 
-it('can render', function () {
+it('can render', function () use ($licenses, $roles) {
     actingAs(user(
-        'prompt.view-any',
-        LicenseType::ConversationalAi
+        licenses: $licenses,
+        roles: $roles
     ));
 
     get(PromptResource::getUrl())
         ->assertSuccessful();
 });
 
-it('can list records', function () {
+it('can list records', function () use ($licenses, $roles) {
     actingAs(user(
-        'prompt.view-any',
-        LicenseType::ConversationalAi
+        licenses: $licenses,
+        roles: $roles
     ));
 
     assertDatabaseCount(Prompt::class, 0);
