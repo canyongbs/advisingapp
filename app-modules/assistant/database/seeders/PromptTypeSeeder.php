@@ -34,33 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+namespace AdvisingApp\Assistant\Database\Seeders;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use Illuminate\Database\Seeder;
+use AdvisingApp\Assistant\Models\PromptType;
 
-class ConsentAgreementResource extends Resource
+class PromptTypeSeeder extends Seeder
 {
-    protected static ?string $model = ConsentAgreement::class;
-
-    protected static ?string $cluster = ArtificialIntelligence::class;
-
-    protected static ?string $navigationLabel = 'User Agreement';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
-    public static function getRelations(): array
+    public function run(): void
     {
-        return [
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListConsentAgreements::route('/'),
-        ];
+        PromptType::factory()->count(20)->create();
     }
 }

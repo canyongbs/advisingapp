@@ -890,6 +890,61 @@ namespace AdvisingApp\Assistant\Models{
  class IdeHelperAssistantChatMessageLog {}
 }
 
+namespace AdvisingApp\Assistant\Models{
+/**
+ * AdvisingApp\Assistant\Models\Prompt
+ *
+ * @property string $id
+ * @property string $title
+ * @property string|null $description
+ * @property string $prompt
+ * @property string $type_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Assistant\Models\PromptType $type
+ * @method static \AdvisingApp\Assistant\Database\Factories\PromptFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt wherePrompt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Prompt whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperPrompt {}
+}
+
+namespace AdvisingApp\Assistant\Models{
+/**
+ * AdvisingApp\Assistant\Models\PromptType
+ *
+ * @property string $id
+ * @property string $title
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Assistant\Models\Prompt> $prompts
+ * @property-read int|null $prompts_count
+ * @method static \AdvisingApp\Assistant\Database\Factories\PromptTypeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PromptType whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperPromptType {}
+}
+
 namespace AdvisingApp\Audit\Models{
 /**
  * AdvisingApp\Audit\Models\Audit

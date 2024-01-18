@@ -34,33 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+namespace AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\Pages;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use Filament\Actions\EditAction;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource;
 
-class ConsentAgreementResource extends Resource
+class ViewPromptType extends ViewRecord
 {
-    protected static ?string $model = ConsentAgreement::class;
+    protected static string $resource = PromptTypeResource::class;
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
-
-    protected static ?string $navigationLabel = 'User Agreement';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
-    public static function getRelations(): array
+    public function infolist(Infolist $infolist): Infolist
     {
-        return [
-        ];
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextEntry::make('title')
+                            ->columnSpanFull(),
+                        TextEntry::make('description')
+                            ->columnSpanFull(),
+                    ]),
+            ]);
     }
 
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListConsentAgreements::route('/'),
+            EditAction::make(),
         ];
     }
 }

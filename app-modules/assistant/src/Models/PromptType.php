@@ -34,31 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Assistant\Models;
 
-use App\Models\User;
-use Filament\Pages\Page;
-use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class PromptLibrary extends Page
+/**
+ * @mixin IdeHelperPromptType
+ */
+class PromptType extends BaseModel
 {
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
+    protected $fillable = [
+        'title',
+        'description',
+    ];
 
-    protected static string $view = 'filament.pages.coming-soon';
-
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
-
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
+    public function prompts(): HasMany
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
+        return $this->hasMany(Prompt::class, 'type_id');
     }
 }

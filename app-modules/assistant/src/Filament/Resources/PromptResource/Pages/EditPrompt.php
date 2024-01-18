@@ -34,63 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages;
 
-use App\Models\User;
 use Filament\Forms\Form;
-use Filament\Pages\SettingsPage;
+use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\IntegrationAI\Settings\AISettings;
+use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource;
 
-class ManageAiSettings extends SettingsPage
+class EditPrompt extends EditRecord
 {
-    protected static string $settings = AISettings::class;
-
-    protected static ?string $title = 'Manage AI Settings';
-
-    protected static ?string $cluster = ArtificialIntelligence::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can(['assistant.access_ai_settings']);
-    }
+    protected static string $resource = PromptResource::class;
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Textarea::make('prompt_system_context')
-                    ->label('Base Prompt')
-                    ->required()
-                    ->string()
-                    ->rows(12)
-                    ->columnSpan('full'),
-                TextInput::make('max_tokens')
-                    ->label('Max Tokens')
-                    ->required()
-                    ->numeric()
-                    ->columnSpan('1/2'),
-                TextInput::make('temperature')
-                    ->label('Temperature')
-                    ->required()
-                    ->numeric()
-                    ->inputMode('decimal')
-                    ->step(0.1)
-                    ->minValue(0.0)
-                    ->maxValue(2.0)
-                    ->columnSpan('1/2'),
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('title')
+                            ->unique(ignoreRecord: true)
+                            ->required()
+                            ->string()
+                            ->maxLength(255),
+                        Select::make('type_id')
+                            ->relationship('type', 'title')
+                            ->preload()
+                            ->searchable()
+                            ->required(),
+                        Textarea::make('description')
+                            ->string()
+                            ->columnSpanFull(),
+                        Textarea::make('prompt')
+                            ->required()
+                            ->string()
+                            ->columnSpanFull(),
+                    ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
     }
 }

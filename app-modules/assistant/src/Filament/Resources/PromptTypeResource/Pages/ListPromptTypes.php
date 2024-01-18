@@ -34,33 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+namespace AdvisingApp\Assistant\Filament\Resources\PromptTypeResource\Pages;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use Filament\Tables\Table;
+use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use AdvisingApp\Assistant\Filament\Resources\PromptTypeResource;
 
-class ConsentAgreementResource extends Resource
+class ListPromptTypes extends ListRecords
 {
-    protected static ?string $model = ConsentAgreement::class;
+    protected static string $resource = PromptTypeResource::class;
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
-
-    protected static ?string $navigationLabel = 'User Agreement';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
-    public static function getRelations(): array
+    public function table(Table $table): Table
     {
-        return [
-        ];
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('title')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('description')
+                    ->limit(50)
+                    ->searchable(),
+                TextColumn::make('prompts_count')
+                    ->label('# of Prompts')
+                    ->counts('prompts')
+                    ->sortable(),
+            ])
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
     }
 
-    public static function getPages(): array
+    protected function getHeaderActions(): array
     {
         return [
-            'index' => ListConsentAgreements::route('/'),
+            CreateAction::make(),
         ];
     }
 }

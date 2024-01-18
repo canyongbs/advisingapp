@@ -34,33 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+namespace AdvisingApp\Assistant\Models;
 
-use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ConsentAgreementResource extends Resource
+/**
+ * @mixin IdeHelperPrompt
+ */
+class Prompt extends BaseModel
 {
-    protected static ?string $model = ConsentAgreement::class;
+    protected $fillable = [
+        'title',
+        'description',
+        'prompt',
+        'type_id',
+    ];
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
-
-    protected static ?string $navigationLabel = 'User Agreement';
-
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-
-    public static function getRelations(): array
+    public function type(): BelongsTo
     {
-        return [
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListConsentAgreements::route('/'),
-        ];
+        return $this->belongsTo(PromptType::class);
     }
 }

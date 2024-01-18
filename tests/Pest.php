@@ -45,6 +45,12 @@
 |
 */
 
+use App\Models\User;
+use Illuminate\Support\Collection;
+use AdvisingApp\Authorization\Models\Role;
+use AdvisingApp\Authorization\Models\RoleGroup;
+use AdvisingApp\Authorization\Enums\LicenseType;
+
 uses(Tests\TestCase::class)->in('../tests', '../app-modules/*/tests');
 
 /*
@@ -73,7 +79,31 @@ uses(Tests\TestCase::class)->in('../tests', '../app-modules/*/tests');
 |
 */
 
-function something()
+/**
+ * @var array<string> | string | null $permissions
+ * @var array<LicenseType> | LicenseType | null $licenses
+ */
+function user(LicenseType | array | null $licenses = null, array | null | string $roles = null, string $guard = 'web'): User
 {
-    // ..
+    $user = User::factory()->create();
+
+    collect($roles)
+        ->whenNotEmpty(function (Collection $collection) use ($guard, $user) {
+            $roleGroup = RoleGroup::factory()->create();
+
+            $roleGroup->users()->attach($user);
+
+            $roles = Role::query()
+                ->whereIn('name', $collection)
+                ->where('guard_name', $guard)
+                ->get();
+
+            $roleGroup->roles()->sync($roles);
+        });
+
+    collect($licenses)
+        ->each(fn (LicenseType $licenseType) => $user->grantLicense($licenseType))
+        ->whenNotEmpty(fn () => $user->refresh());
+
+    return $user;
 }

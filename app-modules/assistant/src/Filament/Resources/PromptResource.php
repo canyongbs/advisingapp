@@ -34,33 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Consent\Filament\Resources;
+namespace AdvisingApp\Assistant\Filament\Resources;
 
 use Filament\Resources\Resource;
-use AdvisingApp\Consent\Models\ConsentAgreement;
-use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
+use AdvisingApp\Assistant\Models\Prompt;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\EditPrompt;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\ViewPrompt;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\ListPrompts;
+use AdvisingApp\Assistant\Filament\Resources\PromptResource\Pages\CreatePrompt;
 
-class ConsentAgreementResource extends Resource
+class PromptResource extends Resource
 {
-    protected static ?string $model = ConsentAgreement::class;
+    protected static ?string $model = Prompt::class;
 
-    protected static ?string $cluster = ArtificialIntelligence::class;
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
-    protected static ?string $navigationLabel = 'User Agreement';
+    protected static ?string $navigationGroup = 'Artificial Intelligence';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static ?string $navigationLabel = 'Prompt Library';
 
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
+    protected static ?int $navigationSort = 10;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListConsentAgreements::route('/'),
+            'index' => ListPrompts::route('/'),
+            'create' => CreatePrompt::route('/create'),
+            'view' => ViewPrompt::route('/{record}'),
+            'edit' => EditPrompt::route('/{record}/edit'),
         ];
     }
 }
