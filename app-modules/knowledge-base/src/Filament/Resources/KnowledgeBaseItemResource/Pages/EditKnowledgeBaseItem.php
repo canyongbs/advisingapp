@@ -36,17 +36,15 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
-use Filament\Actions;
 use Filament\Forms\Form;
-use Filament\Forms\Components\Radio;
+use Filament\Actions\EditAction;
 use App\Filament\Fields\TiptapEditor;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use AdvisingApp\Division\Models\Division;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
+use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 class EditKnowledgeBaseItem extends EditRecord
@@ -57,54 +55,38 @@ class EditKnowledgeBaseItem extends EditRecord
     {
         return $form
             ->schema([
-                TextInput::make('question')
-                    ->label('Question/Issue/Feature')
-                    ->translateLabel()
-                    ->required()
-                    ->string(),
-                Select::make('quality_id')
-                    ->label('Quality')
-                    ->translateLabel()
-                    ->relationship('quality', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->exists((new KnowledgeBaseQuality())->getTable(), (new KnowledgeBaseQuality())->getKeyName()),
-                Select::make('status_id')
-                    ->label('Status')
-                    ->relationship('status', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->exists((new KnowledgeBaseStatus())->getTable(), (new KnowledgeBaseStatus())->getKeyName()),
-                Select::make('category_id')
-                    ->label('Category')
-                    ->translateLabel()
-                    ->relationship('category', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->exists((new KnowledgeBaseCategory())->getTable(), (new KnowledgeBaseCategory())->getKeyName()),
-                Radio::make('public')
-                    ->label('Public')
-                    ->translateLabel()
-                    ->boolean()
-                    ->default(false)
-                    ->rules(['boolean']),
-                Select::make('division')
-                    ->label('Division')
-                    ->translateLabel()
-                    ->relationship('division', 'name')
-                    ->searchable(['name', 'code'])
-                    ->preload()
-                    ->exists((new Division())->getTable(), (new Division())->getKeyName()),
-                TiptapEditor::make('solution')
-                    ->label('Solution')
-                    ->translateLabel()
+                Section::make()
+                    ->schema([
+                        TextInput::make('title')
+                            ->label('Article Title')
+                            ->required()
+                            ->string()
+                            ->suffixAction(
+                                Action::make('saveArticleTitle')
+                                    ->icon('heroicon-o-check')
+                                    ->action(function (Model $record, $state) {
+                                        if ($record->title === $state) {
+                                            return;
+                                        }
+
+                                        $record->update([
+                                            'title' => $state,
+                                        ]);
+
+                                        if ($record->wasChanged('title')) {
+                                            Notification::make()
+                                                ->title("Title successfully updated to '{$record->title}'")
+                                                ->success()
+                                                ->duration(3000)
+                                                ->send();
+                                        }
+                                    }),
+                            ),
+                    ]),
+                TiptapEditor::make('article_details')
+                    ->label('Article Details')
                     ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;']),
-                TiptapEditor::make('notes')
-                    ->label('Notes')
-                    ->translateLabel()
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;']),
+                    ->extraInputAttributes(['style' => 'min-height: 32rem;']),
             ]);
     }
 
@@ -118,8 +100,11 @@ class EditKnowledgeBaseItem extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            EditAction::make()
+                ->label('Edit Article Metadata')
+                ->record($this->record)
+                ->form(resolve(EditKnowledgeBaseItemMetadata::class)->form())
+                ->successNotificationTitle('Article metadata successfully updated'),
         ];
     }
 }

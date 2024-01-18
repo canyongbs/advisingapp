@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources;
 
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -61,11 +62,11 @@ class KnowledgeBaseItemResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $recordTitleAttribute = 'question';
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['question', 'solution'];
+        return ['title', 'article_details'];
     }
 
     public static function getGlobalSearchEloquentQuery(): Builder
@@ -89,11 +90,15 @@ class KnowledgeBaseItemResource extends Resource
         return static::getUrl('view', ['record' => $record]);
     }
 
+    public static function form(Form $form): Form
+    {
+        return resolve(CreateKnowledgeBaseItem::class)->form($form);
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => ListKnowledgeBaseItems::route('/'),
-            'create' => CreateKnowledgeBaseItem::route('/create'),
             'view' => ViewKnowledgeBaseItem::route('/{record}'),
             'edit' => EditKnowledgeBaseItem::route('/{record}/edit'),
         ];

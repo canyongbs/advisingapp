@@ -42,6 +42,7 @@ use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -60,8 +61,8 @@ class ListKnowledgeBaseItems extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('question')
-                    ->label('Question/Issue/Feature')
+                TextColumn::make('title')
+                    ->label('Title')
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
@@ -106,13 +107,17 @@ class ListKnowledgeBaseItems extends ListRecords
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('updated_at', 'desc');
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->label('Create Knowledge Base Article')
+                ->createAnother('false')
+                ->successRedirectUrl(fn (Model $record): string => KnowledgeBaseItemResource::getUrl('edit', ['record' => $record])),
         ];
     }
 }
