@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Providers;
 
 use Filament\Panel;
+use App\Models\Tenant;
 use Livewire\Livewire;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\MeetingCenter\Models\Event;
@@ -80,9 +81,11 @@ class MeetingCenterServiceProvider extends ServiceProvider
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
-            $schedule->job(SyncCalendars::class)
-                ->everyMinute()
-                ->withoutOverlapping();
+            Tenant::all()->eachCurrent(function (Tenant $tenant) use ($schedule) {
+                $schedule->job(SyncCalendars::class)
+                    ->everyMinute()
+                    ->withoutOverlapping();
+            });
         });
 
         $this->registerRolesAndPermissions();

@@ -36,17 +36,15 @@
 
 namespace App\Console;
 
+use App\Models\Tenant;
 use AdvisingApp\Audit\Models\Audit;
+use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Database\Console\PruneCommand;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Engagement\Models\EngagementFile;
-use Spatie\Health\Commands\RunHealthChecksCommand;
 use App\Console\Commands\RefreshAdmMaterializedView;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
-use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
-use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -56,65 +54,139 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        /** @var TenantCollection $tenants */
+        $tenants = Tenant::all();
+
         if (config('database.adm_materialized_views_enabled')) {
-            $this->refreshAdmMaterializedViews($schedule);
+            $this->refreshAdmMaterializedViews($schedule, $tenants);
         }
 
-        $schedule->command('cache:prune-stale-tags')->hourly();
+        $tenants->each(function (Tenant $tenant) use ($schedule) {
+            $schedule->command(
+                command: 'tenants:artisan',
+                parameters: [
+                    'artisanCommand' => 'cache:prune-stale-tags',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->hourly()
+                ->onOneServer()
+                ->runInBackground();
 
-        $schedule->command(RunHealthChecksCommand::class)->everyMinute();
+            $schedule->command(
+                command: 'tenants:artisan',
+                parameters: [
+                    'artisanCommand' => 'health:check',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->everyMinute()
+                ->onOneServer()
+                ->runInBackground();
 
-        $schedule->command(DispatchQueueCheckJobsCommand::class)->everyMinute();
+            $schedule->command(
+                command: 'tenants:artisan',
+                parameters: [
+                    'artisanCommand' => 'health:queue-check-heartbeat',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->everyMinute()
+                ->onOneServer()
+                ->runInBackground();
 
-        collect([
-            Audit::class,
-            AssistantChatMessageLog::class,
-            EngagementFile::class,
-            FailedImportRow::class,
-            FormAuthentication::class,
-        ])
-            ->each(
-                fn ($model) => $schedule->command(PruneCommand::class, [
-                    '--model' => [$model],
-                ])
-                    ->daily()
-                    ->onOneServer()
-                    ->runInBackground()
-            );
+            collect([
+                Audit::class,
+                AssistantChatMessageLog::class,
+                EngagementFile::class,
+                FailedImportRow::class,
+                FormAuthentication::class,
+            ])
+                ->each(
+                    fn ($model) => $schedule->command('tenants:artisan', [
+                        'artisanCommand' => "model:prune --model={$model}",
+                        '--tenant' => $tenant->id,
+                    ])
+                        ->daily()
+                        ->onOneServer()
+                        ->runInBackground()
+                );
 
-        $schedule->command('meeting-center:refresh-calendar-refresh-tokens')
-            ->daily()
-            ->onOneServer();
+            $schedule->command(
+                command: 'tenants:artisan',
+                parameters: [
+                    'artisanCommand' => 'meeting-center:refresh-calendar-refresh-tokens',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->daily()
+                ->onOneServer()
+                ->runInBackground();
 
-        // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
-        $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+            $schedule->command(
+                command: 'tenants:artisan',
+                parameters: [
+                    'artisanCommand' => 'health:schedule-check-heartbeat',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->everyMinute()
+                ->onOneServer()
+                ->runInBackground();
+        });
     }
 
-    protected function refreshAdmMaterializedViews(Schedule $schedule): void
+    protected function refreshAdmMaterializedViews(Schedule $schedule, TenantCollection $tenants): void
     {
-        $schedule->command(RefreshAdmMaterializedView::class, ['students'])
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
+        $tenants->each(function (Tenant $tenant) use ($schedule) {
+            $schedule->command(
+                command: RefreshAdmMaterializedView::class,
+                parameters: [
+                    'remoteTable' => 'students',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->everyMinute()
+                ->onOneServer()
+                ->withoutOverlapping()
+                ->runInBackground();
 
-        $schedule->command(RefreshAdmMaterializedView::class, ['enrollments'])
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
+            $schedule->command(
+                command: RefreshAdmMaterializedView::class,
+                parameters: [
+                    'remoteTable' => 'enrollments',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->everyMinute()
+                ->onOneServer()
+                ->withoutOverlapping()
+                ->runInBackground();
 
-        $schedule->command(RefreshAdmMaterializedView::class, ['performance'])
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
+            $schedule->command(
+                command: RefreshAdmMaterializedView::class,
+                parameters: [
+                    'remoteTable' => 'performance',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->everyMinute()
+                ->onOneServer()
+                ->withoutOverlapping()
+                ->runInBackground();
 
-        $schedule->command(RefreshAdmMaterializedView::class, ['programs'])
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
+            $schedule->command(
+                command: RefreshAdmMaterializedView::class,
+                parameters: [
+                    'remoteTable' => 'programs',
+                    '--tenant' => $tenant->id,
+                ]
+            )
+                ->everyMinute()
+                ->onOneServer()
+                ->withoutOverlapping()
+                ->runInBackground();
+        });
     }
 
     protected function pruning(Schedule $schedule) {}
