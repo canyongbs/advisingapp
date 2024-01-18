@@ -10,9 +10,11 @@ use Illuminate\Events\CallQueuedListener;
 use App\Multitenancy\Tasks\SwitchMailTask;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Spatie\Multitenancy\Tasks\PrefixCacheTask;
+use App\Multitenancy\Tasks\SwitchS3FilesystemTask;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
 use App\Multitenancy\Tasks\SwitchTenantDatabasesTask;
 use Illuminate\Notifications\SendQueuedNotifications;
+use App\Multitenancy\Tasks\SwitchS3PublicFilesystemTask;
 use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
 use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
 use Spatie\Multitenancy\Actions\ForgetCurrentTenantAction;
@@ -47,6 +49,8 @@ return [
         SwitchAppUrl::class,
         SwitchAppName::class,
         SwitchMailTask::class,
+        SwitchS3FilesystemTask::class,
+        SwitchS3PublicFilesystemTask::class,
         //\Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
     ],
 
