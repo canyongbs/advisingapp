@@ -21,7 +21,7 @@
         <server name="AUDIT_QUEUE_CONNECTION" value="sync"/>
         <server name="SESSION_DRIVER" value="array"/>
         <server name="TELESCOPE_ENABLED" value="false"/>
-        <env name="DB_DATABASE" value="testing"/>
+        <env name="DB_DATABASE" value="testing_landlord"/>
         <env name="SIS_DB_DATABASE" value="testing"/>
         <env name="AZURE_OPEN_AI_ENABLE_TEST_MODE" value="true"/>
         <env name="SCOUT_DRIVER" value="database"/>

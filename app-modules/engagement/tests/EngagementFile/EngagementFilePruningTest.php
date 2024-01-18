@@ -69,10 +69,12 @@ it('correctly prunes EngagementFiles based on retention_date', function () {
 it('is scheduled to prune EngagementFiles daily during scheduler run', function () {
     $schedule = app()->make(Schedule::class);
 
+    ray($schedule->events());
+
     $events = collect($schedule->events())->filter(function (Illuminate\Console\Scheduling\Event $event) {
         $engagementFileClass = EngagementFile::class;
 
-        return str_contains($event->command, "model:prune --model='{$engagementFileClass}'")
+        return str_contains($event->command, "model:prune --model={$engagementFileClass}")
             && $event->expression === '0 0 * * *';
     });
 
