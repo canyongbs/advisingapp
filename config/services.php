@@ -64,7 +64,6 @@ return [
         'region' => env('AWS_SES_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    // TODO: Find a way to move this setting to the Auth Module
     'azure' => [
         'client_id' => env('AZURE_CLIENT_ID'),
         'client_secret' => env('AZURE_CLIENT_SECRET'),

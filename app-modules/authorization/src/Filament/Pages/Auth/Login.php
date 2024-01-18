@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
 use Filament\Actions\Action;
 use Filament\Pages\Auth\Login as FilamentLogin;
+use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 
 class Login extends FilamentLogin
 {
@@ -47,7 +48,9 @@ class Login extends FilamentLogin
     {
         $ssoActions = [];
 
-        if (! empty(config('services.azure.client_id'))) {
+        $azureSsoSettings = app(AzureSsoSettings::class);
+
+        if ($azureSsoSettings->is_enabled && ! empty($azureSsoSettings->client_id)) {
             $ssoActions[] = Action::make('azure_sso')
                 ->label(__('Login with Azure SSO'))
                 ->url(route('socialite.redirect', ['provider' => 'azure']))

@@ -34,10 +34,34 @@
 </COPYRIGHT>
 */
 
-return [
-    'impersonate',
-    'view_product_health_dashboard',
-    'view_dashboard',
-    'view_api_documentation',
-    'view_azure_sso_settings',
-];
+namespace AdvisingApp\Authorization\Settings;
+
+use Spatie\LaravelSettings\Settings;
+
+class AzureSsoSettings extends Settings
+{
+    public bool $is_enabled;
+
+    public ?string $client_id;
+
+    public ?string $client_secret;
+
+    public ?string $redirect;
+
+    public ?string $tenant_id;
+
+    public static function group(): string
+    {
+        return 'azure_sso';
+    }
+
+    public static function encrypted(): array
+    {
+        return [
+            'client_id',
+            'client_secret',
+            'redirect',
+            'tenant_id',
+        ];
+    }
+}

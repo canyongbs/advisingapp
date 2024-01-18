@@ -41,6 +41,7 @@ use Mockery\MockInterface;
 use SocialiteProviders\Manager\Config;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Contracts\Provider;
+use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 
 enum SocialiteProvider: string
 {
@@ -63,12 +64,14 @@ enum SocialiteProvider: string
 
     public function config(): Config
     {
+        $azureSsoSettings = app(AzureSsoSettings::class);
+
         return match ($this->value) {
             'azure' => new Config(
-                config('services.azure.client_id'),
-                config('services.azure.client_secret'),
-                config('services.azure.redirect'),
-                ['tenant' => config('services.azure.tenant_id', 'common')]
+                $azureSsoSettings->client_id,
+                $azureSsoSettings->client_secret,
+                $azureSsoSettings->redirect,
+                ['tenant' => $azureSsoSettings->tenant_id ?? 'common']
             ),
             'azure_calendar' => new Config(
                 key: config('services.azure_calendar.client_id'),
