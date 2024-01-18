@@ -38,17 +38,14 @@ namespace AdvisingApp\MeetingCenter\Console\Commands;
 
 use Illuminate\Console\Command;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class DeleteEvent extends Command
 {
-    /**
-     * @var string
-     */
-    protected $signature = 'meeting-center:delete-event';
+    use TenantAware;
 
-    /**
-     * @var string
-     */
+    protected $signature = 'meeting-center:delete-event {--tenant=*}';
+
     protected $description = 'Delete a calendar event for testing.';
 
     public function handle(): int

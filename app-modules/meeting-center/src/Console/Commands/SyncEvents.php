@@ -38,18 +38,15 @@ namespace AdvisingApp\MeetingCenter\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 
 class SyncEvents extends Command
 {
-    /**
-     * @var string
-     */
-    protected $signature = 'meeting-center:sync-events';
+    use TenantAware;
 
-    /**
-     * @var string
-     */
+    protected $signature = 'meeting-center:sync-events {--tenant=*}';
+
     protected $description = 'Sync calendar events for testing.';
 
     public function handle(): int

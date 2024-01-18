@@ -46,6 +46,7 @@ use App\Console\Commands\RefreshAdmMaterializedView;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 
 class Kernel extends ConsoleKernel
 {
@@ -91,7 +92,12 @@ class Kernel extends ConsoleKernel
                         ->runInBackground()
                 );
 
-            $schedule->command("tenants:artisan \"meeting-center:refresh-calendar-refresh-tokens\" --tenant={$tenant->id}")
+            $schedule->command(
+                command: RefreshCalendarRefreshTokens::class,
+                parameters: [
+                    "--tenant={$tenant->id}",
+                ]
+            )
                 ->daily()
                 ->onOneServer()
                 ->runInBackground();

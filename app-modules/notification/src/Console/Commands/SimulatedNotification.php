@@ -39,10 +39,13 @@ namespace AdvisingApp\Notification\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Filament\Notifications\Notification;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class SimulatedNotification extends Command
 {
-    protected $signature = 'notifications:simulate {--type=info}';
+    use TenantAware;
+
+    protected $signature = 'notifications:simulate {--type=info} {--tenant=*}';
 
     protected $description = 'This is a temporary command to showcase the notification system.';
 
