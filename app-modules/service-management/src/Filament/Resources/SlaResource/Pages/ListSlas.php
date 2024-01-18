@@ -56,8 +56,6 @@ class ListSlas extends ListRecords
                 TextColumn::make('name')
                     ->searchable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make(),
             ])

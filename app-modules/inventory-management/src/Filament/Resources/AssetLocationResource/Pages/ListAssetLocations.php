@@ -58,8 +58,6 @@ class ListAssetLocations extends ListRecords
                     ->searchable()
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),

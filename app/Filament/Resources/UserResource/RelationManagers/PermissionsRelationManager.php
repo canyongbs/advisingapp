@@ -70,8 +70,6 @@ class PermissionsRelationManager extends RelationManager
                 TextColumn::make('name'),
                 TextColumn::make('guard_name'),
             ])
-            ->filters([
-            ])
             ->headerActions([
             ])
             ->actions([

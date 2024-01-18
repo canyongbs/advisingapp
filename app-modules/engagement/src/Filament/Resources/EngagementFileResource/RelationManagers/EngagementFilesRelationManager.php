@@ -75,8 +75,6 @@ class EngagementFilesRelationManager extends RelationManager
                     ->collection('file')
                     ->visibility('private'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 CreateAction::make(),
             ])

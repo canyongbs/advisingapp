@@ -65,8 +65,6 @@ class ListKnowledgeBaseQualities extends ListRecords
                     ->counts('knowledgeBaseItems')
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

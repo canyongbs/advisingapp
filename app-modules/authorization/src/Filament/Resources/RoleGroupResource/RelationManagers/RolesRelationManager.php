@@ -76,8 +76,6 @@ class RolesRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 AttachAction::make()
                     ->recordSelectOptionsQuery(function (Builder $query) {

@@ -92,8 +92,6 @@ class ManageProspectApplicationSubmissions extends ManageRelatedRecords
                 TextColumn::make('created_at')
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make()
                     ->modalHeading(fn (ApplicationSubmission $record) => "Submission Details: {$record->created_at}")

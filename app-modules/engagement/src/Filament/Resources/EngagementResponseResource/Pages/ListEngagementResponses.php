@@ -55,8 +55,6 @@ class ListEngagementResponses extends ListRecords
                 TextColumn::make('content')
                     ->translateLabel(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
             ])

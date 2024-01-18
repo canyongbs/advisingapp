@@ -81,8 +81,6 @@ class CampaignActionsRelationManager extends RelationManager
                 TextColumn::make('execute_at')
                     ->dateTime(timezone: app(CampaignSettings::class)->getActionExecutionTimezone()),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 CreateAction::make()
                     ->form([
