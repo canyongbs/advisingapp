@@ -34,7 +34,28 @@
 </COPYRIGHT>
 */
 
-return [
-    'view_azure_calendar_settings',
-    'view_google_calendar_settings',
-];
+namespace AdvisingApp\MeetingCenter\Settings;
+
+use Spatie\LaravelSettings\Settings;
+
+class GoogleCalendarSettings extends Settings
+{
+    public bool $is_enabled;
+
+    public ?string $client_id;
+
+    public ?string $client_secret;
+
+    public static function group(): string
+    {
+        return 'google_calendar';
+    }
+
+    public static function encrypted(): array
+    {
+        return [
+            'client_id',
+            'client_secret',
+        ];
+    }
+}
