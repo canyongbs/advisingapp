@@ -71,8 +71,6 @@ class RolesRelationManager extends RelationManager
                 TextColumn::make('guard_name'),
                 TextColumn::make('pivot.via')->label('Via'),
             ])
-            ->filters([
-            ])
             ->headerActions([
             ])
             ->actions([

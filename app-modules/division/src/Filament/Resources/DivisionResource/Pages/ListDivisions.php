@@ -73,8 +73,6 @@ class ListDivisions extends ListRecords
                 TextColumn::make('notificationSetting.setting.name')
                     ->label('Notification Setting'),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

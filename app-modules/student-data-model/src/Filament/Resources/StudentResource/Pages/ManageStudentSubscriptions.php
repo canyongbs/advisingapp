@@ -80,8 +80,6 @@ class ManageStudentSubscriptions extends ManageRelatedRecords
                 TextColumn::make('pivot.created_at')
                     ->label('Subscribed At'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 AttachAction::make()
                     ->label('Create Subscription')

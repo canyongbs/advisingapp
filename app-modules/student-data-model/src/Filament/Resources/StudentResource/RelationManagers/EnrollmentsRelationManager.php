@@ -86,8 +86,6 @@ class EnrollmentsRelationManager extends RelationManager
                 TextColumn::make('unt_earned')
                     ->label('Earned'),
             ])
-            ->filters([
-            ])
             ->headerActions([])
             ->actions([
                 ViewAction::make(),

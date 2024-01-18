@@ -61,8 +61,6 @@ class ListApplications extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->filters([
-            ])
             ->actions([
                 Action::make('Respond')
                     ->url(fn (Application $application) => route('applications.show', ['application' => $application]))

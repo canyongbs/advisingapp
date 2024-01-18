@@ -57,6 +57,7 @@ class ServiceRequestPriority extends BaseModel implements Auditable
     protected $fillable = [
         'name',
         'order',
+        'sla_id',
     ];
 
     public function serviceRequests(): HasMany
@@ -67,6 +68,11 @@ class ServiceRequestPriority extends BaseModel implements Auditable
     public function type(): BelongsTo
     {
         return $this->belongsTo(ServiceRequestType::class, 'type_id');
+    }
+
+    public function sla(): BelongsTo
+    {
+        return $this->belongsTo(Sla::class);
     }
 
     protected function serializeDate(DateTimeInterface $date): string
