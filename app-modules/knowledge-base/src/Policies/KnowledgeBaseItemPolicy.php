@@ -39,13 +39,29 @@ namespace AdvisingApp\KnowledgeBase\Policies;
 use App\Enums\Feature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
-use App\Concerns\FeatureAccessEnforcedPolicyBefore;
+use App\Concerns\PerformsFeatureChecks;
+use App\Concerns\PerformsLicenseChecks;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use App\Policies\Contracts\FeatureAccessEnforcedPolicy;
+use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
-class KnowledgeBaseItemPolicy implements FeatureAccessEnforcedPolicy
+class KnowledgeBaseItemPolicy implements PerformsChecksBeforeAuthorization
 {
-    use FeatureAccessEnforcedPolicyBefore;
+    use PerformsLicenseChecks;
+    use PerformsFeatureChecks;
+
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! is_null($response = $this->hasAnyLicense($authenticatable, [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]))) {
+            return $response;
+        }
+
+        if (! is_null($response = $this->hasFeatures())) {
+            return $response;
+        }
+
+        return null;
+    }
 
     public function viewAny(Authenticatable $authenticatable): Response
     {

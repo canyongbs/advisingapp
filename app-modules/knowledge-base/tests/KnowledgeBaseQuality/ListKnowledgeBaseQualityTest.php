@@ -39,6 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
 
 // TODO: Write ListKnowledgeBaseQuality tests
@@ -49,7 +50,7 @@ use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
 // Permission Tests
 
 test('ListKnowledgeBaseQuality is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -71,7 +72,7 @@ test('ListKnowledgeBaseQuality is gated with proper feature access control', fun
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_quality.view-any');
 
@@ -83,6 +84,36 @@ test('ListKnowledgeBaseQuality is gated with proper feature access control', fun
     $settings->data->addons->knowledgeManagement = true;
 
     $settings->save();
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseQualityResource::getUrl('index')
+        )->assertSuccessful();
+});
+
+test('ListKnowledgeBaseQuality is gated with proper license access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    // When the feature is enabled
+    $settings->data->addons->knowledgeManagement = true;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    // And the authenticatable has the correct permissions
+    // But they do not have the appropriate license
+    $user->givePermissionTo('knowledge_base_quality.view-any');
+
+    // They should not be able to access the resource
+    actingAs($user)
+        ->get(
+            KnowledgeBaseQualityResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->grantLicense(LicenseType::RecruitmentCrm);
+
+    $user->refresh();
 
     actingAs($user)
         ->get(

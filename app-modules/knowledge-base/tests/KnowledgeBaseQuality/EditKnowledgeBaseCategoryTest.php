@@ -41,6 +41,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseQualityResource;
 use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseQuality\RequestFactories\EditKnowledgeBaseQualityRequestFactory;
@@ -53,7 +54,7 @@ use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseQuality\RequestFactories\EditKn
 // Permission Tests
 
 test('EditKnowledgeBaseQuality is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $knowledgeBaseQuality = KnowledgeBaseQuality::factory()->create();
 
@@ -98,7 +99,7 @@ test('EditKnowledgeBaseQuality is gated with proper feature access control', fun
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_quality.view-any');
     $user->givePermissionTo('knowledge_base_quality.*.update');

@@ -39,7 +39,7 @@ return [
         'analytics_resource_source' => [
             '*',
         ],
-        'analytics_resource_classification' => [
+        'analytics_resource_category' => [
             '*',
         ],
         'analytics_resource' => [

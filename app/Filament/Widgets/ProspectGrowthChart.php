@@ -48,9 +48,26 @@ class ProspectGrowthChart extends ChartWidget
 
     protected int | string | array $columnSpan = 'full';
 
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                ],
+            ],
+        ];
+    }
+
     protected function getData(): array
     {
-        $totalCreatedPerMonth = Prospect::query()->toBase()
+        $totalCreatedPerMonth = Prospect::query()
+            ->toBase()
             ->selectRaw('date_trunc(\'month\', created_at) as month')
             ->selectRaw('count(*) as total')
             ->where('created_at', '>', now()->subYear())
@@ -76,7 +93,6 @@ class ProspectGrowthChart extends ChartWidget
             'datasets' => [
                 [
                     'data' => array_values($runningTotalPerMonth),
-                    'label' => 'Prospects',
                 ],
             ],
             'labels' => array_keys($runningTotalPerMonth),

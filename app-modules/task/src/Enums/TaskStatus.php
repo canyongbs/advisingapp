@@ -37,10 +37,11 @@
 namespace AdvisingApp\Task\Enums;
 
 use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
 use Bvtterfly\ModelStateMachine\Attributes\InitialState;
 use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
 
-enum TaskStatus: string implements HasColor
+enum TaskStatus: string implements HasColor, HasLabel
 {
     #[InitialState]
     #[AllowTransitionTo(self::InProgress)]
@@ -53,7 +54,7 @@ enum TaskStatus: string implements HasColor
 
     case Completed = 'completed';
 
-    case Cancelled = 'canceled';
+    case Cancelled = 'cancelled';
 
     public function getColor(): string
     {
@@ -65,13 +66,8 @@ enum TaskStatus: string implements HasColor
         };
     }
 
-    public function displayName(): string
+    public function getLabel(): string
     {
-        return match ($this) {
-            self::Pending => 'Pending',
-            self::InProgress => 'In Progress',
-            self::Completed => 'Completed',
-            self::Cancelled => 'Cancelled',
-        };
+        return str($this->value)->headline()->toString();
     }
 }

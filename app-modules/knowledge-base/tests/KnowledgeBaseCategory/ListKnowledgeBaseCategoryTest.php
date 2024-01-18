@@ -39,6 +39,7 @@ use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 
 // TODO: Write ListKnowledgeBaseCategory tests
@@ -49,7 +50,7 @@ use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseCategoryResource;
 // Permission Tests
 
 test('ListKnowledgeBaseCategory is gated with proper access control', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     actingAs($user)
         ->get(
@@ -71,7 +72,7 @@ test('ListKnowledgeBaseCategory is gated with proper feature access control', fu
 
     $settings->save();
 
-    $user = User::factory()->create();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $user->givePermissionTo('knowledge_base_category.view-any');
 
@@ -83,6 +84,36 @@ test('ListKnowledgeBaseCategory is gated with proper feature access control', fu
     $settings->data->addons->knowledgeManagement = true;
 
     $settings->save();
+
+    actingAs($user)
+        ->get(
+            KnowledgeBaseCategoryResource::getUrl('index')
+        )->assertSuccessful();
+});
+
+test('ListKnowledgeBaseCategory is gated with proper license access control', function () {
+    $settings = app(LicenseSettings::class);
+
+    // When the feature is enabled
+    $settings->data->addons->knowledgeManagement = true;
+
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    // And the authenticatable has the correct permissions
+    // But they do not have the appropriate license
+    $user->givePermissionTo('knowledge_base_category.view-any');
+
+    // They should not be able to access the resource
+    actingAs($user)
+        ->get(
+            KnowledgeBaseCategoryResource::getUrl('index')
+        )->assertForbidden();
+
+    $user->grantLicense(LicenseType::RecruitmentCrm);
+
+    $user->refresh();
 
     actingAs($user)
         ->get(
