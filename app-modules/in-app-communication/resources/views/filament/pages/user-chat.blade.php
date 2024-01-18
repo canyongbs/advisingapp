@@ -35,7 +35,7 @@
     use AdvisingApp\InAppCommunication\Enums\ConversationType;
     use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-
+    
     $conversationGroups = $this->getConversations()->reduce(
         function (array $carry, TwilioConversation $conversation): array {
             if ($conversation->type === ConversationType::Channel) {
@@ -43,7 +43,7 @@
             } else {
                 $carry[1][] = $conversation;
             }
-
+    
             return $carry;
         },
         [[], []],
@@ -107,14 +107,12 @@
                                                     @endif
                                                 </span>
 
-                                                <x-filament::loading-indicator
-                                                    :attributes="
-                                                        (new \Illuminate\View\ComponentAttributeBag([
-                                                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                                            'wire:target' => 'selectConversation(\'' . $conversation['sid'] . '\')',
-                                                        ]))->class(['w-5 h-5'])
-                                                    "
-                                                />
+                                                <x-filament::loading-indicator :attributes="(new \Illuminate\View\ComponentAttributeBag([
+                                                    'wire:loading.delay.' .
+                                                    config('filament.livewire_loading_delay', 'default') => '',
+                                                    'wire:target' =>
+                                                        'selectConversation(\'' . $conversation['sid'] . '\')',
+                                                ]))->class(['w-5 h-5'])" />
                                             </button>
                                         </li>
                                     @endforeach
