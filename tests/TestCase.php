@@ -105,8 +105,6 @@ abstract class TestCase extends BaseTestCase
             ...$this->migrateFreshUsing(),
         ]);
 
-        $this->artisan('app:remove-foreign-data-wrapper');
-
         $this->artisan('app:setup-foreign-data-wrapper');
 
         if (config('database.adm_materialized_views_enabled')) {
@@ -212,15 +210,6 @@ abstract class TestCase extends BaseTestCase
                 ),
             )
         );
-    }
-
-    protected function connectionsToTransact()
-    {
-        return [
-            $this->landlordDatabaseConnectionName(),
-            //$this->tenantDatabaseConnectionName(),
-            //'sis',
-        ];
     }
 
     protected function refreshTestDatabase()
