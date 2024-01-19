@@ -33,7 +33,7 @@
     <server name="TELESCOPE_ENABLED" value="false"/>
     <server name="SCOUT_QUEUE" value="false"/>
     <env name="REDIS_HOST" value="redis"/>
-    <env name="DB_CONNECTION" value="pgsql"/>
+    <env name="DB_CONNECTION" value="landlord"/>
     <env name="DB_HOST" value="postgres"/>
     <env name="DB_PORT" value="5432"/>
     <env name="DB_DATABASE" value="testing_landlord"/>
