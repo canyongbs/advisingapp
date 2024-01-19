@@ -36,12 +36,13 @@
 
 namespace App\Casts;
 
-use Exception;
 use App\Models\Tenant;
 use Illuminate\Support\Str;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Database\Eloquent\Model;
+use App\Multitenancy\Exceptions\TenantAppKeyIsNull;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use App\Multitenancy\Exceptions\UnableToResolveTenantForEncryptionKey;
 
 class TenantEncrypted implements CastsAttributes
 {
@@ -52,11 +53,11 @@ class TenantEncrypted implements CastsAttributes
             : (
                 Tenant::checkCurrent()
                     ? Tenant::current()->key
-                    : throw new Exception('Unable to resolve tenant for encryption key')
+                    : throw new UnableToResolveTenantForEncryptionKey()
             );
 
         if (is_null($appKey)) {
-            throw new Exception('Tenant key required for encryption is null');
+            throw new TenantAppKeyIsNull();
         }
 
         $encrypter = new Encrypter($this->parseKey($appKey), config('app.cipher'));
@@ -71,11 +72,11 @@ class TenantEncrypted implements CastsAttributes
             : (
                 Tenant::checkCurrent()
                 ? Tenant::current()->key
-                : throw new Exception('Unable to resolve tenant for encryption key')
+                : throw new UnableToResolveTenantForEncryptionKey()
             );
 
         if (is_null($appKey)) {
-            throw new Exception('Tenant key required for encryption is null');
+            throw new TenantAppKeyIsNull();
         }
 
         $encrypter = new Encrypter($this->parseKey($appKey), config('app.cipher'));
