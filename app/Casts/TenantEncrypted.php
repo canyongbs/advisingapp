@@ -47,7 +47,7 @@ class TenantEncrypted implements CastsAttributes
 {
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        $key = $model instanceof Tenant
+        $appKey = $model instanceof Tenant
             ? (new Encrypter($this->parseKey(app('originalAppKey')), config('app.cipher')))->decrypt($attributes['key'])
             : (
                 Tenant::checkCurrent()
@@ -55,18 +55,18 @@ class TenantEncrypted implements CastsAttributes
                     : throw new Exception('Unable to resolve tenant for encryption key')
             );
 
-        if (is_null($key)) {
+        if (is_null($appKey)) {
             throw new Exception('Tenant key required for encryption is null');
         }
 
-        $encrypter = new Encrypter($this->parseKey($key), config('app.cipher'));
+        $encrypter = new Encrypter($this->parseKey($appKey), config('app.cipher'));
 
         return $encrypter->decrypt($value);
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        $key = $model instanceof Tenant
+        $appKey = $model instanceof Tenant
             ? (new Encrypter($this->parseKey(app('originalAppKey')), config('app.cipher')))->decrypt($attributes['key'])
             : (
                 Tenant::checkCurrent()
@@ -74,11 +74,11 @@ class TenantEncrypted implements CastsAttributes
                 : throw new Exception('Unable to resolve tenant for encryption key')
             );
 
-        if (is_null($key)) {
+        if (is_null($appKey)) {
             throw new Exception('Tenant key required for encryption is null');
         }
 
-        $encrypter = new Encrypter($this->parseKey($key), config('app.cipher'));
+        $encrypter = new Encrypter($this->parseKey($appKey), config('app.cipher'));
 
         return $encrypter->encrypt($value);
     }
