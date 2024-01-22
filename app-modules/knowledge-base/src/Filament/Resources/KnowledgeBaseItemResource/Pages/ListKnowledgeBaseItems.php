@@ -40,7 +40,6 @@ use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
 use Filament\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ListRecords;
@@ -100,7 +99,6 @@ class ListKnowledgeBaseItems extends ListRecords
                 TernaryFilter::make('public'),
             ])
             ->actions([
-                ViewAction::make(),
                 EditAction::make(),
             ])
             ->bulkActions([
@@ -116,7 +114,7 @@ class ListKnowledgeBaseItems extends ListRecords
         return [
             CreateAction::make()
                 ->label('Create Knowledge Base Article')
-                ->createAnother('false')
+                ->createAnother(false)
                 ->successRedirectUrl(fn (Model $record): string => KnowledgeBaseItemResource::getUrl('edit', ['record' => $record])),
         ];
     }

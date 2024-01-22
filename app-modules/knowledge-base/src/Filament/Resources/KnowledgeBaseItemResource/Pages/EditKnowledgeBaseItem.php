@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\Actions\Action;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
@@ -86,7 +87,10 @@ class EditKnowledgeBaseItem extends EditRecord
                 TiptapEditor::make('article_details')
                     ->label('Article Details')
                     ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 32rem;']),
+                    ->extraInputAttributes([
+                        'style' => 'min-height: 32rem;',
+                        'class' => 'text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-2 dark:border-0 border-gray-200 rounded-none mx-4 my-2 px-8 py-4',
+                    ]),
             ]);
     }
 
@@ -97,11 +101,30 @@ class EditKnowledgeBaseItem extends EditRecord
         $this->fillForm();
     }
 
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Article details successfully saved';
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getSubmitFormAction()->label('Save Article Details'),
+        ];
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+            BaseAction::make('save')
+                ->action('save')
+                ->button()
+                ->color('primary')
+                ->label('Save Article Details'),
             EditAction::make()
                 ->label('Edit Article Metadata')
+                ->button()
+                ->outlined()
                 ->record($this->record)
                 ->form(resolve(EditKnowledgeBaseItemMetadata::class)->form())
                 ->successNotificationTitle('Article metadata successfully updated'),
