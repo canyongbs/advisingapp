@@ -82,10 +82,12 @@ class EngagementServiceProvider extends ServiceProvider
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             $schedule->call(function () {
                 /** @var TenantCollection $tenants */
-                $tenants = Tenant::all();
+                $tenants = Tenant::cursor();
 
-                $tenants->eachCurrent(function (Tenant $tenant) {
-                    dispatch(new DeliverEngagements());
+                $tenants->each(function (Tenant $tenant) {
+                    $tenant->execute(function () {
+                        dispatch(new DeliverEngagements());
+                    });
                 });
             })
                 ->everyMinute()
