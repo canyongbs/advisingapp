@@ -50,7 +50,7 @@ class EditKnowledgeBaseItemMetadata
     public function form(): array
     {
         return [
-            Section::make('')
+            Section::make()
                 ->schema([
                     Toggle::make('public')
                         ->label('Public')
@@ -62,7 +62,7 @@ class EditKnowledgeBaseItemMetadata
                         ->columnSpanFull()
                         ->extraInputAttributes(['style' => 'min-height: 12rem;']),
                 ]),
-            Section::make('')
+            Section::make()
                 ->schema([
                     Select::make('quality_id')
                         ->label('Quality')
