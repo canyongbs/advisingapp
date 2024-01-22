@@ -53,7 +53,6 @@ use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 class Kernel extends HttpKernel
 {
@@ -96,7 +95,6 @@ class Kernel extends HttpKernel
         'api' => [
             NeedsTenant::class,
             StartSession::class,
-            EnsureFrontendRequestsAreStateful::class,
             // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             SubstituteBindings::class,
             Middleware\AuthGates::class,
