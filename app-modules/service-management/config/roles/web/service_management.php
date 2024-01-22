@@ -54,5 +54,8 @@ return [
         'service_request_assignment' => [
             '*',
         ],
+        'sla' => [
+            '*',
+        ],
     ],
 ];

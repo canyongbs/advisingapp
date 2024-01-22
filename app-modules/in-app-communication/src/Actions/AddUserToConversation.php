@@ -51,26 +51,26 @@ class AddUserToConversation
     public function __invoke(User $user, TwilioConversation $conversation): void
     {
         throw_if(
-            $conversation->type === ConversationType::UserToUser && $conversation->participants()->count() >= 2,
+            ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
             new Exception('User to User conversations can only have 2 participants.')
         );
+
+        if ($conversation->participants()->whereKey($user)->exists()) {
+            return;
+        }
 
         $participant = $this->twilioClient
             ->conversations
             ->v1
             ->conversations($conversation->sid)
             ->participants
-            ->create(
-                [
-                    'identity' => $user->id,
-                ]
-            );
+            ->create([
+                'identity' => $user->id,
+            ]);
 
         $conversation->participants()->attach(
             $user,
-            [
-                'participant_sid' => $participant->sid,
-            ]
+            ['participant_sid' => $participant->sid]
         );
     }
 }

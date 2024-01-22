@@ -72,8 +72,6 @@ class ListServiceRequestStatuses extends ListRecords
                     ->counts('serviceRequests')
                     ->sortable(),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

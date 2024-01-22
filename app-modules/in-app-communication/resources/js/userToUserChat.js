@@ -37,6 +37,8 @@ document.addEventListener('alpine:init', () => {
 
     let avatarCache = {};
 
+    let authorCache = {};
+
     let conversationsClient = null;
 
     Alpine.data('userToUserChat', (selectedConversation) => ({
@@ -57,12 +59,28 @@ document.addEventListener('alpine:init', () => {
 
             this.message = '';
         },
+        formatDate: (date) => {
+            if (date.toDateString() === new Date().toDateString()) {
+                return `Today at ${new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            }
+
+            return `${new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric' })} at ${new Date(
+                date,
+            ).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        },
         async getAvatarUrl(userId) {
             if (avatarCache[userId]) return avatarCache[userId];
 
             avatarCache[userId] = await this.$wire.getUserAvatarUrl(userId);
 
             return avatarCache[userId];
+        },
+        async getAuthorName(userId) {
+            if (authorCache[userId]) return authorCache[userId];
+
+            authorCache[userId] = await this.$wire.getUserName(userId);
+
+            return authorCache[userId];
         },
         async initializeClient() {
             conversationsClient = new Client(await this.$wire.generateToken());
@@ -138,6 +156,8 @@ document.addEventListener('alpine:init', () => {
                 this.conversation.on('messageAdded', async (message) => {
                     this.messages.push({
                         avatar: await this.getAvatarUrl(message.author),
+                        author: await this.getAuthorName(message.author),
+                        date: message.dateCreated,
                         message: message,
                     });
 
@@ -152,6 +172,8 @@ document.addEventListener('alpine:init', () => {
                     if (index !== -1) {
                         this.messages[index] = {
                             avatar: await this.getAvatarUrl(data.message.author),
+                            author: await this.getAuthorName(data.message.author),
+                            data: data.message.dateCreated,
                             message: data.message,
                         };
                     }
@@ -194,6 +216,8 @@ document.addEventListener('alpine:init', () => {
                     messages.items.forEach(async (message) => {
                         this.messages.push({
                             avatar: await this.getAvatarUrl(message.author),
+                            author: await this.getAuthorName(message.author),
+                            date: message.dateCreated,
                             message: message,
                         });
                     });
@@ -219,6 +243,8 @@ document.addEventListener('alpine:init', () => {
                         messages.items.forEach(async (message) => {
                             this.messages.unshift({
                                 avatar: await this.getAvatarUrl(message.author),
+                                author: await this.getAuthorName(message.author),
+                                date: message.dateCreated,
                                 message: message,
                             });
                         });

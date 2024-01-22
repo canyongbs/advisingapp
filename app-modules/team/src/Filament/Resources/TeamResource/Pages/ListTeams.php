@@ -64,8 +64,6 @@ class ListTeams extends ListRecords
                 TextColumn::make('description')
                     ->limit(50),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make(),

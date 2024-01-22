@@ -34,31 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Assistant\Filament\Pages;
+namespace Tests\Helpers;
 
 use App\Models\User;
-use Filament\Pages\Page;
+
+use function Pest\Laravel\actingAs;
+
 use AdvisingApp\Authorization\Enums\LicenseType;
 
-class PromptLibrary extends Page
+function testResourceRequiresPermissionForAccess(string $resource, string $permission, string $method)
 {
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
+    test("{$resource} {$method} is gated with proper access control", function () use ($permission, $resource, $method) {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    protected static string $view = 'filament.pages.coming-soon';
+        actingAs($user)
+            ->get(
+                $resource::getUrl($method)
+            )->assertForbidden();
 
-    protected static ?string $navigationGroup = 'Artificial Intelligence';
+        $user->givePermissionTo($permission);
 
-    protected static ?int $navigationSort = 10;
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! $user->hasLicense(LicenseType::ConversationalAi)) {
-            return false;
-        }
-
-        return $user->can('assistant.access');
-    }
+        actingAs($user)
+            ->get(
+                $resource::getUrl($method)
+            )->assertSuccessful();
+    });
 }

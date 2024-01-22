@@ -39,6 +39,7 @@ namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeRes
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Filament\Columns\IdColumn;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -46,6 +47,8 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use App\Filament\Resources\RelationManagers\RelationManager;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource;
 
 class ServiceRequestPrioritiesRelationManager extends RelationManager
 {
@@ -67,6 +70,12 @@ class ServiceRequestPrioritiesRelationManager extends RelationManager
                     ->integer()
                     ->numeric()
                     ->disabledOn('edit'),
+                Select::make('sla_id')
+                    ->label('SLA')
+                    ->relationship('sla', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm(fn (Form $form) => SlaResource::form($form)),
             ]);
     }
 
@@ -82,6 +91,10 @@ class ServiceRequestPrioritiesRelationManager extends RelationManager
                 TextColumn::make('order')
                     ->label('Priority Order')
                     ->sortable(),
+                TextColumn::make('sla.name')
+                    ->label('SLA')
+                    ->url(fn (ServiceRequestPriority $record): ?string => $record->sla ? SlaResource::getUrl('edit', ['record' => $record->sla]) : null)
+                    ->searchable(),
                 TextColumn::make('service_requests_count')
                     ->label('# of Service Requests')
                     ->counts('serviceRequests')

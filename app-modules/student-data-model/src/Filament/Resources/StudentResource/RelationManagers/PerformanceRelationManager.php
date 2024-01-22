@@ -102,8 +102,6 @@ class PerformanceRelationManager extends RelationManager
                 TextColumn::make('cum_gpa')
                     ->label('Cumulative GPA'),
             ])
-            ->filters([
-            ])
             ->headerActions([])
             ->actions([
                 ViewAction::make(),

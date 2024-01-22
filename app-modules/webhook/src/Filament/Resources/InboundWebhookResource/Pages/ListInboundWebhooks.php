@@ -58,8 +58,6 @@ class ListInboundWebhooks extends ListRecords
                 TextColumn::make('url'),
                 TextColumn::make('payload'),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
             ])

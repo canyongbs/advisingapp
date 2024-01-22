@@ -34,35 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace AdvisingApp\ServiceManagement\Enums;
 
-use App\Enums\Feature;
-use Filament\Pages\Page;
-use App\Models\Authenticatable;
-use Illuminate\Support\Facades\Gate;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Clusters\ServiceManagement;
-use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasLabel;
 
-class ChangeManagement extends Page
+enum SlaComplianceStatus implements HasColor, HasIcon, HasLabel
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    case Compliant;
 
-    protected static ?int $navigationSort = 30;
+    case NonCompliant;
 
-    protected static string $view = 'filament.pages.coming-soon';
-
-    protected static ?string $cluster = ServiceManagement::class;
-
-    public static function canAccess(): bool
+    public function getLabel(): ?string
     {
-        if (! Gate::check(Feature::ServiceManagement->getGateName())) {
-            return false;
-        }
+        return match ($this) {
+            self::Compliant => 'Within SLA',
+            self::NonCompliant => 'Outside of SLA',
+        };
+    }
 
-        /** @var Authenticatable $user */
-        $user = auth()->user();
+    public function getColor(): string | array | null
+    {
+        return match ($this) {
+            self::Compliant => 'success',
+            self::NonCompliant => 'danger',
+        };
+    }
 
-        return $user->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()]);
+    public function getIcon(): string | null
+    {
+        return match ($this) {
+            self::Compliant => 'heroicon-m-check-circle',
+            self::NonCompliant => 'heroicon-m-x-circle',
+        };
     }
 }

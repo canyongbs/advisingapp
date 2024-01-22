@@ -6,7 +6,7 @@ services:
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-                SPECIFIC_NODE_VERSION: 20.4.0
+                SPECIFIC_NODE_VERSION: 21.6.0
         image: sail-8.2/app
         labels:
             - dev.orbstack.domains=advisingapp.local

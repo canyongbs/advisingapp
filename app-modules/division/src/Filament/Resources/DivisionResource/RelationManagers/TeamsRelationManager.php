@@ -58,8 +58,6 @@ class TeamsRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('name'),
             ])
-            ->filters([
-            ])
             ->headerActions([
                 AssociateAction::make(),
             ])

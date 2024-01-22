@@ -34,37 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+use function Tests\Helpers\testResourceRequiresPermissionForAccess;
 
-use App\Enums\Feature;
-use Filament\Pages\Page;
-use App\Models\Authenticatable;
-use Illuminate\Support\Facades\Gate;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Filament\Clusters\ServiceManagement;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestStatusResource;
 
-class SLAs extends Page
-{
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?int $navigationSort = 40;
-
-    protected static string $view = 'filament.pages.coming-soon';
-
-    protected static ?string $title = 'SLAs';
-
-    protected static ?string $cluster = ServiceManagement::class;
-
-    public static function canAccess(): bool
-    {
-        if (! Gate::check(Feature::ServiceManagement->getGateName())) {
-            return false;
-        }
-
-        /** @var Authenticatable $user */
-        $user = auth()->user();
-
-        return $user->hasAnyLicense([Student::getLicenseType(), Prospect::getLicenseType()]);
-    }
-}
+testResourceRequiresPermissionForAccess(
+    resource: ChangeRequestStatusResource::class,
+    permission: 'change_request_status.view-any',
+    method: 'index'
+);

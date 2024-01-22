@@ -39,7 +39,7 @@ namespace AdvisingApp\Consent\Filament\Resources;
 use Filament\Resources\Resource;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use App\Filament\Clusters\ArtificialIntelligence;
-use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages;
+use AdvisingApp\Consent\Filament\Resources\ConsentAgreementResource\Pages\ListConsentAgreements;
 
 class ConsentAgreementResource extends Resource
 {
@@ -48,6 +48,8 @@ class ConsentAgreementResource extends Resource
     protected static ?string $cluster = ArtificialIntelligence::class;
 
     protected static ?string $navigationLabel = 'User Agreement';
+
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
     public static function getRelations(): array
     {
@@ -58,10 +60,7 @@ class ConsentAgreementResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListConsentAgreements::route('/'),
-            // Creating consent agreements would currently require a code change
-            // 'create' => Pages\CreateConsentAgreement::route('/create'),
-            //'edit' => Pages\EditConsentAgreement::route('/{record}/edit'),
+            'index' => ListConsentAgreements::route('/'),
         ];
     }
 }

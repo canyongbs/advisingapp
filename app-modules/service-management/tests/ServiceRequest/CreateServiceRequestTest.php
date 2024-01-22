@@ -66,7 +66,7 @@ test('A successful action on the CreateServiceRequest page', function () {
 
     $request = collect(CreateServiceRequestRequestFactory::new()->create());
 
-    livewire(ServiceRequestResource\Pages\CreateServiceRequest::class)
+    livewire(CreateServiceRequest::class)
         ->fillForm($request->toArray())
         ->fillForm([
             'respondent_id' => Prospect::factory()->create()->getKey(),
@@ -108,7 +108,7 @@ test('CreateServiceRequest requires valid data', function ($data, $errors, $setu
 
     $request = collect(CreateServiceRequestRequestFactory::new($data)->create());
 
-    livewire(ServiceRequestResource\Pages\CreateServiceRequest::class)
+    livewire(CreateServiceRequest::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -146,7 +146,7 @@ test('CreateServiceRequest is gated with proper access control', function () {
             ServiceRequestResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(ServiceRequestResource\Pages\CreateServiceRequest::class)
+    livewire(CreateServiceRequest::class)
         ->assertForbidden();
 
     $user->givePermissionTo('service_request.view-any');
@@ -159,7 +159,7 @@ test('CreateServiceRequest is gated with proper access control', function () {
 
     $request = collect(CreateServiceRequestRequestFactory::new()->create());
 
-    livewire(ServiceRequestResource\Pages\CreateServiceRequest::class)
+    livewire(CreateServiceRequest::class)
         ->fillForm($request->toArray())
         ->fillForm([
             'respondent_id' => Prospect::factory()->create()->getKey(),

@@ -59,8 +59,6 @@ class ListCampaigns extends ListRecords
                 TextColumn::make('name'),
                 TextColumn::make('caseload.name'),
             ])
-            ->filters([
-            ])
             ->actions([
                 ViewAction::make(),
                 EditAction::make()

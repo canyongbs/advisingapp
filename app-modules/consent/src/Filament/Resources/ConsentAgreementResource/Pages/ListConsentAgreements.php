@@ -84,8 +84,6 @@ class ListConsentAgreements extends ListRecords
                 TextColumn::make('type'),
                 TextColumn::make('title'),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make('edit')
                     ->modalSubmitAction(false)

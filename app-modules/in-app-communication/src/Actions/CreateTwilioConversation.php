@@ -36,11 +36,10 @@
 
 namespace AdvisingApp\InAppCommunication\Actions;
 
+use Exception;
 use Throwable;
-use App\Models\User;
 use Twilio\Rest\Client;
-use Illuminate\Support\Collection;
-use Twilio\Exceptions\TwilioException;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
@@ -51,35 +50,29 @@ class CreateTwilioConversation
     ) {}
 
     /**
-     * @param ConversationType $type
-     * @param string|null $friendlyName
-     * @param Collection|null $users
-     *
      * @throws Throwable
-     * @throws TwilioException
-     *
-     * @return TwilioConversation
      */
-    public function __invoke(ConversationType $type, ?string $friendlyName = null, ?Collection $users = null): TwilioConversation
+    public function __invoke(ConversationType $type, ?string $friendlyName = null, ?array $users = null, ?string $channelName = null, ?bool $isPrivateChannel = null): TwilioConversation
     {
         if ($type === ConversationType::UserToUser) {
             throw_if(
-                $users->count() !== 2,
-                new TwilioException('User to User conversations must have 2 participants.')
-            );
-
-            $duplicateQuery = TwilioConversation::where('type', $type->value);
-
-            $users->each(
-                fn (User $user) => $duplicateQuery->whereHas(
-                    'participants',
-                    fn ($query) => $query->where('user_id', $user->id)
-                )
+                count($users) !== 2,
+                new Exception('User to User conversations must have 2 participants.')
             );
 
             throw_if(
-                $duplicateQuery->exists(),
-                new TwilioException('User to User conversations can only have 1 conversation per set of participants.')
+                TwilioConversation::query()
+                    ->where('type', $type)
+                    ->tap(function (Builder $query) use ($users) {
+                        foreach ($users as $user) {
+                            $query->whereHas(
+                                'participants',
+                                fn (Builder $query) => $query->where('user_id', $user->id),
+                            );
+                        }
+                    })
+                    ->exists(),
+                new Exception('User to User conversations can only have 1 conversation per set of participants.')
             );
         }
 
@@ -90,15 +83,17 @@ class CreateTwilioConversation
             ]),
         ]);
 
-        $conversation = TwilioConversation::create(
-            [
-                'sid' => $twilioConversation->sid,
-                'friendly_name' => $twilioConversation->friendlyName,
-                'type' => $type,
-            ]
-        );
+        $conversation = TwilioConversation::create([
+            'sid' => $twilioConversation->sid,
+            'friendly_name' => $twilioConversation->friendlyName,
+            'type' => $type,
+            'channel_name' => $channelName,
+            'is_private_channel' => $isPrivateChannel ?? false,
+        ]);
 
-        $users?->each(fn (User $user) => app(AddUserToConversation::class)(user: $user, conversation: $conversation));
+        foreach ($users as $user) {
+            app(AddUserToConversation::class)(user: $user, conversation: $conversation);
+        }
 
         return $conversation;
     }

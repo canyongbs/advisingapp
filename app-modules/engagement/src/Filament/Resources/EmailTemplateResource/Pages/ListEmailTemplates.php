@@ -56,8 +56,6 @@ class ListEmailTemplates extends ListRecords
                 TextColumn::make('name'),
                 TextColumn::make('description'),
             ])
-            ->filters([
-            ])
             ->actions([
                 EditAction::make(),
             ])
