@@ -36,25 +36,15 @@
 
 namespace AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories;
 
-use AdvisingApp\Division\Models\Division;
 use Worksome\RequestFactories\RequestFactory;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseStatus;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseQuality;
-use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseCategory;
 
 class EditKnowledgeBaseItemRequestFactory extends RequestFactory
 {
     public function definition(): array
     {
         return [
-            'question' => $this->faker->sentence(),
-            'public' => $this->faker->boolean(),
-            'solution' => $this->faker->paragraph(),
-            'notes' => $this->faker->paragraph(),
-            'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first()?->id ?? KnowledgeBaseQuality::factory()->create()->id,
-            'status_id' => KnowledgeBaseStatus::inRandomOrder()->first()?->id ?? KnowledgeBaseStatus::factory()->create()->id,
-            'category_id' => KnowledgeBaseCategory::inRandomOrder()->first()?->id ?? KnowledgeBaseCategory::factory()->create()->id,
-            'division' => [Division::inRandomOrder()->first()?->id ?? Division::factory()->create()->id],
+            'title' => fake()->words(5, true),
+            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph()]]]]],
         ];
     }
 }

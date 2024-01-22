@@ -44,7 +44,7 @@ use function Pest\Laravel\assertDatabaseHas;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem;
-use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
+use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages\ListKnowledgeBaseItems;
 use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories\CreateKnowledgeBaseItemRequestFactory;
 
 // TODO: Write CreateKnowledgeBaseItem tests
@@ -57,34 +57,28 @@ use AdvisingApp\KnowledgeBase\Tests\KnowledgeBaseItem\RequestFactories\CreateKno
 test('CreateKnowledgeBaseItem is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('create')
-        )->assertForbidden();
-
-    livewire(KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem::class)
-        ->assertForbidden();
+    actingAs($user);
 
     $user->givePermissionTo('knowledge_base_item.view-any');
+
+    livewire(ListKnowledgeBaseItems::class)
+        ->assertSuccessful()
+        ->assertActionDisabled('create');
+
     $user->givePermissionTo('knowledge_base_item.create');
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('create')
-        )->assertSuccessful();
+    livewire(ListKnowledgeBaseItems::class)
+        ->assertActionEnabled('create');
 
     $request = collect(CreateKnowledgeBaseItemRequestFactory::new()->create());
 
-    livewire(KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem::class)
-        ->fillForm($request->toArray())
-        ->call('create')
-        ->assertHasNoFormErrors();
+    livewire(ListKnowledgeBaseItems::class)
+        ->callAction('create', $request->toArray())
+        ->assertHasNoActionErrors();
 
     assertCount(1, KnowledgeBaseItem::all());
 
     $data = $request->except('division')->toArray();
-    $data['solution'] = json_encode($data['solution']);
-    $data['notes'] = json_encode($data['notes']);
 
     assertDatabaseHas(KnowledgeBaseItem::class, $data);
 
@@ -102,38 +96,30 @@ test('CreateKnowledgeBaseItem is gated with proper feature access control', func
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('create')
-        )->assertForbidden();
+    actingAs($user);
 
     $user->givePermissionTo('knowledge_base_item.view-any');
     $user->givePermissionTo('knowledge_base_item.create');
 
-    livewire(KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem::class)
+    livewire(ListKnowledgeBaseItems::class)
         ->assertForbidden();
 
     $settings->data->addons->knowledgeManagement = true;
 
     $settings->save();
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('create')
-        )->assertSuccessful();
+    livewire(ListKnowledgeBaseItems::class)
+        ->assertSuccessful();
 
     $request = collect(CreateKnowledgeBaseItemRequestFactory::new()->create());
 
-    livewire(KnowledgeBaseItemResource\Pages\CreateKnowledgeBaseItem::class)
-        ->fillForm($request->toArray())
-        ->call('create')
-        ->assertHasNoFormErrors();
+    livewire(ListKnowledgeBaseItems::class)
+        ->callAction('create', $request->toArray())
+        ->assertHasNoActionErrors();
 
     assertCount(1, KnowledgeBaseItem::all());
 
     $data = $request->except('division')->toArray();
-    $data['solution'] = json_encode($data['solution']);
-    $data['notes'] = json_encode($data['notes']);
 
     assertDatabaseHas(KnowledgeBaseItem::class, $data);
 
