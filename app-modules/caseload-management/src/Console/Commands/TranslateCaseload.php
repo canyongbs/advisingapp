@@ -45,7 +45,7 @@ class TranslateCaseload extends Command
 {
     use TenantAware;
 
-    protected $signature = 'caseloads:translat {--tenant=*}';
+    protected $signature = 'caseloads:translate {--tenant=*}';
 
     protected $description = 'Translate caseload filters.';
 
