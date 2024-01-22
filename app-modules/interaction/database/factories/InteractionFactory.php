@@ -48,7 +48,6 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionCampaign;
 use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 
 /**
  * @extends Factory<Interaction>
@@ -60,7 +59,8 @@ class InteractionFactory extends Factory
         $interactable = fake()->randomElement([
             Student::class,
             Prospect::class,
-            ServiceRequest::class,
+            // Disabled until ADVAPP-253
+            //ServiceRequest::class,
         ]);
 
         $interactable = $interactable::factory()->create();
