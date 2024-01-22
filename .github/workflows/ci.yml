@@ -77,7 +77,7 @@ jobs:
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
@@ -198,7 +198,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
         shell: bash
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
@@ -240,7 +240,7 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/composer-dependency-setup
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
