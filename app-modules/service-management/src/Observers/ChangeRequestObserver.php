@@ -64,20 +64,5 @@ class ChangeRequestObserver
     public function saving(ChangeRequest $changeRequest): void
     {
         $changeRequest->risk_score = $changeRequest->impact * $changeRequest->likelihood;
-
-        // Do not automatically approve change requests
-        // // TODO Implement a rule that specifies that only one change request status can be of classification "Approved"
-        // $approvedStatus = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Approved))->first();
-
-        // // TODO Implement a rule that specifies that only one change request status can be of classification "New"
-        // $newStatus = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::New))->first();
-
-        // if (is_null($changeRequest->change_request_status_id)) {
-        //     $changeRequest->change_request_status_id = ($changeRequest->type?->number_of_required_approvals === 0)
-        //         ? $approvedStatus->id
-        //         : $newStatus->id;
-        // } elseif ($changeRequest->change_request_status_id === $newStatus->id && $changeRequest->type?->number_of_required_approvals === 0) {
-        //     $changeRequest->change_request_status_id = $approvedStatus->id;
-        // }
     }
 }

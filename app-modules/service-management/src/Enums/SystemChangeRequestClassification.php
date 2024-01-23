@@ -70,4 +70,16 @@ enum SystemChangeRequestClassification: string implements HasLabel
             default => $this->name,
         };
     }
+
+    public function getDescription(): ?string
+    {
+        return match ($this) {
+            SystemChangeRequestClassification::Approved => 'has been approved',
+            SystemChangeRequestClassification::InProgress => 'is in progress',
+            SystemChangeRequestClassification::Completed => 'has been completed',
+            SystemChangeRequestClassification::FailedOrReverted => 'has failed or been reverted',
+            SystemChangeRequestClassification::Custom => 'is in a custom state',
+            default => null,
+        };
+    }
 }

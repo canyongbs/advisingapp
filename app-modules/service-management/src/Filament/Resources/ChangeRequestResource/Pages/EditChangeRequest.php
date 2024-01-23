@@ -58,9 +58,10 @@ class EditChangeRequest extends EditRecord
         return $form
             ->schema([
                 Section::make('Change Request Details')
+                    ->aside()
                     ->description(function (ChangeRequest $record) {
                         return $record->isNotNew()
-                            ? "This change request has been {$record->status->classification->getLabel()} and can no longer be edited."
+                            ? "This change request {$record->status->classification->getDescription()} and can no longer be edited."
                             : null;
                     })
                     ->schema([
@@ -108,6 +109,7 @@ class EditChangeRequest extends EditRecord
                     ])
                     ->columns(2),
                 Section::make('Risk Management')
+                    ->aside()
                     ->schema([
                         TextInput::make('impact')
                             ->reactive()
@@ -139,7 +141,7 @@ class EditChangeRequest extends EditRecord
         return [
             ViewAction::make(),
             DeleteAction::make()
-                ->disabled(fn ($record) => $record->isApproved()),
+                ->disabled(fn ($record) => $record->isNotNew()),
         ];
     }
 }
