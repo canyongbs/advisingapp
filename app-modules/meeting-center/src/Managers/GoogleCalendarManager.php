@@ -49,6 +49,7 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use Google\Service\Calendar as GoogleCalendar;
 use Google\Service\Calendar\CalendarListEntry;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Settings\GoogleCalendarSettings;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Notifications\CalendarRequiresReconnect;
 
@@ -207,9 +208,11 @@ class GoogleCalendarManager implements CalendarInterface
     public static function client(?Calendar $calendar = null): Client
     {
         if ($calendar?->oauth_token) {
+            $googleCalendarSettings = app(GoogleCalendarSettings::class);
+
             $client = new Client([
-                'client_id' => config('services.google_calendar.client_id'),
-                'client_secret' => config('services.google_calendar.client_secret'),
+                'client_id' => $googleCalendarSettings->client_id,
+                'client_secret' => $googleCalendarSettings->client_secret,
                 'scopes' => [
                     GoogleCalendar::CALENDAR,
                     GoogleCalendar::CALENDAR_EVENTS,
@@ -222,9 +225,11 @@ class GoogleCalendarManager implements CalendarInterface
 
             $client->setAccessToken($calendar->oauth_token);
         } else {
+            $googleCalendarSettings = app(GoogleCalendarSettings::class);
+
             $client = new Client([
-                'client_id' => config('services.google_calendar.client_id'),
-                'client_secret' => config('services.google_calendar.client_secret'),
+                'client_id' => $googleCalendarSettings->client_id,
+                'client_secret' => $googleCalendarSettings->client_secret,
                 'scopes' => [
                     Oauth2::OPENID,
                     Oauth2::USERINFO_EMAIL,
@@ -244,9 +249,11 @@ class GoogleCalendarManager implements CalendarInterface
     public function refreshToken(Calendar $calendar): Calendar
     {
         try {
+            $googleCalendarSettings = app(GoogleCalendarSettings::class);
+
             $client = new Client([
-                'client_id' => config('services.google_calendar.client_id'),
-                'client_secret' => config('services.google_calendar.client_secret'),
+                'client_id' => $googleCalendarSettings->client_id,
+                'client_secret' => $googleCalendarSettings->client_secret,
                 'scopes' => [
                     GoogleCalendar::CALENDAR,
                     GoogleCalendar::CALENDAR_EVENTS,

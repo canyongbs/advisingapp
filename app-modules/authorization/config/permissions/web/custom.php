@@ -39,4 +39,6 @@ return [
     'view_product_health_dashboard',
     'view_dashboard',
     'view_api_documentation',
+    'view_azure_sso_settings',
+    'view_google_sso_settings',
 ];

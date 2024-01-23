@@ -36,19 +36,26 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\MeetingCenter\Models\Calendar;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
-class SyncCalendars implements ShouldQueue
+class SyncCalendars implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    public function uniqueId(): string
+    {
+        return Tenant::current()->id;
+    }
 
     public function handle(): void
     {

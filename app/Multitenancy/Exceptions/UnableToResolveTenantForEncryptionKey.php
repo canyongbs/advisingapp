@@ -34,33 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Traits;
+namespace App\Multitenancy\Exceptions;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use Exception;
 
-trait Tenantable
+class UnableToResolveTenantForEncryptionKey extends Exception
 {
-    protected static function bootTenantable(): void
-    {
-        if (app()->runningInConsole()) {
-            return;
-        }
-
-        static::creating(function (Model $model) {
-            if (! auth()->check()) {
-                return;
-            }
-
-            $model->owner_id = auth()->id();
-        });
-
-        static::addGlobalScope('owner_filter', function (Builder $builder) {
-            if (optional(auth()->user())->is_admin) {
-                return;
-            }
-
-            $builder->where((new static())->getTable() . '.owner_id', auth()->id());
-        });
-    }
+    protected $message = 'Unable to resolve tenant for encryption key';
 }

@@ -38,16 +38,23 @@ namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
 use AdvisingApp\Authorization\Actions\CreateRoles;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class SetupRoles extends Command
 {
-    protected $signature = 'roles:setup';
+    use TenantAware;
+
+    protected $signature = 'roles:setup {--tenant=*}';
 
     protected $description = 'This command will create all of the roles defined in the roles config directory.';
 
     public function handle(): int
     {
+        $this->line('Creating roles...');
+
         resolve(CreateRoles::class)->handle();
+
+        $this->info('Roles created successfully!');
 
         return self::SUCCESS;
     }

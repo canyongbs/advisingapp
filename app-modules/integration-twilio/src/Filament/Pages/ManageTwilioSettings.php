@@ -82,10 +82,14 @@ class ManageTwilioSettings extends SettingsPage
                         TextInput::make('account_sid')
                             ->label('Account SID')
                             ->string()
-                            ->required(),
+                            ->required()
+                            ->password()
+                            ->revealable(),
                         TextInput::make('auth_token')
                             ->string()
-                            ->required(),
+                            ->required()
+                            ->password()
+                            ->revealable(),
                         TextInput::make('from_number')
                             ->string()
                             ->required(),

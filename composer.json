@@ -86,6 +86,7 @@
         "spatie/laravel-cookie-consent": "^3.2",
         "spatie/laravel-data": "^3.10",
         "spatie/laravel-medialibrary": "^10.15",
+        "spatie/laravel-multitenancy": "^3.0",
         "spatie/laravel-settings": "^3.2",
         "sqids/sqids": "^0.4.1",
         "staudenmeir/eloquent-has-many-deep": "^1.19",
@@ -110,7 +111,7 @@
         "pestphp/pest-plugin-laravel": "^2.1",
         "pestphp/pest-plugin-livewire": "^2.1",
         "phpunit/phpunit": "^10.0",
-        "rector/rector": "^0.18.3",
+        "rector/rector": "^0.19.0",
         "spatie/laravel-ignition": "^2.0",
         "spatie/laravel-ray": "^1.32",
         "worksome/request-factories": "^3.2"
@@ -134,9 +135,7 @@
             "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -144,18 +143,12 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "clear-sis-database": [
-            "@php artisan migrate:fresh --database=sis --path=app-modules/student-data-model/database/migrations/sis"
-        ],
         "refresh-database": [
-            "@php artisan migrate:fresh",
+            "@php artisan tenants:artisan \"migrate:fresh --database=tenant\"",
             "@php artisan app:remove-foreign-data-wrapper",
             "@php artisan app:setup-foreign-data-wrapper",
             "@php artisan app:create-adm-materialized-views",
-            "@php artisan db:seed"
-        ],
-        "refresh-sis": [
-            "./refresh-and-seed-sis.sh"
+            "@php artisan tenants:artisan \"db:seed --database=tenant\""
         ],
         "php-cs-format": [
             "./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v --config=./php-cs-fixer.php"
@@ -187,9 +180,7 @@
             "@prettier-format"
         ],
         "generate-helper-files": [
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:models -M",
-            "@php artisan ide-helper:meta",
+            "@php artisan app:generate-helper-files",
             "./vendor/bin/rector",
             "@php-cs-format"
         ],
@@ -204,12 +195,9 @@
             "rm -rf ./vendor",
             "composer install"
         ],
-        "print-schema": [
-            "@php artisan lighthouse:print-schema -W -D public"
-        ],
         "generate-api-docs": [
             "./node_modules/.bin/prettier \"graphql/*.graphql\" \"app-modules/**/graphql/*.graphql\" --config ./.prettierrc.json --ignore-path ./.prettierignore --cache --write",
-            "@print-schema",
+            "@php artisan api:print-schema",
             "npm run api-docs:generate"
         ]
     },

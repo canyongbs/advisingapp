@@ -38,17 +38,14 @@ namespace AdvisingApp\MeetingCenter\Console\Commands;
 
 use Illuminate\Console\Command;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class UpdateEvent extends Command
 {
-    /**
-     * @var string
-     */
-    protected $signature = 'meeting-center:update-event';
+    use TenantAware;
 
-    /**
-     * @var string
-     */
+    protected $signature = 'meeting-center:update-event {--tenant=*}';
+
     protected $description = 'Update a calendar event for testing.';
 
     public function handle(): int

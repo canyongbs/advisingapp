@@ -37,17 +37,24 @@
 namespace AdvisingApp\Authorization\Console\Commands;
 
 use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\Authorization\Actions\CreateAndSyncRoleGroups;
 
 class SetupRoleGroups extends Command
 {
-    protected $signature = 'role-groups:setup';
+    use TenantAware;
+
+    protected $signature = 'role-groups:setup {--tenant=*}';
 
     protected $description = 'This command will create all of the role groups defined in the role_groups config directory.';
 
     public function handle(): int
     {
+        $this->line('Creating role groups...');
+
         resolve(CreateAndSyncRoleGroups::class)->handle();
+
+        $this->info('Role groups created successfully!');
 
         return self::SUCCESS;
     }

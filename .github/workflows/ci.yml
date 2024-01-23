@@ -109,7 +109,7 @@ jobs:
       DB_HOST: postgres
       DB_USERNAME: root
       DB_PASSWORD: root
-      DB_DATABASE: testing
+      DB_DATABASE: testing_landlord
       SCOUT_PREFIX: test_
       MEILISEARCH_KEY: testing
       MEILISEARCH_HOST: http://meilisearch:7700
@@ -169,7 +169,12 @@ jobs:
 
     steps:
       - name: Install git
-        run: apt-get update ; apt-get install -y git zip unzip
+        run: apt-get update ; apt-get install -y git zip unzip postgresql-client
+
+      - name: Create tenant database
+        run: psql -h postgres -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
+        env:
+           PGPASSWORD: root
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -220,7 +225,7 @@ jobs:
         run: php artisan route:list
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: php artisan test --configuration phpunit-ci.xml --parallel
+        run: php artisan test --configuration phpunit-ci.xml
   lint:
     runs-on: ubuntu-22.04
 

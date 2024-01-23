@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Engagement\Notifications;
 
+use App\Models\Tenant;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use AdvisingApp\Engagement\Models\EngagementDeliverable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\SmsNotification;
@@ -44,13 +46,18 @@ use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Notification\Notifications\Concerns\SmsChannelTrait;
 
-class EngagementSmsNotification extends BaseNotification implements SmsNotification
+class EngagementSmsNotification extends BaseNotification implements SmsNotification, ShouldBeUnique
 {
     use SmsChannelTrait;
 
     public function __construct(
         public EngagementDeliverable $deliverable
     ) {}
+
+    public function uniqueId(): string
+    {
+        return Tenant::current()->id . ':' . $this->deliverable->id;
+    }
 
     public function toSms(NotifiableInterface $notifiable): TwilioMessage
     {

@@ -37,7 +37,9 @@
 namespace AdvisingApp\Engagement\Providers;
 
 use Filament\Panel;
+use App\Models\Tenant;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Multitenancy\TenantCollection;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Engagement\EngagementPlugin;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -78,9 +80,19 @@ class EngagementServiceProvider extends ServiceProvider
         ]);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            // TODO Ensure we are locking entities that have already been picked up for processing to avoid overlap
-            $schedule->job(DeliverEngagements::class)
+            $schedule->call(function () {
+                /** @var TenantCollection $tenants */
+                $tenants = Tenant::cursor();
+
+                $tenants->each(function (Tenant $tenant) {
+                    $tenant->execute(function () {
+                        dispatch(new DeliverEngagements());
+                    });
+                });
+            })
                 ->everyMinute()
+                ->name('DeliverEngagements')
+                ->onOneServer()
                 ->withoutOverlapping();
         });
 

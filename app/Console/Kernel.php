@@ -36,18 +36,17 @@
 
 namespace App\Console;
 
+use App\Models\Tenant;
 use AdvisingApp\Audit\Models\Audit;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Database\Console\PruneCommand;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Engagement\Models\EngagementFile;
-use Spatie\Health\Commands\RunHealthChecksCommand;
 use App\Console\Commands\RefreshAdmMaterializedView;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
-use Spatie\Health\Commands\DispatchQueueCheckJobsCommand;
-use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 
 class Kernel extends ConsoleKernel
 {
@@ -56,68 +55,110 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        if (config('database.adm_materialized_views_enabled')) {
-            $this->refreshAdmMaterializedViews($schedule);
-        }
+        /** @var LazyCollection $tenants */
+        $tenants = Tenant::cursor();
 
-        $schedule->command('cache:prune-stale-tags')->hourly();
+        $tenants->each(function (Tenant $tenant) use ($schedule) {
+            if (config('database.adm_materialized_views_enabled')) {
+                $this->refreshAdmMaterializedViews($schedule, $tenant);
+            }
 
-        $schedule->command(RunHealthChecksCommand::class)->everyMinute();
+            $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
+                ->hourly()
+                ->onOneServer()
+                ->runInBackground();
 
-        $schedule->command(DispatchQueueCheckJobsCommand::class)->everyMinute();
+            $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
+                ->everyMinute()
+                ->onOneServer()
+                ->runInBackground();
 
-        collect([
-            Audit::class,
-            AssistantChatMessageLog::class,
-            EngagementFile::class,
-            FailedImportRow::class,
-            FormAuthentication::class,
-        ])
-            ->each(
-                fn ($model) => $schedule->command(PruneCommand::class, [
-                    '--model' => [$model],
-                ])
-                    ->daily()
-                    ->onOneServer()
-                    ->runInBackground()
-            );
+            $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
+                ->everyMinute()
+                ->onOneServer()
+                ->runInBackground();
 
-        $schedule->command('meeting-center:refresh-calendar-refresh-tokens')
-            ->daily()
-            ->onOneServer();
+            collect([
+                Audit::class,
+                AssistantChatMessageLog::class,
+                EngagementFile::class,
+                FailedImportRow::class,
+                FormAuthentication::class,
+            ])
+                ->each(
+                    fn ($model) => $schedule->command("tenants:artisan \"model:prune --model={$model}\" --tenant={$tenant->id}")
+                        ->daily()
+                        ->onOneServer()
+                        ->runInBackground()
+                );
 
-        // Needs to remain as the last command: https://spatie.be/docs/laravel-health/v1/available-checks/schedule
-        $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+            $schedule->command(
+                command: RefreshCalendarRefreshTokens::class,
+                parameters: [
+                    "--tenant={$tenant->id}",
+                ]
+            )
+                ->daily()
+                ->onOneServer()
+                ->runInBackground();
+
+            $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
+                ->everyMinute()
+                ->onOneServer()
+                ->runInBackground();
+        });
     }
 
-    protected function refreshAdmMaterializedViews(Schedule $schedule): void
+    protected function refreshAdmMaterializedViews(Schedule $schedule, Tenant $tenant): void
     {
-        $schedule->command(RefreshAdmMaterializedView::class, ['students'])
+        $schedule->command(
+            command: RefreshAdmMaterializedView::class,
+            parameters: [
+                'students',
+                "--tenant={$tenant->id}",
+            ]
+        )
             ->everyMinute()
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
 
-        $schedule->command(RefreshAdmMaterializedView::class, ['enrollments'])
+        $schedule->command(
+            command: RefreshAdmMaterializedView::class,
+            parameters: [
+                'enrollments',
+                "--tenant={$tenant->id}",
+            ]
+        )
             ->everyMinute()
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
 
-        $schedule->command(RefreshAdmMaterializedView::class, ['performance'])
+        $schedule->command(
+            command: RefreshAdmMaterializedView::class,
+            parameters: [
+                'performance',
+                "--tenant={$tenant->id}",
+            ]
+        )
             ->everyMinute()
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
 
-        $schedule->command(RefreshAdmMaterializedView::class, ['programs'])
+        $schedule->command(
+            command: RefreshAdmMaterializedView::class,
+            parameters: [
+                'programs',
+                "--tenant={$tenant->id}",
+            ]
+        )
             ->everyMinute()
             ->onOneServer()
             ->withoutOverlapping()
             ->runInBackground();
     }
-
-    protected function pruning(Schedule $schedule) {}
 
     /**
      * Register the commands for the application.

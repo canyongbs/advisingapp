@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Authorization\Models\Pivots\RoleGroupRolePivot;
 use AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
@@ -62,6 +63,7 @@ class RoleGroup extends Model implements Auditable
     use HasUuids;
     use AuditableTrait;
     use DefinesPermissions;
+    use UsesTenantConnection;
 
     protected $fillable = [
         'name',

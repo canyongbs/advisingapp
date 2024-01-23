@@ -67,35 +67,7 @@ return [
     */
 
     'connections' => [
-        'sqlite' => [
-            'driver' => 'sqlite',
-            'url' => env('DATABASE_URL'),
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-        ],
-
-        'mysql' => [
-            'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ],
-
-        'pgsql' => [
+        'landlord' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
@@ -110,29 +82,27 @@ return [
             'sslmode' => 'prefer',
         ],
 
-        'sqlsrv' => [
-            'driver' => 'sqlsrv',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+        'tenant' => [
+            'driver' => 'pgsql',
+            'host' => null,
+            'port' => null,
+            'database' => null,
+            'username' => null,
+            'password' => null,
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
         ],
 
         'sis' => [
             'driver' => 'pgsql',
-            'url' => env('SIS_DATABASE_URL'),
-            'host' => env('SIS_DB_HOST', 'redshift'),
-            'port' => env('SIS_DB_PORT', '5433'),
-            'database' => env('SIS_DB_DATABASE', 'sis'),
-            'username' => env('SIS_DB_USERNAME', 'sail'),
-            'password' => env('SIS_DB_PASSWORD', 'password'),
+            'host' => env('SIS_DB_HOST'),
+            'port' => env('SIS_DB_PORT'),
+            'database' => env('SIS_DB_DATABASE'),
+            'username' => env('SIS_DB_USERNAME'),
+            'password' => env('SIS_DB_PASSWORD'),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
@@ -194,13 +164,8 @@ return [
     ],
 
     'fdw' => [
-        'connection' => env('FDW_CONNECTION', 'pgsql'),
+        'connection' => env('FDW_CONNECTION', 'tenant'),
         'server_name' => env('FDW_SERVER_NAME', 'sis_bridge'),
-        'external_host' => env('FDW_EXTERNAL_HOST', 'redshift'),
-        'external_port' => env('FDW_EXTERNAL_PORT', '5433'),
-        'external_user' => env('FDW_EXTERNAL_USER', 'sail'),
-        'external_password' => env('FDW_EXTERNAL_PASSWORD', 'password'),
-        'external_database' => env('FDW_EXTERNAL_DBNAME', 'sis'),
     ],
 
     'adm_materialized_views_enabled' => env('ADM_MATERIALIZED_VIEWS_ENABLED', false),

@@ -59,12 +59,11 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+        'key' => env('AWS_SES_KEY'),
+        'secret' => env('AWS_SES_SECRET'),
+        'region' => env('AWS_SES_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    // TODO: Find a way to move this setting to the Auth Module
     'azure' => [
         'client_id' => env('AZURE_CLIENT_ID'),
         'client_secret' => env('AZURE_CLIENT_SECRET'),
@@ -84,7 +83,6 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    // TODO Find a way to move this setting to the Integration Twilio module
     'twilio' => [
         'test_from_number' => env('TWILIO_TEST_FROM_NUMBER'),
         'test_to_number' => env('TWILIO_TEST_TO_NUMBER'),

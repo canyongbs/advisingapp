@@ -36,16 +36,20 @@
 
 namespace AdvisingApp\Authorization\Console\Commands;
 
+use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Authorization\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 use App\Actions\Finders\ApplicationModules;
 use AdvisingApp\Authorization\Models\Permission;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class SyncRolesAndPermissions extends Command
 {
-    protected $signature = 'roles-and-permissions:sync';
+    use TenantAware;
+
+    protected $signature = 'roles-and-permissions:sync {--tenant=*}';
 
     protected $description = 'This command will sync all roles and permissions defined in the roles and permissions config files.';
 
@@ -56,13 +60,32 @@ class SyncRolesAndPermissions extends Command
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        $currentTenant = Tenant::current();
+
         // Seed roles and permissions
-        Artisan::call(SetupRoles::class);
-        Artisan::call(SetupPermissions::class);
+        Artisan::call(
+            command: SetupRoles::class,
+            parameters: [
+                '--tenant' => $currentTenant->id,
+            ],
+            outputBuffer: $this->output,
+        );
 
+        Artisan::call(
+            command: SetupPermissions::class,
+            parameters: [
+                '--tenant' => $currentTenant->id,
+            ],
+            outputBuffer: $this->output,
+        );
+
+        $this->line('Syncing Web permissions...');
         $this->syncWebPermissions();
+        $this->info('Web permissions synced successfully!');
 
+        $this->line('Syncing API permissions...');
         $this->syncApiPermissions();
+        $this->info('API permissions synced successfully!');
 
         // TODO We might just leave this command out for now, and just allow for manual creation of role groups per org
         // Artisan::call(SetupRoleGroups::class);
@@ -72,22 +95,28 @@ class SyncRolesAndPermissions extends Command
 
     protected function syncWebPermissions(): void
     {
-        Role::where('guard_name', 'web')
-            ->where('name', '!=', 'authorization.super_admin')
-            ->cursor()
-            ->each(function (Role $role) {
+        $this->withProgressBar(
+            Role::where('guard_name', 'web')
+                ->where('name', '!=', 'authorization.super_admin')
+                ->cursor(),
+            function (Role $role) {
                 $this->syncPermissionFor('web', $role);
-            });
+            }
+        );
+        $this->newLine();
     }
 
     protected function syncApiPermissions(): void
     {
-        Role::where('guard_name', 'api')
-            ->where('name', '!=', 'authorization.super_admin')
-            ->cursor()
-            ->each(function (Role $role) {
+        $this->withProgressBar(
+            Role::where('guard_name', 'api')
+                ->where('name', '!=', 'authorization.super_admin')
+                ->cursor(),
+            function (Role $role) {
                 $this->syncPermissionFor('api', $role);
-            });
+            }
+        );
+        $this->newLine();
     }
 
     protected function syncPermissionFor(string $guard, Role $role): void

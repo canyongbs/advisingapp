@@ -37,28 +37,19 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use App\Actions\Setup\RemoveForeignDataWrapper as RemoveForeignDataWrapperAction;
 
 class RemoveForeignDataWrapper extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:remove-foreign-data-wrapper';
+    use TenantAware;
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+    protected $signature = 'app:remove-foreign-data-wrapper {--tenant=*}';
+
     protected $description = 'Remove foreign data wrapper for SIS database';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function handle(): void
     {
-        resolve(\App\Actions\Setup\RemoveForeignDataWrapper::class)->handle();
+        resolve(RemoveForeignDataWrapperAction::class)->handle();
     }
 }

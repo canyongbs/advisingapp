@@ -36,6 +36,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
@@ -64,7 +65,15 @@ class DemoDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Artisan::call(SyncRolesAndPermissions::class);
+        $currentTenant = Tenant::current();
+
+        Artisan::call(
+            command: SyncRolesAndPermissions::class,
+            parameters: [
+                '--tenant' => $currentTenant->id,
+            ],
+            outputBuffer: $this->command->getOutput(),
+        );
 
         $this->call([
             SuperAdminProfileSeeder::class,

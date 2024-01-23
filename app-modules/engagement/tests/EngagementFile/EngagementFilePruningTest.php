@@ -72,7 +72,7 @@ it('is scheduled to prune EngagementFiles daily during scheduler run', function 
     $events = collect($schedule->events())->filter(function (Illuminate\Console\Scheduling\Event $event) {
         $engagementFileClass = EngagementFile::class;
 
-        return str_contains($event->command, "model:prune --model='{$engagementFileClass}'")
+        return str_contains($event->command, "model:prune --model={$engagementFileClass}")
             && $event->expression === '0 0 * * *';
     });
 

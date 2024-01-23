@@ -37,11 +37,14 @@
 namespace AdvisingApp\Campaign\Console\Commands;
 
 use Illuminate\Console\Command;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\Campaign\Actions\ExecuteCampaignActions as ExecuteCampaignActionsJob;
 
 class ExecuteCampaignActions extends Command
 {
-    protected $signature = 'campaign-actions:execute';
+    use TenantAware;
+
+    protected $signature = 'campaign-actions:execute {--tenant=*}';
 
     protected $description = 'Execute campaign actions that are scheduled to be executed.';
 

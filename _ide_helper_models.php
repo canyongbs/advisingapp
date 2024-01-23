@@ -72,6 +72,41 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\HealthCheckResultHistoryItem
+ *
+ * @property int $id
+ * @property string $check_name
+ * @property string $check_label
+ * @property string $status
+ * @property string|null $notification_message
+ * @property string|null $short_summary
+ * @property array $meta
+ * @property string $ended_at
+ * @property string $batch
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereBatch($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereCheckLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereCheckName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereEndedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereMeta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereNotificationMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereShortSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|HealthCheckResultHistoryItem whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperHealthCheckResultHistoryItem {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Import
  *
  * @property string $id
@@ -262,6 +297,53 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperSystemUser {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Tenant
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $domain
+ * @property string|null $key
+ * @property string $db_host
+ * @property string $db_port
+ * @property string $database
+ * @property string $db_username
+ * @property string $db_password
+ * @property string $sis_db_host
+ * @property string $sis_db_port
+ * @property string $sis_database
+ * @property string $sis_db_username
+ * @property string $sis_db_password
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Spatie\Multitenancy\TenantCollection<int, static> all($columns = ['*'])
+ * @method static \Spatie\Multitenancy\TenantCollection<int, static> get($columns = ['*'])
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDatabase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDbHost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDbPassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDbPort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDbUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereDomain($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSisDatabase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSisDbHost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSisDbPassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSisDbPort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereSisDbUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Tenant whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperTenant {}
 }
 
 namespace App\Models{

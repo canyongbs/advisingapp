@@ -40,6 +40,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use AdvisingApp\Authorization\Models\Concerns\DefinesPermissions;
 
 /**
@@ -49,6 +50,7 @@ class Performance extends Model
 {
     use HasFactory;
     use DefinesPermissions;
+    use UsesTenantConnection;
 
     // TODO: Need to revisit whether or not this should be the primary key, just using it for now since there is nothing else
     protected $primaryKey = 'sisid';

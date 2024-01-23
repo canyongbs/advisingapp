@@ -36,17 +36,24 @@
 
 namespace AdvisingApp\Campaign\Actions;
 
+use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use AdvisingApp\Campaign\Models\CampaignAction;
 
-class ExecuteCampaignActions implements ShouldQueue
+class ExecuteCampaignActions implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
+
+    public function uniqueId(): string
+    {
+        return Tenant::current()->id;
+    }
 
     public function handle(): void
     {

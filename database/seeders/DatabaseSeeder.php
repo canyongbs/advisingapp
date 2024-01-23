@@ -36,6 +36,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification;
@@ -77,7 +78,15 @@ class DatabaseSeeder extends Seeder
         // Reduce notifications sent during seeding
         Notification::fake();
 
-        Artisan::call(SyncRolesAndPermissions::class);
+        $currentTenant = Tenant::current();
+
+        Artisan::call(
+            command: SyncRolesAndPermissions::class,
+            parameters: [
+                '--tenant' => $currentTenant->id,
+            ],
+            outputBuffer: $this->command->getOutput(),
+        );
 
         $this->call([
             SuperAdminProfileSeeder::class,

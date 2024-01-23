@@ -34,4 +34,7 @@
 </COPYRIGHT>
 */
 
-return [];
+return [
+    'view_azure_calendar_settings',
+    'view_google_calendar_settings',
+];

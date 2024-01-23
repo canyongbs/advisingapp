@@ -41,6 +41,9 @@ use Mockery\MockInterface;
 use SocialiteProviders\Manager\Config;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Contracts\Provider;
+use AdvisingApp\Authorization\Settings\AzureSsoSettings;
+use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use AdvisingApp\MeetingCenter\Settings\AzureCalendarSettings;
 
 enum SocialiteProvider: string
 {
@@ -63,23 +66,29 @@ enum SocialiteProvider: string
 
     public function config(): Config
     {
+        $azureSsoSettings = app(AzureSsoSettings::class);
+
+        $azureCalendarSettings = app(AzureCalendarSettings::class);
+
+        $googleSsoSettings = app(GoogleSsoSettings::class);
+
         return match ($this->value) {
             'azure' => new Config(
-                config('services.azure.client_id'),
-                config('services.azure.client_secret'),
-                config('services.azure.redirect'),
-                ['tenant' => config('services.azure.tenant_id', 'common')]
+                $azureSsoSettings->client_id,
+                $azureSsoSettings->client_secret,
+                route('socialite.callback', ['provider' => 'azure']),
+                ['tenant' => $azureSsoSettings->tenant_id ?? 'common']
             ),
             'azure_calendar' => new Config(
-                key: config('services.azure_calendar.client_id'),
-                secret: config('services.azure_calendar.client_secret'),
-                callbackUri: route('calendar.outlook.callback'),
-                additionalProviderConfig: ['tenant' => config('services.azure_calendar.tenant_id', 'common')]
+                key: $azureCalendarSettings->client_id,
+                secret: $azureCalendarSettings->client_secret,
+                callbackUri: route('socialite.callback', ['provider' => 'azure_calendar']),
+                additionalProviderConfig: ['tenant' => $azureCalendarSettings->tenant_id ?? 'common']
             ),
             'google' => new Config(
-                config('services.google.client_id'),
-                config('services.google.client_secret'),
-                config('services.google.redirect'),
+                $googleSsoSettings->client_id,
+                $googleSsoSettings->client_secret,
+                route('socialite.callback', ['provider' => 'google'])
             ),
             default => throw new Exception('Invalid socialite provider'),
         };

@@ -38,12 +38,15 @@ namespace AdvisingApp\MeetingCenter\Console\Commands;
 
 use Illuminate\Console\Command;
 use AdvisingApp\MeetingCenter\Models\Calendar;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 use AdvisingApp\MeetingCenter\Jobs\RefreshCalendarRefreshToken;
 
 class RefreshCalendarRefreshTokens extends Command
 {
+    use TenantAware;
+
     protected $signature =
-        'meeting-center:refresh-calendar-refresh-tokens';
+        'meeting-center:refresh-calendar-refresh-tokens {--tenant=*}';
 
     protected $description = 'Triggers a refresh of all calendar refresh tokens that are needed.';
 

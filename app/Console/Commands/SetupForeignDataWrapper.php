@@ -38,24 +38,28 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\DataTransferObjects\ForeignDataWrapperData;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use App\Actions\Setup\SetupForeignDataWrapper as SetupForeignDataWrapperAction;
 
 class SetupForeignDataWrapper extends Command
 {
-    protected $signature = 'app:setup-foreign-data-wrapper';
+    use TenantAware;
+
+    protected $signature = 'app:setup-foreign-data-wrapper {--tenant=*}';
 
     protected $description = 'Setup foreign data wrapper for SIS database';
 
     public function handle(): void
     {
-        resolve(\App\Actions\Setup\SetupForeignDataWrapper::class)->handle(
+        resolve(SetupForeignDataWrapperAction::class)->handle(
             new ForeignDataWrapperData(
                 connection: config('database.fdw.connection'),
                 localServerName: config('database.fdw.server_name'),
-                externalHost: config('database.fdw.external_host'),
-                externalPort: config('database.fdw.external_port'),
-                externalUser: config('database.fdw.external_user'),
-                externalPassword: config('database.fdw.external_password'),
-                externalDatabase: config('database.fdw.external_database'),
+                externalHost: config('database.connections.sis.host'),
+                externalPort: config('database.connections.sis.port'),
+                externalUser: config('database.connections.sis.username'),
+                externalPassword: config('database.connections.sis.password'),
+                externalDatabase: config('database.connections.sis.database'),
                 tables: [
                     'students',
                     'programs',

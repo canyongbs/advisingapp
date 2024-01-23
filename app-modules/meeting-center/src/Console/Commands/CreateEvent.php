@@ -39,17 +39,14 @@ namespace AdvisingApp\MeetingCenter\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class CreateEvent extends Command
 {
-    /**
-     * @var string
-     */
-    protected $signature = 'meeting-center:create-event';
+    use TenantAware;
 
-    /**
-     * @var string
-     */
+    protected $signature = 'meeting-center:create-event {--tenant=*}';
+
     protected $description = 'Create a calendar event for testing.';
 
     public function handle(): int

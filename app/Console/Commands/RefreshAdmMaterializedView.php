@@ -41,26 +41,21 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Benchmark;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class RefreshAdmMaterializedView extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:refresh-adm-materialized-view {remoteTable} {--indexColumn=sisid} {--connection=pgsql}';
+    use TenantAware;
 
-    protected $description = 'Command description';
+    protected $signature = 'app:refresh-adm-materialized-view {remoteTable} {--indexColumn=sisid} {--tenant=*}';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    protected $description = 'Refresh ADM materialized view';
+
+    public function handle(): void
     {
         try {
             $benchmark = Benchmark::measure(function () {
-                $database = DB::connection($this->option('connection'));
+                $database = DB::connection(config('database.default'));
 
                 $remoteTable = $this->argument('remoteTable');
 
@@ -78,14 +73,14 @@ class RefreshAdmMaterializedView extends Command
             Log::channel('amd_refresh')->info($benchmark, [
                 'remoteTable' => $this->argument('remoteTable'),
                 'indexColumn' => $this->option('indexColumn'),
-                'connection' => $this->option('connection'),
+                'connection' => config('database.default'),
             ]);
         } catch (Exception $e) {
             // TODO: Notify someone
             Log::channel('amd_refresh')->error($e->getMessage(), [
                 'remoteTable' => $this->argument('remoteTable'),
                 'indexColumn' => $this->option('indexColumn'),
-                'connection' => $this->option('connection'),
+                'connection' => config('database.default'),
             ]);
         }
     }

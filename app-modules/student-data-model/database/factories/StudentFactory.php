@@ -96,7 +96,7 @@ class StudentFactory extends Factory
                 $result->setTable('students_local');
             });
 
-            DB::connection('pgsql')->statement('REFRESH MATERIALIZED VIEW students_local');
+            DB::connection(config('multitenancy.tenant_database_connection_name'))->statement('REFRESH MATERIALIZED VIEW students_local');
         } else {
             parent::store($results);
         }
