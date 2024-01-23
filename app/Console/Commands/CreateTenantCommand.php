@@ -36,7 +36,7 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Support\Str;
+use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use App\Multitenancy\Actions\CreateTenant;
@@ -56,16 +56,26 @@ class CreateTenantCommand extends Command
 
     public function handle(): void
     {
+        if (! app()->environment('local')) {
+            $this->error('This command can only be run in the local environment.');
+
+            return;
+        }
+
         $name = $this->argument('name');
         $domain = $this->argument('domain');
+        $database = str($domain)
+            ->replace('.', '_')
+            ->replace('-', '_')
+            ->toString();
 
-        $database = 'tenant_' . strtolower(Str::random(30));
-
+        DB::connection('landlord')->statement("DROP DATABASE IF EXISTS {$database}");
         DB::connection('landlord')->statement("CREATE DATABASE {$database}");
 
-        $sisDatabase = 'tenant_' . strtolower(Str::random(30));
+        DB::connection('sis')->statement("DROP DATABASE IF EXISTS {$database}");
+        DB::connection('sis')->statement("CREATE DATABASE {$database}");
 
-        DB::connection('sis')->statement("CREATE DATABASE {$sisDatabase}");
+        Tenant::where('domain', $domain)->delete();
 
         app(CreateTenant::class)(
             $name,
@@ -81,7 +91,7 @@ class CreateTenantCommand extends Command
                 sisDatabase: new TenantSisDatabaseConfig(
                     host: config('database.connections.sis.host'),
                     port: config('database.connections.sis.port'),
-                    database: $sisDatabase,
+                    database: $database,
                     username: config('database.connections.sis.username'),
                     password: config('database.connections.sis.password'),
                 ),
