@@ -45,6 +45,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class EditChangeRequest extends EditRecord
@@ -75,7 +76,15 @@ class EditChangeRequest extends EditRecord
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(function ($record) {
+                                return $record->status->classification === SystemChangeRequestClassification::New;
+                            })
+                            ->helperText(function ($record) {
+                                return $record->status->classification === SystemChangeRequestClassification::New
+                                    ? 'The status cannot be changed until the change request has been approved.'
+                                    : null;
+                            }),
                         Textarea::make('reason')
                             ->label('Reason for change')
                             ->rows(5)

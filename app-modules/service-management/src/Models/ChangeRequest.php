@@ -41,10 +41,12 @@ use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 
 class ChangeRequest extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use HasRelationBasedStateMachine;
 
     protected $fillable = [
         'backout_strategy',
@@ -67,6 +69,13 @@ class ChangeRequest extends BaseModel implements Auditable
         'risk_score' => 'integer',
         'start_time' => 'datetime',
     ];
+
+    public function getStateMachineFields(): array
+    {
+        return [
+            'status.classification',
+        ];
+    }
 
     public function user(): BelongsTo
     {

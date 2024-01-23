@@ -67,6 +67,8 @@ class ChangeRequestTypeResource extends Resource
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
+                        TextEntry::make('number_of_required_approvals')
+                            ->label('Number of required approvers.'),
                         RepeatableEntry::make('userApprovers')
                             ->schema([
                                 TextEntry::make('name')
@@ -86,6 +88,13 @@ class ChangeRequestTypeResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->string(),
+                Select::make('number_of_required_approvals')
+                    ->options([
+                        '0' => '0',
+                        '1' => '1',
+                        '2' => '2',
+                    ])
+                    ->required(),
                 Select::make('userApprovers')
                     ->label('User approvers')
                     ->relationship('userApprovers', 'name')

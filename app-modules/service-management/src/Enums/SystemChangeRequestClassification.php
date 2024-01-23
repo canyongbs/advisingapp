@@ -37,19 +37,29 @@
 namespace AdvisingApp\ServiceManagement\Enums;
 
 use Filament\Support\Contracts\HasLabel;
+use Bvtterfly\ModelStateMachine\Attributes\InitialState;
+use Bvtterfly\ModelStateMachine\Attributes\AllowTransitionTo;
 
 enum SystemChangeRequestClassification: string implements HasLabel
 {
+    #[InitialState]
+    #[AllowTransitionTo(self::Approved)]
     case New = 'new';
 
+    #[AllowTransitionTo(self::InProgress)]
     case Approved = 'approved';
 
+    #[AllowTransitionTo(self::Completed)]
+    #[AllowTransitionTo(self::FailedOrReverted)]
+    #[AllowTransitionTo(self::Custom)]
     case InProgress = 'in_progress';
 
     case Completed = 'completed';
 
     case FailedOrReverted = 'failed_or_reverted';
 
+    #[AllowTransitionTo(self::Completed)]
+    #[AllowTransitionTo(self::FailedOrReverted)]
     case Custom = 'custom';
 
     public function getLabel(): ?string

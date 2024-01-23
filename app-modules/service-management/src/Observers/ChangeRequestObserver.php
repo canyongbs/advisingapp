@@ -37,6 +37,9 @@
 namespace AdvisingApp\ServiceManagement\Observers;
 
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
+use AdvisingApp\ServiceManagement\Models\Scopes\ClassifiedAs;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
 class ChangeRequestObserver
 {
@@ -44,6 +47,11 @@ class ChangeRequestObserver
     {
         if (is_null($changeRequest->created_by) && ! is_null(auth()->user())) {
             $changeRequest->created_by = auth()->user()->id;
+        }
+
+        if (is_null($changeRequest->change_request_status_id)) {
+            // TODO Implement a rule that specifies that only one change request status can be of classification "New"
+            $changeRequest->change_request_status_id = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::New))->first()->id;
         }
     }
 
