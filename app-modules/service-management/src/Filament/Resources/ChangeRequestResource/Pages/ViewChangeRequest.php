@@ -67,7 +67,7 @@ class ViewChangeRequest extends ViewRecord
                     ->headerActions([
                         InfolistAction::make('approveChangeRequest')
                             ->requiresConfirmation()
-                            ->hidden(fn (ChangeRequest $record) => $record->type->number_of_required_approvals === 0)
+                            ->hidden(fn (ChangeRequest $record) => $record->type->number_of_required_approvals === 0 || $record->isNotNew())
                             ->disabled(fn (ChangeRequest $record) => $record->isNotNew() || ! $record->canBeApprovedBy(auth()->user()))
                             ->action(fn (ChangeRequest $record) => resolve(ApproveChangeRequest::class, ['changeRequest' => $record, 'user' => auth()->user()])->handle()),
                     ])
