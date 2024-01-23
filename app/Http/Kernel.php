@@ -104,7 +104,6 @@ class Kernel extends HttpKernel
 
         'api' => [
             NeedsTenant::class,
-            StartSession::class,
             // \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             SubstituteBindings::class,
             AuthGates::class,
