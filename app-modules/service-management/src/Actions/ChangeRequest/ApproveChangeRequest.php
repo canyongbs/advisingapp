@@ -38,6 +38,9 @@ namespace AdvisingApp\ServiceManagement\Actions\ChangeRequest;
 
 use App\Models\User;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
+use AdvisingApp\ServiceManagement\Models\Scopes\ClassifiedAs;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
 class ApproveChangeRequest
 {
@@ -48,6 +51,10 @@ class ApproveChangeRequest
 
     public function handle(): void
     {
+        if ($this->changeRequest->isApproved()) {
+            return;
+        }
+
         if ($this->changeRequest->canBeApprovedBy($this->user)) {
             $this->changeRequest->responses()->create([
                 'user_id' => $this->user->id,
@@ -55,6 +62,12 @@ class ApproveChangeRequest
             ]);
         }
 
-        // TODO Update status as necessary
+        if ($this->changeRequest->isApproved()) {
+            $this->changeRequest->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')
+                ->transitionTo(
+                    relatedModel: ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Approved))->first(),
+                    newState: SystemChangeRequestClassification::Approved
+                );
+        }
     }
 }
