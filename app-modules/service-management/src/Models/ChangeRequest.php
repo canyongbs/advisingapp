@@ -118,20 +118,20 @@ class ChangeRequest extends BaseModel implements Auditable
         return $this->approvals()->where('user_id', $user->id)->exists();
     }
 
-    public function approvedBy(User $user): bool
+    public function getIcon(): string
     {
-        // TODO This method will carry out the actual approval
-        // We might want to extract this to an independent action
-        if ($this->canBeApprovedBy($user)) {
-            $this->responses()->create([
-                'user_id' => $user->id,
-                'approved' => true,
-            ]);
+        return match (true) {
+            $this->isApproved() => 'heroicon-s-check-circle',
+            default => 'heroicon-s-clock',
+        };
+    }
 
-            return true;
-        }
-
-        return false;
+    public function getIconColor(): string
+    {
+        return match (true) {
+            $this->isApproved() => 'success',
+            default => 'gray',
+        };
     }
 
     public static function getColorBasedOnRisk(?int $value): string

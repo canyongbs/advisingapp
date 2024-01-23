@@ -37,13 +37,18 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
 use Carbon\CarbonInterface;
-use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Filament\Support\Enums\IconSize;
+use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\RepeatableEntry;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
+use AdvisingApp\ServiceManagement\Actions\ChangeRequest\ApproveChangeRequest;
 
 class ViewChangeRequest extends ViewRecord
 {
@@ -53,6 +58,30 @@ class ViewChangeRequest extends ViewRecord
     {
         return $infolist
             ->schema([
+                Section::make('Approval Status')
+                    ->headerActions([
+                        Action::make('approveChangeRequest')
+                            ->requiresConfirmation()
+                            ->disabled(fn ($record) => ! $record->canBeApprovedBy(auth()->user()))
+                            ->action(fn ($record) => resolve(ApproveChangeRequest::class, ['changeRequest' => $record, 'user' => auth()->user()])->handle()),
+                    ])
+                    ->icon(fn ($record) => $record->getIcon())
+                    ->iconColor(fn ($record) => $record->getIconColor())
+                    ->iconSize(IconSize::Large)
+                    ->schema([
+                        TextEntry::make('type.number_of_required_approvals')
+                            ->label('Approvals Needed')
+                            ->columnSpan(2),
+                        RepeatableEntry::make('approvals')
+                            ->label('Approved By')
+                            ->schema([
+                                TextEntry::make('user')
+                                    ->formatStateUsing(fn ($state) => $state->name)
+                                    ->hiddenLabel()
+                                    ->url(fn ($state) => UserResource::getUrl('view', ['record' => $state]))
+                                    ->color('primary'),
+                            ]),
+                    ]),
                 Section::make('Change Request Details')
                     ->schema([
                         TextEntry::make('title')
@@ -99,10 +128,8 @@ class ViewChangeRequest extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('approveChangeRequest')
-                ->requiresConfirmation()
-                ->disabled(fn ($record) => ! $record->canBeApprovedBy(auth()->user()))
-                ->action(fn ($record) => $record->approvedBy(auth()->user())),
+            EditAction::make()
+                ->outlined(),
         ];
     }
 }
