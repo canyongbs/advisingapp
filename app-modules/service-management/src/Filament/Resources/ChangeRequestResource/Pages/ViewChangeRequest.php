@@ -67,11 +67,11 @@ class ViewChangeRequest extends ViewRecord
                     ->headerActions([
                         InfolistAction::make('approveChangeRequest')
                             ->requiresConfirmation()
-                            ->disabled(fn ($record) => ! $record->canBeApprovedBy(auth()->user()))
-                            ->action(fn ($record) => resolve(ApproveChangeRequest::class, ['changeRequest' => $record, 'user' => auth()->user()])->handle()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isApproved() || ! $record->canBeApprovedBy(auth()->user()))
+                            ->action(fn (ChangeRequest $record) => resolve(ApproveChangeRequest::class, ['changeRequest' => $record, 'user' => auth()->user()])->handle()),
                     ])
-                    ->icon(fn ($record) => $record->getIcon())
-                    ->iconColor(fn ($record) => $record->getIconColor())
+                    ->icon(fn (ChangeRequest $record) => $record->getIcon())
+                    ->iconColor(fn (ChangeRequest $record) => $record->getIconColor())
                     ->iconSize(IconSize::Large)
                     ->schema([
                         TextEntry::make('type.number_of_required_approvals')
@@ -112,7 +112,7 @@ class ViewChangeRequest extends ViewRecord
                             ->columnSpan(2),
                         TextEntry::make('created_at')
                             ->label('Duration')
-                            ->state(fn ($record) => $record->end_time->diffForHumans($record->start_time, CarbonInterface::DIFF_ABSOLUTE, true, 6))
+                            ->state(fn (ChangeRequest $record) => $record->end_time->diffForHumans($record->start_time, CarbonInterface::DIFF_ABSOLUTE, true, 6))
                             ->columnSpan(2),
                     ])
                     ->columns(6),
