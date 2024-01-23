@@ -46,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class EditChangeRequest extends EditRecord
@@ -57,27 +58,27 @@ class EditChangeRequest extends EditRecord
         return $form
             ->schema([
                 Section::make('Change Request Details')
-                    ->description(function ($record) {
-                        return $record->isApproved()
-                            ? 'This change request has been approved and can no longer be edited.'
+                    ->description(function (ChangeRequest $record) {
+                        return $record->isNotNew()
+                            ? "This change request has been {$record->status->classification->getLabel()} and can no longer be edited."
                             : null;
                     })
                     ->schema([
                         TextInput::make('title')
                             ->required()
                             ->columnSpanFull()
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         TextInput::make('description')
                             ->required()
                             ->columnSpanFull()
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         Select::make('change_request_type_id')
                             ->relationship('type', 'name')
                             ->searchable()
                             ->preload()
                             ->required()
                             ->columnSpan(1)
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         Select::make('change_request_status_id')
                             ->relationship('status', 'name')
                             ->searchable()
@@ -90,20 +91,20 @@ class EditChangeRequest extends EditRecord
                             ->rows(5)
                             ->required()
                             ->columnSpanFull()
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         Textarea::make('backout_strategy')
                             ->rows(5)
                             ->required()
                             ->columnSpanFull()
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         DateTimePicker::make('start_time')
                             ->required()
                             ->columnSpan(1)
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         DateTimePicker::make('end_time')
                             ->required()
                             ->columnSpan(1)
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                     ])
                     ->columns(2),
                 Section::make('Risk Management')
@@ -116,7 +117,7 @@ class EditChangeRequest extends EditRecord
                             ->minValue(1)
                             ->maxValue(5)
                             ->columnSpan(1)
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         TextInput::make('likelihood')
                             ->reactive()
                             ->helperText('Please enter a number between 1 and 5.')
@@ -125,7 +126,7 @@ class EditChangeRequest extends EditRecord
                             ->minValue(1)
                             ->maxValue(5)
                             ->columnSpan(1)
-                            ->disabled(fn ($record) => $record->isApproved()),
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         ViewField::make('risk_score')
                             ->view('filament.forms.components.change-request.calculated-risk-score'),
                     ])

@@ -62,9 +62,9 @@ class ChangeRequestObserver
         $changeRequest->risk_score = $changeRequest->impact * $changeRequest->likelihood;
 
         // TODO Implement a rule that specifies that only one change request status can be of classification "Approved"
-        $approvedStatus = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Approved))->first()->id;
+        $approvedStatus = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Approved))->first();
         // TODO Implement a rule that specifies that only one change request status can be of classification "New"
-        $newStatus = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::New))->first()->id;
+        $newStatus = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::New))->first();
 
         if (is_null($changeRequest->change_request_status_id)) {
             $changeRequest->change_request_status_id = ($changeRequest->type?->number_of_required_approvals === 0)

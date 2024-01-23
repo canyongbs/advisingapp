@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
 class ChangeRequest extends BaseModel implements Auditable
 {
@@ -106,6 +107,11 @@ class ChangeRequest extends BaseModel implements Auditable
     public function isApproved(): bool
     {
         return $this->type->number_of_required_approvals === 0 || $this->approvals()->count() >= $this->type->number_of_required_approvals;
+    }
+
+    public function isNotNew(): bool
+    {
+        return $this->status->classification !== SystemChangeRequestClassification::New;
     }
 
     public function canBeApprovedBy(User $user): bool
