@@ -67,7 +67,8 @@ class ViewChangeRequest extends ViewRecord
                     ->headerActions([
                         InfolistAction::make('approveChangeRequest')
                             ->requiresConfirmation()
-                            ->disabled(fn (ChangeRequest $record) => $record->isApproved() || ! $record->canBeApprovedBy(auth()->user()))
+                            ->hidden(fn (ChangeRequest $record) => $record->type->number_of_required_approvals === 0)
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew() || ! $record->canBeApprovedBy(auth()->user()))
                             ->action(fn (ChangeRequest $record) => resolve(ApproveChangeRequest::class, ['changeRequest' => $record, 'user' => auth()->user()])->handle()),
                     ])
                     ->icon(fn (ChangeRequest $record) => $record->getIcon())
@@ -79,6 +80,7 @@ class ViewChangeRequest extends ViewRecord
                             ->columnSpan(2),
                         RepeatableEntry::make('approvals')
                             ->label('Approved By')
+                            ->hidden(fn (ChangeRequest $record) => $record->type->number_of_required_approvals === 0)
                             ->schema([
                                 TextEntry::make('user')
                                     ->formatStateUsing(fn ($state) => $state->name)
@@ -133,6 +135,17 @@ class ViewChangeRequest extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('transition_to_approved')
+                ->requiresConfirmation()
+                ->modalDescription('Once this change request is approved, it can no longer be edited.')
+                ->label('Transition to Approved')
+                ->action(
+                    fn (ChangeRequest $record) => $record->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')
+                        ->transitionTo(ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Approved))->first(), SystemChangeRequestClassification::Approved)
+                )
+                ->cancelParentActions()
+                ->disabled(fn (ChangeRequest $record) => ! $record->user->is(auth()->user()))
+                ->visible(fn (ChangeRequest $record) => $record->doesNotNeedExplicitApproval() && $record->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')->getStateTransitions()->contains(SystemChangeRequestClassification::Approved->value)),
             Action::make('transition_to_in_progress')
                 ->label('Transition to In Progress')
                 ->action(

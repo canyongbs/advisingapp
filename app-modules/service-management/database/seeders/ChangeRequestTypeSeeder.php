@@ -44,12 +44,17 @@ class ChangeRequestTypeSeeder extends Seeder
 {
     public function run(): void
     {
-        $types = ['Standard Change', 'Normal Change', 'Emergency Change'];
+        $types = [
+            ['Normal Change', 0],
+            ['Standard Change', 1],
+            ['Emergency Change', 2],
+        ];
 
         foreach ($types as $type) {
             $changeRequestType = ChangeRequestType::factory()
                 ->create([
-                    'name' => $type,
+                    'name' => $type[0],
+                    'number_of_required_approvals' => $type[1],
                 ]);
 
             // TODO Introduce scoping for this

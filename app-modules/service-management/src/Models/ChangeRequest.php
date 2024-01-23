@@ -104,9 +104,14 @@ class ChangeRequest extends BaseModel implements Auditable
         return $this->responses()->where('approved', '=', true);
     }
 
+    public function hasApproval(): bool
+    {
+        return $this->approvals()->count() >= $this->type->number_of_required_approvals;
+    }
+
     public function isApproved(): bool
     {
-        return $this->type->number_of_required_approvals === 0 || $this->approvals()->count() >= $this->type->number_of_required_approvals;
+        return $this->status->classification === SystemChangeRequestClassification::Approved;
     }
 
     public function isNotNew(): bool
@@ -124,10 +129,15 @@ class ChangeRequest extends BaseModel implements Auditable
         return $this->approvals()->where('user_id', $user->id)->exists();
     }
 
+    public function doesNotNeedExplicitApproval(): bool
+    {
+        return $this->type->number_of_required_approvals === 0;
+    }
+
     public function getIcon(): string
     {
         return match (true) {
-            $this->isApproved() => 'heroicon-s-check-circle',
+            $this->isApproved() || $this->hasApproval() => 'heroicon-s-check-circle',
             default => 'heroicon-s-clock',
         };
     }
@@ -135,7 +145,7 @@ class ChangeRequest extends BaseModel implements Auditable
     public function getIconColor(): string
     {
         return match (true) {
-            $this->isApproved() => 'success',
+            $this->isApproved() || $this->hasApproval() => 'success',
             default => 'gray',
         };
     }

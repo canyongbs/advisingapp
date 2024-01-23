@@ -51,7 +51,7 @@ class ApproveChangeRequest
 
     public function handle(): void
     {
-        if ($this->changeRequest->isApproved()) {
+        if ($this->changeRequest->isApproved() || $this->changeRequest->hasApproval()) {
             return;
         }
 
@@ -62,7 +62,7 @@ class ApproveChangeRequest
             ]);
         }
 
-        if ($this->changeRequest->isApproved()) {
+        if ($this->changeRequest->hasApproval()) {
             $this->changeRequest->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')
                 ->transitionTo(
                     relatedModel: ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Approved))->first(),
