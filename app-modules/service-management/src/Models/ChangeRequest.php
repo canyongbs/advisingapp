@@ -103,6 +103,37 @@ class ChangeRequest extends BaseModel implements Auditable
         return $this->responses()->where('approved', '=', true);
     }
 
+    public function isApproved(): bool
+    {
+        return $this->approvals()->count() >= $this->type->number_of_required_approvals;
+    }
+
+    public function canBeApprovedBy(User $user): bool
+    {
+        return $this->type->userApprovers()->pluck('user_id')->contains($user->id) && ! $this->hasBeenApprovedBy($user);
+    }
+
+    public function hasBeenApprovedBy(User $user): bool
+    {
+        return $this->approvals()->where('user_id', $user->id)->exists();
+    }
+
+    public function approvedBy(User $user): bool
+    {
+        // TODO This method will carry out the actual approval
+        // We might want to extract this to an independent action
+        if ($this->canBeApprovedBy($user)) {
+            $this->responses()->create([
+                'user_id' => $user->id,
+                'approved' => true,
+            ]);
+
+            return true;
+        }
+
+        return false;
+    }
+
     public static function getColorBasedOnRisk(?int $value): string
     {
         $classMap = [

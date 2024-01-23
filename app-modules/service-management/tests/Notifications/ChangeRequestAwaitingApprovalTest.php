@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
+use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApproval;
+
 /*
 <COPYRIGHT>
 
@@ -34,36 +40,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Observers;
+test('ChangeRequestAwaitingApproval notification is sent to each change request approver based on the change request type', function () {
+    Notification::fake();
 
-use Illuminate\Support\Facades\Notification;
-use AdvisingApp\ServiceManagement\Models\ChangeRequest;
-use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
-use AdvisingApp\ServiceManagement\Models\Scopes\ClassifiedAs;
-use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
-use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApproval;
+    // Given that we have a have a change request type with user approvers
+    $changeRequestType = ChangeRequestType::factory()->create();
+    $userApprovers = User::factory()->count(3)->create();
+    $changeRequestType->userApprovers()->attach($userApprovers);
 
-class ChangeRequestObserver
-{
-    public function creating(ChangeRequest $changeRequest): void
-    {
-        if (is_null($changeRequest->created_by) && ! is_null(auth()->user())) {
-            $changeRequest->created_by = auth()->user()->id;
-        }
+    // And a change request is created with that type
+    ChangeRequest::factory()->create([
+        'change_request_type_id' => $changeRequestType->id,
+    ]);
 
-        if (is_null($changeRequest->change_request_status_id)) {
-            // TODO Implement a rule that specifies that only one change request status can be of classification "New"
-            $changeRequest->change_request_status_id = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::New))->first()->id;
-        }
-    }
-
-    public function created(ChangeRequest $changeRequest): void
-    {
-        Notification::send($changeRequest->type->userApprovers, new ChangeRequestAwaitingApproval($changeRequest));
-    }
-
-    public function saving(ChangeRequest $changeRequest): void
-    {
-        $changeRequest->risk_score = $changeRequest->impact * $changeRequest->likelihood;
-    }
-}
+    // Notifcations will be sent to each approver
+    Notification::assertSentTo($userApprovers, ChangeRequestAwaitingApproval::class);
+});

@@ -61,16 +61,19 @@ class EditChangeRequest extends EditRecord
                     ->schema([
                         TextInput::make('title')
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(fn ($record) => $record->isApproved()),
                         TextInput::make('description')
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(fn ($record) => $record->isApproved()),
                         Select::make('change_request_type_id')
                             ->relationship('type', 'name')
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn ($record) => $record->isApproved()),
                         Select::make('change_request_status_id')
                             ->relationship('status', 'name')
                             ->searchable()
@@ -78,10 +81,10 @@ class EditChangeRequest extends EditRecord
                             ->required()
                             ->columnSpan(1)
                             ->disabled(function ($record) {
-                                return $record->status->classification === SystemChangeRequestClassification::New;
+                                return $record->status->classification === SystemChangeRequestClassification::New && ! $record->isApproved();
                             })
                             ->helperText(function ($record) {
-                                return $record->status->classification === SystemChangeRequestClassification::New
+                                return ($record->status->classification === SystemChangeRequestClassification::New && ! $record->isApproved())
                                     ? 'The status cannot be changed until the change request has been approved.'
                                     : null;
                             }),
@@ -89,17 +92,21 @@ class EditChangeRequest extends EditRecord
                             ->label('Reason for change')
                             ->rows(5)
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(fn ($record) => $record->isApproved()),
                         Textarea::make('backout_strategy')
                             ->rows(5)
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(fn ($record) => $record->isApproved()),
                         DateTimePicker::make('start_time')
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn ($record) => $record->isApproved()),
                         DateTimePicker::make('end_time')
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn ($record) => $record->isApproved()),
                     ])
                     ->columns(2),
                 Section::make('Risk Management')
@@ -112,7 +119,8 @@ class EditChangeRequest extends EditRecord
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(5)
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn ($record) => $record->isApproved()),
                         TextInput::make('likelihood')
                             ->reactive()
                             ->helperText('Please enter a number between 1 and 5.')
@@ -120,7 +128,8 @@ class EditChangeRequest extends EditRecord
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(5)
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn ($record) => $record->isApproved()),
                         ViewField::make('risk_score')
                             ->view('filament.forms.components.change-request.calculated-risk-score'),
                     ])
