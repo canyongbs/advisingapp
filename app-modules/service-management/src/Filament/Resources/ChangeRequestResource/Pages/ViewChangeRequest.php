@@ -37,6 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
 use Carbon\CarbonInterface;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
 use Filament\Support\Enums\IconSize;
@@ -45,8 +46,12 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
-use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\RepeatableEntry;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
+use AdvisingApp\ServiceManagement\Models\Scopes\ClassifiedAs;
+use Filament\Infolists\Components\Actions\Action as InfolistAction;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 use AdvisingApp\ServiceManagement\Actions\ChangeRequest\ApproveChangeRequest;
 
@@ -60,7 +65,7 @@ class ViewChangeRequest extends ViewRecord
             ->schema([
                 Section::make('Approval Status')
                     ->headerActions([
-                        Action::make('approveChangeRequest')
+                        InfolistAction::make('approveChangeRequest')
                             ->requiresConfirmation()
                             ->disabled(fn ($record) => ! $record->canBeApprovedBy(auth()->user()))
                             ->action(fn ($record) => resolve(ApproveChangeRequest::class, ['changeRequest' => $record, 'user' => auth()->user()])->handle()),
@@ -128,6 +133,33 @@ class ViewChangeRequest extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('transition_to_in_progress')
+                ->label('Transition to In Progress')
+                ->action(
+                    fn (ChangeRequest $record) => $record->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')
+                        ->transitionTo(ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::InProgress))->first(), SystemChangeRequestClassification::InProgress)
+                )
+                ->cancelParentActions()
+                ->disabled(fn (ChangeRequest $record) => ! $record->user->is(auth()->user()))
+                ->visible(fn (ChangeRequest $record) => $record->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')->getStateTransitions()->contains(SystemChangeRequestClassification::InProgress->value)),
+            Action::make('transition_to_completed')
+                ->label('Transition to Completed')
+                ->action(
+                    fn (ChangeRequest $record) => $record->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')
+                        ->transitionTo(ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Completed))->first(), SystemChangeRequestClassification::Completed)
+                )
+                ->cancelParentActions()
+                ->disabled(fn (ChangeRequest $record) => ! $record->user->is(auth()->user()))
+                ->visible(fn (ChangeRequest $record) => $record->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')->getStateTransitions()->contains(SystemChangeRequestClassification::Completed->value)),
+            Action::make('transition_to_failed')
+                ->label('Transition to Failed')
+                ->action(
+                    fn (ChangeRequest $record) => $record->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')
+                        ->transitionTo(ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::FailedOrReverted))->first(), SystemChangeRequestClassification::FailedOrReverted)
+                )
+                ->cancelParentActions()
+                ->disabled(fn (ChangeRequest $record) => ! $record->user->is(auth()->user()))
+                ->visible(fn (ChangeRequest $record) => $record->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')->getStateTransitions()->contains(SystemChangeRequestClassification::FailedOrReverted->value)),
             EditAction::make()
                 ->outlined(),
         ];

@@ -46,7 +46,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\DateTimePicker;
-use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class EditChangeRequest extends EditRecord
@@ -58,7 +57,11 @@ class EditChangeRequest extends EditRecord
         return $form
             ->schema([
                 Section::make('Change Request Details')
-                    ->aside()
+                    ->description(function ($record) {
+                        return $record->isApproved()
+                            ? 'This change request has been approved and can no longer be edited.'
+                            : null;
+                    })
                     ->schema([
                         TextInput::make('title')
                             ->required()
@@ -81,14 +84,7 @@ class EditChangeRequest extends EditRecord
                             ->preload()
                             ->required()
                             ->columnSpan(1)
-                            ->disabled(function ($record) {
-                                return $record->status->classification === SystemChangeRequestClassification::New && ! $record->isApproved();
-                            })
-                            ->helperText(function ($record) {
-                                return ($record->status->classification === SystemChangeRequestClassification::New && ! $record->isApproved())
-                                    ? 'The status cannot be changed until the change request has been approved.'
-                                    : null;
-                            }),
+                            ->disabled(),
                         Textarea::make('reason')
                             ->label('Reason for change')
                             ->rows(5)
@@ -111,7 +107,6 @@ class EditChangeRequest extends EditRecord
                     ])
                     ->columns(2),
                 Section::make('Risk Management')
-                    ->aside()
                     ->schema([
                         TextInput::make('impact')
                             ->reactive()
@@ -142,7 +137,8 @@ class EditChangeRequest extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->disabled(fn ($record) => $record->isApproved()),
         ];
     }
 }

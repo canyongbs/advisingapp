@@ -105,7 +105,7 @@ class ChangeRequest extends BaseModel implements Auditable
 
     public function isApproved(): bool
     {
-        return $this->approvals()->count() >= $this->type->number_of_required_approvals;
+        return $this->type->number_of_required_approvals === 0 || $this->approvals()->count() >= $this->type->number_of_required_approvals;
     }
 
     public function canBeApprovedBy(User $user): bool
