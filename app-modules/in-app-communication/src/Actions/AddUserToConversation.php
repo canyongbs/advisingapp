@@ -48,7 +48,7 @@ class AddUserToConversation
         public Client $twilioClient,
     ) {}
 
-    public function __invoke(User $user, TwilioConversation $conversation): void
+    public function __invoke(User $user, TwilioConversation $conversation, bool $manager = false): void
     {
         throw_if(
             ($conversation->type === ConversationType::UserToUser) && ($conversation->participants->count() >= 2),
@@ -68,9 +68,10 @@ class AddUserToConversation
                 'identity' => $user->id,
             ]);
 
-        $conversation->participants()->attach(
-            $user,
-            ['participant_sid' => $participant->sid]
-        );
+        $conversation->participants()
+            ->attach($user, [
+                'participant_sid' => $participant->sid,
+                'is_chanel_manager' => $manager,
+            ]);
     }
 }

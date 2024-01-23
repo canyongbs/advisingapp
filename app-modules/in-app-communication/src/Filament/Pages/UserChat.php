@@ -39,6 +39,8 @@ namespace AdvisingApp\InAppCommunication\Filament\Pages;
 use Exception;
 use App\Models\User;
 use App\Enums\Feature;
+use Filament\Actions\StaticAction;
+use Illuminate\Support\HtmlString;
 use Twilio\Rest\Client;
 use Filament\Pages\Page;
 use Twilio\Jwt\AccessToken;
@@ -120,11 +122,11 @@ class UserChat extends Page implements HasForms, HasActions
             ->where('id', '!=', auth()->id())
             ->whereDoesntHave(
                 'conversations',
-                fn ($query) => $query
+                fn (Builder $query) => $query
                     ->where('type', ConversationType::UserToUser)
                     ->whereHas(
                         'participants',
-                        fn ($query) => $query->where('user_id', auth()->id())
+                        fn (Builder $query) => $query->where('user_id', auth()->id())
                     )
             );
 
@@ -259,8 +261,11 @@ class UserChat extends Page implements HasForms, HasActions
                         continue;
                     }
 
+                    /** @var User $user */
+                    $user = auth()->user();
+
                     $addUserToConversation(
-                        user: auth()->user(),
+                        user: $user,
                         conversation: $channel,
                     );
                 }
@@ -278,14 +283,55 @@ class UserChat extends Page implements HasForms, HasActions
 
     public function leaveConversationAction(): Action
     {
+        $disabled = function (): bool {
+            $conversation = $this->getSelectedConversation();
+
+            /** @var User $user */
+            $user = auth()->user();
+
+            if (! $conversation->managers()->find($user)) {
+                return false;
+            }
+
+            if ($conversation->managers()->whereKeyNot($user->getKey())->exists()) {
+                return false;
+            }
+
+            return true;
+        };
+
         return Action::make('leaveConversation')
             ->label('Leave conversation')
             ->color('danger')
             ->link()
             ->icon('heroicon-m-arrow-right-start-on-rectangle')
             ->requiresConfirmation()
-            ->modalHeading('Are you sure you want to leave?')
-            ->modalDescription('You will no longer have access to these messages, unless you are invited back.')
+            ->modalHeading(function () use ($disabled) {
+                if ($disabled()) {
+                    return 'Unable to leave channel.';
+                }
+
+                return 'Are you sure you want to leave?';
+            })
+            ->modalDescription(function () use ($disabled) {
+                if ($disabled()) {
+                    return 'You cannot leave a channel where you are the only manager.';
+                }
+
+                $message = str('You will no longer have access to these messages, unless you are invited back.');
+
+                $conversation = $this->getSelectedConversation();
+
+                /** @var User $user */
+                $user = auth()->user();
+
+                if ($conversation->managers()->find($user)) {
+                    $message = $message->append('<br>You will be removed as a channel manager.');
+                }
+
+                return new HtmlString($message);
+            })
+            ->modalSubmitAction(fn (StaticAction $action) => $disabled() ? null : $action)
             ->action(function (RemoveUserFromConversation $removeUserFromConversation) {
                 $conversation = $this->getSelectedConversation();
 
@@ -293,8 +339,11 @@ class UserChat extends Page implements HasForms, HasActions
                     return;
                 }
 
+                /** @var User $user */
+                $user = auth()->user();
+
                 $removeUserFromConversation(
-                    user: auth()->user(),
+                    user: $user,
                     conversation: $conversation,
                 );
 
