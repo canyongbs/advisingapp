@@ -46,7 +46,7 @@ class CreateTenant
         string $name,
         string $domain,
         TenantConfig $config,
-    ): Tenant {
+    ): ?Tenant {
         return Tenant::query()
             ->create(
                 [

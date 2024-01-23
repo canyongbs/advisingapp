@@ -37,6 +37,7 @@
 namespace App\Providers\Filament;
 
 use Filament\Panel;
+use App\Models\Tenant;
 use Filament\PanelProvider;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
@@ -86,8 +87,9 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->id('admin')
+            // TODO: Look into how to handle this better, currently this is the best way I could find to prevent Filament from thinking Landlord API calls should be routed through Filament
+            ->domains(Tenant::select('domain')->get()->pluck('domain')->toArray())
             ->path('/')
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')

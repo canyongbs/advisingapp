@@ -34,18 +34,4 @@
 </COPYRIGHT>
 */
 
-use Spatie\Multitenancy\Http\Middleware\NeedsTenant;
-use App\Multitenancy\Http\Controllers\CreateTenantController;
-use Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession;
-
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
-
-Route::group(['prefix' => 'landlord', 'as' => 'landlord.api.', 'middleware' => []], function () {
-    Route::post('tenants/create', CreateTenantController::class)->name('tenants.create');
-})
-    ->withoutMiddleware(
-        [
-            NeedsTenant::class,
-            EnsureValidTenantSession::class,
-        ]
-    );

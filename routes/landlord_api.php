@@ -34,17 +34,6 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\DataTransferObjects;
+use App\Http\Controllers\CreateTenantController;
 
-use Spatie\LaravelData\Data;
-
-class TenantSisDatabaseConfig extends Data
-{
-    public function __construct(
-        public ?string $host = null,
-        public ?int $port = null,
-        public ?string $database = null,
-        public ?string $username = null,
-        public ?string $password = null,
-    ) {}
-}
+Route::post('tenants/create', CreateTenantController::class)->name('tenants.create');

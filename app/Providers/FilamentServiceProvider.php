@@ -59,7 +59,7 @@ class FilamentServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //to get around database connection missing setup during tests
-        if (! $this->app->runningInConsole()) {
+        if (! is_null(filament()->getCurrentPanel()) && ! $this->app->runningInConsole()) {
             $themeSettings = app(ThemeSettings::class);
             $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
             $favicon = $settingsProperty->getFirstMedia('favicon');

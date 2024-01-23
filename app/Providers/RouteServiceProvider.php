@@ -61,6 +61,11 @@ class RouteServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         $this->routes(function () {
+            Route::prefix('landlord/api')
+                ->namespace($this->namespace)
+                ->as('landlord.api.')
+                ->group(base_path('routes/landlord_api.php'));
+
             Route::prefix('api')
                 ->middleware('api')
                 ->namespace($this->namespace)
