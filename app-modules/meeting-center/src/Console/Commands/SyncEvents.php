@@ -54,7 +54,7 @@ class SyncEvents extends Command
 
     public function handle(): int
     {
-        $user = User::where('email', 'sampleadmin@advising.app')->first();
+        $user = User::where('email', config('local_development.super_admin.email'))->first();
 
         resolve(CalendarManager::class)
             ->driver($user->calendar->provider_type->value)

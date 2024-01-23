@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ServiceManagement\Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
 
@@ -46,10 +47,13 @@ class ChangeRequestTypeSeeder extends Seeder
         $types = ['Standard Change', 'Normal Change', 'Emergency Change'];
 
         foreach ($types as $type) {
-            ChangeRequestType::factory()
+            $changeRequestType = ChangeRequestType::factory()
                 ->create([
                     'name' => $type,
                 ]);
+
+            // TODO Introduce scoping for this
+            $changeRequestType->userApprovers()->attach(User::where('email', config('local_development.super_admin.email'))->first()->id);
         }
     }
 }
