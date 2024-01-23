@@ -39,6 +39,7 @@ namespace AdvisingApp\ServiceManagement\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
@@ -90,6 +91,16 @@ class ChangeRequest extends BaseModel implements Auditable
     public function status(): BelongsTo
     {
         return $this->belongsTo(ChangeRequestStatus::class, 'change_request_status_id');
+    }
+
+    public function responses(): HasMany
+    {
+        return $this->hasMany(ChangeRequestResponse::class, 'change_request_id');
+    }
+
+    public function approvals(): HasMany
+    {
+        return $this->responses()->where('approved', '=', true);
     }
 
     public static function getColorBasedOnRisk(?int $value): string
