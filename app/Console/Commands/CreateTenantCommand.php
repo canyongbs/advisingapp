@@ -39,6 +39,7 @@ namespace App\Console\Commands;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 use App\Multitenancy\Actions\CreateTenant;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
@@ -50,7 +51,7 @@ use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 
 class CreateTenantCommand extends Command
 {
-    protected $signature = 'tenants:create {name} {domain}';
+    protected $signature = 'tenants:create {name} {domain} {--m|run-queue} {--s|seed}';
 
     protected $description = 'Temporary command to test the tenant creation process.';
 
@@ -77,7 +78,7 @@ class CreateTenantCommand extends Command
 
         Tenant::where('domain', $domain)->delete();
 
-        app(CreateTenant::class)(
+        $tenant = app(CreateTenant::class)(
             $name,
             $domain,
             new TenantConfig(
@@ -135,5 +136,19 @@ class CreateTenantCommand extends Command
                 ),
             )
         );
+
+        if ($this->option('run-queue') || $this->confirm('Run the queue to migrate tenant databases?')) {
+            Artisan::call(
+                command: 'queue:work --queue=landlord --stop-when-empty',
+                outputBuffer: $this->output,
+            );
+
+            if ($this->option('seed') || $this->confirm('Seed the tenant database?')) {
+                Artisan::call(
+                    command: "tenants:artisan \"db:seed --database=tenant\" --tenant={$tenant->id}",
+                    outputBuffer: $this->output,
+                );
+            }
+        }
     }
 }

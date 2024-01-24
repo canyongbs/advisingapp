@@ -73,11 +73,11 @@ These commands will set up the application for the "landlord" database. The land
 
 ```bash
 sail artisan tenant:create [A Name for the Tenant] [A domain for the tenant]
-sail artisan sis:refresh
-sail composer refresh-database
+sail artisan queue:work --queue=landlord --stop-when-empty
+sail artisan tenants:artisan "db:seed --database=tenant"
 ```
 
-These commands will create a new tenant with the name and domain you supplied, seed some did into it's sis database, and then refresh and seed the tenant's database.
+These commands will create a new tenant with the name and domain you supplied, seed some data into it's sis database, and then refresh and seed the tenant's database.
 
 After this the application should be accessible at the domain you supplied.
 
