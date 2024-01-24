@@ -60,7 +60,12 @@ class DemoteUserFromChannelManager
             new Exception('User is not a participant in the channel.')
         );
 
-        $conversation->participants()
+        throw_unless(
+            $conversation->managers()->whereKeyNot($user->getKey())->exists(),
+            'User cannot be removed because they are the only manager in the channel.'
+        );
+
+        $conversation->managers()
             ->updateExistingPivot($user->getKey(), [
                 'is_channel_manager' => false,
             ]);

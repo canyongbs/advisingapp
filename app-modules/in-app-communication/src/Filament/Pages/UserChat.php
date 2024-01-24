@@ -296,7 +296,7 @@ class UserChat extends Page implements HasForms, HasActions
                 $conversation->managers()
                     ->whereNotIn('id', $data['managers'])
                     ->whereNot('id', $user->id)
-                    ->each(fn (User $remove) => app(DemoteUserFromChannelManager::class)(user: $remove, conversation: $conversation));
+                    ->each(fn (User $demote) => app(DemoteUserFromChannelManager::class)(user: $demote, conversation: $conversation));
             });
     }
 
