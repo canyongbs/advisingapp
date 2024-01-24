@@ -27,7 +27,7 @@ class ListServiceRequestForms extends ListRecords
             ])
             ->actions([
                 Action::make('Respond')
-                    ->url(fn (ServiceRequestForm $form) => route('service-request-form.show', ['service-request-form' => $form]))
+                    ->url(fn (ServiceRequestForm $form) => route('service-request-forms.show', ['serviceRequestForm' => $form]))
                     ->icon('heroicon-m-arrow-top-right-on-square')
                     ->openUrlInNewTab()
                     ->color('gray'),
