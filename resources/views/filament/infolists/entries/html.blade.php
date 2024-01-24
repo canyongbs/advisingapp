@@ -38,7 +38,7 @@
         {{ $getLabel() }}
     </span>
 </dt>
-<div class="mt-2 rounded border border-gray-700 p-4">
+<div class="mt-2 rounded p-4">
     <div class="prose mt-2 max-w-full dark:prose-invert lg:prose-xl">
         {!! $getState() ? tiptap_converter()->asHTML(TipTapMediaEncoder::decode($getState())) : null !!}
     </div>

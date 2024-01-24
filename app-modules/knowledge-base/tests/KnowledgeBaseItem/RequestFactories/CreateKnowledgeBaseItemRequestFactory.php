@@ -47,10 +47,9 @@ class CreateKnowledgeBaseItemRequestFactory extends RequestFactory
     public function definition(): array
     {
         return [
-            'question' => fake()->sentence(),
+            'title' => fake()->words(5, true),
             'public' => fake()->boolean(),
-            'solution' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
-            'notes' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]],
+            'notes' => fake()->paragraph(),
             'quality_id' => KnowledgeBaseQuality::inRandomOrder()->first()?->id ?? KnowledgeBaseQuality::factory()->create()->id,
             'status_id' => KnowledgeBaseStatus::inRandomOrder()->first()?->id ?? KnowledgeBaseStatus::factory()->create()->id,
             'category_id' => KnowledgeBaseCategory::inRandomOrder()->first()?->id ?? KnowledgeBaseCategory::factory()->create()->id,

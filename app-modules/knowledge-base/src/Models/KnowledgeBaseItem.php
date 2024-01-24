@@ -58,18 +58,17 @@ class KnowledgeBaseItem extends BaseModel implements Auditable, HasMedia
 
     protected $casts = [
         'public' => 'boolean',
-        'solution' => 'array',
-        'notes' => 'array',
+        'article_details' => 'array',
     ];
 
     protected $fillable = [
-        'question',
+        'article_details',
+        'category_id',
+        'notes',
+        'public',
         'quality_id',
         'status_id',
-        'public',
-        'category_id',
-        'solution',
-        'notes',
+        'title',
     ];
 
     public function quality(): BelongsTo

@@ -44,10 +44,10 @@ class CreateKnowledgeBaseItemsTable extends Migration
     {
         Schema::create('knowledge_base_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('question');
             $table->boolean('public');
-            $table->jsonb('solution')->nullable();
-            $table->jsonb('notes')->nullable();
+            $table->string('title');
+            $table->json('article_details')->nullable();
+            $table->longText('notes')->nullable();
             $table->uuid('quality_id')->nullable();
             $table->uuid('status_id')->nullable();
             $table->uuid('category_id')->nullable();
