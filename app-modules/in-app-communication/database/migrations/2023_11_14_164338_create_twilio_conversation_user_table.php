@@ -48,7 +48,7 @@ return new class () extends Migration {
             $table->string('conversation_sid');
             $table->foreignUuid('user_id');
             $table->string('participant_sid');
-            $table->boolean('is_chanel_manager')->default(false);
+            $table->boolean('is_channel_manager')->default(false);
 
             $table->timestamps();
 

@@ -71,7 +71,10 @@ class AddUserToConversation
         $conversation->participants()
             ->attach($user, [
                 'participant_sid' => $participant->sid,
-                'is_chanel_manager' => $manager,
             ]);
+
+        if ($manager) {
+            app(PromoteUserToChannelManager::class)(user: $user, conversation: $conversation);
+        }
     }
 }

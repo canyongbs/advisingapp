@@ -109,7 +109,7 @@ class CreateTwilioConversation
 
         if ($type === ConversationType::UserToUser) {
             foreach ($users as $user) {
-                app(AddUserToConversation::class)(user: $user, conversation: $conversation, manager: true);
+                app(AddUserToConversation::class)(user: $user, conversation: $conversation);
             }
         } else {
             /** @var User $user */

@@ -43,6 +43,9 @@ use AdvisingApp\Audit\Overrides\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperChangeRequestType
+ */
 class ChangeRequestType extends BaseModel implements Auditable
 {
     use AuditableTrait;

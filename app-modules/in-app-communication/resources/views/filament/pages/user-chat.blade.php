@@ -112,7 +112,7 @@
                                                     config('filament.livewire_loading_delay', 'default') => '',
                                                     'wire:target' =>
                                                         'selectConversation(\'' . $conversation['sid'] . '\')',
-                                                ]))->class(['w-5 h-5'])" />
+                                                ]))->class(['w-5 h-5'])"/>
                                             </button>
                                         </li>
                                     @endforeach
@@ -123,12 +123,14 @@
                                     You can
                                     {{ (clone $this->joinChannelsAction)->link()->label('browse a list')->tooltip(null)->icon(null) }}
                                     or
-                                    {{ (clone $this->newChannelAction)->link()->label('create a new one')->tooltip(null)->icon(null) }}.
+                                    {{ (clone $this->newChannelAction)->link()->label('create a new one')->tooltip(null)->icon(null) }}
+                                    .
                                 </div>
                             @else
                                 <div class="text-sm">
                                     You do not have any direct messages yet. You can
-                                    {{ (clone $this->newUserToUserChatAction)->link()->label('start one')->tooltip(null)->icon(null) }}.
+                                    {{ (clone $this->newUserToUserChatAction)->link()->label('start one')->tooltip(null)->icon(null) }}
+                                    .
                                 </div>
                             @endif
                         </div>
@@ -147,7 +149,7 @@
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500"/>
                         <p
                             class="text-center"
                             x-text="loadingMessage"
@@ -285,6 +287,10 @@
                         </form>
                         @if ($selectedConversation?->type === ConversationType::Channel)
                             <div class="flex items-center justify-end gap-3">
+                                @if($selectedConversation->managers()->find(auth()->user()))
+                                    {{ $this->editChannelAction }}
+                                @endif
+
                                 {{ $this->addUserToChannelAction }}
 
                                 {{ $this->leaveConversationAction }}
