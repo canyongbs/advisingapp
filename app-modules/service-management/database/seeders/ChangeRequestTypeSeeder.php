@@ -57,7 +57,9 @@ class ChangeRequestTypeSeeder extends Seeder
                     'number_of_required_approvals' => $type[1],
                 ]);
 
-            $changeRequestType->userApprovers()->attach(User::where('email', config('local_development.super_admin.email'))->first()->id);
+            if (! app()->environment('production')) {
+                $changeRequestType->userApprovers()->attach(User::where('email', config('local_development.super_admin.email'))->first()->id);
+            }
         }
     }
 }
