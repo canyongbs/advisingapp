@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
+use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApproval;
+
 /*
 <COPYRIGHT>
 
@@ -34,18 +40,19 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+test('ChangeRequestAwaitingApproval notification is sent to each change request approver based on the change request type', function () {
+    Notification::fake();
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::create('change_request_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->integer('number_of_required_approvals');
-            $table->timestamps();
-        });
-    }
-};
+    // Given that we have a have a change request type with user approvers
+    $changeRequestType = ChangeRequestType::factory()->create();
+    $userApprovers = User::factory()->count(3)->create();
+    $changeRequestType->userApprovers()->attach($userApprovers);
+
+    // And a change request is created with that type
+    ChangeRequest::factory()->create([
+        'change_request_type_id' => $changeRequestType->id,
+    ]);
+
+    // Notifcations will be sent to each approver
+    Notification::assertSentTo($userApprovers, ChangeRequestAwaitingApproval::class);
+});

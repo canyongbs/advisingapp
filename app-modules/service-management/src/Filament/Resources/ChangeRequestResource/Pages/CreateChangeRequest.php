@@ -69,12 +69,6 @@ class CreateChangeRequest extends CreateRecord
                             ->preload()
                             ->required()
                             ->columnSpan(1),
-                        Select::make('change_request_status_id')
-                            ->relationship('status', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->required()
-                            ->columnSpan(1),
                         Textarea::make('reason')
                             ->rows(5)
                             ->required()

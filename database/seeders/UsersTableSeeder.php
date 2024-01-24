@@ -52,7 +52,7 @@ class UsersTableSeeder extends Seeder
         if (app()->environment('local')) {
             $superAdmin = User::factory()->licensed(LicenseType::cases())->create([
                 'name' => 'Super Admin',
-                'email' => 'sampleadmin@advising.app',
+                'email' => config('local_development.super_admin.email'),
                 'password' => Hash::make('password'),
             ]);
 

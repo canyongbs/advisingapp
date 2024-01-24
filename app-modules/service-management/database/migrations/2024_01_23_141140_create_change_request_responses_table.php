@@ -41,11 +41,13 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('change_request_types', function (Blueprint $table) {
+        Schema::create('change_request_responses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->integer('number_of_required_approvals');
+            $table->foreignUuid('change_request_id')->constrained('change_requests')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('users');
+            $table->boolean('approved');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

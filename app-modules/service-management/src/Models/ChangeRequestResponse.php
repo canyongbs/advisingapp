@@ -34,18 +34,34 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\ServiceManagement\Models;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Models\User;
+use App\Models\BaseModel;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+
+class ChangeRequestResponse extends BaseModel implements Auditable
+{
+    use AuditableTrait;
+
+    protected $fillable = [
+        'approved',
+        'user_id',
+    ];
+
+    protected $casts = [
+        'approved' => 'boolean',
+    ];
+
+    public function changeRequest(): BelongsTo
     {
-        Schema::create('change_request_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->integer('number_of_required_approvals');
-            $table->timestamps();
-        });
+        return $this->belongsTo(ChangeRequest::class);
     }
-};
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}
