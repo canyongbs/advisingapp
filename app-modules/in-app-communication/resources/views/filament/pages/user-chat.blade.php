@@ -35,7 +35,7 @@
     use AdvisingApp\InAppCommunication\Enums\ConversationType;
     use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-    
+
     $conversationGroups = $this->getConversations()->reduce(
         function (array $carry, TwilioConversation $conversation): array {
             if ($conversation->type === ConversationType::Channel) {
@@ -43,7 +43,7 @@
             } else {
                 $carry[1][] = $conversation;
             }
-    
+
             return $carry;
         },
         [[], []],
