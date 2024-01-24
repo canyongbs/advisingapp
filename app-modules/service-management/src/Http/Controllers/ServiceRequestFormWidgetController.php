@@ -60,30 +60,30 @@ use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 
 class ServiceRequestFormWidgetController extends Controller
 {
-    public function view(GenerateFormKitSchema $generateSchema, ServiceRequestForm $form): JsonResponse
+    public function view(GenerateFormKitSchema $generateSchema, ServiceRequestForm $serviceRequestForm): JsonResponse
     {
         return response()->json(
             [
-                'name' => $form->name,
-                'description' => $form->description,
-                'is_authenticated' => $form->is_authenticated,
-                ...($form->is_authenticated ? [
-                    'authentication_url' => URL::signedRoute('service-request-forms.request-authentication', ['serviceRequestForm' => $form]),
+                'name' => $serviceRequestForm->name,
+                'description' => $serviceRequestForm->description,
+                'is_authenticated' => $serviceRequestForm->is_authenticated,
+                ...($serviceRequestForm->is_authenticated ? [
+                    'authentication_url' => URL::signedRoute('service-request-forms.request-authentication', ['serviceRequestForm' => $serviceRequestForm]),
                 ] : [
-                    'submission_url' => URL::signedRoute('service-request-forms.submit', ['serviceRequestForm' => $form]),
+                    'submission_url' => URL::signedRoute('service-request-forms.submit', ['serviceRequestForm' => $serviceRequestForm]),
                 ]),
-                'recaptcha_enabled' => $form->recaptcha_enabled,
-                ...($form->recaptcha_enabled ? [
+                'recaptcha_enabled' => $serviceRequestForm->recaptcha_enabled,
+                ...($serviceRequestForm->recaptcha_enabled ? [
                     'recaptcha_site_key' => app(GoogleRecaptchaSettings::class)->site_key,
                 ] : []),
-                'schema' => $generateSchema($form),
-                'primary_color' => Color::all()[$form->primary_color ?? 'blue'],
-                'rounding' => $form->rounding,
+                'schema' => $generateSchema($serviceRequestForm),
+                'primary_color' => Color::all()[$serviceRequestForm->primary_color ?? 'blue'],
+                'rounding' => $serviceRequestForm->rounding,
             ],
         );
     }
 
-    public function requestAuthentication(Request $request, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, ServiceRequestForm $form): JsonResponse
+    public function requestAuthentication(Request $request, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, ServiceRequestForm $serviceRequestForm): JsonResponse
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
@@ -101,7 +101,7 @@ class ServiceRequestFormWidgetController extends Controller
 
         $authentication = new ServiceRequestFormAuthentication();
         $authentication->author()->associate($author);
-        $authentication->submissible()->associate($form);
+        $authentication->submissible()->associate($serviceRequestForm);
         $authentication->code = Hash::make($code);
         $authentication->save();
 
@@ -112,13 +112,13 @@ class ServiceRequestFormWidgetController extends Controller
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
             'authentication_url' => URL::signedRoute('service-request-forms.authenticate', [
-                'serviceRequestForm' => $form,
+                'serviceRequestForm' => $serviceRequestForm,
                 'authentication' => $authentication,
             ]),
         ]);
     }
 
-    public function authenticate(Request $request, ServiceRequestForm $form, ServiceRequestFormAuthentication $authentication): JsonResponse
+    public function authenticate(Request $request, ServiceRequestForm $serviceRequestForm, ServiceRequestFormAuthentication $authentication): JsonResponse
     {
         if ($authentication->isExpired()) {
             return response()->json([
@@ -148,7 +148,7 @@ class ServiceRequestFormWidgetController extends Controller
         Request $request,
         GenerateSubmissibleValidation $generateValidation,
         ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail,
-        ServiceRequestForm $form,
+        ServiceRequestForm $serviceRequestForm,
     ): JsonResponse {
         $authentication = $request->query('authentication');
 
@@ -157,7 +157,7 @@ class ServiceRequestFormWidgetController extends Controller
         }
 
         if (
-            $form->is_authenticated &&
+            $serviceRequestForm->is_authenticated &&
             ($authentication?->isExpired() ?? true)
         ) {
             abort(Response::HTTP_UNAUTHORIZED);
@@ -165,7 +165,7 @@ class ServiceRequestFormWidgetController extends Controller
 
         $validator = Validator::make(
             $request->all(),
-            $generateValidation($form)
+            $generateValidation($serviceRequestForm)
         );
 
         if ($validator->fails()) {
@@ -178,12 +178,12 @@ class ServiceRequestFormWidgetController extends Controller
         }
 
         /** @var ?ServiceRequestFormSubmission $submission */
-        $submission = $authentication ? $form->submissions()
+        $submission = $authentication ? $serviceRequestForm->submissions()
             ->requested()
             ->whereMorphedTo('author', $authentication->author)
             ->first() : null;
 
-        $submission ??= $form->submissions()->make();
+        $submission ??= $serviceRequestForm->submissions()->make();
 
         if ($authentication) {
             $submission->author()->associate($authentication->author);
@@ -199,8 +199,8 @@ class ServiceRequestFormWidgetController extends Controller
 
         unset($data['recaptcha-token']);
 
-        if ($form->is_wizard) {
-            foreach ($form->steps as $step) {
+        if ($serviceRequestForm->is_wizard) {
+            foreach ($serviceRequestForm->steps as $step) {
                 $stepFields = $step->fields()->pluck('type', 'id')->all();
 
                 foreach ($data[$step->label] as $fieldId => $response) {
@@ -227,7 +227,7 @@ class ServiceRequestFormWidgetController extends Controller
                 }
             }
         } else {
-            $formFields = $form->fields()->pluck('type', 'id')->all();
+            $formFields = $serviceRequestForm->fields()->pluck('type', 'id')->all();
 
             foreach ($data as $fieldId => $response) {
                 $submission->fields()->attach(

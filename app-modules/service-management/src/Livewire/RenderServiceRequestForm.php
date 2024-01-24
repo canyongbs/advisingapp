@@ -54,7 +54,7 @@ class RenderServiceRequestForm extends Component implements HasForms
 
     public function render(): View
     {
-        return view('survey::livewire.render-service-request-form')
+        return view('service-management::livewire.render-service-request-form')
             ->title($this->serviceRequestForm->name);
     }
 }

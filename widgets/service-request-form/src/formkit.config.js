@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,20 +31,17 @@
 
 </COPYRIGHT>
 */
+import { generateClasses } from '@formkit/themes';
+import { genesisIcons } from '@formkit/icons';
+import theme from './FormKit/theme';
+import inputs from './FormKit/Inputs/index';
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::create('service_request_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->foreignUuid('service_request_form_id')->nullable()->constrained('service_request_forms');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
+export default {
+    icons: {
+        ...genesisIcons,
+    },
+    inputs,
+    config: {
+        classes: generateClasses(theme),
+    },
 };

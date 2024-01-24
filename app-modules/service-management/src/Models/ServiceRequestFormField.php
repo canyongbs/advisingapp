@@ -59,11 +59,11 @@ class ServiceRequestFormField extends SubmissibleField
 
     public function submissible(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestForm::class);
+        return $this->belongsTo(ServiceRequestForm::class, 'service_request_form_id');
     }
 
     public function step(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestFormStep::class);
+        return $this->belongsTo(ServiceRequestFormStep::class, 'service_request_form_step_id');
     }
 }

@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,20 +31,9 @@
 
 </COPYRIGHT>
 */
+import preset from './tailwind.config.preset.js';
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::create('service_request_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->foreignUuid('service_request_form_id')->nullable()->constrained('service_request_forms');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
+export default {
+    presets: [preset],
+    content: ['./src/**/*.vue', './src/FormKit/theme.js'],
 };

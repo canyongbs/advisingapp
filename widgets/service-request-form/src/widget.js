@@ -1,4 +1,4 @@
-{{--
+/*
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -30,13 +30,33 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
---}}
-@php
-    use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
-@endphp
+*/
+import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
+import './widget.css';
+import App from './App.vue';
+import { defaultConfig, plugin } from '@formkit/vue';
+import config from './formkit.config.js';
+import VueSignaturePad from 'vue-signature-pad';
 
-<div class="flex items-center justify-center px-4 py-16">
-    <div class="w-full max-w-4xl">
-        {!! resolve(GenerateSubmissibleEmbedCode::class)->handle($this->serviceManagementForm) !!}
-    </div>
-</div>
+customElements.define(
+    'service-request-form-embed',
+    defineCustomElement({
+        setup(props) {
+            const app = createApp();
+
+            // install plugins
+            app.use(plugin, defaultConfig(config));
+
+            app.use(VueSignaturePad);
+
+            app.config.devtools = true;
+
+            const inst = getCurrentInstance();
+            Object.assign(inst.appContext, app._context);
+            Object.assign(inst.provides, app._context.provides);
+
+            return () => h(App, props);
+        },
+        props: ['url'],
+    }),
+);
