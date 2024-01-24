@@ -62,8 +62,10 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             Route::prefix('landlord/api')
+                ->middleware('landlord-api')
                 ->namespace($this->namespace)
                 ->as('landlord.api.')
+                ->domain('advisingapp.local')
                 ->group(base_path('routes/landlord_api.php'));
 
             Route::prefix('api')

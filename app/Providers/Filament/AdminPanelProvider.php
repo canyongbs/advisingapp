@@ -37,8 +37,8 @@
 namespace App\Providers\Filament;
 
 use Filament\Panel;
-use App\Models\Tenant;
 use Filament\PanelProvider;
+use App\Models\SettingsProperty;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Actions\ImportAction;
@@ -50,6 +50,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Spatie\Multitenancy\Http\Middleware\NeedsTenant;
@@ -87,13 +88,18 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->default()
             ->id('admin')
-            // TODO: Look into how to handle this better, currently this is the best way I could find to prevent Filament from thinking Landlord API calls should be routed through Filament
-            ->domains(Tenant::select('domain')->get()->pluck('domain')->toArray())
             ->path('/')
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->favicon(asset('/images/default-favicon.png'))
+            ->favicon(function () {
+                $themeSettings = app(ThemeSettings::class);
+                $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
+                $favicon = $settingsProperty->getFirstMedia('favicon');
+
+                return $themeSettings->is_favicon_active && $favicon ? $favicon->getTemporaryUrl(now()->addMinutes(5)) : asset('/images/default-favicon.png');
+            })
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->maxContentWidth('full')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
