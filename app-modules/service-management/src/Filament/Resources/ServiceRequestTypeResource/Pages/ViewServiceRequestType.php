@@ -59,7 +59,8 @@ class ViewServiceRequestType extends ViewRecord
                             ->label('Name'),
                         TextEntry::make('form.name')
                             ->label('Form')
-                            ->url(fn (ServiceRequestType $record) => ServiceRequestFormResource::getUrl('edit', ['record' => $record->form]))
+                            ->hidden(fn (ServiceRequestType $record) => ! $record->form)
+                            ->url(fn (ServiceRequestType $record) => $record->form ? ServiceRequestFormResource::getUrl('edit', ['record' => $record?->form]) : null)
                             ->color('primary'),
                     ])
                     ->columns(),

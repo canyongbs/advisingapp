@@ -34,27 +34,15 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\ServiceManagement\Observers;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
+use AdvisingApp\ServiceManagement\Actions\ServiceRequest\CreateServiceRequestFromSubmission;
+
+class ServiceRequestFormSubmissionObserver
+{
+    public function created(ServiceRequestFormSubmission $serviceRequestFormSubmission): void
     {
-        Schema::create('service_request_form_submissions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('service_request_form_id')->constrained('service_request_forms')->cascadeOnDelete();
-            $table->string('author_id')->nullable();
-            $table->string('author_type')->nullable();
-            $table->timestamp('submitted_at')->nullable();
-            $table->timestamp('canceled_at')->nullable();
-            $table->string('request_method')->nullable();
-            $table->text('request_note')->nullable();
-            $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->timestamps();
-            $table->softDeletes();
-
-            $table->index(['author_type', 'author_id']);
-        });
+        resolve(CreateServiceRequestFromSubmission::class)->handle($serviceRequestFormSubmission);
     }
-};
+}

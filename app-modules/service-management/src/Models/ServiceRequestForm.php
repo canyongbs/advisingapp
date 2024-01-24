@@ -70,21 +70,21 @@ class ServiceRequestForm extends Submissible
 
     public function fields(): HasMany
     {
-        return $this->hasMany(ServiceRequestFormField::class);
+        return $this->hasMany(ServiceRequestFormField::class, 'service_request_form_id');
     }
 
     public function steps(): HasMany
     {
-        return $this->hasMany(ServiceRequestFormStep::class);
+        return $this->hasMany(ServiceRequestFormStep::class, 'service_request_form_id');
     }
 
     public function submissions(): HasMany
     {
-        return $this->hasMany(ServiceRequestFormSubmission::class);
+        return $this->hasMany(ServiceRequestFormSubmission::class, 'service_request_form_id');
     }
 
     public function types(): HasMany
     {
-        return $this->hasMany(ServiceRequestType::class);
+        return $this->hasMany(ServiceRequestType::class, 'service_request_form_id');
     }
 }

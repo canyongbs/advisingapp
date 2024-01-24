@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceRequestForm\Policies;
+namespace AdvisingApp\ServiceManagement\Policies;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
@@ -45,7 +45,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 use App\Policies\Contracts\PerformsChecksBeforeAuthorization;
 
-class FormPolicy implements PerformsChecksBeforeAuthorization
+class ServiceRequestFormPolicy implements PerformsChecksBeforeAuthorization
 {
     use PerformsLicenseChecks;
     use PerformsFeatureChecks;

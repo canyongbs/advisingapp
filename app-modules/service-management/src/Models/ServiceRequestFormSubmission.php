@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
@@ -68,9 +69,14 @@ class ServiceRequestFormSubmission extends Submission
         'request_method' => FormSubmissionRequestDeliveryMethod::class,
     ];
 
+    public function serviceRequest(): HasOne
+    {
+        return $this->hasOne(ServiceRequest::class, 'service_request_form_submission_id');
+    }
+
     public function submissible(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestForm::class);
+        return $this->belongsTo(ServiceRequestForm::class, 'service_request_form_id');
     }
 
     public function requester(): BelongsTo
@@ -82,9 +88,9 @@ class ServiceRequestFormSubmission extends Submission
     {
         return $this->belongsToMany(
             ServiceRequestFormField::class,
-            'survey_request_form_field_submission',
-            'survey_request_form_submission_id',
-            'survey_request_form_field_id',
+            'service_request_form_field_submission',
+            'service_request_form_submission_id',
+            'service_request_form_field_id',
         )
             ->withPivot(['id', 'response']);
     }

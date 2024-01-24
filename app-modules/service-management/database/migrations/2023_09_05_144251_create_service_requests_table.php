@@ -43,20 +43,17 @@ return new class () extends Migration {
     {
         Schema::create('service_requests', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
             $table->string('service_request_number')->unique();
             $table->string('respondent_type');
             $table->string('respondent_id');
             $table->longText('close_details')->nullable();
             $table->longText('res_details')->nullable();
-
+            $table->foreignUuid('service_request_form_submission_id')->nullable()->constrained('service_request_form_submissions');
             $table->foreignUuid('division_id')->nullable()->constrained('divisions');
             $table->foreignUuid('status_id')->nullable()->constrained('service_request_statuses');
             $table->foreignUuid('priority_id')->nullable()->constrained('service_request_priorities');
             $table->foreignUuid('created_by_id')->nullable()->constrained('users');
-
             $table->timestamp('status_updated_at')->nullable();
-
             $table->timestamps();
             $table->softDeletes();
         });

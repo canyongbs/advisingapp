@@ -69,6 +69,9 @@ class ServiceRequestType extends BaseModel implements Auditable
         return $this->hasMany(ServiceRequestPriority::class, 'type_id');
     }
 
+    // TODO We might need to implement a highestPriority/lowestPriority or a defaultPriority method
+    // So that we can effectively create a service request and relate it to the correct type through the priority.
+
     public function form(): BelongsTo
     {
         return $this->belongsTo(ServiceRequestForm::class, 'service_request_form_id');

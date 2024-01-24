@@ -34,27 +34,22 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\ServiceManagement\Actions\ServiceRequest;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
+
+class CreateServiceRequestFromSubmission
+{
+    public function handle(ServiceRequestFormSubmission $serviceRequestFormSubmission): void
     {
-        Schema::create('service_request_form_submissions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('service_request_form_id')->constrained('service_request_forms')->cascadeOnDelete();
-            $table->string('author_id')->nullable();
-            $table->string('author_type')->nullable();
-            $table->timestamp('submitted_at')->nullable();
-            $table->timestamp('canceled_at')->nullable();
-            $table->string('request_method')->nullable();
-            $table->text('request_note')->nullable();
-            $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->timestamps();
-            $table->softDeletes();
-
-            $table->index(['author_type', 'author_id']);
-        });
+        // TODO Determine what final relationship between submissions and types should be...
+        foreach ($serviceRequestFormSubmission->submissible?->types as $type) {
+            // TODO Determine which priority of type should be used...
+            $serviceRequestFormSubmission->serviceRequest()->create([
+                'respondent_type' => $serviceRequestFormSubmission->author->getMorphClass(),
+                'respondent_id' => $serviceRequestFormSubmission->author->getKey(),
+                'priority_id' => $type->priorities->first()->getKey(),
+            ]);
+        }
     }
-};
+}

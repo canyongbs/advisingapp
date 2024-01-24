@@ -65,6 +65,7 @@ use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestAssignmentObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestFormSubmissionObserver;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServiceRequestNumberGenerator;
 
@@ -114,6 +115,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
         ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
         ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);
         ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
+        ServiceRequestFormSubmission::observe(ServiceRequestFormSubmissionObserver::class);
     }
 
     protected function registerRolesAndPermissions()
