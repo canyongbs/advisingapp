@@ -71,8 +71,17 @@ class TwilioConversation extends Model
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'twilio_conversation_user', 'conversation_sid', 'user_id')
-            ->withPivot('participant_sid')
+            ->withPivot([
+                'participant_sid',
+                'is_channel_manager',
+            ])
             ->withTimestamps()
-            ->as('participant');
+            ->as('participant')
+            ->using(TwilioConversationUser::class);
+    }
+
+    public function managers(): BelongsToMany
+    {
+        return $this->participants()->wherePivot('is_channel_manager', true);
     }
 }

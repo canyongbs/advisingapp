@@ -41,6 +41,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
+/**
+ * @mixin IdeHelperChangeRequestStatus
+ */
 class ChangeRequestStatus extends BaseModel implements Auditable
 {
     use AuditableTrait;

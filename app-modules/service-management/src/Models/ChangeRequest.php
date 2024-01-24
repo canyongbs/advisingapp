@@ -45,6 +45,9 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
+/**
+ * @mixin IdeHelperChangeRequest
+ */
 class ChangeRequest extends BaseModel implements Auditable
 {
     use AuditableTrait;

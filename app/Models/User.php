@@ -84,6 +84,7 @@ use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
+use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
@@ -194,9 +195,13 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function conversations(): BelongsToMany
     {
         return $this->belongsToMany(TwilioConversation::class, 'twilio_conversation_user', 'user_id', 'conversation_sid')
-            ->withPivot('participant_sid')
+            ->withPivot([
+                'participant_sid',
+                'is_channel_manager',
+            ])
             ->withTimestamps()
-            ->as('participant');
+            ->as('participant')
+            ->using(TwilioConversationUser::class);
     }
 
     public function caseloads(): HasMany

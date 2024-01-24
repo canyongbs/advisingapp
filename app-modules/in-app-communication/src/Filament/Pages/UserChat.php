@@ -45,6 +45,7 @@ use Twilio\Jwt\AccessToken;
 use Filament\Actions\Action;
 use Livewire\Attributes\Url;
 use Twilio\Jwt\Grants\ChatGrant;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Renderless;
 use Illuminate\Support\Facades\Gate;
 use Filament\Forms\Components\Select;
@@ -67,6 +68,8 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\AddUserToConversation;
 use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\RemoveUserFromConversation;
+use AdvisingApp\InAppCommunication\Actions\PromoteUserToChannelManager;
+use AdvisingApp\InAppCommunication\Actions\DemoteUserFromChannelManager;
 
 class UserChat extends Page implements HasForms, HasActions
 {
@@ -79,7 +82,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public Collection $conversations;
 
-    #[Url(as: 'conversation', except: 'null')]
+    #[Url(as: 'conversation')]
     public ?string $selectedConversation = null;
 
     protected static ?string $navigationGroup = 'Premium Features';
@@ -101,7 +104,8 @@ class UserChat extends Page implements HasForms, HasActions
             return false;
         }
 
-        return Gate::check(Feature::RealtimeChat->getGateName()) && $user->can('in-app-communication.realtime-chat.access');
+        return Gate::check(Feature::RealtimeChat->getGateName())
+            && $user->can('in-app-communication.realtime-chat.access');
     }
 
     public function getConversations(): Collection
@@ -114,17 +118,17 @@ class UserChat extends Page implements HasForms, HasActions
             ->get();
     }
 
-    public function newUserToUserChatAction()
+    public function newUserToUserChatAction(): Action
     {
         $usersQuery = User::query()
             ->where('id', '!=', auth()->id())
             ->whereDoesntHave(
                 'conversations',
-                fn ($query) => $query
+                fn (Builder $query) => $query
                     ->where('type', ConversationType::UserToUser)
                     ->whereHas(
                         'participants',
-                        fn ($query) => $query->where('user_id', auth()->id())
+                        fn (Builder $query) => $query->where('user_id', auth()->id())
                     )
             );
 
@@ -166,7 +170,7 @@ class UserChat extends Page implements HasForms, HasActions
             });
     }
 
-    public function newChannelAction()
+    public function newChannelAction(): Action
     {
         $usersQuery = User::query()
             ->where('id', '!=', auth()->id());
@@ -222,6 +226,80 @@ class UserChat extends Page implements HasForms, HasActions
             });
     }
 
+    public function editChannelAction(): Action
+    {
+        $usersQuery = $this->getSelectedConversation()
+            ->participants()
+            ->whereNot('id', auth()->id());
+
+        return Action::make('editChannel')
+            ->link()
+            ->icon('heroicon-m-pencil')
+            ->modalWidth('sm')
+            ->form([
+                TextInput::make('name')
+                    ->autocomplete(false)
+                    ->formatStateUsing(fn () => $this->getSelectedConversation()?->channel_name)
+                    ->required(),
+                Checkbox::make('is_private')
+                    ->label('Invite only')
+                    ->helperText('If not checked, the channel will be public and anyone can join.')
+                    ->formatStateUsing(fn () => $this->getSelectedConversation()?->is_private_channel),
+                Select::make('managers')
+                    ->label('Channel managers')
+                    ->multiple()
+                    ->options(
+                        fn (): array => $usersQuery
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getSearchResultsUsing(
+                        fn (string $search): array => $usersQuery
+                            ->where('name', 'ilike', "%{$search}%")
+                            ->limit(50)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->getOptionLabelsUsing(
+                        fn (array $values): array => $usersQuery
+                            ->whereKey($values)
+                            ->pluck('name', 'id')
+                            ->all(),
+                    )
+                    ->searchable()
+                    ->default(
+                        fn () => $this->getSelectedConversation()
+                            ->managers()
+                            ->whereNot('id', auth()->id())
+                            ->pluck('id')
+                            ->all()
+                    ),
+            ])
+            ->action(function (array $data) {
+                $conversation = $this->getSelectedConversation();
+
+                /** @var User $user */
+                $user = auth()->user();
+
+                if (! $conversation->managers()->find($user)) {
+                    return;
+                }
+
+                $conversation->channel_name = $data['name'];
+                $conversation->is_private_channel = $data['is_private'];
+                $conversation->save();
+
+                collect($data['managers'])
+                    ->each(fn (string $id) => app(PromoteUserToChannelManager::class)(user: User::find($id), conversation: $conversation));
+
+                $conversation->managers()
+                    ->whereNotIn('id', $data['managers'])
+                    ->whereNot('id', $user->id)
+                    ->each(fn (User $demote) => app(DemoteUserFromChannelManager::class)(user: $demote, conversation: $conversation));
+            });
+    }
+
     public function joinChannelsAction()
     {
         $channels = TwilioConversation::query()
@@ -244,7 +322,7 @@ class UserChat extends Page implements HasForms, HasActions
                     ->hiddenLabel()
                     ->searchable()
                     ->options($channels)
-                    ->columns(2)
+                    ->columns()
                     ->hidden(empty($channels)),
             ])
             ->action(function (AddUserToConversation $addUserToConversation, array $data) {
@@ -259,8 +337,11 @@ class UserChat extends Page implements HasForms, HasActions
                         continue;
                     }
 
+                    /** @var User $user */
+                    $user = auth()->user();
+
                     $addUserToConversation(
-                        user: auth()->user(),
+                        user: $user,
                         conversation: $channel,
                     );
                 }
@@ -278,7 +359,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public function leaveConversationAction(): Action
     {
-        return Action::make('leaveConversation')
+        $action = Action::make('leaveConversation')
             ->label('Leave conversation')
             ->color('danger')
             ->link()
@@ -293,13 +374,37 @@ class UserChat extends Page implements HasForms, HasActions
                     return;
                 }
 
+                /** @var User $user */
+                $user = auth()->user();
+
                 $removeUserFromConversation(
-                    user: auth()->user(),
+                    user: $user,
                     conversation: $conversation,
                 );
 
                 $this->selectedConversation = null;
             });
+
+        $conversation = $this->getSelectedConversation();
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        if ($conversation->managers()->find($user)) {
+            if ($conversation->managers()->whereKeyNot($user->getKey())->exists()) {
+                $action->modalDescription(
+                    new HtmlString("You will be removed as a channel manager.<br>{$action->getModalDescription()}")
+                );
+            } else {
+                $action->modalHeading('Unable to leave channel.')
+                    ->modalDescription('You cannot leave a channel where you are the only manager.')
+                    ->action(null)
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close');
+            }
+        }
+
+        return $action;
     }
 
     public function addUserToChannelAction(): Action
@@ -370,7 +475,11 @@ class UserChat extends Page implements HasForms, HasActions
 
     public function getSelectedConversation(): ?TwilioConversation
     {
-        return auth()->user()->conversations()->find($this->selectedConversation);
+        /** @var User $user */
+        $user = auth()->user();
+
+        //it hates the find type hint...
+        return $user->conversations()->whereKey($this->selectedConversation)->first();
     }
 
     #[Renderless]
@@ -420,11 +529,7 @@ class UserChat extends Page implements HasForms, HasActions
     {
         $user = User::find($userId);
 
-        if (! $user) {
-            return null;
-        }
-
-        return $user->name;
+        return $user?->name;
     }
 
     #[Renderless]

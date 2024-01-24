@@ -34,39 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\InAppCommunication\Models;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperSla
+ * @mixin IdeHelperTwilioConversationUser
  */
-class Sla extends BaseModel implements Auditable
+class TwilioConversationUser extends Pivot
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'name',
-        'description',
-        'terms',
-        'response_seconds',
-        'resolution_seconds',
-    ];
-
     protected $casts = [
-        'response_seconds' => 'integer',
-        'resolution_seconds' => 'integer',
+        'is_channel_manager' => 'boolean',
     ];
 
-    public function serviceRequestPriorities(): HasMany
+    public function conversation(): BelongsTo
     {
-        return $this->hasMany(ServiceRequestPriority::class);
+        return $this->belongsTo(TwilioConversation::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

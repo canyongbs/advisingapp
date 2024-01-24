@@ -34,39 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\InAppCommunication\Actions;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Exception;
+use App\Models\User;
+use Twilio\Rest\Client;
+use AdvisingApp\InAppCommunication\Enums\ConversationType;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-/**
- * @mixin IdeHelperSla
- */
-class Sla extends BaseModel implements Auditable
+class PromoteUserToChannelManager
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
+    public function __construct(
+        public Client $twilioClient,
+    ) {}
 
-    protected $fillable = [
-        'name',
-        'description',
-        'terms',
-        'response_seconds',
-        'resolution_seconds',
-    ];
-
-    protected $casts = [
-        'response_seconds' => 'integer',
-        'resolution_seconds' => 'integer',
-    ];
-
-    public function serviceRequestPriorities(): HasMany
+    public function __invoke(User $user, TwilioConversation $conversation): void
     {
-        return $this->hasMany(ServiceRequestPriority::class);
+        throw_if(
+            ($conversation->type === ConversationType::UserToUser),
+            new Exception('Only channels have managers.')
+        );
+
+        throw_unless(
+            $conversation->participants()->whereKey($user)->exists(),
+            new Exception('User is not a participant in the channel.')
+        );
+
+        $conversation->participants()
+            ->updateExistingPivot($user->getKey(), [
+                'is_channel_manager' => true,
+            ]);
     }
 }
