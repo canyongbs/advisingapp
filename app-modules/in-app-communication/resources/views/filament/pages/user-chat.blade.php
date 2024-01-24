@@ -35,7 +35,7 @@
     use AdvisingApp\InAppCommunication\Enums\ConversationType;
     use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-
+    
     $conversationGroups = $this->getConversations()->reduce(
         function (array $carry, TwilioConversation $conversation): array {
             if ($conversation->type === ConversationType::Channel) {
@@ -43,7 +43,7 @@
             } else {
                 $carry[1][] = $conversation;
             }
-
+    
             return $carry;
         },
         [[], []],
@@ -112,7 +112,7 @@
                                                     config('filament.livewire_loading_delay', 'default') => '',
                                                     'wire:target' =>
                                                         'selectConversation(\'' . $conversation['sid'] . '\')',
-                                                ]))->class(['w-5 h-5'])"/>
+                                                ]))->class(['w-5 h-5'])" />
                                             </button>
                                         </li>
                                     @endforeach
@@ -149,7 +149,7 @@
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500"/>
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
                         <p
                             class="text-center"
                             x-text="loadingMessage"
@@ -287,7 +287,7 @@
                         </form>
                         @if ($selectedConversation?->type === ConversationType::Channel)
                             <div class="flex items-center justify-end gap-3">
-                                @if($selectedConversation->managers()->find(auth()->user()))
+                                @if ($selectedConversation->managers()->find(auth()->user()))
                                     {{ $this->editChannelAction }}
                                 @endif
 
