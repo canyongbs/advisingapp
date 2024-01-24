@@ -37,6 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource\Pages;
 
 use Filament\Forms\Form;
+use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -45,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\DateTimePicker;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
 use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestResource;
 
 class EditChangeRequest extends EditRecord
@@ -57,40 +59,53 @@ class EditChangeRequest extends EditRecord
             ->schema([
                 Section::make('Change Request Details')
                     ->aside()
+                    ->description(function (ChangeRequest $record) {
+                        return $record->isNotNew()
+                            ? "This change request {$record->status->classification->getDescription()} and can no longer be edited."
+                            : null;
+                    })
                     ->schema([
                         TextInput::make('title')
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         TextInput::make('description')
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         Select::make('change_request_type_id')
                             ->relationship('type', 'name')
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         Select::make('change_request_status_id')
                             ->relationship('status', 'name')
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(),
                         Textarea::make('reason')
                             ->label('Reason for change')
                             ->rows(5)
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         Textarea::make('backout_strategy')
                             ->rows(5)
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         DateTimePicker::make('start_time')
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         DateTimePicker::make('end_time')
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                     ])
                     ->columns(2),
                 Section::make('Risk Management')
@@ -103,7 +118,8 @@ class EditChangeRequest extends EditRecord
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(5)
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         TextInput::make('likelihood')
                             ->reactive()
                             ->helperText('Please enter a number between 1 and 5.')
@@ -111,7 +127,8 @@ class EditChangeRequest extends EditRecord
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(5)
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->disabled(fn (ChangeRequest $record) => $record->isNotNew()),
                         ViewField::make('risk_score')
                             ->view('filament.forms.components.change-request.calculated-risk-score'),
                     ])
@@ -122,7 +139,9 @@ class EditChangeRequest extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make()
+                ->disabled(fn ($record) => $record->isNotNew()),
         ];
     }
 }

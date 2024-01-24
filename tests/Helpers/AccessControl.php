@@ -37,14 +37,15 @@
 namespace Tests\Helpers;
 
 use App\Models\User;
+use Illuminate\Support\Arr;
 
 use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 
-function testResourceRequiresPermissionForAccess(string $resource, string $permission, string $method)
+function testResourceRequiresPermissionForAccess(string $resource, string|array $permissions, string $method)
 {
-    test("{$resource} {$method} is gated with proper access control", function () use ($permission, $resource, $method) {
+    test("{$resource} {$method} is gated with proper access control", function () use ($permissions, $resource, $method) {
         $user = User::factory()->licensed(LicenseType::cases())->create();
 
         actingAs($user)
@@ -52,7 +53,7 @@ function testResourceRequiresPermissionForAccess(string $resource, string $permi
                 $resource::getUrl($method)
             )->assertForbidden();
 
-        $user->givePermissionTo($permission);
+        collect(Arr::wrap($permissions))->each(fn ($permission) => $user->givePermissionTo($permission));
 
         actingAs($user)
             ->get(

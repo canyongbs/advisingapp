@@ -34,18 +34,19 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\ServiceManagement\Models\Scopes;
 
-return new class () extends Migration {
-    public function up(): void
+use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
+
+class ClassifiedAs
+{
+    public function __construct(
+        protected SystemChangeRequestClassification $classification,
+    ) {}
+
+    public function __invoke(Builder $query): void
     {
-        Schema::create('change_request_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->integer('number_of_required_approvals');
-            $table->timestamps();
-        });
+        $query->where('classification', $this->classification);
     }
-};
+}

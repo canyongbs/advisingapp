@@ -36,10 +36,12 @@
 
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
-use Filament\Actions;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Infolist;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
+use Illuminate\Contracts\Support\Htmlable;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
@@ -48,51 +50,55 @@ class ViewKnowledgeBaseItem extends ViewRecord
 {
     protected static string $resource = KnowledgeBaseItemResource::class;
 
+    public function getTitle(): string | Htmlable
+    {
+        return $this->record->title;
+    }
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
             ->schema([
-                Section::make()
+                Section::make('Article Information')
+                    ->collapsed()
                     ->schema([
-                        TextEntry::make('question')
-                            ->label('Question/Issue/Feature')
-                            ->translateLabel(),
-                        TextEntry::make('status.name')
-                            ->label('Status')
-                            ->translateLabel(),
-                        TextEntry::make('quality.name')
-                            ->label('Quality')
-                            ->translateLabel(),
-                        TextEntry::make('category.name')
-                            ->label('Category')
-                            ->translateLabel(),
+                        TextEntry::make('title')
+                            ->label('Article Title')
+                            ->columnSpanFull(),
+                        TextEntry::make('notes')
+                            ->label('Notes')
+                            ->columnSpanFull(),
                         TextEntry::make('public')
                             ->label('Public')
-                            ->translateLabel()
                             ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
+                    ]),
+                Section::make()
+                    ->schema([
+                        ViewEntry::make('article_details')
+                            ->label('Article Details')
+                            ->columnSpanFull()
+                            ->view('filament.infolists.entries.html'),
+                    ]),
+                Section::make('Article Metadata')
+                    ->collapsed()
+                    ->schema([
+                        TextEntry::make('status.name')
+                            ->label('Status'),
+                        TextEntry::make('quality.name')
+                            ->label('Quality'),
+                        TextEntry::make('category.name')
+                            ->label('Category'),
                         TextEntry::make('division.name')
-                            ->label('Division')
-                            ->translateLabel(),
-                        ViewEntry::make('solution')
-                            ->label('Solution')
-                            ->translateLabel()
-                            ->columnSpanFull()
-                            ->view('filament.infolists.entries.html'),
-                        ViewEntry::make('notes')
-                            ->label('Notes')
-                            ->translateLabel()
-                            ->columnSpanFull()
-                            ->view('filament.infolists.entries.html'),
-                    ])
-                    ->columns(),
+                            ->label('Division'),
+                    ]),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
-            Actions\DeleteAction::make(),
+            EditAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

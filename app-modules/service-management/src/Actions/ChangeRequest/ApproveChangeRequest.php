@@ -34,18 +34,40 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\ServiceManagement\Actions\ChangeRequest;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Models\User;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
+use AdvisingApp\ServiceManagement\Models\Scopes\ClassifiedAs;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
+
+class ApproveChangeRequest
+{
+    public function __construct(
+        public ChangeRequest $changeRequest,
+        public User $user,
+    ) {}
+
+    public function handle(): void
     {
-        Schema::create('change_request_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->integer('number_of_required_approvals');
-            $table->timestamps();
-        });
+        if ($this->changeRequest->isApproved() || $this->changeRequest->hasApproval()) {
+            return;
+        }
+
+        if ($this->changeRequest->canBeApprovedBy($this->user)) {
+            $this->changeRequest->responses()->create([
+                'user_id' => $this->user->id,
+                'approved' => true,
+            ]);
+        }
+
+        if ($this->changeRequest->hasApproval()) {
+            $this->changeRequest->getStateMachine(SystemChangeRequestClassification::class, 'status.classification')
+                ->transitionTo(
+                    relatedModel: ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::Approved))->first(),
+                    newState: SystemChangeRequestClassification::Approved
+                );
+        }
     }
-};
+}

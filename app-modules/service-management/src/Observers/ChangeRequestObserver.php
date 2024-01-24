@@ -36,7 +36,12 @@
 
 namespace AdvisingApp\ServiceManagement\Observers;
 
+use Illuminate\Support\Facades\Notification;
 use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
+use AdvisingApp\ServiceManagement\Models\Scopes\ClassifiedAs;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
+use AdvisingApp\ServiceManagement\Notifications\ChangeRequestAwaitingApproval;
 
 class ChangeRequestObserver
 {
@@ -45,6 +50,15 @@ class ChangeRequestObserver
         if (is_null($changeRequest->created_by) && ! is_null(auth()->user())) {
             $changeRequest->created_by = auth()->user()->id;
         }
+
+        if (is_null($changeRequest->change_request_status_id)) {
+            $changeRequest->change_request_status_id = ChangeRequestStatus::tap(new ClassifiedAs(SystemChangeRequestClassification::New))->first()->id;
+        }
+    }
+
+    public function created(ChangeRequest $changeRequest): void
+    {
+        Notification::send($changeRequest->type->userApprovers, new ChangeRequestAwaitingApproval($changeRequest));
     }
 
     public function saving(ChangeRequest $changeRequest): void

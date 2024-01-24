@@ -39,8 +39,11 @@ namespace AdvisingApp\ServiceManagement\Models;
 use App\Models\User;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
+use AdvisingApp\ServiceManagement\Enums\SystemChangeRequestClassification;
 
 /**
  * @mixin IdeHelperChangeRequest
@@ -48,6 +51,7 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 class ChangeRequest extends BaseModel implements Auditable
 {
     use AuditableTrait;
+    use HasRelationBasedStateMachine;
 
     protected $fillable = [
         'backout_strategy',
@@ -71,6 +75,13 @@ class ChangeRequest extends BaseModel implements Auditable
         'start_time' => 'datetime',
     ];
 
+    public function getStateMachineFields(): array
+    {
+        return [
+            'status.classification',
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -84,6 +95,62 @@ class ChangeRequest extends BaseModel implements Auditable
     public function status(): BelongsTo
     {
         return $this->belongsTo(ChangeRequestStatus::class, 'change_request_status_id');
+    }
+
+    public function responses(): HasMany
+    {
+        return $this->hasMany(ChangeRequestResponse::class, 'change_request_id');
+    }
+
+    public function approvals(): HasMany
+    {
+        return $this->responses()->where('approved', '=', true);
+    }
+
+    public function hasApproval(): bool
+    {
+        return $this->approvals()->count() >= $this->type->number_of_required_approvals;
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status->classification === SystemChangeRequestClassification::Approved;
+    }
+
+    public function isNotNew(): bool
+    {
+        return $this->status->classification !== SystemChangeRequestClassification::New;
+    }
+
+    public function canBeApprovedBy(User $user): bool
+    {
+        return $this->type->userApprovers()->pluck('user_id')->contains($user->id) && ! $this->hasBeenApprovedBy($user);
+    }
+
+    public function hasBeenApprovedBy(User $user): bool
+    {
+        return $this->approvals()->where('user_id', $user->id)->exists();
+    }
+
+    public function doesNotNeedExplicitApproval(): bool
+    {
+        return $this->type->number_of_required_approvals === 0;
+    }
+
+    public function getIcon(): string
+    {
+        return match (true) {
+            $this->isApproved() || $this->hasApproval() => 'heroicon-s-check-circle',
+            default => 'heroicon-s-clock',
+        };
+    }
+
+    public function getIconColor(): string
+    {
+        return match (true) {
+            $this->isApproved() || $this->hasApproval() => 'success',
+            default => 'gray',
+        };
     }
 
     public static function getColorBasedOnRisk(?int $value): string

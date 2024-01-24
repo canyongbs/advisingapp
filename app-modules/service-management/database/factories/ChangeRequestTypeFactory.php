@@ -47,6 +47,7 @@ class ChangeRequestTypeFactory extends Factory
     {
         return [
             'name' => fake()->word(),
+            'number_of_required_approvals' => fake()->numberBetween(0, 2),
         ];
     }
 }

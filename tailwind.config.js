@@ -38,7 +38,20 @@ import plugin from 'tailwindcss/plugin';
 
 export default {
     presets: [preset],
-    safelist: ['text-black'],
+    safelist: [
+        'text-black',
+        'text-gray-900',
+        'dark:bg-gray-800',
+        'dark:text-gray-100',
+        'border-2',
+        'dark:border-0',
+        'border-gray-200',
+        'rounded-none',
+        'mx-4',
+        'my-2',
+        'px-8',
+        'py-4',
+    ],
     content: [
         './app/Filament/**/*.php',
         './app-modules/**/src/Filament/**/*.php',

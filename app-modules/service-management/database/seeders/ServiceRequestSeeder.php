@@ -45,7 +45,7 @@ class ServiceRequestSeeder extends Seeder
 {
     public function run(): void
     {
-        $superAdmin = User::where('email', 'sampleadmin@advising.app')->first();
+        $superAdmin = User::where('email', config('local_development.super_admin.email'))->first();
 
         ServiceRequest::factory()
             ->has(

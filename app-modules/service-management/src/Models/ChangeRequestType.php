@@ -52,6 +52,7 @@ class ChangeRequestType extends BaseModel implements Auditable
 
     protected $fillable = [
         'name',
+        'number_of_required_approvals',
     ];
 
     public function userApprovers(): BelongsToMany

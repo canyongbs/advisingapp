@@ -51,6 +51,7 @@ use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
@@ -76,6 +77,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
+            'change_request_response' => ChangeRequestResponse::class,
             'change_request_status' => ChangeRequestStatus::class,
             'change_request_type' => ChangeRequestType::class,
             'change_request' => ChangeRequest::class,
