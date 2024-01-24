@@ -35,6 +35,9 @@
 */
 
 use App\Models\User;
+
+use function Pest\Laravel\get;
+
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
@@ -53,22 +56,22 @@ test('ViewKnowledgeBaseItem is gated with proper access control', function () {
 
     $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('view', [
-                'record' => $knowledgeBaseItem,
-            ])
-        )->assertForbidden();
+    actingAs($user);
+
+    get(
+        KnowledgeBaseItemResource::getUrl('view', [
+            'record' => $knowledgeBaseItem,
+        ])
+    )->assertForbidden();
 
     $user->givePermissionTo('knowledge_base_item.view-any');
     $user->givePermissionTo('knowledge_base_item.*.view');
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('view', [
-                'record' => $knowledgeBaseItem,
-            ])
-        )->assertSuccessful();
+    get(
+        KnowledgeBaseItemResource::getUrl('view', [
+            'record' => $knowledgeBaseItem,
+        ])
+    )->assertSuccessful();
 });
 
 test('ViewKnowledgeBaseItem is gated with proper feature access control', function () {
@@ -85,21 +88,21 @@ test('ViewKnowledgeBaseItem is gated with proper feature access control', functi
 
     $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('view', [
-                'record' => $knowledgeBaseItem,
-            ])
-        )->assertForbidden();
+    actingAs($user);
+
+    get(
+        KnowledgeBaseItemResource::getUrl('view', [
+            'record' => $knowledgeBaseItem,
+        ])
+    )->assertForbidden();
 
     $settings->data->addons->knowledgeManagement = true;
 
     $settings->save();
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('view', [
-                'record' => $knowledgeBaseItem,
-            ])
-        )->assertSuccessful();
+    get(
+        KnowledgeBaseItemResource::getUrl('view', [
+            'record' => $knowledgeBaseItem,
+        ])
+    )->assertSuccessful();
 });

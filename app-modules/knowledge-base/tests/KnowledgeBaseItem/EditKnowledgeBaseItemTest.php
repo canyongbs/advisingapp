@@ -35,6 +35,9 @@
 */
 
 use App\Models\User;
+
+use function Pest\Laravel\get;
+
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
@@ -59,7 +62,7 @@ test('EditKnowledgeBaseItem is gated with proper access control', function () {
 
     $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
 
-    $this->get(
+    get(
         KnowledgeBaseItemResource::getUrl('edit', [
             'record' => $knowledgeBaseItem,
         ])
@@ -73,7 +76,7 @@ test('EditKnowledgeBaseItem is gated with proper access control', function () {
     $user->givePermissionTo('knowledge_base_item.view-any');
     $user->givePermissionTo('knowledge_base_item.*.update');
 
-    $this->get(
+    get(
         KnowledgeBaseItemResource::getUrl('edit', [
             'record' => $knowledgeBaseItem,
         ])
@@ -98,7 +101,7 @@ test('EditKnowledgeBaseItem is gated with proper feature access control', functi
 
     $knowledgeBaseItem = KnowledgeBaseItem::factory()->create();
 
-    $this->get(
+    get(
         KnowledgeBaseItemResource::getUrl('edit', [
             'record' => $knowledgeBaseItem,
         ])
@@ -113,7 +116,7 @@ test('EditKnowledgeBaseItem is gated with proper feature access control', functi
 
     $settings->save();
 
-    $this->get(
+    get(
         KnowledgeBaseItemResource::getUrl('edit', [
             'record' => $knowledgeBaseItem,
         ])
