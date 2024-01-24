@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use App\Http\Middleware\CheckLandlordApiKey;
-use App\Http\Controllers\CreateTenantController;
+use App\Multitenancy\Http\Middleware\CheckLandlordApiKey;
+use App\Multitenancy\Http\Controllers\CreateTenantController;
 
 Route::middleware([CheckLandlordApiKey::class])
     ->post('tenants/create', CreateTenantController::class)

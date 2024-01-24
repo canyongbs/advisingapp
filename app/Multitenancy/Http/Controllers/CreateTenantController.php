@@ -34,10 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Controllers;
+namespace App\Multitenancy\Http\Controllers;
 
 use Exception;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use App\Multitenancy\Actions\CreateTenant;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\Http\Requests\CreateTenantRequest;
