@@ -83,6 +83,7 @@ use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Authorization\Models\Pivots\RoleGroupUserPivot;
+use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
@@ -301,6 +302,11 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function changeRequests(): HasMany
     {
         return $this->hasMany(ChangeRequest::class, 'created_by');
+    }
+
+    public function changeRequestResponses(): HasMany
+    {
+        return $this->hasMany(ChangeRequestResponse::class);
     }
 
     public function changeRequestTypes(): BelongsToMany

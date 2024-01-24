@@ -59,6 +59,9 @@ class ListChangeRequestTypes extends ListRecords
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('number_of_required_approvals')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->actions([
                 ViewAction::make(),

@@ -61,12 +61,11 @@ class RecentKnowledgeBaseArticlesList extends BaseWidget
             )
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('question')
-                    ->label('Question/Issue/Feature')
+                TextColumn::make('title')
+                    ->label('Title')
                     ->searchable()
                     ->sortable()
-                    ->limit()
-                    ->tooltip(fn (KnowledgeBaseItem $record): string => $record->question),
+                    ->limit(),
                 TextColumn::make('quality.name')
                     ->label('Quality')
                     ->sortable()

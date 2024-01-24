@@ -40,6 +40,6 @@ use AdvisingApp\ServiceManagement\Filament\Resources\ChangeRequestTypeResource;
 
 testResourceRequiresPermissionForAccess(
     resource: ChangeRequestTypeResource::class,
-    permission: 'change_request_type.view-any',
+    permissions: 'change_request_type.view-any',
     method: 'index'
 );

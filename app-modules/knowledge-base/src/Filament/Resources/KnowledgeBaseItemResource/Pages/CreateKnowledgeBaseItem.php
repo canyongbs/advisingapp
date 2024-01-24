@@ -37,9 +37,10 @@
 namespace AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource\Pages;
 
 use Filament\Forms\Form;
-use Filament\Forms\Components\Radio;
-use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use AdvisingApp\Division\Models\Division;
 use Filament\Resources\Pages\CreateRecord;
@@ -56,54 +57,48 @@ class CreateKnowledgeBaseItem extends CreateRecord
     {
         return $form
             ->schema([
-                TextInput::make('question')
-                    ->label('Question/Issue/Feature')
-                    ->translateLabel()
-                    ->required()
-                    ->string(),
-                Select::make('quality_id')
-                    ->label('Quality')
-                    ->translateLabel()
-                    ->relationship('quality', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->exists((new KnowledgeBaseQuality())->getTable(), (new KnowledgeBaseQuality())->getKeyName()),
-                Select::make('status_id')
-                    ->label('Status')
-                    ->relationship('status', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->exists((new KnowledgeBaseStatus())->getTable(), (new KnowledgeBaseStatus())->getKeyName()),
-                Select::make('category_id')
-                    ->label('Category')
-                    ->translateLabel()
-                    ->relationship('category', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->exists((new KnowledgeBaseCategory())->getTable(), (new KnowledgeBaseCategory())->getKeyName()),
-                Radio::make('public')
-                    ->label('Public')
-                    ->translateLabel()
-                    ->boolean()
-                    ->default(false)
-                    ->rules(['boolean']),
-                Select::make('division')
-                    ->label('Division')
-                    ->translateLabel()
-                    ->relationship('division', 'name')
-                    ->searchable(['name', 'code'])
-                    ->preload()
-                    ->exists((new Division())->getTable(), (new Division())->getKeyName()),
-                TiptapEditor::make('solution')
-                    ->label('Solution')
-                    ->translateLabel()
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;']),
-                TiptapEditor::make('notes')
-                    ->label('Notes')
-                    ->translateLabel()
-                    ->columnSpanFull()
-                    ->extraInputAttributes(['style' => 'min-height: 12rem;']),
+                Section::make()
+                    ->schema([
+                        TextInput::make('title')
+                            ->label('Article Title')
+                            ->required()
+                            ->string(),
+                        Toggle::make('public')
+                            ->label('Public')
+                            ->default(false)
+                            ->onColor('success')
+                            ->offColor('gray'),
+                        Textarea::make('notes')
+                            ->label('Notes')
+                            ->string(),
+                    ]),
+                Section::make()
+                    ->schema([
+                        Select::make('quality_id')
+                            ->label('Quality')
+                            ->relationship('quality', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->exists((new KnowledgeBaseQuality())->getTable(), (new KnowledgeBaseQuality())->getKeyName()),
+                        Select::make('status_id')
+                            ->label('Status')
+                            ->relationship('status', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->exists((new KnowledgeBaseStatus())->getTable(), (new KnowledgeBaseStatus())->getKeyName()),
+                        Select::make('category_id')
+                            ->label('Category')
+                            ->relationship('category', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->exists((new KnowledgeBaseCategory())->getTable(), (new KnowledgeBaseCategory())->getKeyName()),
+                        Select::make('division')
+                            ->label('Division')
+                            ->relationship('division', 'name')
+                            ->searchable(['name', 'code'])
+                            ->preload()
+                            ->exists((new Division())->getTable(), (new Division())->getKeyName()),
+                    ]),
             ]);
     }
 }

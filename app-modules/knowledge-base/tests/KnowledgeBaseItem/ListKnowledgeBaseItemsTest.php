@@ -35,11 +35,17 @@
 */
 
 use App\Models\User;
+
+use function Pest\Laravel\get;
+
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+
+use function Tests\Helpers\testResourceRequiresPermissionForAccess;
+
 use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 // TODO: Write ListKnowledgeBaseItems tests
@@ -49,21 +55,11 @@ use AdvisingApp\KnowledgeBase\Filament\Resources\KnowledgeBaseItemResource;
 
 // Permission Tests
 
-test('ListKnowledgeBaseItems is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('index')
-        )->assertForbidden();
-
-    $user->givePermissionTo('knowledge_base_item.view-any');
-
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('index')
-        )->assertSuccessful();
-});
+testResourceRequiresPermissionForAccess(
+    resource: KnowledgeBaseItemResource::class,
+    permissions: 'knowledge_base_item.view-any',
+    method: 'index'
+);
 
 test('ListKnowledgeBaseItems is gated with proper feature access control', function () {
     $settings = app(LicenseSettings::class);
@@ -76,19 +72,19 @@ test('ListKnowledgeBaseItems is gated with proper feature access control', funct
 
     $user->givePermissionTo('knowledge_base_item.view-any');
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('index')
-        )->assertForbidden();
+    actingAs($user);
+
+    get(
+        KnowledgeBaseItemResource::getUrl('index')
+    )->assertForbidden();
 
     $settings->data->addons->knowledgeManagement = true;
 
     $settings->save();
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('index')
-        )->assertSuccessful();
+    get(
+        KnowledgeBaseItemResource::getUrl('index')
+    )->assertSuccessful();
 });
 
 test('ListKnowledgeBaseItems is gated with proper license access control', function () {
@@ -106,17 +102,17 @@ test('ListKnowledgeBaseItems is gated with proper license access control', funct
     $user->givePermissionTo('knowledge_base_item.view-any');
 
     // They should not be able to access the resource
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('index')
-        )->assertForbidden();
+    actingAs($user);
+
+    get(
+        KnowledgeBaseItemResource::getUrl('index')
+    )->assertForbidden();
 
     $user->grantLicense(LicenseType::RecruitmentCrm);
 
     $user->refresh();
 
-    actingAs($user)
-        ->get(
-            KnowledgeBaseItemResource::getUrl('index')
-        )->assertSuccessful();
+    get(
+        KnowledgeBaseItemResource::getUrl('index')
+    )->assertSuccessful();
 });

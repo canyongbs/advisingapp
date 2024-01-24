@@ -34,18 +34,23 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\ServiceManagement\Database\Factories;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\ServiceManagement\Models\ChangeRequest;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\AdvisingApp\ServiceManagement\Models\ChangeRequestResponse>
+ */
+class ChangeRequestResponseFactory extends Factory
+{
+    public function definition(): array
     {
-        Schema::create('change_request_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->integer('number_of_required_approvals');
-            $table->timestamps();
-        });
+        return [
+            'change_request_id' => ChangeRequest::factory(),
+            'user_id' => User::factory(),
+            'approved' => $this->faker->boolean,
+        ];
     }
-};
+}
