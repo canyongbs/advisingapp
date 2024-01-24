@@ -194,7 +194,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function conversations(): BelongsToMany
     {
         return $this->belongsToMany(TwilioConversation::class, 'twilio_conversation_user', 'user_id', 'conversation_sid')
-            ->withPivot('participant_sid')
+            ->withPivot([
+                'participant_sid',
+                'is_channel_manager',
+            ])
             ->withTimestamps()
             ->as('participant')
             ->using(TwilioConversationUser::class);
