@@ -34,31 +34,36 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'service_request' => [
-            '*',
-        ],
-        'service_request_priority' => [
-            '*',
-        ],
-        'service_request_status' => [
-            '*',
-        ],
-        'service_request_type' => [
-            '*',
-        ],
-        'service_request_update' => [
-            '*',
-        ],
-        'service_request_assignment' => [
-            '*',
-        ],
-        'service_request_form' => [
-            '*',
-        ],
-        'sla' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\ServiceManagement\Models;
+
+use AdvisingApp\Form\Models\SubmissibleField;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * @mixin IdeHelperFormField
+ */
+class ServiceRequestFormField extends SubmissibleField
+{
+    protected $fillable = [
+        'config',
+        'label',
+        'type',
+        'is_required',
+        'form_id',
+    ];
+
+    protected $casts = [
+        'config' => 'array',
+        'is_required' => 'bool',
+    ];
+
+    public function submissible(): BelongsTo
+    {
+        return $this->belongsTo(ServiceRequestForm::class, 'form_id');
+    }
+
+    public function step(): BelongsTo
+    {
+        return $this->belongsTo(ServiceRequestFormStep::class, 'step_id');
+    }
+}

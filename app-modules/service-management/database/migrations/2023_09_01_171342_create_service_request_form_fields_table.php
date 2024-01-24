@@ -34,31 +34,25 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'service_request' => [
-            '*',
-        ],
-        'service_request_priority' => [
-            '*',
-        ],
-        'service_request_status' => [
-            '*',
-        ],
-        'service_request_type' => [
-            '*',
-        ],
-        'service_request_update' => [
-            '*',
-        ],
-        'service_request_assignment' => [
-            '*',
-        ],
-        'service_request_form' => [
-            '*',
-        ],
-        'sla' => [
-            '*',
-        ],
-    ],
-];
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('service_request_form_fields', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->text('label');
+            $table->text('type');
+            $table->boolean('is_required');
+            $table->json('config');
+
+            $table->foreignUuid('form_id')->constrained('service_request_forms')->cascadeOnDelete();
+            $table->foreignUuid('step_id')->nullable()->constrained('service_request_form_steps')->cascadeOnDelete();
+
+            $table->timestamps();
+        });
+    }
+};

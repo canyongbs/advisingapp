@@ -34,31 +34,20 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'service_request' => [
-            '*',
-        ],
-        'service_request_priority' => [
-            '*',
-        ],
-        'service_request_status' => [
-            '*',
-        ],
-        'service_request_type' => [
-            '*',
-        ],
-        'service_request_update' => [
-            '*',
-        ],
-        'service_request_assignment' => [
-            '*',
-        ],
-        'service_request_form' => [
-            '*',
-        ],
-        'sla' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\ServiceManagement\Models;
+
+use App\Models\Attributes\NoPermissions;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
+
+/**
+ * @mixin IdeHelperFormAuthentication
+ */
+#[NoPermissions]
+class ServiceRequestFormAuthentication extends SubmissibleAuthentication
+{
+    public function submissible(): BelongsTo
+    {
+        return $this->belongsTo(ServiceRequestForm::class, 'form_id');
+    }
+}

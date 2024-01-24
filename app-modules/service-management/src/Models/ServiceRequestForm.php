@@ -34,31 +34,57 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'service_request' => [
-            '*',
-        ],
-        'service_request_priority' => [
-            '*',
-        ],
-        'service_request_status' => [
-            '*',
-        ],
-        'service_request_type' => [
-            '*',
-        ],
-        'service_request_update' => [
-            '*',
-        ],
-        'service_request_assignment' => [
-            '*',
-        ],
-        'service_request_form' => [
-            '*',
-        ],
-        'sla' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\ServiceManagement\Models;
+
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\Form\Models\Submissible;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+/**
+ * @mixin IdeHelperForm
+ */
+class ServiceRequestForm extends Submissible
+{
+    protected $fillable = [
+        'name',
+        'description',
+        'embed_enabled',
+        'allowed_domains',
+        'is_authenticated',
+        'is_wizard',
+        'recaptcha_enabled',
+        'primary_color',
+        'rounding',
+        'content',
+    ];
+
+    protected $casts = [
+        'content' => 'array',
+        'embed_enabled' => 'boolean',
+        'allowed_domains' => 'array',
+        'is_authenticated' => 'boolean',
+        'is_wizard' => 'boolean',
+        'recaptcha_enabled' => 'boolean',
+        'rounding' => Rounding::class,
+    ];
+
+    public function fields(): HasMany
+    {
+        return $this->hasMany(ServiceRequestFormField::class);
+    }
+
+    public function steps(): HasMany
+    {
+        return $this->hasMany(ServiceRequestFormStep::class);
+    }
+
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(ServiceRequestFormSubmission::class);
+    }
+
+    public function types(): HasMany
+    {
+        return $this->hasMany(ServiceRequestType::class);
+    }
+}

@@ -34,31 +34,29 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'service_request' => [
-            '*',
-        ],
-        'service_request_priority' => [
-            '*',
-        ],
-        'service_request_status' => [
-            '*',
-        ],
-        'service_request_type' => [
-            '*',
-        ],
-        'service_request_update' => [
-            '*',
-        ],
-        'service_request_assignment' => [
-            '*',
-        ],
-        'service_request_form' => [
-            '*',
-        ],
-        'sla' => [
-            '*',
-        ],
-    ],
-];
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('service_request_forms', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
+            $table->boolean('embed_enabled')->default(false);
+            $table->json('allowed_domains')->nullable();
+            $table->string('primary_color')->nullable();
+            $table->string('rounding')->nullable();
+            $table->boolean('is_authenticated')->default(false);
+            $table->boolean('is_wizard')->default(false);
+            $table->boolean('recaptcha_enabled')->default(false);
+            $table->json('content')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+};

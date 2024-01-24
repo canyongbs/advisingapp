@@ -34,31 +34,24 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'service_request' => [
-            '*',
-        ],
-        'service_request_priority' => [
-            '*',
-        ],
-        'service_request_status' => [
-            '*',
-        ],
-        'service_request_type' => [
-            '*',
-        ],
-        'service_request_update' => [
-            '*',
-        ],
-        'service_request_assignment' => [
-            '*',
-        ],
-        'service_request_form' => [
-            '*',
-        ],
-        'sla' => [
-            '*',
-        ],
-    ],
-];
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('service_request_form_authentications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+
+            $table->string('author_id')->nullable();
+            $table->string('author_type')->nullable();
+            $table->string('code')->nullable();
+            $table->foreignUuid('service_request_form_id')->constrained('service_request_forms')->cascadeOnDelete();
+
+            $table->timestamps();
+
+            $table->index(['author_type', 'author_id']);
+        });
+    }
+};

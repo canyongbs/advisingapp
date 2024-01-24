@@ -34,31 +34,37 @@
 </COPYRIGHT>
 */
 
-return [
-    'model' => [
-        'service_request' => [
-            '*',
-        ],
-        'service_request_priority' => [
-            '*',
-        ],
-        'service_request_status' => [
-            '*',
-        ],
-        'service_request_type' => [
-            '*',
-        ],
-        'service_request_update' => [
-            '*',
-        ],
-        'service_request_assignment' => [
-            '*',
-        ],
-        'service_request_form' => [
-            '*',
-        ],
-        'sla' => [
-            '*',
-        ],
-    ],
-];
+namespace AdvisingApp\ServiceManagement\Models;
+
+use App\Models\Attributes\NoPermissions;
+use AdvisingApp\Form\Models\SubmissibleStep;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * @mixin IdeHelperFormStep
+ */
+#[NoPermissions]
+class ServiceRequestFormStep extends SubmissibleStep
+{
+    protected $fillable = [
+        'label',
+        'content',
+        'sort',
+    ];
+
+    protected $casts = [
+        'content' => 'array',
+        'sort' => 'integer',
+    ];
+
+    public function submissible(): BelongsTo
+    {
+        return $this->belongsTo(ServiceRequestForm::class, 'form_id');
+    }
+
+    public function fields(): HasMany
+    {
+        return $this->hasMany(ServiceRequestFormField::class, 'step_id');
+    }
+}
