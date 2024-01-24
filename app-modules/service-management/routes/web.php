@@ -34,29 +34,13 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Route;
+use AdvisingApp\ServiceManagement\Livewire\RenderServiceRequestForm;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        Schema::create('service_request_forms', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->boolean('embed_enabled')->default(false);
-            $table->json('allowed_domains')->nullable();
-            $table->string('primary_color')->nullable();
-            $table->string('rounding')->nullable();
-            $table->boolean('is_authenticated')->default(true);
-            $table->boolean('is_wizard')->default(false);
-            $table->boolean('recaptcha_enabled')->default(false);
-            $table->json('content')->nullable();
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
-};
+Route::middleware('web')
+    ->prefix('service-request-forms')
+    ->name('service-request-forms.')
+    ->group(function () {
+        Route::get('/{serviceRequestForm}/respond', RenderServiceRequestForm::class)
+            ->name('show');
+    });

@@ -34,29 +34,27 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\ServiceManagement\Livewire;
 
-return new class () extends Migration {
-    public function up(): void
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Concerns\InteractsWithForms;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
+
+class RenderServiceRequestForm extends Component implements HasForms
+{
+    use InteractsWithForms;
+
+    public bool $show = true;
+
+    public ServiceRequestForm $serviceRequestForm;
+
+    public ?array $data = [];
+
+    public function render(): View
     {
-        Schema::create('service_request_forms', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->boolean('embed_enabled')->default(false);
-            $table->json('allowed_domains')->nullable();
-            $table->string('primary_color')->nullable();
-            $table->string('rounding')->nullable();
-            $table->boolean('is_authenticated')->default(true);
-            $table->boolean('is_wizard')->default(false);
-            $table->boolean('recaptcha_enabled')->default(false);
-            $table->json('content')->nullable();
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        return view('survey::livewire.render-service-request-form')
+            ->title($this->serviceRequestForm->name);
     }
-};
+}
