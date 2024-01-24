@@ -40,8 +40,10 @@ use DateTimeInterface;
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use AdvisingApp\Form\Models\ServiceRequestForm;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
@@ -66,6 +68,11 @@ class ServiceRequestType extends BaseModel implements Auditable
     public function priorities(): HasMany
     {
         return $this->hasMany(ServiceRequestPriority::class, 'type_id');
+    }
+
+    public function form(): BelongsTo
+    {
+        return $this->belongsTo(ServiceRequestForm::class, 'service_request_form_id');
     }
 
     protected function serializeDate(DateTimeInterface $date): string
