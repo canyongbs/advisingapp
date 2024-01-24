@@ -56,7 +56,7 @@ class ServiceRequestFormSubmission extends Submission
 {
     protected $fillable = [
         'canceled_at',
-        'form_id',
+        'service_request_form_id',
         'request_method',
         'request_note',
         'submitted_at',
@@ -70,7 +70,7 @@ class ServiceRequestFormSubmission extends Submission
 
     public function submissible(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestForm::class, 'form_id');
+        return $this->belongsTo(ServiceRequestForm::class);
     }
 
     public function requester(): BelongsTo
@@ -82,9 +82,9 @@ class ServiceRequestFormSubmission extends Submission
     {
         return $this->belongsToMany(
             ServiceRequestFormField::class,
-            'form_field_submission',
-            'submission_id',
-            'field_id',
+            'survey_request_form_field_submission',
+            'survey_request_form_submission_id',
+            'survey_request_form_field_id',
         )
             ->withPivot(['id', 'response']);
     }

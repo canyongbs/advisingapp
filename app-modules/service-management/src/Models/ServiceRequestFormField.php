@@ -49,7 +49,7 @@ class ServiceRequestFormField extends SubmissibleField
         'label',
         'type',
         'is_required',
-        'form_id',
+        'service_request_form_id',
     ];
 
     protected $casts = [
@@ -59,11 +59,11 @@ class ServiceRequestFormField extends SubmissibleField
 
     public function submissible(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestForm::class, 'form_id');
+        return $this->belongsTo(ServiceRequestForm::class);
     }
 
     public function step(): BelongsTo
     {
-        return $this->belongsTo(ServiceRequestFormStep::class, 'step_id');
+        return $this->belongsTo(ServiceRequestFormStep::class);
     }
 }

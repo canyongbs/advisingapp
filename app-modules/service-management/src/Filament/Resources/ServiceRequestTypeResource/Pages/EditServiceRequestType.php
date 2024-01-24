@@ -36,8 +36,9 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages;
 
-use Filament\Actions;
 use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
@@ -54,13 +55,17 @@ class EditServiceRequestType extends EditRecord
                     ->label('Name')
                     ->required()
                     ->string(),
+                Select::make('service_request_form_id')
+                    ->relationship('form', 'name')
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }

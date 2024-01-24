@@ -70,12 +70,12 @@ class ServiceRequestForm extends Submissible
 
     public function fields(): HasMany
     {
-        return $this->hasMany(ServiceRequestFormField::class, 'form_id');
+        return $this->hasMany(ServiceRequestFormField::class);
     }
 
     public function steps(): HasMany
     {
-        return $this->hasMany(ServiceRequestFormStep::class, 'form_id');
+        return $this->hasMany(ServiceRequestFormStep::class);
     }
 
     public function submissions(): HasMany

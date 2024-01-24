@@ -45,8 +45,8 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->longText('response');
-            $table->foreignUuid('field_id')->constrained('service_request_form_fields')->cascadeOnDelete();
-            $table->foreignUuid('submission_id')->constrained('service_request_form_submissions')->cascadeOnDelete();
+            $table->foreignUuid('service_request_form_field_id')->constrained('service_request_form_fields')->cascadeOnDelete();
+            $table->foreignUuid('service_request_form_submission_id')->constrained('service_request_form_submissions')->cascadeOnDelete();
 
             $table->timestamps();
         });

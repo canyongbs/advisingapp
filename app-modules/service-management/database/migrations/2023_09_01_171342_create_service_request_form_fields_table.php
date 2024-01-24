@@ -49,8 +49,8 @@ return new class () extends Migration {
             $table->boolean('is_required');
             $table->json('config');
 
-            $table->foreignUuid('form_id')->constrained('service_request_forms')->cascadeOnDelete();
-            $table->foreignUuid('step_id')->nullable()->constrained('service_request_form_steps')->cascadeOnDelete();
+            $table->foreignUuid('service_request_form_id')->constrained('service_request_forms')->cascadeOnDelete();
+            $table->foreignUuid('service_request_form_step_id')->nullable()->constrained('service_request_form_steps')->cascadeOnDelete();
 
             $table->timestamps();
         });

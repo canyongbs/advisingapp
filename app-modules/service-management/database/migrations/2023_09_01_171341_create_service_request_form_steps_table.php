@@ -46,7 +46,7 @@ return new class () extends Migration {
 
             $table->text('label');
             $table->json('content')->nullable();
-            $table->foreignUuid('form_id')->constrained('service_request_forms')->cascadeOnDelete();
+            $table->foreignUuid('service_request_form_id')->constrained('service_request_forms')->cascadeOnDelete();
             $table->integer('sort');
 
             $table->timestamps();
