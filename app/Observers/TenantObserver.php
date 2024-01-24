@@ -52,7 +52,7 @@ class TenantObserver
 {
     public function created(Tenant $tenant): void
     {
-        $jobChain = app()->environment('local')
+        $jobChain = app()->environment('local', 'testing')
             ? [
                 new MigrateTenantSisDatabase($tenant),
             ]

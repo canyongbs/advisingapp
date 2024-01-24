@@ -40,7 +40,7 @@ class SkipIfNotLocal
 {
     public function handle($job, $next): void
     {
-        if (! app()->environment('local')) {
+        if (! app()->environment('local', 'testing')) {
             return;
         }
 
