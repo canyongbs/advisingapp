@@ -32,10 +32,12 @@
 </COPYRIGHT>
 -->
 <script setup>
-import { defineProps, ref, reactive, onMounted } from 'vue';
+import { defineProps, onMounted, reactive, ref } from 'vue';
 import wizard from './FormKit/wizard';
 import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
 import getRecaptchaToken from '../../../app-modules/integration-google-recaptcha/resources/js/Services/GetRecaptchaToken.js';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 onMounted(async () => {
     await getForm().then(function () {
@@ -126,6 +128,7 @@ const formPrimaryColor = ref('');
 const formRounding = ref('');
 const formRecaptchaEnabled = ref(false);
 const formRecaptchaKey = ref(null);
+const onScreenResponse = ref(null);
 const schema = ref([]);
 
 const authentication = ref({
@@ -193,6 +196,8 @@ async function getForm() {
                     full: '9999px',
                 },
             }[json.rounding ?? 'md'];
+
+            onScreenResponse.value = json.on_screen_response ?? null;
 
             display.value = true;
         })
@@ -351,7 +356,8 @@ async function authenticate(formData, node) {
         </div>
 
         <div v-if="submittedSuccess">
-            <h1 class="text-2xl font-bold mb-2 text-center">Thank you, your submission has been received.</h1>
+            <div v-if="onScreenResponse" v-html="DOMPurify.sanitize(marked.parse(onScreenResponse))"></div>
+            <h1 v-else class="text-2xl font-bold mb-2 text-center">Thank you, your submission has been received.</h1>
         </div>
     </div>
 </template>

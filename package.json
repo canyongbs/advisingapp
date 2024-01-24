@@ -13,7 +13,7 @@
         "build:survey": "(cd widgets/survey && vite build)",
         "build:event-registration": "(cd widgets/event-registration && vite build)",
         "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration",
-	    "api-docs:generate": "export NODE_OPTIONS=--max_old_space_size=4096 && env-cmd spectaql spectaql.yml"
+        "api-docs:generate": "export NODE_OPTIONS=--max_old_space_size=4096 && env-cmd spectaql spectaql.yml"
     },
     "devDependencies": {
         "@headlessui/vue": "^1.7.16",
@@ -50,6 +50,7 @@
         "env-cmd": "^10.1.0",
         "esbuild-plugin-polyfill-node": "^0.3.0",
         "flowbite": "^1.8.1",
+        "marked": "^11.1.1",
         "showdown": "^2.1.0",
         "sortablejs": "^1.15.0",
         "spectaql": "^2.3.0",
