@@ -253,4 +253,6 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
+
+    'landlord_api_key' => env('LANDLORD_API_KEY'),
 ];
