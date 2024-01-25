@@ -43,6 +43,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperSla
+ */
 class Sla extends BaseModel implements Auditable
 {
     use SoftDeletes;

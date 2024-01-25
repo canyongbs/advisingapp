@@ -99,10 +99,6 @@ trait HasSharedFormConfiguration
                         ),
                 ])
                 ->columnSpanFull(),
-            // TODO Pretty sure this should ALWAYS be authenticated
-            // Toggle::make('is_authenticated')
-            //     ->label('Requires authentication')
-            //     ->helperText('If enabled, only students and prospects can submit this service request form, and they must verify their email address first.'),
             Toggle::make('is_wizard')
                 ->label('Multi-step service request form')
                 ->live()

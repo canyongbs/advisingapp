@@ -34,52 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\InAppCommunication\Actions;
 
-use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Exception;
+use App\Models\User;
+use Twilio\Rest\Client;
+use AdvisingApp\InAppCommunication\Enums\ConversationType;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+class DemoteUserFromChannelManager
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'recaptcha_enabled',
-        'primary_color',
-        'rounding',
-        'content',
-        'on_screen_response',
-    ];
+    public function __construct(
+        public Client $twilioClient,
+    ) {}
 
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'recaptcha_enabled' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
-
-    public function fields(): HasMany
+    public function __invoke(User $user, TwilioConversation $conversation): void
     {
-        return $this->hasMany(FormField::class);
-    }
+        throw_if(
+            ($conversation->type === ConversationType::UserToUser),
+            new Exception('Only channels have managers.')
+        );
 
-    public function steps(): HasMany
-    {
-        return $this->hasMany(FormStep::class);
-    }
+        throw_unless(
+            $conversation->participants()->whereKey($user)->exists(),
+            new Exception('User is not a participant in the channel.')
+        );
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
+        throw_unless(
+            $conversation->managers()->whereKeyNot($user->getKey())->exists(),
+            'User cannot be removed because they are the only manager in the channel.'
+        );
+
+        $conversation->managers()
+            ->updateExistingPivot($user->getKey(), [
+                'is_channel_manager' => false,
+            ]);
     }
 }

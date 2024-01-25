@@ -123,12 +123,14 @@
                                     You can
                                     {{ (clone $this->joinChannelsAction)->link()->label('browse a list')->tooltip(null)->icon(null) }}
                                     or
-                                    {{ (clone $this->newChannelAction)->link()->label('create a new one')->tooltip(null)->icon(null) }}.
+                                    {{ (clone $this->newChannelAction)->link()->label('create a new one')->tooltip(null)->icon(null) }}
+                                    .
                                 </div>
                             @else
                                 <div class="text-sm">
                                     You do not have any direct messages yet. You can
-                                    {{ (clone $this->newUserToUserChatAction)->link()->label('start one')->tooltip(null)->icon(null) }}.
+                                    {{ (clone $this->newUserToUserChatAction)->link()->label('start one')->tooltip(null)->icon(null) }}
+                                    .
                                 </div>
                             @endif
                         </div>
@@ -285,6 +287,10 @@
                         </form>
                         @if ($selectedConversation?->type === ConversationType::Channel)
                             <div class="flex items-center justify-end gap-3">
+                                @if ($selectedConversation->managers()->find(auth()->user()))
+                                    {{ $this->editChannelAction }}
+                                @endif
+
                                 {{ $this->addUserToChannelAction }}
 
                                 {{ $this->leaveConversationAction }}

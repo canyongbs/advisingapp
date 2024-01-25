@@ -42,6 +42,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
+/**
+ * @mixin IdeHelperChangeRequestResponse
+ */
 class ChangeRequestResponse extends BaseModel implements Auditable
 {
     use AuditableTrait;
