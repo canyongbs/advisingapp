@@ -66,8 +66,7 @@ class CreateTenantCommand extends Command
         $name = $this->argument('name');
         $domain = $this->argument('domain');
         $database = str($domain)
-            ->replace('.', '_')
-            ->replace('-', '_')
+            ->replace(['.', '-'], '_')
             ->toString();
 
         DB::connection('landlord')->statement("DROP DATABASE IF EXISTS {$database}");
