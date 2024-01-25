@@ -41,7 +41,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use AdvisingApp\Form\Models\SubmissibleAuthentication;
 
 /**
- * @mixin IdeHelperFormAuthentication
+ * @mixin IdeHelperServiceRequestFormAuthentication
  */
 #[NoPermissions]
 class ServiceRequestFormAuthentication extends SubmissibleAuthentication
