@@ -383,6 +383,8 @@ namespace App\Models{
  * @property-read int|null $care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseloadManagement\Models\Caseload> $caseloads
  * @property-read int|null $caseloads_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $changeRequestResponses
+ * @property-read int|null $change_request_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestType> $changeRequestTypes
  * @property-read int|null $change_request_types_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequest> $changeRequests
@@ -1809,6 +1811,7 @@ namespace AdvisingApp\Form\Models{
  * @property bool $is_wizard
  * @property bool $recaptcha_enabled
  * @property array|null $content
+ * @property string|null $on_screen_response
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -1832,6 +1835,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsAuthenticated($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereOnScreenResponse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form wherePrimaryColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereRecaptchaEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereRounding($value)
@@ -2646,10 +2650,10 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem
  *
  * @property string $id
- * @property string $question
  * @property bool $public
- * @property array|null $solution
- * @property array|null $notes
+ * @property string $title
+ * @property array|null $article_details
+ * @property string|null $notes
  * @property string|null $quality_id
  * @property string|null $status_id
  * @property string|null $category_id
@@ -2668,15 +2672,15 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereArticleDetails($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem wherePublic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereQualityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereQuestion($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereSolution($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereStatusId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -3337,8 +3341,12 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $approvals
+ * @property-read int|null $approvals_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $responses
+ * @property-read int|null $responses_count
  * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequestStatus $status
  * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequestType $type
  * @property-read \App\Models\User|null $user
@@ -3366,6 +3374,38 @@ namespace AdvisingApp\ServiceManagement\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperChangeRequest {}
+}
+
+namespace AdvisingApp\ServiceManagement\Models{
+/**
+ * AdvisingApp\ServiceManagement\Models\ChangeRequestResponse
+ *
+ * @property string $id
+ * @property string $change_request_id
+ * @property string $user_id
+ * @property bool $approved
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
+ * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequest $changeRequest
+ * @property-read \App\Models\User $user
+ * @method static \AdvisingApp\ServiceManagement\Database\Factories\ChangeRequestResponseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereApproved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereChangeRequestId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperChangeRequestResponse {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3400,6 +3440,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  *
  * @property string $id
  * @property string $name
+ * @property int $number_of_required_approvals
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
@@ -3415,6 +3456,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereNumberOfRequiredApprovals($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereUpdatedAt($value)
  * @mixin \Eloquent
  */
