@@ -34,32 +34,21 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Route;
-use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
-use AdvisingApp\ServiceManagement\Http\Controllers\ServiceRequestFormWidgetController;
-use AdvisingApp\ServiceManagement\Http\Middleware\EnsureServiceManagementFeatureIsActive;
+namespace AdvisingApp\ServiceManagement\Http\Middleware;
 
-Route::prefix('api')
-    ->middleware([
-        'api',
-        EnsureServiceManagementFeatureIsActive::class,
-        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':serviceRequestForm',
-    ])
-    ->group(function () {
-        Route::prefix('service-request-forms')
-            ->name('service-request-forms.')
-            ->group(function () {
-                Route::get('/{serviceRequestForm}', [ServiceRequestFormWidgetController::class, 'view'])
-                    ->middleware(['signed'])
-                    ->name('define');
-                Route::post('/{serviceRequestForm}/authenticate/request', [ServiceRequestFormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
-                    ->name('request-authentication');
-                Route::post('/{serviceRequestForm}/authenticate/{authentication}', [ServiceRequestFormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
-                    ->name('authenticate');
-                Route::post('/{serviceRequestForm}/submit', [ServiceRequestFormWidgetController::class, 'store'])
-                    ->middleware(['signed'])
-                    ->name('submit');
-            });
-    });
+use Closure;
+use Illuminate\Http\Request;
+use App\Settings\LicenseSettings;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureServiceManagementFeatureIsActive
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (! app(LicenseSettings::class)->data->addons->serviceManagement) {
+            return response()->json(['error' => 'Service Management is not enabled.'], 403);
+        }
+
+        return $next($request);
+    }
+}
