@@ -36,7 +36,7 @@
     use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-    $conversationGroups = $this->getConversations()->reduce(
+    $conversationGroups = $this->conversations()->reduce(
         function (array $carry, TwilioConversation $conversation): array {
             if ($conversation->type === ConversationType::Channel) {
                 $carry[0][] = $conversation;
@@ -48,6 +48,7 @@
         },
         [[], []],
     );
+ray($conversationGroups);
 @endphp
 
 <x-filament-panels::page full-height="true">
@@ -84,21 +85,21 @@
                                         <li @class([
                                             'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                             'bg-gray-100 dark:bg-white/5' =>
-                                                $this->selectedConversation === $conversation['sid'],
+                                                $this->conversation?->getKey() === $conversation->getKey(),
                                         ])>
                                             <button
                                                 type="button"
                                                 @class([
                                                     'relative flex flex-1 items-center justify-between text-start gap-x-3 rounded-lg py-2 text-sm',
                                                 ])
-                                                wire:click="selectConversation('{{ $conversation['sid'] }}')"
+                                                wire:click="selectConversation({{ $conversation }})"
                                             >
                                                 <span @class([
                                                     'flex-1 truncate',
                                                     'text-gray-700 dark:text-gray-200' =>
-                                                        $this->selectedConversation !== $conversation['sid'],
+                                                        $this->conversation?->getKey() !== $conversation->getKey(),
                                                     'text-primary-600 dark:text-primary-400' =>
-                                                        $this->selectedConversation === $conversation['sid'],
+                                                        $this->conversation?->getKey() === $conversation->getKey(),
                                                 ])>
                                                     @if (filled($conversation->channel_name))
                                                         {{ $conversation->channel_name }}
@@ -106,13 +107,12 @@
                                                         {{ $conversation->participants->where('id', '!=', auth()->id())->first()?->name }}
                                                     @endif
                                                 </span>
-
                                                 <x-filament::loading-indicator :attributes="(new \Illuminate\View\ComponentAttributeBag([
                                                     'wire:loading.delay.' .
                                                     config('filament.livewire_loading_delay', 'default') => '',
                                                     'wire:target' =>
-                                                        'selectConversation(\'' . $conversation['sid'] . '\')',
-                                                ]))->class(['w-5 h-5'])" />
+                                                        'selectConversation($conversation)',
+                                                ]))->class(['w-5 h-5'])"/>
                                             </button>
                                         </li>
                                     @endforeach
@@ -138,18 +138,18 @@
                 </div>
             </div>
 
-            @if ($selectedConversation = $this->getSelectedConversation())
+            @if ($this->conversation)
                 <div
                     class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
-                    x-data="userToUserChat(`{{ $selectedConversation->getKey() }}`)"
-                    wire:key="conversation-{{ $selectedConversation->getKey() }}"
+                    x-data="userToUserChat(`{{ $this->conversation->getKey() }}`)"
+                    wire:key="conversation-{{ $this->conversation->getKey() }}"
                 >
                     <div
                         class="flex flex-col items-center self-center"
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500"/>
                         <p
                             class="text-center"
                             x-text="loadingMessage"
@@ -253,7 +253,12 @@
                                         required
                                         x-on:keydown="typing"
                                     >
-                                </textarea>
+                                    </textarea>
+                                    {{--                                    <filament-tiptap-editor::tiptap-editor--}}
+
+                                    {{--                                    >--}}
+                                    {{--                                    </filament-tiptap-editor::tiptap-editor>--}}
+                                    {{--                                    {{ $this->form }}--}}
                                 </div>
                                 <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
                                     <div class="flex items-center gap-3">
@@ -285,9 +290,9 @@
                                 </div>
                             </div>
                         </form>
-                        @if ($selectedConversation?->type === ConversationType::Channel)
+                        @if ($this->conversation->type === ConversationType::Channel)
                             <div class="flex items-center justify-end gap-3">
-                                @if ($selectedConversation->managers()->find(auth()->user()))
+                                @if ($conversation->managers()->find(auth()->user()))
                                     {{ $this->editChannelAction }}
                                 @endif
 
