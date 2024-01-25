@@ -72,6 +72,10 @@ trait HasSharedFormConfiguration
             Textarea::make('description')
                 ->string()
                 ->columnSpanFull(),
+            Select::make('service_request_type_id')
+                ->relationship('type', 'name')
+                ->preload()
+                ->searchable(),
             Grid::make()
                 ->schema([
                     Toggle::make('embed_enabled')

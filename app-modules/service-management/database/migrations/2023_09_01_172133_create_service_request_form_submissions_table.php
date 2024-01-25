@@ -44,7 +44,7 @@ return new class () extends Migration {
         Schema::create('service_request_form_submissions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('service_request_form_id')->constrained('service_request_forms')->cascadeOnDelete();
-            $table->foreignUuid('service_request_priority_id')->constrained('service_request_priorities');
+            $table->foreignUuid('service_request_priority_id')->nullable()->constrained('service_request_priorities');
             $table->string('author_id')->nullable();
             $table->string('author_type')->nullable();
             $table->timestamp('submitted_at')->nullable();
