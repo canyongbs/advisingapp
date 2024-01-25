@@ -34,58 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\Form\Listeners;
 
-use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
+use AdvisingApp\Form\Notifications\FormSubmissionAutoReplyNotification;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'recaptcha_enabled',
-        'primary_color',
-        'rounding',
-        'content',
-        'on_screen_response',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'recaptcha_enabled' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
-
-    public function fields(): HasMany
+    public function handle(FormSubmissionCreated $event): void
     {
-        return $this->hasMany(FormField::class);
-    }
+        /** @var Student|Prospect|null $author */
+        $author = $event->submission->author;
 
-    public function steps(): HasMany
-    {
-        return $this->hasMany(FormStep::class);
-    }
+        if (! $author) {
+            return;
+        }
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
+        /** @var Form $form */
+        $form = $event->submission->submissible;
 
-    public function emailAutoReply(): HasOne
-    {
-        return $this->hasOne(FormEmailAutoReply::class);
+        if (! $form->emailAutoReply->is_enabled) {
+            return;
+        }
+
+        $author->notify(new FormSubmissionAutoReplyNotification(submission: $event->submission));
     }
 }

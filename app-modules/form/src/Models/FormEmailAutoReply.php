@@ -36,56 +36,46 @@
 
 namespace AdvisingApp\Form\Models;
 
-use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\BaseModel;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
 
 /**
- * @mixin IdeHelperForm
+ * @mixin IdeHelperFormEmailAutoReply
  */
-class Form extends Submissible
+class FormEmailAutoReply extends BaseModel
 {
     protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'recaptcha_enabled',
-        'primary_color',
-        'rounding',
-        'content',
-        'on_screen_response',
+        'subject',
+        'body',
+        'is_enabled',
     ];
 
     protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'recaptcha_enabled' => 'boolean',
-        'rounding' => Rounding::class,
+        'body' => 'array',
+        'is_enabled' => 'boolean',
     ];
 
-    public function fields(): HasMany
+    public function form(): BelongsTo
     {
-        return $this->hasMany(FormField::class);
+        return $this->belongsTo(Form::class);
     }
 
-    public function steps(): HasMany
+    public function getBody(Student|Prospect|null $author): string
     {
-        return $this->hasMany(FormStep::class);
+        return app(GenerateEmailMarkdownContent::class)(
+            [$this->body],
+            $this->getMergeData($author),
+        );
     }
 
-    public function submissions(): HasMany
+    public function getMergeData(Student|Prospect|null $author): array
     {
-        return $this->hasMany(FormSubmission::class);
-    }
-
-    public function emailAutoReply(): HasOne
-    {
-        return $this->hasOne(FormEmailAutoReply::class);
+        return [
+            'student full name' => $author->getAttribute($author->displayNameKey()),
+            'student email' => $author->getAttribute($author->displayEmailKey()),
+        ];
     }
 }

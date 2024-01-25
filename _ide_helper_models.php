@@ -1815,6 +1815,7 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \AdvisingApp\Form\Models\FormEmailAutoReply|null $emailAutoReply
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormStep> $steps
@@ -1873,6 +1874,34 @@ namespace AdvisingApp\Form\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperFormAuthentication {}
+}
+
+namespace AdvisingApp\Form\Models{
+/**
+ * AdvisingApp\Form\Models\FormEmailAutoReply
+ *
+ * @property string $id
+ * @property string|null $subject
+ * @property array|null $body
+ * @property bool $is_enabled
+ * @property string $form_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\Form\Models\Form $form
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply query()
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereIsEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereSubject($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperFormEmailAutoReply {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -2026,7 +2055,6 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @property string $conversation_sid
  * @property string $user_id
  * @property string $participant_sid
- * @property bool $is_channel_manager
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\InAppCommunication\Models\TwilioConversation $conversation
@@ -2036,7 +2064,6 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser query()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereConversationSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereIsChannelManager($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereParticipantSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUserId($value)

@@ -34,58 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
-{
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'recaptcha_enabled',
-        'primary_color',
-        'rounding',
-        'content',
-        'on_screen_response',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'recaptcha_enabled' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
-
-    public function fields(): HasMany
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->hasMany(FormField::class);
-    }
+        Schema::create('form_email_auto_replies', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function steps(): HasMany
-    {
-        return $this->hasMany(FormStep::class);
-    }
+            $table->string('subject')->nullable();
+            $table->json('body')->nullable();
+            $table->boolean('is_enabled')->default(false);
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
+            $table->foreignUuid('form_id')->constrained()->cascadeOnDelete();
 
-    public function emailAutoReply(): HasOne
-    {
-        return $this->hasOne(FormEmailAutoReply::class);
+            $table->timestamps();
+        });
     }
-}
+};

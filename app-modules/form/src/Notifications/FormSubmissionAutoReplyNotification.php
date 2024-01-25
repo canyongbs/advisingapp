@@ -34,58 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\Form\Notifications;
 
-use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Tenant;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Form\Models\FormSubmission;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+class FormSubmissionAutoReplyNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'recaptcha_enabled',
-        'primary_color',
-        'rounding',
-        'content',
-        'on_screen_response',
-    ];
+    use EmailChannelTrait;
 
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'recaptcha_enabled' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
+    public function __construct(
+        public FormSubmission $submission
+    ) {}
 
-    public function fields(): HasMany
+    public function uniqueId(): string
     {
-        return $this->hasMany(FormField::class);
+        return Tenant::current()->getKey() . ':' . $this->submission->getKey();
     }
 
-    public function steps(): HasMany
+    public function toEmail(NotifiableInterface $notifiable): MailMessage
     {
-        return $this->hasMany(FormStep::class);
-    }
+        /** @var Form $form */
+        $form = $this->submission->submissible;
 
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
-    }
+        /** @var Student|Prospect|null $author */
+        $author = $this->submission->author;
 
-    public function emailAutoReply(): HasOne
-    {
-        return $this->hasOne(FormEmailAutoReply::class);
+        return MailMessage::make()
+            ->subject($form->emailAutoReply->subject)
+            ->content($form->emailAutoReply->getBody($author));
     }
 }

@@ -43,12 +43,14 @@ use Illuminate\Support\Facades\Event;
 use AdvisingApp\Form\Models\FormField;
 use Illuminate\Support\ServiceProvider;
 use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Observers\FormObserver;
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use AdvisingApp\Form\Observers\FormSubmissionObserver;
 use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
+use AdvisingApp\Form\Listeners\SendFormSubmissionAutoReplyEmailToSubmitter;
 
 class FormServiceProvider extends ServiceProvider
 {
@@ -73,13 +75,19 @@ class FormServiceProvider extends ServiceProvider
     public function registerObservers(): void
     {
         FormSubmission::observe(FormSubmissionObserver::class);
+        Form::observe(FormObserver::class);
     }
 
     public function registerEvents(): void
     {
         Event::listen(
             events: FormSubmissionCreated::class,
-            listener: NotifySubscribersOfFormSubmission::class
+            listener: NotifySubscribersOfFormSubmission::class,
+        );
+
+        Event::listen(
+            events: FormSubmissionCreated::class,
+            listener: SendFormSubmissionAutoReplyEmailToSubmitter::class,
         );
     }
 
