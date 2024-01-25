@@ -34,48 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperServiceRequestType
- */
-class ServiceRequestType extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-    ];
-
-    public function serviceRequests(): HasManyThrough
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->through('priorities')->has('serviceRequests');
+        Schema::create('service_request_forms', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('service_request_type_id')->nullable()->constrained('service_request_types');
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
+            $table->boolean('embed_enabled')->default(false);
+            $table->json('allowed_domains')->nullable();
+            $table->string('primary_color')->nullable();
+            $table->string('rounding')->nullable();
+            $table->boolean('is_authenticated')->default(true);
+            $table->boolean('is_wizard')->default(false);
+            $table->boolean('recaptcha_enabled')->default(false);
+            $table->json('content')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-
-    public function priorities(): HasMany
-    {
-        return $this->hasMany(ServiceRequestPriority::class, 'type_id');
-    }
-
-    public function form(): HasOne
-    {
-        return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
-    }
-}
+};

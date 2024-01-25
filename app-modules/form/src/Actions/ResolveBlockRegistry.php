@@ -42,6 +42,7 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 use AdvisingApp\Survey\Filament\Blocks\SurveyFieldBlockRegistry;
 
 class ResolveBlockRegistry
@@ -49,7 +50,7 @@ class ResolveBlockRegistry
     public function __invoke(Submissible $submissible): array
     {
         return match ($submissible::class) {
-            Form::class, Application::class, EventRegistrationForm::class => FormFieldBlockRegistry::keyByType(),
+            Form::class, Application::class, EventRegistrationForm::class, ServiceRequestForm::class => FormFieldBlockRegistry::keyByType(),
             Survey::class => SurveyFieldBlockRegistry::keyByType(),
         };
     }

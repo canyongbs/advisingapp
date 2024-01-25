@@ -34,48 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource\Pages;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource\Pages\Concerns\HasSharedFormConfiguration;
 
-/**
- * @mixin IdeHelperServiceRequestType
- */
-class ServiceRequestType extends BaseModel implements Auditable
+class CreateServiceRequestForm extends CreateRecord
 {
-    use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
+    use HasSharedFormConfiguration;
 
-    protected $fillable = [
-        'name',
-    ];
+    protected static string $resource = ServiceRequestFormResource::class;
 
-    public function serviceRequests(): HasManyThrough
+    public function form(Form $form): Form
     {
-        return $this->through('priorities')->has('serviceRequests');
-    }
-
-    public function priorities(): HasMany
-    {
-        return $this->hasMany(ServiceRequestPriority::class, 'type_id');
-    }
-
-    public function form(): HasOne
-    {
-        return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return $form
+            ->schema($this->fields());
     }
 }

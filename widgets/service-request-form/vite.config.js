@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,49 +31,28 @@
 
 </COPYRIGHT>
 */
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
-namespace AdvisingApp\ServiceManagement\Models;
-
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperServiceRequestType
- */
-class ServiceRequestType extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-    ];
-
-    public function serviceRequests(): HasManyThrough
-    {
-        return $this->through('priorities')->has('serviceRequests');
-    }
-
-    public function priorities(): HasMany
-    {
-        return $this->hasMany(ServiceRequestPriority::class, 'type_id');
-    }
-
-    public function form(): HasOne
-    {
-        return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
-    }
-}
+export default defineConfig({
+    plugins: [vue()],
+    build: {
+        manifest: true,
+        lib: {
+            entry: resolve(__dirname, 'src/widget.js'),
+            name: 'AdvisingAppServiceRequestFormWidget',
+            fileName: 'advising-app-service-request-form-widget',
+            formats: ['es'],
+        },
+        outDir: resolve(__dirname, '../../public/js/widgets/service-request-form'),
+        emptyOutDir: true,
+        sourcemap: true,
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
+    define: { 'process.env.NODE_ENV': '"production"' },
+});

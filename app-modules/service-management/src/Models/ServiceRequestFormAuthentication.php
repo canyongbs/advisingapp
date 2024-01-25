@@ -36,46 +36,18 @@
 
 namespace AdvisingApp\ServiceManagement\Models;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use App\Models\Attributes\NoPermissions;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Form\Models\SubmissibleAuthentication;
 
 /**
- * @mixin IdeHelperServiceRequestType
+ * @mixin IdeHelperServiceRequestFormAuthentication
  */
-class ServiceRequestType extends BaseModel implements Auditable
+#[NoPermissions]
+class ServiceRequestFormAuthentication extends SubmissibleAuthentication
 {
-    use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-    ];
-
-    public function serviceRequests(): HasManyThrough
+    public function submissible(): BelongsTo
     {
-        return $this->through('priorities')->has('serviceRequests');
-    }
-
-    public function priorities(): HasMany
-    {
-        return $this->hasMany(ServiceRequestPriority::class, 'type_id');
-    }
-
-    public function form(): HasOne
-    {
-        return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return $this->belongsTo(ServiceRequestForm::class, 'service_request_form_id');
     }
 }

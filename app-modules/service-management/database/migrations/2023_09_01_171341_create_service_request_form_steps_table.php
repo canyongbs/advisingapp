@@ -34,48 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-
-/**
- * @mixin IdeHelperServiceRequestType
- */
-class ServiceRequestType extends BaseModel implements Auditable
-{
-    use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
-
-    protected $fillable = [
-        'name',
-    ];
-
-    public function serviceRequests(): HasManyThrough
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->through('priorities')->has('serviceRequests');
-    }
+        Schema::create('service_request_form_steps', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function priorities(): HasMany
-    {
-        return $this->hasMany(ServiceRequestPriority::class, 'type_id');
-    }
+            $table->text('label');
+            $table->json('content')->nullable();
+            $table->foreignUuid('service_request_form_id')->constrained('service_request_forms')->cascadeOnDelete();
+            $table->integer('sort');
 
-    public function form(): HasOne
-    {
-        return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
+            $table->timestamps();
+        });
     }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
-    }
-}
+};

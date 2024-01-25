@@ -141,6 +141,7 @@ class ListServiceRequests extends ListRecords
                     DeleteBulkAction::make(),
                 ]),
             ])
+            ->defaultSort('created_at', 'desc')
             ->poll('60s');
     }
 

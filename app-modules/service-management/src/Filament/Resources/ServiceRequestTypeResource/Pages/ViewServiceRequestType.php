@@ -41,6 +41,8 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
 class ViewServiceRequestType extends ViewRecord
@@ -54,8 +56,12 @@ class ViewServiceRequestType extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name')
-                            ->label('Name')
-                            ->translateLabel(),
+                            ->label('Name'),
+                        TextEntry::make('form.name')
+                            ->label('Form')
+                            ->hidden(fn (ServiceRequestType $record) => ! $record->form)
+                            ->url(fn (ServiceRequestType $record) => $record->form ? ServiceRequestFormResource::getUrl('edit', ['record' => $record?->form]) : null)
+                            ->color('primary'),
                     ])
                     ->columns(),
             ]);

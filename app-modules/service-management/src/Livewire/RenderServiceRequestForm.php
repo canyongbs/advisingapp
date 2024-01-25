@@ -34,48 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Livewire;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Concerns\InteractsWithForms;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 
-/**
- * @mixin IdeHelperServiceRequestType
- */
-class ServiceRequestType extends BaseModel implements Auditable
+class RenderServiceRequestForm extends Component implements HasForms
 {
-    use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
+    use InteractsWithForms;
 
-    protected $fillable = [
-        'name',
-    ];
+    public bool $show = true;
 
-    public function serviceRequests(): HasManyThrough
+    public ServiceRequestForm $serviceRequestForm;
+
+    public ?array $data = [];
+
+    public function render(): View
     {
-        return $this->through('priorities')->has('serviceRequests');
-    }
-
-    public function priorities(): HasMany
-    {
-        return $this->hasMany(ServiceRequestPriority::class, 'type_id');
-    }
-
-    public function form(): HasOne
-    {
-        return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return view('service-management::livewire.render-service-request-form')
+            ->title($this->serviceRequestForm->name);
     }
 }

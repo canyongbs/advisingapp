@@ -34,48 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\ServiceManagement\Filament\Resources;
 
-use DateTimeInterface;
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use Filament\Resources\Resource;
+use App\Filament\Clusters\ServiceManagementAdministration;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource\Pages\EditServiceRequestForm;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource\Pages\ListServiceRequestForms;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource\Pages\CreateServiceRequestForm;
 
-/**
- * @mixin IdeHelperServiceRequestType
- */
-class ServiceRequestType extends BaseModel implements Auditable
+class ServiceRequestFormResource extends Resource
 {
-    use SoftDeletes;
-    use HasUuids;
-    use AuditableTrait;
+    protected static ?string $model = ServiceRequestForm::class;
 
-    protected $fillable = [
-        'name',
-    ];
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
 
-    public function serviceRequests(): HasManyThrough
+    protected static ?int $navigationSort = 30;
+
+    protected static ?string $cluster = ServiceManagementAdministration::class;
+
+    public static function getPages(): array
     {
-        return $this->through('priorities')->has('serviceRequests');
-    }
-
-    public function priorities(): HasMany
-    {
-        return $this->hasMany(ServiceRequestPriority::class, 'type_id');
-    }
-
-    public function form(): HasOne
-    {
-        return $this->hasOne(ServiceRequestForm::class, 'service_request_type_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
+        return [
+            'index' => ListServiceRequestForms::route('/'),
+            'create' => CreateServiceRequestForm::route('/create'),
+            'edit' => EditServiceRequestForm::route('/{record}/edit'),
+        ];
     }
 }

@@ -34,25 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
+namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource\Pages;
 
 use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use AdvisingApp\Survey\Models\Survey;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
-use AdvisingApp\Survey\Filament\Resources\SurveyResource;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
-use AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestFormResource\Pages\Concerns\HasSharedFormConfiguration;
 
-class EditSurvey extends EditRecord
+class EditServiceRequestForm extends EditRecord
 {
     use HasSharedFormConfiguration;
 
-    protected static string $resource = SurveyResource::class;
-
-    protected static ?string $navigationLabel = 'Edit';
+    protected static string $resource = ServiceRequestFormResource::class;
 
     public function form(Form $form): Form
     {
@@ -64,7 +62,7 @@ class EditSurvey extends EditRecord
     {
         return [
             Action::make('view')
-                ->url(fn (Survey $survey) => route('surveys.show', ['survey' => $survey]))
+                ->url(fn (ServiceRequestForm $serviceRequestForm) => route('service-request-forms.show', ['serviceRequestForm' => $serviceRequestForm]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
@@ -73,8 +71,8 @@ class EditSurvey extends EditRecord
                     [
                         TextEntry::make('snippet')
                             ->label('Click to Copy')
-                            ->state(function (Survey $survey) {
-                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($survey);
+                            ->state(function (ServiceRequestForm $serviceRequestForm) {
+                                $code = resolve(GenerateSubmissibleEmbedCode::class)->handle($serviceRequestForm);
 
                                 return <<<EOD
                                 ```
@@ -84,14 +82,14 @@ class EditSurvey extends EditRecord
                             })
                             ->markdown()
                             ->copyable()
-                            ->copyableState(fn (Survey $survey) => resolve(GenerateSubmissibleEmbedCode::class)->handle($survey))
+                            ->copyableState(fn (ServiceRequestForm $serviceRequestForm) => resolve(GenerateSubmissibleEmbedCode::class)->handle($serviceRequestForm))
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500),
                     ]
                 )
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
-                ->hidden(fn (Survey $survey) => ! $survey->embed_enabled),
+                ->hidden(fn (ServiceRequestForm $serviceRequestForm) => ! $serviceRequestForm->embed_enabled),
             DeleteAction::make(),
         ];
     }
