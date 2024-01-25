@@ -38,7 +38,9 @@ namespace AdvisingApp\InAppCommunication\Actions;
 
 use Exception;
 use Throwable;
+use App\Models\User;
 use Twilio\Rest\Client;
+use Twilio\Exceptions\TwilioException;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
@@ -50,10 +52,24 @@ class CreateTwilioConversation
     ) {}
 
     /**
+     * @param ConversationType $type
+     * @param string|null $friendlyName
+     * @param array<User>|null $users
+     * @param string|null $channelName
+     * @param bool|null $isPrivateChannel
+     *
      * @throws Throwable
+     * @throws TwilioException
+     *
+     * @return TwilioConversation
      */
-    public function __invoke(ConversationType $type, ?string $friendlyName = null, ?array $users = null, ?string $channelName = null, ?bool $isPrivateChannel = null): TwilioConversation
-    {
+    public function __invoke(
+        ConversationType $type,
+        ?string $friendlyName = null,
+        ?array $users = null,
+        ?string $channelName = null,
+        ?bool $isPrivateChannel = null
+    ): TwilioConversation {
         if ($type === ConversationType::UserToUser) {
             throw_if(
                 count($users) !== 2,
@@ -91,8 +107,17 @@ class CreateTwilioConversation
             'is_private_channel' => $isPrivateChannel ?? false,
         ]);
 
-        foreach ($users as $user) {
-            app(AddUserToConversation::class)(user: $user, conversation: $conversation);
+        if ($type === ConversationType::UserToUser) {
+            foreach ($users as $user) {
+                app(AddUserToConversation::class)(user: $user, conversation: $conversation);
+            }
+        } else {
+            /** @var User $user */
+            $creator = auth()->user();
+
+            foreach ($users as $user) {
+                app(AddUserToConversation::class)(user: $user, conversation: $conversation, manager: $user->is($creator));
+            }
         }
 
         return $conversation;

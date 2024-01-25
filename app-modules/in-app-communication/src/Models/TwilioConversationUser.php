@@ -37,51 +37,25 @@
 namespace AdvisingApp\InAppCommunication\Models;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use AdvisingApp\InAppCommunication\Enums\ConversationType;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperTwilioConversation
+ * @mixin IdeHelperTwilioConversationUser
  */
-class TwilioConversation extends Model
+class TwilioConversationUser extends Pivot
 {
-    use UsesTenantConnection;
-
-    protected $primaryKey = 'sid';
-
-    protected $keyType = 'string';
-
-    public $incrementing = false;
-
     protected $casts = [
-        'is_private_channel' => 'boolean',
-        'type' => ConversationType::class,
+        'is_channel_manager' => 'boolean',
     ];
 
-    protected $fillable = [
-        'sid',
-        'friendly_name',
-        'type',
-        'channel_name',
-        'is_private_channel',
-    ];
-
-    public function participants(): BelongsToMany
+    public function conversation(): BelongsTo
     {
-        return $this->belongsToMany(User::class, 'twilio_conversation_user', 'conversation_sid', 'user_id')
-            ->withPivot([
-                'participant_sid',
-                'is_channel_manager',
-            ])
-            ->withTimestamps()
-            ->as('participant')
-            ->using(TwilioConversationUser::class);
+        return $this->belongsTo(TwilioConversation::class);
     }
 
-    public function managers(): BelongsToMany
+    public function user(): BelongsTo
     {
-        return $this->participants()->wherePivot('is_channel_manager', true);
+        return $this->belongsTo(User::class);
     }
 }

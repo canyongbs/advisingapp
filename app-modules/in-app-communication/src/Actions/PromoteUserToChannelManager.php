@@ -34,54 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InAppCommunication\Models;
+namespace AdvisingApp\InAppCommunication\Actions;
 
+use Exception;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Twilio\Rest\Client;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-/**
- * @mixin IdeHelperTwilioConversation
- */
-class TwilioConversation extends Model
+class PromoteUserToChannelManager
 {
-    use UsesTenantConnection;
+    public function __construct(
+        public Client $twilioClient,
+    ) {}
 
-    protected $primaryKey = 'sid';
-
-    protected $keyType = 'string';
-
-    public $incrementing = false;
-
-    protected $casts = [
-        'is_private_channel' => 'boolean',
-        'type' => ConversationType::class,
-    ];
-
-    protected $fillable = [
-        'sid',
-        'friendly_name',
-        'type',
-        'channel_name',
-        'is_private_channel',
-    ];
-
-    public function participants(): BelongsToMany
+    public function __invoke(User $user, TwilioConversation $conversation): void
     {
-        return $this->belongsToMany(User::class, 'twilio_conversation_user', 'conversation_sid', 'user_id')
-            ->withPivot([
-                'participant_sid',
-                'is_channel_manager',
-            ])
-            ->withTimestamps()
-            ->as('participant')
-            ->using(TwilioConversationUser::class);
-    }
+        throw_if(
+            ($conversation->type === ConversationType::UserToUser),
+            new Exception('Only channels have managers.')
+        );
 
-    public function managers(): BelongsToMany
-    {
-        return $this->participants()->wherePivot('is_channel_manager', true);
+        throw_unless(
+            $conversation->participants()->whereKey($user)->exists(),
+            new Exception('User is not a participant in the channel.')
+        );
+
+        $conversation->participants()
+            ->updateExistingPivot($user->getKey(), [
+                'is_channel_manager' => true,
+            ]);
     }
 }

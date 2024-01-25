@@ -1,5 +1,39 @@
 <?php
 
+/*
+<COPYRIGHT>
+
+    Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
+
+    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS LLC respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
+      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS LLC.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
 // @formatter:off
 /**
  * A helper file for your Eloquent Models
@@ -349,8 +383,6 @@ namespace App\Models{
  * @property-read int|null $care_teams_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\CaseloadManagement\Models\Caseload> $caseloads
  * @property-read int|null $caseloads_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $changeRequestResponses
- * @property-read int|null $change_request_responses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestType> $changeRequestTypes
  * @property-read int|null $change_request_types_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequest> $changeRequests
@@ -1780,7 +1812,6 @@ namespace AdvisingApp\Form\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \AdvisingApp\Form\Models\FormEmailAutoReply|null $emailAutoReply
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormField> $fields
  * @property-read int|null $fields_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Form\Models\FormStep> $steps
@@ -1838,34 +1869,6 @@ namespace AdvisingApp\Form\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperFormAuthentication {}
-}
-
-namespace AdvisingApp\Form\Models{
-/**
- * AdvisingApp\Form\Models\FormEmailAutoReply
- *
- * @property string $id
- * @property string|null $subject
- * @property array|null $body
- * @property bool $is_enabled
- * @property string $form_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \AdvisingApp\Form\Models\Form $form
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply query()
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereFormId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereIsEnabled($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereSubject($value)
- * @method static \Illuminate\Database\Eloquent\Builder|FormEmailAutoReply whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperFormEmailAutoReply {}
 }
 
 namespace AdvisingApp\Form\Models{
@@ -1992,6 +1995,8 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @property bool $is_private_channel
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $managers
+ * @property-read int|null $managers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $participants
  * @property-read int|null $participants_count
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversation newModelQuery()
@@ -2008,6 +2013,33 @@ namespace AdvisingApp\InAppCommunication\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperTwilioConversation {}
+}
+
+namespace AdvisingApp\InAppCommunication\Models{
+/**
+ * AdvisingApp\InAppCommunication\Models\TwilioConversationUser
+ *
+ * @property string $conversation_sid
+ * @property string $user_id
+ * @property string $participant_sid
+ * @property bool $is_channel_manager
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\InAppCommunication\Models\TwilioConversation $conversation
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereConversationSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereIsChannelManager($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereParticipantSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperTwilioConversationUser {}
 }
 
 namespace AdvisingApp\Interaction\Models{
@@ -2614,10 +2646,10 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * AdvisingApp\KnowledgeBase\Models\KnowledgeBaseItem
  *
  * @property string $id
+ * @property string $question
  * @property bool $public
- * @property string $title
- * @property array|null $article_details
- * @property string|null $notes
+ * @property array|null $solution
+ * @property array|null $notes
  * @property string|null $quality_id
  * @property string|null $status_id
  * @property string|null $category_id
@@ -2636,15 +2668,15 @@ namespace AdvisingApp\KnowledgeBase\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem query()
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereArticleDetails($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCategoryId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem wherePublic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereQualityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereQuestion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereSolution($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereStatusId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|KnowledgeBaseItem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -3305,12 +3337,8 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $approvals
- * @property-read int|null $approvals_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ChangeRequestResponse> $responses
- * @property-read int|null $responses_count
  * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequestStatus $status
  * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequestType $type
  * @property-read \App\Models\User|null $user
@@ -3338,38 +3366,6 @@ namespace AdvisingApp\ServiceManagement\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperChangeRequest {}
-}
-
-namespace AdvisingApp\ServiceManagement\Models{
-/**
- * AdvisingApp\ServiceManagement\Models\ChangeRequestResponse
- *
- * @property string $id
- * @property string $change_request_id
- * @property string $user_id
- * @property bool $approved
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
- * @property-read int|null $audits_count
- * @property-read \AdvisingApp\ServiceManagement\Models\ChangeRequest $changeRequest
- * @property-read \App\Models\User $user
- * @method static \AdvisingApp\ServiceManagement\Database\Factories\ChangeRequestResponseFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse query()
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereApproved($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereChangeRequestId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestResponse whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
- class IdeHelperChangeRequestResponse {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3404,7 +3400,6 @@ namespace AdvisingApp\ServiceManagement\Models{
  *
  * @property string $id
  * @property string $name
- * @property int $number_of_required_approvals
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
@@ -3420,7 +3415,6 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereNumberOfRequiredApprovals($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ChangeRequestType whereUpdatedAt($value)
  * @mixin \Eloquent
  */
