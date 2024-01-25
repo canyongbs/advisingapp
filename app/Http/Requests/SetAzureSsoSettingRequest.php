@@ -34,11 +34,19 @@
 </COPYRIGHT>
 */
 
-use App\Http\Controllers\SetAzureSsoSettingController;
-use App\Multitenancy\Http\Middleware\CheckLandlordApiKey;
+namespace App\Http\Requests;
 
-Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
+use Illuminate\Foundation\Http\FormRequest;
 
-Route::middleware([CheckLandlordApiKey::class])
-    ->post('azure-sso/update', SetAzureSsoSettingController::class)
-    ->name('azure-sso.update');
+class SetAzureSsoSettingRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'enabled' => ['required', 'boolean'],
+            'tenant_id' => ['required', 'string', 'max:255'],
+            'client_id' => ['required', 'string', 'max:255'],
+            'client_secret' => ['required', 'string', 'max:255'],
+        ];
+    }
+}
