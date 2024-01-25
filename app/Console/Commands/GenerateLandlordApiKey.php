@@ -54,11 +54,15 @@ class GenerateLandlordApiKey extends Command
 
         $hash = base64_encode(Hash::make($plaintextKey));
 
-        $this->setKeyInEnvironmentFile($hash);
+        if ($this->setKeyInEnvironmentFile($hash)) {
+            $this->info('The plaintext API key is: ' . $plaintextKey);
 
-        $this->info('The plaintext API key is: ' . $plaintextKey);
+            return self::SUCCESS;
+        }
 
-        return 0;
+        $this->error('API key set failed.');
+
+        return self::FAILURE;
     }
 
     protected function setKeyInEnvironmentFile($key): bool
@@ -69,11 +73,7 @@ class GenerateLandlordApiKey extends Command
             return false;
         }
 
-        if (! $this->writeNewEnvironmentFileWith($key)) {
-            return false;
-        }
-
-        return true;
+        return $this->writeNewEnvironmentFileWith($key);
     }
 
     protected function writeNewEnvironmentFileWith($key): bool

@@ -49,10 +49,10 @@ class CheckLandlordApiKey
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Invalid API key',
-                ], 403);
+                ], Response::HTTP_FORBIDDEN);
             }
 
-            abort(403, 'Invalid API key');
+            abort(Response::HTTP_FORBIDDEN, 'Invalid API key');
         }
 
         return $next($request);

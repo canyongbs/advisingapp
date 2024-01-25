@@ -40,6 +40,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Multitenancy\Actions\CreateTenant;
+use Symfony\Component\HttpFoundation\Response;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\Http\Requests\CreateTenantRequest;
 
@@ -59,24 +60,36 @@ class CreateTenantController extends Controller
             if (is_null($tenant)) {
                 DB::rollBack();
 
-                return response()->json([
-                    'message' => 'Tenant failed to create',
-                ], 500);
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'message' => 'Tenant failed to create',
+                    ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+
+                return response('Tenant failed to create', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'Tenant created successfully!',
-            ]);
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Tenant created successfully!',
+                ], Response::HTTP_CREATED);
+            }
+
+            return response('Tenant created successfully!', Response::HTTP_CREATED);
         } catch (Exception $e) {
             DB::rollBack();
 
             report($e);
 
-            return response()->json([
-                'message' => 'Something went wrong. Please try again.',
-            ], 500);
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Something went wrong. Please try again.',
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            return response('Something went wrong. Please try again.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
