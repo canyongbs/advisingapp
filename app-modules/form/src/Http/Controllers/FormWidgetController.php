@@ -79,6 +79,7 @@ class FormWidgetController extends Controller
                 'schema' => $generateSchema($form),
                 'primary_color' => Color::all()[$form->primary_color ?? 'blue'],
                 'rounding' => $form->rounding,
+                'on_screen_response' => $form->on_screen_response,
             ],
         );
     }

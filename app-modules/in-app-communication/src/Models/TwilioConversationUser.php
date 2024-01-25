@@ -34,52 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\InAppCommunication\Models;
 
-use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperForm
+ * @mixin IdeHelperTwilioConversationUser
  */
-class Form extends Submissible
+class TwilioConversationUser extends Pivot
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'recaptcha_enabled',
-        'primary_color',
-        'rounding',
-        'content',
-        'on_screen_response',
-    ];
-
     protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'recaptcha_enabled' => 'boolean',
-        'rounding' => Rounding::class,
+        'is_channel_manager' => 'boolean',
     ];
 
-    public function fields(): HasMany
+    public function conversation(): BelongsTo
     {
-        return $this->hasMany(FormField::class);
+        return $this->belongsTo(TwilioConversation::class);
     }
 
-    public function steps(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(FormStep::class);
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
+        return $this->belongsTo(User::class);
     }
 }

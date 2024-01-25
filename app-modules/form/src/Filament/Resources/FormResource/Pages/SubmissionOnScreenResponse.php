@@ -34,52 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace AdvisingApp\Form\Filament\Resources\FormResource\Pages;
 
-use AdvisingApp\Form\Enums\Rounding;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Filament\Forms\Form as FilamentForm;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Forms\Components\MarkdownEditor;
+use AdvisingApp\Form\Filament\Resources\FormResource;
 
-/**
- * @mixin IdeHelperForm
- */
-class Form extends Submissible
+class SubmissionOnScreenResponse extends EditRecord
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'embed_enabled',
-        'allowed_domains',
-        'is_authenticated',
-        'is_wizard',
-        'recaptcha_enabled',
-        'primary_color',
-        'rounding',
-        'content',
-        'on_screen_response',
-    ];
+    protected static string $resource = FormResource::class;
 
-    protected $casts = [
-        'content' => 'array',
-        'embed_enabled' => 'boolean',
-        'allowed_domains' => 'array',
-        'is_authenticated' => 'boolean',
-        'is_wizard' => 'boolean',
-        'recaptcha_enabled' => 'boolean',
-        'rounding' => Rounding::class,
-    ];
+    protected static ?string $navigationLabel = 'On-Screen Response';
 
-    public function fields(): HasMany
+    protected static ?string $navigationIcon = 'heroicon-o-bars-arrow-up';
+
+    public function form(FilamentForm $form): FilamentForm
     {
-        return $this->hasMany(FormField::class);
-    }
-
-    public function steps(): HasMany
-    {
-        return $this->hasMany(FormStep::class);
-    }
-
-    public function submissions(): HasMany
-    {
-        return $this->hasMany(FormSubmission::class);
+        return $form
+            ->schema(
+                [
+                    MarkdownEditor::make('on_screen_response')
+                        ->disableToolbarButtons(['attachFiles']),
+                ]
+            );
     }
 }
