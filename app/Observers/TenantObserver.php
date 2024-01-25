@@ -68,7 +68,8 @@ class TenantObserver
                 ],
             ]
         )
-            ->onQueue('landlord')
+            // TODO: Bring back landlord queue when we have figured out how to handle in prod
+            //->onQueue('landlord')
             ->then(function (Batch $batch) use ($tenant) {
                 Event::dispatch(new NewTenantSetupComplete($tenant));
             })

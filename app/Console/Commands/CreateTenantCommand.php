@@ -138,7 +138,7 @@ class CreateTenantCommand extends Command
 
         if ($this->option('run-queue') || $this->confirm('Run the queue to migrate tenant databases?')) {
             Artisan::call(
-                command: 'queue:work --queue=landlord --stop-when-empty',
+                command: 'queue:work --stop-when-empty',
                 outputBuffer: $this->output,
             );
 
