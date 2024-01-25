@@ -44,7 +44,6 @@ return new class () extends Migration {
         Schema::create('service_request_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->foreignUuid('service_request_form_id')->nullable()->constrained('service_request_forms');
             $table->timestamps();
             $table->softDeletes();
         });

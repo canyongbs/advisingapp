@@ -43,6 +43,7 @@ return new class () extends Migration {
     {
         Schema::create('service_request_forms', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('service_request_type_id')->constrained('service_request_types');
             $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->boolean('embed_enabled')->default(false);
