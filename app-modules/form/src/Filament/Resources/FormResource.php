@@ -45,6 +45,7 @@ use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ListForms;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\CreateForm;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormEmailAutoReply;
+use AdvisingApp\Form\Filament\Resources\FormResource\Pages\SubmissionOnScreenResponse;
 
 class FormResource extends Resource
 {
@@ -73,6 +74,7 @@ class FormResource extends Resource
     {
         return $page->generateNavigationItems([
             EditForm::class,
+            SubmissionOnScreenResponse::class,
             ManageFormSubmissions::class,
             ManageFormEmailAutoReply::class,
         ]);
@@ -84,6 +86,7 @@ class FormResource extends Resource
             'index' => ListForms::route('/'),
             'create' => CreateForm::route('/create'),
             'edit' => EditForm::route('/{record}/edit'),
+            'manage-on-screen-response' => SubmissionOnScreenResponse::route('/{record}/on-screen-response'),
             'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
             'manage-email-auto-reply' => ManageFormEmailAutoReply::route('/{record}/email-auto-reply'),
         ];

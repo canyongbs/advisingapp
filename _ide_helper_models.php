@@ -1811,6 +1811,7 @@ namespace AdvisingApp\Form\Models{
  * @property bool $is_wizard
  * @property bool $recaptcha_enabled
  * @property array|null $content
+ * @property string|null $on_screen_response
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -1835,6 +1836,7 @@ namespace AdvisingApp\Form\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsAuthenticated($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereIsWizard($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Form whereOnScreenResponse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form wherePrimaryColor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereRecaptchaEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Form whereRounding($value)
