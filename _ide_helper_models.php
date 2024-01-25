@@ -3475,6 +3475,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property string $respondent_id
  * @property string|null $close_details
  * @property string|null $res_details
+ * @property string|null $service_request_form_submission_id
  * @property string|null $division_id
  * @property string|null $status_id
  * @property string|null $priority_id
@@ -3498,6 +3499,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate|null $latestInboundServiceRequestUpdate
  * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate|null $latestOutboundServiceRequestUpdate
  * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority|null $priority
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission|null $serviceRequestFormSubmission
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate> $serviceRequestUpdates
  * @property-read int|null $service_request_updates_count
  * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestStatus|null $status
@@ -3518,6 +3520,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereResDetails($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereRespondentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereRespondentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereServiceRequestFormSubmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereServiceRequestNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereStatusId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequest whereStatusUpdatedAt($value)
@@ -3563,6 +3566,200 @@ namespace AdvisingApp\ServiceManagement\Models{
  */
 	#[\AllowDynamicProperties]
  class IdeHelperServiceRequestAssignment {}
+}
+
+namespace AdvisingApp\ServiceManagement\Models{
+/**
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestForm
+ *
+ * @property string $id
+ * @property string|null $service_request_type_id
+ * @property string $name
+ * @property string|null $description
+ * @property bool $embed_enabled
+ * @property array|null $allowed_domains
+ * @property string|null $primary_color
+ * @property \AdvisingApp\Form\Enums\Rounding|null $rounding
+ * @property bool $is_authenticated
+ * @property bool $is_wizard
+ * @property bool $recaptcha_enabled
+ * @property array|null $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormStep> $steps
+ * @property-read int|null $steps_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission> $submissions
+ * @property-read int|null $submissions_count
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestType|null $type
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereAllowedDomains($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereEmbedEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereIsAuthenticated($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereIsWizard($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm wherePrimaryColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereRecaptchaEnabled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereRounding($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereServiceRequestTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestForm whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestForm {}
+}
+
+namespace AdvisingApp\ServiceManagement\Models{
+/**
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication
+ *
+ * @property string $id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property string|null $code
+ * @property string $service_request_form_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $author
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereServiceRequestFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormAuthentication whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestFormAuthentication {}
+}
+
+namespace AdvisingApp\ServiceManagement\Models{
+/**
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestFormField
+ *
+ * @property string $id
+ * @property string $label
+ * @property string $type
+ * @property bool $is_required
+ * @property array $config
+ * @property string $service_request_form_id
+ * @property string|null $service_request_form_step_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestFormStep|null $step
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereConfig($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereIsRequired($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereServiceRequestFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereServiceRequestFormStepId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormField whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestFormField {}
+}
+
+namespace AdvisingApp\ServiceManagement\Models{
+/**
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestFormStep
+ *
+ * @property string $id
+ * @property string $label
+ * @property array|null $content
+ * @property string $service_request_form_id
+ * @property int $sort
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm|null $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereServiceRequestFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormStep whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestFormStep {}
+}
+
+namespace AdvisingApp\ServiceManagement\Models{
+/**
+ * AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission
+ *
+ * @property Student|Prospect|null $author
+ * @property string $id
+ * @property string $service_request_form_id
+ * @property string|null $service_request_priority_id
+ * @property string|null $author_id
+ * @property string|null $author_type
+ * @property \Carbon\CarbonImmutable|null $submitted_at
+ * @property \Carbon\CarbonImmutable|null $canceled_at
+ * @property \AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod|null $request_method
+ * @property string|null $request_note
+ * @property string|null $requester_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestFormField> $fields
+ * @property-read int|null $fields_count
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority|null $priority
+ * @property-read \App\Models\User|null $requester
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequest|null $serviceRequest
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm $submissible
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission canceled()
+ * @method static \Illuminate\Database\Eloquent\Builder|Submission licensedToEducatable(string $relationship)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission notCanceled()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission notSubmitted()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission requested()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission submitted()
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereAuthorType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereRequestMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereRequestNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereRequesterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereServiceRequestFormId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereServiceRequestPriorityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereSubmittedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ServiceRequestFormSubmission whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+ class IdeHelperServiceRequestFormSubmission {}
 }
 
 namespace AdvisingApp\ServiceManagement\Models{
@@ -3677,6 +3874,7 @@ namespace AdvisingApp\ServiceManagement\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\Audit\Models\Audit> $audits
  * @property-read int|null $audits_count
+ * @property-read \AdvisingApp\ServiceManagement\Models\ServiceRequestForm|null $form
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequestPriority> $priorities
  * @property-read int|null $priorities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\ServiceManagement\Models\ServiceRequest> $serviceRequests
