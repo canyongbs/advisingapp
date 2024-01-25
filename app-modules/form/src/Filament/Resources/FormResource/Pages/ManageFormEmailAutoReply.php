@@ -38,7 +38,7 @@ class ManageFormEmailAutoReply extends EditRecord
         /** @var ?Form $form */
         $form = $parameters['record'] ?? null;
 
-        if(! $form) {
+        if (! $form) {
             return false;
         }
 

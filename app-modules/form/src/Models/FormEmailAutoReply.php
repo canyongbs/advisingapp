@@ -2,11 +2,11 @@
 
 namespace AdvisingApp\Form\Models;
 
-use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
+use App\Models\BaseModel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Engagement\Actions\GenerateEmailMarkdownContent;
 
 /**
  * @mixin IdeHelperFormEmailAutoReply
