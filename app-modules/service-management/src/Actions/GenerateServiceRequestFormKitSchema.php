@@ -34,18 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Actions\ServiceRequest;
+namespace AdvisingApp\ServiceManagement\Actions;
 
-use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
+use AdvisingApp\Form\Models\Submissible;
+use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 
-class CreateServiceRequestFromSubmission
+class GenerateServiceRequestFormKitSchema extends GenerateFormKitSchema
 {
-    public function handle(ServiceRequestFormSubmission $serviceRequestFormSubmission): void
+    public function __invoke(Submissible $submissible): array
     {
-        $serviceRequestFormSubmission->serviceRequest()->create([
-            'respondent_type' => $serviceRequestFormSubmission->author->getMorphClass(),
-            'respondent_id' => $serviceRequestFormSubmission->author->getKey(),
-            'priority_id' => $serviceRequestFormSubmission->service_request_priority_id,
-        ]);
+        $priorities = $submissible->type->priorities->map(function ($priority) {
+            return [
+                'label' => $priority->name,
+                'value' => $priority->id,
+            ];
+        })->toArray();
+
+        return [
+            '$cmp' => 'FormKit',
+            'props' => [
+                'type' => 'form',
+                'id' => 'form',
+                'onSubmit' => '$submitForm',
+                'plugins' => '$plugins',
+                'actions' => false,
+            ],
+            'children' => [
+                [
+                    '$formkit' => 'select',
+                    'label' => 'What is the priority of your request?',
+                    'id' => 'priority',
+                    'name' => 'priority',
+                    'options' => $priorities,
+                    'validation' => 'required',
+                ],
+                ...$this->generateContent($submissible),
+            ],
+        ];
     }
 }
