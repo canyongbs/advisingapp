@@ -70,7 +70,7 @@ class ServiceRequestFormSubmissionRelationManager extends RelationManager
                 ViewAction::make()
                     ->modalHeading(fn (ServiceRequestFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
                     ->infolist(fn (ServiceRequestFormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
-                        Section::make('Authenticated author')
+                        Section::make('Submitted By')
                             ->schema([
                                 TextEntry::make('author.' . $record->author::displayNameKey())
                                     ->label('Name'),
