@@ -34,39 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ServiceManagement\Models;
+namespace AdvisingApp\Form\Listeners;
 
-use App\Models\BaseModel;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
+use AdvisingApp\Form\Notifications\FormSubmissionAutoReplyNotification;
 
-/**
- * @mixin IdeHelperSla
- */
-class Sla extends BaseModel implements Auditable
+class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    protected $fillable = [
-        'name',
-        'description',
-        'terms',
-        'response_seconds',
-        'resolution_seconds',
-    ];
-
-    protected $casts = [
-        'response_seconds' => 'integer',
-        'resolution_seconds' => 'integer',
-    ];
-
-    public function serviceRequestPriorities(): HasMany
+    public function handle(FormSubmissionCreated $event): void
     {
-        return $this->hasMany(ServiceRequestPriority::class);
+        /** @var Student|Prospect|null $author */
+        $author = $event->submission->author;
+
+        if (! $author) {
+            return;
+        }
+
+        /** @var Form $form */
+        $form = $event->submission->submissible;
+
+        if (! $form->emailAutoReply->is_enabled) {
+            return;
+        }
+
+        $author->notify(new FormSubmissionAutoReplyNotification(submission: $event->submission));
     }
 }

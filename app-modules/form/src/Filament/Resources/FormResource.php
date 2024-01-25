@@ -44,6 +44,7 @@ use AdvisingApp\Form\Filament\Resources\FormResource\Pages\EditForm;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ListForms;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\CreateForm;
 use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormSubmissions;
+use AdvisingApp\Form\Filament\Resources\FormResource\Pages\ManageFormEmailAutoReply;
 
 class FormResource extends Resource
 {
@@ -73,6 +74,7 @@ class FormResource extends Resource
         return $page->generateNavigationItems([
             EditForm::class,
             ManageFormSubmissions::class,
+            ManageFormEmailAutoReply::class,
         ]);
     }
 
@@ -83,6 +85,7 @@ class FormResource extends Resource
             'create' => CreateForm::route('/create'),
             'edit' => EditForm::route('/{record}/edit'),
             'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
+            'manage-email-auto-reply' => ManageFormEmailAutoReply::route('/{record}/email-auto-reply'),
         ];
     }
 }
