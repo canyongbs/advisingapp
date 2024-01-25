@@ -42,14 +42,10 @@ class CreateServiceRequestFromSubmission
 {
     public function handle(ServiceRequestFormSubmission $serviceRequestFormSubmission): void
     {
-        // TODO Determine what final relationship between submissions and types should be...
-        foreach ($serviceRequestFormSubmission->submissible?->types as $type) {
-            // TODO Determine which priority of type should be used...
-            $serviceRequestFormSubmission->serviceRequest()->create([
-                'respondent_type' => $serviceRequestFormSubmission->author->getMorphClass(),
-                'respondent_id' => $serviceRequestFormSubmission->author->getKey(),
-                'priority_id' => $type->priorities->first()->getKey(),
-            ]);
-        }
+        $serviceRequestFormSubmission->serviceRequest()->create([
+            'respondent_type' => $serviceRequestFormSubmission->author->getMorphClass(),
+            'respondent_id' => $serviceRequestFormSubmission->author->getKey(),
+            'priority_id' => $serviceRequestFormSubmission->service_request_priority_id,
+        ]);
     }
 }

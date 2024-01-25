@@ -72,6 +72,13 @@ trait HasSharedFormConfiguration
             Textarea::make('description')
                 ->string()
                 ->columnSpanFull(),
+            Select::make('service_request_type_id')
+                ->label('Service Request Type')
+                ->helperText('This is the type of service request that will be created when this form is submitted.')
+                ->relationship('type', 'name')
+                ->preload()
+                ->searchable()
+                ->required(),
             Grid::make()
                 ->schema([
                     Toggle::make('embed_enabled')

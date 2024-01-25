@@ -34,19 +34,42 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\ServiceManagement\Actions;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\Form\Models\Submissible;
+use AdvisingApp\Form\Actions\GenerateFormKitSchema;
+
+class GenerateServiceRequestFormKitSchema extends GenerateFormKitSchema
+{
+    public function __invoke(Submissible $submissible): array
     {
-        Schema::create('service_request_types', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->foreignUuid('service_request_form_id')->nullable()->constrained('service_request_forms');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+        $priorities = $submissible->type->priorities->map(function ($priority) {
+            return [
+                'label' => $priority->name,
+                'value' => $priority->id,
+            ];
+        })->toArray();
+
+        return [
+            '$cmp' => 'FormKit',
+            'props' => [
+                'type' => 'form',
+                'id' => 'form',
+                'onSubmit' => '$submitForm',
+                'plugins' => '$plugins',
+                'actions' => false,
+            ],
+            'children' => [
+                [
+                    '$formkit' => 'select',
+                    'label' => 'What is the priority of your request?',
+                    'id' => 'priority',
+                    'name' => 'priority',
+                    'options' => $priorities,
+                    'validation' => 'required',
+                ],
+                ...$this->generateContent($submissible),
+            ],
+        ];
     }
-};
+}

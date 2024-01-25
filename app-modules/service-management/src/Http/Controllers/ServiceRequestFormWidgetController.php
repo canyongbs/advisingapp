@@ -48,7 +48,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
@@ -57,10 +56,11 @@ use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
+use AdvisingApp\ServiceManagement\Actions\GenerateServiceRequestFormKitSchema;
 
 class ServiceRequestFormWidgetController extends Controller
 {
-    public function view(GenerateFormKitSchema $generateSchema, ServiceRequestForm $serviceRequestForm): JsonResponse
+    public function view(GenerateServiceRequestFormKitSchema $generateSchema, ServiceRequestForm $serviceRequestForm): JsonResponse
     {
         return response()->json(
             [
@@ -184,6 +184,10 @@ class ServiceRequestFormWidgetController extends Controller
             ->first() : null;
 
         $submission ??= $serviceRequestForm->submissions()->make();
+
+        $submission
+            ->priority()
+            ->associate($serviceRequestForm->type->priorities()->findOrFail($request->input('priority')));
 
         if ($authentication) {
             $submission->author()->associate($authentication->author);

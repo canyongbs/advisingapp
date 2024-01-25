@@ -39,6 +39,7 @@ namespace AdvisingApp\ServiceManagement\Models;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperForm
@@ -83,8 +84,8 @@ class ServiceRequestForm extends Submissible
         return $this->hasMany(ServiceRequestFormSubmission::class, 'service_request_form_id');
     }
 
-    public function types(): HasMany
+    public function type(): BelongsTo
     {
-        return $this->hasMany(ServiceRequestType::class, 'service_request_form_id');
+        return $this->belongsTo(ServiceRequestType::class, 'service_request_type_id');
     }
 }

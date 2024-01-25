@@ -84,6 +84,11 @@ class ServiceRequestFormSubmission extends Submission
         return $this->belongsTo(User::class, 'requester_id');
     }
 
+    public function priority(): BelongsTo
+    {
+        return $this->belongsTo(ServiceRequestPriority::class, 'service_request_priority_id');
+    }
+
     public function fields(): BelongsToMany
     {
         return $this->belongsToMany(
