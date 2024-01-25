@@ -39,12 +39,10 @@ namespace App\Providers;
 use App\Models\Import;
 use Illuminate\View\View;
 use App\Models\FailedImportRow;
-use App\Models\SettingsProperty;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
-use AdvisingApp\Theme\Settings\ThemeSettings;
 use Filament\Actions\Imports\Models\Import as BaseImport;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 
@@ -58,17 +56,6 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //to get around database connection missing setup during tests
-        if (! $this->app->runningInConsole()) {
-            $themeSettings = app(ThemeSettings::class);
-            $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
-            $favicon = $settingsProperty->getFirstMedia('favicon');
-
-            if ($themeSettings->is_favicon_active && $favicon) {
-                filament()->getCurrentPanel()->favicon($favicon->getTemporaryUrl(now()->addMinutes(5)));
-            }
-        }
-
         // Changes to colors also need to be reflected in tailwind.config.js
         FilamentColor::register([
             'danger' => Color::Red,

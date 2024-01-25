@@ -34,58 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace App\Providers;
+namespace App\Jobs\Middleware;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-
-class RouteServiceProvider extends ServiceProvider
+class SkipIfNotLocal
 {
-    /**
-     * The path to the "home" route for your application.
-     *
-     * This is used by Laravel authentication to redirect users after login.
-     *
-     * @var string
-     */
-    public const HOME = '/admin';
-
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     */
-    public function boot()
+    public function handle($job, $next): void
     {
-        $this->configureRateLimiting();
+        if (! app()->environment('local', 'testing')) {
+            return;
+        }
 
-        $this->routes(function () {
-            Route::prefix('landlord/api')
-                ->middleware('landlord-api')
-                ->namespace($this->namespace)
-                ->as('landlord.api.')
-                ->domain('advisingapp.local')
-                ->group(base_path('routes/landlord_api.php'));
-
-            Route::prefix('api')
-                ->middleware('api')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/api.php'));
-
-            Route::middleware('web')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
-        });
-    }
-
-    /**
-     * Configure the rate limiters for the application.
-     */
-    protected function configureRateLimiting()
-    {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
-        });
+        $next($job);
     }
 }

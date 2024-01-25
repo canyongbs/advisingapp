@@ -34,45 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace App\Providers;
+namespace App\Multitenancy\Events;
 
 use App\Models\Tenant;
-use App\Models\SystemUser;
-use App\Observers\TenantObserver;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use OpenSearch\Migrations\Filesystem\MigrationStorage;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
 
-class AppServiceProvider extends ServiceProvider
+class NewTenantSetupComplete
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        $this->app->singleton('originalAppKey', fn () => config('app.key'));
-    }
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        resolve(MigrationStorage::class)->registerPaths([
-            'app-modules/prospect/opensearch/migrations',
-        ]);
-
-        Relation::morphMap([
-            'system_user' => SystemUser::class,
-            'tenant' => Tenant::class,
-        ]);
-
-        Tenant::observe(TenantObserver::class);
-
-        if (config('app.force_https')) {
-            URL::forceScheme('https');
-            $this->app['request']->server->set('HTTPS', true);
-        }
-    }
+    public function __construct(public Tenant $tenant) {}
 }

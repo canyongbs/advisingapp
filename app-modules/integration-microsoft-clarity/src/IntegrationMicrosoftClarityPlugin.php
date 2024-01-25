@@ -59,10 +59,15 @@ class IntegrationMicrosoftClarityPlugin implements Plugin
 
     public function boot(Panel $panel): void
     {
-        $settings = app(MicrosoftClaritySettings::class);
+        FilamentView::registerRenderHook(
+            'panels::head.start',
+            function (): string {
+                $settings = app(MicrosoftClaritySettings::class);
 
-        if ($settings->is_enabled) {
-            if (filled($settings->id)) {
+                if (! $settings->is_enabled && ! filled($settings->id)) {
+                    return '';
+                }
+
                 $script = "
                     <script type='text/javascript'>
                         (function(c,l,a,r,i,t,y){
@@ -73,11 +78,8 @@ class IntegrationMicrosoftClarityPlugin implements Plugin
                     </script>
                 ";
 
-                FilamentView::registerRenderHook(
-                    'panels::head.start',
-                    fn (): string => Blade::render($script),
-                );
-            }
-        }
+                return Blade::render($script);
+            },
+        );
     }
 }

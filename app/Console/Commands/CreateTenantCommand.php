@@ -36,9 +36,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Support\Str;
+use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 use App\Multitenancy\Actions\CreateTenant;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use App\Multitenancy\DataTransferObjects\TenantMailConfig;
@@ -50,24 +51,33 @@ use App\Multitenancy\DataTransferObjects\TenantS3FilesystemConfig;
 
 class CreateTenantCommand extends Command
 {
-    protected $signature = 'tenants:create {name} {domain}';
+    protected $signature = 'tenants:create {name} {domain} {--m|run-queue} {--s|seed}';
 
     protected $description = 'Temporary command to test the tenant creation process.';
 
     public function handle(): void
     {
+        if (! app()->environment('local')) {
+            $this->error('This command can only be run in the local environment.');
+
+            return;
+        }
+
         $name = $this->argument('name');
         $domain = $this->argument('domain');
+        $database = str($domain)
+            ->replace(['.', '-'], '_')
+            ->toString();
 
-        $database = 'tenant_' . strtolower(Str::random(30));
-
+        DB::connection('landlord')->statement("DROP DATABASE IF EXISTS {$database}");
         DB::connection('landlord')->statement("CREATE DATABASE {$database}");
 
-        $sisDatabase = 'tenant_' . strtolower(Str::random(30));
+        DB::connection('sis')->statement("DROP DATABASE IF EXISTS {$database}");
+        DB::connection('sis')->statement("CREATE DATABASE {$database}");
 
-        DB::connection('sis')->statement("CREATE DATABASE {$sisDatabase}");
+        Tenant::where('domain', $domain)->delete();
 
-        app(CreateTenant::class)(
+        $tenant = app(CreateTenant::class)(
             $name,
             $domain,
             new TenantConfig(
@@ -81,7 +91,7 @@ class CreateTenantCommand extends Command
                 sisDatabase: new TenantSisDatabaseConfig(
                     host: config('database.connections.sis.host'),
                     port: config('database.connections.sis.port'),
-                    database: $sisDatabase,
+                    database: $database,
                     username: config('database.connections.sis.username'),
                     password: config('database.connections.sis.password'),
                 ),
@@ -125,5 +135,19 @@ class CreateTenantCommand extends Command
                 ),
             )
         );
+
+        if ($this->option('run-queue') || $this->confirm('Run the queue to migrate tenant databases?')) {
+            Artisan::call(
+                command: 'queue:work --queue=landlord --stop-when-empty',
+                outputBuffer: $this->output,
+            );
+
+            if ($this->option('seed') || $this->confirm('Seed the tenant database?')) {
+                Artisan::call(
+                    command: "tenants:artisan \"db:seed --database=tenant\" --tenant={$tenant->id}",
+                    outputBuffer: $this->output,
+                );
+            }
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace App\Providers\Filament;
 
 use Filament\Panel;
 use Filament\PanelProvider;
+use App\Models\SettingsProperty;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Actions\ImportAction;
@@ -49,6 +50,7 @@ use FilamentTiptapEditor\TiptapEditor;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Spatie\Multitenancy\Http\Middleware\NeedsTenant;
@@ -91,7 +93,13 @@ class AdminPanelProvider extends PanelProvider
             ->path('/')
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->favicon(asset('/images/default-favicon.png'))
+            ->favicon(function () {
+                $themeSettings = app(ThemeSettings::class);
+                $settingsProperty = SettingsProperty::getInstance('theme.is_favicon_active');
+                $favicon = $settingsProperty->getFirstMedia('favicon');
+
+                return $themeSettings->is_favicon_active && $favicon ? $favicon->getTemporaryUrl(now()->addMinutes(5)) : asset('/images/default-favicon.png');
+            })
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
             ->maxContentWidth('full')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')

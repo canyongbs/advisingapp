@@ -34,58 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace App\Providers;
+namespace App\Observers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Throwable;
+use App\Models\Tenant;
+use Illuminate\Bus\Batch;
+use App\Jobs\MigrateTenantDatabase;
+use App\Jobs\SetupMaterializedView;
+use Illuminate\Support\Facades\Bus;
+use App\Jobs\SetupForeignDataWrapper;
+use Illuminate\Support\Facades\Event;
+use App\Jobs\MigrateTenantSisDatabase;
+use App\Multitenancy\Events\NewTenantSetupFailure;
+use App\Multitenancy\Events\NewTenantSetupComplete;
 
-class RouteServiceProvider extends ServiceProvider
+class TenantObserver
 {
-    /**
-     * The path to the "home" route for your application.
-     *
-     * This is used by Laravel authentication to redirect users after login.
-     *
-     * @var string
-     */
-    public const HOME = '/admin';
-
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     */
-    public function boot()
+    public function created(Tenant $tenant): void
     {
-        $this->configureRateLimiting();
+        $jobChain = app()->environment('local', 'testing')
+            ? [
+                new MigrateTenantSisDatabase($tenant),
+            ]
+            : [];
 
-        $this->routes(function () {
-            Route::prefix('landlord/api')
-                ->middleware('landlord-api')
-                ->namespace($this->namespace)
-                ->as('landlord.api.')
-                ->domain('advisingapp.local')
-                ->group(base_path('routes/landlord_api.php'));
-
-            Route::prefix('api')
-                ->middleware('api')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/api.php'));
-
-            Route::middleware('web')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
-        });
-    }
-
-    /**
-     * Configure the rate limiters for the application.
-     */
-    protected function configureRateLimiting()
-    {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
-        });
+        Bus::batch(
+            [
+                [
+                    ...$jobChain,
+                    new MigrateTenantDatabase($tenant),
+                    new SetupForeignDataWrapper($tenant),
+                    new SetupMaterializedView($tenant),
+                ],
+            ]
+        )
+            ->onQueue('landlord')
+            ->then(function (Batch $batch) use ($tenant) {
+                Event::dispatch(new NewTenantSetupComplete($tenant));
+            })
+            ->catch(function (Batch $batch, Throwable $e) use ($tenant) {
+                Event::dispatch(new NewTenantSetupFailure($tenant, $e));
+            })
+            ->allowFailures()
+            ->dispatch();
     }
 }

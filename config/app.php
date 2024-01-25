@@ -229,8 +229,8 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
-        App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\MorphServiceProvider::class,
 
         App\Providers\HealthServiceProvider::class,
@@ -253,4 +253,6 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
+
+    'landlord_api_key' => env('LANDLORD_API_KEY'),
 ];

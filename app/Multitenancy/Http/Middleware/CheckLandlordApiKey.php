@@ -34,58 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Providers;
+namespace App\Multitenancy\Http\Middleware;
 
+use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 
-class RouteServiceProvider extends ServiceProvider
+class CheckLandlordApiKey
 {
-    /**
-     * The path to the "home" route for your application.
-     *
-     * This is used by Laravel authentication to redirect users after login.
-     *
-     * @var string
-     */
-    public const HOME = '/admin';
-
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     */
-    public function boot()
+    public function handle(Request $request, Closure $next): Response
     {
-        $this->configureRateLimiting();
+        if (! Hash::check($request->bearerToken(), base64_decode(config('app.landlord_api_key')))) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Invalid API key',
+                ], Response::HTTP_FORBIDDEN);
+            }
 
-        $this->routes(function () {
-            Route::prefix('landlord/api')
-                ->middleware('landlord-api')
-                ->namespace($this->namespace)
-                ->as('landlord.api.')
-                ->domain('advisingapp.local')
-                ->group(base_path('routes/landlord_api.php'));
+            abort(Response::HTTP_FORBIDDEN, 'Invalid API key');
+        }
 
-            Route::prefix('api')
-                ->middleware('api')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/api.php'));
-
-            Route::middleware('web')
-                ->namespace($this->namespace)
-                ->group(base_path('routes/web.php'));
-        });
-    }
-
-    /**
-     * Configure the rate limiters for the application.
-     */
-    protected function configureRateLimiting()
-    {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
-        });
+        return $next($request);
     }
 }

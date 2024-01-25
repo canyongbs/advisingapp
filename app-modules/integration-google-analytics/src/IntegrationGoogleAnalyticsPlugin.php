@@ -59,10 +59,15 @@ class IntegrationGoogleAnalyticsPlugin implements Plugin
 
     public function boot(Panel $panel): void
     {
-        $settings = app(GoogleAnalyticsSettings::class);
+        FilamentView::registerRenderHook(
+            'panels::head.start',
+            function (): string {
+                $settings = app(GoogleAnalyticsSettings::class);
 
-        if ($settings->is_enabled) {
-            if (filled($settings->id)) {
+                if (! $settings->is_enabled && ! filled($settings->id)) {
+                    return '';
+                }
+
                 $script = "
                     <script async src='https://www.googletagmanager.com/gtag/js?id={$settings->id}'></script>
                     <script>
@@ -74,11 +79,8 @@ class IntegrationGoogleAnalyticsPlugin implements Plugin
                     </script>
                 ";
 
-                FilamentView::registerRenderHook(
-                    'panels::head.start',
-                    fn (): string => Blade::render($script),
-                );
-            }
-        }
+                return Blade::render($script);
+            },
+        );
     }
 }
