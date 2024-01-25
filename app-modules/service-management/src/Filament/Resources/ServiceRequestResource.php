@@ -48,6 +48,7 @@ use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Page
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestAssignment;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestInteraction;
+use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestResource\Pages\ManageServiceRequestFormSubmission;
 
 class ServiceRequestResource extends Resource
 {
@@ -59,16 +60,31 @@ class ServiceRequestResource extends Resource
 
     protected static ?string $cluster = ServiceManagement::class;
 
+    public static function shouldShowFormSubmission(Page $page): bool
+    {
+        if (! is_null($page->record) && ! is_null($page->record->serviceRequestFormSubmission)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static function getRecordSubNavigation(Page $page): array
     {
-        return $page->generateNavigationItems([
+        $navigationItems = [
             ViewServiceRequest::class,
             EditServiceRequest::class,
             ManageServiceRequestAssignment::class,
             ManageServiceRequestUpdate::class,
             ManageServiceRequestInteraction::class,
             ServiceRequestTimeline::class,
-        ]);
+        ];
+
+        if (static::shouldShowFormSubmission($page)) {
+            array_splice($navigationItems, 1, 0, ManageServiceRequestFormSubmission::class);
+        }
+
+        return $page->generateNavigationItems($navigationItems);
     }
 
     public static function getPages(): array
@@ -78,6 +94,7 @@ class ServiceRequestResource extends Resource
             'manage-assignments' => ManageServiceRequestAssignment::route('/{record}/users'),
             'manage-service-request-updates' => ManageServiceRequestUpdate::route('/{record}/updates'),
             'manage-interactions' => ManageServiceRequestInteraction::route('/{record}/interactions'),
+            'manage-service-request-form-submission' => ManageServiceRequestFormSubmission::route('/{record}/form-submission'),
             'create' => CreateServiceRequest::route('/create'),
             'view' => ViewServiceRequest::route('/{record}'),
             'edit' => EditServiceRequest::route('/{record}/edit'),

@@ -44,6 +44,7 @@ use Filament\Resources\Pages\ViewRecord;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\Enums\SlaComplianceStatus;
@@ -147,6 +148,15 @@ class ViewServiceRequest extends ViewRecord
                         ]),
                     ])
                     ->columns(2),
+                Section::make('Form Submission Details')
+                    ->collapsed()
+                    ->visible(fn (ServiceRequest $record): bool => ! is_null($record->serviceRequestFormSubmission))
+                    ->schema([
+                        TextEntry::make('serviceRequestFormSubmission.submitted_at')
+                            ->dateTime(),
+                        ViewEntry::make('serviceRequestFormSubmission')
+                            ->view('filament.infolists.entries.submission-entry'),
+                    ]),
             ]);
     }
 
