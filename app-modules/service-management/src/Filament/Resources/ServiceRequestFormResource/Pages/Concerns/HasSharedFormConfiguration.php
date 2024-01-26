@@ -167,7 +167,12 @@ trait HasSharedFormConfiguration
                     ->when($serviceRequestFormStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($serviceRequestFormStep, 'step'))
                     ->delete();
 
-                $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
+                $content = [];
+
+                if (filled($component->getState())) {
+                    $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
+                }
+
                 $content['content'] = $this->saveFieldsFromComponents(
                     $serviceRequestForm,
                     $content['content'] ?? [],
