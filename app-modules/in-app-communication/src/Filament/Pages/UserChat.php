@@ -39,7 +39,6 @@ namespace AdvisingApp\InAppCommunication\Filament\Pages;
 use Exception;
 use App\Models\User;
 use App\Enums\Feature;
-use Livewire\Attributes\Computed;
 use Twilio\Rest\Client;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
@@ -47,9 +46,11 @@ use Twilio\Jwt\AccessToken;
 use Filament\Actions\Action;
 use Livewire\Attributes\Url;
 use Twilio\Jwt\Grants\ChatGrant;
+use Livewire\Attributes\Computed;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Renderless;
 use Illuminate\Support\Facades\Gate;
+use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
@@ -81,12 +82,6 @@ class UserChat extends Page implements HasForms, HasActions
     use InteractsWithForms;
     use InteractsWithActions;
 
-    public array $chats = [];
-
-    public string $chatId = '';
-
-    public Collection $conversations;
-
     #[Url(as: 'conversation')]
     public ?string $conversationId = null;
 
@@ -117,7 +112,8 @@ class UserChat extends Page implements HasForms, HasActions
 
     public function mount(): void
     {
-        $this->selectConversation($this->conversationId
+        $this->selectConversation(
+            $this->conversationId
             ? TwilioConversation::find($this->conversationId)
             : null
         );
@@ -293,7 +289,6 @@ class UserChat extends Page implements HasForms, HasActions
                     ),
             ])
             ->action(function (array $data) {
-
                 /** @var User $user */
                 $user = auth()->user();
 
@@ -367,7 +362,7 @@ class UserChat extends Page implements HasForms, HasActions
                     ->send();
 
                 if ($channels->count() === 1) {
-                    $this->selectConversation($channels->first()->getKey());
+                    $this->selectConversation($channels->first());
                 }
             });
     }
@@ -383,7 +378,6 @@ class UserChat extends Page implements HasForms, HasActions
             ->modalHeading('Are you sure you want to leave?')
             ->modalDescription('You will no longer have access to these messages, unless you are invited back.')
             ->action(function (RemoveUserFromConversation $removeUserFromConversation) {
-
                 if ($this->conversation->type !== ConversationType::Channel) {
                     return;
                 }
@@ -480,7 +474,6 @@ class UserChat extends Page implements HasForms, HasActions
 
     public function selectConversation(?TwilioConversation $conversation): void
     {
-        ray($conversation);
         $this->conversationId = $conversation?->getKey();
         $this->conversation = $conversation;
     }
