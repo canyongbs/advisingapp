@@ -12,7 +12,9 @@
         "build:form": "(cd widgets/form && vite build)",
         "build:survey": "(cd widgets/survey && vite build)",
         "build:event-registration": "(cd widgets/event-registration && vite build)",
-        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration",
+        "build:service-request-form": "(cd widgets/service-request-form && vite build)",
+        "build:widgets": "npm run build:application && npm run build:form && npm run build:survey && npm run build:event-registration && npm run build:service-request-form",
+        "build": "npm run build:js-compile && npm run build:vite && npm run build:filament && npm run build:widgets",
         "api-docs:generate": "export NODE_OPTIONS=--max_old_space_size=4096 && env-cmd spectaql spectaql.yml"
     },
     "devDependencies": {

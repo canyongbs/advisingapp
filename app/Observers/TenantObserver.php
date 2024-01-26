@@ -68,7 +68,7 @@ class TenantObserver
                 ],
             ]
         )
-            ->onQueue('landlord')
+            ->onQueue(config('queue.landlord_queue'))
             ->then(function (Batch $batch) use ($tenant) {
                 Event::dispatch(new NewTenantSetupComplete($tenant));
             })

@@ -181,6 +181,11 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
         return $this->belongsTo(ServiceRequestPriority::class);
     }
 
+    public function serviceRequestFormSubmission(): BelongsTo
+    {
+        return $this->belongsTo(ServiceRequestFormSubmission::class, 'service_request_form_submission_id');
+    }
+
     public function assignments(): HasMany
     {
         return $this->hasMany(ServiceRequestAssignment::class);

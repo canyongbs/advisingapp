@@ -34,25 +34,32 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Route;
+use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
+use AdvisingApp\ServiceManagement\Http\Controllers\ServiceRequestFormWidgetController;
+use AdvisingApp\ServiceManagement\Http\Middleware\EnsureServiceManagementFeatureIsActive;
 
-return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('slas', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->unsignedInteger('response_seconds')->nullable();
-            $table->unsignedInteger('resolution_seconds')->nullable();
-            $table->text('terms')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-        });
-    }
-};
+Route::prefix('api')
+    ->middleware([
+        'api',
+        EnsureServiceManagementFeatureIsActive::class,
+        EnsureSubmissibleIsEmbeddableAndAuthorized::class . ':serviceRequestForm',
+    ])
+    ->group(function () {
+        Route::prefix('service-request-forms')
+            ->name('service-request-forms.')
+            ->group(function () {
+                Route::get('/{serviceRequestForm}', [ServiceRequestFormWidgetController::class, 'view'])
+                    ->middleware(['signed'])
+                    ->name('define');
+                Route::post('/{serviceRequestForm}/authenticate/request', [ServiceRequestFormWidgetController::class, 'requestAuthentication'])
+                    ->middleware(['signed'])
+                    ->name('request-authentication');
+                Route::post('/{serviceRequestForm}/authenticate/{authentication}', [ServiceRequestFormWidgetController::class, 'authenticate'])
+                    ->middleware(['signed'])
+                    ->name('authenticate');
+                Route::post('/{serviceRequestForm}/submit', [ServiceRequestFormWidgetController::class, 'store'])
+                    ->middleware(['signed'])
+                    ->name('submit');
+            });
+    });

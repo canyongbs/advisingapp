@@ -43,11 +43,13 @@ use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 
 class GenerateSubmissibleEmbedCode
 {
     public function handle(Submissible $submissible): string
     {
+        // TODO Clean this up
         return match ($submissible::class) {
             Form::class => (function () use ($submissible) {
                 $scriptUrl = url('js/widgets/form/advising-app-form-widget.js?');
@@ -83,6 +85,16 @@ class GenerateSubmissibleEmbedCode
 
                 return <<<EOD
                 <event-registration-embed url="{$formDefinitionUrl}"></event-registration-embed>
+                <script src="{$scriptUrl}"></script>
+                EOD;
+            })(),
+            ServiceRequestForm::class => (function () use ($submissible) {
+                /** @var ServiceRequestForm $submissible */
+                $scriptUrl = url('js/widgets/service-request-form/advising-app-service-request-form-widget.js?');
+                $formDefinitionUrl = URL::signedRoute('service-request-forms.define', ['serviceRequestForm' => $submissible]);
+
+                return <<<EOD
+                <service-request-form-embed url="{$formDefinitionUrl}"></service-request-form-embed>
                 <script src="{$scriptUrl}"></script>
                 EOD;
             })(),

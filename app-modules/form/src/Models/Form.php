@@ -37,6 +37,7 @@
 namespace AdvisingApp\Form\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -81,5 +82,10 @@ class Form extends Submissible
     public function submissions(): HasMany
     {
         return $this->hasMany(FormSubmission::class);
+    }
+
+    public function emailAutoReply(): HasOne
+    {
+        return $this->hasOne(FormEmailAutoReply::class);
     }
 }

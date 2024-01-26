@@ -54,6 +54,9 @@ return [
         'service_request_assignment' => [
             '*',
         ],
+        'service_request_form' => [
+            '*',
+        ],
         'sla' => [
             '*',
         ],

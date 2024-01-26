@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Survey\Filament\Resources\SurveyResource\Pages;
 
+use Filament\Forms\Form;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use AdvisingApp\Survey\Models\Survey;
-use Filament\Forms\Form as FilamentForm;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Infolists\Components\TextEntry;
 use AdvisingApp\Survey\Filament\Resources\SurveyResource;
@@ -54,7 +54,7 @@ class EditSurvey extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    public function form(FilamentForm $form): FilamentForm
+    public function form(Form $form): Form
     {
         return $form
             ->schema($this->fields());

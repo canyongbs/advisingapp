@@ -46,6 +46,7 @@ use AdvisingApp\Authorization\AuthorizationRoleRegistry;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
 use AdvisingApp\ServiceManagement\ServiceManagementPlugin;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestType;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestForm;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestType;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestStatus;
 use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
@@ -53,13 +54,18 @@ use AdvisingApp\ServiceManagement\Models\ServiceRequestStatus;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestUpdate;
 use AdvisingApp\ServiceManagement\Models\ChangeRequestResponse;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestHistory;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestFormStep;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestPriority;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestFormField;
 use AdvisingApp\ServiceManagement\Models\ServiceRequestAssignment;
 use AdvisingApp\ServiceManagement\Observers\ChangeRequestObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestObserver;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestFormSubmission;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestUpdateObserver;
+use AdvisingApp\ServiceManagement\Models\ServiceRequestFormAuthentication;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestHistoryObserver;
 use AdvisingApp\ServiceManagement\Observers\ServiceRequestAssignmentObserver;
+use AdvisingApp\ServiceManagement\Observers\ServiceRequestFormSubmissionObserver;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\Contracts\ServiceRequestNumberGenerator;
 use AdvisingApp\ServiceManagement\Services\ServiceRequestNumber\SqidPlusSixServiceRequestNumberGenerator;
 
@@ -82,6 +88,11 @@ class ServiceManagementServiceProvider extends ServiceProvider
             'change_request_type' => ChangeRequestType::class,
             'change_request' => ChangeRequest::class,
             'service_request_assignment' => ServiceRequestAssignment::class,
+            'service_request_form_authentication' => ServiceRequestFormAuthentication::class,
+            'service_request_form_field' => ServiceRequestFormField::class,
+            'service_request_form_step' => ServiceRequestFormStep::class,
+            'service_request_form_submission' => ServiceRequestFormSubmission::class,
+            'service_request_form' => ServiceRequestForm::class,
             'service_request_history' => ServiceRequestHistory::class,
             'service_request_priority' => ServiceRequestPriority::class,
             'service_request_status' => ServiceRequestStatus::class,
@@ -104,6 +115,7 @@ class ServiceManagementServiceProvider extends ServiceProvider
         ServiceRequestUpdate::observe(ServiceRequestUpdateObserver::class);
         ServiceRequestAssignment::observe(ServiceRequestAssignmentObserver::class);
         ServiceRequestHistory::observe(ServiceRequestHistoryObserver::class);
+        ServiceRequestFormSubmission::observe(ServiceRequestFormSubmissionObserver::class);
     }
 
     protected function registerRolesAndPermissions()

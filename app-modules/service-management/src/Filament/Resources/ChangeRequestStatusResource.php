@@ -54,7 +54,7 @@ class ChangeRequestStatusResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 50;
 
     protected static ?string $cluster = ServiceManagementAdministration::class;
 

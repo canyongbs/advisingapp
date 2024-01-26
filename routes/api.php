@@ -34,4 +34,11 @@
 </COPYRIGHT>
 */
 
+use App\Http\Controllers\SetAzureSsoSettingController;
+use App\Multitenancy\Http\Middleware\CheckLandlordApiKey;
+
 Route::group(['prefix' => 'v1', 'as' => 'api.', 'middleware' => ['auth:sanctum']], function () {});
+
+Route::middleware([CheckLandlordApiKey::class])
+    ->post('azure-sso/update', SetAzureSsoSettingController::class)
+    ->name('azure-sso.update');
