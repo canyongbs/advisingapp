@@ -33,3 +33,5 @@ public/api-docs/*
 /programmatic-types.graphql
 /schema-directives.graphql
 /*tinkerwell.php
+
+#bump
