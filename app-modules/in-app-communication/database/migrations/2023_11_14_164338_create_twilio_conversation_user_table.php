@@ -49,6 +49,7 @@ return new class () extends Migration {
             $table->foreignUuid('user_id');
             $table->string('participant_sid');
             $table->boolean('is_channel_manager')->default(false);
+            $table->boolean('is_pinned')->default(false);
 
             $table->timestamps();
 

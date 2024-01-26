@@ -39,8 +39,8 @@ namespace AdvisingApp\InAppCommunication\Filament\Pages;
 use Exception;
 use App\Models\User;
 use App\Enums\Feature;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Twilio\Rest\Client;
-use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Twilio\Jwt\AccessToken;
 use Filament\Actions\Action;
@@ -50,7 +50,6 @@ use Livewire\Attributes\Computed;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Renderless;
 use Illuminate\Support\Facades\Gate;
-use App\Filament\Fields\TiptapEditor;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Cache;
 use Filament\Forms\Contracts\HasForms;
@@ -69,6 +68,7 @@ use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\AddUserToConversation;
+use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
 use AdvisingApp\InAppCommunication\Actions\RemoveUserFromConversation;
 use AdvisingApp\InAppCommunication\Actions\PromoteUserToChannelManager;
@@ -125,9 +125,47 @@ class UserChat extends Page implements HasForms, HasActions
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->conversations()
+        $conversations = $user
+            ->conversations()
+            // ->join('users', 'twilio_conversation_user.user_id', '=', 'users.id')
             ->with(['participants'])
+            ->orderByPivot('is_pinned', 'desc')
+            ->orderBy('channel_name')
+            // ->orderBy(
+            //     User::query()
+            //         ->select('name')
+            //         ->join('twilio_conversation_user', 'twilio_conversation_user.user_id', '=', 'users.id')
+            //         ->whereColumn('twilio_conversation_user.user_id', '!=', 'users.id')
+            //         ->limit(1)
+            // )
+            // ->ddRawSql()
             ->get();
+
+        // ray($conversations);
+
+        return $conversations;
+    }
+
+    public function togglePinChannelAction(): Action
+    {
+        return Action::make('togglePinChannel')
+            ->iconButton()
+            ->size('sm')
+            ->action(function (array $arguments) {
+                /** @var User $user */
+                $user = auth()->user();
+
+                /** @var TwilioConversation $conversation */
+                $conversation = $user->conversations()->find($arguments['id']);
+
+                /** @var TwilioConversationUser $participant */
+                $participant = $conversation->participant;
+
+                $conversation->participants()
+                    ->updateExistingPivot($user->getKey(), [
+                        'is_pinned' => $participant->is_pinned = ! $participant->is_pinned,
+                    ]);
+            });
     }
 
     public function newUserToUserChatAction(): Action

@@ -113,6 +113,19 @@
                                                         'selectConversation(\'' . $conversationItem->getKey() . '\')',
                                                 ]))->class(['w-5 h-5'])"/>
                                             </button>
+                                            @if($conversationItem->participant->is_pinned)
+                                                {{
+                                                    ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])
+                                                        ->icon('heroicon-s-star')
+                                                        ->tooltip('Unpin')
+                                                }}
+                                            @else
+                                                {{
+                                                    ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])
+                                                        ->icon('heroicon-o-star')
+                                                        ->tooltip('Pin')
+                                                }}
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>
