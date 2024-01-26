@@ -120,4 +120,6 @@ return [
         'database' => env('DB_CONNECTION', 'mysql'),
         'table' => 'failed_jobs',
     ],
+
+    'landlord_queue' => env('LANDLORD_SQS_QUEUE', 'landlord'),
 ];
