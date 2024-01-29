@@ -38,11 +38,9 @@ namespace App\Console;
 
 use App\Models\Tenant;
 use AdvisingApp\Audit\Models\Audit;
-use Illuminate\Support\LazyCollection;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Engagement\Models\EngagementFile;
-use App\Console\Commands\RefreshAdmMaterializedView;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -55,14 +53,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        /** @var LazyCollection $tenants */
         $tenants = Tenant::cursor();
 
         $tenants->each(function (Tenant $tenant) use ($schedule) {
-            if (config('database.adm_materialized_views_enabled')) {
-                $this->refreshAdmMaterializedViews($schedule, $tenant);
-            }
-
             $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                 ->hourly()
                 ->onOneServer()
@@ -107,57 +100,6 @@ class Kernel extends ConsoleKernel
                 ->onOneServer()
                 ->runInBackground();
         });
-    }
-
-    protected function refreshAdmMaterializedViews(Schedule $schedule, Tenant $tenant): void
-    {
-        $schedule->command(
-            command: RefreshAdmMaterializedView::class,
-            parameters: [
-                'students',
-                "--tenant={$tenant->id}",
-            ]
-        )
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
-
-        $schedule->command(
-            command: RefreshAdmMaterializedView::class,
-            parameters: [
-                'enrollments',
-                "--tenant={$tenant->id}",
-            ]
-        )
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
-
-        $schedule->command(
-            command: RefreshAdmMaterializedView::class,
-            parameters: [
-                'performance',
-                "--tenant={$tenant->id}",
-            ]
-        )
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
-
-        $schedule->command(
-            command: RefreshAdmMaterializedView::class,
-            parameters: [
-                'programs',
-                "--tenant={$tenant->id}",
-            ]
-        )
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
     }
 
     /**
