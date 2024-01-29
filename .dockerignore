@@ -4,3 +4,5 @@
 .phpunit.cache
 #bin
 docs
+.env
+.env.example

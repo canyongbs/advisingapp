@@ -6,9 +6,8 @@ services:
       args:
         USER_ID: ${SPIN_USER_ID:-9999}
         GROUP_ID: ${SPIN_GROUP_ID:-9999}
-    image: 'canyongbs/advisingapp:latest'
-    environment:
-      SSL_MODE: "full"
+    image: 'canyongbs/advisingapp'
+    platform: linux/amd64
     ports:
       - '${APP_PORT:-80}:80'
       - '${APP_HTTPS_PORT:-443}:443'
