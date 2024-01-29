@@ -38,4 +38,10 @@ FROM base AS development
 
 FROM base AS deploy
 
-COPY --chown=www-data:www-data . /var/www/html
+# TODO: Determine if it is necessary to set the user and group rather than just chowning
+
+USER $PUID:$PGID
+
+COPY --chown=$PUID:$PGID . /var/www/html
+
+USER root:root
