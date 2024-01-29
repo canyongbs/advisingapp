@@ -36,13 +36,13 @@
 
 namespace App\Console;
 
+use Throwable;
 use App\Models\Tenant;
 use AdvisingApp\Audit\Models\Audit;
-use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Scheduling\Schedule;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Engagement\Models\EngagementFile;
-use App\Console\Commands\RefreshAdmMaterializedView;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use AdvisingApp\Assistant\Models\AssistantChatMessageLog;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -55,109 +55,60 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        /** @var LazyCollection $tenants */
-        $tenants = Tenant::cursor();
+        Tenant::cursor()->each(function (Tenant $tenant) use ($schedule) {
+            try {
+                $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
+                    ->hourly()
+                    ->onOneServer()
+                    ->withoutOverlapping();
 
-        $tenants->each(function (Tenant $tenant) use ($schedule) {
-            if (config('database.adm_materialized_views_enabled')) {
-                $this->refreshAdmMaterializedViews($schedule, $tenant);
+                $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
+                    ->everyMinute()
+                    ->onOneServer()
+                    ->withoutOverlapping();
+
+                $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
+                    ->everyMinute()
+                    ->onOneServer()
+                    ->withoutOverlapping();
+
+                collect([
+                    Audit::class,
+                    AssistantChatMessageLog::class,
+                    EngagementFile::class,
+                    FailedImportRow::class,
+                    FormAuthentication::class,
+                ])
+                    ->each(
+                        fn ($model) => $schedule->command("tenants:artisan \"model:prune --model={$model}\" --tenant={$tenant->id}")
+                            ->daily()
+                            ->onOneServer()
+                            ->withoutOverlapping()
+                    );
+
+                $schedule->command(
+                    command: RefreshCalendarRefreshTokens::class,
+                    parameters: [
+                        "--tenant={$tenant->id}",
+                    ]
+                )
+                    ->daily()
+                    ->onOneServer()
+                    ->withoutOverlapping();
+
+                $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
+                    ->everyMinute()
+                    ->onOneServer()
+                    ->withoutOverlapping();
+            } catch (Throwable $th) {
+                Log::error('Error scheduling tenant commands.', [
+                    'tenant' => $tenant->id,
+                    'exception' => $th,
+                ]);
+
+                report($th);
             }
-
-            $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
-                ->hourly()
-                ->onOneServer()
-                ->runInBackground();
-
-            $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
-                ->everyMinute()
-                ->onOneServer()
-                ->runInBackground();
-
-            $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
-                ->everyMinute()
-                ->onOneServer()
-                ->runInBackground();
-
-            collect([
-                Audit::class,
-                AssistantChatMessageLog::class,
-                EngagementFile::class,
-                FailedImportRow::class,
-                FormAuthentication::class,
-            ])
-                ->each(
-                    fn ($model) => $schedule->command("tenants:artisan \"model:prune --model={$model}\" --tenant={$tenant->id}")
-                        ->daily()
-                        ->onOneServer()
-                        ->runInBackground()
-                );
-
-            $schedule->command(
-                command: RefreshCalendarRefreshTokens::class,
-                parameters: [
-                    "--tenant={$tenant->id}",
-                ]
-            )
-                ->daily()
-                ->onOneServer()
-                ->runInBackground();
-
-            $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
-                ->everyMinute()
-                ->onOneServer()
-                ->runInBackground();
         });
-    }
-
-    protected function refreshAdmMaterializedViews(Schedule $schedule, Tenant $tenant): void
-    {
-        $schedule->command(
-            command: RefreshAdmMaterializedView::class,
-            parameters: [
-                'students',
-                "--tenant={$tenant->id}",
-            ]
-        )
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
-
-        $schedule->command(
-            command: RefreshAdmMaterializedView::class,
-            parameters: [
-                'enrollments',
-                "--tenant={$tenant->id}",
-            ]
-        )
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
-
-        $schedule->command(
-            command: RefreshAdmMaterializedView::class,
-            parameters: [
-                'performance',
-                "--tenant={$tenant->id}",
-            ]
-        )
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
-
-        $schedule->command(
-            command: RefreshAdmMaterializedView::class,
-            parameters: [
-                'programs',
-                "--tenant={$tenant->id}",
-            ]
-        )
-            ->everyMinute()
-            ->onOneServer()
-            ->withoutOverlapping()
-            ->runInBackground();
     }
 
     /**

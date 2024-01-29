@@ -190,7 +190,12 @@ trait HasSharedEventFormConfiguration
                     ->when($formStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($formStep, 'step'))
                     ->delete();
 
-                $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
+                $content = [];
+
+                if (filled($component->getState())) {
+                    $content = $component->decodeBlocksBeforeSave($component->getJSON(decoded: true));
+                }
+
                 $content['content'] = $this->saveFieldsFromComponents(
                     $form,
                     $content['content'] ?? [],
