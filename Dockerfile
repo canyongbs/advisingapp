@@ -27,6 +27,10 @@ RUN export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
+COPY ./docker/s6-overlay/scripts/laravel-scheduler /etc/s6-overlay/scripts/laravel-scheduler
+COPY ./docker/s6-overlay/laravel-scheduler /etc/s6-overlay/s6-rc.d/laravel-scheduler
+COPY ./docker/s6-overlay/user/laravel-scheduler /etc/s6-overlay/s6-rc.d/user/contents.d/laravel-scheduler
+
 
 FROM base AS development
 
