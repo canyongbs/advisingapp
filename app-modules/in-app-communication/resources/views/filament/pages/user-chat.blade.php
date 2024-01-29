@@ -33,10 +33,21 @@
 --}}
 @php
     use AdvisingApp\InAppCommunication\Enums\ConversationType;
-    use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+    use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
+    use Filament\Support\Facades\FilamentAsset;
 
-    $conversationGroups = $this->conversations()->groupBy('type');
+    $conversationGroups = $this->conversations->reduce(
+        function (array $carry, TwilioConversation $conversation): array {
+            if ($conversation->type === ConversationType::Channel) {
+                $carry[0][] = $conversation;
+            } else {
+                $carry[1][] = $conversation;
+            }
+            return $carry;
+        },
+        [[], []],
+    );
 @endphp
 
 <x-filament-panels::page full-height="true">
@@ -100,9 +111,13 @@
                                                     config('filament.livewire_loading_delay', 'default') => '',
                                                     'wire:target' =>
                                                         'selectConversation(\'' . $conversationItem->getKey() . '\')',
-                                                ]))->class(['w-5 h-5'])" />
+                                                ]))->class(['w-5 h-5'])"/>
                                             </button>
-                                            @if ($conversationItem->participant->is_pinned)
+                                            @php
+                                                /** @var TwilioConversationUser $participant */
+                                                $participant = $conversationItem->participant;
+                                            @endphp
+                                            @if ($participant->is_pinned)
                                                 {{ ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])->icon('heroicon-s-star')->tooltip('Unpin') }}
                                             @else
                                                 {{ ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])->icon('heroicon-o-star')->tooltip('Pin') }}
@@ -131,6 +146,9 @@
                 </div>
             </div>
 
+            @php
+                /** @var TwilioConversation $conversation */
+            @endphp
             @if ($conversation)
                 <div
                     class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
@@ -142,7 +160,7 @@
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500"/>
                         <p
                             class="text-center"
                             x-text="loadingMessage"
