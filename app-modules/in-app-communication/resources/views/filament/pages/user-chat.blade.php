@@ -36,18 +36,7 @@
     use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-    $conversationGroups = $this->conversations()->reduce(
-        function (array $carry, TwilioConversation $conversation): array {
-            if ($conversation->type === ConversationType::Channel) {
-                $carry[0][] = $conversation;
-            } else {
-                $carry[1][] = $conversation;
-            }
-
-            return $carry;
-        },
-        [[], []],
-    );
+    $conversationGroups = $this->conversations()->groupBy('type');
 @endphp
 
 <x-filament-panels::page full-height="true">
@@ -103,7 +92,7 @@
                                                     @if (filled($conversationItem->channel_name))
                                                         {{ $conversationItem->channel_name }}
                                                     @else
-                                                        {{ $conversationItem->participants->where('id', '!=', auth()->id())->first()?->name }}
+                                                        {{ $conversationItem->name }}
                                                     @endif
                                                 </span>
                                                 <x-filament::loading-indicator :attributes="(new \Illuminate\View\ComponentAttributeBag([
@@ -113,7 +102,7 @@
                                                         'selectConversation(\'' . $conversationItem->getKey() . '\')',
                                                 ]))->class(['w-5 h-5'])"/>
                                             </button>
-                                            @if($conversationItem->participant->is_pinned)
+                                            @if($conversationItem->is_pinned)
                                                 {{
                                                     ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])
                                                         ->icon('heroicon-s-star')
