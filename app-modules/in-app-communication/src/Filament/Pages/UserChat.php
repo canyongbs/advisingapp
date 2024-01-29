@@ -125,54 +125,20 @@ class UserChat extends Page implements HasForms, HasActions
         /** @var User $user */
         $user = auth()->user();
 
-        // TwilioConversation::leftJoinRelationship('participants', [
-        //     'participants' => [
-        //         'participants' => fn ($join) => $join->as('participants_alias'),
-        //         'twilio_conversation_user' => fn ($join) => $join->as('twilio_conversation_user_alias'),
-        //     ],
-        // ])->ddRawSql();
-
-        // $conversationIds = $user->conversations()->pluck('sid');
-
-        // $conversations = TwilioConversation::query()
-        //     ->whereIn('sid', $conversationIds)
-        //     ->join('twilio_conversation_user', 'twilio_conversation_user.conversation_sid', '=', 'twilio_conversations.sid')
-        //     ->join('users', 'users.id', '=', 'twilio_conversation_user.user_id')
-        //     ->with(['participants' => fn (BelongsToMany $query) => $query->whereKeyNot($user->getKey())])
-        //     ->orderByDesc('is_pinned')
-        //     ->orderBy('channel_name')
-        //     ->orderBy('users.name')
-            // ->distinct()
-            // ->orderByPowerJoins('participants.name')
-            // ->orderBy(
-            //     // User::query()
-            //     //     ->select('name')
-            //     //     ->join('twilio_conversation_user', 'twilio_conversation_user.user_id', '=', 'users.id')
-            //     //     ->where('twilio_conversation_user.user_id', '!=', 'users.id')
-            //     //     ->limit(1)
-            //     User::query()
-            //         ->joinRelationship('conversations', fn ($join) => $join->where('conversations.user.name', "!'"))
-            // )
-            // ->orderByPowerJoins(['participants.name' => ])
-            // ->ddRawSql()
-        $user
+        return $user
             ->conversations()
-            ->with(['participants'])
-            ->orderByPivot('is_pinned', 'desc')
+            ->with(['participants' => fn (BelongsToMany $query) => $query->whereKeyNot($user->getKey())])
+            ->addSelect(['other_participant_name' => User::query()
+                ->select('name')
+                ->join('twilio_conversation_user', 'twilio_conversation_user.user_id', '=', 'users.id')
+                ->whereColumn('twilio_conversation_user.conversation_sid', 'twilio_conversations.sid')
+                ->whereKeyNot($user->getKey())
+                ->limit(1),
+            ])
+            ->orderByDesc('is_pinned')
             ->orderBy('channel_name')
-            ->orderBy(
-                User::query()
-                    ->select('name')
-                    ->join('twilio_conversation_user', 'twilio_conversation_user.user_id', '=', 'users.id')
-                    ->where('twilio_conversation_user.user_id', '!=', 'users.id')
-                    ->limit(1)
-            )
-            ->ddRawSql()
+            ->orderBy('other_participant_name')
             ->get();
-
-        ray($conversations);
-
-        return $conversations;
     }
 
     public function togglePinChannelAction(): Action

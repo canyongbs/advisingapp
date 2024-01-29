@@ -39,7 +39,6 @@ namespace AdvisingApp\InAppCommunication\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Kirschbaum\PowerJoins\PowerJoins;
 
 /**
  * @mixin IdeHelperTwilioConversationUser

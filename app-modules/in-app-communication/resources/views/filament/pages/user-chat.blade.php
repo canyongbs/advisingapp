@@ -92,7 +92,7 @@
                                                     @if (filled($conversationItem->channel_name))
                                                         {{ $conversationItem->channel_name }}
                                                     @else
-                                                        {{ $conversationItem->name }}
+                                                        {{ $conversationItem->participants->where('id', '!=', auth()->id())->first()?->name }}
                                                     @endif
                                                 </span>
                                                 <x-filament::loading-indicator :attributes="(new \Illuminate\View\ComponentAttributeBag([
@@ -100,20 +100,12 @@
                                                     config('filament.livewire_loading_delay', 'default') => '',
                                                     'wire:target' =>
                                                         'selectConversation(\'' . $conversationItem->getKey() . '\')',
-                                                ]))->class(['w-5 h-5'])"/>
+                                                ]))->class(['w-5 h-5'])" />
                                             </button>
-                                            @if($conversationItem->is_pinned)
-                                                {{
-                                                    ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])
-                                                        ->icon('heroicon-s-star')
-                                                        ->tooltip('Unpin')
-                                                }}
+                                            @if ($conversationItem->participant->is_pinned)
+                                                {{ ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])->icon('heroicon-s-star')->tooltip('Unpin') }}
                                             @else
-                                                {{
-                                                    ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])
-                                                        ->icon('heroicon-o-star')
-                                                        ->tooltip('Pin')
-                                                }}
+                                                {{ ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])->icon('heroicon-o-star')->tooltip('Pin') }}
                                             @endif
                                         </li>
                                     @endforeach
@@ -150,7 +142,7 @@
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500"/>
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
                         <p
                             class="text-center"
                             x-text="loadingMessage"
