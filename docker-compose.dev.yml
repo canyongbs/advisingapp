@@ -1,7 +1,6 @@
 version: '3.8'
 services:
   php:
-    image: 'canyongbs/advisingapp:latest'
     build:
       target: development
     environment:
@@ -16,8 +15,8 @@ services:
       - '${APP_PORT:-80}:80'
       - '${APP_HTTPS_PORT:-443}:443'
       - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
-#    volumes:
-#      - '.:/var/www/html'
+    volumes:
+      - '.:/var/www/html'
     networks:
       - development
     depends_on:
@@ -32,7 +31,7 @@ services:
     ports:
       - '${FORWARD_REDIS_PORT:-6379}:6379'
     volumes:
-      - 'sail-redis:/data'
+      - 'advisingapp-redis:/data'
     networks:
       - development
     healthcheck:
@@ -47,7 +46,7 @@ services:
     ports:
       - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
     volumes:
-      - 'sail-meilisearch:/meili_data'
+      - 'advisingapp-meilisearch:/meili_data'
     networks:
       - development
     healthcheck:
@@ -65,10 +64,10 @@ services:
       - '${FORWARD_MINIO_PORT:-9000}:9000'
       - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
     environment:
-      MINIO_ROOT_USER: sail
+      MINIO_ROOT_USER: advisingapp
       MINIO_ROOT_PASSWORD: password
     volumes:
-      - 'sail-minio:/data/minio'
+      - 'advisingapp-minio:/data/minio'
     networks:
       - development
     command: 'minio server /data/minio --console-address ":8900"'
@@ -97,7 +96,7 @@ services:
       POSTGRES_USER: '${DB_USERNAME}'
       POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
     volumes:
-      - 'sail-pgsql:/var/lib/postgresql/data'
+      - 'advisingapp-pgsql:/var/lib/postgresql/data'
       - './docker/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
     networks:
       - development
@@ -122,7 +121,7 @@ services:
       POSTGRES_USER: '${SIS_DB_USERNAME}'
       POSTGRES_PASSWORD: '${SIS_DB_PASSWORD:-secret}'
     volumes:
-      - 'sail-redshift:/var/lib/postgresql/data'
+      - 'advisingapp-redshift:/var/lib/postgresql/data'
       - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
     command: -p 5433
     networks:
@@ -141,13 +140,13 @@ services:
 networks:
   development:
 volumes:
-  sail-redis:
+  advisingapp-redis:
     driver: local
-  sail-meilisearch:
+  advisingapp-meilisearch:
     driver: local
-  sail-minio:
+  advisingapp-minio:
     driver: local
-  sail-redshift:
+  advisingapp-redshift:
     driver: local
-  sail-pgsql:
+  advisingapp-pgsql:
     driver: local
