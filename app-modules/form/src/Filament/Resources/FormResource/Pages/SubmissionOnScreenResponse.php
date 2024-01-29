@@ -55,7 +55,8 @@ class SubmissionOnScreenResponse extends EditRecord
             ->schema(
                 [
                     MarkdownEditor::make('on_screen_response')
-                        ->disableToolbarButtons(['attachFiles']),
+                        ->disableToolbarButtons(['attachFiles'])
+                        ->columnSpanFull(),
                 ]
             );
     }
