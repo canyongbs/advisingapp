@@ -42,7 +42,7 @@ class TenantSisDatabaseConfig extends Data
 {
     public function __construct(
         public ?string $host = null,
-        public ?int $port = null,
+        public int|string|null $port = null,
         public ?string $database = null,
         public ?string $username = null,
         public ?string $password = null,
