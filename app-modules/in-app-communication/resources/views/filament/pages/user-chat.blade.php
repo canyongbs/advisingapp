@@ -111,7 +111,7 @@
                                                     config('filament.livewire_loading_delay', 'default') => '',
                                                     'wire:target' =>
                                                         'selectConversation(\'' . $conversationItem->getKey() . '\')',
-                                                ]))->class(['w-5 h-5'])"/>
+                                                ]))->class(['w-5 h-5'])" />
                                             </button>
                                             @php
                                                 /** @var TwilioConversationUser $participant */
@@ -160,7 +160,7 @@
                         x-show="loading"
                         x-transition.delay.800ms
                     >
-                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500"/>
+                        <x-filament::loading-indicator class="h-12 w-12 text-primary-500" />
                         <p
                             class="text-center"
                             x-text="loadingMessage"
