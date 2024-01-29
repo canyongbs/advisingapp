@@ -37,4 +37,5 @@ FROM base AS development
 #RUN docker-php-serversideup-set-id www-data ${USER_ID} ${GROUP_ID}
 
 FROM base AS deploy
+
 COPY --chown=www-data:www-data . /var/www/html

@@ -2,6 +2,5 @@
 .github
 .gitlab-ci.yml
 .phpunit.cache
-#bin - maybe, we need to confirm if this can be ignored after build process
-#docker maybe
+#bin
 docs

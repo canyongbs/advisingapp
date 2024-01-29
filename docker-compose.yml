@@ -2,13 +2,11 @@ version: '3.8'
 services:
     php:
         build:
-            context: ./docker/serverside
+            context: .
             target: base
             args:
                 USER_ID: ${SPIN_USER_ID:-9999}
                 GROUP_ID: ${SPIN_GROUP_ID:-9999}
-                SPECIFIC_NODE_VERSION: 21.6.0
-                SSL_MODE: "mixed"
         labels:
             - dev.orbstack.domains=*.advisingapp.local
         extra_hosts:
@@ -16,5 +14,3 @@ services:
         ports:
             - '${APP_PORT:-80}:80'
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
-        volumes:
-            - '.:/var/www/html'
