@@ -8,6 +8,7 @@ services:
       PUID: '${UID:-1000}'
       PGID: '${GID:-1000}'
       LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
+      LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
     labels:
       - dev.orbstack.domains=*.advisingapp.local
     extra_hosts:
