@@ -38,9 +38,9 @@
         <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
             <div class="mx-auto text-center">
                 <img
-                        class="mx-auto mb-3 max-w-md"
-                        src="{{ Vite::asset('resources/svg/flowbite-500.svg') }}"
-                        alt="Internal Server Error"
+                    class="mx-auto mb-3 max-w-md"
+                    src="{{ Vite::asset('resources/svg/flowbite-500.svg') }}"
+                    alt="Internal Server Error"
                 >
                 <h1 class="mb-3 text-5xl font-extrabold text-primary-600 dark:text-primary-500">
                     Not all who wander are lost...
