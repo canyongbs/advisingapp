@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2022-2023, Canyon GBS LLC. All rights reserved.
@@ -32,47 +30,25 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
+--}}
+@php use Filament\Facades\Filament; @endphp
 
-namespace App\Providers\Filament;
-
-use Filament\Panel;
-use Filament\PanelProvider;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-
-class LandlordPanelProvider extends PanelProvider
-{
-    public function panel(Panel $panel): Panel
-    {
-        return $panel
-            ->id('landlord')
-            ->domain(parse_url(config('app.landlord_url'))['host'])
-            ->path('/')
-            ->favicon(fn () => asset('/images/default-favicon.png'))
-            ->viteTheme('resources/css/filament/admin/theme.css')
-            ->middleware([
-                StartSession::class,
-                EncryptCookies::class,
-                AddQueuedCookiesToResponse::class,
-                AuthenticateSession::class,
-                ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
-                SubstituteBindings::class,
-                DisableBladeIconComponents::class,
-            ])
-            ->routes(function () {
-                Route::get('/{path?}', fn () => view('landlord'))
-                    ->where('path', '.*');
-            });
-    }
-
-    public function boot(): void {}
-}
+<x-layout>
+    <section>
+        <div class="mx-auto max-w-screen-xl px-4 py-8 lg:px-6 lg:py-16">
+            <div class="mx-auto text-center">
+                <img
+                        class="mx-auto mb-3 max-w-md"
+                        src="{{ Vite::asset('resources/svg/flowbite-500.svg') }}"
+                        alt="Internal Server Error"
+                >
+                <h1 class="mb-3 text-5xl font-extrabold text-primary-600 dark:text-primary-500">
+                    Not all who wander are lost...
+                </h1>
+                <p class="mb-5 font-bold tracking-tight text-gray-900 dark:text-gray-400 md:text-xl">
+                    But you might be. We can't find the page you're looking for.
+                </p>
+            </div>
+        </div>
+    </section>
+</x-layout>
