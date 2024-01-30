@@ -36,8 +36,13 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages;
 
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
 
@@ -49,10 +54,29 @@ class CreateServiceRequestType extends CreateRecord
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->string(),
+                        Group::make()
+                            ->schema([
+                                Toggle::make('has_enabled_feedback_collection')
+                                    ->label('Enable feedback collection')
+                                    ->dehydrated(false) //TODO: remove after implementation
+                                    ->live(),
+                                Toggle::make('csat')
+                                    ->label('CSAT')
+                                    ->dehydrated(false) //TODO: remove after implementation
+                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
+                                Toggle::make('nps')
+                                    ->label('NPS')
+                                    ->dehydrated(false) //TODO: remove after implementation
+                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
+                            ]),
+                    ]),
             ]);
     }
 

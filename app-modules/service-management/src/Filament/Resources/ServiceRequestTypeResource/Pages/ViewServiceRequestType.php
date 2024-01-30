@@ -37,6 +37,7 @@
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages;
 
 use Filament\Actions\EditAction;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
@@ -54,6 +55,7 @@ class ViewServiceRequestType extends ViewRecord
         return $infolist
             ->schema([
                 Section::make()
+                    ->columns()
                     ->schema([
                         TextEntry::make('name')
                             ->label('Name'),
@@ -62,8 +64,26 @@ class ViewServiceRequestType extends ViewRecord
                             ->hidden(fn (ServiceRequestType $record) => ! $record->form)
                             ->url(fn (ServiceRequestType $record) => $record->form ? ServiceRequestFormResource::getUrl('edit', ['record' => $record?->form]) : null)
                             ->color('primary'),
-                    ])
-                    ->columns(),
+                        //TODO: fix after implementation
+                        Group::make()
+                            ->schema([
+                                TextEntry::make('has_enabled_feedback_collection')
+                                    ->hiddenLabel()
+                                    ->state('Has enabled feedback collection')
+                                    ->badge()
+                                    ->color('info'),
+                                TextEntry::make('csat')
+                                    ->hiddenLabel()
+                                    ->state('CSAT')
+                                    ->badge()
+                                    ->color('info'),
+                                TextEntry::make('nps')
+                                    ->hiddenLabel()
+                                    ->state('NPS')
+                                    ->badge()
+                                    ->color('info'),
+                            ]),
+                    ]),
             ]);
     }
 
