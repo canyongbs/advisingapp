@@ -51,10 +51,10 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
     public function before(Authenticatable $authenticatable): ?Response
     {
         if (
-            (! is_null($response = $this->hasAnyLicense($authenticatable, [LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]))) &&
+            (! $authenticatable->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) &&
             $authenticatable->cannot('viewAny', User::class)
         ) {
-            return $response ?? Response::deny('You can not access this resource.');
+            return Response::deny('You can not access this resource.');
         }
 
         return null;
