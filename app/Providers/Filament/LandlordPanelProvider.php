@@ -74,5 +74,8 @@ class LandlordPanelProvider extends PanelProvider
             });
     }
 
-    public function boot(): void {}
+    public function boot(): void
+    {
+        // boot skeleton required
+    }
 }
