@@ -41,6 +41,7 @@ use Filament\PanelProvider;
 use App\Models\SettingsProperty;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
+use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
 use App\Filament\Pages\EditProfile;
 use Filament\Tables\Columns\Column;
@@ -75,6 +76,7 @@ class AdminPanelProvider extends PanelProvider
         Field::configureUsing(fn ($field) => $field->translateLabel());
         Entry::configureUsing(fn ($entry) => $entry->translateLabel());
         Column::configureUsing(fn ($column) => $column->translateLabel());
+        ExportAction::configureUsing(fn (ExportAction $action) => $action->maxRows(100000));
         ImportAction::configureUsing(fn (ImportAction $action) => $action->maxRows(100000));
         TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->gridLayouts([
             'two-columns',

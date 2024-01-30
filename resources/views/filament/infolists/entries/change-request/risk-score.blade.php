@@ -33,7 +33,7 @@
 --}}
 @php
     use AdvisingApp\ServiceManagement\Models\ChangeRequest;
-
+    
     $classes = match (ChangeRequest::getColorBasedOnRisk($getState())) {
         'green' => 'border-green-500 bg-green-400/10 text-green-500 ring-green-500 dark:border-green-500 dark:bg-green-400/10 dark:text-green-500 dark:ring-green-500',
         'yellow' => 'border-yellow-500 bg-yellow-400/10 text-yellow-500 ring-yellow-500 dark:border-yellow-500 dark:bg-yellow-400/10 dark:text-yellow-500 dark:ring-yellow-500',

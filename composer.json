@@ -53,6 +53,7 @@
         "canyon-gbs/advising-app-webhook": "*",
         "canyon-gbs/analytics": "*",
         "canyon-gbs/inventory-management": "*",
+        "canyon-gbs/report": "*",
         "composer/composer": "^2.6.4",
         "filament/filament": "^3.1",
         "filament/spatie-laravel-media-library-plugin": "^3.1",

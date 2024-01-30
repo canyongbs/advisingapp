@@ -45,8 +45,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Tables\Enums\FiltersLayout;
 use AdvisingApp\Prospect\Models\Prospect;
+use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Concerns\InteractsWithTable;
 use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
@@ -62,13 +62,6 @@ class EditCaseload extends EditRecord implements HasTable
     protected static string $resource = CaseloadResource::class;
 
     protected static string $view = 'caseload-management::filament.resources.caseloads.pages.edit-caseload';
-
-    public function afterFill(): void
-    {
-        $this->data['model'] = CaseloadModel::from($this->data['model']);
-        $this->data['type'] = CaseloadType::from($this->data['type']);
-        $this->data['user']['name'] = $this->getRecord()->user->name;
-    }
 
     public function form(Form $form): Form
     {
@@ -101,23 +94,17 @@ class EditCaseload extends EditRecord implements HasTable
 
     public function table(Table $table): Table
     {
-        return $table
-            ->columns(CaseloadResource::columns($this->data['model']))
-            ->filters(CaseloadResource::filters($this->data['model']), layout: FiltersLayout::AboveContent)
-            // ->actions(CaseloadResource::actions($this->data['model']))
-            ->query(function () {
-                $model = $this->data['model'];
-                $query = $model->query();
+        $caseload = $this->getRecord();
 
-                if ($this->getRecord()->type === CaseloadType::Static) {
-                    $column = app($model->class())->getKeyName();
-                    $ids = $this->getRecord()->subjects()->pluck('subject_id');
+        $table = $caseload->model->table($table);
 
-                    $query->whereIn($column, $ids);
-                }
+        if ($caseload->type === CaseloadType::Static) {
+            $keys = $caseload->subjects()->pluck('subject_id');
 
-                return $query;
-            });
+            $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
+        }
+
+        return $table;
     }
 
     public function bootedInteractsWithTable(): void
@@ -129,7 +116,16 @@ class EditCaseload extends EditRecord implements HasTable
         $this->baseBootedInteractsWithTable();
     }
 
-    public function afterSave(): void {}
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $caseload = $this->getRecord();
+
+        $data['model'] = $caseload->model;
+        $data['type'] = $caseload->type;
+        $data['user']['name'] = $caseload->user->name;
+
+        return $data;
+    }
 
     protected function getHeaderActions(): array
     {

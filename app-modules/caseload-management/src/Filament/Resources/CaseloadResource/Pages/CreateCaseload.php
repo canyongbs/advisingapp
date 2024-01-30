@@ -45,6 +45,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Support\ChunkIterator;
+use Filament\Forms\Components\View;
 use Illuminate\Support\Facades\Bus;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -52,14 +53,11 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Tables\Enums\FiltersLayout;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Filesystem\AwsS3V3Adapter;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -114,9 +112,7 @@ class CreateCaseload extends CreateRecord implements HasTable
                 ->columns(2),
             Step::make('Create Caseload')
                 ->schema([
-                    Placeholder::make('table')
-                        ->content(fn (): Htmlable => $this->table)
-                        ->hiddenLabel()
+                    View::make('filament.forms.components.table')
                         ->visible(fn (Get $get): bool => CaseloadType::tryFromCaseOrValue($get('type')) === CaseloadType::Dynamic),
                     FileUpload::make('file')
                         ->acceptedFileTypes(['text/csv', 'text/plain'])
@@ -135,16 +131,35 @@ class CreateCaseload extends CreateRecord implements HasTable
 
     public function table(Table $table): Table
     {
-        $model = $this->getCaseloadModel();
-
-        return $table
-            ->columns(CaseloadResource::columns($model))
-            ->filters(CaseloadResource::filters($model), layout: FiltersLayout::AboveContent)
-            // ->actions(CaseloadResource::actions($model))
-            ->query(fn () => $model->query());
+        return $this->getCaseloadModel()->table($table);
     }
 
-    public function afterCreate(): void
+    /**
+     * @return resource | false
+     */
+    public function getUploadedFileStream(TemporaryUploadedFile $file)
+    {
+        $filePath = $file->getRealPath();
+
+        if (config('filament.default_filesystem_disk') !== 's3') {
+            return fopen($filePath, mode: 'r');
+        }
+
+        /** @var AwsS3V3Adapter $s3Adapter */
+        $s3Adapter = Storage::disk('s3')->getAdapter();
+
+        invade($s3Adapter)->client->registerStreamWrapper();
+
+        $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
+
+        return fopen($fileS3Path, mode: 'r', context: stream_context_create([
+            's3' => [
+                'seekable' => true,
+            ],
+        ]));
+    }
+
+    protected function afterCreate(): void
     {
         $data = $this->form->getRawState();
 
@@ -270,31 +285,6 @@ class CreateCaseload extends CreateRecord implements HasTable
             ->body("Your import has begun and {$import->total_rows} rows will be processed in the background.")
             ->success()
             ->send();
-    }
-
-    /**
-     * @return resource | false
-     */
-    public function getUploadedFileStream(TemporaryUploadedFile $file)
-    {
-        $filePath = $file->getRealPath();
-
-        if (config('filament.default_filesystem_disk') !== 's3') {
-            return fopen($filePath, mode: 'r');
-        }
-
-        /** @var AwsS3V3Adapter $s3Adapter */
-        $s3Adapter = Storage::disk('s3')->getAdapter();
-
-        invade($s3Adapter)->client->registerStreamWrapper();
-
-        $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
-
-        return fopen($fileS3Path, mode: 'r', context: stream_context_create([
-            's3' => [
-                'seekable' => true,
-            ],
-        ]));
     }
 
     protected function getCaseloadModel(): CaseloadModel

@@ -47,19 +47,19 @@ enum CaseloadType: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            CaseloadType::Static => 'Static',
+            static::Static => 'Static',
             default => $this->name,
         };
     }
 
-    public static function default(): CaseloadType
+    public static function default(): static
     {
-        return CaseloadType::Dynamic;
+        return static::Dynamic;
     }
 
-    public static function tryFromCaseOrValue(CaseloadType | string $value): ?CaseloadType
+    public static function tryFromCaseOrValue(CaseloadType | string $value): ?static
     {
-        if ($value instanceof CaseloadType) {
+        if ($value instanceof static) {
             return $value;
         }
 

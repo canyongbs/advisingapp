@@ -36,10 +36,13 @@
 
 namespace AdvisingApp\CaseloadManagement\Enums;
 
+use Filament\Tables\Table;
 use Filament\Support\Contracts\HasLabel;
 use AdvisingApp\Prospect\Models\Prospect;
 use Illuminate\Database\Eloquent\Builder;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Prospect\Filament\Tables\ProspectsTable;
+use AdvisingApp\StudentDataModel\Filament\Tables\StudentsTable;
 use AdvisingApp\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
 use AdvisingApp\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
 
@@ -54,34 +57,42 @@ enum CaseloadModel: string implements HasLabel
         return $this->name;
     }
 
-    public static function default(): CaseloadModel
+    public static function default(): static
     {
-        return CaseloadModel::Student;
+        return static::Student;
     }
 
     public function query(): Builder
     {
         return match ($this) {
-            CaseloadModel::Student => Student::query(),
-            CaseloadModel::Prospect => Prospect::query(),
+            static::Student => Student::query(),
+            static::Prospect => Prospect::query(),
         };
     }
 
     public function class(): string
     {
         return match ($this) {
-            CaseloadModel::Student => Student::class,
-            CaseloadModel::Prospect => Prospect::class,
+            static::Student => Student::class,
+            static::Prospect => Prospect::class,
         };
     }
 
-    public static function tryFromCaseOrValue(CaseloadModel | string $value): ?CaseloadModel
+    public function table(Table $table): Table
+    {
+        return $table->tap(app(match ($this) {
+            static::Student => StudentsTable::class,
+            static::Prospect => ProspectsTable::class,
+        }));
+    }
+
+    public static function tryFromCaseOrValue(CaseloadModel | string $value): ?static
     {
         if ($value instanceof CaseloadModel) {
             return $value;
         }
 
-        return CaseloadModel::tryFrom($value);
+        return static::tryFrom($value);
     }
 
     /**
@@ -90,8 +101,8 @@ enum CaseloadModel: string implements HasLabel
     public function getSubjectImporter(): string
     {
         return match ($this) {
-            CaseloadModel::Prospect => ProspectCaseloadSubjectImporter::class,
-            CaseloadModel::Student => StudentCaseloadSubjectImporter::class,
+            static::Prospect => ProspectCaseloadSubjectImporter::class,
+            static::Student => StudentCaseloadSubjectImporter::class,
         };
     }
 }
