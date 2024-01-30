@@ -124,7 +124,7 @@ services:
       POSTGRES_PASSWORD: '${SIS_DB_PASSWORD:-secret}'
     volumes:
       - 'advisingapp-redshift:/var/lib/postgresql/data'
-      - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+      - './docker/pgsql/create-testing-sis-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
     command: -p 5433
     networks:
       - development
