@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Application\Policies;
 
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
 
 class ApplicationSubmissionStatePolicy
 {
