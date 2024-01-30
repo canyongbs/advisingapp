@@ -28,15 +28,36 @@ nvm use
 Details on how to automatically use the correct version of Node when entering the project directory can be found on the [NVM GitHub page | Deeper Shell Integration](https://github.com/nvm-sh/nvm#deeper-shell-integration)
 
 ### Setup
-This application makes use of [Laravel Sail](https://laravel.com/docs/10.x/sail) for local development. Though not a requirement, it is highly recommended reading through the documentation on it.
+This application makes use of [Spin](https://serversideup.net/open-source/spin/docs) for local development. Though not a requirement, it is highly recommended reading through the documentation on it.
 
-The `sail` executable is within your vendor folder, so you would have to type the path to it everytime to use it. To make this better, Sail recommends adding the following Bash alias:
+The `spin` executable is within your vendor folder, so you would have to type the path to it everytime to use it. To make this better, Sail recommends adding the following Bash alias:
 
 ```bash
-alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+alias spin='[ -f node_modules/.bin/spin ] && bash node_modules/.bin/spin || bash vendor/bin/spin'
 ```
 
-This documentation will assume you have done so. If not you can simply replace `sail` throughout with `./vendor/bin/sail`.
+This documentation will assume you have done so. If not you can simply replace `spin` throughout with `./vendor/bin/spin`.
+
+It may also be helpful to add some aliases for quick artisan and composer commands.
+
+```bash
+alias spina='spin exec -it php php artisan'
+alias spinc='spin exec -it php php composer'
+```
+
+Make sure to add these after the `spin` alias.
+
+If you choose not to add these aliases, you can execute commands using `exec` like so:
+
+```bash
+spin exec -it php php artisan key:generate
+
+# or
+
+spin exec -it php php composer install
+```
+
+---
 
 After cloning this project, execute the following commands to install php dependencies:
 
