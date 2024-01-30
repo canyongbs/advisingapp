@@ -9,7 +9,9 @@ if [ -f $WEBUSER_HOME/artisan ] && [ ${LARAVEL_SCHEDULER_ENABLED:="true"} == "tr
 
         cd $WEBUSER_HOME
 
-        s6-setuidgid webuser php $WEBUSER_HOME/artisan schedule:work
+        USERNAME=$(id -nu $PUID)
+
+        s6-setuidgid $USERNAME php $WEBUSER_HOME/artisan schedule:work
 else
     echo "👉 Skipping Laravel Scheduler because we could not detect a Laravel install or it was specifically disabled..."
 
