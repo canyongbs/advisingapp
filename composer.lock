@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "efaaed2cf5802e57bfb77f7193c75a33",
+    "content-hash": "2a659b4046c24c308c752778b2a8e87f",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1128,16 +1128,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.297.2",
+            "version": "3.297.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "bbf516a4a88f829f92cc396628be705966880dbd"
+                "reference": "6d108ecd1825f066d47a995cb2bc211d97ef0d7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bbf516a4a88f829f92cc396628be705966880dbd",
-                "reference": "bbf516a4a88f829f92cc396628be705966880dbd",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6d108ecd1825f066d47a995cb2bc211d97ef0d7a",
+                "reference": "6d108ecd1825f066d47a995cb2bc211d97ef0d7a",
                 "shasum": ""
             },
             "require": {
@@ -1217,9 +1217,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.297.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.297.3"
             },
-            "time": "2024-01-26T19:09:20+00:00"
+            "time": "2024-01-29T19:12:30+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1606,6 +1606,41 @@
                     "AdvisingApp\\Alert\\Tests\\": "tests/",
                     "AdvisingApp\\Alert\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Alert\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-analytics",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/analytics",
+                "reference": "20bf4d89a69ac1f56cfcf0e0395714be2b53e1cd"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Analytics\\Providers\\AnalyticsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Analytics\\": "src/",
+                    "AdvisingApp\\Analytics\\Tests\\": "tests/",
+                    "AdvisingApp\\Analytics\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Analytics\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -2292,6 +2327,41 @@
             }
         },
         {
+            "name": "canyon-gbs/advising-app-inventory-management",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/inventory-management",
+                "reference": "4125a058df41583461c17a1538636b1baf92bf48"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\InventoryManagement\\Providers\\InventoryManagementServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\InventoryManagement\\": "src/",
+                    "AdvisingApp\\InventoryManagement\\Tests\\": "tests/",
+                    "AdvisingApp\\InventoryManagement\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\InventoryManagement\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "canyon-gbs/advising-app-knowledge-base",
             "version": "1.0",
             "dist": {
@@ -2459,6 +2529,41 @@
                     "AdvisingApp\\Prospect\\Tests\\": "tests/",
                     "AdvisingApp\\Prospect\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Prospect\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "canyon-gbs/advising-app-report",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/report",
+                "reference": "40ff87de1d9cf2f7932743e9910e1570c732dc04"
+            },
+            "require": {
+                "filament/filament": "^3.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AdvisingApp\\Report\\Providers\\ReportServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AdvisingApp\\Report\\": "src/",
+                    "AdvisingApp\\Report\\Tests\\": "tests/",
+                    "AdvisingApp\\Report\\Database\\Factories\\": "database/factories/",
+                    "AdvisingApp\\Report\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -2742,111 +2847,6 @@
                     "AdvisingApp\\Webhook\\Tests\\": "tests/",
                     "AdvisingApp\\Webhook\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Webhook\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/analytics",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/analytics",
-                "reference": "ee7fa00ee78ce3e31c49566043aaf89cca68ad6b"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Analytics\\Providers\\AnalyticsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Analytics\\": "src/",
-                    "AdvisingApp\\Analytics\\Tests\\": "tests/",
-                    "AdvisingApp\\Analytics\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Analytics\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/inventory-management",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/inventory-management",
-                "reference": "16210c789f3a6d5a4b14ce0db3a17f5cdc4f6e48"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\InventoryManagement\\Providers\\InventoryManagementServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\InventoryManagement\\": "src/",
-                    "AdvisingApp\\InventoryManagement\\Tests\\": "tests/",
-                    "AdvisingApp\\InventoryManagement\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\InventoryManagement\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/report",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/report",
-                "reference": "11a185db066ab5c05ab5ed3da3cd79e9be851d56"
-            },
-            "require": {
-                "filament/filament": "^3.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Report\\Providers\\ReportServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Report\\": "src/",
-                    "AdvisingApp\\Report\\Tests\\": "tests/",
-                    "AdvisingApp\\Report\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Report\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [
@@ -4593,16 +4593,16 @@
         },
         {
             "name": "filament/actions",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
-                "reference": "533a32d9d20dbc5a559ec0043a8c0d233358bb41"
+                "reference": "b44fda13231d6a3ac74bf0546dbc6b5c6293cf3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/actions/zipball/533a32d9d20dbc5a559ec0043a8c0d233358bb41",
-                "reference": "533a32d9d20dbc5a559ec0043a8c0d233358bb41",
+                "url": "https://api.github.com/repos/filamentphp/actions/zipball/b44fda13231d6a3ac74bf0546dbc6b5c6293cf3f",
+                "reference": "b44fda13231d6a3ac74bf0546dbc6b5c6293cf3f",
                 "shasum": ""
             },
             "require": {
@@ -4642,20 +4642,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2024-01-29T13:20:08+00:00"
+            "time": "2024-01-30T14:17:01+00:00"
         },
         {
             "name": "filament/filament",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
-                "reference": "6e64acca96de649e8dcd4a7e8ea35a9dfc00fd36"
+                "reference": "d542a29fe59fd91b1881d50aae560a46bdd3769e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/panels/zipball/6e64acca96de649e8dcd4a7e8ea35a9dfc00fd36",
-                "reference": "6e64acca96de649e8dcd4a7e8ea35a9dfc00fd36",
+                "url": "https://api.github.com/repos/filamentphp/panels/zipball/d542a29fe59fd91b1881d50aae560a46bdd3769e",
+                "reference": "d542a29fe59fd91b1881d50aae560a46bdd3769e",
                 "shasum": ""
             },
             "require": {
@@ -4707,20 +4707,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2024-01-29T13:20:18+00:00"
+            "time": "2024-01-30T14:17:04+00:00"
         },
         {
             "name": "filament/forms",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
-                "reference": "17f1385fa1535ac28d225aae25b7b509409dda8b"
+                "reference": "845dead2fabb744aab173d356a9cb21fed1f74b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/forms/zipball/17f1385fa1535ac28d225aae25b7b509409dda8b",
-                "reference": "17f1385fa1535ac28d225aae25b7b509409dda8b",
+                "url": "https://api.github.com/repos/filamentphp/forms/zipball/845dead2fabb744aab173d356a9cb21fed1f74b2",
+                "reference": "845dead2fabb744aab173d356a9cb21fed1f74b2",
                 "shasum": ""
             },
             "require": {
@@ -4763,20 +4763,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2024-01-29T13:20:12+00:00"
+            "time": "2024-01-30T14:17:00+00:00"
         },
         {
             "name": "filament/infolists",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
-                "reference": "67fdb53e032753ad663cf22c21c1ed87b43a1c06"
+                "reference": "59276ff0ceb280400701f9082175818e988fdd2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/67fdb53e032753ad663cf22c21c1ed87b43a1c06",
-                "reference": "67fdb53e032753ad663cf22c21c1ed87b43a1c06",
+                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/59276ff0ceb280400701f9082175818e988fdd2e",
+                "reference": "59276ff0ceb280400701f9082175818e988fdd2e",
                 "shasum": ""
             },
             "require": {
@@ -4814,11 +4814,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2024-01-29T13:20:06+00:00"
+            "time": "2024-01-30T14:16:58+00:00"
         },
         {
             "name": "filament/notifications",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
@@ -4870,7 +4870,7 @@
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -4907,7 +4907,7 @@
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
@@ -4954,16 +4954,16 @@
         },
         {
             "name": "filament/support",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
-                "reference": "e91541bd6cbfbf5a5904968d249683fff0c6d7f5"
+                "reference": "3c055c5bfdacc080adbc1d76f9ac8f99c8ca0398"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/support/zipball/e91541bd6cbfbf5a5904968d249683fff0c6d7f5",
-                "reference": "e91541bd6cbfbf5a5904968d249683fff0c6d7f5",
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/3c055c5bfdacc080adbc1d76f9ac8f99c8ca0398",
+                "reference": "3c055c5bfdacc080adbc1d76f9ac8f99c8ca0398",
                 "shasum": ""
             },
             "require": {
@@ -5007,20 +5007,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2024-01-29T13:20:08+00:00"
+            "time": "2024-01-29T15:36:06+00:00"
         },
         {
             "name": "filament/tables",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
-                "reference": "6018676bb9f2ceccfa922c01fe5ca43477ecbc7e"
+                "reference": "3c88d322c48109c11f4663029207f21978dc97bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/tables/zipball/6018676bb9f2ceccfa922c01fe5ca43477ecbc7e",
-                "reference": "6018676bb9f2ceccfa922c01fe5ca43477ecbc7e",
+                "url": "https://api.github.com/repos/filamentphp/tables/zipball/3c88d322c48109c11f4663029207f21978dc97bd",
+                "reference": "3c88d322c48109c11f4663029207f21978dc97bd",
                 "shasum": ""
             },
             "require": {
@@ -5060,11 +5060,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2024-01-29T13:20:09+00:00"
+            "time": "2024-01-30T14:17:15+00:00"
         },
         {
             "name": "filament/widgets",
-            "version": "v3.2.17",
+            "version": "v3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
@@ -13967,16 +13967,16 @@
         },
         {
             "name": "stechstudio/filament-impersonate",
-            "version": "3.5",
+            "version": "3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stechstudio/filament-impersonate.git",
-                "reference": "ee92ce42de52561aaf6731390b92846329f58b13"
+                "reference": "e559289a0f597fcb087a8863a07def495665a53d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stechstudio/filament-impersonate/zipball/ee92ce42de52561aaf6731390b92846329f58b13",
-                "reference": "ee92ce42de52561aaf6731390b92846329f58b13",
+                "url": "https://api.github.com/repos/stechstudio/filament-impersonate/zipball/e559289a0f597fcb087a8863a07def495665a53d",
+                "reference": "e559289a0f597fcb087a8863a07def495665a53d",
                 "shasum": ""
             },
             "require": {
@@ -14003,9 +14003,9 @@
             "description": "A Filament package to impersonate your users.",
             "support": {
                 "issues": "https://github.com/stechstudio/filament-impersonate/issues",
-                "source": "https://github.com/stechstudio/filament-impersonate/tree/3.5"
+                "source": "https://github.com/stechstudio/filament-impersonate/tree/3.6"
             },
-            "time": "2023-08-14T13:33:53+00:00"
+            "time": "2024-01-29T16:13:09+00:00"
         },
         {
             "name": "symfony/console",
@@ -19857,16 +19857,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.19.2",
+            "version": "0.19.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "bc96a99895bf47c6bfe70ea1b799f0081ed5a903"
+                "reference": "89c895d127b9d248d2af007068a824b5348ef81f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/bc96a99895bf47c6bfe70ea1b799f0081ed5a903",
-                "reference": "bc96a99895bf47c6bfe70ea1b799f0081ed5a903",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/89c895d127b9d248d2af007068a824b5348ef81f",
+                "reference": "89c895d127b9d248d2af007068a824b5348ef81f",
                 "shasum": ""
             },
             "require": {
@@ -19901,7 +19901,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.19.2"
+                "source": "https://github.com/rectorphp/rector/tree/0.19.5"
             },
             "funding": [
                 {
@@ -19909,7 +19909,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-19T10:58:30+00:00"
+            "time": "2024-01-29T23:53:47+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -22036,5 +22036,5 @@
         "ext-pdo": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
