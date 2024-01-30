@@ -5,8 +5,8 @@ services:
       target: development
     environment:
       SSL_MODE: "mixed"
-      PUID: '${UID:-1000}'
-      PGID: '${GID:-1000}'
+#      PUID: '${UID:-1000}'
+#      PGID: '${GID:-1000}'
       LARAVEL_SCHEDULER_ENABLED: '${LARAVEL_SCHEDULER_ENABLED:-true}'
       LARAVEL_QUEUE_ENABLED: '${LARAVEL_QUEUE_ENABLED:-true}'
     labels:
