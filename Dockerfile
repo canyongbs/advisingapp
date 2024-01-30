@@ -31,6 +31,8 @@ COPY ./docker/s6-overlay/scripts/ /etc/s6-overlay/scripts/
 COPY docker/s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
 COPY ./docker/s6-overlay/user/ /etc/s6-overlay/s6-rc.d/user/contents.d/
 
+RUN apt-get update \
+    && apt-get upgrade -y
 
 FROM base AS development
 
