@@ -8,9 +8,9 @@ ARG POSTGRES_VERSION=15
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git gnupg zip unzip php8.2-pgsql php8.2-imagick php8.2-redis php8.2-pcov php8.2-xdebug \
     && curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/keyrings/pgdg.gpg >/dev/null \
-    && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] https://apt.postgresql.org/pub/repos/apt jammy-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
-    && apt-get install -y postgresql-client-$POSTGRES_VERSION \
+    && apt-get install -y --no-install-recommends postgresql-client-$POSTGRES_VERSION \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
@@ -43,5 +43,7 @@ FROM base AS development
 #RUN docker-php-serversideup-set-id www-data ${USER_ID} ${GROUP_ID}
 
 FROM base AS deploy
+
+USER $PUID:$PGID
 
 COPY --chown=$PUID:$PGID . /var/www/html
