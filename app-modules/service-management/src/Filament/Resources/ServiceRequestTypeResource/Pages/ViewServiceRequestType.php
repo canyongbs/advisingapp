@@ -64,7 +64,6 @@ class ViewServiceRequestType extends ViewRecord
                             ->hidden(fn (ServiceRequestType $record) => ! $record->form)
                             ->url(fn (ServiceRequestType $record) => $record->form ? ServiceRequestFormResource::getUrl('edit', ['record' => $record?->form]) : null)
                             ->color('primary'),
-                        //TODO: fix after implementation
                         Group::make()
                             ->schema([
                                 TextEntry::make('has_enabled_feedback_collection')
