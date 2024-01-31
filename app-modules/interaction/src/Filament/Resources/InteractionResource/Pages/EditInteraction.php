@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionResource\Pages;
 
-use Filament\Actions;
 use Filament\Forms\Form;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
@@ -145,7 +145,7 @@ class EditInteraction extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            DeleteAction::make(),
         ];
     }
 }
