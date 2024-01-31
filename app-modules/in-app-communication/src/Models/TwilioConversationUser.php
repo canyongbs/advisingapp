@@ -47,6 +47,7 @@ class TwilioConversationUser extends Pivot
 {
     protected $casts = [
         'is_channel_manager' => 'boolean',
+        'is_pinned' => 'boolean',
     ];
 
     public function conversation(): BelongsTo
