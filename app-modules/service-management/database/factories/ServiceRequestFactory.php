@@ -38,7 +38,6 @@ namespace AdvisingApp\ServiceManagement\Database\Factories;
 
 use App\Models\User;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use AdvisingApp\ServiceManagement\Models\ServiceRequest;
@@ -52,14 +51,11 @@ class ServiceRequestFactory extends Factory
 {
     public function definition(): array
     {
-        $respondent = fake()->randomElement([
-            Student::inRandomOrder()->first() ?? Student::factory()->create(),
-            Prospect::factory()->create(),
-        ]);
-
         return [
-            'respondent_id' => $respondent->getKey(),
-            'respondent_type' => $respondent->getMorphClass(),
+            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
+            'respondent_type' => function (array $attributes) {
+                return Student::find($attributes['respondent_id'])->getMorphClass();
+            },
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
             'division_id' => Division::inRandomOrder()->first()?->id ?? Division::factory(),
