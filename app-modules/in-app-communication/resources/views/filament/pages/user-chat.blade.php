@@ -199,7 +199,7 @@
                                     <div class="group w-full dark:bg-gray-800">
                                         <div class="m-auto justify-center px-6 py-3 text-base">
                                             <div
-                                                class="mx-auto flex flex-1 text-base md:max-w-2xl gap-6 lg:max-w-[38rem] xl:max-w-3xl">
+                                                class="mx-auto flex flex-1 gap-6 text-base md:max-w-2xl lg:max-w-[38rem] xl:max-w-3xl">
                                                 <div class="relative mt-1 flex flex-shrink-0 flex-col items-end">
                                                     <x-filament::avatar
                                                         class="rounded-full"
