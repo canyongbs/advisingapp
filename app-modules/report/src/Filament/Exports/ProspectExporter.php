@@ -54,28 +54,28 @@ class ProspectExporter extends Exporter
         return [
             $type::make('id')
                 ->label('ID'),
-            $type::make('status.name'),
-            $type::make('source.name'),
+            static::notDefault($type::make('status.name')),
+            static::notDefault($type::make('source.name')),
             $type::make('first_name'),
             $type::make('last_name'),
-            $type::make('full_name'),
-            $type::make('preferred')
-                ->label('Preferred Name'),
-            $type::make('description'),
+            static::notDefault($type::make('full_name')),
+            static::notDefault($type::make('preferred')
+                ->label('Preferred Name')),
+            static::notDefault($type::make('description')),
             $type::make('email'),
-            $type::make('email_2')
-                ->label('Email 2'),
-            $type::make('mobile'),
+            static::notDefault($type::make('email_2')
+                ->label('Email 2')),
+            static::notDefault($type::make('mobile')),
             $type::make('phone'),
-            $type::make('address'),
+            static::notDefault($type::make('address')),
             $type::make('address_2')
                 ->label('Address 2'),
-            $type::make('birthdate'),
-            $type::make('hsgrad')
-                ->label('High School Grad'),
+            static::notDefault($type::make('birthdate')),
+            static::notDefault($type::make('hsgrad')
+                ->label('High School Grad')),
             $type::make('created_at'),
-            $type::make('assigned_to.name'),
-            $type::make('created_by.name'),
+            static::notDefault($type::make('assigned_to.name')),
+            static::notDefault($type::make('created_by.name')),
         ];
     }
 
@@ -88,5 +88,14 @@ class ProspectExporter extends Exporter
         }
 
         return $body;
+    }
+
+    protected static function notDefault(ExportColumn | TextColumn $column): ExportColumn | TextColumn
+    {
+        if ($column instanceof ExportColumn) {
+            $column->enabledByDefault(false);
+        }
+
+        return $column;
     }
 }

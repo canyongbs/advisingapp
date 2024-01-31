@@ -89,8 +89,9 @@ class CreateReport extends CreateRecord implements HasTable
                         ->selectablePlaceholder(false)
                         ->afterStateUpdated(function (Set $set) {
                             $set('columns', collect($this->getReportModel()->exporter()::getColumns())
-                                ->take(5)
+                                ->filter(fn (ExportColumn $column): bool => $column->isEnabledByDefault())
                                 ->map(fn (ExportColumn $column): string => $column->getName())
+                                ->values()
                                 ->all());
 
                             $this->cacheForms();
@@ -112,8 +113,9 @@ class CreateReport extends CreateRecord implements HasTable
                             [],
                         ))
                         ->default(fn (): array => collect($this->getReportModel()->exporter()::getColumns())
-                            ->take(5)
+                            ->filter(fn (ExportColumn $column): bool => $column->isEnabledByDefault())
                             ->map(fn (ExportColumn $column): string => $column->getName())
+                            ->values()
                             ->all())
                         ->columns(3)
                         ->live()
