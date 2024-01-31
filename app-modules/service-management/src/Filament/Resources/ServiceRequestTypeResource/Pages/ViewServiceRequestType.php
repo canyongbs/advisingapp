@@ -69,19 +69,19 @@ class ViewServiceRequestType extends ViewRecord
                             ->schema([
                                 TextEntry::make('has_enabled_feedback_collection')
                                     ->hiddenLabel()
-                                    ->state('Has enabled feedback collection')
+                                    ->state('Feedback collection')
                                     ->badge()
-                                    ->color('info'),
-                                TextEntry::make('csat')
+                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_feedback_collection ? 'success' : 'gray'),
+                                TextEntry::make('has_enabled_csat')
                                     ->hiddenLabel()
                                     ->state('CSAT')
                                     ->badge()
-                                    ->color('info'),
-                                TextEntry::make('nps')
+                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_csat ? 'success' : 'gray'),
+                                TextEntry::make('has_enabled_nps')
                                     ->hiddenLabel()
                                     ->state('NPS')
                                     ->badge()
-                                    ->color('info'),
+                                    ->color(fn (ServiceRequestType $record) => $record->has_enabled_nps ? 'success' : 'gray'),
                             ]),
                     ]),
             ]);

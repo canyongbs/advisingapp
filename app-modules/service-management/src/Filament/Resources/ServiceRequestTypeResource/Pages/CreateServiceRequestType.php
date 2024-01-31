@@ -64,15 +64,12 @@ class CreateServiceRequestType extends CreateRecord
                             ->schema([
                                 Toggle::make('has_enabled_feedback_collection')
                                     ->label('Enable feedback collection')
-                                    ->dehydrated(false) //TODO: remove after implementation
                                     ->live(),
-                                Toggle::make('csat')
+                                Toggle::make('has_enabled_csat')
                                     ->label('CSAT')
-                                    ->dehydrated(false) //TODO: remove after implementation
                                     ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
-                                Toggle::make('nps')
+                                Toggle::make('has_enabled_nps')
                                     ->label('NPS')
-                                    ->dehydrated(false) //TODO: remove after implementation
                                     ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
                             ]),
                     ]),
