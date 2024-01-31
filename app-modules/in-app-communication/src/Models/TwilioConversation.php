@@ -74,6 +74,7 @@ class TwilioConversation extends Model
             ->withPivot([
                 'participant_sid',
                 'is_channel_manager',
+                'is_pinned',
             ])
             ->withTimestamps()
             ->as('participant')
