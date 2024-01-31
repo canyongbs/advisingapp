@@ -34,35 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Actions;
+namespace AdvisingApp\Engagement\Drivers;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
+use AdvisingApp\Engagement\Models\EngagementDeliverable;
+use AdvisingApp\Engagement\Actions\QueuedEngagementDelivery;
+use AdvisingApp\Engagement\Actions\EngagementSmsChannelDelivery;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-class MessageReceived implements ShouldQueue
+class EngagementSmsDriver implements EngagementDeliverableDriver
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        public TwilioMessageReceivedData $data
+        protected EngagementDeliverable $deliverable
     ) {}
 
-    public function handle(): void
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void
     {
-        $createEngagementResponse = resolve(CreateEngagementResponse::class);
+        /** @var TwilioStatusCallbackData $updateData */
+        $updateData = $data->data;
 
-        $createEngagementResponse(EngagementResponseData::from([
-            'from' => $this->data->from,
-            'body' => $this->data->body,
-        ]));
+        $this->deliverable->update([
+            'external_status' => $updateData->messageStatus ?? null,
+        ]);
+
+        match ($this->deliverable->external_status) {
+            'delivered' => $this->deliverable->markDeliverySuccessful(),
+            'undelivered', 'failed' => $this->deliverable->markDeliveryFailed($updateData->errorMessage ?? null),
+            default => null,
+        };
+    }
+
+    public function jobForDelivery(): QueuedEngagementDelivery
+    {
+        return new EngagementSmsChannelDelivery($this->deliverable);
+    }
+
+    public function deliver(): void
+    {
+        EngagementSmsChannelDelivery::dispatch($this->deliverable);
     }
 }

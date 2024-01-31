@@ -34,35 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Actions;
+namespace AdvisingApp\Notification\DataTransferObjects;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
+use Spatie\LaravelData\Data;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-class MessageReceived implements ShouldQueue
+class UpdateDeliveryStatusData extends Data
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        public TwilioMessageReceivedData $data
+        public TwilioStatusCallbackData|Data $data
     ) {}
-
-    public function handle(): void
-    {
-        $createEngagementResponse = resolve(CreateEngagementResponse::class);
-
-        $createEngagementResponse(EngagementResponseData::from([
-            'from' => $this->data->from,
-            'body' => $this->data->body,
-        ]));
-    }
 }

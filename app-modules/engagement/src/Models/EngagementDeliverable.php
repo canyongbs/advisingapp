@@ -38,12 +38,12 @@ namespace AdvisingApp\Engagement\Models;
 
 use App\Models\BaseModel;
 use OwenIt\Auditing\Contracts\Auditable;
-use AdvisingApp\Engagement\Drivers\SmsDriver;
-use AdvisingApp\Engagement\Drivers\EmailDriver;
-use AdvisingApp\Engagement\Drivers\DeliverableDriver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use AdvisingApp\Engagement\Drivers\EngagementSmsDriver;
+use AdvisingApp\Engagement\Drivers\EngagementEmailDriver;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryMethod;
 use AdvisingApp\Engagement\Enums\EngagementDeliveryStatus;
+use AdvisingApp\Engagement\Drivers\EngagementDeliverableDriver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 
 /**
@@ -102,11 +102,11 @@ class EngagementDeliverable extends BaseModel implements Auditable
         }
     }
 
-    public function driver(): DeliverableDriver
+    public function driver(): EngagementDeliverableDriver
     {
         return match ($this->channel) {
-            EngagementDeliveryMethod::Email => new EmailDriver($this),
-            EngagementDeliveryMethod::Sms => new SmsDriver($this),
+            EngagementDeliveryMethod::Email => new EngagementEmailDriver($this),
+            EngagementDeliveryMethod::Sms => new EngagementSmsDriver($this),
         };
     }
 }

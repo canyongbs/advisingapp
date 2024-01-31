@@ -34,18 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Actions;
+namespace AdvisingApp\Notification\Actions;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
+use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 
-class MessageReceived implements ShouldQueue
+class UpdateOutboundDeliverableStatus implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -53,16 +54,30 @@ class MessageReceived implements ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public TwilioMessageReceivedData $data
+        public OutboundDeliverable $deliverable,
+        public TwilioStatusCallbackData $data
     ) {}
 
     public function handle(): void
     {
-        $createEngagementResponse = resolve(CreateEngagementResponse::class);
+        $data = UpdateDeliveryStatusData::from([
+            'data' => $this->data,
+        ]);
 
-        $createEngagementResponse(EngagementResponseData::from([
-            'from' => $this->data->from,
-            'body' => $this->data->body,
-        ]));
+        $this->deliverable->driver()->updateDeliveryStatus($data);
+
+        if ($this->deliverable->related) {
+            // TODO Ensure the related model has a driver() method
+            $this->deliverable->related->driver()->updateDeliveryStatus($data);
+        }
+    }
+
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping($this->deliverable->id))
+                ->releaseAfter(30)
+                ->expireAfter(300),
+        ];
     }
 }

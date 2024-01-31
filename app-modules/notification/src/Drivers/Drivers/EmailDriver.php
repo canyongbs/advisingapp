@@ -34,35 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationTwilio\Actions;
+namespace AdvisingApp\Notification\Drivers;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use AdvisingApp\Engagement\Actions\CreateEngagementResponse;
-use AdvisingApp\Engagement\DataTransferObjects\EngagementResponseData;
-use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioMessageReceivedData;
+use AdvisingApp\Notification\Models\OutboundDeliverable;
+use AdvisingApp\Notification\DataTransferObjects\UpdateDeliveryStatusData;
 
-class MessageReceived implements ShouldQueue
+class EmailDriver implements OutboundDeliverableDriver
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     public function __construct(
-        public TwilioMessageReceivedData $data
+        protected OutboundDeliverable $deliverable
     ) {}
 
-    public function handle(): void
-    {
-        $createEngagementResponse = resolve(CreateEngagementResponse::class);
-
-        $createEngagementResponse(EngagementResponseData::from([
-            'from' => $this->data->from,
-            'body' => $this->data->body,
-        ]));
-    }
+    public function updateDeliveryStatus(UpdateDeliveryStatusData $data): void {}
 }

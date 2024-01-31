@@ -47,7 +47,6 @@ class FindEngagementResponseSender implements EngagementResponseSenderFinder
     {
         // Student currently takes priority, but determine if we potentially want to store this response
         // For *all* potential matches instead of just a singular result.
-        // TODO: Make use of shared Student/Prospect implementation
         if (! is_null($student = Student::where('mobile', $phoneNumber)->orWhere('phone', $phoneNumber)->first())) {
             return $student;
         }
