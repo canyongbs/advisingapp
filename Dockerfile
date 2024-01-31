@@ -44,6 +44,4 @@ FROM base AS development
 
 FROM base AS deploy
 
-USER $PUID:$PGID
-
 COPY --chown=$PUID:$PGID . /var/www/html
