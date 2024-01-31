@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\InAppCommunication\Actions;
 
+use Exception;
 use App\Models\User;
 use Twilio\Rest\Client;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
@@ -46,23 +47,28 @@ class RemoveUserFromConversation
         public Client $twilioClient,
     ) {}
 
-    public function __invoke(User $user, TwilioConversation $conversation): void
+    public function __invoke(User $user, TwilioConversation $conversation): bool
     {
-        $participant = $conversation
-            ->participants()
-            ->find($user);
+        throw_unless(
+            $conversation->participants()->whereKey($user)->exists(),
+            new Exception('User is not a participant in the channel.')
+        );
 
-        if (! $participant) {
-            return;
+        try {
+            $this->twilioClient
+                ->conversations
+                ->v1
+                ->users($user->id)
+                ->userConversations($conversation->sid)
+                ->delete();
+        } catch (Exception $e) {
+            report($e);
+
+            return false;
         }
 
-        $this->twilioClient
-            ->conversations
-            ->v1
-            ->users($user->id)
-            ->userConversations($conversation->sid)
-            ->delete();
-
         $conversation->participants()->detach($user);
+
+        return true;
     }
 }

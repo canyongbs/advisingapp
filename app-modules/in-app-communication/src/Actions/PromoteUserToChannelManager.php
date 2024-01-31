@@ -50,8 +50,8 @@ class PromoteUserToChannelManager
 
     public function __invoke(User $user, TwilioConversation $conversation): void
     {
-        throw_if(
-            ($conversation->type === ConversationType::UserToUser),
+        throw_unless(
+            $conversation->type === ConversationType::Channel,
             new Exception('Only channels have managers.')
         );
 

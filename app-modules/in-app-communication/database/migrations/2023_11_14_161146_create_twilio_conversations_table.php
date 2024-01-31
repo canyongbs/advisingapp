@@ -43,11 +43,14 @@ return new class () extends Migration {
     {
         Schema::create('twilio_conversations', function (Blueprint $table) {
             $table->string('sid')->primary();
+
             $table->string('friendly_name')->nullable();
             $table->string('type');
             $table->string('channel_name')->nullable();
             $table->boolean('is_private_channel')->default(false);
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };
