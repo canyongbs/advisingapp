@@ -37,7 +37,7 @@
 >
     @php
         $state = $getState();
-
+        
         if (is_array($state)) {
             $state = json_encode($state, JSON_PRETTY_PRINT);
         }
