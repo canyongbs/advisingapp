@@ -53,7 +53,7 @@ class ServiceRequestFactory extends Factory
     public function definition(): array
     {
         $respondent = fake()->randomElement([
-            Student::inRandomOrder()->first() ?? Student::factory(),
+            Student::inRandomOrder()->first() ?? Student::factory()->create(),
             Prospect::factory()->create(),
         ]);
 
