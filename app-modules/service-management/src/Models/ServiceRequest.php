@@ -51,7 +51,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -84,7 +83,6 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     use SoftDeletes;
     use PowerJoins;
     use AuditableTrait;
-    use HasUuids;
     use HasManyMorphedInteractions;
     use HasRelationships;
 
