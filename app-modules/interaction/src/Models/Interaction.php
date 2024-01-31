@@ -175,13 +175,11 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
         static::addGlobalScope('licensed', function (Builder $builder) {
             $builder
                 ->tap(new LicensedToEducatable('interactable'))
-                ->where(fn (Builder $builder) => $builder
-                    ->where('interactable_type', '!=', app(ServiceRequest::class)->getMorphClass())
-                    ->orWhereDoesntHaveMorph(
-                        'interactable',
-                        ServiceRequest::class,
-                        fn (Builder $builder) => $builder->tap(new LicensedToEducatable('respondent')),
-                    ));
+                ->orWhereHasMorph(
+                    'interactable',
+                    ServiceRequest::class,
+                    fn (Builder $builder) => $builder->tap(new LicensedToEducatable('respondent')),
+                );
         });
     }
 }

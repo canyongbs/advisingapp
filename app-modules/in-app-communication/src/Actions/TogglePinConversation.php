@@ -34,26 +34,27 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\InAppCommunication\Actions;
 
-return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+use App\Models\User;
+use Twilio\Rest\Client;
+use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
+
+class TogglePinConversation
+{
+    public function __construct(
+        public Client $twilioClient,
+    ) {}
+
+    public function __invoke(User $user, TwilioConversation $conversation): void
     {
-        Schema::create('twilio_conversation_user', function (Blueprint $table) {
-            $table->string('conversation_sid');
-            $table->foreignUuid('user_id');
-            $table->string('participant_sid');
-            $table->boolean('is_channel_manager')->default(false);
-            $table->boolean('is_pinned')->default(false);
+        /** @var TwilioConversationUser $participant */
+        $participant = $conversation->participant;
 
-            $table->timestamps();
-
-            $table->foreign('conversation_sid')->references('sid')->on('twilio_conversations')->cascadeOnDelete();
-        });
+        $conversation->participants()
+            ->updateExistingPivot($user->getKey(), [
+                'is_pinned' => $participant->is_pinned = ! $participant->is_pinned,
+            ]);
     }
-};
+}

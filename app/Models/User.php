@@ -198,6 +198,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ->withPivot([
                 'participant_sid',
                 'is_channel_manager',
+                'is_pinned',
             ])
             ->withTimestamps()
             ->as('participant')

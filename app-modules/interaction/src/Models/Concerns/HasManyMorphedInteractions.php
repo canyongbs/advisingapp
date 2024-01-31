@@ -46,6 +46,8 @@ trait HasManyMorphedInteractions
         return $this->morphMany(
             related: Interaction::class,
             name: 'interactable',
+            type: 'interactable_type',
+            id: 'interactable_id'
         );
     }
 }
