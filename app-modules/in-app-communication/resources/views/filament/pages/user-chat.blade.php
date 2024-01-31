@@ -33,17 +33,17 @@
 --}}
 @php
     use AdvisingApp\InAppCommunication\Enums\ConversationType;
-    use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\InAppCommunication\Models\TwilioConversation;
+    use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
+    use Filament\Support\Facades\FilamentAsset;
 
-    $conversationGroups = $this->getConversations()->reduce(
+    $conversationGroups = $this->conversations->reduce(
         function (array $carry, TwilioConversation $conversation): array {
             if ($conversation->type === ConversationType::Channel) {
                 $carry[0][] = $conversation;
             } else {
                 $carry[1][] = $conversation;
             }
-
             return $carry;
         },
         [[], []],
@@ -77,43 +77,51 @@
                             @if (count($conversations))
                                 <ul
                                     class="flex flex-col gap-y-1 rounded-xl border border-gray-950/5 bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900">
-                                    @foreach ($conversations as $conversation)
+                                    @foreach ($conversations as $conversationItem)
                                         @php
-                                            /** @var TwilioConversation $conversation */
+                                            /** @var TwilioConversation $conversationItem */
                                         @endphp
                                         <li @class([
                                             'px-2 group cursor-pointer flex rounded-lg w-full items-center outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5 space-x-1',
                                             'bg-gray-100 dark:bg-white/5' =>
-                                                $this->selectedConversation === $conversation['sid'],
+                                                $conversation?->getKey() === $conversationItem->getKey(),
                                         ])>
                                             <button
                                                 type="button"
                                                 @class([
                                                     'relative flex flex-1 items-center justify-between text-start gap-x-3 rounded-lg py-2 text-sm',
                                                 ])
-                                                wire:click="selectConversation('{{ $conversation['sid'] }}')"
+                                                wire:click="selectConversation('{{ $conversationItem->getKey() }}')"
                                             >
                                                 <span @class([
                                                     'flex-1 truncate',
                                                     'text-gray-700 dark:text-gray-200' =>
-                                                        $this->selectedConversation !== $conversation['sid'],
+                                                        $conversation?->getKey() !== $conversationItem->getKey(),
                                                     'text-primary-600 dark:text-primary-400' =>
-                                                        $this->selectedConversation === $conversation['sid'],
+                                                        $conversation?->getKey() === $conversationItem->getKey(),
                                                 ])>
-                                                    @if (filled($conversation->channel_name))
-                                                        {{ $conversation->channel_name }}
+                                                    @if (filled($conversationItem->channel_name))
+                                                        {{ $conversationItem->channel_name }}
                                                     @else
-                                                        {{ $conversation->participants->where('id', '!=', auth()->id())->first()?->name }}
+                                                        {{ $conversationItem->participants->where('id', '!=', auth()->id())->first()?->name }}
                                                     @endif
                                                 </span>
-
                                                 <x-filament::loading-indicator :attributes="(new \Illuminate\View\ComponentAttributeBag([
                                                     'wire:loading.delay.' .
                                                     config('filament.livewire_loading_delay', 'default') => '',
                                                     'wire:target' =>
-                                                        'selectConversation(\'' . $conversation['sid'] . '\')',
+                                                        'selectConversation(\'' . $conversationItem->getKey() . '\')',
                                                 ]))->class(['w-5 h-5'])" />
                                             </button>
+                                            @php
+                                                /** @var TwilioConversationUser $participant */
+                                                $participant = $conversationItem->participant;
+                                            @endphp
+                                            @if ($participant->is_pinned)
+                                                {{ ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])->icon('heroicon-s-star')->tooltip('Unpin') }}
+                                            @else
+                                                {{ ($this->togglePinChannelAction)(['id' => $conversationItem->getKey()])->icon('heroicon-o-star')->tooltip('Pin') }}
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>
@@ -138,11 +146,14 @@
                 </div>
             </div>
 
-            @if ($selectedConversation = $this->getSelectedConversation())
+            @php
+                /** @var TwilioConversation $conversation */
+            @endphp
+            @if ($conversation)
                 <div
                     class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
-                    x-data="userToUserChat(`{{ $selectedConversation->getKey() }}`)"
-                    wire:key="conversation-{{ $selectedConversation->getKey() }}"
+                    x-data="userToUserChat(`{{ $conversation->getKey() }}`)"
+                    wire:key="conversation-{{ $conversation->getKey() }}"
                 >
                     <div
                         class="flex flex-col items-center self-center"
@@ -253,7 +264,7 @@
                                         required
                                         x-on:keydown="typing"
                                     >
-                                </textarea>
+                                    </textarea>
                                 </div>
                                 <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
                                     <div class="flex items-center gap-3">
@@ -285,9 +296,9 @@
                                 </div>
                             </div>
                         </form>
-                        @if ($selectedConversation?->type === ConversationType::Channel)
+                        @if ($conversation->type === ConversationType::Channel)
                             <div class="flex items-center justify-end gap-3">
-                                @if ($selectedConversation->managers()->find(auth()->user()))
+                                @if ($conversation->managers()->find(auth()->user()))
                                     {{ $this->editChannelAction }}
                                 @endif
 

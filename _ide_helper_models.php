@@ -2055,6 +2055,8 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @property string $conversation_sid
  * @property string $user_id
  * @property string $participant_sid
+ * @property bool $is_channel_manager
+ * @property bool $is_pinned
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \AdvisingApp\InAppCommunication\Models\TwilioConversation $conversation
@@ -2064,6 +2066,8 @@ namespace AdvisingApp\InAppCommunication\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser query()
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereConversationSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereIsChannelManager($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereIsPinned($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereParticipantSid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TwilioConversationUser whereUserId($value)
