@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Models\User;
 use Illuminate\Support\Arr;
 use Filament\Facades\Filament;
 
