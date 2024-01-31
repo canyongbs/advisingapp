@@ -53,7 +53,7 @@ use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 
 class SmsChannel
 {
-    public function send($notifiable, SmsNotification $notification): void
+    public function send(object $notifiable, SmsNotification $notification): void
     {
         try {
             DB::beginTransaction();
