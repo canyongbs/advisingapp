@@ -58,7 +58,7 @@ class InteractionFactory extends Factory
     public function definition(): array
     {
         $interactable = fake()->randomElement([
-            Student::inRandomOrder()->first()->sisid ?? Student::factory()->create(),
+            Student::inRandomOrder()->first() ?? Student::factory()->create(),
             Prospect::factory()->create(),
             ServiceRequest::factory()->create(),
         ]);
