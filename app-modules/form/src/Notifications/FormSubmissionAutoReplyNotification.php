@@ -45,7 +45,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
 class FormSubmissionAutoReplyNotification extends BaseNotification implements EmailNotification, ShouldBeUnique
@@ -61,7 +60,7 @@ class FormSubmissionAutoReplyNotification extends BaseNotification implements Em
         return Tenant::current()->getKey() . ':' . $this->submission->getKey();
     }
 
-    public function toEmail(NotifiableInterface $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         /** @var Form $form */
         $form = $this->submission->submissible;

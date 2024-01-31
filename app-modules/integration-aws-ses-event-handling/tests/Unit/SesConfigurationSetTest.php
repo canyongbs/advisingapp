@@ -42,7 +42,6 @@ use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
@@ -103,7 +102,7 @@ class TestEmailNotification extends BaseNotification implements EmailNotificatio
 {
     use EmailChannelTrait;
 
-    public function toEmail(NotifiableInterface $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->subject('Test Subject')
