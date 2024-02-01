@@ -66,7 +66,7 @@ class MigrateTenantDatabase implements ShouldQueue, NotTenantAware
     {
         $this->tenant->execute(function () {
             Artisan::call(
-                command: 'migrate'
+                command: 'migrate --force'
             );
         });
     }
