@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Models\Tenant;
-
 use function Pest\Laravel\post;
 use function Pest\Laravel\withHeaders;
 use function Tests\loadFixtureFromModule;
