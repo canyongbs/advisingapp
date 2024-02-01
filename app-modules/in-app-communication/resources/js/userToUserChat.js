@@ -296,10 +296,7 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    Alpine.data('chatEditor', ({
-        currentUser,
-        users,
-    }) => {
+    Alpine.data('chatEditor', ({ currentUser, users }) => {
         let editor;
 
         return {
@@ -309,7 +306,7 @@ document.addEventListener('alpine:init', () => {
             init() {
                 const _this = this;
 
-                delete users[currentUser]
+                delete users[currentUser];
 
                 editor = new Editor({
                     element: this.$refs.element,
