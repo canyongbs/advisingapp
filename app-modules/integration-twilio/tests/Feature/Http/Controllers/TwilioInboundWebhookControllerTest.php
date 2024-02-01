@@ -43,6 +43,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\withoutMiddleware;
 use function Pest\Laravel\assertDatabaseMissing;
 
+use AdvisingApp\IntegrationTwilio\Actions\StatusCallback;
 use AdvisingApp\IntegrationTwilio\Actions\MessageReceived;
 
 it('will create an inbound webhook with the correct source and event for a MessageReceived webhook', function () {
@@ -63,12 +64,12 @@ it('will create an inbound webhook with the correct source and event for a Messa
 
     assertDatabaseMissing('inbound_webhooks', [
         'source' => 'twilio',
-        'event' => 'status_update',
+        'event' => 'status_callback',
     ]);
 });
 
 it('will create an inbound webhook with the correct source and event for a StatusCallback webhook', function () {
-    Queue::fake([MessageReceived::class]);
+    Queue::fake([StatusCallback::class]);
     withoutMiddleware();
 
     $response = post(

@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Models\Tenant;
-
 use function Pest\Laravel\post;
 
 use Illuminate\Support\Facades\Queue;
@@ -52,10 +50,7 @@ it('will dispatch the correct job to handle the incoming webhook', function (str
     Queue::fake();
 
     post(
-        route('inbound.webhook.twilio', [
-            'tenant' => Tenant::current()->domain,
-            'event' => $event,
-        ]),
+        route('inbound.webhook.twilio', $event),
         loadFixtureFromModule('integration-twilio', $payloadPath),
     );
 

@@ -37,7 +37,6 @@
 namespace AdvisingApp\Notification\Notifications\Channels;
 
 use Exception;
-use App\Models\Tenant;
 use Twilio\Rest\Client;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\DB;
@@ -99,10 +98,7 @@ class SmsChannel
         ];
 
         if (! app()->environment('local')) {
-            $messageContent['statusCallback'] = route('inbound.webhook.twilio', [
-                'tenant' => Tenant::current()->domain,
-                'event' => 'status_callback',
-            ]);
+            $messageContent['statusCallback'] = config('app.url') . route('inbound.webhook.twilio', 'status_callback', false);
         }
 
         $result = SmsChannelResultData::from([
