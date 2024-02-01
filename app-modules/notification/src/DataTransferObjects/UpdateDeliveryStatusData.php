@@ -42,6 +42,6 @@ use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
 class UpdateDeliveryStatusData extends Data
 {
     public function __construct(
-        public TwilioStatusCallbackData|Data $data
+        public TwilioStatusCallbackData $data
     ) {}
 }

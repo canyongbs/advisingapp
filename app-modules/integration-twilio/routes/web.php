@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\Route;
 use AdvisingApp\IntegrationTwilio\Http\Middleware\EnsureTwilioRequestIsValid;
 use AdvisingApp\IntegrationTwilio\Http\Controllers\TwilioInboundWebhookController;
 
-Route::post('/inbound/webhook/twilio/{event}', TwilioInboundWebhookController::class)
-    ->middleware(EnsureTwilioRequestIsValid::class)
-    ->name('inbound.webhook.twilio');
+Route::domain('{tenant}')->group(function () {
+    Route::post('/inbound/webhook/twilio/{event}', TwilioInboundWebhookController::class)
+        ->middleware(EnsureTwilioRequestIsValid::class)
+        ->name('inbound.webhook.twilio');
+});

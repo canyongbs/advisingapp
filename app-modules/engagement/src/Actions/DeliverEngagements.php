@@ -43,19 +43,14 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Engagement\Models\Engagement;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-class DeliverEngagements implements ShouldQueue, ShouldBeUnique
+class DeliverEngagements implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
-    public function uniqueId(): string
-    {
-        return Tenant::current()->id;
-    }
 
     public function handle(): void
     {
@@ -69,5 +64,10 @@ class DeliverEngagements implements ShouldQueue, ShouldBeUnique
             ->each(function (Engagement $engagement) {
                 $engagement->deliverable->driver()->deliver();
             });
+    }
+
+    public function middleware(): array
+    {
+        return [new WithoutOverlapping(Tenant::current()->id)];
     }
 }

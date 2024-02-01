@@ -44,6 +44,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Actions\UpdateOutboundDeliverableStatus;
 use AdvisingApp\IntegrationTwilio\DataTransferObjects\TwilioStatusCallbackData;
+use AdvisingApp\Notification\Events\CouldNotFindOutboundDeliverableFromExternalReference;
 
 class StatusCallback implements ShouldQueue
 {
@@ -63,7 +64,8 @@ class StatusCallback implements ShouldQueue
             ->first();
 
         if (is_null($outboundDeliverable)) {
-            // TODO Potentially trigger a notification to an admin that a message was received for a non-existent deliverable
+            CouldNotFindOutboundDeliverableFromExternalReference::dispatch($this->data);
+
             return;
         }
 

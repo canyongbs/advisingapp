@@ -48,8 +48,10 @@ class DeliverEngagements extends Command
 
     protected $description = 'Deliver all engagements that are ready to be sent';
 
-    public function handle(): void
+    public function handle(): int
     {
         dispatch(new DeliverEngagementsJob());
+
+        return self::SUCCESS;
     }
 }
