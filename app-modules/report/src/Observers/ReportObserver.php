@@ -34,29 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Database\Factories;
+namespace AdvisingApp\Report\Observers;
 
-use App\Models\User;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use AdvisingApp\Report\Models\Report;
 
-/**
- * @extends Factory<Caseload>
- */
-class CaseloadFactory extends Factory
+class ReportObserver
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function creating(Report $report): void
     {
-        return [
-            'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(CaseloadModel::cases()),
-            'type' => CaseloadType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
-        ];
+        $report->user()->associate($report->user ?? auth()->user());
     }
 }

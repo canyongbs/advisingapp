@@ -34,29 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Database\Factories;
+namespace AdvisingApp\Report\Filament\Exports;
 
 use App\Models\User;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use Filament\Actions\Exports\Exporter;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Models\Export;
 
-/**
- * @extends Factory<Caseload>
- */
-class CaseloadFactory extends Factory
+class UserExporter extends Exporter
 {
+    protected static ?string $model = User::class;
+
     /**
-     * @return array<string, mixed>
+     * @param class-string<TextColumn | ExportColumn> $type
      */
-    public function definition(): array
+    public static function getColumns(string $type = ExportColumn::class): array
     {
         return [
-            'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(CaseloadModel::cases()),
-            'type' => CaseloadType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
+            $type::make('id')
+                ->label('ID'),
+            $type::make('name'),
+            $type::make('email'),
+            $type::make('phone_number'),
+            $type::make('created_at'),
         ];
+    }
+
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        $body = 'Your user report export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
+
+        if ($failedRowsCount = $export->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+        }
+
+        return $body;
     }
 }

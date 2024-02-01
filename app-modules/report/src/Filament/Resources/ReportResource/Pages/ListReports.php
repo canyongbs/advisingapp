@@ -34,75 +34,62 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Enums;
+namespace AdvisingApp\Report\Filament\Resources\ReportResource\Pages;
 
+use App\Models\User;
 use Filament\Tables\Table;
-use Filament\Support\Contracts\HasLabel;
+use App\Filament\Columns\IdColumn;
+use Filament\Actions\CreateAction;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\DeleteAction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Prospect\Filament\Tables\ProspectsTable;
-use AdvisingApp\StudentDataModel\Filament\Tables\StudentsTable;
-use AdvisingApp\CaseloadManagement\Importers\StudentCaseloadSubjectImporter;
-use AdvisingApp\CaseloadManagement\Importers\ProspectCaseloadSubjectImporter;
+use AdvisingApp\Report\Filament\Resources\ReportResource;
 
-enum CaseloadModel: string implements HasLabel
+class ListReports extends ListRecords
 {
-    case Prospect = 'prospect';
+    protected ?string $heading = 'Report Management';
 
-    case Student = 'student';
-
-    public function getLabel(): ?string
-    {
-        return $this->name;
-    }
-
-    public static function default(): static
-    {
-        return static::Student;
-    }
-
-    public function query(): Builder
-    {
-        return match ($this) {
-            static::Student => Student::query(),
-            static::Prospect => Prospect::query(),
-        };
-    }
-
-    public function class(): string
-    {
-        return match ($this) {
-            static::Student => Student::class,
-            static::Prospect => Prospect::class,
-        };
-    }
+    protected static string $resource = ReportResource::class;
 
     public function table(Table $table): Table
     {
-        return $table->tap(app(match ($this) {
-            static::Student => StudentsTable::class,
-            static::Prospect => ProspectsTable::class,
-        }));
+        return $table
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('name')
+                    ->sortable(),
+                TextColumn::make('model')
+                    ->sortable()
+                    ->visible(auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()]) || auth()->user()->can('viewAny', User::class)),
+                TextColumn::make('user.name')
+                    ->label('Owner')
+                    ->sortable()
+                    ->hidden(function (Table $table) {
+                        return $table->getFilter('my_reports')->getState()['isActive'];
+                    }),
+            ])
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(),
+            ])
+            ->filters([
+                Filter::make('my_reports')
+                    ->label('My Reports')
+                    ->query(
+                        fn ($query) => $query->where('user_id', auth()->id())
+                    )
+                    ->default(),
+            ]);
     }
 
-    public static function tryFromCaseOrValue(CaseloadModel | string $value): ?static
+    protected function getHeaderActions(): array
     {
-        if ($value instanceof CaseloadModel) {
-            return $value;
-        }
-
-        return static::tryFrom($value);
-    }
-
-    /**
-     * @return class-string<Importer>
-     */
-    public function getSubjectImporter(): string
-    {
-        return match ($this) {
-            static::Prospect => ProspectCaseloadSubjectImporter::class,
-            static::Student => StudentCaseloadSubjectImporter::class,
-        };
+        return [
+            CreateAction::make(),
+        ];
     }
 }

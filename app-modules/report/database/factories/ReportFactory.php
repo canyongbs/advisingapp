@@ -34,18 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Database\Factories;
+namespace AdvisingApp\Report\Database\Factories;
 
 use App\Models\User;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
+use AdvisingApp\Report\Models\Report;
+use AdvisingApp\Report\Enums\ReportModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
 
 /**
- * @extends Factory<Caseload>
+ * @extends Factory<Report>
  */
-class CaseloadFactory extends Factory
+class ReportFactory extends Factory
 {
     /**
      * @return array<string, mixed>
@@ -54,8 +53,7 @@ class CaseloadFactory extends Factory
     {
         return [
             'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(CaseloadModel::cases()),
-            'type' => CaseloadType::Dynamic, //TODO: add static later
+            'model' => fake()->randomElement(ReportModel::cases()),
             'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
         ];
     }

@@ -36,6 +36,7 @@
 
 namespace App\Providers;
 
+use App\Models\Export;
 use App\Models\Import;
 use Illuminate\View\View;
 use App\Models\FailedImportRow;
@@ -43,6 +44,7 @@ use Filament\Support\Colors\Color;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Actions\Exports\Models\Export as BaseExport;
 use Filament\Actions\Imports\Models\Import as BaseImport;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 
@@ -50,6 +52,7 @@ class FilamentServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(BaseExport::class, Export::class);
         $this->app->bind(BaseImport::class, Import::class);
         $this->app->bind(BaseFailedImportRow::class, FailedImportRow::class);
     }

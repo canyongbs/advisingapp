@@ -34,29 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Database\Factories;
+namespace AdvisingApp\Report\Filament\Resources;
 
-use App\Models\User;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use Filament\Resources\Resource;
+use AdvisingApp\Report\Models\Report;
+use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\EditReport;
+use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\ListReports;
+use AdvisingApp\Report\Filament\Resources\ReportResource\Pages\CreateReport;
 
-/**
- * @extends Factory<Caseload>
- */
-class CaseloadFactory extends Factory
+class ReportResource extends Resource
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected static ?string $model = Report::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Reporting';
+
+    protected static ?int $navigationSort = 10;
+
+    protected static ?string $navigationLabel = 'Report Center';
+
+    protected static ?string $breadcrumb = 'Report Center';
+
+    public static function getPages(): array
     {
         return [
-            'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(CaseloadModel::cases()),
-            'type' => CaseloadType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
+            'index' => ListReports::route('/'),
+            'create' => CreateReport::route('/create'),
+            'edit' => EditReport::route('/{record}/edit'),
         ];
     }
 }

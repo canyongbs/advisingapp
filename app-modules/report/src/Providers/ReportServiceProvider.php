@@ -34,29 +34,64 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Database\Factories;
+namespace AdvisingApp\Report\Providers;
 
-use App\Models\User;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use Filament\Panel;
+use AdvisingApp\Report\ReportPlugin;
+use AdvisingApp\Report\Models\Report;
+use Illuminate\Support\ServiceProvider;
+use AdvisingApp\Report\Observers\ReportObserver;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use AdvisingApp\Authorization\AuthorizationRoleRegistry;
+use AdvisingApp\Authorization\AuthorizationPermissionRegistry;
 
-/**
- * @extends Factory<Caseload>
- */
-class CaseloadFactory extends Factory
+class ReportServiceProvider extends ServiceProvider
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function register()
     {
-        return [
-            'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(CaseloadModel::cases()),
-            'type' => CaseloadType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
-        ];
+        Panel::configureUsing(fn (Panel $panel) => $panel->plugin(new ReportPlugin()));
+    }
+
+    public function boot()
+    {
+        Relation::morphMap([
+            'report' => Report::class,
+        ]);
+
+        $this->registerRolesAndPermissions();
+
+        $this->registerObservers();
+    }
+
+    protected function registerRolesAndPermissions()
+    {
+        $permissionRegistry = app(AuthorizationPermissionRegistry::class);
+
+        $permissionRegistry->registerApiPermissions(
+            module: 'report',
+            path: 'permissions/api/custom'
+        );
+
+        $permissionRegistry->registerWebPermissions(
+            module: 'report',
+            path: 'permissions/web/custom'
+        );
+
+        $roleRegistry = app(AuthorizationRoleRegistry::class);
+
+        $roleRegistry->registerApiRoles(
+            module: 'report',
+            path: 'roles/api'
+        );
+
+        $roleRegistry->registerWebRoles(
+            module: 'report',
+            path: 'roles/web'
+        );
+    }
+
+    protected function registerObservers(): void
+    {
+        Report::observe(ReportObserver::class);
     }
 }

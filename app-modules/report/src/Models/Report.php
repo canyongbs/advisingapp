@@ -34,29 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Database\Factories;
+namespace AdvisingApp\Report\Models;
 
 use App\Models\User;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use App\Models\BaseModel;
+use App\Models\Authenticatable;
+use AdvisingApp\Report\Enums\ReportModel;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @extends Factory<Caseload>
+ * @mixin IdeHelperReport
  */
-class CaseloadFactory extends Factory
+class Report extends BaseModel
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected $fillable = [
+        'query',
+        'columns',
+        'filters',
+        'name',
+        'description',
+        'model',
+    ];
+
+    protected $casts = [
+        'columns' => 'array',
+        'filters' => 'array',
+        'model' => ReportModel::class,
+    ];
+
+    public function user(): BelongsTo
     {
-        return [
-            'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(CaseloadModel::cases()),
-            'type' => CaseloadType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
-        ];
+        return $this->belongsTo(User::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('authorized', function (Builder $builder) {
+            if (! auth()->check()) {
+                return;
+            }
+
+            /** @var Authenticatable $user */
+            $user = auth()->user();
+
+            foreach (ReportModel::cases() as $model) {
+                if (! $model->canBeAccessed($user)) {
+                    $builder->where('model', '!=', $model);
+                }
+            }
+        });
     }
 }

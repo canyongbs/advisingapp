@@ -34,29 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseloadManagement\Database\Factories;
+namespace App\Filament\Tables;
 
 use App\Models\User;
-use AdvisingApp\CaseloadManagement\Models\Caseload;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadType;
-use AdvisingApp\CaseloadManagement\Enums\CaseloadModel;
+use Filament\Tables\Table;
+use Filament\Tables\Actions\ViewAction;
+use App\Filament\Resources\UserResource;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 
-/**
- * @extends Factory<Caseload>
- */
-class CaseloadFactory extends Factory
+class UsersTable
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function __invoke(Table $table): Table
     {
-        return [
-            'name' => fake()->words(asText: true),
-            'model' => fake()->randomElement(CaseloadModel::cases()),
-            'type' => CaseloadType::Dynamic, //TODO: add static later
-            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
-        ];
+        return $table
+            ->query(fn () => User::query())
+            ->filters([
+                QueryBuilder::make()
+                    ->constraints([
+                        TextConstraint::make('name'),
+                        QueryBuilder\Constraints\DateConstraint::make('created_at')
+                            ->icon('heroicon-m-calendar'),
+                        TextConstraint::make('email')
+                            ->label('Email Address')
+                            ->icon('heroicon-m-envelope'),
+                        TextConstraint::make('phone_number')
+                            ->icon('heroicon-m-phone'),
+                    ])
+                    ->constraintPickerColumns([
+                        'md' => 2,
+                        'lg' => 3,
+                        'xl' => 4,
+                    ])
+                    ->constraintPickerWidth('7xl'),
+            ], layout: FiltersLayout::AboveContent)
+            ->actions([
+                ViewAction::make()
+                    ->authorize('view')
+                    ->url(fn (User $record) => UserResource::getUrl('view', ['record' => $record])),
+            ]);
     }
 }
