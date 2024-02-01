@@ -46,14 +46,11 @@ enum SlaComplianceStatus implements HasColor, HasIcon, HasLabel
 
     case NonCompliant;
 
-    case NoResponse;
-
     public function getLabel(): ?string
     {
         return match ($this) {
             self::Compliant => 'Within SLA',
             self::NonCompliant => 'Outside of SLA',
-            self::NoResponse => 'No Response',
         };
     }
 
@@ -62,7 +59,6 @@ enum SlaComplianceStatus implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::Compliant => 'success',
             self::NonCompliant => 'danger',
-            self::NoResponse => 'warning',
         };
     }
 
@@ -71,7 +67,6 @@ enum SlaComplianceStatus implements HasColor, HasIcon, HasLabel
         return match ($this) {
             self::Compliant => 'heroicon-m-check-circle',
             self::NonCompliant => 'heroicon-m-x-circle',
-            self::NoResponse => 'heroicon-m-exclamation-circle'
         };
     }
 }
