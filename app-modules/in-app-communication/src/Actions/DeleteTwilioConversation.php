@@ -37,37 +37,39 @@
 namespace AdvisingApp\InAppCommunication\Actions;
 
 use Exception;
-use App\Models\User;
 use Twilio\Rest\Client;
 use AdvisingApp\InAppCommunication\Enums\ConversationType;
 use AdvisingApp\InAppCommunication\Models\TwilioConversation;
 
-class DemoteUserFromChannelManager
+class DeleteTwilioConversation
 {
     public function __construct(
         public Client $twilioClient,
     ) {}
 
-    public function __invoke(User $user, TwilioConversation $conversation): void
+    public function __invoke(TwilioConversation $conversation): bool
     {
         throw_unless(
             $conversation->type === ConversationType::Channel,
-            new Exception('Only channels have managers.')
+            new Exception('Only channels can be deleted.')
         );
 
-        throw_unless(
-            $conversation->participants()->whereKey($user)->exists(),
-            new Exception('User is not a participant in the channel.')
-        );
+        try {
+            $this->twilioClient
+                ->conversations
+                ->v1
+                ->conversations($conversation->sid)
+                ->update([
+                    'state' => 'closed',
+                ]);
+        } catch (Exception $e) {
+            report($e);
 
-        throw_unless(
-            $conversation->managers()->whereKeyNot($user->getKey())->exists(),
-            'User cannot be removed because they are the only manager in the channel.'
-        );
+            return false;
+        }
 
-        $conversation->managers()
-            ->updateExistingPivot($user->getKey(), [
-                'is_channel_manager' => false,
-            ]);
+        $conversation->delete();
+
+        return true;
     }
 }

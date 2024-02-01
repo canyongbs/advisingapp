@@ -355,14 +355,23 @@
                             </div>
                         </form>
                         @if ($conversation->type === ConversationType::Channel)
-                            <div class="flex items-center justify-end gap-3">
-                                @if ($conversation->managers()->find(auth()->user()))
-                                    {{ $this->editChannelAction }}
+                            @php
+                                $isManager = (bool) $conversation->managers()->find(auth()->user());
+                            @endphp
+                            <div class="{{ $isManager ? 'justify-between' : 'justify-end' }} flex items-center">
+                                @if ($isManager)
+                                    <div class="flex gap-3">
+                                        {{ $this->editChannelAction }}
+
+                                        {{ $this->deleteChannelAction }}
+                                    </div>
                                 @endif
+                                <div class="flex gap-3">
+                                    {{ $this->addUserToChannelAction }}
 
-                                {{ $this->addUserToChannelAction }}
+                                    {{ $this->leaveChannelAction }}
+                                </div>
 
-                                {{ $this->leaveConversationAction }}
                             </div>
                         @endif
                     </div>
