@@ -57,9 +57,14 @@ class SocialiteController extends Controller
 
         auth()->guard('web')->logout();
 
-        return $provider->driver()
-            ->setConfig($provider->config())
-            ->redirect();
+        $driver = $provider->driver()
+            ->setConfig($provider->config());
+
+        if ($provider === SocialiteProvider::Azure) {
+            $driver->with(['prompt' => 'select_account']);
+        }
+
+        return $driver->redirect();
     }
 
     public function callback(SocialiteProvider $provider)
