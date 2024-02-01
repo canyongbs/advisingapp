@@ -60,7 +60,7 @@ class SocialiteController extends Controller
         $driver = $provider->driver()
             ->setConfig($provider->config());
 
-        if ($provider === SocialiteProvider::Azure) {
+        if (in_array($provider, [SocialiteProvider::Azure, SocialiteProvider::Google])) {
             $driver->with(['prompt' => 'select_account']);
         }
 
