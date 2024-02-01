@@ -479,7 +479,9 @@ class UserChat extends Page implements HasForms, HasActions
         if ($this->conversation->managers()->find($user)) {
             if ($this->conversation->managers()->whereKeyNot($user->getKey())->exists()) {
                 $action->modalDescription(
-                    new HtmlString("You will be removed as a channel manager.<br>{$action->getModalDescription()}")
+                    new HtmlString(
+                        "You will be removed as a channel manager.<br>{$action->getModalDescription()}"
+                    )
                 );
             } else {
                 $action->modalHeading('Unable to leave channel.')
@@ -621,5 +623,12 @@ class UserChat extends Page implements HasForms, HasActions
             ->title('Something went wrong. If this issue persists, please contact support.')
             ->danger()
             ->send();
+    }
+
+    protected function getViewData(): array
+    {
+        return [
+            'users' => $this->conversation?->participants()->pluck('name', 'id')->all() ?? [],
+        ];
     }
 }

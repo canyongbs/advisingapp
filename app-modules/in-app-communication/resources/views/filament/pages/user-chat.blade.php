@@ -152,7 +152,7 @@
             @if ($conversation)
                 <div
                     class="col-span-1 flex h-full flex-col gap-2 overflow-hidden md:col-span-3"
-                    x-data="userToUserChat(`{{ $conversation->getKey() }}`)"
+                    x-data="userToUserChat({ selectedConversation: @js($conversation->getKey()), users: @js($users) })"
                     wire:key="conversation-{{ $conversation->getKey() }}"
                 >
                     <div
@@ -254,8 +254,9 @@
                                 class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-sm dark:border-white/10 dark:bg-gray-700">
                                 <div class="bg-white dark:bg-gray-800">
                                     <div
-                                        x-data="chatEditor"
+                                        x-data="chatEditor({ currentUser: @js(auth()->id()), users: @js($users) })"
                                         x-model="message"
+                                        wire:ignore
                                         x-modelable="content"
                                     >
                                         <template x-if="isLoaded()">
@@ -327,8 +328,9 @@
                                 <div class="flex items-center justify-between border-t px-3 py-2 dark:border-gray-600">
                                     <div class="flex items-center gap-3">
                                         <x-filament::button type="submit">
-                                            Post
+                                            Send
                                         </x-filament::button>
+
                                         <div
                                             class="relative flex h-6 items-center justify-center gap-0.5"
                                             x-show="usersTyping.length"
@@ -366,12 +368,12 @@
                                         {{ $this->deleteChannelAction }}
                                     </div>
                                 @endif
+
                                 <div class="flex gap-3">
                                     {{ $this->addUserToChannelAction }}
 
                                     {{ $this->leaveChannelAction }}
                                 </div>
-
                             </div>
                         @endif
                     </div>

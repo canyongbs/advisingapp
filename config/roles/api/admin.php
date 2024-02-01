@@ -82,6 +82,7 @@ return [
         'report_prospect.delete',
         'report_prospect.access',
         'journey_menu.access',
+        'license_settings.manage',
     ],
 
     'model' => [

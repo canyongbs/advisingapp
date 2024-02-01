@@ -34,21 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+use App\Models\User;
+use Illuminate\Support\Arr;
+use Filament\Facades\Filament;
 
-use Filament\Pages\Page;
+use function Pest\Laravel\actingAs;
+use function PHPUnit\Framework\assertCount;
 
-class Reports extends Page
-{
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+test('there is only the Dashboard item for unlicensed users', function () {
+    actingAs(User::factory()->create());
 
-    protected static ?string $navigationGroup = 'Reporting';
+    $navigation = Filament::getNavigation();
 
-    protected static ?int $navigationSort = 10;
-
-    protected static string $view = 'filament.pages.coming-soon';
-
-    protected static ?string $title = 'Report Center';
-
-    protected static bool $shouldRegisterNavigation = false;
-}
+    assertCount(1, $navigation);
+    assertCount(1, Arr::first($navigation)->getItems());
+});

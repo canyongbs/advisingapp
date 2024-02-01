@@ -58,6 +58,11 @@ class ManageLicenseSettings extends SettingsPage
 
     protected static ?string $cluster = GlobalSettings::class;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('license_settings.manage');
+    }
+
     public function form(Form $form): Form
     {
         return $form

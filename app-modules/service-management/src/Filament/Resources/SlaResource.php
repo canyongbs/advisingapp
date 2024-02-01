@@ -40,9 +40,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Clusters\ServiceManagement;
 use AdvisingApp\ServiceManagement\Models\Sla;
 use App\Filament\Fields\SecondsDurationInput;
+use App\Filament\Clusters\ServiceManagementAdministration;
 use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\EditSla;
 use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\ListSlas;
 use AdvisingApp\ServiceManagement\Filament\Resources\SlaResource\Pages\CreateSla;
@@ -54,13 +54,13 @@ class SlaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 60;
 
     protected static ?string $modelLabel = 'SLA';
 
     protected static ?string $pluralModelLabel = 'SLAs';
 
-    protected static ?string $cluster = ServiceManagement::class;
+    protected static ?string $cluster = ServiceManagementAdministration::class;
 
     public static function form(Form $form): Form
     {
