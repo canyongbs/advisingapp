@@ -103,7 +103,6 @@
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.46",
         "larastan/larastan": "^2.7",
-        "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
         "pestphp/pest": "^2.11",
@@ -112,6 +111,7 @@
         "pestphp/pest-plugin-livewire": "^2.1",
         "phpunit/phpunit": "^10.0",
         "rector/rector": "^0.19.0",
+        "serversideup/spin": "v2.0.0-beta-3",
         "spatie/laravel-ignition": "^2.0",
         "spatie/laravel-ray": "^1.32",
         "worksome/request-factories": "^3.2"

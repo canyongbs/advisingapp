@@ -23,6 +23,8 @@
     </testsuite>
   </testsuites>
   <php>
+    <server name="LANDLORD_APP_URL" value="http://advisingapp.local"/>
+    <server name="APP_URL" value="http://test.advisingapp.local"/>
     <server name="APP_ENV" value="testing"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="array"/>

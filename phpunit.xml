@@ -13,7 +13,8 @@
     </testsuites>
     <php>
         <server name="APP_ENV" value="testing"/>
-        <server name="APP_URL" value="http://localhost"/>
+        <server name="LANDLORD_APP_URL" value="http://advisingapp.local"/>
+        <server name="APP_URL" value="http://test.advisingapp.local"/>
         <server name="BCRYPT_ROUNDS" value="4"/>
         <server name="CACHE_DRIVER" value="array"/>
         <server name="MAIL_MAILER" value="array"/>

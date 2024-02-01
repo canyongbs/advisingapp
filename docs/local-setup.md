@@ -28,15 +28,36 @@ nvm use
 Details on how to automatically use the correct version of Node when entering the project directory can be found on the [NVM GitHub page | Deeper Shell Integration](https://github.com/nvm-sh/nvm#deeper-shell-integration)
 
 ### Setup
-This application makes use of [Laravel Sail](https://laravel.com/docs/10.x/sail) for local development. Though not a requirement, it is highly recommended reading through the documentation on it.
+This application makes use of [Spin](https://serversideup.net/open-source/spin/docs) for local development. Though not a requirement, it is highly recommended reading through the documentation on it.
 
-The `sail` executable is within your vendor folder, so you would have to type the path to it everytime to use it. To make this better, Sail recommends adding the following Bash alias:
+The `spin` executable is within your vendor folder, so you would have to type the path to it everytime to use it. To make this better, Spin recommends adding the following Bash alias:
 
 ```bash
-alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+alias spin='[ -f node_modules/.bin/spin ] && bash node_modules/.bin/spin || bash vendor/bin/spin'
 ```
 
-This documentation will assume you have done so. If not you can simply replace `sail` throughout with `./vendor/bin/sail`.
+This documentation will assume you have done so. If not you can simply replace `spin` throughout with `./vendor/bin/spin`.
+
+It may also be helpful to add some aliases for quick artisan and composer commands.
+
+```bash
+alias spina='spin exec -it php php artisan'
+alias spinc='spin exec -it php php composer'
+```
+
+Make sure to add these after the `spin` alias.
+
+If you choose not to add these aliases, you can execute commands using `exec` like so:
+
+```bash
+spin exec -it php php artisan key:generate
+
+# or
+
+spin exec -it php php composer install
+```
+
+---
 
 After cloning this project, execute the following commands to install php dependencies:
 
@@ -55,53 +76,59 @@ Then, create a `.env` file based on `.env.example`
 cp .env.example .env
 ```
 
-Next we need to get Sail to set up the containers and start running:
+Next we need to get Spin to set up the containers and start running:
 
 ```bash
-sail up -d
+spin up -d
 ```
 
 Finally, we will set up the application by running the following commands:
 ```bash
-sail artisan key:generate
-sail artisan migrate:landlord:fresh
-sail npm install
-sail npm run build
+spina key:generate
+spina migrate:landlord:fresh
+npm install
+npm run build
 ```
 
-These commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
+> #### Note:
+> If you do not have `nvm` installed and set up or you would prefer to run `npm` commands inside the container, you will need to run bash within the container and run the commands from there:
+>
+> ```bash
+> spin exec -it php bash
+> ```
+>
+> You will then have an interactive bash session within the container that you can run all commands from.
+
+The above commands will set up the application for the "landlord" database. The landlord database is in charge of holding all information on tenants. Next we will set up a tenant.
 
 ```bash
-sail artisan tenant:create [A Name for the Tenant] [A domain for the tenant]
-sail artisan queue:work --queue=landlord --stop-when-empty
-sail artisan tenants:artisan "db:seed --database=tenant"
+spina tenant:create [A Name for the Tenant] [A domain for the tenant]
+spina queue:work --queue=landlord --stop-when-empty
+spina tenants:artisan "db:seed --database=tenant"
 ```
 
 These commands will create a new tenant with the name and domain you supplied, seed some data into it's sis database, and then refresh and seed the tenant's database.
 
 After this the application should be accessible at the domain you supplied.
 
-Sail can be stopped by running `sail stop` and turning back on by running `sail up -d`
+Spin can be stopped by running `spin stop` and turning back on by running `spin up -d`
 
-### Customizing Sail settings and Ports
+### Customizing container settings and Ports
 
 Within the `.env.example` (and within the `.env` after you copy it) should exist the following variables:
+
 ```dotenv
-# The following env variables are only needed for local Laravel Sail instances
 FORWARD_DB_PORT=3306
 FORWARD_DB_PORT_TEST=3309
 FORWARD_REDIS_PORT=6379
 FORWARD_MEILISEARCH_PORT=7700
 FORWARD_MAILPIT_PORT=1025
 FORWARD_MAILPIT_DASHBOARD_PORT=8025
-SAIL_XDEBUG_MODE=off
-SAIL_XDEBUG_CONFIG=client_host=host.docker.internal
 FORWARD_MINIO_PORT=9000
 FORWARD_MINIO_CONSOLE_PORT=8900
-# End Laravel Sail env variables
 ```
 
-Those variable will allow you to edit particular settings and forwarding ports for Sail. A great example of this usage is within the database section below.
+Those variable will allow you to edit particular settings and forwarding ports for your local containers. A great example of this usage is within the database section below.
 
 ### Accessing the Database
 Within the containers, MySQL lives on port 3306. And by default it can be accessed outside of the containers on port 3308 as well.
@@ -111,12 +138,12 @@ you can set the `FORWARD_DB_PORT` in your `.env` file to whatever available
 port you want.
 
 ### Seed Mass ADM Data
-In order to seed the ADM data, you will need to first create a shell within sail by running the following command:
+In order to seed the ADM data, you will need to first create a shell within your apps container by running the following command:
 ```bash
-sail shell
+spin exec -it php bash
 ```
 
-Then you can run the following command within the sail container to seed the data:
+Then you can run the following command within the container to seed the data:
 
 ```bash
 source .env ; gunzip < resources/sql/advising-app-adm-data.gz | PGPASSWORD=$SIS_DB_PASSWORD psql -h $SIS_DB_HOST -p $SIS_DB_PORT -U $SIS_DB_USERNAME -d $SIS_DB_DATABASE -q
@@ -125,7 +152,7 @@ source .env ; gunzip < resources/sql/advising-app-adm-data.gz | PGPASSWORD=$SIS_
 ### Minio (S3 Compatible Storage)
 Minio is a S3 compatible storage solution that is used for storing files locally.
 
-When first setting up you will need to create a bucket. This can be done by going to `localhost:8900` in your browser and logging in with `sail` as the username and `password` as the password. Once logged in, you can create a bucket.
+When first setting up you will need to create a bucket. This can be done by going to `localhost:8900` in your browser and logging in with `advisingapp` as the username and `password` as the password. Once logged in, you can create a bucket.
 
 By default, the application is set up in the `.env.example` to reference a bucket named `local`. Create a bucket with this name in Minio. Then change its access policy to "Custom" with the following policy configuration:
 
@@ -157,4 +184,11 @@ In order to facilitate proper file upload with Livewire you will need to set the
 127.0.0.1 minio
 ```
 
+### Queue and Scheduler
 
+The application should automatically start a queue worker and scheduler when you run `spin up -d`. If you preferred to not have these running. You can see the corresponding `env` variables to false like so:
+
+```dotenv
+LARAVEL_SCHEDULER_ENABLED=false
+LARAVEL_QUEUE_ENABLED=false
+```

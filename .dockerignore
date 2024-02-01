@@ -1,0 +1,8 @@
+.infrastructure
+.github
+.gitlab-ci.yml
+.phpunit.cache
+#bin
+docs
+.env
+.env.example
