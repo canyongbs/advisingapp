@@ -36,6 +36,7 @@
 
 namespace App\Filament\Clusters;
 
+use App\Models\User;
 use Filament\Clusters\Cluster;
 use AdvisingApp\Authorization\Enums\LicenseType;
 
