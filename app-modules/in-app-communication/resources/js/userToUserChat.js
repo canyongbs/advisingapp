@@ -35,6 +35,7 @@ document.addEventListener('alpine:init', () => {
     global = globalThis;
     const { generateHTML } = require('@tiptap/html');
     const { Editor } = require('@tiptap/core');
+    const { Mention } = require('./TipTap/Extentions/Mention');
     const { Placeholder } = require('@tiptap/extension-placeholder');
     const { StarterKit } = require('@tiptap/starter-kit');
     const { Underline } = require('@tiptap/extension-underline');
@@ -46,7 +47,7 @@ document.addEventListener('alpine:init', () => {
 
     let conversationsClient = null;
 
-    Alpine.data('userToUserChat', (selectedConversation) => ({
+    Alpine.data('userToUserChat', ({ selectedConversation, users }) => ({
         loading: true,
         loadingMessage: 'Loading chat…',
         error: false,
@@ -285,11 +286,20 @@ document.addEventListener('alpine:init', () => {
                 .catch((error) => console.error('Error handler failed to handle error: ', error));
         },
         generateHTML: (content) => {
-            return generateHTML(content, [StarterKit, Underline]);
+            return generateHTML(content, [
+                Mention.configure({
+                    users,
+                }),
+                StarterKit,
+                Underline,
+            ]);
         },
     }));
 
-    Alpine.data('chatEditor', () => {
+    Alpine.data('chatEditor', ({
+        currentUser,
+        users,
+    }) => {
         let editor;
 
         return {
@@ -299,9 +309,14 @@ document.addEventListener('alpine:init', () => {
             init() {
                 const _this = this;
 
+                delete users[currentUser]
+
                 editor = new Editor({
                     element: this.$refs.element,
                     extensions: [
+                        Mention.configure({
+                            users,
+                        }),
                         StarterKit,
                         Underline,
                         Placeholder.configure({

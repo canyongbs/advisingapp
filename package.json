@@ -28,6 +28,7 @@
         "@tiptap/html": "^2.2.1",
         "@tiptap/pm": "^2.2.1",
         "@tiptap/starter-kit": "^2.2.1",
+        "@tiptap/suggestion": "^2.2.1",
         "@vitejs/plugin-vue": "^4.4.0",
         "autoprefixer": "^10.4.14",
         "cross-env": "^7.0.3",

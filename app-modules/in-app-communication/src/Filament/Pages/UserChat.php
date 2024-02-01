@@ -120,6 +120,13 @@ class UserChat extends Page implements HasForms, HasActions
         );
     }
 
+    protected function getViewData(): array
+    {
+        return [
+            'users' => $this->conversation?->participants()->pluck('name', 'id')->all() ?? [],
+        ];
+    }
+
     #[Computed]
     public function conversations(): Collection
     {
