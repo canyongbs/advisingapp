@@ -36,30 +36,24 @@
 
 namespace AdvisingApp\Application\Notifications;
 
-use App\Models\User;
-use Illuminate\Bus\Queueable;
 use Illuminate\Support\HtmlString;
 use AdvisingApp\Prospect\Models\Prospect;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectResource;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use Filament\Notifications\Notification as FilamentNotification;
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentResource;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-class AuthorLinkedApplicationSubmissionCreatedNotification extends Notification implements ShouldQueue
+class AuthorLinkedApplicationSubmissionCreatedNotification extends BaseNotification implements DatabaseNotification
 {
-    use Queueable;
+    use DatabaseChannelTrait;
 
     public function __construct(public ApplicationSubmission $submission) {}
 
-    public function via(User $notifiable): array
-    {
-        return ['database'];
-    }
-
-    public function toDatabase(User $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         $author = $this->submission->author;
 

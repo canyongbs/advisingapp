@@ -37,17 +37,20 @@
 namespace AdvisingApp\Engagement\Notifications;
 
 use App\Models\User;
-use Illuminate\Bus\Queueable;
 use App\Models\NotificationSetting;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use AdvisingApp\Engagement\Models\EngagementBatch;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\EmailNotification;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-class EngagementBatchFinishedNotification extends Notification implements ShouldQueue
+class EngagementBatchFinishedNotification extends BaseNotification implements DatabaseNotification, EmailNotification
 {
-    use Queueable;
+    use DatabaseChannelTrait;
+    use EmailChannelTrait;
 
     public function __construct(
         public EngagementBatch $engagementBatch,
@@ -55,12 +58,7 @@ class EngagementBatchFinishedNotification extends Notification implements Should
         public int $failedJobs,
     ) {}
 
-    public function via(User $notifiable): array
-    {
-        return ['mail', 'database'];
-    }
-
-    public function toMail(User $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         $message = MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable));
@@ -76,7 +74,7 @@ class EngagementBatchFinishedNotification extends Notification implements Should
             ->line("{$this->processedJobs} jobs processed successfully.");
     }
 
-    public function toDatabase(User $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         if ($this->failedJobs > 0) {
             return FilamentNotification::make()

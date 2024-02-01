@@ -55,7 +55,7 @@ class SendRegistrationLinkToEventAttendee extends BaseNotification implements Em
         protected User $sender
     ) {}
 
-    public function toEmail(NotifiableInterface $notifiable): MailMessage
+    public function toEmail(object $notifiable): MailMessage
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))

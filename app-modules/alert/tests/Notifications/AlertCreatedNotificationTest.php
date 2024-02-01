@@ -34,36 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
-
 use App\Models\User;
-use App\Models\NotificationSetting;
-use Illuminate\Support\Facades\URL;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
+use AdvisingApp\Alert\Models\Alert;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Alert\Notifications\AlertCreatedNotification;
 
-class SetPasswordNotification extends BaseNotification implements EmailNotification
-{
-    use EmailChannelTrait;
+use function Tests\Helpers\testItIsDispatchedToTheProperChannels;
 
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('A new account has been created for you.')
-            ->action('Set up your password', URL::temporarySignedRoute(
-                'login.one-time',
-                now()->addDay(),
-                ['user' => $notifiable],
-            ))
-            ->line('For security reasons, this link will expire in 24 hours.')
-            ->line('Please contact support if you need a new link or have any issues setting up your account.');
+use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
+
+testItIsDispatchedToTheProperChannels(
+    notification: AlertCreatedNotification::class,
+    deliveryChannels: [DatabaseChannel::class],
+    triggerNotificationToNotifiable: function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $student = Student::factory()->create();
+
+        $student->subscriptions()->create([
+            'user_id' => $user->id,
+        ]);
+
+        Alert::factory()->create([
+            'concern_id' => $student->sisid,
+            'concern_type' => Student::class,
+        ]);
+
+        return $user;
     }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
-    }
-}
+);

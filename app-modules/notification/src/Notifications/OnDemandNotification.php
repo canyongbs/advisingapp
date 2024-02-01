@@ -34,36 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace AdvisingApp\Notification\Notifications;
 
-use App\Models\User;
-use App\Models\NotificationSetting;
-use Illuminate\Support\Facades\URL;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
-
-class SetPasswordNotification extends BaseNotification implements EmailNotification
+interface OnDemandNotification
 {
-    use EmailChannelTrait;
-
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('A new account has been created for you.')
-            ->action('Set up your password', URL::temporarySignedRoute(
-                'login.one-time',
-                now()->addDay(),
-                ['user' => $notifiable],
-            ))
-            ->line('For security reasons, this link will expire in 24 hours.')
-            ->line('Please contact support if you need a new link or have any issues setting up your account.');
-    }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
-    }
+    public function identifyRecipient(): array;
 }

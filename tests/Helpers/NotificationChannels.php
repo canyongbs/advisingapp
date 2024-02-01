@@ -34,36 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
+namespace Tests\Helpers;
 
-use App\Models\User;
-use App\Models\NotificationSetting;
-use Illuminate\Support\Facades\URL;
+use Closure;
+use Illuminate\Support\Facades\Notification;
 use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class SetPasswordNotification extends BaseNotification implements EmailNotification
+function testItIsDispatchedToTheProperChannels(string $notification, array $deliveryChannels, Closure $triggerNotificationToNotifiable)
 {
-    use EmailChannelTrait;
+    test("{$notification} is dispatched to the proper channels", function () use ($notification, $deliveryChannels, $triggerNotificationToNotifiable) {
+        Notification::fake();
 
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('A new account has been created for you.')
-            ->action('Set up your password', URL::temporarySignedRoute(
-                'login.one-time',
-                now()->addDay(),
-                ['user' => $notifiable],
-            ))
-            ->line('For security reasons, this link will expire in 24 hours.')
-            ->line('Please contact support if you need a new link or have any issues setting up your account.');
-    }
+        $notifiable = $triggerNotificationToNotifiable();
 
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
-    }
+        Notification::assertSentTo(
+            $notifiable,
+            $notification,
+            function (BaseNotification $notification, array $channels, object $notifiable) use ($deliveryChannels) {
+                if (sort($channels) !== sort($deliveryChannels)) {
+                    return false;
+                }
+
+                return true;
+            }
+        );
+    });
 }

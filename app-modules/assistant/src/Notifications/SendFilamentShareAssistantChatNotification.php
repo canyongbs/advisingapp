@@ -36,15 +36,15 @@
 
 namespace AdvisingApp\Assistant\Notifications;
 
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use AdvisingApp\Assistant\Enums\AssistantChatShareVia;
+use AdvisingApp\Notification\Notifications\BaseNotification;
+use AdvisingApp\Notification\Notifications\DatabaseNotification;
 use Filament\Notifications\Notification as FilamentNotification;
+use AdvisingApp\Notification\Notifications\Concerns\DatabaseChannelTrait;
 
-class SendFilamentShareAssistantChatNotification extends Notification
+class SendFilamentShareAssistantChatNotification extends BaseNotification implements DatabaseNotification
 {
-    use Queueable;
+    use DatabaseChannelTrait;
 
     public function __construct(
         protected AssistantChatShareVia $via,
@@ -52,17 +52,9 @@ class SendFilamentShareAssistantChatNotification extends Notification
     ) {}
 
     /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['database'];
-    }
-
-    /**
      * @return array<string, mixed>
      */
-    public function toDatabase(User $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return match ($this->via) {
             AssistantChatShareVia::Email => FilamentNotification::make()

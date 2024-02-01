@@ -34,36 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace App\Notifications;
-
 use App\Models\User;
-use App\Models\NotificationSetting;
-use Illuminate\Support\Facades\URL;
-use AdvisingApp\Notification\Notifications\BaseNotification;
-use AdvisingApp\Notification\Notifications\EmailNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Notification\Notifications\Concerns\EmailChannelTrait;
 
-class SetPasswordNotification extends BaseNotification implements EmailNotification
-{
-    use EmailChannelTrait;
+use function Pest\Laravel\seed;
 
-    public function toEmail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
-            ->line('A new account has been created for you.')
-            ->action('Set up your password', URL::temporarySignedRoute(
-                'login.one-time',
-                now()->addDay(),
-                ['user' => $notifiable],
-            ))
-            ->line('For security reasons, this link will expire in 24 hours.')
-            ->line('Please contact support if you need a new link or have any issues setting up your account.');
+use AdvisingApp\Application\Models\ApplicationSubmission;
+
+use function Tests\Helpers\testItIsDispatchedToTheProperChannels;
+
+use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Notifications\AuthorLinkedApplicationSubmissionCreatedNotification;
+
+testItIsDispatchedToTheProperChannels(
+    notification: AuthorLinkedApplicationSubmissionCreatedNotification::class,
+    deliveryChannels: [DatabaseChannel::class],
+    triggerNotificationToNotifiable: function () {
+        seed(ApplicationSubmissionStateSeeder::class);
+
+        $submission = ApplicationSubmission::factory()->make();
+
+        $user = User::factory()->create();
+
+        $user->subscriptions()->create([
+            'subscribable_id' => $submission->author->getKey(),
+            'subscribable_type' => $submission->author->getMorphClass(),
+        ]);
+
+        $submission->save();
+
+        return $user;
     }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->teams()->first()?->division?->notificationSetting?->setting;
-    }
-}
+);

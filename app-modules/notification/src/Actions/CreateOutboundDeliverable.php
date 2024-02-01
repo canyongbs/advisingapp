@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notification\Actions;
 
 use Exception;
+use Illuminate\Notifications\AnonymousNotifiable;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Notifications\SmsNotification;
@@ -44,6 +45,7 @@ use AdvisingApp\Notification\Notifications\BaseNotification;
 use AdvisingApp\Notification\Notifications\EmailNotification;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\DatabaseNotification;
+use AdvisingApp\Notification\Notifications\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 
@@ -65,12 +67,19 @@ class CreateOutboundDeliverable
             default => throw new Exception('Invalid notification channel.'),
         };
 
+        $recipientId = null;
+        $recipientType = 'anonymous';
+
+        if ($notifiable instanceof AnonymousNotifiable && $notification instanceof OnDemandNotification) {
+            [$recipientId, $recipientType] = $notification->identifyRecipient();
+        }
+
         return OutboundDeliverable::create([
             'channel' => $channel,
             'notification_class' => get_class($notification),
             'content' => json_encode($content),
-            'recipient_id' => $notifiable->getKey(),
-            'recipient_type' => $notifiable->getMorphClass(),
+            'recipient_id' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getKey() : $recipientId,
+            'recipient_type' => ! $notifiable instanceof AnonymousNotifiable ? $notifiable->getMorphClass() : $recipientType,
         ]);
     }
 }

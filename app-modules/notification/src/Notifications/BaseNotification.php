@@ -41,13 +41,11 @@ use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use AdvisingApp\Notification\Models\OutboundDeliverable;
 use AdvisingApp\Notification\Actions\CreateOutboundDeliverable;
 use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Notifications\Channels\EmailChannel;
 use AdvisingApp\Notification\Notifications\Concerns\ChannelTrait;
-use AdvisingApp\Notification\Models\Contracts\NotifiableInterface;
 use AdvisingApp\Notification\Notifications\Channels\DatabaseChannel;
 use AdvisingApp\Notification\DataTransferObjects\SmsChannelResultData;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
@@ -57,11 +55,10 @@ use AdvisingApp\Notification\DataTransferObjects\DatabaseChannelResultData;
 abstract class BaseNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    use Dispatchable;
 
     protected array $metadata = [];
 
-    public function via(NotifiableInterface $notifiable): array
+    public function via(object $notifiable): array
     {
         $traits = collect(class_uses_recursive(static::class));
 
@@ -85,7 +82,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
             ->toArray();
     }
 
-    public function beforeSend(NotifiableInterface $notifiable, string $channel): OutboundDeliverable|false
+    public function beforeSend(object $notifiable, string $channel): OutboundDeliverable|false
     {
         $deliverable = resolve(CreateOutboundDeliverable::class)->handle($this, $notifiable, $channel);
 
@@ -98,7 +95,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         return $deliverable;
     }
 
-    public function afterSend(NotifiableInterface $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
+    public function afterSend(object $notifiable, OutboundDeliverable $deliverable, NotificationResultData $result): void
     {
         match (true) {
             $result instanceof SmsChannelResultData => SmsChannel::afterSending($notifiable, $deliverable, $result),
@@ -110,7 +107,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
         $this->afterSendHook($notifiable, $deliverable);
     }
 
-    protected function beforeSendHook(NotifiableInterface $notifiable, OutboundDeliverable $deliverable, string $channel): void {}
+    protected function beforeSendHook(object $notifiable, OutboundDeliverable $deliverable, string $channel): void {}
 
-    protected function afterSendHook(NotifiableInterface $notifiable, OutboundDeliverable $deliverable): void {}
+    protected function afterSendHook(object $notifiable, OutboundDeliverable $deliverable): void {}
 }
