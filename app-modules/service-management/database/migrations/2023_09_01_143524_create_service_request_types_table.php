@@ -43,7 +43,12 @@ return new class () extends Migration {
     {
         Schema::create('service_request_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->string('name');
+            $table->boolean('has_enabled_feedback_collection')->default(false);
+            $table->boolean('has_enabled_csat')->default(false);
+            $table->boolean('has_enabled_nps')->default(false);
+
             $table->timestamps();
             $table->softDeletes();
         });

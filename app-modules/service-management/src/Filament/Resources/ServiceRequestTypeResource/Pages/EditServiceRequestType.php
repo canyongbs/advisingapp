@@ -36,8 +36,12 @@
 
 namespace AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource\Pages;
 
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Actions\DeleteAction;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use AdvisingApp\ServiceManagement\Filament\Resources\ServiceRequestTypeResource;
@@ -50,10 +54,26 @@ class EditServiceRequestType extends EditRecord
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->string(),
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->string(),
+                        Group::make()
+                            ->schema([
+                                Toggle::make('has_enabled_feedback_collection')
+                                    ->label('Enable feedback collection')
+                                    ->live(),
+                                Toggle::make('has_enabled_csat')
+                                    ->label('CSAT')
+                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
+                                Toggle::make('has_enabled_nps')
+                                    ->label('NPS')
+                                    ->visible(fn (Get $get) => $get('has_enabled_feedback_collection')),
+                            ]),
+                    ]),
             ]);
     }
 

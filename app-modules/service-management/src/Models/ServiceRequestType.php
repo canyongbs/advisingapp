@@ -57,6 +57,15 @@ class ServiceRequestType extends BaseModel implements Auditable
 
     protected $fillable = [
         'name',
+        'has_enabled_feedback_collection',
+        'has_enabled_csat',
+        'has_enabled_nps',
+    ];
+
+    protected $casts = [
+        'has_enabled_feedback_collection' => 'boolean',
+        'has_enabled_csat' => 'boolean',
+        'has_enabled_nps' => 'boolean',
     ];
 
     public function serviceRequests(): HasManyThrough
