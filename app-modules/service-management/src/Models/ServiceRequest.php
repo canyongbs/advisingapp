@@ -279,6 +279,7 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
     {
         if (! $this->latestInboundServiceRequestUpdate) {
             return null;
+            // return $this->created_at->diffInSeconds(now());
         }
 
         if (
@@ -331,7 +332,13 @@ class ServiceRequest extends BaseModel implements Auditable, CanTriggerAutoSubsc
 
         $latestResponseSeconds = $this->getLatestResponseSeconds();
 
-        return ($latestResponseSeconds <= $slaResponseSeconds)
+        if (is_null($latestResponseSeconds)) {
+            return $this->created_at->diffInSeconds(now()) <= $slaResponseSeconds
+                ? SlaComplianceStatus::NoResponse
+                : SlaComplianceStatus::NonCompliant;
+        }
+
+        return $latestResponseSeconds <= $slaResponseSeconds
             ? SlaComplianceStatus::Compliant
             : SlaComplianceStatus::NonCompliant;
     }
