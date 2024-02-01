@@ -54,13 +54,7 @@ class ReportFactory extends Factory
         return [
             'name' => fake()->words(asText: true),
             'model' => fake()->randomElement(ReportModel::cases()),
+            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
         ];
-    }
-
-    public function configure(): ReportFactory|Factory
-    {
-        return $this->afterMaking(function (Report $report) {
-            $report->user()->associate(User::inRandomOrder()->first() ?? User::factory()->create());
-        });
     }
 }

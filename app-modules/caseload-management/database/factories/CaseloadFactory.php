@@ -56,13 +56,7 @@ class CaseloadFactory extends Factory
             'name' => fake()->words(asText: true),
             'model' => fake()->randomElement(CaseloadModel::cases()),
             'type' => CaseloadType::Dynamic, //TODO: add static later
+            'user_id' => User::inRandomOrder()->first()?->getKey() ?? User::factory()->create()?->getKey(),
         ];
-    }
-
-    public function configure(): CaseloadFactory|Factory
-    {
-        return $this->afterMaking(function (Caseload $caseload) {
-            $caseload->user()->associate(User::inRandomOrder()->first() ?? User::factory()->create());
-        });
     }
 }
